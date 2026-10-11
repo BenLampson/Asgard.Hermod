@@ -84,6 +84,8 @@ public sealed class LocalInstanceConfigurationService : IInstanceConfigurationSe
                 StoredInstanceConfiguration? existing = instanceId is null ? null :
                     snapshot.Instances.FirstOrDefault(value => value.Id == instanceId)
                     ?? throw new InvalidOperationException("实例已不存在，请刷新后重新配置。");
+                if (existing is not null && (existing.TypeId != provider.Descriptor.Type.Id || existing.ProviderId != provider.Descriptor.Id))
+                    throw new InvalidOperationException("编辑实例不能更改实例类型或服务商，请新增对应类型的实例。");
                 var instance = new StoredInstanceConfiguration(existing?.Id ?? Guid.NewGuid().ToString("N"), name,
                     provider.Descriptor.Type.Id, provider.Descriptor.Id, protectedParameters,
                     existing?.CreatedAt ?? DateTime.UtcNow, existing?.TagIds ?? requestedTagIds);
