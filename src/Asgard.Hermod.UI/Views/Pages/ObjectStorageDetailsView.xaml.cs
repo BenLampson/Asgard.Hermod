@@ -11,12 +11,8 @@ public partial class ObjectStorageDetailsView : UserControl
     private void OnMoreClick(object sender, RoutedEventArgs args)
     {
         if (sender is not Button button || DataContext is not ObjectStorageWorkspaceViewModel { SelectedEntry: { } row } model) return;
-        var menu = new ContextMenu { PlacementTarget = button };
-        menu.Items.Add(new MenuItem { Header = "复制 Object Key", Command = model.CopyKeyCommand, CommandParameter = row, Icon = new IconView { Kind = "copy", Width = 15, Height = 15 } });
-        menu.Items.Add(new MenuItem { Header = "生成临时链接…", Command = model.TemporaryLinkCommand, CommandParameter = row, Icon = new IconView { Kind = "link", Width = 15, Height = 15 } });
-        menu.Items.Add(new Separator());
-        var delete = new MenuItem { Header = "删除对象…", Command = model.DeleteCommand, CommandParameter = row, Icon = new IconView { Kind = "trash-2", Width = 15, Height = 15 } };
-        delete.SetResourceReference(ForegroundProperty, "DangerBrush");
-        menu.Items.Add(delete); menu.IsOpen = true;
+        var menu = ObjectStorageMenuFactory.Create(model, row, button, includeDownload: false);
+        menu.IsOpen = true;
+        args.Handled = true;
     }
 }

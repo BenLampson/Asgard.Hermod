@@ -77,7 +77,7 @@ public partial class ObjectStorageListView : UserControl
     {
         if (args.OriginalSource is DependencyObject source
             && ItemsControl.ContainerFromElement(ObjectRows, source) is ListBoxItem { DataContext: ObjectStorageEntryViewModel row } item)
-        { ObjectRows.SelectedItem = row; ShowMenu(row, item); args.Handled = true; }
+        { ObjectRows.SelectedItem = row; ShowMenu(row, item, PlacementMode.MousePoint); args.Handled = true; }
     }
 
     /// <summary>行末的更多按钮与右键菜单复用同一菜单。</summary>
@@ -88,22 +88,10 @@ public partial class ObjectStorageListView : UserControl
     }
 
     /// <summary>菜单命令使用明确的行参数，临时链接只对文件可用。</summary>
-    private void ShowMenu(ObjectStorageEntryViewModel row, FrameworkElement target)
+    private void ShowMenu(ObjectStorageEntryViewModel row, FrameworkElement target, PlacementMode placement = PlacementMode.Bottom)
     {
         if (DataContext is not ObjectStorageWorkspaceViewModel model) return;
-        var menu = new ContextMenu { PlacementTarget = target };
-        MenuItem Item(string label, string icon, ICommand command)
-        {
-            var item = new MenuItem { Header = label, Command = command, CommandParameter = row, Icon = new IconView { Kind = icon, Width = 15, Height = 15 } };
-            return item;
-        }
-        menu.Items.Add(Item("下载", "download", model.DownloadCommand));
-        menu.Items.Add(Item("复制 Object Key", "copy", model.CopyKeyCommand));
-        menu.Items.Add(Item("生成临时链接…", "link", model.TemporaryLinkCommand));
-        menu.Items.Add(new Separator());
-        var delete = Item("删除对象…", "trash-2", model.DeleteCommand);
-        delete.SetResourceReference(ForegroundProperty, "DangerBrush");
-        menu.Items.Add(delete);
+        var menu = ObjectStorageMenuFactory.Create(model, row, target, placement: placement);
         menu.IsOpen = true;
     }
 

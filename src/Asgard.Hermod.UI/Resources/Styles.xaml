@@ -5,6 +5,7 @@
         <ResourceDictionary Source="SelectStyles.xaml" />
         <ResourceDictionary Source="CheckBoxStyles.xaml" />
         <ResourceDictionary Source="ScrollBarStyles.xaml" />
+        <ResourceDictionary Source="MenuStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
     <!-- 字号、圆角和颜色对应 Pencil 的基础控件，动态颜色支持即时换肤。 -->
     <Style TargetType="TextBlock">
@@ -206,30 +207,4 @@
         <Setter Property="CornerRadius" Value="8" />
     </Style>
 
-    <Style TargetType="ContextMenu">
-        <Setter Property="FontFamily" Value="{DynamicResource UiFont}" />
-        <Setter Property="FontSize" Value="12" />
-        <Setter Property="Foreground" Value="{DynamicResource TextBodyBrush}" />
-        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource LineBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Padding" Value="4" />
-    </Style>
-
-    <Style TargetType="MenuItem">
-        <Setter Property="FontFamily" Value="{DynamicResource UiFont}" />
-        <Setter Property="FontSize" Value="12" />
-        <Setter Property="Foreground" Value="{DynamicResource TextBodyBrush}" />
-        <Setter Property="Padding" Value="8,6" />
-        <Setter Property="Background" Value="Transparent" />
-        <Style.Triggers>
-            <Trigger Property="IsHighlighted" Value="True">
-                <Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" />
-                <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
-            </Trigger>
-            <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Opacity" Value="0.45" />
-            </Trigger>
-        </Style.Triggers>
-    </Style>
 </ResourceDictionary>
