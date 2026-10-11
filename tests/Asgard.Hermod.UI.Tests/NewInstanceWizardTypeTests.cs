@@ -123,7 +123,7 @@ public sealed class NewInstanceWizardTypeTests
     public async Task TypeChangeDuringTest_CancelsAndIgnoresPreviousTypeSuccess()
     {
         var completion = new TaskCompletionSource<InstanceConnectionTestResult>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var oss = new NewInstanceWizardTestProvider { TestHandler = (_, _) => completion.Task };
+        var oss = new NewInstanceWizardTestProvider { TestHandler = (_, _) => completion.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken) };
         var docker = new NewInstanceWizardTestDockerProvider();
         using var model = new NewInstanceViewModel(new NewInstanceWizardTestRegistry(oss, docker),
             new NewInstanceWizardTestConfigurationService());

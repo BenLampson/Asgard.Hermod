@@ -89,7 +89,12 @@ public sealed class ServiceDetailViewTests
     /// <summary>真实显示但不激活测试宿主，允许绑定及显示树完成初始化。</summary>
     private static Window CreateWindow(ServiceDetailView view) => new()
     {
-        Content = view, Width = 1000, Height = 720, Opacity = 0,
-        ShowActivated = false, ShowInTaskbar = false, WindowStartupLocation = WindowStartupLocation.Manual
+        Content = view,
+        Width = 1000,
+        Height = 720,
+        Opacity = 0,
+        ShowActivated = false,
+        ShowInTaskbar = false,
+        WindowStartupLocation = WindowStartupLocation.Manual
     };
 }

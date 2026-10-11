@@ -108,6 +108,7 @@
                         <ItemsControl ItemsSource="{Binding Instances}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
+                                    <StackPanel>
                                     <Button Height="30"
                                             Margin="0,0,0,1" Padding="14,0" HorizontalContentAlignment="Stretch"
                                             Command="{Binding DataContext.OpenInstanceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
@@ -134,6 +135,27 @@
                                                        Foreground="{DynamicResource TextPrimaryBrush}" />
                                         </Grid>
                                     </Button>
+                                    <ContentControl Content="{Binding DataContext.ActiveStorageNavigation, RelativeSource={RelativeSource AncestorType=ItemsControl}}">
+                                        <ContentControl.Style>
+                                            <Style TargetType="ContentControl">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                    <Trigger Property="Content" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ContentControl.Style>
+                                        <ContentControl.ContentTemplate>
+                                            <DataTemplate>
+                                                <shell:ObjectStorageNavigationView />
+                                            </DataTemplate>
+                                        </ContentControl.ContentTemplate>
+                                    </ContentControl>
+                                    </StackPanel>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>

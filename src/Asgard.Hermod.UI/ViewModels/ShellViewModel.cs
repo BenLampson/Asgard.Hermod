@@ -6,6 +6,8 @@ namespace Asgard.Hermod.UI.ViewModels;
 public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
 {
     private readonly IThemeService _themes;
+    private readonly IObjectStorageService? _storage;
+    private readonly Dictionary<ObjectStorageWorkspaceViewModel, ObjectStorageNavigationViewModel> _storageNavigation = [];
     private bool _isSidebarExpanded = true;
     private string _globalSearchQuery = "";
     private bool _disposed;
@@ -13,11 +15,13 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     /// <summary>装配外壳，构造时不启动 Shell 或远程连接。</summary>
     public ShellViewModel(IWorkspaceDataSource source, IInstanceEditor editor,
         ITerminalSessionFactory terminalFactory, IThemeService themes,
-        ISettingsEditor? settings = null, ITagManagementService? tags = null)
+        ISettingsEditor? settings = null, ITagManagementService? tags = null,
+        IInstanceWorkspaceFactory? pageFactory = null, IObjectStorageService? storage = null)
     {
         ArgumentNullException.ThrowIfNull(themes);
         _themes = themes;
-        Workspace = new WorkspaceViewModel(source, terminalFactory);
+        _storage = storage;
+        Workspace = new WorkspaceViewModel(source, terminalFactory, pageFactory);
         Sidebar = new InstanceSidebarViewModel(source, editor, Workspace.OpenInstance, Workspace.OpenLocalTerminal, tags);
         OpenSettingsCommand = new AsyncRelayCommand(_ => settings?.OpenAsync() ?? Task.CompletedTask,
             _ => settings is not null);
@@ -112,8 +116,36 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     private void OnSelectedTabChanged(object? sender, EventArgs args)
     {
         Sidebar.SelectInstance(Workspace.SelectedTab.InstanceId);
+        Sidebar.ActiveStorageNavigation = null;
+        if (Workspace.SelectedTab is ObjectStorageWorkspaceViewModel page && _storage is not null)
+        {
+            if (!_storageNavigation.TryGetValue(page, out var navigation))
+            {
+                navigation = new ObjectStorageNavigationViewModel(page, _storage);
+                _storageNavigation.Add(page, navigation);
+                page.PropertyChanged += OnStoragePageChanged;
+            }
+            Sidebar.ActiveStorageNavigation = navigation;
+            _ = page.InitializeAsync();
+        }
         if (Workspace.SelectedTab.Id == "tag:production")
             Sidebar.SelectedTag = "Production";
+    }
+
+    /// <summary>编辑连接改变标题时刷新所有导航快照，页签关闭及时移除目录订阅。</summary>
+    private async void OnStoragePageChanged(object? sender, PropertyChangedEventArgs args)
+    {
+        if (sender is not ObjectStorageWorkspaceViewModel page || _disposed) return;
+        if (args.PropertyName == nameof(WorkspacePageViewModel.IsClosed) && page.IsClosed)
+        {
+            if (_storageNavigation.Remove(page, out var navigation)) navigation.Dispose();
+            page.PropertyChanged -= OnStoragePageChanged;
+        }
+        else if (args.PropertyName == nameof(WorkspacePageViewModel.Header))
+        {
+            try { await Sidebar.RefreshAsync(); }
+            catch (Exception) { /* 下次打开设置或刷新导航时再次读取本地快照。 */ }
+        }
     }
 
     /// <summary>使用全部实例搜索，不改变侧栏过滤视图。</summary>
@@ -136,6 +168,12 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
         _themes.ThemeChanged -= OnThemeChanged;
         Sidebar.InstancesChanged -= OnInstancesChanged;
         Workspace.SelectedTabChanged -= OnSelectedTabChanged;
+        foreach (var (page, navigation) in _storageNavigation)
+        {
+            page.PropertyChanged -= OnStoragePageChanged;
+            navigation.Dispose();
+        }
+        _storageNavigation.Clear();
         Sidebar.Dispose();
         await Workspace.DisposeAsync();
     }

@@ -158,7 +158,7 @@ public sealed class NewInstanceDialogTests
     public Task ShowDialog_CaptionCloseCancelsRunningConnectionTest() => _fixture.RunAsync(async () =>
     {
         var completion = new TaskCompletionSource<InstanceConnectionTestResult>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var provider = new NewInstanceWizardTestProvider { TestHandler = (_, token) => completion.Task.WaitAsync(token) };
+        var provider = new NewInstanceWizardTestProvider { TestHandler = (_, token) => completion.Task.WaitAsync(TimeSpan.FromSeconds(5), token) };
         var configurations = new NewInstanceWizardTestConfigurationService();
         using var model = new NewInstanceViewModel(new NewInstanceWizardTestRegistry(provider), configurations);
         var owner = CreateOwner();
@@ -198,7 +198,7 @@ public sealed class NewInstanceDialogTests
     public Task ShowDialog_CaptionCloseWaitsForInFlightSave() => _fixture.RunAsync(async () =>
     {
         var completion = new TaskCompletionSource<InstanceSummary>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var configurations = new NewInstanceWizardTestConfigurationService { CreateHandler = (_, _) => completion.Task };
+        var configurations = new NewInstanceWizardTestConfigurationService { CreateHandler = (_, _) => completion.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken) };
         using var model = new NewInstanceViewModel(new NewInstanceWizardTestRegistry(new NewInstanceWizardTestProvider()), configurations);
         var owner = CreateOwner();
         var dialog = new NewInstanceWindow(model) { Opacity = 0 };

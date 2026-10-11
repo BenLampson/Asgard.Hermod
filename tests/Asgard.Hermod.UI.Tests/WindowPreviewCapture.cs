@@ -22,7 +22,7 @@ internal static class WindowPreviewCapture
         Assert.InRange(frame.ActualWidth, window.Width - 2, window.Width + 2);
         Assert.InRange(frame.ActualHeight, window.Height - 2, window.Height + 2);
         var caption = WindowTestVisuals.Caption(window);
-        Assert.Equal(36, caption.ActualHeight);
+        Assert.Equal(window.CaptionHeight, caption.ActualHeight);
         if (window.FooterContent is DialogActionBar)
         {
             var footer = WindowTestVisuals.Footer(window);

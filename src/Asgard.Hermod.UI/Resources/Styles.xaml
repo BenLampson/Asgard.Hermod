@@ -3,6 +3,8 @@
                     xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="SelectStyles.xaml" />
+        <ResourceDictionary Source="CheckBoxStyles.xaml" />
+        <ResourceDictionary Source="ScrollBarStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
     <!-- 字号、圆角和颜色对应 Pencil 的基础控件，动态颜色支持即时换肤。 -->
     <Style TargetType="TextBlock">

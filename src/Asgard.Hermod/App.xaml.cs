@@ -24,6 +24,9 @@ public partial class App : Application
                 provider.GetRequiredService<IInstanceConfigurationService>()));
             services.AddSingleton<ISettingsEditor>(provider => new SettingsEditorService(() => MainWindow,
                 provider.GetRequiredService<ITagManagementService>()));
+            services.AddSingleton<IObjectStorageDialogService>(_ => new WindowsObjectStorageDialogService(() => MainWindow));
+            services.AddSingleton<IInstancePageProvider, ObjectStoragePageProvider>();
+            services.AddSingleton<IInstanceWorkspaceFactory, InstanceWorkspaceFactory>();
             services.AddSingleton<IThemeService>(_ => new ThemeService(Resources));
             var provider = services.BuildServiceProvider(new ServiceProviderOptions
             {

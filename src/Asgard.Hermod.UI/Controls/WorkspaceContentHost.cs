@@ -59,6 +59,7 @@ public sealed class WorkspaceContentHost : ContentControl, IDisposable
     {
         EmptyWorkspaceViewModel => new EmptyWorkspaceView(),
         ServiceDetailViewModel => new ServiceDetailView(),
+        ObjectStorageWorkspaceViewModel => new ObjectStorageView(),
         TerminalWorkspaceViewModel => new TerminalWorkspaceView(),
         _ => throw new NotSupportedException($"没有为页面类型 {page.GetType().Name} 注册内容视图。"),
     };

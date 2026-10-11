@@ -13,6 +13,7 @@ public sealed class InstanceSidebarViewModel : ObservableObject, IDisposable
     private long _refreshRevision;
     private bool _disposed;
     private string _operationError = "";
+    private ObjectStorageNavigationViewModel? _activeStorageNavigation;
     private string _query = "";
     private string[] _selectedTagPaths = [];
     private TagFilterMatchMode _tagMatchMode = TagFilterMatchMode.Any;
@@ -94,6 +95,13 @@ public sealed class InstanceSidebarViewModel : ObservableObject, IDisposable
     public RelayCommand OpenLocalTerminalCommand { get; }
     /// <summary>收集并添加当前工作区中的实例配置。</summary>
     public AsyncRelayCommand AddInstanceCommand { get; }
+    /// <summary>仅为当前已打开的存储实例呈现容器导航。</summary>
+    public ObjectStorageNavigationViewModel? ActiveStorageNavigation
+    {
+        get => _activeStorageNavigation;
+        internal set => SetProperty(ref _activeStorageNavigation, value);
+    }
+
     /// <summary>同步导航选中态，不受当前过滤条件影响。</summary>
     public void SelectInstance(string? instanceId)
     {

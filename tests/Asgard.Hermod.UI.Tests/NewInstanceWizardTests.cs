@@ -114,7 +114,7 @@ public sealed class NewInstanceWizardTests
     public async Task InformationChangedDuringTest_IgnoresLateSuccess()
     {
         var completion = NewTestCompletion();
-        var provider = new NewInstanceWizardTestProvider { TestHandler = (_, _) => completion.Task };
+        var provider = new NewInstanceWizardTestProvider { TestHandler = (_, _) => completion.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken) };
         using var model = CreateModel(provider);
         MoveToTest(model);
         Task running = model.TestConnectionCommand.ExecuteAsync();
@@ -132,7 +132,7 @@ public sealed class NewInstanceWizardTests
     public async Task TestCommand_PreventsDuplicateRequestsAndStepChanges()
     {
         var completion = NewTestCompletion();
-        var provider = new NewInstanceWizardTestProvider { TestHandler = (_, _) => completion.Task };
+        var provider = new NewInstanceWizardTestProvider { TestHandler = (_, _) => completion.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken) };
         using var model = CreateModel(provider);
         MoveToTest(model);
         Task running = model.TestConnectionCommand.ExecuteAsync();
@@ -154,7 +154,7 @@ public sealed class NewInstanceWizardTests
         var completion = NewTestCompletion();
         var provider = new NewInstanceWizardTestProvider
         {
-            TestHandler = (_, token) => completion.Task.WaitAsync(token),
+            TestHandler = (_, token) => completion.Task.WaitAsync(TimeSpan.FromSeconds(5), token),
         };
         using var model = CreateModel(provider);
         MoveToTest(model);
@@ -176,7 +176,7 @@ public sealed class NewInstanceWizardTests
     public async Task CancelWizard_CancelsTestingAndBlocksFutureCreate()
     {
         var completion = NewTestCompletion();
-        var provider = new NewInstanceWizardTestProvider { TestHandler = (_, _) => completion.Task };
+        var provider = new NewInstanceWizardTestProvider { TestHandler = (_, _) => completion.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken) };
         var configurations = new NewInstanceWizardTestConfigurationService();
         using var model = CreateModel(provider, configurations);
         MoveToTest(model);
@@ -276,7 +276,7 @@ public sealed class NewInstanceWizardTests
     public async Task SubmitCommand_PreventsDuplicateSaveAndClosesOnce()
     {
         var completion = new TaskCompletionSource<InstanceSummary>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var configurations = new NewInstanceWizardTestConfigurationService { CreateHandler = (_, _) => completion.Task };
+        var configurations = new NewInstanceWizardTestConfigurationService { CreateHandler = (_, _) => completion.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken) };
         using var model = CreateModel(configurations: configurations);
         await ReachConfirmationAsync(model);
         var results = new List<bool>();

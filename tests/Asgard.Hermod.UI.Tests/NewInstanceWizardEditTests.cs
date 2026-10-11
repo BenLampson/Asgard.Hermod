@@ -111,7 +111,7 @@ public sealed class NewInstanceWizardEditTests
     public async Task EditMode_PreventsDuplicateUpdate()
     {
         var completion = new TaskCompletionSource<InstanceSummary>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var configurations = new NewInstanceWizardTestConfigurationService { UpdateHandler = (_, _, _) => completion.Task };
+        var configurations = new NewInstanceWizardTestConfigurationService { UpdateHandler = (_, _, _) => completion.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken) };
         using var model = CreateModel(configurations);
         await ReachConfirmationAsync(model);
         var results = new List<bool>();
