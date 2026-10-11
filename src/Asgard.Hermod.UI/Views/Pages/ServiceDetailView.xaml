@@ -17,6 +17,21 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        <!-- 未接入详情时不显示服务专用操作，避免已配置的第三方实例出现错误引导。 -->
+        <Style x:Key="RestartVisible" TargetType="Button" BasedOn="{StaticResource StandardButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding HasDetails}" Value="False">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="DeployVisible" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding HasDetails}" Value="False">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </UserControl.Resources>
     <Grid Margin="24">
         <Grid.RowDefinitions>
@@ -55,7 +70,7 @@
                     </Style>
                 </controls:StatusBadge.Style>
             </controls:StatusBadge>
-            <Button Grid.Column="6" Style="{DynamicResource StandardButton}" Command="{Binding RestartCommand}"
+            <Button Grid.Column="6" Style="{StaticResource RestartVisible}" Command="{Binding RestartCommand}"
                     Padding="13,6" VerticalAlignment="Center" ToolTipService.ShowOnDisabled="True"
                     ToolTip="Connector not configured. Restart will be available after a service connection is added.">
                 <StackPanel Orientation="Horizontal">
@@ -64,7 +79,7 @@
                                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
                 </StackPanel>
             </Button>
-            <Button Grid.Column="8" Style="{DynamicResource PrimaryButton}" Command="{Binding DeployCommand}"
+            <Button Grid.Column="8" Style="{StaticResource DeployVisible}" Command="{Binding DeployCommand}"
                     Padding="14,6" VerticalAlignment="Center" ToolTipService.ShowOnDisabled="True"
                     ToolTip="Connector not configured. Deploy will be available after a service connection is added.">
                 <StackPanel Orientation="Horizontal">
@@ -125,9 +140,9 @@
             </StackPanel.Style>
             <controls:IconView Kind="{Binding Icon}" Width="28" Height="28" Margin="0,0,0,14"
                                Foreground="{DynamicResource TextFaintBrush}" />
-            <TextBlock Text="No connector configured" FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Center"
+            <TextBlock Text="{Binding PlaceholderTitle}" FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Center"
                        Foreground="{DynamicResource TextBodyBrush}" />
-            <TextBlock Text="Add a service connection to view configuration, metrics and events."
+            <TextBlock Text="{Binding PlaceholderDescription}"
                        Margin="0,6,0,0" FontSize="12.5" TextAlignment="Center"
                        Foreground="{DynamicResource TextMutedBrush}" />
         </StackPanel>

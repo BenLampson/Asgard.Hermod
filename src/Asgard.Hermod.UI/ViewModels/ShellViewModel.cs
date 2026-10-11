@@ -12,12 +12,15 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
 
     /// <summary>装配外壳，构造时不启动 Shell 或远程连接。</summary>
     public ShellViewModel(IWorkspaceDataSource source, IInstanceEditor editor,
-        ITerminalSessionFactory terminalFactory, IThemeService themes)
+        ITerminalSessionFactory terminalFactory, IThemeService themes,
+        ISettingsEditor? settings = null, ITagManagementService? tags = null)
     {
         ArgumentNullException.ThrowIfNull(themes);
         _themes = themes;
         Workspace = new WorkspaceViewModel(source, terminalFactory);
-        Sidebar = new InstanceSidebarViewModel(source, editor, Workspace.OpenInstance, Workspace.OpenLocalTerminal);
+        Sidebar = new InstanceSidebarViewModel(source, editor, Workspace.OpenInstance, Workspace.OpenLocalTerminal, tags);
+        OpenSettingsCommand = new AsyncRelayCommand(_ => settings?.OpenAsync() ?? Task.CompletedTask,
+            _ => settings is not null);
         ToggleSidebarCommand = new RelayCommand(_ => IsSidebarExpanded = !IsSidebarExpanded);
         SetLightThemeCommand = new RelayCommand(_ => _themes.SetTheme(UiTheme.Light));
         SetDarkThemeCommand = new RelayCommand(_ => _themes.SetTheme(UiTheme.Dark));
@@ -45,12 +48,12 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     public InstanceSidebarViewModel Sidebar { get; }
     /// <summary>工作页状态。</summary>
     public WorkspaceViewModel Workspace { get; }
-    /// <summary>Pencil 工作区名称。</summary>
-    public string WorkspaceName => "Production workspace";
-    /// <summary>设计中的账号显示名；登录接入后由身份服务提供。</summary>
-    public string AccountName => "BenLampson";
-    /// <summary>设计中的头像缩写。</summary>
-    public string AccountInitials => "Be";
+    /// <summary>当前使用设备上的用户级工作区。</summary>
+    public string WorkspaceName => "本地工作区";
+    /// <summary>未接入身份服务时显示本地模式。</summary>
+    public string AccountName => "本地";
+    /// <summary>当前未接入账户登录。</summary>
+    public bool IsSignedIn => false;
     /// <summary>当前程序集版本。</summary>
     public string Version => "v" + CompactVersion;
     /// <summary>收起侧栏使用紧凑版本文本。</summary>
@@ -85,10 +88,15 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     public RelayCommand ToggleThemeCommand { get; }
     /// <summary>打开新的本地终端。</summary>
     public RelayCommand OpenLocalTerminalCommand { get; }
+    /// <summary>打开系统设置，共用账号菜单和标题栏入口。</summary>
+    public AsyncRelayCommand OpenSettingsCommand { get; }
     /// <summary>打开指定搜索结果。</summary>
     public RelayCommand OpenGlobalSearchResultCommand { get; }
     /// <summary>按 Enter 打开第一个匹配结果。</summary>
     public RelayCommand OpenFirstSearchResultCommand { get; }
+
+    /// <summary>窗口显示前载入持久化标签目录。</summary>
+    public Task InitializeAsync() => Sidebar.RefreshAsync();
 
     /// <summary>统一刷新主题相关计算属性。</summary>
     private void OnThemeChanged(object? sender, EventArgs args)
@@ -128,6 +136,7 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
         _themes.ThemeChanged -= OnThemeChanged;
         Sidebar.InstancesChanged -= OnInstancesChanged;
         Workspace.SelectedTabChanged -= OnSelectedTabChanged;
+        Sidebar.Dispose();
         await Workspace.DisposeAsync();
     }
 }

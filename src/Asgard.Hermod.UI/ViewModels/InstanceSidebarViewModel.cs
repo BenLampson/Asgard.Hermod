@@ -1,18 +1,25 @@
 namespace Asgard.Hermod.UI.ViewModels;
 
 /// <summary>维护实例搜索、标签过滤和导航命令。</summary>
-public sealed class InstanceSidebarViewModel : ObservableObject
+public sealed class InstanceSidebarViewModel : ObservableObject, IDisposable
 {
     private readonly ObservableCollection<InstanceItemViewModel> _items;
     private readonly IInstanceEditor _editor;
     private readonly Action<InstanceItemViewModel> _openInstance;
+    private readonly IWorkspaceDataSource _source;
+    private readonly ITagManagementService? _tagService;
+    private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+    private IReadOnlyList<ManagedTag> _managedTags = [];
+    private long _refreshRevision;
+    private bool _disposed;
+    private string _operationError = "";
     private string _query = "";
     private string[] _selectedTagPaths = [];
     private TagFilterMatchMode _tagMatchMode = TagFilterMatchMode.Any;
 
     /// <summary>将应用层实例转换为共享导航条目。</summary>
     public InstanceSidebarViewModel(IWorkspaceDataSource source, IInstanceEditor editor,
-        Action<InstanceItemViewModel> openInstance, Action openLocalTerminal)
+        Action<InstanceItemViewModel> openInstance, Action openLocalTerminal, ITagManagementService? tags = null)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(editor);
@@ -20,6 +27,8 @@ public sealed class InstanceSidebarViewModel : ObservableObject
         ArgumentNullException.ThrowIfNull(openLocalTerminal);
         _editor = editor;
         _openInstance = openInstance;
+        _source = source;
+        _tagService = tags;
         _items = new ObservableCollection<InstanceItemViewModel>(
             source.GetInstances().Select(instance => new InstanceItemViewModel(instance)));
         Instances = new CollectionViewSource { Source = _items }.View;
@@ -34,6 +43,9 @@ public sealed class InstanceSidebarViewModel : ObservableObject
         ClearTagCommand = new RelayCommand(_ => SelectedTag = null);
         OpenLocalTerminalCommand = new RelayCommand(_ => openLocalTerminal());
         AddInstanceCommand = new AsyncRelayCommand(_ => AddInstanceAsync());
+        AddInstanceCommand.ExecutionFailed += OnAddInstanceFailed;
+        if (_tagService is not null)
+            _tagService.TagsChanged += OnTagsChanged;
         RefreshTags();
     }
 
@@ -45,6 +57,8 @@ public sealed class InstanceSidebarViewModel : ObservableObject
     public IReadOnlyList<InstanceItemViewModel> AllInstances => _items;
     /// <summary>可选标签列表。</summary>
     public ObservableCollection<string> AvailableTags { get; } = [];
+    /// <summary>通过统一安全文案反馈刷新或创建失败。</summary>
+    public string OperationError { get => _operationError; private set => SetProperty(ref _operationError, value); }
     /// <summary>实例名称过滤文字。</summary>
     public string Query
     {
@@ -80,7 +94,6 @@ public sealed class InstanceSidebarViewModel : ObservableObject
     public RelayCommand OpenLocalTerminalCommand { get; }
     /// <summary>收集并添加当前工作区中的实例配置。</summary>
     public AsyncRelayCommand AddInstanceCommand { get; }
-
     /// <summary>同步导航选中态，不受当前过滤条件影响。</summary>
     public void SelectInstance(string? instanceId)
     {
@@ -88,9 +101,62 @@ public sealed class InstanceSidebarViewModel : ObservableObject
             instance.IsSelected = instance.Id == instanceId;
     }
 
-    /// <summary>从实际实例标签建立树，选择器不使用固定标签或虚构数量。</summary>
+    /// <summary>使用持久化标签目录建立树，尚未关联实例的自定义标签也立即可选。</summary>
     public IReadOnlyList<TagFilterDefinition> BuildTagFilterDefinitions() =>
-        TagFilterTreeBuilder.Create(_items.SelectMany(instance => instance.Tags));
+        TagFilterTreeBuilder.Create(_managedTags.Select(tag => tag.Path).Concat(_items.SelectMany(instance => instance.Tags)),
+            _managedTags.ToDictionary(tag => tag.Path, tag => tag.Color, StringComparer.OrdinalIgnoreCase));
+
+    /// <summary>启动和标签修改后重新读取快照，以稳定标识保留条目与筛选关联。</summary>
+    public async Task RefreshAsync()
+    {
+        if (_disposed)
+            return;
+        long revision = Interlocked.Increment(ref _refreshRevision);
+        var tags = _tagService is null ? _managedTags : await _tagService.GetTagsAsync();
+        var summaries = await Task.Run(_source.GetInstances);
+        if (_disposed || revision != _refreshRevision)
+            return;
+        string[] selectedIds = _managedTags.Where(tag => _selectedTagPaths.Contains(tag.Path,
+            StringComparer.OrdinalIgnoreCase)).Select(tag => tag.Id).ToArray();
+        var oldCatalog = _managedTags;
+        _managedTags = tags;
+        // 改名、移动和删除只变更路径，过滤通过稳定标签标识跟随修改。
+        string[] selectedPaths = _selectedTagPaths.Where(path => !oldCatalog.Any(tag =>
+            tag.Path.Equals(path, StringComparison.OrdinalIgnoreCase))).Concat(tags
+            .Where(tag => selectedIds.Contains(tag.Id)).Select(tag => tag.Path)).ToArray();
+        foreach (var item in _items.ToArray())
+        {
+            var summary = summaries.FirstOrDefault(value => value.Id == item.Id);
+            if (summary is null)
+                _items.Remove(item);
+            else
+                item.UpdateSnapshot(summary);
+        }
+        foreach (var summary in summaries.Where(value => _items.All(item => item.Id != value.Id)))
+            _items.Add(new InstanceItemViewModel(summary));
+        ApplyTagFilter(selectedPaths, TagMatchMode);
+        RefreshTags();
+        RefreshFilter();
+        OperationError = "";
+        InstancesChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>后台持久化通知统一回到所属 Dispatcher，不在数据库线程修改 WPF 集合。</summary>
+    private async void OnTagsChanged(object? sender, EventArgs args)
+    {
+        if (_disposed || _dispatcher.HasShutdownStarted)
+            return;
+        try { await _dispatcher.InvokeAsync(RefreshAsync).Task.Unwrap(); }
+        catch (Exception)
+        {
+            if (!_disposed && !_dispatcher.HasShutdownStarted)
+                await _dispatcher.InvokeAsync(() => OperationError = "无法刷新标签，请重新打开系统设置后重试。");
+        }
+    }
+
+    /// <summary>创建服务异常不直接暴露第三方请求或凭据。</summary>
+    private void OnAddInstanceFailed(object? sender, Exception exception) =>
+        OperationError = "无法打开实例配置，请重试。";
 
     /// <summary>只有用户应用草稿后才更新实例列表；父路径包含全部下级标签。</summary>
     public void ApplyTagFilter(IReadOnlyList<string> selectedPaths, TagFilterMatchMode matchMode)
@@ -151,18 +217,20 @@ public sealed class InstanceSidebarViewModel : ObservableObject
     private void RefreshTags()
     {
         AvailableTags.Clear();
-        foreach (string tag in _items.SelectMany(item => item.Tags).Select(TagFilterTreeBuilder.NormalizePath)
+        foreach (string tag in _managedTags.Select(tag => tag.Path).Concat(_items.SelectMany(item => item.Tags))
+            .Select(TagFilterTreeBuilder.NormalizePath)
             .Where(path => path.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase)
             .Order(StringComparer.OrdinalIgnoreCase))
             AvailableTags.Add(tag);
     }
 
-    /// <summary>取消表单不改变工作区；有效配置仅保存在本次进程内。</summary>
+    /// <summary>宿主成功保存后加入导航；取消或失败不改变工作区。</summary>
     private async Task AddInstanceAsync()
     {
         InstanceSummary? created = await _editor.CreateAsync();
         if (created is null)
             return;
+        OperationError = "";
         var instance = new InstanceItemViewModel(created);
         _items.Add(instance);
         Query = "";
@@ -171,5 +239,16 @@ public sealed class InstanceSidebarViewModel : ObservableObject
         RefreshFilter();
         InstancesChanged?.Invoke(this, EventArgs.Empty);
         _openInstance(instance);
+    }
+
+    /// <summary>关闭外壳时释放目录订阅，不让持久化事件继续访问已销毁视图。</summary>
+    public void Dispose()
+    {
+        if (_disposed)
+            return;
+        _disposed = true;
+        if (_tagService is not null)
+            _tagService.TagsChanged -= OnTagsChanged;
+        AddInstanceCommand.ExecutionFailed -= OnAddInstanceFailed;
     }
 }

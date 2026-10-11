@@ -1,0 +1,33 @@
+<UserControl x:Class="Asgard.Hermod.UI.Controls.InstanceConfigurationFieldEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
+             Focusable="False">
+    <UserControl.Resources>
+        <DataTemplate x:Key="TextFieldTemplate">
+            <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     Height="36" MaxLength="{Binding MaxLength}" FontFamily="{DynamicResource MonoFont}"
+                     AutomationProperties.Name="{Binding Label}" />
+        </DataTemplate>
+        <DataTemplate x:Key="SecretFieldTemplate">
+            <controls:SecretInput Value="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  Height="36" MaxLength="{Binding MaxLength}"
+                                  AutomationProperties.Name="{Binding Label}" />
+        </DataTemplate>
+    </UserControl.Resources>
+    <!-- 新类型复用同一字段编辑器，文字和密钥均由连接器声明决定。 -->
+    <controls:FormField Label="{Binding Label}" Hint="{Binding Hint}" Error="{Binding Error}" IsRequired="{Binding IsRequired}">
+        <ContentControl Content="{Binding}" Focusable="False">
+            <ContentControl.Style>
+                <Style TargetType="ContentControl">
+                    <Setter Property="ContentTemplate" Value="{StaticResource TextFieldTemplate}" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSecret}" Value="True">
+                            <Setter Property="ContentTemplate" Value="{StaticResource SecretFieldTemplate}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
+    </controls:FormField>
+</UserControl>

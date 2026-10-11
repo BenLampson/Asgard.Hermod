@@ -4,7 +4,7 @@ namespace Asgard.Hermod.Infrastructure.Persistence;
 public sealed class LocalDatabaseInitializer
 {
     /// <summary>当前程序支持的数据库结构版本；新增迁移时递增。</summary>
-    public const int CurrentSchemaVersion = 1;
+    public const int CurrentSchemaVersion = 3;
 
     /// <summary>由服务容器拥有的业务数据库实例。</summary>
     private readonly IFreeSql _database;
@@ -44,11 +44,21 @@ public sealed class LocalDatabaseInitializer
             command.ExecuteNonQuery();
             command.CommandText = "PRAGMA user_version = 1;";
             command.ExecuteNonQuery();
+            version = 1;
         }
 
         // 已有版本也验证必要列，避免版本标记存在但结构缺失时进入主界面。
         command.CommandText = "SELECT id, value, update_time FROM app_setting LIMIT 0;";
         using (command.ExecuteReader()) { }
+        if (version == 1)
+        {
+            LocalDatabaseVersionTwoMigration.Apply(command);
+            version = 2;
+        }
+        LocalDatabaseVersionTwoMigration.Validate(command);
+        if (version == 2)
+            LocalDatabaseVersionThreeMigration.Apply(command);
+        LocalDatabaseVersionThreeMigration.Validate(command);
         transaction.Commit();
     }
 }

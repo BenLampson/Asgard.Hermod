@@ -59,11 +59,12 @@ public sealed class LocalDatabaseTests
         initializer.Initialize();
         var database = services.GetRequiredService<IFreeSql>();
         database.Ado.ExecuteNonQuery("INSERT INTO app_setting VALUES ('sentinel', 'saved', '2026-10-11');");
-        database.Ado.ExecuteNonQuery("PRAGMA user_version = 2;");
+        int futureVersion = LocalDatabaseInitializer.CurrentSchemaVersion + 1;
+        database.Ado.ExecuteNonQuery($"PRAGMA user_version = {futureVersion};");
 
         Assert.Throws<InvalidOperationException>(initializer.Initialize);
 
-        Assert.Equal(2, Convert.ToInt32(database.Ado.ExecuteScalar("PRAGMA user_version;")));
+        Assert.Equal(futureVersion, Convert.ToInt32(database.Ado.ExecuteScalar("PRAGMA user_version;")));
         Assert.Equal("saved", database.Ado.ExecuteScalar("SELECT value FROM app_setting WHERE id = 'sentinel';"));
     }
 
@@ -110,7 +111,8 @@ public sealed class LocalDatabaseTests
             Task.Run(() => first.GetRequiredService<LocalDatabaseInitializer>().Initialize(), TestContext.Current.CancellationToken),
             Task.Run(() => second.GetRequiredService<LocalDatabaseInitializer>().Initialize(), TestContext.Current.CancellationToken));
 
-        Assert.Equal(1, Convert.ToInt32(first.GetRequiredService<IFreeSql>().Ado.ExecuteScalar("PRAGMA user_version;")));
+        Assert.Equal(LocalDatabaseInitializer.CurrentSchemaVersion,
+            Convert.ToInt32(first.GetRequiredService<IFreeSql>().Ado.ExecuteScalar("PRAGMA user_version;")));
         Assert.Equal(0, Convert.ToInt32(second.GetRequiredService<IFreeSql>().Ado.ExecuteScalar("SELECT COUNT(*) FROM app_setting;")));
     }
 

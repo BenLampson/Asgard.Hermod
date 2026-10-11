@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="Asgard.Core" Version="6.0.3" />
     <PackageReference Include="FreeSql.Provider.Sqlite" Version="3.5.311" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.10.0" />
   </ItemGroup>
   <ItemGroup>
     <None Update="app.yaml" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />

@@ -2,6 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
+             xmlns:shell="clr-namespace:Asgard.Hermod.UI.Views.Shell"
              x:Name="SidebarRoot">
     <Grid>
         <!-- 展开视图与图标栏共用 Instances 集合和打开命令。 -->
@@ -20,7 +21,21 @@
                 <RowDefinition Height="38" />
                 <RowDefinition Height="36" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
+            <TextBlock Grid.Row="3" Text="{Binding OperationError}" Margin="12,4,12,8"
+                       FontSize="11" TextWrapping="Wrap" Foreground="{DynamicResource DangerBrush}">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding OperationError}" Value="">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
             <Grid Margin="12,0">
                 <TextBlock Text="Instances" FontSize="12.5" FontWeight="Bold"
                            Foreground="{DynamicResource TextBodyBrush}" VerticalAlignment="Center" />

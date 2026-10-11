@@ -12,16 +12,4 @@ public partial class TitleBarView : UserControl
     {
         InitializeComponent();
     }
-
-    /// <summary>
-    /// 左键打开设置菜单，其命令继续由绑定提供。
-    /// </summary>
-    private void OnSettingsClick(object sender, RoutedEventArgs e)
-    {
-        if (SettingsButton.ContextMenu is { } menu)
-        {
-            menu.PlacementTarget = SettingsButton;
-            menu.IsOpen = true;
-        }
-    }
 }

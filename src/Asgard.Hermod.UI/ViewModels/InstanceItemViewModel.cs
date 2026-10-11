@@ -13,7 +13,7 @@ public sealed class InstanceItemViewModel : ObservableObject
     }
 
     /// <summary>保留应用层提供的实例快照。</summary>
-    public InstanceSummary Summary { get; }
+    public InstanceSummary Summary { get; private set; }
     /// <summary>实例稳定标识。</summary>
     public string Id => Summary.Id;
     /// <summary>实例名称。</summary>
@@ -30,4 +30,16 @@ public sealed class InstanceItemViewModel : ObservableObject
     public bool HasAlert => Summary.HasAlert;
     /// <summary>当前工作页是否属于该实例。</summary>
     public bool IsSelected { get => _isSelected; set => SetProperty(ref _isSelected, value); }
+
+    /// <summary>刷新安全快照并保留导航选中态和正在使用的条目对象。</summary>
+    public void UpdateSnapshot(InstanceSummary summary)
+    {
+        ArgumentNullException.ThrowIfNull(summary);
+        if (summary.Id != Id)
+            throw new InvalidOperationException("An instance snapshot must keep its identifier.");
+        Summary = summary;
+        foreach (string property in new[] { nameof(Summary), nameof(Name), nameof(DisplayName),
+            nameof(Icon), nameof(Tags), nameof(IsLocal), nameof(HasAlert) })
+            OnPropertyChanged(property);
+    }
 }

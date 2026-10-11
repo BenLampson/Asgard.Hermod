@@ -1,80 +1,181 @@
 namespace Asgard.Hermod.UI.ViewModels;
 
-/// <summary>收集新实例显示配置；不保存凭据或连接到远程服务。</summary>
-public sealed class NewInstanceViewModel : ObservableObject
+/// <summary>通过五步向导收集实例配置，连接测试和持久化都由注入服务处理。</summary>
+public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
 {
-    private string _name = "";
-    private string _endpoint = "";
-    private string _tag = "Production";
-    private InstanceConnectionType _connectionType = InstanceConnectionType.SSH;
+    private readonly IInstanceProviderRegistry _registry;
+    private readonly IInstanceConfigurationService _configurations;
+    private readonly InstanceSummary? _editingInstance;
+    private readonly CancellationTokenSource _lifetimeCancellation = new();
+    private CancellationTokenSource? _testCancellation;
+    private int _configurationRevision;
+    private int _verifiedConfigurationRevision = -1;
+    private bool _showValidation;
+    private bool _disposed;
 
-    /// <summary>创建表单命令。</summary>
-    public NewInstanceViewModel()
+    /// <summary>由宿主提供顶层类型连接器与配置服务。</summary>
+    public NewInstanceViewModel(IInstanceProviderRegistry registry,
+        IInstanceConfigurationService configurations)
     {
-        SubmitCommand = new RelayCommand(_ => CloseRequested?.Invoke(this, true), _ => CanCreate);
-        CancelCommand = new RelayCommand(_ => CloseRequested?.Invoke(this, false));
+        ArgumentNullException.ThrowIfNull(registry);
+        ArgumentNullException.ThrowIfNull(configurations);
+        _registry = registry;
+        _configurations = configurations;
+        Types = registry.Types.ToArray();
+        Steps = [new(1, "选择类型"), new(2, "输入信息"), new(3, "测试连接"),
+            new(4, "保存位置"), new(5, "确认创建")];
+        NextCommand = new RelayCommand(_ => GoNext(), _ => CanGoNext);
+        PreviousCommand = new RelayCommand(_ => SetCurrentStep(CurrentStep - 1), _ => CanGoPrevious);
+        CancelCommand = new RelayCommand(_ => Cancel(), _ => !_disposed && !IsSaving);
+        ModifyInformationCommand = new RelayCommand(_ => SetCurrentStep(2),
+            _ => !_disposed && !IsTesting && !IsSaving && CurrentStep == 3);
+        TestConnectionCommand = new AsyncRelayCommand(_ => TestConnectionAsync(), _ => CanTest);
+        CancelTestCommand = new RelayCommand(_ => CancelTest(), _ => !_disposed && IsTesting);
+        SubmitCommand = new AsyncRelayCommand(_ => SubmitAsync(), _ => CanCreate);
+        RefreshState();
     }
 
-    /// <summary>请求宿主结束表单。</summary>
+    /// <summary>保存成功或用户取消时请求宿主关闭窗口。</summary>
     public event EventHandler<bool>? CloseRequested;
-    /// <summary>可选的实例显示类型。</summary>
-    public IReadOnlyList<InstanceConnectionType> ConnectionTypes { get; } = Enum.GetValues<InstanceConnectionType>();
-    /// <summary>实例名称。</summary>
-    public string Name
+    /// <summary>注册表中的顶层实例类型；存储与 Docker 等保持同级。</summary>
+    public IReadOnlyList<InstanceTypeDescriptor> Types { get; }
+    /// <summary>只展示所选类型下的服务商。</summary>
+    public IReadOnlyList<InstanceProviderDescriptor> Providers { get; private set; } = [];
+    /// <summary>当前服务商声明的配置字段，每次切换类型或服务重新创建。</summary>
+    public IReadOnlyList<InstanceConfigurationFieldViewModel> Fields { get; private set; } = [];
+    /// <summary>侧边五步进度。</summary>
+    public IReadOnlyList<InstanceWizardStep> Steps { get; }
+    /// <summary>当前步骤只允许导航命令改变，无法跳过连接测试。</summary>
+    public int CurrentStep { get; private set; } = 1;
+    /// <summary>先选择顶层类型，再发现对应服务；不把旧类型凭据带到新类型。</summary>
+    public InstanceTypeDescriptor? SelectedType
     {
-        get => _name;
-        set { if (SetProperty(ref _name, value)) RefreshValidation(); }
-    }
-    /// <summary>远程端点地址；本地终端无需填写。</summary>
-    public string Endpoint
-    {
-        get => _endpoint;
-        set { if (SetProperty(ref _endpoint, value)) RefreshValidation(); }
-    }
-    /// <summary>实例分组标签。</summary>
-    public string Tag { get => _tag; set => SetProperty(ref _tag, value); }
-    /// <summary>选择实例的显示类型。</summary>
-    public InstanceConnectionType ConnectionType
-    {
-        get => _connectionType;
+        get;
         set
         {
-            if (!SetProperty(ref _connectionType, value))
+            if (IsEditing && value != SelectedType)
                 return;
-            OnPropertyChanged(nameof(IsRemote));
-            RefreshValidation();
+            if (value is not null && !Types.Contains(value))
+                return;
+            if (!SetProperty(ref field, value))
+                return;
+            Providers = value is null ? [] : _registry.GetProviders(value.Id)
+                .Where(provider => provider.Type.Id == value.Id).ToArray();
+            OnPropertyChanged(nameof(Providers));
+            SelectedProvider = null;
+            if (Providers.Count == 1)
+                SelectedProvider = Providers[0];
+            InvalidateConnection();
         }
     }
-    /// <summary>远程类型需要端点地址。</summary>
-    public bool IsRemote => ConnectionType != InstanceConnectionType.Local;
-    /// <summary>判断当前表单是否完整。</summary>
-    public bool CanCreate => !string.IsNullOrWhiteSpace(Name) && (!IsRemote || !string.IsNullOrWhiteSpace(Endpoint));
-    /// <summary>确认创建命令。</summary>
-    public RelayCommand SubmitCommand { get; }
-    /// <summary>取消表单命令。</summary>
-    public RelayCommand CancelCommand { get; }
-
-    /// <summary>将有效表单变为当前工作区的实例快照。</summary>
-    public InstanceSummary CreateInstance()
+    /// <summary>当前服务商来自注册表，修改后必须重新测试。</summary>
+    public InstanceProviderDescriptor? SelectedProvider
     {
-        if (!CanCreate)
-            throw new InvalidOperationException("Complete the instance name and endpoint.");
-        string icon = ConnectionType switch
+        get;
+        set
         {
-            InstanceConnectionType.Docker => "container",
-            InstanceConnectionType.Kubernetes => "hexagon",
-            InstanceConnectionType.FTP => "server",
-            InstanceConnectionType.Local => "laptop",
-            _ => "server",
-        };
-        return new InstanceSummary(Guid.NewGuid().ToString("N"), Name.Trim(), Name.Trim(), icon,
-            string.IsNullOrWhiteSpace(Tag) ? [] : [Tag.Trim()], !IsRemote, Endpoint: IsRemote ? Endpoint.Trim() : "");
+            if (IsEditing && value != SelectedProvider)
+                return;
+            if (value is not null && !Providers.Contains(value))
+                return;
+            if (SetProperty(ref field, value))
+            {
+                ReplaceFields(value);
+                InvalidateConnection();
+            }
+        }
+    }
+    /// <summary>实例显示名称。</summary>
+    public string Name
+    {
+        get;
+        set { if (SetProperty(ref field, value ?? "")) InvalidateConnection(); }
+    } = "";
+    /// <summary>目前本地是唯一可用保存范围，账户未登录时拒绝切换。</summary>
+    public InstanceSaveLocation SaveLocation
+    {
+        get;
+        set
+        {
+            if (value != InstanceSaveLocation.Local)
+                return;
+            if (SetProperty(ref field, value))
+                RefreshState();
+        }
+    } = InstanceSaveLocation.Local;
+    /// <summary>共享选择卡绑定的本地保存选中状态。</summary>
+    public bool IsLocalSave
+    {
+        get => SaveLocation == InstanceSaveLocation.Local;
+        set { if (value) SaveLocation = InstanceSaveLocation.Local; }
+    }
+    /// <summary>账户连接尚未接入，保持设计中的未登录禁用状态。</summary>
+    public bool CanSaveToAccount => false;
+    /// <summary>名称缺失时显示就地错误。</summary>
+    public string NameError => _showValidation ? ValidateName() : "";
+    /// <summary>连接测试的当前结果。</summary>
+    public InstanceConnectionTestState TestState { get; private set; }
+    /// <summary>经过脱敏处理的连接测试说明。</summary>
+    public string TestMessage { get; private set; } = "点击开始测试，验证连接信息和访问权限。";
+    /// <summary>经过脱敏处理的服务商错误码。</summary>
+    public string TestErrorCode { get; private set; } = "";
+    /// <summary>连接器提供的真实检查项目。</summary>
+    public IReadOnlyList<InstanceConnectionCheck> TestChecks { get; private set; } = [];
+    /// <summary>测试未结束期间禁止重复测试或推进。</summary>
+    public bool IsTesting { get; private set; }
+    /// <summary>创建期间禁止重复提交和修改表单。</summary>
+    public bool IsSaving { get; private set; }
+    /// <summary>保存失败保留填写内容，并仅显示安全提示。</summary>
+    public string SaveError { get; private set; } = "";
+    /// <summary>持久化成功后返回的安全导航快照。</summary>
+    public InstanceSummary? CreatedInstance { get; private set; }
+    /// <summary>推进步骤时验证当前步骤要求。</summary>
+    public RelayCommand NextCommand { get; }
+    /// <summary>返回前一步，不重置已经填写的内容。</summary>
+    public RelayCommand PreviousCommand { get; }
+    /// <summary>关闭向导并取消进行中的连接测试。</summary>
+    public RelayCommand CancelCommand { get; }
+    /// <summary>失败后返回填写页修正凭据。</summary>
+    public RelayCommand ModifyInformationCommand { get; }
+    /// <summary>调用选中服务商的真实只读连接测试。</summary>
+    public AsyncRelayCommand TestConnectionCommand { get; }
+    /// <summary>取消正在进行的连接测试。</summary>
+    public RelayCommand CancelTestCommand { get; }
+    /// <summary>调用配置服务提交已经验证的连接。</summary>
+    public AsyncRelayCommand SubmitCommand { get; }
+
+    /// <summary>关闭窗口后取消异步工作，所有命令都失效。</summary>
+    public void Dispose()
+    {
+        if (_disposed)
+            return;
+        _disposed = true;
+        _lifetimeCancellation.Cancel();
+        _lifetimeCancellation.Dispose();
+        foreach (var field in Fields)
+            field.PropertyChanged -= OnFieldPropertyChanged;
+        RefreshState();
     }
 
-    /// <summary>字段变化后刷新创建按钮。</summary>
-    private void RefreshValidation()
+    /// <summary>字段对象按服务隔离，离开的服务会清除全部填写值并释放事件订阅。</summary>
+    private void ReplaceFields(InstanceProviderDescriptor? provider)
     {
-        OnPropertyChanged(nameof(CanCreate));
-        SubmitCommand.NotifyCanExecuteChanged();
+        foreach (var field in Fields)
+        {
+            field.PropertyChanged -= OnFieldPropertyChanged;
+            field.Value = "";
+        }
+        Fields = provider?.Fields.Select(definition => new InstanceConfigurationFieldViewModel(definition)).ToArray() ?? [];
+        foreach (var field in Fields)
+            field.PropertyChanged += OnFieldPropertyChanged;
+        _showValidation = false;
+        OnPropertyChanged(nameof(Fields));
+    }
+
+    /// <summary>任意配置字段变更都作废旧连接测试，不依赖具体认证字段名称。</summary>
+    private void OnFieldPropertyChanged(object? sender, PropertyChangedEventArgs args)
+    {
+        if (args.PropertyName == nameof(InstanceConfigurationFieldViewModel.Value))
+            InvalidateConnection();
     }
 }

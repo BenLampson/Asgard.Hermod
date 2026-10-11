@@ -18,9 +18,12 @@ public partial class App : Application
         {
             var services = new ServiceCollection();
             services.AddLocalStorage(LocalDatabaseConfiguration.Load(args.Args));
-            services.AddSingleton<IWorkspaceDataSource, DesignWorkspaceDataSource>();
             services.AddSingleton<ITerminalSessionFactory, LocalTerminalSessionFactory>();
-            services.AddSingleton<IInstanceEditor>(_ => new InstanceEditorService(() => MainWindow));
+            services.AddSingleton<IInstanceEditor>(provider => new InstanceEditorService(() => MainWindow,
+                provider.GetRequiredService<IInstanceProviderRegistry>(),
+                provider.GetRequiredService<IInstanceConfigurationService>()));
+            services.AddSingleton<ISettingsEditor>(provider => new SettingsEditorService(() => MainWindow,
+                provider.GetRequiredService<ITagManagementService>()));
             services.AddSingleton<IThemeService>(_ => new ThemeService(Resources));
             var provider = services.BuildServiceProvider(new ServiceProviderOptions
             {
@@ -32,6 +35,7 @@ public partial class App : Application
             await Task.Run(() => provider.GetRequiredService<LocalDatabaseInitializer>().Initialize());
             // 外壳由窗口拥有，窗口会在关闭前异步释放终端。
             var shell = ActivatorUtilities.CreateInstance<ShellViewModel>(provider);
+            await shell.InitializeAsync();
             MainWindow = new MainWindow(shell);
             MainWindow.Show();
             ShutdownMode = ShutdownMode.OnMainWindowClose;

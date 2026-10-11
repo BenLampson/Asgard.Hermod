@@ -4,6 +4,7 @@ namespace Asgard.Hermod.UI.ViewModels;
 public abstract class WorkspacePageViewModel : ObservableObject, IAsyncDisposable
 {
     private bool _isSelected;
+    private string _header = "";
     private bool _isClosed;
     private Task? _closeTask;
 
@@ -22,7 +23,7 @@ public abstract class WorkspacePageViewModel : ObservableObject, IAsyncDisposabl
     /// <summary>页签唯一标识。</summary>
     public string Id { get; }
     /// <summary>页签标题；首页只展示图标。</summary>
-    public string Header { get; }
+    public string Header { get => _header; protected set => SetProperty(ref _header, value); }
     /// <summary>页签图标。</summary>
     public string Icon { get; }
     /// <summary>关联实例标识。</summary>

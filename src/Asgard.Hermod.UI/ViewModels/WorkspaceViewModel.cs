@@ -5,17 +5,20 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
 {
     private readonly IWorkspaceDataSource _source;
     private readonly ITerminalSessionFactory _terminalFactory;
+    private readonly IInstanceWorkspaceFactory? _pageFactory;
     private WorkspacePageViewModel _selectedTab;
     private Task? _disposeTask;
     private int _terminalNumber;
 
     /// <summary>建立 Pencil 中的初始页签，但不自动连接任何服务。</summary>
-    public WorkspaceViewModel(IWorkspaceDataSource source, ITerminalSessionFactory terminalFactory)
+    public WorkspaceViewModel(IWorkspaceDataSource source, ITerminalSessionFactory terminalFactory,
+        IInstanceWorkspaceFactory? pageFactory = null)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(terminalFactory);
         _source = source;
         _terminalFactory = terminalFactory;
+        _pageFactory = pageFactory;
         _selectedTab = new EmptyWorkspaceViewModel { IsSelected = true };
         Tabs.Add(_selectedTab);
         foreach (var instance in source.GetInstances().Where(instance => !instance.IsLocal).Take(3))
@@ -93,8 +96,8 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
     }
 
     /// <summary>通过应用层读取详情快照。</summary>
-    private ServiceDetailViewModel CreateServicePage(InstanceItemViewModel instance) =>
-        new(instance, _source.GetServiceSnapshot(instance.Id));
+    private WorkspacePageViewModel CreateServicePage(InstanceItemViewModel instance) =>
+        _pageFactory?.CreatePage(instance) ?? new ServiceDetailViewModel(instance, _source.GetServiceSnapshot(instance.Id));
 
     /// <summary>每个新终端拥有独立页签和应用层会话句柄。</summary>
     private TerminalWorkspaceViewModel CreateTerminalPage(InstanceItemViewModel instance) =>
