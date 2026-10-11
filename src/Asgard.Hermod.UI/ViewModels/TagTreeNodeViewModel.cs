@@ -17,6 +17,7 @@ public sealed class TagTreeNodeViewModel : ObservableObject
         Name = definition.Name;
         Path = definition.Path;
         Count = definition.Count;
+        Color = definition.Color;
         Parent = parent;
         Depth = depth;
         _select = select;
@@ -35,6 +36,10 @@ public sealed class TagTreeNodeViewModel : ObservableObject
 
     /// <summary>实际后代数量，叶标签为零。</summary>
     public int Count { get; }
+    /// <summary>管理窗口中定义的颜色，同一目录也用于筛选器。</summary>
+    public string? Color { get; }
+    /// <summary>虚拟分组没有颜色，不占用色点的位置。</summary>
+    public bool HasColor => !string.IsNullOrWhiteSpace(Color);
 
     /// <summary>保持定义顺序的直接子节点。</summary>
     public IReadOnlyList<TagTreeNodeViewModel> Children { get; }

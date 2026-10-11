@@ -1,5 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="SelectStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
@@ -17,7 +18,13 @@
                 CornerRadius="6" SnapsToDevicePixels="True">
             <ContentPresenter Margin="{TemplateBinding Padding}" RecognizesAccessKey="True"
                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                <ContentPresenter.Resources>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                        <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                    </Style>
+                </ContentPresenter.Resources>
+            </ContentPresenter>
         </Border>
         <ControlTemplate.Triggers>
             <Trigger Property="IsEnabled" Value="False">
@@ -167,10 +174,18 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Chrome" Property="Opacity" Value="0.45" />
                         </Trigger>
+                        <Trigger Property="controls:FormField.HasError" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Style.Triggers>
+            <Trigger Property="controls:FormField.HasError" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style x:Key="SearchTextBox" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">

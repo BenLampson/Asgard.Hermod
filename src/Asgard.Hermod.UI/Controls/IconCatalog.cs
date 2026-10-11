@@ -5,7 +5,7 @@ namespace Asgard.Hermod.UI.Controls;
 /// <summary>
 /// 缓存官方 Lucide SVG 转换后的几何；来源、版本与授权见 Assets/NOTICE.txt。
 /// </summary>
-internal static class IconCatalog
+internal static partial class IconCatalog
 {
     private static readonly Dictionary<string, Geometry> Geometries = new(StringComparer.OrdinalIgnoreCase)
     {

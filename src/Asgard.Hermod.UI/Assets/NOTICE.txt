@@ -5,6 +5,10 @@ Repository: https://github.com/lucide-icons/lucide
 Source revision: 70562c1ee1c4fdcf736fe97bc893fb8511927934
 Original SVG files: Assets/Icons/*.svg
 WPF geometry conversion: Controls/IconCatalog.cs
+Feature geometry conversion: Controls/IconCatalog.FeatureIcons.cs
+Object storage geometry conversion: Controls/IconCatalog.ObjectStorageIcons.cs
+The design alias file-json uses the official file-braces.svg icon at the same revision.
+The design alias trash-2 uses the official trash.svg icon at the same revision.
 License: Assets/Licenses/Lucide.LICENSE.txt (ISC, including upstream Feather MIT notices)
 SVG paths are preserved. Circle, ellipse, line, and rectangle elements are converted
 to equivalent WPF geometry. The control preserves the 24x24 canvas, 2-unit strokes,

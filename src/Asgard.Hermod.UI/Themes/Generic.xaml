@@ -3,5 +3,6 @@
     <!-- 默认样式由 WPF 自动发现，继承 HermodWindow 的宿主无需手工指定 Style。 -->
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/Windows.xaml" />
+        <ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/Forms.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

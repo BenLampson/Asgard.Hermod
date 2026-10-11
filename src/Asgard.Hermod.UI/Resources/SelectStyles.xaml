@@ -101,6 +101,9 @@
                         <Trigger Property="Validation.HasError" Value="True">
                             <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
                         </Trigger>
+                        <Trigger Property="controls:FormField.HasError" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
+                        </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="SelectRoot" Property="Opacity" Value="0.45" />
                             <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource LineBrush}" />
@@ -109,6 +112,11 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Style.Triggers>
+            <Trigger Property="controls:FormField.HasError" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
     <Style TargetType="ComboBoxItem">
         <Setter Property="FontFamily" Value="{DynamicResource UiFont}" />

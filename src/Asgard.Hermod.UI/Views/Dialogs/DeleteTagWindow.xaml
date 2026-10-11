@@ -1,0 +1,43 @@
+<controls:HermodDialog x:Class="Asgard.Hermod.UI.Views.Dialogs.DeleteTagWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
+        Title="删除 Tag" Width="520" Height="480" ResizeMode="NoResize">
+    <controls:HermodDialog.InputBindings><KeyBinding Key="Escape" Command="{Binding CancelCommand}" /></controls:HermodDialog.InputBindings>
+    <controls:HermodDialog.FooterContent>
+        <controls:DialogActionBar Height="56" Background="{DynamicResource SurfaceBrush}">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="取消" Command="{Binding CancelCommand}" Style="{StaticResource StandardButton}" Height="32" Padding="14,0" Margin="0,0,10,0" />
+                <!-- 不设置默认确认，删除只能由用户主动执行确认按钮。 -->
+                <Button Content="{Binding DeleteLabel}" Command="{Binding DeleteCommand}" Height="32" Padding="14,0" FontWeight="SemiBold"
+                        Background="{DynamicResource DangerBrush}" BorderBrush="{DynamicResource DangerBrush}" Foreground="{DynamicResource InverseTextBrush}" />
+            </StackPanel>
+        </controls:DialogActionBar>
+    </controls:HermodDialog.FooterContent>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="24">
+            <controls:IconView Kind="triangle-alert" Width="26" Height="26" Foreground="{DynamicResource DangerBrush}" HorizontalAlignment="Left" Margin="0,0,0,14" />
+            <TextBlock Text="{Binding Title}" FontSize="20" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,0,0,14" />
+            <TextBlock Text="{Binding Summary}" FontSize="13" Margin="0,0,0,14" />
+            <Border CornerRadius="6" Background="{DynamicResource AppBackgroundBrush}" Padding="14">
+                <ScrollViewer MaxHeight="136" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl ItemsSource="{Binding Tags}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate><TextBlock Text="{Binding Path}" TextWrapping="Wrap" Margin="0,0,0,8" /></DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+            <TextBlock Text="{Binding Impact}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,14,0,0" LineHeight="18" />
+            <Border CornerRadius="6" Background="{DynamicResource DangerWeakBrush}" Padding="12" Margin="0,16,0,0">
+                <Border.Style><Style TargetType="Border"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding Error}" Value=""><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></Border.Style>
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Content="重试" Command="{Binding RetryCommand}" Height="28" Margin="12,0,0,0">
+                        <Button.Style><Style TargetType="Button" BasedOn="{StaticResource StandardButton}"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding Preview}" Value="{x:Null}"><Setter Property="Visibility" Value="Visible" /></DataTrigger><DataTrigger Binding="{Binding CanDelete}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></Button.Style>
+                    </Button>
+                    <TextBlock Text="{Binding Error}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" VerticalAlignment="Center" AutomationProperties.LiveSetting="Polite" />
+                </DockPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</controls:HermodDialog>
