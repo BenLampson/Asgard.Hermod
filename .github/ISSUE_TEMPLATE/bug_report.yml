@@ -1,0 +1,23 @@
+name: Bug report
+description: Report a reproducible problem in Hermod.
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the problem and expected behavior. Remove credentials and private data.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include Windows version, .NET version, and Hermod version or commit.
+    validations:
+      required: true

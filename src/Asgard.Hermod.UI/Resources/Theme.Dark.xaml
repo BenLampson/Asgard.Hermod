@@ -1,0 +1,30 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- 与明亮主题共享资源键，换肤只替换字典，不重建视图和会话。 -->
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#20252C" />
+    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#15181D" />
+    <SolidColorBrush x:Key="SidebarBrush" Color="#1A1E25" />
+    <SolidColorBrush x:Key="TitleBarBrush" Color="#101318" />
+    <SolidColorBrush x:Key="TabInactiveBrush" Color="#181C23" />
+    <SolidColorBrush x:Key="LineBrush" Color="#2E3540" />
+    <SolidColorBrush x:Key="LineSoftBrush" Color="#252B34" />
+    <SolidColorBrush x:Key="ThemeTrackBrush" Color="#252B34" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#EAEEF5" />
+    <SolidColorBrush x:Key="TextBodyBrush" Color="#BFC7D4" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="#8C96A7" />
+    <SolidColorBrush x:Key="TextFaintBrush" Color="#606A7B" />
+    <SolidColorBrush x:Key="AccentBrush" Color="#5189F8" />
+    <SolidColorBrush x:Key="AccentTextBrush" Color="#A8C6FF" />
+    <SolidColorBrush x:Key="AccentWeakBrush" Color="#1E2C47" />
+    <SolidColorBrush x:Key="SuccessBrush" Color="#38C98E" />
+    <SolidColorBrush x:Key="SuccessWeakBrush" Color="#103324" />
+    <SolidColorBrush x:Key="WarningBrush" Color="#F2994A" />
+    <SolidColorBrush x:Key="WarningWeakBrush" Color="#3A2712" />
+    <SolidColorBrush x:Key="DangerBrush" Color="#F26057" />
+    <SolidColorBrush x:Key="DangerWeakBrush" Color="#3D1B19" />
+    <SolidColorBrush x:Key="InverseTextBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="WindowBorderBrush" Color="#3E4756" />
+    <SolidColorBrush x:Key="OnAccentSoftBrush" Color="#C2D4FF" />
+    <SolidColorBrush x:Key="TerminalSurfaceBrush" Color="#20252C" />
+    <SolidColorBrush x:Key="TerminalTextBrush" Color="#EAEEF5" />
+</ResourceDictionary>

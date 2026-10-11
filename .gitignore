@@ -8,6 +8,12 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/Dotnet.gitignore
 
 # Build results
+# IDE local state
+.vs/
+.idea/
+*.user
+*.suo
+
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
@@ -40,6 +46,15 @@ ScaffoldingReadMe.txt
 .env
 
 # Others
+# 本地 SQLite 数据及事务辅助文件
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite-journal
 ~$*
 *~
 CodeCoverage/

@@ -1,0 +1,28 @@
+Hermod UI third-party asset notices
+
+Lucide icons
+Repository: https://github.com/lucide-icons/lucide
+Source revision: 70562c1ee1c4fdcf736fe97bc893fb8511927934
+Original SVG files: Assets/Icons/*.svg
+WPF geometry conversion: Controls/IconCatalog.cs
+License: Assets/Licenses/Lucide.LICENSE.txt (ISC, including upstream Feather MIT notices)
+SVG paths are preserved. Circle, ellipse, line, and rectangle elements are converted
+to equivalent WPF geometry. The control preserves the 24x24 canvas, 2-unit strokes,
+round line caps, and round joins. No original icons were redrawn.
+
+Inter
+Repository: https://github.com/rsms/inter
+Release: v4.1
+Download: https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip
+Original files: extras/ttf/Inter-Regular.ttf, Inter-SemiBold.ttf, Inter-Bold.ttf
+Bundled files: Assets/Fonts/Inter-Regular.ttf, Inter-SemiBold.ttf, Inter-Bold.ttf
+License: Assets/Licenses/Inter.LICENSE.txt (SIL Open Font License 1.1)
+The static TTF files are bundled unchanged.
+
+JetBrains Mono
+Repository: https://github.com/JetBrains/JetBrainsMono
+Source revision: 19371302b95d218af43299bce79ddbddd0bc364d
+Original file: fonts/ttf/JetBrainsMono-Regular.ttf
+Bundled file: Assets/Fonts/JetBrainsMono-Regular.ttf
+License: Assets/Licenses/JetBrainsMono.OFL.txt (SIL Open Font License 1.1)
+The static TTF file is bundled unchanged.

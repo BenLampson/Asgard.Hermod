@@ -1,0 +1,19 @@
+<ContentControl x:Class="Asgard.Hermod.UI.Controls.DialogActionBar"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                Height="60" Padding="20,0"
+                Background="{DynamicResource AppBackgroundBrush}"
+                BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,1,0,0"
+                HorizontalContentAlignment="Right" VerticalContentAlignment="Center">
+    <!-- 业务直接提供按钮内容，共享操作栏只负责间距、背景和对齐。 -->
+    <ContentControl.Template>
+        <ControlTemplate TargetType="ContentControl">
+            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="True">
+                <ContentPresenter ContentSource="Content" Margin="{TemplateBinding Padding}"
+                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+            </Border>
+        </ControlTemplate>
+    </ContentControl.Template>
+</ContentControl>

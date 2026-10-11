@@ -1,0 +1,5 @@
+# 本地持久化配置；相对数据库路径基于当前用户的数据目录解析。
+database:
+  enabled: true
+  provider: sqlite
+  connectionString: "Data Source=hermod.db;Version=3;Pooling=False;Default Timeout=5;Journal Mode=Wal;"

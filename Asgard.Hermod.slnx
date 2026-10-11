@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Asgard.Hermod/Asgard.Hermod.csproj" />
+    <Project Path="src/Asgard.Hermod.UI/Asgard.Hermod.UI.csproj" />
+    <Project Path="src/Asgard.Hermod.WinTerminal/Asgard.Hermod.WinTerminal.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Asgard.Hermod.UI.Tests/Asgard.Hermod.UI.Tests.csproj" />
+    <Project Path="tests/Asgard.Hermod.WinTerminal.Tests/Asgard.Hermod.WinTerminal.Tests.csproj" />
+  </Folder>
+</Solution>

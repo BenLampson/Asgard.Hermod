@@ -1,0 +1,57 @@
+<UserControl x:Class="Asgard.Hermod.UI.Views.Shell.TitleBarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
+             xmlns:chrome="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+             Height="42">
+    <Border Background="{DynamicResource TitleBarBrush}"
+            BorderBrush="{DynamicResource LineBrush}"
+            BorderThickness="0,0,0,1" Padding="12,0">
+        <!-- 对称留白保持全局搜索位于窗口中心。 -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="340" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <controls:IconView Kind="layers" Width="17" Height="17"
+                                   Foreground="{DynamicResource AccentBrush}" />
+                <TextBlock Text="Hermod" FontSize="13" FontWeight="Bold"
+                           Foreground="{DynamicResource TextPrimaryBrush}"
+                           VerticalAlignment="Center" Margin="7,0,10,0" />
+                <TextBlock Text="{Binding WorkspaceName}" FontSize="11.5"
+                           Foreground="{DynamicResource TextFaintBrush}"
+                           VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+            <controls:GlobalSearchBox Grid.Column="1" Height="26"
+                                     VerticalAlignment="Center"
+                                     chrome:WindowChrome.IsHitTestVisibleInChrome="True" />
+            <StackPanel Grid.Column="2" Orientation="Horizontal"
+                        HorizontalAlignment="Right" VerticalAlignment="Center">
+                <Button x:Name="SettingsButton" Style="{DynamicResource IconButton}"
+                        Width="26" Height="28" Padding="0" Margin="0,0,6,0" ToolTip="Settings"
+                        Click="OnSettingsClick"
+                        chrome:WindowChrome.IsHitTestVisibleInChrome="True">
+                    <controls:IconView Kind="settings" Width="17" Height="17"
+                                       Foreground="{DynamicResource TextMutedBrush}" />
+                    <Button.ContextMenu>
+                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                            <MenuItem Header="Local terminal" Command="{Binding OpenLocalTerminalCommand}" />
+                            <Separator />
+                            <MenuItem Header="Theme">
+                                <MenuItem Header="Light" Command="{Binding SetLightThemeCommand}"
+                                          IsCheckable="True" IsChecked="{Binding IsLightTheme, Mode=OneWay}" />
+                                <MenuItem Header="Dark" Command="{Binding SetDarkThemeCommand}"
+                                          IsCheckable="True" IsChecked="{Binding IsDarkTheme, Mode=OneWay}" />
+                            </MenuItem>
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+                <controls:AccountMenu Margin="0,0,8,0"
+                                      chrome:WindowChrome.IsHitTestVisibleInChrome="True" />
+                <controls:WindowControls chrome:WindowChrome.IsHitTestVisibleInChrome="True" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

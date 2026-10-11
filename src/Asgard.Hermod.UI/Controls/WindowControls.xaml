@@ -1,0 +1,96 @@
+<UserControl x:Class="Asgard.Hermod.UI.Controls.WindowControls"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
+             xmlns:chrome="clr-namespace:System.Windows.Shell;assembly=PresentationFramework">
+    <StackPanel Orientation="Horizontal">
+        <Button x:Name="MinimizeButton"
+                Command="{x:Static SystemCommands.MinimizeWindowCommand}"
+                CommandTarget="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                ToolTip="Minimize" AutomationProperties.Name="Minimize window"
+                chrome:WindowChrome.IsHitTestVisibleInChrome="True">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource CaptionButton}">
+                    <Setter Property="Width" Value="28" />
+                    <Setter Property="Height" Value="40" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsCompact, RelativeSource={RelativeSource AncestorType=controls:WindowControls}}" Value="True">
+                            <Setter Property="Width" Value="14" />
+                            <Setter Property="Height" Value="26" />
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Margin" Value="0,0,8,0" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ResizeMode, RelativeSource={RelativeSource AncestorType=Window}}" Value="NoResize">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+            <controls:IconView Kind="minus" Width="14" Height="14" />
+        </Button>
+        <Button x:Name="MaximizeButton"
+                CommandTarget="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                chrome:WindowChrome.IsHitTestVisibleInChrome="True">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource CaptionButton}">
+                    <Setter Property="Width" Value="28" />
+                    <Setter Property="Height" Value="40" />
+                    <Setter Property="ToolTip" Value="Maximize" />
+                    <Setter Property="AutomationProperties.Name" Value="Maximize window" />
+                    <Setter Property="Command" Value="{x:Static SystemCommands.MaximizeWindowCommand}" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsCompact, RelativeSource={RelativeSource AncestorType=controls:WindowControls}}" Value="True">
+                            <Setter Property="Width" Value="14" />
+                            <Setter Property="Height" Value="26" />
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Margin" Value="0,0,8,0" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Maximized">
+                            <Setter Property="ToolTip" Value="Restore" />
+                            <Setter Property="AutomationProperties.Name" Value="Restore window" />
+                            <Setter Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ResizeMode, RelativeSource={RelativeSource AncestorType=Window}}" Value="NoResize">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ResizeMode, RelativeSource={RelativeSource AncestorType=Window}}" Value="CanMinimize">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+            <controls:IconView Width="14" Height="14">
+                <controls:IconView.Style>
+                    <Style TargetType="controls:IconView">
+                        <Setter Property="Kind" Value="square" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Maximized">
+                                <Setter Property="Kind" Value="copy" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </controls:IconView.Style>
+            </controls:IconView>
+        </Button>
+        <Button x:Name="CloseButton"
+                Command="{x:Static SystemCommands.CloseWindowCommand}"
+                CommandTarget="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                ToolTip="Close" AutomationProperties.Name="Close window"
+                chrome:WindowChrome.IsHitTestVisibleInChrome="True">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource CaptionButton}">
+                    <Setter Property="Width" Value="28" />
+                    <Setter Property="Height" Value="40" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsCompact, RelativeSource={RelativeSource AncestorType=controls:WindowControls}}" Value="True">
+                            <Setter Property="Width" Value="14" />
+                            <Setter Property="Height" Value="26" />
+                            <Setter Property="Padding" Value="0" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+            <controls:IconView Kind="x" Width="14" Height="14" />
+        </Button>
+    </StackPanel>
+</UserControl>
