@@ -25,7 +25,11 @@
         <Setter Property="BorderBrush" Value="{DynamicResource LineBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CaretBrush" Value="{DynamicResource TextPrimaryBrush}" />
-        <Setter Property="SelectionBrush" Value="{DynamicResource AccentWeakBrush}" />
+        <!-- 文本选区使用实色底和白字，避免弱强调色叠加默认透明度后无法辨认。 -->
+        <Setter Property="SelectionBrush" Value="{DynamicResource ActionFillBrush}" />
+        <Setter Property="SelectionTextBrush" Value="{DynamicResource InverseTextBrush}" />
+        <Setter Property="SelectionOpacity" Value="1" />
+        <Setter Property="IsInactiveSelectionHighlightEnabled" Value="True" />
         <Setter Property="Padding" Value="10,0" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
@@ -39,7 +43,8 @@
                                 CornerRadius="6" SnapsToDevicePixels="True">
                             <Grid>
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                                <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"
+                                <!-- WPF 已将 TextBox.Padding 同步到内容宿主，不能再作为 Margin 叠加。 -->
+                                <ScrollViewer x:Name="PART_ContentHost"
                                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                                 <controls:IconView x:Name="ErrorIcon" Grid.Column="1" Kind="circle-alert"
                                                    Width="16" Height="16" Margin="0,0,10,0" Visibility="Collapsed"
@@ -107,7 +112,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
-                    <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"
+                    <ScrollViewer x:Name="PART_ContentHost"
                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                 </ControlTemplate>
             </Setter.Value>

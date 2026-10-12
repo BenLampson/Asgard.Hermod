@@ -1,4 +1,5 @@
 using Asgard.Hermod.UI.Views.Dialogs;
+using System.Windows.Media.Imaging;
 
 namespace Asgard.Hermod.UI.Tests;
 
@@ -66,6 +67,98 @@ public sealed class ObjectStorageTemporaryLinkWindowTests(WpfTestFixture fixture
             themes.SetTheme(UiTheme.Light);
         }
     });
+
+    /// <summary>长签名链接不会挤出复制按钮，实际渲染中的选区和白字在两种主题下清晰可见。</summary>
+    [Theory]
+    [InlineData(UiTheme.Light)]
+    [InlineData(UiTheme.Dark)]
+    public Task TemporaryLinkDialog_LongLinkSelectionIsVisibleAndCopiesFullUrl(UiTheme theme) => fixture.RunAsync(async () =>
+    {
+        var themes = new ThemeService(Application.Current.Resources);
+        themes.SetTheme(theme);
+        const string key = "bridge/production/qualifications/12345678-1234-1234-1234-123456789abc/long-object-name.png";
+        string link = "https://example.test/" + key + "?x-oss-signature-version=OSS4-HMAC-SHA256&signature=" + new string('a', 256);
+        string? copied = null;
+        using var model = new ObjectStorageTemporaryLinkDialogViewModel(key, _ => Task.FromResult(link),
+            value => { copied = value; return true; });
+        var owner = ObjectStorageDialogTestVisuals.CreateOwner();
+        var dialog = new ObjectStorageTemporaryLinkWindow(model) { Opacity = 0 };
+        try
+        {
+            owner.Show();
+            dialog.Owner = owner;
+            await ModalWindowTestInteraction.ShowAsync(dialog, async () =>
+            {
+                WindowTestVisuals.Invoke(Assert.IsType<Button>(dialog.FindName("GenerateButton")));
+                await WindowTestVisuals.UpdateLayoutAsync(dialog);
+                var preview = Assert.IsType<TextBox>(dialog.FindName("LinkPreview"));
+                var copy = Assert.IsType<Button>(dialog.FindName("CopyButton"));
+                var scroll = Assert.IsType<ScrollViewer>(dialog.FindName("DialogScrollViewer"));
+                Assert.Equal(Visibility.Collapsed, scroll.ComputedVerticalScrollBarVisibility);
+                Point inputOrigin = preview.TranslatePoint(new Point(), dialog);
+                Point copyOrigin = copy.TranslatePoint(new Point(), dialog);
+                Assert.True(inputOrigin.X + preview.ActualWidth + 8 <= copyOrigin.X + 1);
+                Assert.Equal(preview.ActualHeight, copy.ActualHeight);
+
+                preview.Focus();
+                preview.Select(25, 30);
+                preview.ScrollToHorizontalOffset(0);
+                await WindowTestVisuals.UpdateLayoutAsync(dialog);
+                Assert.Equal(link.Substring(25, 30), preview.SelectedText);
+                await WindowPreviewCapture.VerifyAsync(dialog, $"object-storage-temporary-link-partial-selection-{theme}");
+                AssertRenderedSelection(preview);
+
+                preview.SelectAll();
+                await WindowTestVisuals.UpdateLayoutAsync(dialog);
+                Assert.Equal(link, preview.SelectedText);
+                await WindowPreviewCapture.VerifyAsync(dialog, $"object-storage-temporary-link-full-selection-{theme}");
+                AssertRenderedSelection(preview);
+
+                // 焦点移到复制按钮后仍能辨认原选区，复制回调必须收到完整签名 URL。
+                copy.Focus();
+                await WindowTestVisuals.UpdateLayoutAsync(dialog);
+                AssertRenderedSelection(preview);
+                WindowTestVisuals.Invoke(copy);
+                await WindowTestVisuals.UpdateLayoutAsync(dialog);
+                Assert.Equal(link, copied);
+                Assert.Equal(Visibility.Collapsed, scroll.ComputedVerticalScrollBarVisibility);
+                WindowTestVisuals.Invoke(ObjectStorageDialogTestVisuals.CommandButton(dialog, model.CancelCommand));
+            });
+        }
+        finally
+        {
+            if (dialog.IsVisible) dialog.Close();
+            owner.Close();
+            themes.SetTheme(UiTheme.Light);
+        }
+    });
+
+    /// <summary>检查正文区域的真实像素，避免只验证样式属性却漏掉 WPF 选区绘制异常。</summary>
+    private static void AssertRenderedSelection(TextBox preview)
+    {
+        int width = (int)Math.Ceiling(preview.ActualWidth);
+        int height = (int)Math.Ceiling(preview.ActualHeight);
+        var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+        bitmap.Render(preview);
+        byte[] pixels = new byte[width * height * 4];
+        bitmap.CopyPixels(pixels, width * 4, 0);
+        Color selection = Assert.IsType<SolidColorBrush>(preview.SelectionBrush).Color;
+        Color text = Assert.IsType<SolidColorBrush>(preview.SelectionTextBrush).Color;
+        int selectedPixels = 0, textPixels = 0;
+        for (int y = 8; y < height - 8; y++)
+        {
+            for (int x = 12; x < width - 12; x++)
+            {
+                int offset = (y * width + x) * 4;
+                if (pixels[offset] == selection.B && pixels[offset + 1] == selection.G && pixels[offset + 2] == selection.R)
+                    selectedPixels++;
+                if (pixels[offset] == text.B && pixels[offset + 1] == text.G && pixels[offset + 2] == text.R)
+                    textPixels++;
+            }
+        }
+        Assert.True(selectedPixels > 100, $"选区背景没有清晰渲染：{selectedPixels} 像素。");
+        Assert.True(textPixels > 10, $"选中文本没有清晰渲染：{textPixels} 像素。");
+    }
 
     /// <summary>标题栏关闭时忽略迟到生成结果，不能在模态结束后自动复制。</summary>
     [Fact]

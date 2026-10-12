@@ -18,6 +18,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Update="app.yaml" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <!-- 选区在文字底层绘制，使实色背景和 SelectionTextBrush 同时生效。 -->
+    <RuntimeHostConfigurationOption Include="Switch.System.Windows.Controls.Text.UseAdornerForTextboxSelectionRendering" Value="false" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Asgard.Hermod.UI\Asgard.Hermod.UI.csproj" />

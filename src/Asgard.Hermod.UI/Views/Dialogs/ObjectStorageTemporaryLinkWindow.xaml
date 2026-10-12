@@ -11,7 +11,7 @@
             <Button Content="关闭" Command="{Binding CancelCommand}" Height="32" Padding="14,0" />
         </controls:DialogActionBar>
     </dialogs:ObjectStorageDialogWindow.FooterContent>
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <ScrollViewer x:Name="DialogScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <StackPanel Margin="20">
             <TextBlock Text="生成临时链接" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,16" />
             <TextBlock Text="{Binding Key}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,0,0,16" />
@@ -26,15 +26,30 @@
             </Grid>
             <ProgressBar Height="3" IsIndeterminate="True" Margin="0,0,0,12" Visibility="{Binding IsGenerating, Converter={StaticResource LinkVisibility}}" />
             <Grid Height="36" Margin="0,0,0,16">
-                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="36" /></Grid.ColumnDefinitions>
-                <TextBox x:Name="LinkPreview" Grid.ColumnSpan="2" Text="{Binding Link, Mode=OneWay}" IsReadOnly="True" FontFamily="{DynamicResource MonoFont}" FontSize="11" Padding="10,0,42,0" AutomationProperties.Name="临时链接" />
-                <Button Grid.Column="1" Command="{Binding CopyCommand}" Style="{StaticResource IconButton}" Width="30" Height="30" ToolTip="复制链接" AutomationProperties.Name="复制临时链接">
-                    <controls:IconView Kind="copy" Width="16" Height="16" />
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                <TextBox x:Name="LinkPreview" Text="{Binding Link, Mode=OneWay}" IsReadOnly="True"
+                         FontFamily="{DynamicResource MonoFont}" FontSize="12" Padding="10,0"
+                         TextWrapping="NoWrap" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled"
+                         AutomationProperties.Name="临时链接" />
+                <Button x:Name="CopyButton" Grid.Column="1" Command="{Binding CopyCommand}" Height="36" Margin="8,0,0,0"
+                        ToolTip="复制完整链接" AutomationProperties.Name="复制临时链接">
+                    <StackPanel Orientation="Horizontal">
+                        <controls:IconView Kind="copy" Width="16" Height="16" Margin="0,0,6,0" />
+                        <TextBlock Text="复制链接" />
+                    </StackPanel>
                 </Button>
             </Grid>
             <TextBlock Text="获得链接的人可在有效期内访问此对象，请谨慎分享。" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" />
-            <TextBlock Text="{Binding CopyStatus}" FontSize="12" Foreground="{DynamicResource SuccessBrush}" TextWrapping="Wrap" Margin="0,12,0,0" AutomationProperties.LiveSetting="Polite" />
-            <TextBlock Text="{Binding Error}" FontSize="12" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" Margin="0,8,0,0" AutomationProperties.LiveSetting="Polite" />
+            <TextBlock Text="{Binding CopyStatus}" FontSize="12" Foreground="{DynamicResource SuccessBrush}" TextWrapping="Wrap" Margin="0,12,0,0" AutomationProperties.LiveSetting="Polite">
+                <TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                    <Style.Triggers><Trigger Property="Text" Value=""><Setter Property="Visibility" Value="Collapsed" /></Trigger></Style.Triggers>
+                </Style></TextBlock.Style>
+            </TextBlock>
+            <TextBlock Text="{Binding Error}" FontSize="12" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" Margin="0,8,0,0" AutomationProperties.LiveSetting="Polite">
+                <TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                    <Style.Triggers><Trigger Property="Text" Value=""><Setter Property="Visibility" Value="Collapsed" /></Trigger></Style.Triggers>
+                </Style></TextBlock.Style>
+            </TextBlock>
         </StackPanel>
     </ScrollViewer>
 </dialogs:ObjectStorageDialogWindow>

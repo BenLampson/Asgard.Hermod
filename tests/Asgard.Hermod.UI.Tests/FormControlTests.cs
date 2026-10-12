@@ -74,6 +74,30 @@ public sealed class FormControlTests(WpfTestFixture fixture)
         finally { window.Close(); }
     });
 
+    /// <summary>内容边距只应用一次，普通、只读和多行输入使用相同的正文起点。</summary>
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    public Task TextBox_PaddingIsAppliedOnce(bool multiline, bool readOnly) => fixture.RunAsync(async () =>
+    {
+        var input = new TextBox { Text = "instance-001", AcceptsReturn = multiline, IsReadOnly = readOnly };
+        var window = CreateWindow(input);
+        try
+        {
+            window.Show();
+            await WindowTestVisuals.UpdateLayoutAsync(window);
+            double expected = input.BorderThickness.Left + input.Padding.Left;
+            double before = input.GetRectFromCharacterIndex(0).Left;
+            // 原生文字视图保留约 2px 的插入符留白；外层模板不能再次叠加整份 Padding。
+            Assert.InRange(before, expected, expected + 3);
+            input.Padding = new Thickness(14, 6, 14, 6);
+            await WindowTestVisuals.UpdateLayoutAsync(window);
+            Assert.InRange(input.GetRectFromCharacterIndex(0).Left - before, 3.5, 4.5);
+        }
+        finally { window.Close(); }
+    });
+
     /// <summary>字符串按钮文字继承按钮前景，主操作在浅色和深色背景上均使用反色文字。</summary>
     [Theory]
     [InlineData(UiTheme.Light)]
