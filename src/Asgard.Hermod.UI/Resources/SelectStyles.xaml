@@ -34,7 +34,7 @@
         <Setter Property="BorderBrush" Value="{DynamicResource LineBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Padding" Value="10,0" />
-        <Setter Property="MinHeight" Value="34" />
+        <Setter Property="MinHeight" Value="36" />
         <Setter Property="MaxDropDownHeight" Value="300" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -57,12 +57,16 @@
                                 <ContentPresenter.Resources>
                                     <!-- 覆盖全局 TextBlock 颜色，确保默认字符串内容继承选择框前景色。 -->
                                     <Style TargetType="TextBlock">
+                                        <Setter Property="FontFamily" Value="{Binding FontFamily, RelativeSource={RelativeSource AncestorType=ComboBox}}" />
+                                        <Setter Property="FontSize" Value="{Binding FontSize, RelativeSource={RelativeSource AncestorType=ComboBox}}" />
+                                        <Setter Property="FontWeight" Value="{Binding FontWeight, RelativeSource={RelativeSource AncestorType=ComboBox}}" />
                                         <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ComboBox}}" />
                                     </Style>
                                 </ContentPresenter.Resources>
                             </ContentPresenter>
                             <TextBox x:Name="PART_EditableTextBox" Grid.Column="0" Visibility="Collapsed" Margin="{TemplateBinding Padding}" VerticalAlignment="Center" Style="{StaticResource SelectEditableTextBox}" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}" FontWeight="{TemplateBinding FontWeight}" Foreground="{TemplateBinding Foreground}" IsReadOnly="{TemplateBinding IsReadOnly}" />
                         </Grid>
+                        <Border x:Name="FocusRing" CornerRadius="6" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="2" Visibility="Collapsed" IsHitTestVisible="False" />
                         <!-- 标准 Popup 名称让 WPF 处理 Escape、Alt+方向键与点击外部关闭。 -->
                         <Popup x:Name="PART_Popup" AllowsTransparency="True" Focusable="False" Placement="Bottom" VerticalOffset="4" PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}" IsOpen="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" PopupAnimation="Fade">
                             <Border x:Name="DropDownBorder" CornerRadius="6" Padding="4" MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}" MaxHeight="{TemplateBinding MaxDropDownHeight}" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1">
@@ -81,9 +85,11 @@
                         </Trigger>
                         <Trigger Property="IsKeyboardFocusWithin" Value="True">
                             <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                            <Setter TargetName="FocusRing" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <Trigger Property="IsDropDownOpen" Value="True">
                             <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                            <Setter TargetName="FocusRing" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <Trigger Property="IsEditable" Value="True">
                             <Setter Property="IsTabStop" Value="False" />
@@ -100,13 +106,17 @@
                         </Trigger>
                         <Trigger Property="Validation.HasError" Value="True">
                             <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
+                            <Setter TargetName="FocusRing" Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
                         </Trigger>
                         <Trigger Property="controls:FormField.HasError" Value="True">
                             <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
+                            <Setter TargetName="FocusRing" Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="SelectRoot" Property="Opacity" Value="0.45" />
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource SidebarBrush}" />
                             <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource LineBrush}" />
+                            <Setter TargetName="FocusRing" Property="Visibility" Value="Collapsed" />
+                            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -125,18 +135,21 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Padding" Value="8,5" />
-        <Setter Property="MinHeight" Value="30" />
+        <Setter Property="Padding" Value="10,0" />
+        <Setter Property="MinHeight" Value="32" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBoxItem">
-                    <Border x:Name="ItemChrome" CornerRadius="4" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                    <Border x:Name="ItemChrome" CornerRadius="5" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
                         <ContentPresenter Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
                             <ContentPresenter.Resources>
                                 <Style TargetType="TextBlock">
+                                    <Setter Property="FontFamily" Value="{Binding FontFamily, RelativeSource={RelativeSource AncestorType=ComboBoxItem}}" />
+                                    <Setter Property="FontSize" Value="{Binding FontSize, RelativeSource={RelativeSource AncestorType=ComboBoxItem}}" />
+                                    <Setter Property="FontWeight" Value="{Binding FontWeight, RelativeSource={RelativeSource AncestorType=ComboBoxItem}}" />
                                     <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ComboBoxItem}}" />
                                 </Style>
                             </ContentPresenter.Resources>

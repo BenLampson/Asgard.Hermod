@@ -30,7 +30,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="controls:FormField">
                     <StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                             <Label Content="{TemplateBinding Label}" Padding="0"
                                    FontSize="12" FontFamily="{DynamicResource UiFont}"
                                    Foreground="{DynamicResource TextBodyBrush}"
@@ -77,26 +77,43 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:SecretInput">
-                    <Border x:Name="Chrome" CornerRadius="6" Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                        <PasswordBox x:Name="PART_Editor" Background="Transparent" BorderThickness="0"
-                                     FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}"
-                                     Foreground="{TemplateBinding Foreground}" Padding="{TemplateBinding Padding}"
-                                     VerticalContentAlignment="Center" PasswordChar="●"
-                                     MaxLength="{TemplateBinding MaxLength}"
-                                     CaretBrush="{DynamicResource TextPrimaryBrush}"
-                                     SelectionBrush="{DynamicResource AccentWeakBrush}"
-                                     AutomationProperties.Name="{Binding Path=(AutomationProperties.Name), RelativeSource={RelativeSource TemplatedParent}}" />
-                    </Border>
+                    <Grid>
+                        <Border x:Name="Chrome" CornerRadius="6" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <PasswordBox x:Name="PART_Editor" Background="Transparent" BorderThickness="0"
+                                             FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}"
+                                             Foreground="{TemplateBinding Foreground}" Padding="{TemplateBinding Padding}"
+                                             VerticalContentAlignment="Center" PasswordChar="●"
+                                             MaxLength="{TemplateBinding MaxLength}"
+                                             CaretBrush="{DynamicResource TextPrimaryBrush}"
+                                             SelectionBrush="{DynamicResource AccentWeakBrush}"
+                                             AutomationProperties.Name="{Binding Path=(AutomationProperties.Name), RelativeSource={RelativeSource TemplatedParent}}" />
+                                <controls:IconView x:Name="ErrorIcon" Grid.Column="1" Kind="circle-alert"
+                                                   Width="16" Height="16" Margin="0,0,10,0" Visibility="Collapsed"
+                                                   Foreground="{DynamicResource DangerBrush}" VerticalAlignment="Center" />
+                            </Grid>
+                        </Border>
+                        <Border x:Name="FocusRing" CornerRadius="6" BorderThickness="2"
+                                BorderBrush="{DynamicResource AccentBrush}" Visibility="Collapsed"
+                                IsHitTestVisible="False" SnapsToDevicePixels="True" />
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsKeyboardFocusWithin" Value="True">
                             <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                            <Setter TargetName="FocusRing" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <Trigger Property="controls:FormField.HasError" Value="True">
                             <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
+                            <Setter TargetName="FocusRing" Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
+                            <Setter TargetName="ErrorIcon" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Chrome" Property="Opacity" Value="0.45" />
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource SidebarBrush}" />
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource LineBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+                            <Setter TargetName="FocusRing" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

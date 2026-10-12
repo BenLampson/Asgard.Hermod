@@ -14,6 +14,8 @@
     <SolidColorBrush x:Key="TextMutedBrush" Color="#5A6577" />
     <SolidColorBrush x:Key="TextFaintBrush" Color="#8791A2" />
     <SolidColorBrush x:Key="AccentBrush" Color="#2F6BE0" />
+    <SolidColorBrush x:Key="ActionFillBrush" Color="#2F6BE0" />
+    <SolidColorBrush x:Key="ActionHoverBrush" Color="#2459C2" />
     <SolidColorBrush x:Key="AccentTextBrush" Color="#0B53A6" />
     <SolidColorBrush x:Key="AccentWeakBrush" Color="#E4EDFE" />
     <SolidColorBrush x:Key="SuccessBrush" Color="#16834E" />

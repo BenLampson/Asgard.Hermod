@@ -7,7 +7,7 @@
         <Setter Property="FontSize" Value="12" />
         <Setter Property="Foreground" Value="{DynamicResource TextBodyBrush}" />
         <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource TextFaintBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource LineBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
@@ -17,17 +17,28 @@
                 <ControlTemplate TargetType="CheckBox">
                     <Grid x:Name="Root" Background="Transparent" Margin="{TemplateBinding Padding}">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                        <Border x:Name="Box" Width="14" Height="14" CornerRadius="2" SnapsToDevicePixels="True"
+                        <Border x:Name="Box" Width="16" Height="16" CornerRadius="3" SnapsToDevicePixels="True"
                                 Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}" VerticalAlignment="Center">
                             <Grid>
-                                <controls:IconView x:Name="Check" Kind="check" Width="10" Height="10"
+                                <controls:IconView x:Name="Check" Kind="check" Width="12" Height="12"
                                                    Foreground="{DynamicResource InverseTextBrush}" Visibility="Collapsed" />
                                 <Rectangle x:Name="Mixed" Width="6" Height="2" Fill="{DynamicResource InverseTextBrush}" Visibility="Collapsed" />
                             </Grid>
                         </Border>
-                        <ContentPresenter x:Name="Label" Grid.Column="1" Margin="6,0,0,0" ContentSource="Content"
-                                          RecognizesAccessKey="True" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        <Border x:Name="FocusRing" Width="16" Height="16" CornerRadius="3" BorderThickness="2"
+                                BorderBrush="{DynamicResource AccentBrush}" Visibility="Collapsed"
+                                VerticalAlignment="Center" IsHitTestVisible="False" />
+                        <ContentPresenter x:Name="Label" Grid.Column="1" Margin="8,0,0,0" ContentSource="Content"
+                                          RecognizesAccessKey="True" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                            <ContentPresenter.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontFamily" Value="{Binding FontFamily, RelativeSource={RelativeSource AncestorType=CheckBox}}" />
+                                    <Setter Property="FontSize" Value="{Binding FontSize, RelativeSource={RelativeSource AncestorType=CheckBox}}" />
+                                    <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=CheckBox}}" />
+                                </Style>
+                            </ContentPresenter.Resources>
+                        </ContentPresenter>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="Content" Value="{x:Null}"><Setter TargetName="Label" Property="Visibility" Value="Collapsed" /></Trigger>
@@ -44,9 +55,17 @@
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
                             <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                            <Setter TargetName="Box" Property="BorderThickness" Value="2" />
+                            <Setter TargetName="FocusRing" Property="Visibility" Value="Visible" />
                         </Trigger>
-                        <Trigger Property="IsEnabled" Value="False"><Setter TargetName="Root" Property="Opacity" Value="0.45" /></Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Box" Property="Background" Value="{DynamicResource SidebarBrush}" />
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource LineBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+                            <Setter TargetName="Check" Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+                            <Setter TargetName="Mixed" Property="Fill" Value="{DynamicResource TextMutedBrush}" />
+                            <Setter Property="Cursor" Value="Arrow" />
+                            <Setter TargetName="FocusRing" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

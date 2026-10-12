@@ -55,6 +55,11 @@ public sealed class FormControlTests(WpfTestFixture fixture)
             Assert.Equal(((SolidColorBrush)Application.Current.FindResource("DangerBrush")).Color,
                 Assert.IsType<SolidColorBrush>(input.BorderBrush).Color);
             Assert.True(FormField.GetHasError(input));
+            var errorIcon = Assert.IsType<IconView>(input.Template.FindName("ErrorIcon", input));
+            Assert.Equal("circle-alert", errorIcon.Kind);
+            Assert.Equal(Visibility.Visible, errorIcon.Visibility);
+            Assert.Equal(((SolidColorBrush)Application.Current.FindResource("DangerBrush")).Color,
+                Assert.IsType<SolidColorBrush>(errorIcon.Foreground).Color);
             input.Focus();
             await WpfTestFixture.DrainDispatcherAsync();
             var chrome = Assert.IsType<Border>(input.Template.FindName("Chrome", input));
@@ -64,6 +69,7 @@ public sealed class FormControlTests(WpfTestFixture fixture)
             await WpfTestFixture.DrainDispatcherAsync();
             Assert.False(field.HasError);
             Assert.False(FormField.GetHasError(input));
+            Assert.Equal(Visibility.Collapsed, errorIcon.Visibility);
         }
         finally { window.Close(); }
     });
@@ -85,6 +91,9 @@ public sealed class FormControlTests(WpfTestFixture fixture)
             var label = Assert.Single(WindowTestVisuals.Descendants<TextBlock>(button));
             Assert.Equal(((SolidColorBrush)Application.Current.FindResource("InverseTextBrush")).Color,
                 Assert.IsType<SolidColorBrush>(label.Foreground).Color);
+            Assert.Equal(button.FontFamily, label.FontFamily);
+            Assert.Equal(12, label.FontSize);
+            Assert.Equal(FontWeights.SemiBold, label.FontWeight);
         }
         finally { themes.SetTheme(UiTheme.Light); window.Close(); }
     });

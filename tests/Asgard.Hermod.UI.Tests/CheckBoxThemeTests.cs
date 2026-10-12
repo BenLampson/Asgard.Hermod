@@ -20,6 +20,10 @@ public sealed class CheckBoxThemeTests(WpfTestFixture fixture)
             window.Show();
             await WindowTestVisuals.UpdateLayoutAsync(window);
             var box = Assert.IsType<Border>(check.Template.FindName("Box", check));
+            Assert.Equal(16, box.ActualWidth);
+            Assert.Equal(16, box.ActualHeight);
+            var label = Assert.IsType<ContentPresenter>(check.Template.FindName("Label", check));
+            Assert.Equal(new Thickness(8, 0, 0, 0), label.Margin);
             Assert.Equal(((SolidColorBrush)Application.Current.FindResource("SurfaceBrush")).Color,
                 Assert.IsType<SolidColorBrush>(box.Background).Color);
             themes.SetTheme(UiTheme.Dark);
@@ -33,6 +37,11 @@ public sealed class CheckBoxThemeTests(WpfTestFixture fixture)
             Assert.Null(check.IsChecked);
             toggle.Toggle();
             Assert.False(check.IsChecked);
+            check.IsEnabled = false;
+            await WpfTestFixture.DrainDispatcherAsync();
+            Assert.Equal(((SolidColorBrush)Application.Current.FindResource("SidebarBrush")).Color,
+                Assert.IsType<SolidColorBrush>(box.Background).Color);
+            Assert.False(check.Focus());
         }
         finally { themes.SetTheme(UiTheme.Light); window.Close(); }
     });

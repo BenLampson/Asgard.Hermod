@@ -1,3 +1,5 @@
+using System.Windows.Media.Imaging;
+
 namespace Asgard.Hermod.UI.Tests;
 
 /// <summary>检查真实资源在加载、换肤和字体打包后的可用性。</summary>
@@ -49,18 +51,56 @@ public sealed class UiResourceTests
         }
     });
 
-    /// <summary>两套设计字体必须从 UI 程序集实际解析，不能静默回退到系统字体。</summary>
+    /// <summary>从实际绘制的拉丁字形确认包内设计字体，而不是只检查包含回退名单的 FontFamily。</summary>
     [Fact]
     public Task PackagedFonts_ResolveFromUiAssembly() => _fixture.RunAsync(() =>
     {
         foreach (string key in new[] { "UiFont", "MonoFont" })
         {
             var family = Assert.IsType<FontFamily>(Application.Current.FindResource(key));
-            var typeface = new Typeface(family, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
-            Assert.True(typeface.TryGetGlyphTypeface(out var glyphs), $"无法加载 {key} 的字形。");
-            Assert.Contains("Asgard.Hermod.UI", glyphs.FontUri.OriginalString, StringComparison.OrdinalIgnoreCase);
-            Assert.Contains("Assets/Fonts", glyphs.FontUri.OriginalString, StringComparison.OrdinalIgnoreCase);
+            foreach (var glyphs in RenderedGlyphs(family, "Hermod OSS 12345"))
+            {
+                Assert.Contains("Asgard.Hermod.UI", glyphs.FontUri.OriginalString, StringComparison.OrdinalIgnoreCase);
+                Assert.Contains("Assets/Fonts", glyphs.FontUri.OriginalString, StringComparison.OrdinalIgnoreCase);
+            }
         }
         return Task.CompletedTask;
     });
+
+    /// <summary>两套字体的中文都使用明确的微软雅黑 UI 回退，不依赖系统默认字体映射。</summary>
+    [Theory]
+    [InlineData("UiFont")]
+    [InlineData("MonoFont")]
+    public Task PackagedFonts_UseExplicitSansSerifChineseFallback(string key) => _fixture.RunAsync(() =>
+    {
+        var family = Assert.IsType<FontFamily>(Application.Current.FindResource(key));
+        foreach (var glyphs in RenderedGlyphs(family, "系统设置对象存储"))
+            Assert.Contains(glyphs.FamilyNames.Values, name => name is "Microsoft YaHei UI" or "微软雅黑 UI");
+        return Task.CompletedTask;
+    });
+
+    /// <summary>强制真实排版和绘制，取得最终使用的字形字体，覆盖字体回退及打包路径。</summary>
+    private static GlyphTypeface[] RenderedGlyphs(FontFamily family, string text)
+    {
+        var label = new TextBlock { Text = text, FontFamily = family, FontSize = 12 };
+        label.Measure(new Size(500, 40));
+        label.Arrange(new Rect(0, 0, 500, 40));
+        label.UpdateLayout();
+        new RenderTargetBitmap(500, 40, 96, 96, PixelFormats.Pbgra32).Render(label);
+        var drawing = Assert.IsType<DrawingGroup>(VisualTreeHelper.GetDrawing(label));
+        var glyphs = GlyphTypefaces(drawing).ToArray();
+        Assert.NotEmpty(glyphs);
+        return glyphs;
+    }
+
+    /// <summary>字形绘制可能嵌套在变换组中，递归读取实际 GlyphRun。</summary>
+    private static IEnumerable<GlyphTypeface> GlyphTypefaces(Drawing drawing)
+    {
+        if (drawing is GlyphRunDrawing glyph)
+            yield return glyph.GlyphRun.GlyphTypeface;
+        if (drawing is DrawingGroup group)
+            foreach (var child in group.Children)
+                foreach (var typeface in GlyphTypefaces(child))
+                    yield return typeface;
+    }
 }
