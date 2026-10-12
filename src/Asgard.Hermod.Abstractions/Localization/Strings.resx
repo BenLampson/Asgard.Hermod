@@ -1628,4 +1628,31 @@
   </data>
   <data xml:space="preserve" name="SystemClockOutOfSync"><value>Your device clock differs from the sign-in server by more than two minutes. Synchronize the Windows clock and try again.</value></data>
   <data xml:space="preserve" name="SaveLocallyThenUploadFromAccountAndSync"><value>Create the instance on this device, then open Account and synchronization to upload your encrypted workspace.</value></data>
+  <data xml:space="preserve" name="LoginCallbackSuccessHelp">
+    <value>Your account is now connected. Return to Hermod to continue.</value>
+  </data>
+  <data xml:space="preserve" name="LoginCallbackReceivedTitle">
+    <value>Return to Hermod</value>
+  </data>
+  <data xml:space="preserve" name="LoginCallbackFailedTitle">
+    <value>Sign-in was not completed</value>
+  </data>
+  <data xml:space="preserve" name="LoginCallbackFailedHelp">
+    <value>Hermod could not complete this sign-in. Return to the app to try again.</value>
+  </data>
+  <data xml:space="preserve" name="LoginCallbackClosePage">
+    <value>Close this page</value>
+  </data>
+  <data xml:space="preserve" name="LoginCallbackCloseHelp">
+    <value>You can safely close this browser tab.</value>
+  </data>
+  <data xml:space="preserve" name="LoginCallbackCloseFallback">
+    <value>Your browser could not close this page automatically. Please close this tab manually.</value>
+  </data>
+  <data xml:space="preserve" name="SwitchAccount">
+    <value>Switch account</value>
+  </data>
+  <data xml:space="preserve" name="LoginCallbackSuccessTitle">
+    <value>Signed in successfully</value>
+  </data>
 </root>

@@ -30,6 +30,10 @@ public sealed class AccountViewModel : ObservableObject, IAsyncDisposable
     public string Username => _accounts.Account?.Username ?? Text.Get("NotSignedIn");
     /// <summary>当前登录状态。</summary>
     public bool IsSignedIn => _accounts.Account is not null;
+    /// <summary>登录后明确提供切换账号，避免继续显示登录按钮造成状态歧义。</summary>
+    public string SignInButtonText => Text.Get(IsSignedIn ? "SwitchAccount" : "SignInToYourAccount");
+    /// <summary>账号窗口同时显示用户名与认证状态。</summary>
+    public string AccountStatus => Text.Get(IsSignedIn ? "SignedIn" : "NotSignedIn");
     /// <summary>互斥操作执行状态。</summary>
     public bool IsBusy { get => _isBusy; private set { SetProperty(ref _isBusy, value); RefreshCommands(); } }
     /// <summary>本次窗口内存中的密码，关闭后清除且不保存。</summary>
@@ -69,6 +73,7 @@ public sealed class AccountViewModel : ObservableObject, IAsyncDisposable
     private void OnAccountChanged(object? sender, EventArgs args)
     {
         OnPropertyChanged(nameof(Username)); OnPropertyChanged(nameof(IsSignedIn));
+        OnPropertyChanged(nameof(SignInButtonText)); OnPropertyChanged(nameof(AccountStatus));
         // 同一身份刷新不清除当前操作密码，真正切换或退出时不向下一账号遗留秘密。
         if (_identity != _accounts.Account?.SubjectId)
         {

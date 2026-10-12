@@ -16,6 +16,14 @@ Open **Account and synchronization** from the title bar account menu. Sign-in
 keeps the local workspace. Instances are still created and edited locally;
 uploading and downloading are explicit actions in the account window.
 
+After sign-in, the account window shows the verified JWT username and **Signed
+in** status; the sign-in action becomes **Switch account**. The browser callback
+shows a localized Hermod result page only after token validation and local session
+storage complete. It removes the callback query from the address bar and offers
+**Close this page**. If the browser prevents closing the tab, the page explains
+that the user can close it manually. Failed or cancelled authentication shows a
+safe failure page, without protocol fields or raw errors.
+
 - Upload includes instances, connection parameters and their credentials, tags
   and instance/tag associations. Language preferences, local terminal output,
   logs, object contents and OAuth credentials are excluded.

@@ -46,9 +46,11 @@ public sealed class HeimdallAccountService(HeimdallOAuthClient oauth, HermodIden
         try
         {
             var request = await oauth.CreateLoginRequestAsync(prompt: "select_account", cancellationToken: cancellationToken);
-            var callback = await browser.LoginAsync(request, cancellationToken);
-            var tokens = await oauth.ExchangeCodeAsync(callback, request, cancellationToken);
-            await CommitAsync(tokens, null, null, cancellationToken);
+            await browser.AuthenticateAsync(request, async (callback, token) =>
+            {
+                var tokens = await oauth.ExchangeCodeAsync(callback, request, token);
+                await CommitAsync(tokens, null, null, token);
+            }, cancellationToken);
         }
         finally { _gate.Release(); }
     }

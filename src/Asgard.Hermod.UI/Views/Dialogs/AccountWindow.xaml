@@ -7,9 +7,10 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="28">
             <TextBlock Text="{loc:Loc AccountAndSync}" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,20" />
-            <TextBlock Text="{Binding Username}" FontSize="18" TextTrimming="CharacterEllipsis" Margin="0,0,0,12" />
+            <TextBlock Text="{Binding Username}" FontSize="18" TextTrimming="CharacterEllipsis" Margin="0,0,0,6" />
+            <TextBlock Text="{Binding AccountStatus}" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,12" />
             <WrapPanel Margin="0,0,0,22">
-                <Button Content="{loc:Loc SignInToYourAccount}" Command="{Binding SignInCommand}" MinWidth="140" Margin="0,0,12,0" />
+                <Button x:Name="SignInButton" Content="{Binding SignInButtonText}" Command="{Binding SignInCommand}" MinWidth="140" Margin="0,0,12,0" />
                 <Button Content="{loc:Loc SignOut}" Command="{Binding SignOutCommand}" MinWidth="100" />
             </WrapPanel>
             <TextBlock Text="{loc:Loc SyncExplanation}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,20" />

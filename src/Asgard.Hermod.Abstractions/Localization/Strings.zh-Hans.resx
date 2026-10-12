@@ -1628,4 +1628,31 @@
   </data>
   <data xml:space="preserve" name="SystemClockOutOfSync"><value>设备与登录服务器的时钟相差超过两分钟，请同步 Windows 时间后重试。</value></data>
   <data xml:space="preserve" name="SaveLocallyThenUploadFromAccountAndSync"><value>请先在本机创建实例，再打开账户与同步上传加密工作区。</value></data>
+  <data xml:space="preserve" name="LoginCallbackSuccessHelp">
+    <value>账户已登录成功，请返回 Hermod 继续使用。</value>
+  </data>
+  <data xml:space="preserve" name="LoginCallbackReceivedTitle">
+    <value>请返回 Hermod</value>
+  </data>
+  <data xml:space="preserve" name="LoginCallbackFailedTitle">
+    <value>登录未完成</value>
+  </data>
+  <data xml:space="preserve" name="LoginCallbackFailedHelp">
+    <value>Hermod 未能完成此次登录，请返回应用重新尝试。</value>
+  </data>
+  <data xml:space="preserve" name="LoginCallbackClosePage">
+    <value>关闭页面</value>
+  </data>
+  <data xml:space="preserve" name="LoginCallbackCloseHelp">
+    <value>你可以安全关闭此浏览器标签页。</value>
+  </data>
+  <data xml:space="preserve" name="LoginCallbackCloseFallback">
+    <value>浏览器未能自动关闭页面，请手动关闭此标签页。</value>
+  </data>
+  <data xml:space="preserve" name="SwitchAccount">
+    <value>切换账户</value>
+  </data>
+  <data xml:space="preserve" name="LoginCallbackSuccessTitle">
+    <value>登录成功</value>
+  </data>
 </root>
