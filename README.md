@@ -6,7 +6,11 @@ English is the primary language for repository documentation, issues, and pull r
 
 ## Status
 
-The solution contains a minimal WPF startup window and the native Windows terminal component `Asgard.Hermod.WinTerminal`. Application architecture, product UI, localization, and service integration remain under discussion.
+The application combines independently compiled modules for the WPF shell, local
+configuration and tags, Windows terminal sessions, and object storage. Alibaba
+Cloud OSS is the first object storage connector. The executable owns startup and
+composition; provider SDKs and persistence dependencies belong to their respective
+implementation projects. See the [architecture guide](docs/architecture.md).
 
 ## Requirements
 
@@ -35,8 +39,17 @@ for configuration and schema initialization.
 ```text
 .github/                 Community templates
 docs/                    Architecture and roadmap
-src/Asgard.Hermod/       WPF application
-src/Asgard.Hermod.WinTerminal/  Windows WPF terminal library
+src/Asgard.Hermod/                    Application entry point and composition
+src/Asgard.Hermod.Abstractions/       Shared contracts and models
+src/Asgard.Hermod.Core/               Instance registry and workspace data source
+src/Asgard.Hermod.UI/                 WPF shell and shared controls
+src/Asgard.Hermod.Persistence.Sqlite/  SQLite storage and configuration services
+src/Asgard.Hermod.Security.Windows/    Windows DPAPI credential protection
+src/Asgard.Hermod.WinTerminal/         Windows terminal engine, control and sessions
+src/Asgard.Hermod.ObjectStorage.Abstractions/  Object storage contracts
+src/Asgard.Hermod.ObjectStorage/       Provider-independent operations and factory
+src/Asgard.Hermod.ObjectStorage.UI/    Object storage pages and dialogs
+src/Asgard.Hermod.Providers.AliyunOss/  Alibaba Cloud OSS connector and SDK
 tests/                  Terminal behavior and Windows integration tests
 ```
 

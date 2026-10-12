@@ -1,5 +1,4 @@
-using Asgard.Hermod.Infrastructure.Storage;
-using Asgard.Hermod.Services;
+using Asgard.Hermod.UI.Services;
 
 namespace Asgard.Hermod.UI.Tests;
 

@@ -15,7 +15,8 @@ public sealed class HermodWindowTests
     [Fact]
     public void ProductionWindows_AllInheritSharedHermodWindow()
     {
-        var windowTypes = new[] { typeof(HermodWindow).Assembly, typeof(Asgard.Hermod.MainWindow).Assembly }
+        var windowTypes = new[] { typeof(HermodWindow).Assembly, typeof(Asgard.Hermod.MainWindow).Assembly,
+            typeof(ObjectStorageDialogWindow).Assembly }
             .Distinct()
             .SelectMany(assembly => assembly.GetTypes())
             .Where(type => !type.IsAbstract && typeof(Window).IsAssignableFrom(type))

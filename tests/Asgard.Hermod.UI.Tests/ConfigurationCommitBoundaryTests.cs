@@ -1,6 +1,6 @@
-using Asgard.Hermod.Infrastructure.Instances;
-using Asgard.Hermod.Infrastructure.Security;
-using Asgard.Hermod.Services;
+using Asgard.Hermod.Abstractions.Security;
+using Asgard.Hermod.Core;
+using Asgard.Hermod.UI.Services;
 
 namespace Asgard.Hermod.UI.Tests;
 

@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http;
-using Asgard.Hermod.Infrastructure.Storage;
 
 namespace Asgard.Hermod.UI.Tests;
 

@@ -37,6 +37,9 @@ public abstract class WorkspacePageViewModel : ObservableObject, IAsyncDisposabl
     /// <summary>已进入关闭流程，视图可以释放缓存。</summary>
     public bool IsClosed => _isClosed;
 
+    /// <summary>页签激活时初始化模块资源，默认页面无需额外操作。</summary>
+    public virtual Task InitializeAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+
     /// <summary>幂等关闭；该入口由 UI 线程调用以保证解绑顺序。</summary>
     public Task CloseAsync()
     {

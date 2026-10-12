@@ -6,7 +6,7 @@ namespace Asgard.Hermod.UI.ViewModels;
 public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
 {
     private readonly IThemeService _themes;
-    private readonly HashSet<ObjectStorageWorkspaceViewModel> _storagePages = [];
+    private readonly HashSet<WorkspacePageViewModel> _instancePages = [];
     private bool _isSidebarExpanded = true;
     private string _globalSearchQuery = "";
     private bool _disposed;
@@ -114,11 +114,11 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     private void OnSelectedTabChanged(object? sender, EventArgs args)
     {
         Sidebar.SelectInstance(Workspace.SelectedTab.InstanceId);
-        if (Workspace.SelectedTab is ObjectStorageWorkspaceViewModel page)
+        if (Workspace.SelectedTab is { InstanceId: not null } page)
         {
-            // 外壳只同步实例摘要，Bucket 和对象目录由右侧工作页负责。
-            if (_storagePages.Add(page))
-                page.PropertyChanged += OnStoragePageChanged;
+            // 外壳只协调通用生命周期，功能模块自行处理远程资源。
+            if (_instancePages.Add(page))
+                page.PropertyChanged += OnInstancePageChanged;
             _ = page.InitializeAsync();
         }
         if (Workspace.SelectedTab.Id == "tag:production")
@@ -126,13 +126,13 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     }
 
     /// <summary>编辑连接改变标题时刷新实例快照，页签关闭及时移除更新订阅。</summary>
-    private async void OnStoragePageChanged(object? sender, PropertyChangedEventArgs args)
+    private async void OnInstancePageChanged(object? sender, PropertyChangedEventArgs args)
     {
-        if (sender is not ObjectStorageWorkspaceViewModel page || _disposed) return;
+        if (sender is not WorkspacePageViewModel page || _disposed) return;
         if (args.PropertyName == nameof(WorkspacePageViewModel.IsClosed) && page.IsClosed)
         {
-            _storagePages.Remove(page);
-            page.PropertyChanged -= OnStoragePageChanged;
+            _instancePages.Remove(page);
+            page.PropertyChanged -= OnInstancePageChanged;
         }
         else if (args.PropertyName == nameof(WorkspacePageViewModel.Header))
         {
@@ -161,9 +161,9 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
         _themes.ThemeChanged -= OnThemeChanged;
         Sidebar.InstancesChanged -= OnInstancesChanged;
         Workspace.SelectedTabChanged -= OnSelectedTabChanged;
-        foreach (var page in _storagePages)
-            page.PropertyChanged -= OnStoragePageChanged;
-        _storagePages.Clear();
+        foreach (var page in _instancePages)
+            page.PropertyChanged -= OnInstancePageChanged;
+        _instancePages.Clear();
         Sidebar.Dispose();
         await Workspace.DisposeAsync();
     }

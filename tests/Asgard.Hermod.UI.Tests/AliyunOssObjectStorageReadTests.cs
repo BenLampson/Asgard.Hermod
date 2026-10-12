@@ -45,7 +45,7 @@ public sealed class AliyunOssObjectStorageReadTests
         using var handler = new StorageTestHttpHandler((_, _) => throw new InvalidOperationException("无效配置不能请求网络。"));
         Assert.Throws<ObjectStorageException>(() => AliyunOssResourceTestClient.Create(handler, "cn-hangzhou.attacker.test"));
         Assert.Throws<ObjectStorageException>(() => AliyunOssResourceTestClient.Create(handler, "../../attacker"));
-        var provider = new Asgard.Hermod.Infrastructure.Storage.AliyunOssObjectStorageProvider(new StorageTestHttpClientFactory(handler));
+        var provider = new Asgard.Hermod.Providers.AliyunOss.AliyunOssObjectStorageProvider(new StorageTestHttpClientFactory(handler));
         ObjectStorageException error = Assert.Throws<ObjectStorageException>(() => provider.CreateClient(new InstanceConnectionOptions
         {
             TypeId = "docker",

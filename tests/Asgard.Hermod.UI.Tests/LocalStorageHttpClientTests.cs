@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http;
-using Asgard.Hermod.Infrastructure.Storage;
 
 namespace Asgard.Hermod.UI.Tests;
 
@@ -9,7 +8,7 @@ public sealed class LocalStorageHttpClientTests
 {
     /// <summary>真实命名客户端和 SDK 连接器能够完成策略验证，构造过程不执行网络请求。</summary>
     [Fact]
-    public void AddLocalStorage_CreatesValidatedHttpAndResourceClients()
+    public void ComposedModules_CreateValidatedHttpAndResourceClients()
     {
         using var environment = new LocalStorageTestEnvironment();
         using ServiceProvider services = environment.CreateServices();
@@ -40,7 +39,7 @@ public sealed class LocalStorageHttpClientTests
                     "<Message>resource-private-secret LTAIResourceTestKey</Message></Error>"),
             });
         });
-        var registration = new ServiceCollection().AddLocalStorage(environment.CreateConfiguration());
+        var registration = new ServiceCollection().AddHermodCore().AddWindowsSecretProtection().AddObjectStorage().AddAliyunOss().AddLocalStorage(environment.CreateConfiguration());
         registration.AddHttpClient(AliyunOssObjectStorageProvider.HttpClientName)
             .ConfigurePrimaryHttpMessageHandler(() => handler);
         using ServiceProvider services = registration.BuildServiceProvider();

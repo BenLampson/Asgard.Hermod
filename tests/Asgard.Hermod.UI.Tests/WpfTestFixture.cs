@@ -59,6 +59,10 @@ public sealed class WpfTestFixture : IAsyncLifetime
                 });
             }
 
+            _application.Resources.MergedDictionaries.Add(new ResourceDictionary
+            {
+                Source = new Uri("pack://application:,,,/Asgard.Hermod.ObjectStorage.UI;component/Resources/WorkspacePages.xaml")
+            });
             _application.DispatcherUnhandledException += OnUnhandledException;
             _ready.TrySetResult(dispatcher);
             Dispatcher.Run();

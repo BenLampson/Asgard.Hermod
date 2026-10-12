@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
              xmlns:terminal="clr-namespace:Asgard.Hermod.WinTerminal;assembly=Asgard.Hermod.WinTerminal"
-             xmlns:models="clr-namespace:Asgard.Hermod.UI.Models"
+             xmlns:models="clr-namespace:Asgard.Hermod.Abstractions.Models;assembly=Asgard.Hermod.Abstractions"
              Background="{DynamicResource AppBackgroundBrush}"
              FontFamily="{DynamicResource UiFont}">
     <Grid Margin="24">

@@ -8,6 +8,7 @@
                 <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.UI;component/Resources/Theme.Light.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.UI;component/Resources/Fonts.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.UI;component/Resources/Styles.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.ObjectStorage.UI;component/Resources/WorkspacePages.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -2,7 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Asgard.Hermod.UI.Controls"
-             xmlns:models="clr-namespace:Asgard.Hermod.UI.Models"
+             xmlns:models="clr-namespace:Asgard.Hermod.Abstractions.Models;assembly=Asgard.Hermod.Abstractions"
              FontFamily="{DynamicResource UiFont}"
              FontSize="11.5"
              FontWeight="SemiBold">

@@ -63,8 +63,13 @@ version-1 baseline to represent a later schema.
 
 ## Service lifetime and verification
 
-`AddLocalStorage` registers configuration, Asgard's singleton `IFreeSql`, and
-`LocalDatabaseInitializer`. Storage consumers use that same database instance.
+`Asgard.Hermod.Persistence.Sqlite` owns database configuration, migrations,
+repositories and local instance/tag services. `AddLocalStorage` registers these
+services and Asgard's singleton `IFreeSql`. The host separately calls
+`AddHermodCore` for the instance registry and workspace source, and
+`AddWindowsSecretProtection` to select DPAPI through `ISecretProtector`.
+Cloud providers, their HTTP clients, and object storage operations are registered
+by their own modules. Storage consumers use the same database instance.
 The application service container disposes the FreeSql connection pool on exit.
 The default connection string disables native driver pooling so file handles are
 released when the application closes. SQLite files and journal/WAL sidecars are

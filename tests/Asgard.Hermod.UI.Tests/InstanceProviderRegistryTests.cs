@@ -1,4 +1,4 @@
-using Asgard.Hermod.Infrastructure.Instances;
+using Asgard.Hermod.Core;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Asgard.Hermod.UI.Tests;
@@ -76,7 +76,7 @@ public sealed class InstanceProviderRegistryTests
         using var environment = new LocalStorageTestEnvironment();
         string instanceId;
         FakeInstanceProvider docker = CreateDockerProvider("shared");
-        var registration = new ServiceCollection().AddLocalStorage(environment.CreateConfiguration());
+        var registration = new ServiceCollection().AddHermodCore().AddWindowsSecretProtection().AddObjectStorage().AddAliyunOss().AddLocalStorage(environment.CreateConfiguration());
         registration.AddSingleton<IInstanceProvider>(docker);
         using (var services = registration.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true }))
         {
@@ -106,7 +106,7 @@ public sealed class InstanceProviderRegistryTests
             Assert.DoesNotContain("future-private-token", System.Text.Encoding.UTF8.GetString(cipher));
         }
 
-        var restartRegistration = new ServiceCollection().AddLocalStorage(environment.CreateConfiguration());
+        var restartRegistration = new ServiceCollection().AddHermodCore().AddWindowsSecretProtection().AddObjectStorage().AddAliyunOss().AddLocalStorage(environment.CreateConfiguration());
         restartRegistration.AddSingleton<IInstanceProvider>(CreateDockerProvider("shared"));
         using (var restarted = restartRegistration.BuildServiceProvider())
         {
@@ -122,7 +122,7 @@ public sealed class InstanceProviderRegistryTests
         }
 
         var wrongType = new FakeStorageProvider("shared");
-        var missingRegistration = new ServiceCollection().AddLocalStorage(environment.CreateConfiguration());
+        var missingRegistration = new ServiceCollection().AddHermodCore().AddWindowsSecretProtection().AddObjectStorage().AddAliyunOss().AddLocalStorage(environment.CreateConfiguration());
         missingRegistration.RemoveAll<IInstanceProvider>();
         missingRegistration.AddSingleton<IInstanceProvider>(wrongType);
         using var missing = missingRegistration.BuildServiceProvider();
@@ -139,7 +139,7 @@ public sealed class InstanceProviderRegistryTests
     public async Task Configuration_ValidatesDeclaredFieldsBeforeSaving()
     {
         using var environment = new LocalStorageTestEnvironment();
-        var registration = new ServiceCollection().AddLocalStorage(environment.CreateConfiguration());
+        var registration = new ServiceCollection().AddHermodCore().AddWindowsSecretProtection().AddObjectStorage().AddAliyunOss().AddLocalStorage(environment.CreateConfiguration());
         registration.AddSingleton<IInstanceProvider>(CreateDockerProvider("docker-engine"));
         using var services = registration.BuildServiceProvider();
         services.GetRequiredService<LocalDatabaseInitializer>().Initialize();

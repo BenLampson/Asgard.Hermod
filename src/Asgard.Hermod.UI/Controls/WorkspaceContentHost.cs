@@ -46,7 +46,7 @@ public sealed class WorkspaceContentHost : ContentControl, IDisposable
         }
         if (!host._views.TryGetValue(page, out var view))
         {
-            view = CreateView(page);
+            view = host.CreateView(page);
             view.DataContext = page;
             host._views.Add(page, view);
             page.PropertyChanged += host.OnPagePropertyChanged;
@@ -55,14 +55,22 @@ public sealed class WorkspaceContentHost : ContentControl, IDisposable
     }
 
     /// <summary>根据页面类型选择对应的原生 WPF 内容组件。</summary>
-    private static FrameworkElement CreateView(WorkspacePageViewModel page) => page switch
+    private FrameworkElement CreateView(WorkspacePageViewModel page) => page switch
     {
         EmptyWorkspaceViewModel => new EmptyWorkspaceView(),
         ServiceDetailViewModel => new ServiceDetailView(),
-        ObjectStorageWorkspaceViewModel => new ObjectStorageView(),
         TerminalWorkspaceViewModel => new TerminalWorkspaceView(),
-        _ => throw new NotSupportedException($"没有为页面类型 {page.GetType().Name} 注册内容视图。"),
+        _ => CreateModuleView(page),
     };
+
+    /// <summary>独立功能模块通过资源字典提供页面模板，外壳不引用模块实现。</summary>
+    private FrameworkElement CreateModuleView(WorkspacePageViewModel page)
+    {
+        if (TryFindResource(new DataTemplateKey(page.GetType())) is DataTemplate template &&
+            template.LoadContent() is FrameworkElement view)
+            return view;
+        throw new NotSupportedException($"没有为页面类型 {page.GetType().Name} 注册内容视图。");
+    }
 
     /// <summary>接收关闭通知；必要时切回 UI 线程移除原生控件。</summary>
     private void OnPagePropertyChanged(object? sender, PropertyChangedEventArgs args)

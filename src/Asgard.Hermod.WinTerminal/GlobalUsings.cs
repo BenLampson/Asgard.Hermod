@@ -8,4 +8,5 @@ global using System.Windows.Threading;
 global using Asgard.Hermod.WinTerminal.Engine;
 global using Asgard.Hermod.WinTerminal.Engine.Input;
 global using Asgard.Hermod.WinTerminal.Engine.Rendering;
+global using Asgard.Hermod.WinTerminal.Local;
 global using Microsoft.Win32.SafeHandles;

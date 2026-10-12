@@ -1,5 +1,13 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/Asgard.Hermod.Abstractions/Asgard.Hermod.Abstractions.csproj" />
+    <Project Path="src/Asgard.Hermod.Core/Asgard.Hermod.Core.csproj" />
+    <Project Path="src/Asgard.Hermod.ObjectStorage/Asgard.Hermod.ObjectStorage.csproj" />
+    <Project Path="src/Asgard.Hermod.ObjectStorage.Abstractions/Asgard.Hermod.ObjectStorage.Abstractions.csproj" />
+    <Project Path="src/Asgard.Hermod.ObjectStorage.UI/Asgard.Hermod.ObjectStorage.UI.csproj" />
+    <Project Path="src/Asgard.Hermod.Persistence.Sqlite/Asgard.Hermod.Persistence.Sqlite.csproj" />
+    <Project Path="src/Asgard.Hermod.Providers.AliyunOss/Asgard.Hermod.Providers.AliyunOss.csproj" />
+    <Project Path="src/Asgard.Hermod.Security.Windows/Asgard.Hermod.Security.Windows.csproj" />
     <Project Path="src/Asgard.Hermod/Asgard.Hermod.csproj" />
     <Project Path="src/Asgard.Hermod.UI/Asgard.Hermod.UI.csproj" />
     <Project Path="src/Asgard.Hermod.WinTerminal/Asgard.Hermod.WinTerminal.csproj" />

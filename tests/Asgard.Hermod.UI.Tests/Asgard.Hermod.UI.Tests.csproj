@@ -18,6 +18,14 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Asgard.Hermod.UI\Asgard.Hermod.UI.csproj" />
+    <ProjectReference Include="..\..\src\Asgard.Hermod.Abstractions\Asgard.Hermod.Abstractions.csproj" />
+    <ProjectReference Include="..\..\src\Asgard.Hermod.Core\Asgard.Hermod.Core.csproj" />
+    <ProjectReference Include="..\..\src\Asgard.Hermod.ObjectStorage\Asgard.Hermod.ObjectStorage.csproj" />
+    <ProjectReference Include="..\..\src\Asgard.Hermod.ObjectStorage.Abstractions\Asgard.Hermod.ObjectStorage.Abstractions.csproj" />
+    <ProjectReference Include="..\..\src\Asgard.Hermod.ObjectStorage.UI\Asgard.Hermod.ObjectStorage.UI.csproj" />
+    <ProjectReference Include="..\..\src\Asgard.Hermod.Persistence.Sqlite\Asgard.Hermod.Persistence.Sqlite.csproj" />
+    <ProjectReference Include="..\..\src\Asgard.Hermod.Providers.AliyunOss\Asgard.Hermod.Providers.AliyunOss.csproj" />
+    <ProjectReference Include="..\..\src\Asgard.Hermod.Security.Windows\Asgard.Hermod.Security.Windows.csproj" />
     <ProjectReference Include="..\..\src\Asgard.Hermod\Asgard.Hermod.csproj" />
   </ItemGroup>
 </Project>

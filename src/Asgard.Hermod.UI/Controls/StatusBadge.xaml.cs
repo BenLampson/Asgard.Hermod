@@ -9,7 +9,7 @@ public partial class StatusBadge : UserControl
 
     /// <summary>声明状态色调的依赖属性。</summary>
     public static readonly DependencyProperty ToneProperty = DependencyProperty.Register(
-        nameof(Tone), typeof(Models.StatusTone), typeof(StatusBadge), new PropertyMetadata(Models.StatusTone.Muted));
+        nameof(Tone), typeof(StatusTone), typeof(StatusBadge), new PropertyMetadata(StatusTone.Muted));
 
     /// <summary>行内状态仅显示语义圆点和辅助文字，适用于内容页头。</summary>
     public static readonly DependencyProperty IsInlineProperty = DependencyProperty.Register(
@@ -26,9 +26,9 @@ public partial class StatusBadge : UserControl
     }
 
     /// <summary>获取或设置语义色；主题切换时同步更新底色和文字。</summary>
-    public Models.StatusTone Tone
+    public StatusTone Tone
     {
-        get => (Models.StatusTone)GetValue(ToneProperty);
+        get => (StatusTone)GetValue(ToneProperty);
         set => SetValue(ToneProperty, value);
     }
 

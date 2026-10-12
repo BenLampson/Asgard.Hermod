@@ -33,7 +33,7 @@ public sealed class LocalStorageTestEnvironment : IDisposable
 
     /// <summary>通过生产注册方法创建容器；调用方负责先释放容器再清理测试目录。</summary>
     public ServiceProvider CreateServices(LocalDatabaseConfiguration? configuration = null) =>
-        new ServiceCollection().AddLocalStorage(configuration ?? CreateConfiguration())
+        new ServiceCollection().AddHermodCore().AddWindowsSecretProtection().AddObjectStorage().AddAliyunOss().AddLocalStorage(configuration ?? CreateConfiguration())
             .BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
 
     /// <summary>核对目录边界后清除本次测试文件；连接泄漏会使清理失败。</summary>

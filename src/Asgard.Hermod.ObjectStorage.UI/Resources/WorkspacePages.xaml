@@ -1,0 +1,9 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:models="clr-namespace:Asgard.Hermod.ObjectStorage.UI.ViewModels"
+                    xmlns:pages="clr-namespace:Asgard.Hermod.ObjectStorage.UI.Views.Pages">
+    <!-- 功能模块拥有页面映射，公共外壳只按模板创建并缓存内容。 -->
+    <DataTemplate DataType="{x:Type models:ObjectStorageWorkspaceViewModel}">
+        <pages:ObjectStorageView />
+    </DataTemplate>
+</ResourceDictionary>

@@ -11,10 +11,7 @@
     <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AlibabaCloud.OSS.V2" Version="0.2.0" />
-    <PackageReference Include="Asgard.Core" Version="6.0.3" />
-    <PackageReference Include="FreeSql.Provider.Sqlite" Version="3.5.311" />
-    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.10.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
   </ItemGroup>
   <ItemGroup>
     <None Update="app.yaml" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
@@ -23,6 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Asgard.Hermod.UI\Asgard.Hermod.UI.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Core\Asgard.Hermod.Core.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Persistence.Sqlite\Asgard.Hermod.Persistence.Sqlite.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Security.Windows\Asgard.Hermod.Security.Windows.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.ObjectStorage\Asgard.Hermod.ObjectStorage.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.ObjectStorage.UI\Asgard.Hermod.ObjectStorage.UI.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Providers.AliyunOss\Asgard.Hermod.Providers.AliyunOss.csproj" />
     <ProjectReference Include="..\Asgard.Hermod.WinTerminal\Asgard.Hermod.WinTerminal.csproj" />
   </ItemGroup>
 </Project>

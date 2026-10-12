@@ -55,6 +55,8 @@ ScaffoldingReadMe.txt
 *.sqlite-wal
 *.sqlite-shm
 *.sqlite-journal
+# Windows 下 *.sqlite 也会匹配同名结尾的项目目录；只放行源码项目。
+!src/Asgard.Hermod.Persistence.Sqlite/
 ~$*
 *~
 CodeCoverage/

@@ -1,5 +1,3 @@
-using Asgard.Hermod.Services;
-
 namespace Asgard.Hermod;
 
 /// <summary>
@@ -17,17 +15,14 @@ public partial class App : Application
         try
         {
             var services = new ServiceCollection();
+            services.AddHermodCore();
+            services.AddWindowsSecretProtection();
             services.AddLocalStorage(LocalDatabaseConfiguration.Load(args.Args));
+            services.AddObjectStorage();
+            services.AddAliyunOss();
             services.AddSingleton<ITerminalSessionFactory, LocalTerminalSessionFactory>();
-            services.AddSingleton<IInstanceEditor>(provider => new InstanceEditorService(() => MainWindow,
-                provider.GetRequiredService<IInstanceProviderRegistry>(),
-                provider.GetRequiredService<IInstanceConfigurationService>()));
-            services.AddSingleton<ISettingsEditor>(provider => new SettingsEditorService(() => MainWindow,
-                provider.GetRequiredService<ITagManagementService>()));
-            services.AddSingleton<IObjectStorageDialogService>(_ => new WindowsObjectStorageDialogService(() => MainWindow));
-            services.AddSingleton<IInstancePageProvider, ObjectStoragePageProvider>();
-            services.AddSingleton<IInstanceWorkspaceFactory, InstanceWorkspaceFactory>();
-            services.AddSingleton<IThemeService>(_ => new ThemeService(Resources));
+            services.AddHermodUi(() => MainWindow, Resources);
+            services.AddObjectStorageUi(() => MainWindow);
             var provider = services.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,

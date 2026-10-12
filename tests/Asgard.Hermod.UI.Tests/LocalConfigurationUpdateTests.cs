@@ -1,4 +1,3 @@
-using Asgard.Hermod.Infrastructure.Storage;
 
 namespace Asgard.Hermod.UI.Tests;
 
@@ -77,7 +76,7 @@ public sealed class LocalConfigurationUpdateTests
     public async Task UpdateAsync_RejectsChangingInstanceTypeOrProvider()
     {
         using var environment = new LocalStorageTestEnvironment();
-        var registration = new ServiceCollection().AddLocalStorage(environment.CreateConfiguration());
+        var registration = new ServiceCollection().AddHermodCore().AddWindowsSecretProtection().AddObjectStorage().AddAliyunOss().AddLocalStorage(environment.CreateConfiguration());
         registration.AddSingleton<IInstanceProvider>(new FakeStorageProvider("other-provider"));
         registration.AddSingleton<IInstanceProvider>(new FakeInstanceProvider(new("docker-provider", "Docker", "Docker", "container",
             new("docker", "Docker", "连接容器服务", "container"), [])));

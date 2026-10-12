@@ -1,6 +1,5 @@
 using System.Text;
-using Asgard.Hermod.Infrastructure.Security;
-using Asgard.Hermod.Infrastructure.Storage;
+using Asgard.Hermod.Abstractions.Security;
 
 namespace Asgard.Hermod.UI.Tests;
 

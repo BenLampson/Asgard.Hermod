@@ -1,40 +1,95 @@
-# Architecture planning
+# Module architecture
 
-Hermod is an open-source Windows management terminal in the Asgard ecosystem, built with C# and .NET 10+ using WPF.
+Hermod is a Windows management terminal built with C# 14, .NET 10 and WPF.
+Each capability is compiled as a separate project. `Asgard.Hermod` is the
+composition root: it chooses implementations, loads resources, initializes local
+storage and owns application startup and shutdown.
 
-English is the primary language of repository documentation. The application will support multiple languages.
+## Project responsibilities
 
-The broader application architecture remains under discussion. The current solution contains the WPF application shell, the independent terminal component, local SQLite storage, and their tests.
+| Project | Responsibility | Direct implementation dependencies |
+| --- | --- | --- |
+| `Asgard.Hermod` | Application entry point, main window, module composition and lifetime | Selected modules, DI container |
+| `Asgard.Hermod.Abstractions` | Instance, configuration, tag and workspace contracts; shared models; secret protection contract | None |
+| `Asgard.Hermod.Core` | Instance provider registry and configuration-backed workspace data source | Shared contracts, DI abstractions |
+| `Asgard.Hermod.UI` | WPF shell, shared controls, configuration and tag dialogs, workspace factory | Shared contracts, terminal, DI abstractions |
+| `Asgard.Hermod.Persistence.Sqlite` | SQLite configuration, migrations, repository, local instance and tag services | Shared contracts, Asgard.Core, FreeSql SQLite |
+| `Asgard.Hermod.Security.Windows` | Windows current-user DPAPI protection | Shared contracts, ProtectedData, DI abstractions |
+| `Asgard.Hermod.WinTerminal` | VT engine, rendering, WPF terminal control, ConPTY connections and local session adapter | Windows desktop framework |
+| `Asgard.Hermod.ObjectStorage.Abstractions` | Object storage models, service and client contracts | Shared contracts |
+| `Asgard.Hermod.ObjectStorage` | Resource client factory, connection probe, transfers, previews and deletion policies | Object storage contracts, DI abstractions |
+| `Asgard.Hermod.ObjectStorage.UI` | Object browser, feature dialogs, view models and page template | Shared UI, object storage contracts, DI abstractions |
+| `Asgard.Hermod.Providers.AliyunOss` | OSS signing, SDK clients, multipart upload and provider-specific HTTP policies | Object storage module, AlibabaCloud.OSS.V2, HTTP resilience |
 
-## Local storage
+Shared contracts, core services, SQLite persistence, and object storage contracts,
+operations and the OSS connector target `net10.0` without WPF. Presentation,
+terminal and DPAPI projects target `net10.0-windows`. No module references the
+application executable. Shared UI does not reference object storage, persistence
+or cloud connectors.
 
-The WPF application loads `app.yaml` through Asgard and registers the SQLite
-provider with its service container. Startup creates the per-user database and
-transactionally initializes its schema before opening the main window. Shutdown
-disposes the database connection pool. See the [local storage guide](local-storage.md)
-for configuration, schema versions, and persistence boundaries.
+## Composition
 
-## Terminal decision
+The application calls the independently owned registration entry points:
 
-`Asgard.Hermod.WinTerminal` is a Windows-only WPF library compiled from source in
-this repository. It starts from selected VirtualTerminal engine and rendering
-code, with Hermod's own control, session boundary, and ConPTY host. The application
-references it directly. No WebView2, xterm.js, Microsoft Terminal repackaging,
-Avalonia, or upstream VirtualTerminal NuGet dependency is installed.
+```csharp
+services.AddHermodCore();
+services.AddWindowsSecretProtection();
+services.AddLocalStorage(configuration);
+services.AddObjectStorage();
+services.AddAliyunOss();
+services.AddSingleton<ITerminalSessionFactory, LocalTerminalSessionFactory>();
+services.AddHermodUi(() => MainWindow, Resources);
+services.AddObjectStorageUi(() => MainWindow);
+```
+
+`AddLocalStorage` registers SQLite and local configuration/tag services. The host
+separately selects the `ISecretProtector` and `IInstanceProviderRegistry`
+implementations. Storage registration does not install cloud providers, HTTP
+clients, remote operations or presentation components.
+
+`AddAliyunOss` registers the OSS instance and resource providers, plus their named
+HTTP clients and resilience policies. Other providers can be registered alongside
+it using the same contracts. Provider keys are indexed by instance type and
+provider identity; duplicate registrations fail during startup validation.
+
+Startup validates the service container, initializes the database off the UI
+thread and opens the main window. Closing the application waits for workspace
+resources to be released before disposing the service container.
+
+## Adding capabilities
+
+A new instance connector references `Asgard.Hermod.Abstractions` and implements
+`IInstanceProvider`, including its metadata, configuration fields and connection
+check. Its project owns its SDK and registration method. The application opts
+into the connector by referencing the project and calling that method.
+
+An object storage connector additionally implements `IObjectStorageProvider` and
+`IObjectStorageClient` from the object storage contracts project. It can reuse the
+generic object storage module without depending on SQLite, WPF or the executable.
+
+A feature with its own UI supplies an `IInstancePageProvider` and a resource
+dictionary with a `DataTemplate` keyed by its workspace view model type. The host
+merges that resource dictionary. `WorkspaceContentHost` creates and caches the
+view through the template, then releases it when its page closes. The shared
+shell calls the common page initialization contract and observes title/close
+notifications without knowing the feature's concrete types.
+
+## Persistence and terminal
+
+The SQLite module retains the existing per-user database path, schema migrations
+and encrypted connection parameters. Windows DPAPI is selected through the
+separate credential protection module. See the [local storage guide](local-storage.md).
 
 The terminal accepts raw output bytes, emits input bytes and grid-size changes,
-and maintains screen state. Service SDKs, connection profiles, persistence, and
-cloud synchronization remain outside this component. Future connectors can attach
-their streams without making the renderer depend on their protocols.
+and maintains screen state. Its independent session adapter owns the local
+ConPTY process and terminal buffer. Cloud SDKs, connection profiles and
+persistence remain outside the terminal project. See the
+[terminal component guide](../src/Asgard.Hermod.WinTerminal/README.md).
 
-See the [component guide](../src/Asgard.Hermod.WinTerminal/README.md).
+## Verification
 
-## Topics for discussion
-
-- Application structure and presentation patterns.
-- Localization approach, initial languages, fallback behavior, and language selection.
-- Supported services and management workflows.
-- Authentication, authorization, and connection configuration.
-- Testing, accessibility, and distribution.
-
-No presentation framework, service integration, or localization mechanism has been selected yet.
+Run the solution build, format verification and test suite documented in the
+repository README. Module composition tests verify local startup without cloud
+providers, independent OSS registration, and assembly dependency boundaries.
+Workspace tests exercise feature templates, cached page reuse, lazy loading,
+connection editing and resource cleanup across project boundaries.
