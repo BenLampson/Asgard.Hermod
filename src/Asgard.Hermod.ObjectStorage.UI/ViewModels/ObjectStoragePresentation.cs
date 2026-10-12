@@ -31,18 +31,23 @@ internal static class ObjectStoragePresentation
         _ => "file-text"
     };
 
-    /// <summary>常见存储类型使用设计稿的中文名称。</summary>
+    /// <summary>存储类型协议值映射到当前界面语言。</summary>
     internal static string StorageClass(string value) => value switch
     {
-        "Standard" => "标准存储",
-        "IA" => "低频访问",
-        "Archive" => "归档存储",
-        "ColdArchive" => "冷归档存储",
-        "DeepColdArchive" => "深度冷归档",
+        "Standard" => Text.Get("StandardStorage"),
+        "IA" => Text.Get("InfrequentAccess"),
+        "Archive" => Text.Get("ArchiveStorage"),
+        "ColdArchive" => Text.Get("ColdArchiveStorage"),
+        "DeepColdArchive" => Text.Get("DeepColdArchive"),
         _ => value
     };
 
     /// <summary>未知异常使用固定文案，已清理的适配器错误才允许展示消息。</summary>
-    internal static string Error(Exception exception, string fallback) => exception is ObjectStorageException safe
-        ? safe.Message + (string.IsNullOrWhiteSpace(safe.ErrorCode) ? "" : "（" + safe.ErrorCode + "）") : fallback;
+    internal static string Error(Exception exception, string fallback)
+    {
+        if (exception.Data["Hermod.ResourceKey"] is not string) return fallback;
+        var message = Text.Error(exception);
+        return exception is ObjectStorageException { ErrorCode: { Length: > 0 } code }
+            ? Text.Format("MessageWithErrorCode", message, code) : message;
+    }
 }

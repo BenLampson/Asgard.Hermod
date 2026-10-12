@@ -31,33 +31,33 @@ public sealed class ObjectStorageConnectionProbe
         {
             IReadOnlyList<ObjectStorageBucket> buckets = await ReadBucketsAsync(options, cancellationToken).ConfigureAwait(false);
             if (buckets.Count == 0)
-                return Failure("no_bucket", "身份与容器列表读取已通过，但没有可用于验证读写的容器，请先创建或授权至少一个容器。");
+                return Failure("no_bucket", Text.Get("IdentityAndBucketListingPassedButNoBucketIsAvailableForReadWriteVerificationCreateOrA"));
             InstanceConnectionTestResult? lastFailure = null;
             foreach (ObjectStorageBucket bucket in buckets)
             {
                 if (cancellationToken.IsCancellationRequested)
                     return lastFailure is null
-                        ? Failure("cancelled", "读写连接测试已取消。")
-                        : lastFailure with { IsSuccessful = false, ErrorCode = "storage_probe_cancelled", Message = "读写连接测试已取消，已完成已知临时对象的清理。" };
+                        ? Failure("cancelled", Text.Get("ReadWriteConnectionTestCanceled"))
+                        : lastFailure with { IsSuccessful = false, ErrorCode = "storage_probe_cancelled", Message = Text.Get("ReadWriteConnectionTestCanceledKnownTemporaryObjectsWereCleanedUp") };
                 InstanceConnectionTestResult result = await VerifyBucketAsync(options, bucket, cancellationToken).ConfigureAwait(false);
                 if (result.RequiresAttentionAfterCancellation) return result;
                 if (cancellationToken.IsCancellationRequested)
-                    return result with { IsSuccessful = false, ErrorCode = "storage_probe_cancelled", Message = "读写连接测试已取消，已完成已知临时对象的清理。" };
+                    return result with { IsSuccessful = false, ErrorCode = "storage_probe_cancelled", Message = Text.Get("ReadWriteConnectionTestCanceledKnownTemporaryObjectsWereCleanedUp") };
                 if (result.IsSuccessful) return result;
                 lastFailure = result;
             }
-            return lastFailure ?? Failure("no_bucket", "没有可用于验证读写的容器。");
+            return lastFailure ?? Failure("no_bucket", Text.Get("NoBucketsAreAvailableForReadWriteVerification"));
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            return new(false, "读写连接测试已取消。", "storage_probe_cancelled", [new("候选容器读取", false)]);
+            return new(false, Text.Get("ReadWriteConnectionTestCanceled"), "storage_probe_cancelled", [new(Text.Get("CandidateBucketListing"), false)]);
         }
         catch (Exception)
         {
             if (cancellationToken.IsCancellationRequested)
-                return new(false, "读写连接测试已取消。", "storage_probe_cancelled", [new("候选容器读取", false)]);
-            return new(false, "无法读取候选容器，请检查容器读取权限、网络与实例配置。",
-                "storage_probe_list_failed", [new("候选容器读取", false)]);
+                return new(false, Text.Get("ReadWriteConnectionTestCanceled"), "storage_probe_cancelled", [new(Text.Get("CandidateBucketListing"), false)]);
+            return new(false, Text.Get("CannotReadCandidateBucketsCheckBucketReadPermissionsTheNetworkAndInstanceConfiguratio"),
+                "storage_probe_list_failed", [new(Text.Get("CandidateBucketListing"), false)]);
         }
     }
 
@@ -91,7 +91,7 @@ public sealed class ObjectStorageConnectionProbe
             client = _provider.CreateClient(options, bucket.Region);
             probeClient = client as IObjectStorageConnectionProbeClient;
             if (probeClient is null)
-                return Failure("unsupported", "当前服务商尚未提供支持精确版本清理的读写连接测试，无法确认完整连接能力。");
+                return Failure("unsupported", Text.Get("ThisProviderDoesNotYetOfferReadWriteTestsWithExactVersionCleanupFullConnectionCapabil"));
             cancellationToken.ThrowIfCancellationRequested();
             using var body = new MemoryStream(expected, writable: false);
             needsCleanup = true;
@@ -104,12 +104,12 @@ public sealed class ObjectStorageConnectionProbe
                 expected, cancellationToken).ConfigureAwait(false);
             read = matches && (versionId is null || versionId == actualVersion);
             if (!read)
-                failure = Failure("content_mismatch", $"容器 {bucket.Name} 的临时对象回读内容不一致，未通过读写验证。", written, read);
+                failure = Failure("content_mismatch", Text.Format("TemporaryObjectReadBackDidNotMatchInBucketReadWriteVerificationFailed", bucket.Name), written, read);
             else if (versionId is null) versionId = actualVersion;
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            failure = Failure("cancelled", "读写连接测试已取消，已完成已知临时对象的清理。", written, read);
+            failure = Failure("cancelled", Text.Get("ReadWriteConnectionTestCanceledKnownTemporaryObjectsWereCleanedUp"), written, read);
         }
         catch (ObjectStorageException error)
         {
@@ -127,12 +127,12 @@ public sealed class ObjectStorageConnectionProbe
             DisposeClient(client);
         }
         if (cleanupFailed)
-            return new(false, $"测试临时对象可能未清理，连接测试未通过。请在服务商控制台检查并删除。容器：{bucket.Name}；对象 Key：{key}。",
+            return new(false, Text.Format("TheTemporaryTestObjectMayRemainTheConnectionTestFailedCheckAndDeleteItInTheProviderCo", bucket.Name, key),
                 "storage_probe_cleanup_failed", Checks(written, read, false))
             { RequiresAttentionAfterCancellation = true };
         if (failure is not null)
             return failure with { Checks = Checks(written, read, needsCleanup ? true : null) };
-        return new(true, $"读写连接测试通过：已在容器 {bucket.Name} 验证随机临时对象的写入、回读和清理；验证结果仅覆盖该容器。",
+        return new(true, Text.Format("ReadWriteConnectionTestPassedRandomTemporaryObjectWriteReadBackAndCleanupWereVerified", bucket.Name),
             Checks: Checks(true, true, true));
     }
 
@@ -183,14 +183,14 @@ public sealed class ObjectStorageConnectionProbe
     private static InstanceConnectionTestResult StageFailure(string bucket, string stage, string? code, bool written, bool read)
     {
         if (code == "ProbePreflightFailed")
-            return Failure("preflight_failed", $"容器 {bucket} 的临时对象写入前检查未通过，未创建测试对象，请检查对象读取权限或网络后重试。", written, read);
+            return Failure("preflight_failed", Text.Format("ThePreWriteCheckFailedInBucketNoTestObjectWasCreatedCheckObjectReadPermissionsAndTheN", bucket), written, read);
         if (code is "FileAlreadyExists" or "ObjectAlreadyExists")
-            return Failure("conflict", $"容器 {bucket} 的随机测试对象发生名称冲突，已跳过且未删除既有对象。", written, read);
+            return Failure("conflict", Text.Format("TheRandomTestObjectNameConflictedInBucketItWasSkippedAndNoExistingObjectWasDeleted", bucket), written, read);
         if (code == "AccessDenied")
-            return Failure(stage + "_denied", $"容器 {bucket} 的临时对象{(stage == "write" ? "写入" : "回读")}被拒绝，请确认对应对象权限。", written, read);
+            return Failure(stage + "_denied", Text.Format("TemporaryObjectWasDeniedInBucketCheckTheCorrespondingObjectPermissions", bucket, (stage == "write" ? Text.Get("Write") : Text.Get("ReadBack"))), written, read);
         if (code == "RequestTimeout")
-            return Failure("timeout", $"容器 {bucket} 的临时对象{(stage == "write" ? "写入" : "回读")}超时，请检查网络后重试。", written, read);
-        return Failure(stage + "_failed", $"容器 {bucket} 的临时对象{(stage == "write" ? "写入" : "回读")}失败，请检查网络、凭据与对象权限。", written, read);
+            return Failure("timeout", Text.Format("TemporaryObjectTimedOutInBucketCheckYourNetworkAndTryAgain", bucket, (stage == "write" ? Text.Get("Write") : Text.Get("ReadBack"))), written, read);
+        return Failure(stage + "_failed", Text.Format("TemporaryObjectFailedInBucketCheckTheNetworkCredentialsAndObjectPermissions", bucket, (stage == "write" ? Text.Get("Write") : Text.Get("ReadBack"))), written, read);
     }
 
     /// <summary>失败检查只呈现已执行步骤，未创建对象时不伪造清理成功。</summary>
@@ -202,9 +202,9 @@ public sealed class ObjectStorageConnectionProbe
     {
         var checks = new List<InstanceConnectionCheck>
         {
-            new("候选容器读取", true), new("临时对象写入", written), new("临时对象回读", read),
+            new(Text.Get("CandidateBucketListing"), true), new(Text.Get("TemporaryObjectWrite"), written), new(Text.Get("TemporaryObjectReadBack"), read),
         };
-        if (cleaned is not null) checks.Add(new("临时对象清理", cleaned.Value));
+        if (cleaned is not null) checks.Add(new(Text.Get("TemporaryObjectCleanup"), cleaned.Value));
         return checks.AsReadOnly();
     }
 

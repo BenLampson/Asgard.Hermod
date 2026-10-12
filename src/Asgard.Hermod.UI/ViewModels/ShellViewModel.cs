@@ -51,9 +51,9 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     /// <summary>工作页状态。</summary>
     public WorkspaceViewModel Workspace { get; }
     /// <summary>当前使用设备上的用户级工作区。</summary>
-    public string WorkspaceName => "本地工作区";
+    public string WorkspaceName => Text.Get("LocalWorkspace");
     /// <summary>未接入身份服务时显示本地模式。</summary>
-    public string AccountName => "本地";
+    public string AccountName => Text.Get("Local");
     /// <summary>当前未接入账户登录。</summary>
     public bool IsSignedIn => false;
     /// <summary>当前程序集版本。</summary>

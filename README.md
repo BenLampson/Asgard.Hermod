@@ -2,7 +2,7 @@
 
 An open-source Windows management terminal for the Asgard ecosystem, built with C# 14, .NET 10, and Windows Presentation Foundation (WPF).
 
-English is the primary language for repository documentation, issues, and pull requests. The application will support multiple languages; localization details will be decided during architecture planning.
+English is the primary language for repository documentation, issues, and pull requests. The application supports English and Simplified Chinese, follows the Windows display language by default, and remembers manual language choices. Unsupported languages and missing translations fall back to English. See the [localization guide](docs/localization.md).
 
 ## Status
 

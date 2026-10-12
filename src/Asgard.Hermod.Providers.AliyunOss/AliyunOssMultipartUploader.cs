@@ -15,14 +15,14 @@ internal sealed class AliyunOssMultipartUploader(Oss.Client client)
     {
         long partSize = Math.Max(MinimumPartSize, (size + 9999) / 10000);
         if (partSize > 5L * 1024 * 1024 * 1024)
-            throw new ObjectStorageException("文件超过 OSS 分片上传的大小限制。", "FileTooLarge");
+            throw ObjectStorageException.FromResource("TheFileExceedsTheOSSMultipartUploadSizeLimit", "FileTooLarge");
         var initiated = await client.InitiateMultipartUploadAsync(new()
         {
             Bucket = bucket,
             Key = key,
             ForbidOverwrite = !overwrite,
         }, cancellationToken: cancellationToken).ConfigureAwait(false);
-        string uploadId = initiated.UploadId ?? throw new ObjectStorageException("OSS 返回了无效的分片上传响应。", "InvalidResponse");
+        string uploadId = initiated.UploadId ?? throw ObjectStorageException.FromResource("OSSReturnedAnInvalidMultipartUploadResponse", "InvalidResponse");
         bool completed = false;
         try
         {
@@ -45,7 +45,7 @@ internal sealed class AliyunOssMultipartUploader(Oss.Client client)
                     ProgressFn = (_, transferred, _) => ObjectStorageProgress.Report(progress, start + transferred, size),
                 }, cancellationToken: cancellationToken).ConfigureAwait(false);
                 if (string.IsNullOrWhiteSpace(part.ETag))
-                    throw new ObjectStorageException("OSS 返回了无效的分片校验响应。", "InvalidResponse");
+                    throw ObjectStorageException.FromResource("OSSReturnedAnInvalidMultipartChecksumResponse", "InvalidResponse");
                 parts.Add(new() { PartNumber = partNumber, ETag = part.ETag });
                 offset += length;
             }

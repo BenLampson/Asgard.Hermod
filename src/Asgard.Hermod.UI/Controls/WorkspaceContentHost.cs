@@ -69,7 +69,7 @@ public sealed class WorkspaceContentHost : ContentControl, IDisposable
         if (TryFindResource(new DataTemplateKey(page.GetType())) is DataTemplate template &&
             template.LoadContent() is FrameworkElement view)
             return view;
-        throw new NotSupportedException($"没有为页面类型 {page.GetType().Name} 注册内容视图。");
+        throw new NotSupportedException(Text.Format("NoContentViewIsRegisteredForPageType", page.GetType().Name));
     }
 
     /// <summary>接收关闭通知；必要时切回 UI 线程移除原生控件。</summary>

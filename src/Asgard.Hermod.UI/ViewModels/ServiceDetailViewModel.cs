@@ -10,8 +10,8 @@ public sealed class ServiceDetailViewModel : WorkspacePageViewModel
         HasConfiguration = instance.Summary.HasConfiguration;
         Name = snapshot?.Name ?? instance.DisplayName;
         Subtitle = snapshot?.Subtitle ?? (string.IsNullOrWhiteSpace(instance.Summary.Endpoint)
-            ? (HasConfiguration ? "实例配置已保存" : "No connector configured") : instance.Summary.Endpoint);
-        Status = snapshot?.Status ?? (HasConfiguration ? "已配置" : "Not configured");
+            ? (HasConfiguration ? Text.Get("InstanceConfigurationSaved") : Text.Get("NoConnectorConfigured")) : instance.Summary.Endpoint);
+        Status = snapshot?.Status ?? (HasConfiguration ? Text.Get("Configured") : Text.Get("NotConfigured"));
         StatusTone = snapshot?.StatusTone ?? StatusTone.Muted;
         IsPreview = snapshot?.IsPreview ?? false;
         HasDetails = snapshot is not null;
@@ -37,10 +37,10 @@ public sealed class ServiceDetailViewModel : WorkspacePageViewModel
     /// <summary>实例来源是否包含已经保存的类型与提供方配置。</summary>
     public bool HasConfiguration { get; }
     /// <summary>没有详情时区分已经保存的实例与未配置的旧导航条目。</summary>
-    public string PlaceholderTitle => HasConfiguration ? "实例已配置" : "No connector configured";
+    public string PlaceholderTitle => HasConfiguration ? Text.Get("InstanceConfigured") : Text.Get("NoConnectorConfigured");
     /// <summary>已保存实例说明详情尚未接入，不要求用户重复配置。</summary>
-    public string PlaceholderDescription => HasConfiguration ? "实例详情页面待接入。"
-        : "Add a service connection to view configuration, metrics and events.";
+    public string PlaceholderDescription => HasConfiguration ? Text.Get("InstanceDetailsAreNotYetAvailable")
+        : Text.Get("AddAServiceConnectionToViewConfigurationMetricsAndEvents");
     /// <summary>四项指标卡片。</summary>
     public IReadOnlyList<MetricValue> Metrics { get; }
     /// <summary>运行配置。</summary>

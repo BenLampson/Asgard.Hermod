@@ -1,3 +1,5 @@
+using Text = Asgard.Hermod.Abstractions.Localization.Text;
+
 namespace Asgard.Hermod.UI.Tests;
 
 /// <summary>区分持久化配置、未配置导航条目与已有详情，不推断远程连接状态。</summary>
@@ -5,7 +7,7 @@ public sealed class ServiceDetailViewModelTests
 {
     /// <summary>保存成功但详情尚未接入时，不再要求用户重复配置。</summary>
     [Theory]
-    [InlineData("", "实例配置已保存")]
+    [InlineData("", "InstanceConfigurationSaved")]
     [InlineData("https://oss-cn-hangzhou.aliyuncs.com", "https://oss-cn-hangzhou.aliyuncs.com")]
     public void SavedConfiguration_WithoutDetailsShowsConfiguredState(string endpoint, string subtitle)
     {
@@ -18,11 +20,11 @@ public sealed class ServiceDetailViewModelTests
         Assert.True(model.HasConfiguration);
         Assert.False(model.HasDetails);
         Assert.False(model.IsPreview);
-        Assert.Equal("已配置", model.Status);
+        Assert.Equal(Text.Get("Configured"), model.Status);
         Assert.Equal(StatusTone.Muted, model.StatusTone);
-        Assert.Equal(subtitle, model.Subtitle);
-        Assert.Equal("实例已配置", model.PlaceholderTitle);
-        Assert.Equal("实例详情页面待接入。", model.PlaceholderDescription);
+        Assert.Equal(endpoint.Length == 0 ? Text.Get(subtitle) : subtitle, model.Subtitle);
+        Assert.Equal(Text.Get("InstanceConfigured"), model.PlaceholderTitle);
+        Assert.Equal(Text.Get("InstanceDetailsAreNotYetAvailable"), model.PlaceholderDescription);
         Assert.Empty(model.Metrics);
         Assert.Empty(model.Configuration);
         Assert.Empty(model.Events);
@@ -32,9 +34,9 @@ public sealed class ServiceDetailViewModelTests
 
     /// <summary>缺少配置身份时保留未配置状态，不能将地址或部分身份当成保存成功。</summary>
     [Theory]
-    [InlineData("", "", "", "No connector configured")]
-    [InlineData("storage", "", "", "No connector configured")]
-    [InlineData("", "aliyun-oss", "", "No connector configured")]
+    [InlineData("", "", "", "NoConnectorConfigured")]
+    [InlineData("storage", "", "", "NoConnectorConfigured")]
+    [InlineData("", "aliyun-oss", "", "NoConnectorConfigured")]
     [InlineData("", "", "https://example.invalid", "https://example.invalid")]
     public void MissingConfiguration_WithoutDetailsKeepsUnconfiguredState(
         string typeId, string providerId, string endpoint, string subtitle)
@@ -47,11 +49,11 @@ public sealed class ServiceDetailViewModelTests
 
         Assert.False(model.HasConfiguration);
         Assert.False(model.HasDetails);
-        Assert.Equal("Not configured", model.Status);
+        Assert.Equal(Text.Get("NotConfigured"), model.Status);
         Assert.Equal(StatusTone.Muted, model.StatusTone);
-        Assert.Equal(subtitle, model.Subtitle);
-        Assert.Equal("No connector configured", model.PlaceholderTitle);
-        Assert.Equal("Add a service connection to view configuration, metrics and events.", model.PlaceholderDescription);
+        Assert.Equal(endpoint.Length == 0 ? Text.Get(subtitle) : subtitle, model.Subtitle);
+        Assert.Equal(Text.Get("NoConnectorConfigured"), model.PlaceholderTitle);
+        Assert.Equal(Text.Get("AddAServiceConnectionToViewConfigurationMetricsAndEvents"), model.PlaceholderDescription);
         Assert.False(model.RestartCommand.CanExecute(null));
         Assert.False(model.DeployCommand.CanExecute(null));
     }
@@ -65,7 +67,7 @@ public sealed class ServiceDetailViewModelTests
         ServiceEvent[] events = [new("Preview service created", "刚刚", "check", StatusTone.Success)];
         var snapshot = new ServiceSnapshot("Demo service", "Design preview", "Running",
             StatusTone.Success, true, metrics, configuration, events);
-        var instance = new InstanceItemViewModel(new InstanceSummary("demo", "demo", "预览", "server", []));
+        var instance = new InstanceItemViewModel(new InstanceSummary("demo", "demo", Text.Get("Preview"), "server", []));
 
         var model = new ServiceDetailViewModel(instance, snapshot);
 

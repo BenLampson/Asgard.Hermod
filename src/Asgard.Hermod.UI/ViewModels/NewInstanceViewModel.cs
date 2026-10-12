@@ -22,8 +22,8 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
         _registry = registry;
         _configurations = configurations;
         Types = registry.Types.ToArray();
-        Steps = [new(1, "选择类型"), new(2, "输入信息"), new(3, "测试连接"),
-            new(4, "保存位置"), new(5, "确认创建")];
+        Steps = [new(1, Text.Get("ChooseType")), new(2, Text.Get("EnterInformation")), new(3, Text.Get("TestConnection")),
+            new(4, Text.Get("SaveLocation")), new(5, Text.Get("ConfirmCreation"))];
         NextCommand = new RelayCommand(_ => GoNext(), _ => CanGoNext);
         PreviousCommand = new RelayCommand(_ => SetCurrentStep(CurrentStep - 1), _ => CanGoPrevious);
         CancelCommand = new RelayCommand(_ => Cancel(), _ => !_disposed && !IsSaving);
@@ -116,7 +116,7 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
     /// <summary>连接测试的当前结果。</summary>
     public InstanceConnectionTestState TestState { get; private set; }
     /// <summary>经过脱敏处理的连接测试说明。</summary>
-    public string TestMessage { get; private set; } = "点击开始测试，验证连接信息和访问权限。";
+    public string TestMessage { get; private set; } = Text.Get("ClickStartTestToVerifyConnectionInformationAndAccessPermissions");
     /// <summary>经过脱敏处理的服务商错误码。</summary>
     public string TestErrorCode { get; private set; } = "";
     /// <summary>连接器提供的真实检查项目。</summary>

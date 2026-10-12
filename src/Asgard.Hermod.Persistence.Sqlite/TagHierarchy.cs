@@ -11,25 +11,25 @@ internal static class TagHierarchy
         ArgumentNullException.ThrowIfNull(draft);
         string name = (draft.Name ?? "").Trim().Normalize(NormalizationForm.FormC);
         if (string.IsNullOrWhiteSpace(name) || name.Length > 80 || name.Contains('/') || name.Any(char.IsControl))
-            throw new InvalidOperationException("标签名称须为 1–80 个字符，且不能包含斜杠或控制字符。");
+            throw Text.Exception("TagNamesMustContain180CharactersAndNoSlashesOrControlCharacters");
         if (tagId is not null)
             EnsureEditable(tagId, tags);
         string? parentId = string.IsNullOrWhiteSpace(draft.ParentId) ? null : draft.ParentId;
         if (parentId is null && string.Equals(name, "Environment", StringComparison.OrdinalIgnoreCase))
-            throw new InvalidOperationException("Environment 是内置环境标签分组，请为自定义根标签使用其他名称。");
+            throw Text.Exception("EnvironmentIsABuiltInTagGroupUseADifferentNameForCustomRootTags");
         if (parentId is not null)
         {
             StoredTag? parent = tags.FirstOrDefault(tag => tag.Id == parentId);
             if (parent is null)
-                throw new InvalidOperationException("所选父标签不存在，请刷新后重试。");
+                throw Text.Exception("TheSelectedParentTagDoesNotExistRefreshAndTryAgain");
             if (parent.IsBuiltIn)
-                throw new InvalidOperationException("内置环境标签不能作为自定义标签的父级。");
+                throw Text.Exception("BuiltInEnvironmentTagsCannotBeParentsOfCustomTags");
             if (tagId is not null && GetSubtree(tagId, tags).Contains(parentId))
-                throw new InvalidOperationException("标签不能移动到自己或其后代之下。");
+                throw Text.Exception("ATagCannotBeMovedUnderItselfOrOneOfItsDescendants");
         }
         if (tags.Any(tag => tag.Id != tagId && tag.ParentId == parentId &&
             string.Equals(NameKey(tag.Name), NameKey(name), StringComparison.Ordinal)))
-            throw new InvalidOperationException("同一父级下已存在同名标签，名称不区分大小写。");
+            throw Text.Exception("ATagWithThisNameAlreadyExistsUnderThisParentNamesAreCaseInsensitive");
         return new TagEditDraft(name, parentId, NormalizeColor(draft.Color));
     }
 
@@ -38,9 +38,9 @@ internal static class TagHierarchy
     {
         StoredTag? tag = tags.FirstOrDefault(value => value.Id == tagId);
         if (tag is null)
-            throw new InvalidOperationException("标签不存在，请刷新后重试。");
+            throw Text.Exception("TheTagDoesNotExistRefreshAndTryAgain");
         if (tag.IsBuiltIn)
-            throw new InvalidOperationException("内置环境标签不能修改或删除。");
+            throw Text.Exception("BuiltInEnvironmentTagsCannotBeEditedOrDeleted");
     }
 
     /// <summary>固定大小写键配合数据库唯一索引，跨并发窗口仍保持同级唯一性。</summary>
@@ -52,7 +52,7 @@ internal static class TagHierarchy
         string color = (value ?? "").Trim();
         if ((color.Length != 4 && color.Length != 7) || color[0] != '#' ||
             !color[1..].All(Uri.IsHexDigit))
-            throw new InvalidOperationException("颜色须使用 #RGB 或 #RRGGBB 十六进制格式。");
+            throw Text.Exception("ColorsMustUseRGBOrRRGGBBHexadecimalFormat");
         return color.Length == 4
             ? $"#{color[1]}{color[1]}{color[2]}{color[2]}{color[3]}{color[3]}".ToUpperInvariant()
             : color.ToUpperInvariant();
@@ -83,7 +83,7 @@ internal static class TagHierarchy
             while (current is not null)
             {
                 if (!visited.Add(current.Id))
-                    throw new InvalidOperationException("标签层级数据损坏，请检查本地数据库。");
+                    throw Text.Exception("TagHierarchyDataIsCorruptedCheckTheLocalDatabase");
                 names.Push(current.Name);
                 current = current.ParentId is not null ? lookup.GetValueOrDefault(current.ParentId) : null;
             }

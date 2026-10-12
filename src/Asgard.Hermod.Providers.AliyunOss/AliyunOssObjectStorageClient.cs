@@ -75,12 +75,12 @@ public sealed partial class AliyunOssObjectStorageClient(Oss.Client client) : IO
             {
                 OssModels.GetObjectAclResult acl = await client.GetObjectAclAsync(new() { Bucket = bucket, Key = key },
                     ReadOptions, cancellationToken).ConfigureAwait(false);
-                accessControl = acl.Acl ?? "未知";
+                accessControl = acl.Acl ?? Text.Get("Unknown");
             }
             catch (Exception error) when (!cancellationToken.IsCancellationRequested && AliyunOssErrors.IsAccessDenied(error))
             {
                 // 对象读取权限不必包含 ACL 管理权限，保留已经确认的 HEAD 元信息。
-                accessControl = "读取权限未知";
+                accessControl = Text.Get("ReadPermissionsUnknown");
             }
             return new ObjectStorageObjectDetails(key, metadata.ContentLength ?? 0, ParseTimestamp(metadata.LastModified),
                 metadata.StorageClass ?? "Standard", metadata.ContentType ?? "application/octet-stream", accessControl);
@@ -154,7 +154,7 @@ public sealed partial class AliyunOssObjectStorageClient(Oss.Client client) : IO
             }, cancellationToken: cancellationToken).ConfigureAwait(false);
             HashSet<string> deleted = (result.DeletedObjects ?? []).Select(item => item.Key ?? "").ToHashSet(StringComparer.Ordinal);
             if (keys.Any(key => !deleted.Contains(key)))
-                throw new ObjectStorageException("部分对象删除失败，请刷新列表后重新确认剩余对象。", "PartialDelete");
+                throw ObjectStorageException.FromResource("SomeObjectsCouldNotBeDeletedRefreshTheListAndConfirmTheRemainingObjectsAgain", "PartialDelete");
             return true;
         }, cancellationToken);
 
@@ -179,7 +179,7 @@ public sealed partial class AliyunOssObjectStorageClient(Oss.Client client) : IO
     private static DateTimeOffset? ParseTimestamp(string? value) =>
         DateTimeOffset.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out DateTimeOffset result) ? result : null;
     /// <summary>无效响应不泄露正文或请求详情。</summary>
-    private static ObjectStorageException InvalidResponse() => new("OSS 返回了无法验证的对象响应，请稍后重试。", "InvalidResponse");
+    private static ObjectStorageException InvalidResponse() => ObjectStorageException.FromResource("OSSReturnedAnUnverifiableObjectResponseTryAgainLater", "InvalidResponse");
     /// <inheritdoc />
     public void Dispose() => client.Dispose();
 }

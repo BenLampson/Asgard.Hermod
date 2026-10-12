@@ -33,7 +33,7 @@ public static class ObjectStorageUploadPathMapper
             }
             string? parent = Directory.GetParent(Path.TrimEndingDirectorySeparator(fullPath))?.FullName;
             if (parent is null)
-                throw new ObjectStorageException("不能上传磁盘根目录，请选择文件夹。");
+                throw ObjectStorageException.FromResource("CannotUploadADriveRootSelectAFolder");
             var directories = new Stack<string>();
             directories.Push(fullPath);
             var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -41,7 +41,7 @@ public static class ObjectStorageUploadPathMapper
             {
                 token.ThrowIfCancellationRequested();
                 if (!visited.Add(directory))
-                    throw new ObjectStorageException("目录存在循环，请选择真实文件夹。");
+                    throw ObjectStorageException.FromResource("TheDirectoryContainsACycleSelectAnActualFolder");
                 foreach (string entry in Directory.EnumerateFileSystemEntries(directory))
                 {
                     token.ThrowIfCancellationRequested();
@@ -77,6 +77,6 @@ public static class ObjectStorageUploadPathMapper
     private static void RejectLink(FileAttributes attributes)
     {
         if (attributes.HasFlag(FileAttributes.ReparsePoint))
-            throw new ObjectStorageException("不能上传链接或重解析点，请选择真实文件和文件夹。");
+            throw ObjectStorageException.FromResource("CannotUploadLinksOrReparsePointsSelectActualFilesAndFolders");
     }
 }

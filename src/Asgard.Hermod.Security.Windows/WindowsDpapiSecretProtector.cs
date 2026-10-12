@@ -19,7 +19,7 @@ public sealed class WindowsDpapiSecretProtector : ISecretProtector
         catch (CryptographicException)
         {
             // 不把操作系统原始异常附加到面向界面的异常链。
-            throw new InvalidOperationException("无法保护连接凭据，请检查当前 Windows 用户的凭据保护状态。");
+            throw Text.Exception("CannotProtectConnectionCredentialsCheckCredentialProtectionForTheCurrentWindowsUser");
         }
         finally { CryptographicOperations.ZeroMemory(buffer); }
     }
@@ -34,7 +34,7 @@ public sealed class WindowsDpapiSecretProtector : ISecretProtector
         }
         catch (CryptographicException)
         {
-            throw new InvalidOperationException("无法读取此连接凭据，请使用原 Windows 用户或重新配置实例。");
+            throw Text.Exception("CannotReadTheseConnectionCredentialsUseTheOriginalWindowsUserOrConfigureTheInstanceAg");
         }
         finally { CryptographicOperations.ZeroMemory(buffer); }
     }

@@ -26,7 +26,7 @@ public partial class MainWindow : HermodWindow
     /// <summary>实际交互失败时由宿主提供用户可见反馈。</summary>
     private void OnCommandFailed(object? sender, Exception exception)
     {
-        var dialog = new MessageDialog("Hermod", exception.Message) { Owner = this };
+        var dialog = new MessageDialog(Text.Get("Hermod"), Text.Error(exception)) { Owner = this };
         dialog.ShowDialog();
     }
 

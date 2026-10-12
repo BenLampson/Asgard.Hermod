@@ -1,9 +1,10 @@
 <controls:HermodWindow x:Class="Asgard.Hermod.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI"
         xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI"
         xmlns:ui="clr-namespace:Asgard.Hermod.UI.Views.Shell;assembly=Asgard.Hermod.UI"
-        Title="Asgard Hermod" Width="1360" Height="860"
+        Title="{loc:Loc AsgardHermod}" Width="1360" Height="860"
         MinWidth="1000" MinHeight="620" WindowStartupLocation="CenterScreen">
     <controls:HermodWindow.CaptionContent>
         <ui:TitleBarView />

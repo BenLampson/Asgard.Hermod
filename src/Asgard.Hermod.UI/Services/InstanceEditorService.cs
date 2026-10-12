@@ -34,9 +34,9 @@ public sealed class InstanceEditorService : IInstanceEditor
     public async Task<InstanceSummary?> EditAsync(string instanceId)
     {
         var existing = _configurations.GetInstances().SingleOrDefault(instance => instance.Id == instanceId)
-            ?? throw new InvalidOperationException("这个实例已经不存在，请刷新实例列表。");
+            ?? throw Text.Exception("ThisInstanceNoLongerExistsRefreshTheInstanceList");
         var connection = await _configurations.GetConnectionAsync(instanceId)
-            ?? throw new InvalidOperationException("无法读取这个实例的配置，请重新打开后重试。");
+            ?? throw Text.Exception("CannotReadThisInstanceConfigurationReopenAndTryAgain");
         using var model = new NewInstanceViewModel(_providers, _configurations, existing, connection);
         var dialog = new NewInstanceWindow(model) { Owner = _getOwner() };
         return dialog.ShowDialog() == true ? model.CreatedInstance : null;

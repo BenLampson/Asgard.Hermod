@@ -46,22 +46,22 @@ public sealed class ObjectStorageConfirmationDialogViewModel : ObjectStorageDial
     {
         ArgumentNullException.ThrowIfNull(bucket);
         ArgumentNullException.ThrowIfNull(plan);
-        return new("删除对象", $"删除这 {plan.Keys.Count} 个对象？",
+        return new(Text.Get("DeleteObjects2"), Text.Format("DeleteTheseObjects", plan.Keys.Count),
             bucket.Name + (prefix.Length == 0 ? " /" : " / " + prefix.TrimEnd('/')), plan.Keys,
-            "将从 OSS 删除对象，操作不可直接撤销。", $"删除 {plan.Keys.Count} 个对象", true, true);
+            Text.Get("ObjectsWillBeDeletedFromOSSThisActionCannotBeDirectlyUndone"), Text.Format("DeleteObjects", plan.Keys.Count), true, true);
     }
 
     /// <summary>逐项询问策略下清楚展示将被覆盖的对象键。</summary>
     public static ObjectStorageConfirmationDialogViewModel ForOverwrite(string key)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(key);
-        return new("覆盖同名对象", "覆盖这个同名对象？", "", [key],
-            "此对象已存在，上传后将替换当前内容。", "覆盖并上传", true, true);
+        return new(Text.Get("OverwriteExistingObjects"), Text.Get("OverwriteThisExistingObject"), "", [key],
+            Text.Get("ThisObjectAlreadyExistsUploadingWillReplaceItsCurrentContent"), Text.Get("OverwriteAndUpload"), true, true);
     }
 
     /// <summary>系统剪贴板失败等提示同样复用业务窗体，不使用系统消息框。</summary>
     public static ObjectStorageConfirmationDialogViewModel ForNotice(string title, string message) =>
-        new(title, title, "", [], message, "关闭", false, false);
+        new(title, title, "", [], message, Text.Get("Close"), false, false);
 
     /// <summary>关闭后的确认不得触发另一轮操作。</summary>
     public override void Dispose()

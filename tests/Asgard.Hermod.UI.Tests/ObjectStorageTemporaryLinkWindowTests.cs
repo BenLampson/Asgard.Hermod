@@ -1,5 +1,5 @@
-using Asgard.Hermod.UI.Views.Dialogs;
 using System.Windows.Media.Imaging;
+using Asgard.Hermod.UI.Views.Dialogs;
 
 namespace Asgard.Hermod.UI.Tests;
 

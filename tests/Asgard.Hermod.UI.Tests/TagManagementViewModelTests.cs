@@ -1,3 +1,5 @@
+using Text = Asgard.Hermod.Abstractions.Localization.Text;
+
 namespace Asgard.Hermod.UI.Tests;
 
 /// <summary>验证固定环境、搜索上下文、刷新选择和编辑服务协调。</summary>
@@ -150,7 +152,7 @@ public sealed class TagManagementViewModelTests
         await model.InitializeAsync(TestContext.Current.CancellationToken);
         Assert.False(model.IsInitialized);
         Assert.False(model.IsEmpty);
-        Assert.Equal("数据源暂不可用", model.Error);
+        Assert.Equal(Text.Get("TheOperationFailedTryAgain"), model.Error);
 
         service.ReadFailure = null;
         await model.RetryCommand.ExecuteAsync();

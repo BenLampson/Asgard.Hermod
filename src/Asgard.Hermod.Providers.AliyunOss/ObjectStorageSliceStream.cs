@@ -13,7 +13,7 @@ internal sealed class ObjectStorageSliceStream : Stream
     /// <summary>分片不拥有源流，并要求源文件支持随机定位。</summary>
     public ObjectStorageSliceStream(Stream source, long offset, long length)
     {
-        if (!source.CanRead || !source.CanSeek) throw new ArgumentException("上传源流必须可读且支持定位。", nameof(source));
+        if (!source.CanRead || !source.CanSeek) throw new ArgumentException(Text.Get("TheUploadSourceStreamMustBeReadableAndSeekable"), nameof(source));
         _source = source;
         _offset = offset;
         _length = length;

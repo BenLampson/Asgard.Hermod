@@ -70,7 +70,7 @@ public sealed partial class AliyunOssObjectStorageClient
             // 未指定版本的删除可能只创建标记；这种响应不能证明临时数据已清理。
             if (result.DeleteMarker == true || versionId is not null && result.VersionId is not null &&
                 !string.Equals(versionId, result.VersionId, StringComparison.Ordinal))
-                throw new ObjectStorageException("OSS 未确认临时对象的精确版本已永久删除，请检查服务商控制台。", "ProbeCleanupIncomplete");
+                throw ObjectStorageException.FromResource("OSSDidNotConfirmPermanentDeletionOfTheExactTemporaryObjectVersionCheckTheProviderCons", "ProbeCleanupIncomplete");
             return true;
         }, token);
 
@@ -89,16 +89,16 @@ public sealed partial class AliyunOssObjectStorageClient
         catch (Exception)
         {
             ThrowIfProbePreflightCancelled(token);
-            throw new ObjectStorageException("临时对象写入前的检查失败，未尝试创建测试对象。", "ProbePreflightFailed");
+            throw ObjectStorageException.FromResource("ThePreWriteCheckFailedNoTestObjectCreationWasAttempted", "ProbePreflightFailed");
         }
-        throw new ObjectStorageException("随机测试对象已存在，未尝试写入或删除该对象。", "FileAlreadyExists");
+        throw ObjectStorageException.FromResource("TheRandomTestObjectAlreadyExistsNoWriteOrDeletionWasAttempted", "FileAlreadyExists");
     }
 
     /// <summary>PUT 尚未开始时的取消明确表示没有写入，上层不必用回读猜测或提示未知残留。</summary>
     private static void ThrowIfProbePreflightCancelled(CancellationToken token)
     {
         if (token.IsCancellationRequested)
-            throw new ObjectStorageException("临时对象写入前的检查已取消，未尝试创建测试对象。", "ProbePreflightFailed");
+            throw ObjectStorageException.FromResource("ThePreWriteCheckWasCanceledNoTestObjectCreationWasAttempted", "ProbePreflightFailed");
     }
 
     /// <summary>保留调用方可识别的安全拒绝码，其余明确拒绝采用固定文案和状态。</summary>
@@ -108,7 +108,7 @@ public sealed partial class AliyunOssObjectStorageClient
         return translated.ErrorCode is "AccessDenied" or "AuthenticationFailed" or "NoSuchBucket" or
             "FileAlreadyExists" or "PreconditionFailed"
             ? translated
-            : new ObjectStorageException("OSS 已拒绝临时对象的写入请求，未创建测试对象。", fallbackCode);
+            : ObjectStorageException.FromResource("OSSRejectedTheTemporaryObjectWriteRequestNoTestObjectWasCreated", fallbackCode);
     }
 
     /// <summary>SDK 包装异常只在适配边界展开，不把第三方请求或诊断内容传给调用方。</summary>

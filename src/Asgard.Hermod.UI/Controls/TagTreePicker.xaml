@@ -1,6 +1,7 @@
 <UserControl x:Class="Asgard.Hermod.UI.Controls.TagTreePicker"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization"
              xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
              xmlns:models="clr-namespace:Asgard.Hermod.Abstractions.Models;assembly=Asgard.Hermod.Abstractions"
              xmlns:sys="clr-namespace:System;assembly=System.Runtime"
@@ -148,10 +149,10 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Margin="16">
                 <Grid Height="18">
-                    <TextBlock Text="Filter by tags" FontSize="14" FontWeight="SemiBold" />
+                    <TextBlock Text="{loc:Loc FilterByTags}" FontSize="14" FontWeight="SemiBold" />
                     <Button Style="{DynamicResource IconButton}" Width="15" Height="15" Padding="0"
                             HorizontalAlignment="Right" Command="{Binding CancelCommand}"
-                            AutomationProperties.Name="Cancel tag filters" ToolTip="Close">
+                            AutomationProperties.Name="{loc:Loc CancelTagFilters}" ToolTip="{loc:Loc Close}">
                         <controls:IconView Kind="x" Width="15" Height="15" Foreground="{DynamicResource TextMutedBrush}" />
                     </Button>
                 </Grid>
@@ -177,8 +178,8 @@
                         <TextBox x:Name="SearchInput" Grid.Column="2" Style="{DynamicResource SearchTextBox}"
                                  FontSize="12" Foreground="{DynamicResource TextBodyBrush}"
                                  Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                                 AutomationProperties.Name="Search tags or paths" />
-                        <TextBlock Grid.Column="2" Text="Search tags or paths…" FontSize="12"
+                                 AutomationProperties.Name="{loc:Loc SearchTagsOrPaths}" />
+                        <TextBlock Grid.Column="2" Text="{loc:Loc SearchTagsOrPaths2}" FontSize="12"
                                    Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" IsHitTestVisible="False">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
@@ -198,11 +199,11 @@
                               Padding="0" BorderThickness="0" Background="Transparent" FontSize="11"
                               HorizontalAlignment="Left" SelectedValuePath="Tag"
                               SelectedValue="{Binding MatchMode, Mode=TwoWay}"
-                              AutomationProperties.Name="Tag matching mode">
-                        <ComboBoxItem Content="Match any selected" Tag="{x:Static models:TagFilterMatchMode.Any}" />
-                        <ComboBoxItem Content="Match all selected" Tag="{x:Static models:TagFilterMatchMode.All}" />
+                              AutomationProperties.Name="{loc:Loc TagMatchingMode}">
+                        <ComboBoxItem Content="{loc:Loc MatchAnySelected}" Tag="{x:Static models:TagFilterMatchMode.Any}" />
+                        <ComboBoxItem Content="{loc:Loc MatchAllSelected}" Tag="{x:Static models:TagFilterMatchMode.All}" />
                     </ComboBox>
-                    <TextBlock Text="{Binding TotalTagCount, StringFormat={}{0} tags}" FontSize="11"
+                    <TextBlock Text="{Binding TotalTagCount, StringFormat={loc:Loc Tags}}" FontSize="11"
                                Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center" />
                 </Grid>
             </StackPanel>
@@ -246,7 +247,7 @@
                                             </Grid.ColumnDefinitions>
                                             <Button Width="12" Height="20" Padding="0" BorderThickness="0"
                                                     Background="Transparent" Command="{Binding ToggleExpansionCommand}"
-                                                    AutomationProperties.Name="{Binding Name, StringFormat='Expand {0}'}">
+                                                    AutomationProperties.Name="{Binding DisplayName, StringFormat={loc:Loc ExpandTag}}">
                                                 <Button.Style>
                                                     <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
                                                         <Style.Triggers>
@@ -285,7 +286,7 @@
                                                                 </Style>
                                                             </Ellipse.Style>
                                                         </Ellipse>
-                                                    <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="12" TextTrimming="CharacterEllipsis">
+                                                    <TextBlock Grid.Column="1" Text="{Binding DisplayName}" FontSize="12" TextTrimming="CharacterEllipsis">
                                                         <TextBlock.Style>
                                                             <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
                                                                 <Setter Property="Foreground" Value="{DynamicResource TextBodyBrush}" />
@@ -311,7 +312,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </ScrollViewer>
-                    <TextBlock Text="No matching tags" Foreground="{DynamicResource TextMutedBrush}"
+                    <TextBlock Text="{loc:Loc NoMatchingTags}" Foreground="{DynamicResource TextMutedBrush}"
                                Margin="10,8" HorizontalAlignment="Left" VerticalAlignment="Top">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
@@ -345,7 +346,7 @@
                             <DataTemplate>
                                 <Button Style="{StaticResource TagPathChip}" Margin="0,8,6,0" ToolTip="{Binding}"
                                         Command="{Binding Model.RemoveSelectedCommand, RelativeSource={RelativeSource AncestorType=controls:TagTreePicker}}"
-                                        CommandParameter="{Binding}" AutomationProperties.Name="{Binding StringFormat='Remove {0}'}">
+                                        CommandParameter="{Binding}" AutomationProperties.Name="{Binding StringFormat={loc:Loc RemoveTag}}">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="{Binding Converter={StaticResource TagPathDisplay}}" FontSize="10" MaxWidth="280" TextTrimming="CharacterEllipsis"
                                                    Foreground="{DynamicResource AccentTextBrush}" VerticalAlignment="Center" Margin="0,0,6,0" />
@@ -361,7 +362,7 @@
                 <Grid>
                     <Button Style="{DynamicResource IconButton}" Width="Auto" Height="32" Padding="0"
                             HorizontalAlignment="Left" Command="{Binding ClearCommand}">
-                        <TextBlock Text="Clear all" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" />
+                        <TextBlock Text="{loc:Loc ClearAll}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" />
                     </Button>
                     <Button Style="{DynamicResource PrimaryButton}" Height="32" Padding="14,0" FontWeight="SemiBold"
                             HorizontalAlignment="Right" Command="{Binding ApplyCommand}">

@@ -10,11 +10,11 @@ internal static class ObjectStorageMenuFactory
         FrameworkElement target, bool includeDownload = true, PlacementMode placement = PlacementMode.Bottom)
     {
         var menu = new ContextMenu { PlacementTarget = target, Placement = placement, Width = 244 };
-        if (includeDownload) menu.Items.Add(Item("下载", "download", model.DownloadCommand, row));
-        menu.Items.Add(Item("复制 Object Key", "copy", model.CopyKeyCommand, row));
-        menu.Items.Add(Item("生成临时链接…", "link", model.TemporaryLinkCommand, row));
+        if (includeDownload) menu.Items.Add(Item(Text.Get("Download"), "download", model.DownloadCommand, row));
+        menu.Items.Add(Item(Text.Get("CopyObjectKey"), "copy", model.CopyKeyCommand, row));
+        menu.Items.Add(Item(Text.Get("GenerateTemporaryLink2"), "link", model.TemporaryLinkCommand, row));
         menu.Items.Add(new Separator());
-        var delete = Item("删除对象…", "trash-2", model.DeleteCommand, row);
+        var delete = Item(Text.Get("DeleteObjects3"), "trash-2", model.DeleteCommand, row);
         delete.SetResourceReference(Control.ForegroundProperty, "DangerBrush");
         menu.Items.Add(delete);
         target.ContextMenu = menu;

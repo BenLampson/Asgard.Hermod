@@ -6,7 +6,7 @@ public sealed class TerminalWorkspaceViewModel : WorkspacePageViewModel
     private readonly ITerminalSessionFactory _factory;
     private readonly Dispatcher _dispatcher;
     private ITerminalWorkspaceSession? _session;
-    private string _status = "Starting";
+    private string _status = Text.Get("Starting");
     private string? _error;
     private bool _isRunning;
 
@@ -27,7 +27,7 @@ public sealed class TerminalWorkspaceViewModel : WorkspacePageViewModel
     /// <summary>当前终端会话；关闭开始时同步变为 null。</summary>
     public TerminalSession? Session => IsClosed ? null : _session?.Terminal;
     /// <summary>当前 Shell 类型。</summary>
-    public string Subtitle => "Local · " + (_session?.DisplayName ?? "Windows PowerShell");
+    public string Subtitle => Text.Get("Local2") + (_session?.DisplayName ?? "Windows PowerShell");
     /// <summary>进程状态或退出码。</summary>
     public string Status { get => _status; private set => SetProperty(ref _status, value); }
     /// <summary>可供用户阅读的启动或通信错误。</summary>
@@ -58,7 +58,7 @@ public sealed class TerminalWorkspaceViewModel : WorkspacePageViewModel
         try
         {
             _session = _factory.OpenLocal();
-            Status = "Running";
+            Status = Text.Get("Running");
             IsRunning = true;
             OnPropertyChanged(nameof(Session));
             OnPropertyChanged(nameof(Subtitle));
@@ -67,9 +67,9 @@ public sealed class TerminalWorkspaceViewModel : WorkspacePageViewModel
         catch (Exception exception)
         {
             _session = null;
-            Status = "Failed to start";
+            Status = Text.Get("FailedToStart");
             IsRunning = false;
-            Error = exception.Message;
+            Error = Text.Error(exception, "CannotStartTheTerminalCheckTheShellAndAccessPermissionsThenTryAgain");
             OnPropertyChanged(nameof(Session));
             OnPropertyChanged(nameof(CanRetry));
             RetryCommand.NotifyCanExecuteChanged();
@@ -84,12 +84,12 @@ public sealed class TerminalWorkspaceViewModel : WorkspacePageViewModel
         try
         {
             int exitCode = await observed.Completion.ConfigureAwait(false);
-            status = $"Exited ({exitCode})";
+            status = Text.Format("Exited", exitCode);
         }
         catch (Exception exception)
         {
-            status = "Disconnected";
-            error = exception.Message;
+            status = Text.Get("Disconnected");
+            error = Text.Error(exception, "TheTerminalConnectionWasInterruptedOpenANewSessionOrTryAgain");
         }
         if (_dispatcher.HasShutdownStarted)
             return;

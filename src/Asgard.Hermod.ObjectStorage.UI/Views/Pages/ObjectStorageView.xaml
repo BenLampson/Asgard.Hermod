@@ -1,6 +1,7 @@
 <UserControl x:Class="Asgard.Hermod.ObjectStorage.UI.Views.Pages.ObjectStorageView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI"
              xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI"
              xmlns:pages="clr-namespace:Asgard.Hermod.ObjectStorage.UI.Views.Pages"
              Background="{DynamicResource SurfaceBrush}" FontFamily="{DynamicResource UiFont}">
@@ -25,7 +26,7 @@
                 </ItemsControl>
                 <controls:StatusBadge Grid.Column="4" Text="{Binding Status}" Tone="{Binding StatusTone}" IsInline="True" VerticalAlignment="Center" Margin="10,0,14,0" />
                 <Button Grid.Column="5" x:Name="EditConnectionButton" Command="{Binding EditConnectionCommand}" Width="32" Height="32" Padding="7"
-                        ToolTip="{Binding EditConnectionHint}" ToolTipService.ShowOnDisabled="True" AutomationProperties.Name="编辑对象存储连接">
+                        ToolTip="{Binding EditConnectionHint}" ToolTipService.ShowOnDisabled="True" AutomationProperties.Name="{loc:Loc EditObjectStorageConnection}">
                     <controls:IconView Kind="settings-2" Width="16" Height="16" Foreground="{DynamicResource TextMutedBrush}" />
                 </Button>
             </Grid>

@@ -10,6 +10,9 @@ public partial class App : Application
     /// <summary>装配宿主服务，完成本地数据库初始化后再打开主窗口。</summary>
     protected override async void OnStartup(StartupEventArgs args)
     {
+        // 捕获 Windows 用户的显示语言，避免手动偏好覆盖后失去系统语言来源。
+        var systemCulture = System.Globalization.CultureInfo.CurrentUICulture;
+        Text.Initialize(null, systemCulture);
         base.OnStartup(args);
         ShutdownMode = ShutdownMode.OnExplicitShutdown;
         try
@@ -31,6 +34,8 @@ public partial class App : Application
             _services = provider;
             // SQLite 驱动执行同步 I/O，在后台完成连接和迁移，保持 Dispatcher 可用。
             await Task.Run(() => provider.GetRequiredService<LocalDatabaseInitializer>().Initialize());
+            var languageStore = provider.GetRequiredService<ILanguagePreferenceStore>();
+            Text.Initialize(languageStore.Load(), systemCulture);
             // 外壳由窗口拥有，窗口会在关闭前异步释放终端。
             var shell = ActivatorUtilities.CreateInstance<ShellViewModel>(provider);
             await shell.InitializeAsync();
@@ -41,7 +46,8 @@ public partial class App : Application
         catch (Exception exception)
         {
             // 持久化不可用时给出明确反馈，不能让用户在无法保存的状态下继续操作。
-            var dialog = new MessageDialog("Unable to start Hermod", exception.Message);
+            var dialog = new MessageDialog(Text.Get("UnableToStartHermod"),
+                Text.Error(exception, "CannotStartHermodCheckLocalStorageConfigurationAndPermissions"));
             dialog.ShowDialog();
             Shutdown(1);
         }

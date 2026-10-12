@@ -39,13 +39,13 @@ public sealed class ObjectStorageFolderDialogViewModel : ObjectStorageDialogView
     {
         string name = value.Trim();
         if (name.Length == 0)
-            return "请输入文件夹名称。";
+            return Text.Get("EnterAFolderName");
         if (name.Contains('/') || name.Contains('\\'))
-            return "名称不可包含 / 或 \\。";
+            return Text.Get("NamesCannotContainOr");
         if (value.Any(char.IsControl))
-            return "名称不可包含控制字符。";
+            return Text.Get("NamesCannotContainControlCharacters");
         if (name.All(character => character == '.'))
-            return "名称不能只包含点。";
+            return Text.Get("NamesCannotConsistOnlyOfDots");
         return "";
     }
 

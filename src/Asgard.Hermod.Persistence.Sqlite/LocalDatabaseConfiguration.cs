@@ -9,17 +9,17 @@ public sealed class LocalDatabaseConfiguration
         ArgumentNullException.ThrowIfNull(database);
         database.Validate();
         if (!database.Enabled)
-            throw new InvalidOperationException("Hermod requires local database storage to be enabled.");
+            throw Text.Exception("HermodRequiresLocalDatabaseStorageToBeEnabled");
         if (!string.Equals(database.Provider, "sqlite", StringComparison.OrdinalIgnoreCase))
-            throw new InvalidOperationException("Hermod local storage requires the SQLite provider.");
+            throw Text.Exception("HermodLocalStorageRequiresTheSQLiteProvider");
 
         var connection = new SQLiteConnectionStringBuilder(database.ConnectionString);
         if (string.IsNullOrWhiteSpace(connection.DataSource)
             || string.Equals(connection.DataSource, ":memory:", StringComparison.OrdinalIgnoreCase)
             || !string.IsNullOrEmpty(connection.Uri) || !string.IsNullOrEmpty(connection.FullUri))
-            throw new InvalidOperationException("Hermod local storage requires a database file path.");
+            throw Text.Exception("HermodLocalStorageRequiresADatabaseFilePath");
         if (connection.ReadOnly)
-            throw new InvalidOperationException("Hermod local storage requires a writable database.");
+            throw Text.Exception("HermodLocalStorageRequiresAWritableDatabase");
 
         // 安装目录和进程工作目录可能不可写，始终以用户数据目录解析相对路径。
         dataDirectory ??= Path.Combine(

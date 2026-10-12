@@ -1,3 +1,5 @@
+using Text = Asgard.Hermod.Abstractions.Localization.Text;
+
 namespace Asgard.Hermod.UI.Tests;
 
 /// <summary>验证重新读取时分页游标失效，失败重试与迟到响应不能混用查询。</summary>
@@ -33,7 +35,7 @@ public sealed class ObjectStoragePagingTests
             : model.RefreshAsync(TestContext.Current.CancellationToken);
         bool hadMoreDuringRead = model.HasMore;
         bool couldContinueDuringRead = model.LoadMoreCommand.CanExecute(null);
-        failedResponse.SetException(new ObjectStorageException("读取对象失败", "AccessDenied"));
+        failedResponse.SetException(ObjectStorageException.FromResource("InsufficientPermissionsCheckTheInstanceCredentialsAndAccessPolicy", "AccessDenied"));
         await failedRead;
 
         Assert.False(hadMoreDuringRead);

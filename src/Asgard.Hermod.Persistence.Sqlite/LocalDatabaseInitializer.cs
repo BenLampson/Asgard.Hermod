@@ -28,8 +28,7 @@ public sealed class LocalDatabaseInitializer
         command.CommandText = "PRAGMA user_version;";
         int version = Convert.ToInt32(command.ExecuteScalar(), CultureInfo.InvariantCulture);
         if (version < 0 || version > CurrentSchemaVersion)
-            throw new InvalidOperationException(
-                $"Database schema version {version} is unsupported. This version of Hermod supports schema {CurrentSchemaVersion}.");
+            throw Text.Exception("DatabaseSchemaVersionIsUnsupportedThisVersionOfHermodSupportsSchema", version, CurrentSchemaVersion);
 
         if (version == 0)
         {

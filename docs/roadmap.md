@@ -9,6 +9,7 @@ This roadmap describes intended direction, not committed release dates.
 - [ ] Add endpoint profiles and connection diagnostics.
 - [ ] Integrate authentication and authorization using the selected service contracts.
 - [ ] Add service administration views and meaningful automated tests.
-- [ ] Agree on application architecture and multilingual behavior.
-- [ ] Implement localization and verify accessibility.
+- [x] Agree on application architecture and multilingual behavior.
+- [x] Implement English/Chinese localization with Windows detection and saved preferences.
+- [ ] Complete accessibility verification.
 - [ ] Establish signed distribution and release packaging.

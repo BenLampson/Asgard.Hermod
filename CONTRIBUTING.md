@@ -16,7 +16,7 @@ Contributions to Asgard Hermod are welcome. English is the primary language for 
 
 - Follow `.editorconfig`; use nullable reference types and C# 14.
 - Keep one class per file and files under 400 lines where practical.
-- Application architecture and localization conventions will be agreed in a later discussion.
+- Follow `AGENTS.md` and [the localization guide](docs/localization.md). All application-owned display text must use shared resources, with English and Chinese translations and English fallback.
 - Document public APIs and non-obvious behavior following Asgard code conventions.
 - Do not commit credentials, local settings, build outputs, or personal data.
 - Add meaningful automated tests when introducing business behavior. New .NET unit tests should use xUnit v3.

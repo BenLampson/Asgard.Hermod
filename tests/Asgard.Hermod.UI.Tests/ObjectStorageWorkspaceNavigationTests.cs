@@ -1,3 +1,5 @@
+using Text = Asgard.Hermod.Abstractions.Localization.Text;
+
 namespace Asgard.Hermod.UI.Tests;
 
 /// <summary>验证惰性读取、分页、目录取消和错误恢复，不访问真实服务。</summary>
@@ -77,7 +79,7 @@ public sealed class ObjectStorageWorkspaceNavigationTests
         var service = new ObjectStorageTestService();
         service.ListBucketsHandler = (_, _) =>
         {
-            if (safe) throw new ObjectStorageException("访问被拒绝", "AccessDenied");
+            if (safe) throw ObjectStorageException.FromResource("InsufficientPermissionsCheckTheInstanceCredentialsAndAccessPolicy", "AccessDenied");
             throw new InvalidOperationException("secret-key=do-not-show");
         };
         await using var model = Create(service);

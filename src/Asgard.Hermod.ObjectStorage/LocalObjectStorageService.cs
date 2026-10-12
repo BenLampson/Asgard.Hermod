@@ -33,11 +33,11 @@ public sealed class LocalObjectStorageService : IObjectStorageService
             string queryPrefix = prefix + (search ?? "").Trim();
             ValidateKey(queryPrefix, allowEmpty: true);
             if (continuationToken?.Length > 16384 || continuationToken?.Any(char.IsControl) == true)
-                throw new ObjectStorageException("对象列表游标无效，请刷新列表。", "InvalidContinuationToken");
+                throw ObjectStorageException.FromResource("InvalidObjectListCursorRefreshTheList", "InvalidContinuationToken");
             ObjectStoragePage page = await client.ListObjectsAsync(bucket.Name, queryPrefix, continuationToken, "/", 100,
                 cancellationToken).ConfigureAwait(false);
             if (page.Entries.Any(entry => !entry.Key.StartsWith(queryPrefix, StringComparison.Ordinal)))
-                throw new ObjectStorageException("对象列表返回了无效范围，请刷新重试。", "InvalidResponse");
+                throw ObjectStorageException.FromResource("TheObjectListReturnedAnInvalidRangeRefreshAndTryAgain", "InvalidResponse");
             return page with { Entries = page.Entries.Where(entry => entry.Key != prefix).ToArray() };
         }, cancellationToken);
 
@@ -106,7 +106,7 @@ public sealed class LocalObjectStorageService : IObjectStorageService
                         ObjectStorageProgress.Report(progress, transferred, remote.Size);
                     }
                     if (remote.Size >= 0 && transferred != remote.Size)
-                        throw new ObjectStorageException("下载内容不完整，请检查网络后重试。", "IncompleteDownload");
+                        throw ObjectStorageException.FromResource("TheDownloadIsIncompleteCheckYourNetworkAndTryAgain", "IncompleteDownload");
                     await file.FlushAsync(cancellationToken).ConfigureAwait(false);
                 }
                 cancellationToken.ThrowIfCancellationRequested();
@@ -131,13 +131,13 @@ public sealed class LocalObjectStorageService : IObjectStorageService
             string folderName = (name ?? "").Trim();
             if (folderName.Length == 0 || folderName is "." or ".." ||
                 folderName.Any(value => char.IsControl(value) || value is '/' or '\\'))
-                throw new ObjectStorageException("目录名称不能为空，也不能包含斜杠或控制字符。", "InvalidFolderName");
+                throw ObjectStorageException.FromResource("DirectoryNamesCannotBeEmptyOrContainSlashesOrControlCharacters", "InvalidFolderName");
             string fileKey = prefix + folderName;
             string folderKey = fileKey + "/";
             ValidateKey(folderKey);
             if (await client.ObjectExistsAsync(bucket.Name, fileKey, cancellationToken).ConfigureAwait(false) ||
                 (await client.ListObjectsAsync(bucket.Name, folderKey, null, null, 1, cancellationToken).ConfigureAwait(false)).Entries.Count > 0)
-                throw new ObjectStorageException("同名文件或目录已经存在，请更换目录名称。", "FileAlreadyExists");
+                throw ObjectStorageException.FromResource("AFileOrFolderWithThisNameAlreadyExistsChooseADifferentFolderName", "FileAlreadyExists");
             using var empty = new MemoryStream();
             await client.UploadAsync(bucket.Name, folderKey, empty, 0, overwrite: false, progress: null,
                 cancellationToken).ConfigureAwait(false);
@@ -159,7 +159,7 @@ public sealed class LocalObjectStorageService : IObjectStorageService
                 keys.Add(entry.Key);
                 if (!entry.IsDirectory) continue;
                 if (!entry.Key.EndsWith('/'))
-                    throw new ObjectStorageException("目录删除范围无效，请刷新后重新选择。", "InvalidDeleteRange");
+                    throw ObjectStorageException.FromResource("InvalidDirectoryDeletionRangeRefreshAndSelectAgain", "InvalidDeleteRange");
                 string? token = null;
                 var seenTokens = new HashSet<string>(StringComparer.Ordinal);
                 do
@@ -171,12 +171,12 @@ public sealed class LocalObjectStorageService : IObjectStorageService
                     {
                         ValidateKey(item.Key);
                         if (!item.Key.StartsWith(entry.Key, StringComparison.Ordinal))
-                            throw new ObjectStorageException("目录枚举返回了不完整的删除范围，请刷新重试。", "InvalidDeleteRange");
+                            throw ObjectStorageException.FromResource("DirectoryEnumerationReturnedAnIncompleteDeletionRangeRefreshAndTryAgain", "InvalidDeleteRange");
                         keys.Add(item.Key);
                     }
                     token = page.NextToken;
                     if (token is not null && !seenTokens.Add(token))
-                        throw new ObjectStorageException("目录分页游标无效，请刷新后重试。", "InvalidResponse");
+                        throw ObjectStorageException.FromResource("InvalidDirectoryPagingCursorRefreshAndTryAgain", "InvalidResponse");
                 } while (token is not null);
             }
             return new ObjectStorageDeletePlan(Array.AsReadOnly(keys.Order(StringComparer.Ordinal).ToArray()));
@@ -205,7 +205,7 @@ public sealed class LocalObjectStorageService : IObjectStorageService
             }
             catch (ObjectStorageException) when (completedBatches > 0)
             {
-                throw new ObjectStorageException("部分对象已经删除，剩余对象删除失败；请刷新后重新确认。", "PartialDelete");
+                throw ObjectStorageException.FromResource("SomeObjectsWereDeletedButTheRemainingObjectsCouldNotBeDeletedRefreshAndConfirmAgain", "PartialDelete");
             }
             return true;
         }, cancellationToken);
@@ -217,7 +217,7 @@ public sealed class LocalObjectStorageService : IObjectStorageService
         {
             ValidateKey(key);
             if (lifetime != TimeSpan.FromMinutes(15) && lifetime != TimeSpan.FromMinutes(60))
-                throw new ObjectStorageException("临时链接有效期只能选择 15 分钟或 60 分钟。", "InvalidLinkLifetime");
+                throw ObjectStorageException.FromResource("TemporaryLinksCanLastOnly15Or60Minutes", "InvalidLinkLifetime");
             cancellationToken.ThrowIfCancellationRequested();
             return Task.FromResult(client.CreateTemporaryLink(bucket.Name, key, lifetime));
         }, cancellationToken);
@@ -231,12 +231,12 @@ public sealed class LocalObjectStorageService : IObjectStorageService
         try
         {
             if (string.IsNullOrWhiteSpace(instanceId))
-                throw new ObjectStorageException("请先选择一个已配置的实例。", "InstanceNotFound");
+                throw ObjectStorageException.FromResource("SelectAConfiguredInstanceFirst", "InstanceNotFound");
             if (bucket is not null && (string.IsNullOrWhiteSpace(bucket.Name) || bucket.Name.Any(char.IsControl)))
-                throw new ObjectStorageException("容器名称无效，请重新选择容器。", "InvalidBucket");
+                throw ObjectStorageException.FromResource("InvalidBucketNameSelectTheBucketAgain", "InvalidBucket");
             InstanceConnectionOptions? options = await _configuration.GetConnectionAsync(instanceId,
                 cancellationToken).ConfigureAwait(false);
-            if (options is null) throw new ObjectStorageException("实例配置已不存在，请重新配置实例。", "InstanceNotFound");
+            if (options is null) throw ObjectStorageException.FromResource("TheInstanceConfigurationNoLongerExistsConfigureTheInstanceAgain", "InstanceNotFound");
             client = _clients.CreateClient(options, bucket?.Region);
             return await operation(client).ConfigureAwait(false);
         }
@@ -245,7 +245,7 @@ public sealed class LocalObjectStorageService : IObjectStorageService
         catch (Exception)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            throw new ObjectStorageException("对象存储操作失败，请检查网络、实例配置与本地文件权限。", "StorageOperationFailed");
+            throw ObjectStorageException.FromResource("ObjectStorageOperationFailedCheckTheNetworkInstanceConfigurationAndLocalFilePermissio", "StorageOperationFailed");
         }
         finally
         {
@@ -259,7 +259,7 @@ public sealed class LocalObjectStorageService : IObjectStorageService
     private static void ValidateKey(string key, bool allowEmpty = false)
     {
         if (key is null || (!allowEmpty && key.Length == 0) || Encoding.UTF8.GetByteCount(key) > 1023 || key.Any(char.IsControl))
-            throw new ObjectStorageException("对象名称无效，请刷新列表或修改名称。", "InvalidObjectKey");
+            throw ObjectStorageException.FromResource("InvalidObjectNameRefreshTheListOrChangeTheName", "InvalidObjectKey");
     }
 
     /// <summary>浏览和创建目录的前缀只能为空或完整目录，不允许隐式扩展到邻接名称。</summary>
@@ -267,14 +267,14 @@ public sealed class LocalObjectStorageService : IObjectStorageService
     {
         ValidateKey(prefix, allowEmpty: true);
         if (prefix.Length > 0 && !prefix.EndsWith('/'))
-            throw new ObjectStorageException("目录路径无效，请重新选择目录。", "InvalidPrefix");
+            throw ObjectStorageException.FromResource("InvalidDirectoryPathSelectTheDirectoryAgain", "InvalidPrefix");
     }
 
     /// <summary>本地路径完全来自用户文件选择，异常路径不传入 SDK 或错误文案。</summary>
     private static void ValidateLocalPath(string path)
     {
         if (string.IsNullOrWhiteSpace(path))
-            throw new ObjectStorageException("请选择有效的本地文件位置。", "InvalidLocalPath");
+            throw ObjectStorageException.FromResource("SelectAValidLocalFileLocation", "InvalidLocalPath");
     }
 
     /// <summary>映射后的子目录由后台创建，拒绝沿目录联接或符号链接写出所选位置。</summary>
@@ -289,11 +289,11 @@ public sealed class LocalObjectStorageService : IObjectStorageService
             if (!Directory.Exists(current))
             {
                 if (!createMissing)
-                    throw new ObjectStorageException("下载目录已发生变化，请重新选择保存位置。", "InvalidLocalPath");
+                    throw ObjectStorageException.FromResource("TheDownloadDirectoryHasChangedSelectTheDestinationAgain", "InvalidLocalPath");
                 Directory.CreateDirectory(current);
             }
             if ((File.GetAttributes(current) & FileAttributes.ReparsePoint) != 0)
-                throw new ObjectStorageException("下载目录包含目录联接或符号链接，请选择普通目录。", "InvalidLocalPath");
+                throw ObjectStorageException.FromResource("TheDownloadDirectoryContainsAJunctionOrSymbolicLinkSelectARegularDirectory", "InvalidLocalPath");
         }
     }
 }

@@ -45,14 +45,14 @@ public sealed class TagDeletionViewModel : ObservableObject, IDisposable
     /// <summary>显示所有将删除的路径，包含根标签本身。</summary>
     public IReadOnlyList<ManagedTag> Tags => Preview?.Tags ?? [];
     /// <summary>叶子和含子级的标签使用同一确认窗口。</summary>
-    public string Title => Tags.Count > 1 ? $"删除 {_tag.Name} 及其子 Tag？" : $"删除 {_tag.Name}？";
+    public string Title => Tags.Count > 1 ? Text.Format("DeleteAndItsChildTags", _tag.Name) : Text.Format("Delete2", _tag.Name);
     /// <summary>影响列表上方的真实数量。</summary>
-    public string Summary => Preview is null ? "正在读取删除影响…" : $"将删除 {Tags.Count} 个自定义 Tag：";
+    public string Summary => Preview is null ? Text.Get("ReadingDeletionImpact") : Text.Format("TheFollowingCustomTagsWillBeDeleted", Tags.Count);
     /// <summary>说明删除仅影响关联，实例和连接信息继续保留。</summary>
     public string Impact => Preview is null ? ""
-        : $"同时移除 {Preview.AffectedInstanceCount} 个实例上的相关 Tag 关联；不会删除实例或连接信息。此操作不可撤销。";
+        : Text.Format("RelatedTagLinksWillAlsoBeRemovedFromInstancesInstancesAndConnectionInformationWillRem", Preview.AffectedInstanceCount);
     /// <summary>确认按钮明确包含标签数量。</summary>
-    public string DeleteLabel => IsBusy ? "处理中…" : Preview is null ? "删除 Tag" : $"删除 {Tags.Count} 个 Tag";
+    public string DeleteLabel => IsBusy ? Text.Get("Processing") : Preview is null ? Text.Get("DeleteTag") : Text.Format("DeleteTags", Tags.Count);
     /// <summary>失败消息与影响列表一起保留，允许再次执行。</summary>
     public string Error { get => _error; private set => SetProperty(ref _error, value); }
     /// <summary>读取和提交期间关闭操作按钮，防止重复删除。</summary>
@@ -80,7 +80,7 @@ public sealed class TagDeletionViewModel : ObservableObject, IDisposable
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
     {
         if (_isDisposed || IsBusy || Preview is not null) return;
-        if (_tag.IsBuiltIn) { Error = "系统内置环境 Tag 不允许删除。"; return; }
+        if (_tag.IsBuiltIn) { Error = Text.Get("BuiltInEnvironmentTagsCannotBeDeleted"); return; }
         IsBusy = true;
         Error = "";
         using var operation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _lifetime.Token);
@@ -91,7 +91,7 @@ public sealed class TagDeletionViewModel : ObservableObject, IDisposable
             Preview = preview;
         }
         catch (OperationCanceledException) when (operation.IsCancellationRequested) { }
-        catch (Exception exception) { Error = exception.Message; }
+        catch (Exception exception) { Error = Text.Error(exception); }
         finally { IsBusy = false; }
     }
 
@@ -109,7 +109,7 @@ public sealed class TagDeletionViewModel : ObservableObject, IDisposable
             if (!_isDisposed) CloseRequested?.Invoke(this, true);
         }
         catch (OperationCanceledException) when (operation.IsCancellationRequested) { }
-        catch (Exception exception) { Error = exception.Message; }
+        catch (Exception exception) { Error = Text.Error(exception); }
         finally { IsBusy = false; }
     }
 

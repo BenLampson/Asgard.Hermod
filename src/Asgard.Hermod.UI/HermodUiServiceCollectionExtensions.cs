@@ -17,7 +17,8 @@ public static class HermodUiServiceCollectionExtensions
             provider.GetRequiredService<IInstanceProviderRegistry>(),
             provider.GetRequiredService<IInstanceConfigurationService>()));
         services.TryAddSingleton<ISettingsEditor>(provider => new SettingsEditorService(owner,
-            provider.GetRequiredService<ITagManagementService>()));
+            provider.GetRequiredService<ITagManagementService>(),
+            provider.GetRequiredService<ILanguagePreferenceStore>()));
         services.TryAddSingleton<IInstanceWorkspaceFactory, InstanceWorkspaceFactory>();
         services.TryAddSingleton<IThemeService>(_ => new ThemeService(resources));
         return services;

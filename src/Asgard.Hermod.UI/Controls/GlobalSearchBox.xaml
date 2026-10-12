@@ -1,6 +1,7 @@
 <UserControl x:Class="Asgard.Hermod.UI.Controls.GlobalSearchBox"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization"
              xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
              x:Name="SearchRoot" Unloaded="OnUnloaded">
     <Grid>
@@ -18,14 +19,14 @@
                 <TextBox x:Name="SearchInput" Grid.Column="2"
                          Text="{Binding GlobalSearchQuery, UpdateSourceTrigger=PropertyChanged}"
                          Style="{DynamicResource SearchTextBox}" FontSize="11.5"
-                         AutomationProperties.Name="Search services and tasks"
+                         AutomationProperties.Name="{loc:Loc SearchServicesAndTasks}"
                          GotKeyboardFocus="OnSearchFocus" TextChanged="OnSearchTextChanged"
                          PreviewKeyDown="OnPreviewKeyDown">
                     <TextBox.InputBindings>
                         <KeyBinding Key="Enter" Command="{Binding OpenFirstSearchResultCommand}" />
                     </TextBox.InputBindings>
                 </TextBox>
-                <TextBlock Grid.Column="2" Text="Search services and tasks"
+                <TextBlock Grid.Column="2" Text="{loc:Loc SearchServicesAndTasks}"
                            FontSize="11.5" VerticalAlignment="Center"
                            Foreground="{DynamicResource TextFaintBrush}" IsHitTestVisible="False">
                     <TextBlock.Style>
@@ -70,7 +71,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </ScrollViewer>
-                    <TextBlock Text="No matching instances" Margin="8,8" FontSize="12"
+                    <TextBlock Text="{loc:Loc NoMatchingInstances}" Margin="8,8" FontSize="12"
                                Foreground="{DynamicResource TextMutedBrush}">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">

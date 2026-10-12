@@ -22,3 +22,4 @@ global using Asgard.Hermod.UI.Models;
 global using Asgard.Hermod.UI.Services;
 global using Asgard.Hermod.UI.ViewModels;
 global using Microsoft.Extensions.DependencyInjection;
+global using Text = Asgard.Hermod.Abstractions.Localization.Text;

@@ -28,7 +28,7 @@ public sealed class TagTreePickerViewModel : ObservableObject
         foreach (TagTreeNodeViewModel node in EnumerateNodes(Roots))
         {
             if (!_nodes.TryAdd(node.Path, node))
-                throw new ArgumentException($"标签路径重复：{node.Path}", nameof(roots));
+                throw new ArgumentException(Text.Format("DuplicateTagPath", node.Path), nameof(roots));
         }
         Rows = new ReadOnlyObservableCollection<TagTreeNodeViewModel>(_rows);
         SelectedPaths = new ReadOnlyObservableCollection<string>(_selectedPaths);
@@ -96,13 +96,13 @@ public sealed class TagTreePickerViewModel : ObservableObject
     public bool IsCompleted => _isCompleted;
 
     /// <summary>选择摘要使用设计文字并展示实际数量。</summary>
-    public string SelectionSummary => $"{SelectedCount} selected · includes nested tags";
+    public string SelectionSummary => Text.Format("SelectedIncludesNestedTags", SelectedCount);
 
     /// <summary>应用按钮使用实际路径数量。</summary>
-    public string ApplyLabel => $"Apply filters ({SelectedCount})";
+    public string ApplyLabel => Text.Format("ApplyFilters", SelectedCount);
 
     /// <summary>树导航提示使用实际分组数量。</summary>
-    public string GroupSummary => $"{GroupCount} groups · expand to browse";
+    public string GroupSummary => Text.Format("GroupsExpandToBrowse", GroupCount);
 
     /// <summary>向宿主交付当前选择和匹配模式。</summary>
     public RelayCommand ApplyCommand { get; }
@@ -245,6 +245,7 @@ public sealed class TagTreePickerViewModel : ObservableObject
         HashSet<TagTreeNodeViewModel> retained)
     {
         bool matches = node.Name.Contains(query, StringComparison.OrdinalIgnoreCase)
+            || node.DisplayName.Contains(query, StringComparison.OrdinalIgnoreCase)
             || node.Path.Contains(query, StringComparison.OrdinalIgnoreCase);
         foreach (TagTreeNodeViewModel child in node.Children)
             matches |= RetainMatches(child, query, retained);
@@ -279,6 +280,6 @@ public sealed class TagTreePickerViewModel : ObservableObject
     private static void ValidateMode(TagFilterMatchMode mode)
     {
         if (!Enum.IsDefined(mode))
-            throw new ArgumentOutOfRangeException(nameof(mode), mode, "标签匹配模式不存在。");
+            throw new ArgumentOutOfRangeException(nameof(mode), mode, Text.Get("TheTagMatchingModeDoesNotExist"));
     }
 }

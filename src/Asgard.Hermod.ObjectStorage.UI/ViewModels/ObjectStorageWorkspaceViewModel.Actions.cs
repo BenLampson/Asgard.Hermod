@@ -46,7 +46,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
             foreach (var item in selection.Items)
             {
                 if (!item.Key.StartsWith(prefix, StringComparison.Ordinal) || item.Key.Length == prefix.Length || item.Key.EndsWith('/'))
-                    throw new ObjectStorageException("上传目标不在已选择的目录中，请重新选择文件。");
+                    throw ObjectStorageException.FromResource("TheUploadDestinationIsOutsideTheSelectedDirectorySelectTheFilesAgain");
                 QueueTransfer(new(item.Key, true, item.Size, async (task, progress, token) =>
                 {
                     await _transferGate.WaitAsync(token);
@@ -137,10 +137,10 @@ public sealed partial class ObjectStorageWorkspaceViewModel
             var parts = relative.Split('/');
             if (parts.Any(part => part.Length == 0 || part is "." or ".." || part.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0
                 || part.EndsWith(' ') || part.EndsWith('.') || IsReservedName(part)))
-                throw new ObjectStorageException("所选对象键无法安全保存为本地文件名，请逐个选择下载位置。");
+                throw ObjectStorageException.FromResource("SelectedObjectKeysCannotBeSafelySavedAsLocalFileNamesChooseADestinationForEachObject");
             string path = Path.GetFullPath(Path.Combine(root, Path.Combine(parts)));
             if (!path.StartsWith(root, StringComparison.OrdinalIgnoreCase) || !paths.Add(path))
-                throw new ObjectStorageException("所选对象映射到重复或无效的本地路径，请逐个下载。");
+                throw ObjectStorageException.FromResource("SelectedObjectsMapToDuplicateOrInvalidLocalPathsDownloadThemIndividually");
             downloads.Add((entry, path));
         }
         if (IsClosed) return;
@@ -201,7 +201,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     {
         if (string.IsNullOrEmpty(text) || IsClosed) return;
         try { _dialogs.CopyText(text); }
-        catch (Exception exception) { ActionError = ObjectStoragePresentation.Error(exception, "无法写入剪贴板，请重试。"); }
+        catch (Exception exception) { ActionError = ObjectStoragePresentation.Error(exception, Text.Get("CannotWriteToTheClipboardTryAgain")); }
     }
 
     /// <summary>准备失败保持已加载列表，关闭后忽略交互返回。</summary>
@@ -210,7 +210,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
         _dialogOpen = true; ActionError = ""; RefreshCommands();
         try { await action(); }
         catch (OperationCanceledException) when (_lifetime.IsCancellationRequested) { }
-        catch (Exception exception) { if (!IsClosed) ActionError = ObjectStoragePresentation.Error(exception, "操作失败，请检查网络和访问权限后重试。"); }
+        catch (Exception exception) { if (!IsClosed) ActionError = ObjectStoragePresentation.Error(exception, Text.Get("TheOperationFailedCheckTheNetworkAndAccessPermissionsThenTryAgain")); }
         finally { _dialogOpen = false; RefreshCommands(); }
     }
 

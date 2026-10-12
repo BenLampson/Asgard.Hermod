@@ -54,9 +54,9 @@ public sealed class InstanceConfigurationFieldViewModel : ObservableObject
         {
             string value = Value.Trim();
             if (value.Length == 0)
-                return "未填写";
+                return Text.Get("NotEntered");
             if (IsSecret)
-                return "已填写 · 隐藏";
+                return Text.Get("EnteredHidden");
             if (!IsSensitive)
                 return value;
             return value.Length > 8 ? $"{value[..4]}••••••••{value[^4..]}" : "••••••••";

@@ -44,7 +44,7 @@ public sealed class ThemeService : IThemeService
         _dispatcher.VerifyAccess();
         if (!Enum.IsDefined(theme))
         {
-            throw new ArgumentOutOfRangeException(nameof(theme), theme, "未知的界面主题。");
+            throw new ArgumentOutOfRangeException(nameof(theme), theme, Text.Get("UnknownInterfaceTheme"));
         }
 
         if (theme == Theme)

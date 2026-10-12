@@ -10,31 +10,31 @@ public sealed partial class NewInstanceViewModel
         ArgumentNullException.ThrowIfNull(existing);
         ArgumentNullException.ThrowIfNull(initialConnection);
         if (string.IsNullOrWhiteSpace(existing.Id))
-            throw new ArgumentException("待编辑实例缺少标识。", nameof(existing));
+            throw new ArgumentException(Text.Get("TheInstanceToEditHasNoIdentifier"), nameof(existing));
         if (existing.HasConfiguration && (existing.TypeId != initialConnection.TypeId
             || existing.ProviderId != initialConnection.ProviderId))
-            throw new ArgumentException("实例与连接配置不匹配。", nameof(initialConnection));
+            throw new ArgumentException(Text.Get("TheInstanceDoesNotMatchTheConnectionConfiguration"), nameof(initialConnection));
         SelectedType = Types.SingleOrDefault(type => type.Id == initialConnection.TypeId)
-            ?? throw new ArgumentException("当前实例类型不可用。", nameof(initialConnection));
+            ?? throw new ArgumentException(Text.Get("TheCurrentInstanceTypeIsUnavailable"), nameof(initialConnection));
         SelectedProvider = Providers.SingleOrDefault(provider => provider.Id == initialConnection.ProviderId)
-            ?? throw new ArgumentException("当前实例服务商不可用。", nameof(initialConnection));
+            ?? throw new ArgumentException(Text.Get("TheCurrentInstanceProviderIsUnavailable"), nameof(initialConnection));
         Name = existing.Name;
         foreach (var field in Fields)
             field.Value = initialConnection.Parameters.TryGetValue(field.Key, out string? value) ? value : "";
         _editingInstance = existing;
-        Steps = [new(1, "选择类型"), new(2, "输入信息"), new(3, "测试连接"),
-            new(4, "保存位置"), new(5, "确认修改")];
+        Steps = [new(1, Text.Get("ChooseType")), new(2, Text.Get("EnterInformation")), new(3, Text.Get("TestConnection")),
+            new(4, Text.Get("SaveLocation")), new(5, Text.Get("ConfirmChanges"))];
         RefreshState();
     }
 
     /// <summary>编辑状态由宿主传入的已保存实例确定。</summary>
     public bool IsEditing => _editingInstance is not null;
     /// <summary>共享标题栏区分添加与编辑操作。</summary>
-    public string WindowTitle => IsEditing ? "编辑实例" : "添加 Instance";
+    public string WindowTitle => IsEditing ? Text.Get("EditInstance") : Text.Get("AddInstance2");
     /// <summary>向导侧栏标题与实际提交操作一致。</summary>
-    public string WizardHeading => IsEditing ? "编辑实例" : "添加实例";
+    public string WizardHeading => IsEditing ? Text.Get("EditInstance") : Text.Get("AddInstance");
     /// <summary>编辑现有实例只修改连接参数，类型与服务商不可变。</summary>
     public bool IsTypeSelectionEditable => IsInformationEditable && !IsEditing;
     /// <summary>确认页说明提交后的结果。</summary>
-    public string ConfirmationHint => IsEditing ? "保存后将使用更新后的连接信息。" : "创建后将在实例列表中打开此连接。";
+    public string ConfirmationHint => IsEditing ? Text.Get("TheUpdatedConnectionInformationWillBeUsedAfterSaving") : Text.Get("TheConnectionWillOpenInTheInstanceListAfterCreation");
 }

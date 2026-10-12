@@ -1,10 +1,11 @@
 <UserControl x:Class="Asgard.Hermod.UI.Controls.AccountMenu"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization"
              xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls">
     <Button x:Name="AccountButton" Click="OnAccountClick"
             Style="{DynamicResource IconButton}" Width="Auto" Height="28" Padding="4,0"
-            ToolTip="本地工作区">
+            ToolTip="{loc:Loc LocalWorkspace}">
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
             <Border Width="22" Height="22" CornerRadius="11"
                     Background="{DynamicResource LineSoftBrush}">
@@ -15,7 +16,7 @@
                        Foreground="{DynamicResource TextBodyBrush}"
                        VerticalAlignment="Center" Margin="6,0,0,0" />
             <Border Width="1" Height="12" Background="{DynamicResource LineBrush}" Margin="8,0" />
-            <TextBlock Text="登录" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
+            <TextBlock Text="{loc:Loc SignIn}" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
             <controls:IconView Kind="chevron-down" Width="12" Height="12" Margin="8,0,0,0"
                                Foreground="{DynamicResource TextMutedBrush}" />
         </StackPanel>
@@ -23,15 +24,15 @@
             <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
                          MinWidth="280" Placement="Bottom" HorizontalOffset="-120">
                 <MenuItem Header="{Binding AccountName}" IsEnabled="False" />
-                <MenuItem Header="未登录" IsEnabled="False" />
+                <MenuItem Header="{loc:Loc NotSignedIn}" IsEnabled="False" />
                 <Separator />
-                <MenuItem Header="登录账户" IsEnabled="False"
-                          ToolTip="账号与同步能力会在后续身份接入时启用。" />
-                <MenuItem Header="系统设置" Command="{Binding OpenSettingsCommand}">
+                <MenuItem Header="{loc:Loc SignInToYourAccount}" IsEnabled="False"
+                          ToolTip="{loc:Loc AccountAndSynchronizationFeaturesWillBeEnabledAfterIdentityIntegration}" />
+                <MenuItem Header="{loc:Loc SystemSettings}" Command="{Binding OpenSettingsCommand}">
                     <MenuItem.Icon><controls:IconView Kind="settings" /></MenuItem.Icon>
                 </MenuItem>
                 <Separator />
-                <MenuItem Header="无需登录即可使用，数据保存在本机。" IsEnabled="False" FontSize="11" />
+                <MenuItem Header="{loc:Loc UseWithoutSigningInDataIsSavedOnThisDevice}" IsEnabled="False" FontSize="11" />
             </ContextMenu>
         </Button.ContextMenu>
     </Button>

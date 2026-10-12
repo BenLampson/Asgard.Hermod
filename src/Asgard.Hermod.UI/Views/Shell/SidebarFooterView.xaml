@@ -1,6 +1,7 @@
 <UserControl x:Class="Asgard.Hermod.UI.Views.Shell.SidebarFooterView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization"
              xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls">
     <UserControl.Resources>
         <Style x:Key="ThemeSegmentButton" TargetType="Button">
@@ -94,7 +95,7 @@
                                 </Button.Style>
                                 <StackPanel Orientation="Horizontal">
                                     <controls:IconView Kind="sun" Width="14" Height="14" />
-                                    <TextBlock Text="Light" FontSize="11" Margin="6,0,0,0" VerticalAlignment="Center"
+                                    <TextBlock Text="{loc:Loc Light}" FontSize="11" Margin="6,0,0,0" VerticalAlignment="Center"
                                                Foreground="{DynamicResource TextBodyBrush}" />
                                 </StackPanel>
                             </Button>
@@ -110,19 +111,19 @@
                                 </Button.Style>
                                 <StackPanel Orientation="Horizontal">
                                     <controls:IconView Kind="moon" Width="14" Height="14" />
-                                    <TextBlock Text="Dark" FontSize="11" Margin="6,0,0,0" VerticalAlignment="Center"
+                                    <TextBlock Text="{loc:Loc Dark}" FontSize="11" Margin="6,0,0,0" VerticalAlignment="Center"
                                                Foreground="{DynamicResource TextBodyBrush}" />
                                 </StackPanel>
                             </Button>
                         </StackPanel>
                     </Border>
                     <Button Style="{StaticResource FooterRoundButton}" HorizontalAlignment="Right"
-                            Command="{Binding ToggleSidebarCommand}" ToolTip="Collapse sidebar">
+                            Command="{Binding ToggleSidebarCommand}" ToolTip="{loc:Loc CollapseSidebar}">
                         <controls:IconView Kind="panel-left" Width="16" Height="16" />
                     </Button>
                 </Grid>
                 <Grid Margin="0,10,0,0">
-                    <TextBlock Text="Hermod" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
+                    <TextBlock Text="{loc:Loc Hermod}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
                     <TextBlock Text="{Binding Version}" FontFamily="{DynamicResource MonoFont}" FontSize="10"
                                HorizontalAlignment="Right" Foreground="{DynamicResource TextMutedBrush}" />
                 </Grid>
@@ -141,10 +142,10 @@
                 <Button Command="{Binding ToggleThemeCommand}" Margin="0,0,0,10">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource FooterRoundButton}">
-                            <Setter Property="ToolTip" Value="Switch to dark mode" />
+                            <Setter Property="ToolTip" Value="{loc:Loc SwitchToDarkMode}" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsDarkTheme}" Value="True">
-                                    <Setter Property="ToolTip" Value="Switch to light mode" />
+                                    <Setter Property="ToolTip" Value="{loc:Loc SwitchToLightMode}" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -163,7 +164,7 @@
                     </controls:IconView>
                 </Button>
                 <Button Style="{StaticResource FooterRoundButton}" Command="{Binding ToggleSidebarCommand}"
-                        ToolTip="Expand sidebar">
+                        ToolTip="{loc:Loc ExpandSidebar}">
                     <controls:IconView Kind="panel-left" Width="16" Height="16" />
                 </Button>
                 <TextBlock Text="{Binding CompactVersion}" FontFamily="{DynamicResource MonoFont}" FontSize="8"

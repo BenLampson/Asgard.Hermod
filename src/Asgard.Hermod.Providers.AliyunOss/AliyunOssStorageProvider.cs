@@ -39,15 +39,15 @@ public sealed class AliyunOssStorageProvider : IStorageProvider
     }
 
     /// <inheritdoc />
-    public InstanceProviderDescriptor Descriptor { get; } = new(ProviderId, "阿里云 OSS", "Object Storage Service", "cloud",
-        new(TypeId, "存储", "连接对象存储服务", "database"),
+    public InstanceProviderDescriptor Descriptor { get; } = new(ProviderId, Text.Get("AlibabaCloudOSS"), "Object Storage Service", "cloud",
+        new(TypeId, Text.Get("Storage"), Text.Get("ConnectToObjectStorage"), "database"),
         Array.AsReadOnly<InstanceConfigurationField>([
             new("accessKeyId", "AccessKey ID", InstanceFieldKind.Text, MaxLength: 128,
                 IsSensitive: true, ValidationRule: InstanceFieldValidationRule.AsciiLettersAndDigits),
             new("accessKeySecret", "AccessKey Secret", InstanceFieldKind.Secret, MaxLength: 256, IsSensitive: true),
         ]))
     {
-        ConnectionTestDescription = "测试会读取容器列表，并在可用容器的 .hermod-connection-test/ 路径创建随机临时对象、回读后删除；验证结果仅覆盖通过测试的容器。",
+        ConnectionTestDescription = Text.Get("TheTestListsBucketsCreatesARandomTemporaryObjectUnderHermodConnectionTestInAnAvailabl"),
     };
 
     /// <inheritdoc />
@@ -58,13 +58,13 @@ public sealed class AliyunOssStorageProvider : IStorageProvider
         cancellationToken.ThrowIfCancellationRequested();
         if (!string.Equals(options.TypeId, TypeId, StringComparison.Ordinal) ||
             !string.Equals(options.ProviderId, ProviderId, StringComparison.Ordinal))
-            return Failure("instance_provider_mismatch", "连接配置与所选实例类型或服务商不匹配。");
+            return Failure("instance_provider_mismatch", Text.Get("TheConnectionConfigurationDoesNotMatchTheSelectedInstanceTypeOrProvider"));
         if (options.Parameters is null || !options.Parameters.TryGetValue("accessKeyId", out string? accessKeyId) ||
             !options.Parameters.TryGetValue("accessKeySecret", out string? accessKeySecret) ||
             string.IsNullOrWhiteSpace(accessKeyId) || accessKeyId.Length > 128 ||
             !accessKeyId.All(char.IsAsciiLetterOrDigit) || string.IsNullOrWhiteSpace(accessKeySecret) ||
             accessKeySecret.Length > 256 || accessKeySecret.Any(char.IsControl))
-            return Failure("oss_invalid_credentials", "请填写有效的 AccessKey ID 和 AccessKey Secret。");
+            return Failure("oss_invalid_credentials", Text.Get("EnterAValidAccessKeyIDAndAccessKeySecret"));
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         deadline.CancelAfter(_timeout);
         try
@@ -80,7 +80,7 @@ public sealed class AliyunOssStorageProvider : IStorageProvider
                 return MapFailure(response.StatusCode, document?.Root?.Element("Code")?.Value);
             if (response.StatusCode != HttpStatusCode.OK || document?.Root?.Name.LocalName != "ListAllMyBucketsResult" ||
                 document.Root.Element("Owner") is null || document.Root.Element("Buckets") is null)
-                return Failure("oss_invalid_response", "OSS 返回了无法验证的响应，请稍后重试。");
+                return Failure("oss_invalid_response", Text.Get("OSSReturnedAnUnverifiableResponseTryAgainLater"));
             // 固定此次已验证的凭据，避免测试期间外部字典变更导致不同请求使用不同身份。
             var snapshot = new InstanceConnectionOptions
             {
@@ -97,13 +97,13 @@ public sealed class AliyunOssStorageProvider : IStorageProvider
             result = result with
             {
                 ErrorCode = result.ErrorCode?.Replace("storage_probe_", "oss_probe_", StringComparison.Ordinal),
-                Checks = Array.AsReadOnly<InstanceConnectionCheck>([new("身份认证", true), .. (result.Checks ?? [])]),
+                Checks = Array.AsReadOnly<InstanceConnectionCheck>([new(Text.Get("Authentication"), true), .. (result.Checks ?? [])]),
             };
             // 清理失败须在用户取消后仍返回安全位置；普通取消继续遵循原有取消契约。
             if (result.RequiresAttentionAfterCancellation) return result;
             cancellationToken.ThrowIfCancellationRequested();
             if (deadline.IsCancellationRequested || result.ErrorCode == "oss_probe_cancelled")
-                return result with { IsSuccessful = false, ErrorCode = "oss_timeout", Message = "连接测试超时，已完成已知临时对象的清理，请检查网络后重试。" };
+                return result with { IsSuccessful = false, ErrorCode = "oss_timeout", Message = Text.Get("ConnectionTestTimedOutKnownTemporaryObjectsWereCleanedUpCheckTheNetworkAndTryAgain") };
             return result;
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -112,25 +112,25 @@ public sealed class AliyunOssStorageProvider : IStorageProvider
         }
         catch (OperationCanceledException)
         {
-            return Failure("oss_timeout", "连接测试超时，请检查网络后重试。");
+            return Failure("oss_timeout", Text.Get("ConnectionTestTimedOutCheckTheNetworkAndTryAgain"));
         }
         catch (TimeoutRejectedException)
         {
-            return Failure("oss_timeout", "连接测试超时，请检查网络后重试。");
+            return Failure("oss_timeout", Text.Get("ConnectionTestTimedOutCheckTheNetworkAndTryAgain"));
         }
         catch (BrokenCircuitException)
         {
-            return Failure("oss_unavailable", "OSS 暂时不可用，请稍后重试。");
+            return Failure("oss_unavailable", Text.Get("OSSIsTemporarilyUnavailableTryAgainLater"));
         }
         catch (XmlException)
         {
-            return Failure("oss_invalid_response", "OSS 返回了无法验证的响应，请稍后重试。");
+            return Failure("oss_invalid_response", Text.Get("OSSReturnedAnUnverifiableResponseTryAgainLater"));
         }
         catch (Exception)
         {
             // 第三方、TLS 或网络异常可能包含请求数据，统一转换为不含原始异常的结果。
             cancellationToken.ThrowIfCancellationRequested();
-            return Failure("oss_network_error", "无法连接阿里云 OSS，请检查网络连接后重试。");
+            return Failure("oss_network_error", Text.Get("CannotConnectToAlibabaCloudOSSCheckYourNetworkAndTryAgain"));
         }
     }
 
@@ -169,19 +169,19 @@ public sealed class AliyunOssStorageProvider : IStorageProvider
     private static InstanceConnectionTestResult MapFailure(HttpStatusCode status, string? code) => code switch
     {
         "InvalidAccessKeyId" or "SignatureDoesNotMatch" =>
-            Failure("oss_authentication_failed", "身份验证失败，请检查 AccessKey ID 和 AccessKey Secret。"),
-        "RequestTimeTooSkewed" => Failure("oss_clock_skew", "系统时间与 OSS 服务不一致，请校准设备时间后重试。"),
-        "AccessDenied" => Failure("oss_access_denied", "访问被拒绝，请确认 AccessKey 具有 oss:ListBuckets 权限。"),
+            Failure("oss_authentication_failed", Text.Get("AuthenticationFailedCheckTheAccessKeyIDAndAccessKeySecret")),
+        "RequestTimeTooSkewed" => Failure("oss_clock_skew", Text.Get("TheSystemTimeDiffersFromOSSCorrectTheDeviceTimeAndTryAgain")),
+        "AccessDenied" => Failure("oss_access_denied", Text.Get("AccessDeniedEnsureTheAccessKeyHasOssListBucketsPermission")),
         _ when status is HttpStatusCode.Unauthorized =>
-            Failure("oss_authentication_failed", "身份验证失败，请检查连接凭据。"),
+            Failure("oss_authentication_failed", Text.Get("AuthenticationFailedCheckTheConnectionCredentials")),
         _ when status is HttpStatusCode.Forbidden =>
-            Failure("oss_access_denied", "访问被拒绝，请确认 AccessKey 具有 oss:ListBuckets 权限。"),
+            Failure("oss_access_denied", Text.Get("AccessDeniedEnsureTheAccessKeyHasOssListBucketsPermission")),
         _ when (int)status >= 500 || status == HttpStatusCode.TooManyRequests =>
-            Failure("oss_unavailable", "OSS 暂时不可用，请稍后重试。"),
-        _ => Failure("oss_request_failed", "OSS 连接测试失败，请检查配置后重试。"),
+            Failure("oss_unavailable", Text.Get("OSSIsTemporarilyUnavailableTryAgainLater")),
+        _ => Failure("oss_request_failed", Text.Get("OSSConnectionTestFailedCheckTheConfigurationAndTryAgain")),
     };
 
     /// <summary>失败不提供伪造的成功检查，也不携带任何请求参数。</summary>
     private static InstanceConnectionTestResult Failure(string code, string message) =>
-        new(false, message, code, [new("身份认证及容器读取", false)]);
+        new(false, message, code, [new(Text.Get("AuthenticationAndBucketListing"), false)]);
 }

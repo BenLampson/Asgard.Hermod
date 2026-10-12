@@ -1,6 +1,7 @@
 <UserControl x:Class="Asgard.Hermod.UI.Views.Pages.ServiceDetailView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization"
              xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
              xmlns:pages="clr-namespace:Asgard.Hermod.UI.Views.Pages"
              Background="{DynamicResource AppBackgroundBrush}"
@@ -10,7 +11,7 @@
             <Setter Property="Visibility" Value="Visible" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsPreview}" Value="True">
-                    <Setter Property="ToolTip" Value="Sample data · service is not connected." />
+                    <Setter Property="ToolTip" Value="{loc:Loc SampleDataServiceIsNotConnected}" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding HasDetails}" Value="False">
                     <Setter Property="Visibility" Value="Collapsed" />
@@ -64,7 +65,7 @@
                     <Style TargetType="{x:Type controls:StatusBadge}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsPreview}" Value="True">
-                                <Setter Property="ToolTip" Value="Sample data · service is not connected." />
+                                <Setter Property="ToolTip" Value="{loc:Loc SampleDataServiceIsNotConnected}" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -72,19 +73,19 @@
             </controls:StatusBadge>
             <Button Grid.Column="6" Style="{StaticResource RestartVisible}" Command="{Binding RestartCommand}"
                     Padding="13,6" VerticalAlignment="Center" ToolTipService.ShowOnDisabled="True"
-                    ToolTip="Connector not configured. Restart will be available after a service connection is added.">
+                    ToolTip="{loc:Loc ConnectorNotConfiguredRestartWillBeAvailableAfterAServiceConnectionIsAdded}">
                 <StackPanel Orientation="Horizontal">
                     <controls:IconView Kind="rotate-cw" Width="13" Height="13" Margin="0,0,6,0" />
-                    <TextBlock Text="Restart" FontSize="12.5"
+                    <TextBlock Text="{loc:Loc Restart}" FontSize="12.5"
                                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
                 </StackPanel>
             </Button>
             <Button Grid.Column="8" Style="{StaticResource DeployVisible}" Command="{Binding DeployCommand}"
                     Padding="14,6" VerticalAlignment="Center" ToolTipService.ShowOnDisabled="True"
-                    ToolTip="Connector not configured. Deploy will be available after a service connection is added.">
+                    ToolTip="{loc:Loc ConnectorNotConfiguredDeployWillBeAvailableAfterAServiceConnectionIsAdded}">
                 <StackPanel Orientation="Horizontal">
                     <controls:IconView Kind="play" Width="13" Height="13" Margin="0,0,6,0" />
-                    <TextBlock Text="Deploy" FontSize="12.5" FontWeight="SemiBold"
+                    <TextBlock Text="{loc:Loc Deploy}" FontSize="12.5" FontWeight="SemiBold"
                                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
                 </StackPanel>
             </Button>

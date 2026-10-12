@@ -15,7 +15,7 @@ public sealed class DesignWorkspaceDataSource : IWorkspaceDataSource
             HasAlert: true),
         new("brigitte", "Brigitte-03", "Brigitte", "hexagon",
             ["Environment/Development/Cluster", "Team/Platform/Tools", "Region/Asia/CN East", "Service type/Kubernetes"]),
-        new("sandbox", "sandbox-local", "Local terminal", "laptop",
+        new("sandbox", "sandbox-local", Text.Get("LocalTerminal"), "laptop",
             ["Environment/Development/Local", "Team/Platform/Tools", "Region/Local", "Service type/Local shell"], true),
     ];
 
@@ -24,13 +24,13 @@ public sealed class DesignWorkspaceDataSource : IWorkspaceDataSource
 
     /// <inheritdoc />
     public ServiceSnapshot? GetServiceSnapshot(string instanceId) => instanceId == "heimdall"
-        ? new ServiceSnapshot("Heimdall", "gateway · heimdall.prod.asgard.internal:8443", "Running",
+        ? new ServiceSnapshot("Heimdall", "gateway · heimdall.prod.asgard.internal:8443", Text.Get("Running"),
             StatusTone.Success, true,
             [
-                new("CPU", "38%", "activity"),
-                new("MEMORY", "1.24 / 4 GiB", "database"),
-                new("REQUESTS", "2,418 rpm", "arrow-left-right"),
-                new("P99 LATENCY", "64 ms", "gauge"),
+                new(Text.Get("CpuMetric"), "38%", "activity"),
+                new(Text.Get("MemoryMetric"), "1.24 / 4 GiB", "database"),
+                new(Text.Get("RequestRateMetric"), "2,418 rpm", "arrow-left-right"),
+                new(Text.Get("P99LatencyMetric"), "64 ms", "gauge"),
             ],
             [
                 new("image", "asgard/heimdall:2.8.1"),

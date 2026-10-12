@@ -1,3 +1,5 @@
+using Text = Asgard.Hermod.Abstractions.Localization.Text;
+
 namespace Asgard.Hermod.UI.Tests;
 
 /// <summary>签名链接验证有效期、主动操作、错误脱敏与关闭后的迟到结果。</summary>
@@ -44,7 +46,7 @@ public sealed class ObjectStorageTemporaryLinkDialogViewModelTests
         {
             if (++calls > 1)
                 return Task.FromResult("https://example.test/safe-link");
-            Exception error = adapterError ? new ObjectStorageException("当前身份无权生成此对象的临时链接。")
+            Exception error = adapterError ? ObjectStorageException.FromResource("InsufficientPermissionsCheckTheInstanceCredentialsAndAccessPolicy")
                 : new InvalidOperationException("credential-from-sdk-exception");
             return Task.FromException<string>(error);
         }, _ => true);
@@ -52,7 +54,7 @@ public sealed class ObjectStorageTemporaryLinkDialogViewModelTests
         Assert.NotEmpty(model.Error);
         Assert.DoesNotContain("credential-from-sdk-exception", model.Error, StringComparison.Ordinal);
         if (adapterError)
-            Assert.Equal("当前身份无权生成此对象的临时链接。", model.Error);
+            Assert.Equal(Text.Get("InsufficientPermissionsCheckTheInstanceCredentialsAndAccessPolicy"), model.Error);
         Assert.Empty(model.Link);
         Assert.Null(model.GenerateCommand.LastException);
         await model.GenerateCommand.ExecuteAsync();

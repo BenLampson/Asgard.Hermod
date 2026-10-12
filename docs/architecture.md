@@ -10,7 +10,7 @@ storage and owns application startup and shutdown.
 | Project | Responsibility | Direct implementation dependencies |
 | --- | --- | --- |
 | `Asgard.Hermod` | Application entry point, main window, module composition and lifetime | Selected modules, DI container |
-| `Asgard.Hermod.Abstractions` | Instance, configuration, tag and workspace contracts; shared models; secret protection contract | None |
+| `Asgard.Hermod.Abstractions` | Instance, configuration, tag and workspace contracts; shared models; secret protection contract; shared localization resources | None |
 | `Asgard.Hermod.Core` | Instance provider registry and configuration-backed workspace data source | Shared contracts, DI abstractions |
 | `Asgard.Hermod.UI` | WPF shell, shared controls, configuration and tag dialogs, workspace factory | Shared contracts, terminal, DI abstractions |
 | `Asgard.Hermod.Persistence.Sqlite` | SQLite configuration, migrations, repository, local instance and tag services | Shared contracts, Asgard.Core, FreeSql SQLite |
@@ -53,7 +53,10 @@ it using the same contracts. Provider keys are indexed by instance type and
 provider identity; duplicate registrations fail during startup validation.
 
 Startup validates the service container, initializes the database off the UI
-thread and opens the main window. Closing the application waits for workspace
+thread, applies the saved language preference and opens the main window. Windows
+display language is the default; unsupported languages fall back to English.
+See [the localization guide](localization.md) for resource and extension rules.
+Closing the application waits for workspace
 resources to be released before disposing the service container.
 
 ## Adding capabilities

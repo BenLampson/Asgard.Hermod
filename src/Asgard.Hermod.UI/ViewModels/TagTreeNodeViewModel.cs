@@ -31,6 +31,9 @@ public sealed class TagTreeNodeViewModel : ObservableObject
     /// <summary>当前标签名称。</summary>
     public string Name { get; }
 
+    /// <summary>系统环境使用当前文案语言，自定义标签名称保持原样。</summary>
+    public string DisplayName => Localization.TagDisplayText.Name(Path, Name);
+
     /// <summary>选中摘要和实际筛选使用的完整路径。</summary>
     public string Path { get; }
 

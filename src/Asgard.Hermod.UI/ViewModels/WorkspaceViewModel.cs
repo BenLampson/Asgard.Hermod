@@ -23,7 +23,7 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
         Tabs.Add(_selectedTab);
         foreach (var instance in source.GetInstances().Where(instance => !instance.IsLocal).Take(3))
             Tabs.Add(CreateServicePage(new InstanceItemViewModel(instance)));
-        Tabs.Add(new EmptyWorkspaceViewModel("tag:production", "Production", "tag"));
+        Tabs.Add(new EmptyWorkspaceViewModel("tag:production", Text.Get("Production"), "tag"));
         SelectTabCommand = new RelayCommand(value =>
         {
             if (value is WorkspacePageViewModel page && Tabs.Contains(page) && !page.IsClosed)
@@ -77,7 +77,7 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
     {
         ObjectDisposedException.ThrowIf(_disposeTask is not null, this);
         var local = new InstanceItemViewModel(_source.GetInstances().FirstOrDefault(instance => instance.IsLocal)
-            ?? new InstanceSummary("local-shell", "sandbox-local", "Local terminal", "laptop", ["Local"], true));
+            ?? new InstanceSummary("local-shell", "sandbox-local", Text.Get("LocalTerminal"), "laptop", ["Local"], true));
         var page = CreateTerminalPage(local);
         Tabs.Add(page);
         SelectedTab = page;

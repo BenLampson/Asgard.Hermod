@@ -53,10 +53,10 @@ public sealed class LocalInstanceConfigurationService : IInstanceConfigurationSe
         ArgumentNullException.ThrowIfNull(draft);
         cancellationToken.ThrowIfCancellationRequested();
         if (draft.SaveLocation != InstanceSaveLocation.Local)
-            throw new InvalidOperationException("账户存储暂未接入，请选择保存在本地设备。");
+            throw Text.Exception("AccountStorageIsNotAvailableYetSaveOnThisDevice");
         string name = (draft.Name ?? "").Trim();
         if (string.IsNullOrWhiteSpace(name) || name.Length > 128 || name.Any(char.IsControl))
-            throw new InvalidOperationException("实例名称须为 1–128 个字符，且不能包含控制字符。");
+            throw Text.Exception("InstanceNamesMustContain1128CharactersAndNoControlCharacters");
         ArgumentNullException.ThrowIfNull(draft.Connection);
         // 类型和服务商必须共同匹配，未知插件不能将数据伪装为可用实例保存。
         IInstanceProvider provider = _providers.GetProvider(draft.Connection.TypeId, draft.Connection.ProviderId);
@@ -64,7 +64,7 @@ public sealed class LocalInstanceConfigurationService : IInstanceConfigurationSe
         if (draft.Connection.Parameters.Count > 100 ||
             draft.Connection.Parameters.Any(pair => string.IsNullOrWhiteSpace(pair.Key) || pair.Key.Length > 128 ||
                 pair.Key.Any(char.IsControl) || pair.Value is null || pair.Value.Length > 65536))
-            throw new InvalidOperationException("连接参数无效，请检查服务商要求的配置字段。");
+            throw Text.Exception("InvalidConnectionParametersCheckTheFieldsRequiredByTheProvider");
         ArgumentNullException.ThrowIfNull(draft.TagIds);
         var parameters = new Dictionary<string, string>(draft.Connection.Parameters, StringComparer.Ordinal);
         foreach (InstanceConfigurationField field in provider.Descriptor.Fields)
@@ -83,9 +83,9 @@ public sealed class LocalInstanceConfigurationService : IInstanceConfigurationSe
                 LocalConfigurationSnapshot snapshot = _repository.GetSnapshot(cancellationToken);
                 StoredInstanceConfiguration? existing = instanceId is null ? null :
                     snapshot.Instances.FirstOrDefault(value => value.Id == instanceId)
-                    ?? throw new InvalidOperationException("实例已不存在，请刷新后重新配置。");
+                    ?? throw Text.Exception("TheInstanceNoLongerExistsRefreshAndConfigureItAgain");
                 if (existing is not null && (existing.TypeId != provider.Descriptor.Type.Id || existing.ProviderId != provider.Descriptor.Id))
-                    throw new InvalidOperationException("编辑实例不能更改实例类型或服务商，请新增对应类型的实例。");
+                    throw Text.Exception("EditingCannotChangeTheInstanceTypeOrProviderCreateAnInstanceOfTheRequiredTypeInstead");
                 var instance = new StoredInstanceConfiguration(existing?.Id ?? Guid.NewGuid().ToString("N"), name,
                     provider.Descriptor.Type.Id, provider.Descriptor.Id, protectedParameters,
                     existing?.CreatedAt ?? DateTime.UtcNow, existing?.TagIds ?? requestedTagIds);
@@ -116,7 +116,7 @@ public sealed class LocalInstanceConfigurationService : IInstanceConfigurationSe
             try
             {
                 var parameters = JsonSerializer.Deserialize<Dictionary<string, string>>(plaintext)
-                    ?? throw new InvalidOperationException("连接配置损坏，请重新配置实例。");
+                    ?? throw Text.Exception("TheConnectionConfigurationIsCorruptedConfigureTheInstanceAgain");
                 cancellationToken.ThrowIfCancellationRequested();
                 return new InstanceConnectionOptions
                 {
@@ -127,7 +127,7 @@ public sealed class LocalInstanceConfigurationService : IInstanceConfigurationSe
             }
             catch (JsonException)
             {
-                throw new InvalidOperationException("连接配置损坏，请重新配置实例。");
+                throw Text.Exception("TheConnectionConfigurationIsCorruptedConfigureTheInstanceAgain");
             }
             finally { CryptographicOperations.ZeroMemory(plaintext); }
         }, cancellationToken);
@@ -142,6 +142,6 @@ public sealed class LocalInstanceConfigurationService : IInstanceConfigurationSe
         HashSet<string> tagIds = instance.TagIds.ToHashSet(StringComparer.Ordinal);
         return new InstanceSummary(instance.Id, instance.Name, instance.Name,
             descriptor?.Icon ?? "database", tags.Where(tag => tagIds.Contains(tag.Id)).Select(tag => tag.Path).ToArray(),
-            Endpoint: descriptor?.Name ?? "未安装的实例连接器", TypeId: instance.TypeId, ProviderId: instance.ProviderId);
+            Endpoint: descriptor?.Name ?? Text.Get("InstanceConnectorNotInstalled"), TypeId: instance.TypeId, ProviderId: instance.ProviderId);
     }
 }

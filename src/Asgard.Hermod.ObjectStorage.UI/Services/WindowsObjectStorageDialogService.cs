@@ -28,11 +28,11 @@ public sealed class WindowsObjectStorageDialogService : IObjectStorageDialogServ
             {
                 var picker = new OpenFileDialog
                 {
-                    Title = "选择上传文件",
+                    Title = Text.Get("SelectUploadFiles"),
                     Multiselect = true,
                     CheckFileExists = true,
                     DereferenceLinks = false,
-                    Filter = "所有文件|*.*",
+                    Filter = Text.Get("AllFiles"),
                 };
                 if (picker.ShowDialog(window) == true)
                     await model.AddPathsAsync(picker.FileNames);
@@ -43,7 +43,7 @@ public sealed class WindowsObjectStorageDialogService : IObjectStorageDialogServ
         {
             try
             {
-                var picker = new OpenFolderDialog { Title = "选择上传文件夹" };
+                var picker = new OpenFolderDialog { Title = Text.Get("SelectUploadFolder") };
                 if (picker.ShowDialog(window) == true)
                     await model.AddPathsAsync([picker.FolderName]);
             }
@@ -70,9 +70,9 @@ public sealed class WindowsObjectStorageDialogService : IObjectStorageDialogServ
         {
             var picker = new SaveFileDialog
             {
-                Title = "保存对象",
+                Title = Text.Get("SaveObject"),
                 FileName = DownloadFileName(suggestedName),
-                Filter = "所有文件|*.*",
+                Filter = Text.Get("AllFiles"),
                 OverwritePrompt = true,
                 AddExtension = true,
             };
@@ -80,7 +80,7 @@ public sealed class WindowsObjectStorageDialogService : IObjectStorageDialogServ
         }
         catch (Exception)
         {
-            ShowNotice("选择下载位置失败", "无法打开保存窗口，请稍后重试。");
+            ShowNotice(Text.Get("CannotSelectDownloadLocation"), Text.Get("CannotOpenTheSaveDialogTryAgainLater"));
             return Task.FromResult<string?>(null);
         }
     }
@@ -90,12 +90,12 @@ public sealed class WindowsObjectStorageDialogService : IObjectStorageDialogServ
     {
         try
         {
-            var picker = new OpenFolderDialog { Title = "选择下载文件夹" };
+            var picker = new OpenFolderDialog { Title = Text.Get("SelectDownloadFolder") };
             return Task.FromResult(ShowPicker(picker) == true ? picker.FolderName : null);
         }
         catch (Exception)
         {
-            ShowNotice("选择下载位置失败", "无法打开文件夹选择窗口，请稍后重试。");
+            ShowNotice(Text.Get("CannotSelectDownloadLocation"), Text.Get("CannotOpenTheFolderPickerTryAgainLater"));
             return Task.FromResult<string?>(null);
         }
     }
@@ -133,7 +133,7 @@ public sealed class WindowsObjectStorageDialogService : IObjectStorageDialogServ
     public void CopyText(string text)
     {
         if (!TryCopyText(text))
-            ShowNotice("复制失败", "无法写入剪贴板，请稍后重试。");
+            ShowNotice(Text.Get("CopyFailed"), Text.Get("CannotWriteToTheClipboardTryAgainLater"));
     }
 
     /// <summary>为嵌套提示保留当前所属窗体，关闭后恢复上一层。</summary>

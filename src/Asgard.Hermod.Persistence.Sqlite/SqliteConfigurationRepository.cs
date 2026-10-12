@@ -46,7 +46,7 @@ public sealed class SqliteConfigurationRepository : ILocalConfigurationRepositor
             var knownTags = ReadTags(command).Select(tag => tag.Id).ToHashSet(StringComparer.Ordinal);
             string[] tagIds = instance.TagIds.Distinct(StringComparer.Ordinal).ToArray();
             if (tagIds.Any(id => !knownTags.Contains(id)))
-                throw new InvalidOperationException("所选标签已不存在，请刷新后重新选择。");
+                throw Text.Exception("TheSelectedTagsNoLongerExistRefreshAndSelectAgain");
             SetCommand(command, """
                 INSERT INTO instance_configuration (id, name, type_id, provider_id, protected_parameters, create_time)
                 VALUES (@id, @name, @type, @provider, @parameters, @created);
@@ -78,7 +78,7 @@ public sealed class SqliteConfigurationRepository : ILocalConfigurationRepositor
                 """, ("@id", instance.Id), ("@name", instance.Name), ("@type", instance.TypeId),
                 ("@provider", instance.ProviderId), ("@parameters", instance.ProtectedParameters));
             if (command.ExecuteNonQuery() != 1)
-                throw new InvalidOperationException("实例已不存在，请刷新后重新配置。");
+                throw Text.Exception("TheInstanceNoLongerExistsRefreshAndConfigureItAgain");
             return true;
         }, cancellationToken);
     }

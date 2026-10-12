@@ -18,12 +18,12 @@ public sealed class AliyunOssObjectStorageProvider(IHttpClientFactory clients) :
     public IObjectStorageClient CreateClient(InstanceConnectionOptions options, string? region)
     {
         if (options.TypeId != TypeId || options.ProviderId != ProviderId)
-            throw new ObjectStorageException("连接配置与所选实例类型或服务商不匹配。", "ProviderMismatch");
+            throw ObjectStorageException.FromResource("TheConnectionConfigurationDoesNotMatchTheSelectedInstanceTypeOrProvider", "ProviderMismatch");
         if (!options.Parameters.TryGetValue("accessKeyId", out string? accessKeyId) ||
             !options.Parameters.TryGetValue("accessKeySecret", out string? accessKeySecret) ||
             string.IsNullOrWhiteSpace(accessKeyId) || accessKeyId.Length > 128 || !accessKeyId.All(char.IsAsciiLetterOrDigit) ||
             string.IsNullOrWhiteSpace(accessKeySecret) || accessKeySecret.Length > 256 || accessKeySecret.Any(char.IsControl))
-            throw new ObjectStorageException("连接凭据无效，请编辑实例配置。", "InvalidCredentials");
+            throw ObjectStorageException.FromResource("InvalidConnectionCredentialsEditTheInstanceConfiguration", "InvalidCredentials");
         string validatedRegion = AliyunOssEndpoint.NormalizeRegion(region ?? "cn-hangzhou");
         var transport = new Oss.Transport.HttpTransport(clients.CreateClient(HttpClientName));
         try

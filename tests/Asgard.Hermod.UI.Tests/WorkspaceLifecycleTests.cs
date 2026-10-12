@@ -1,3 +1,5 @@
+using Text = Asgard.Hermod.Abstractions.Localization.Text;
+
 namespace Asgard.Hermod.UI.Tests;
 
 /// <summary>验证页签缓存、解绑顺序、连接释放与重试边界。</summary>
@@ -141,8 +143,8 @@ public sealed class WorkspaceLifecycleTests
         var page = Assert.IsType<TerminalWorkspaceViewModel>(environment.Shell.Workspace.SelectedTab);
 
         Assert.Null(page.Session);
-        Assert.Equal("Failed to start", page.Status);
-        Assert.Equal("启动测试失败", page.Error);
+        Assert.Equal(Text.Get("FailedToStart"), page.Status);
+        Assert.Equal(Text.Get("CannotStartTheTerminalCheckTheShellAndAccessPermissionsThenTryAgain"), page.Error);
         Assert.True(page.RetryCommand.CanExecute(null));
         Assert.Empty(environment.Factory.Sessions);
 
@@ -186,7 +188,7 @@ public sealed class WorkspaceLifecycleTests
         {
             page.PropertyChanged -= OnStopped;
         }
-        Assert.Equal("Exited (7)", page.Status);
+        Assert.Equal(Text.Format("Exited", 7), page.Status);
 
         Task retry = page.RetryCommand.ExecuteAsync();
         Assert.Null(page.Session);

@@ -26,7 +26,7 @@ public sealed class ObjectStorageTemporaryLinkDialogViewModel : ObjectStorageDia
     public string Key { get; }
     /// <summary>设计稿只提供十五分钟与一小时。</summary>
     public IReadOnlyList<ObjectStorageLinkLifetime> Lifetimes { get; } =
-        [new(TimeSpan.FromMinutes(15), "15 分钟"), new(TimeSpan.FromHours(1), "1 小时")];
+        [new(TimeSpan.FromMinutes(15), Text.Get("15Minutes")), new(TimeSpan.FromHours(1), Text.Get("1Hour"))];
     /// <summary>改变有效期后旧链接失效，迟到结果不会显示为新有效期的链接。</summary>
     public ObjectStorageLinkLifetime SelectedLifetime
     {
@@ -52,7 +52,7 @@ public sealed class ObjectStorageTemporaryLinkDialogViewModel : ObjectStorageDia
     /// <summary>剪贴板回调成功后才显示完成。</summary>
     public string CopyStatus { get; private set; } = "";
     /// <summary>按钮在真实请求期间提示生成中。</summary>
-    public string GenerateLabel => IsGenerating ? "生成中…" : "生成链接";
+    public string GenerateLabel => IsGenerating ? Text.Get("Generating") : Text.Get("GenerateLink");
     /// <summary>避免生成中的有效期选择与请求快照不一致。</summary>
     public bool CanSelectLifetime => !IsDisposed && !IsGenerating;
     /// <summary>只在用户请求时生成签名链接。</summary>
@@ -88,14 +88,14 @@ public sealed class ObjectStorageTemporaryLinkDialogViewModel : ObjectStorageDia
             if (IsDisposed || revision != _revision)
                 return;
             if (string.IsNullOrWhiteSpace(link))
-                Error = "生成临时链接失败，请稍后重试。";
+                Error = Text.Get("CannotGenerateATemporaryLinkTryAgainLater");
             else
                 Link = link;
         }
         catch (Exception exception)
         {
             if (!IsDisposed && revision == _revision)
-                Error = exception is ObjectStorageException safe ? safe.Message : "生成临时链接失败，请稍后重试。";
+                Error = Text.Error(exception, "CannotGenerateATemporaryLinkTryAgainLater");
         }
         finally
         {
@@ -113,13 +113,13 @@ public sealed class ObjectStorageTemporaryLinkDialogViewModel : ObjectStorageDia
         try
         {
             bool copied = _copy(Link);
-            CopyStatus = copied ? "已复制链接。" : "";
-            Error = copied ? "" : "无法写入剪贴板，请稍后重试。";
+            CopyStatus = copied ? Text.Get("LinkCopied") : "";
+            Error = copied ? "" : Text.Get("CannotWriteToTheClipboardTryAgainLater");
         }
         catch (Exception)
         {
             CopyStatus = "";
-            Error = "无法写入剪贴板，请稍后重试。";
+            Error = Text.Get("CannotWriteToTheClipboardTryAgainLater");
         }
         RefreshCommands();
     }

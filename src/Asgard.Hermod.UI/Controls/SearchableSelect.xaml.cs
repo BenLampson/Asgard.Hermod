@@ -20,7 +20,7 @@ public partial class SearchableSelect : UserControl
     /// <summary>控制弹层开关，点击外部和 Escape 都会关闭。</summary>
     public static readonly DependencyProperty IsDropDownOpenProperty = DependencyProperty.Register(nameof(IsDropDownOpen), typeof(bool), typeof(SearchableSelect), new PropertyMetadata(false));
     /// <summary>当前已确认选项的可见名称。</summary>
-    public static readonly DependencyProperty SelectedLabelProperty = DependencyProperty.Register(nameof(SelectedLabel), typeof(string), typeof(SearchableSelect), new PropertyMetadata("请选择"));
+    public static readonly DependencyProperty SelectedLabelProperty = DependencyProperty.Register(nameof(SelectedLabel), typeof(string), typeof(SearchableSelect), new PropertyMetadata(Text.Get("SelectAnOption")));
     /// <summary>筛选结果是否非空。</summary>
     public static readonly DependencyProperty HasOptionsProperty = DependencyProperty.Register(nameof(HasOptions), typeof(bool), typeof(SearchableSelect), new PropertyMetadata(false));
     /// <summary>弹层底部显示当前筛选数量。</summary>
@@ -80,7 +80,7 @@ public partial class SearchableSelect : UserControl
     /// <summary>筛选只操作轻量候选，选中名称始终来自已经确认的业务对象。</summary>
     private void RebuildOptions(bool resetCandidate = false)
     {
-        SelectedLabel = SelectedItem is null ? "请选择" : Label(SelectedItem);
+        SelectedLabel = SelectedItem is null ? Text.Get("SelectAnOption") : Label(SelectedItem);
         var all = ItemsSource?.Cast<object>().ToArray() ?? [];
         var candidate = !resetCandidate && OptionsList?.SelectedItem is SelectOption option ? option.Value : SelectedItem;
         Options.Clear();
@@ -90,7 +90,7 @@ public partial class SearchableSelect : UserControl
             if (label.Contains(SearchText.Trim(), StringComparison.OrdinalIgnoreCase)) Options.Add(new(value, label, Equals(value, SelectedItem)));
         }
         HasOptions = Options.Count > 0;
-        OptionCountText = $"{Options.Count} / {all.Length} · 输入以筛选";
+        OptionCountText = Text.Format("TypeToFilter", Options.Count, all.Length);
         if (OptionsList is not null) OptionsList.SelectedItem = Options.FirstOrDefault(item => Equals(item.Value, candidate)) ?? Options.FirstOrDefault();
     }
 

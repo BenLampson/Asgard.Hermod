@@ -18,6 +18,7 @@ public static class LocalStorageServiceCollectionExtensions
         services.TryAddSingleton<ILocalConfigurationRepository, SqliteConfigurationRepository>();
         services.TryAddSingleton<IInstanceConfigurationService, LocalInstanceConfigurationService>();
         services.TryAddSingleton<ITagManagementService, LocalTagManagementService>();
+        services.TryAddSingleton<ILanguagePreferenceStore, SqliteLanguagePreferenceStore>();
         return services;
     }
 }

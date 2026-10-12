@@ -78,9 +78,9 @@ public sealed class InstanceSidebarViewModel : ObservableObject, IDisposable
     /// <summary>过滤按钮显示文字。</summary>
     public string TagFilterLabel => _selectedTagPaths.Length switch
     {
-        0 => "Tag Filter",
-        1 => _selectedTagPaths[0].Split('/')[^1],
-        _ => $"{_selectedTagPaths.Length} tags"
+        0 => Text.Get("TagFilter"),
+        1 => Localization.TagDisplayText.Name(_selectedTagPaths[0], _selectedTagPaths[0].Split('/')[^1]),
+        _ => Text.Format("Tags", _selectedTagPaths.Length)
     };
     /// <summary>是否没有匹配实例。</summary>
     public bool IsEmpty => Instances.IsEmpty;
@@ -150,13 +150,13 @@ public sealed class InstanceSidebarViewModel : ObservableObject, IDisposable
         catch (Exception)
         {
             if (!_disposed && !_dispatcher.HasShutdownStarted)
-                await _dispatcher.InvokeAsync(() => OperationError = "无法刷新标签，请重新打开系统设置后重试。");
+                await _dispatcher.InvokeAsync(() => OperationError = Text.Get("CannotRefreshTagsReopenSettingsAndTryAgain"));
         }
     }
 
     /// <summary>创建服务异常不直接暴露第三方请求或凭据。</summary>
     private void OnAddInstanceFailed(object? sender, Exception exception) =>
-        OperationError = "无法打开实例配置，请重试。";
+        OperationError = Text.Get("CannotOpenInstanceConfigurationTryAgain");
 
     /// <summary>只有用户应用草稿后才更新实例列表；父路径包含全部下级标签。</summary>
     public void ApplyTagFilter(IReadOnlyList<string> selectedPaths, TagFilterMatchMode matchMode)

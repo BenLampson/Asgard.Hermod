@@ -2,6 +2,7 @@ using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls.Primitives;
 using Asgard.Hermod.UI.Views.Shell;
+using Text = Asgard.Hermod.Abstractions.Localization.Text;
 
 namespace Asgard.Hermod.UI.Tests;
 
@@ -32,7 +33,7 @@ public sealed class MenuInteractionTests
             menu.PlacementTarget = button;
             menu.IsOpen = true;
             await WpfTestFixture.DrainDispatcherAsync();
-            var header = Assert.Single(menu.Items.OfType<MenuItem>(), item => item.Header is "Theme");
+            var header = Assert.Single(menu.Items.OfType<MenuItem>(), item => item.Header is string label && label == Text.Get("Theme"));
             var popup = Assert.IsType<Popup>(header.Template.FindName("PART_Popup", header));
             Assert.IsAssignableFrom<UIElement>(popup.Child).Opacity = 0;
             var peer = new MenuItemAutomationPeer(header);
@@ -40,8 +41,8 @@ public sealed class MenuInteractionTests
             await WpfTestFixture.DrainDispatcherAsync();
             Assert.True(header.IsSubmenuOpen);
             Assert.True(popup.IsOpen);
-            var light = Assert.Single(header.Items.OfType<MenuItem>(), item => item.Header is "Light");
-            var dark = Assert.Single(header.Items.OfType<MenuItem>(), item => item.Header is "Dark");
+            var light = Assert.Single(header.Items.OfType<MenuItem>(), item => item.Header is string label && label == Text.Get("Light"));
+            var dark = Assert.Single(header.Items.OfType<MenuItem>(), item => item.Header is string label && label == Text.Get("Dark"));
             Assert.True(light.IsChecked);
             Assert.False(dark.IsChecked);
             Assert.Equal(Visibility.Visible, Assert.IsType<IconView>(light.Template.FindName("CheckMark", light)).Visibility);

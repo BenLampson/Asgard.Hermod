@@ -1,3 +1,5 @@
+using Text = Asgard.Hermod.Abstractions.Localization.Text;
+
 namespace Asgard.Hermod.UI.Tests;
 
 /// <summary>验证真实详情视图绑定，不将未接入详情的实例显示为服务配置失败。</summary>
@@ -33,11 +35,11 @@ public sealed class ServiceDetailViewTests
             Assert.False(Assert.Single(WindowTestVisuals.Descendants<ConfigurationPanel>(view)).IsVisible);
             Assert.False(Assert.Single(WindowTestVisuals.Descendants<EventsPanel>(view)).IsVisible);
             Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(view), text => text.IsVisible
-                && text.Text == (configured ? "实例已配置" : "No connector configured"));
+                && text.Text == (configured ? Text.Get("InstanceConfigured") : Text.Get("NoConnectorConfigured")));
             Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(view), text => text.IsVisible
                 && text.Text == model.PlaceholderDescription);
             var badge = Assert.Single(WindowTestVisuals.Descendants<StatusBadge>(view));
-            Assert.Equal(configured ? "已配置" : "Not configured", badge.Text);
+            Assert.Equal(configured ? Text.Get("Configured") : Text.Get("NotConfigured"), badge.Text);
             Assert.Equal(StatusTone.Muted, badge.Tone);
         }
         finally
@@ -54,7 +56,7 @@ public sealed class ServiceDetailViewTests
             [new("CPU", "23%", "cpu")], [new("Host", "demo.local")],
             [new("Preview service created", "刚刚", "check", StatusTone.Success)]);
         var model = new ServiceDetailViewModel(
-            new InstanceItemViewModel(new InstanceSummary("demo", "demo", "预览", "server", [])), snapshot);
+            new InstanceItemViewModel(new InstanceSummary("demo", "demo", Text.Get("Preview"), "server", [])), snapshot);
         var view = new ServiceDetailView { DataContext = model };
         var window = CreateWindow(view);
         try
@@ -78,7 +80,7 @@ public sealed class ServiceDetailViewTests
             Assert.False(Assert.Single(textBlocks, text => text.Text == model.PlaceholderTitle).IsVisible);
             var badge = Assert.Single(WindowTestVisuals.Descendants<StatusBadge>(view));
             Assert.Equal("Running", badge.Text);
-            Assert.Equal("Sample data · service is not connected.", badge.ToolTip);
+            Assert.Equal(Text.Get("SampleDataServiceIsNotConnected"), badge.ToolTip);
         }
         finally
         {

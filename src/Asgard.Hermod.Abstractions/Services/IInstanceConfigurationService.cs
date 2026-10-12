@@ -11,7 +11,7 @@ public interface IInstanceConfigurationService
     /// <summary>更新已保存配置，保留实例标识并返回不包含凭据的最新导航信息。</summary>
     Task<InstanceSummary> UpdateAsync(string instanceId, InstanceConfigurationDraft draft,
         CancellationToken cancellationToken = default) =>
-        throw new NotSupportedException("当前配置服务不支持编辑实例。");
+        throw new NotSupportedException(Text.Get("TheCurrentConfigurationServiceDoesNotSupportEditingInstances"));
     /// <summary>仅向需要建立连接的应用服务返回解密配置。</summary>
     Task<InstanceConnectionOptions?> GetConnectionAsync(string instanceId,
         CancellationToken cancellationToken = default);

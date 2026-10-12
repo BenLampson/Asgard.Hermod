@@ -40,7 +40,7 @@ public class HermodWindow : Window
     {
         DefaultStyleKeyProperty.OverrideMetadata(typeof(HermodWindow),
             new FrameworkPropertyMetadata(typeof(HermodWindow)));
-        TitleProperty.OverrideMetadata(typeof(HermodWindow), new FrameworkPropertyMetadata("Hermod"));
+        TitleProperty.OverrideMetadata(typeof(HermodWindow), new FrameworkPropertyMetadata(Text.Get("Hermod")));
         ResizeModeProperty.OverrideMetadata(typeof(HermodWindow),
             new FrameworkPropertyMetadata(ResizeMode.CanResize, OnResizeModeChanged));
     }

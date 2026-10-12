@@ -1,0 +1,1533 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <data xml:space="preserve" name="100ItemsPerBatch">
+    <value>100 items per batch</value>
+  </data>
+  <data xml:space="preserve" name="15Minutes">
+    <value>15 minutes</value>
+  </data>
+  <data xml:space="preserve" name="1Hour">
+    <value>1 hour</value>
+  </data>
+  <data xml:space="preserve" name="AFileOrFolderWithThisNameAlreadyExistsChooseADifferentFolderName">
+    <value>A file or folder with this name already exists. Choose a different folder name.</value>
+  </data>
+  <data xml:space="preserve" name="ATagCannotBeMovedUnderItselfOrOneOfItsDescendants">
+    <value>A tag cannot be moved under itself or one of its descendants.</value>
+  </data>
+  <data xml:space="preserve" name="ATagWithThisNameAlreadyExistsUnderThisParentNamesAreCaseInsensitive">
+    <value>A tag with this name already exists under this parent. Names are case-insensitive.</value>
+  </data>
+  <data xml:space="preserve" name="About">
+    <value>About</value>
+  </data>
+  <data xml:space="preserve" name="AccessDeniedEnsureTheAccessKeyHasOssListBucketsPermission">
+    <value>Access denied. Ensure the AccessKey has oss:ListBuckets permission.</value>
+  </data>
+  <data xml:space="preserve" name="AccessPermissions">
+    <value>Access permissions</value>
+  </data>
+  <data xml:space="preserve" name="Account">
+    <value>Account</value>
+  </data>
+  <data xml:space="preserve" name="AccountAndSynchronizationFeaturesWillBeEnabledAfterIdentityIntegration">
+    <value>Account and synchronization features will be enabled after identity integration.</value>
+  </data>
+  <data xml:space="preserve" name="AccountStorageIsNotAvailableYetSaveOnThisDevice">
+    <value>Account storage is not available yet. Save on this device.</value>
+  </data>
+  <data xml:space="preserve" name="ActionFailed">
+    <value>Action failed</value>
+  </data>
+  <data xml:space="preserve" name="ActiveFailed">
+    <value>{0} active · {1} failed</value>
+  </data>
+  <data xml:space="preserve" name="AddAServiceConnectionToViewConfigurationMetricsAndEvents">
+    <value>Add a service connection to view configuration, metrics and events.</value>
+  </data>
+  <data xml:space="preserve" name="AddChild">
+    <value>Add child</value>
+  </data>
+  <data xml:space="preserve" name="AddInstance">
+    <value>Add instance</value>
+  </data>
+  <data xml:space="preserve" name="AddInstance2">
+    <value>Add instance</value>
+  </data>
+  <data xml:space="preserve" name="AlibabaCloudOSS">
+    <value>Alibaba Cloud OSS</value>
+  </data>
+  <data xml:space="preserve" name="AllFiles">
+    <value>All files|*.*</value>
+  </data>
+  <data xml:space="preserve" name="AnObjectWithThisNameAlreadyExistsConfirmOverwriteOrSkip">
+    <value>An object with this name already exists. Confirm overwrite or skip.</value>
+  </data>
+  <data xml:space="preserve" name="AnyoneWithThisLinkCanAccessTheObjectWhileItIsValidShareItCarefully">
+    <value>Anyone with this link can access the object while it is valid. Share it carefully.</value>
+  </data>
+  <data xml:space="preserve" name="Appearance">
+    <value>Appearance</value>
+  </data>
+  <data xml:space="preserve" name="ApplyFilters">
+    <value>Apply filters ({0})</value>
+  </data>
+  <data xml:space="preserve" name="ArchiveStorage">
+    <value>Archive storage</value>
+  </data>
+  <data xml:space="preserve" name="AsgardHermod">
+    <value>Asgard Hermod</value>
+  </data>
+  <data xml:space="preserve" name="AskBeforeUploading">
+    <value>Ask before uploading</value>
+  </data>
+  <data xml:space="preserve" name="Authentication">
+    <value>Authentication</value>
+  </data>
+  <data xml:space="preserve" name="AuthenticationAndBucketListing">
+    <value>Authentication and bucket listing</value>
+  </data>
+  <data xml:space="preserve" name="AuthenticationFailedCheckTheAccessKeyIDAndAccessKeySecret">
+    <value>Authentication failed. Check the AccessKey ID and AccessKey Secret.</value>
+  </data>
+  <data xml:space="preserve" name="AuthenticationFailedCheckTheConnectionCredentials">
+    <value>Authentication failed. Check the connection credentials.</value>
+  </data>
+  <data xml:space="preserve" name="AuthenticationFailedEditTheInstanceConnectionCredentials">
+    <value>Authentication failed. Edit the instance connection credentials.</value>
+  </data>
+  <data xml:space="preserve" name="AvailableOptions">
+    <value>Available options</value>
+  </data>
+  <data xml:space="preserve" name="Back">
+    <value>Back</value>
+  </data>
+  <data xml:space="preserve" name="BuiltInEnvironmentTag">
+    <value>Built-in environment tag</value>
+  </data>
+  <data xml:space="preserve" name="BuiltInEnvironmentTagsCannotBeDeleted">
+    <value>Built-in environment tags cannot be deleted.</value>
+  </data>
+  <data xml:space="preserve" name="BuiltInEnvironmentTagsCannotBeEditedOrDeleted">
+    <value>Built-in environment tags cannot be edited or deleted.</value>
+  </data>
+  <data xml:space="preserve" name="BuiltInEnvironmentTagsCannotBeParentsOfCustomTags">
+    <value>Built-in environment tags cannot be parents of custom tags.</value>
+  </data>
+  <data xml:space="preserve" name="CanContainOnlyEnglishLettersAndDigits">
+    <value>{0} can contain only English letters and digits.</value>
+  </data>
+  <data xml:space="preserve" name="Cancel">
+    <value>Cancel</value>
+  </data>
+  <data xml:space="preserve" name="CancelCurrentTask">
+    <value>Cancel current task</value>
+  </data>
+  <data xml:space="preserve" name="CancelTagFilters">
+    <value>Cancel tag filters</value>
+  </data>
+  <data xml:space="preserve" name="CancelTest">
+    <value>Cancel test</value>
+  </data>
+  <data xml:space="preserve" name="Canceled">
+    <value>Canceled</value>
+  </data>
+  <data xml:space="preserve" name="CandidateBucketListing">
+    <value>Candidate bucket listing</value>
+  </data>
+  <data xml:space="preserve" name="CannotAddTheSelectedFilesCheckAccessPermissionsAndTryAgain">
+    <value>Cannot add the selected files. Check access permissions and try again.</value>
+  </data>
+  <data xml:space="preserve" name="CannotConnectToAlibabaCloudOSSCheckYourNetworkAndTryAgain">
+    <value>Cannot connect to Alibaba Cloud OSS. Check your network and try again.</value>
+  </data>
+  <data xml:space="preserve" name="CannotContainControlCharacters">
+    <value>{0} cannot contain control characters.</value>
+  </data>
+  <data xml:space="preserve" name="CannotExceedCharacters">
+    <value>{0} cannot exceed {1} characters.</value>
+  </data>
+  <data xml:space="preserve" name="CannotGenerateATemporaryLinkTryAgainLater">
+    <value>Cannot generate a temporary link. Try again later.</value>
+  </data>
+  <data xml:space="preserve" name="CannotOpenInstanceConfigurationTryAgain">
+    <value>Cannot open instance configuration. Try again.</value>
+  </data>
+  <data xml:space="preserve" name="CannotOpenTheFilePickerTryAgainLater">
+    <value>Cannot open the file picker. Try again later.</value>
+  </data>
+  <data xml:space="preserve" name="CannotOpenTheFolderPickerTryAgainLater">
+    <value>Cannot open the folder picker. Try again later.</value>
+  </data>
+  <data xml:space="preserve" name="CannotOpenTheSaveDialogTryAgainLater">
+    <value>Cannot open the save dialog. Try again later.</value>
+  </data>
+  <data xml:space="preserve" name="CannotProtectConnectionCredentialsCheckCredentialProtectionForTheCurrentWindowsUser">
+    <value>Cannot protect connection credentials. Check credential protection for the current Windows user.</value>
+  </data>
+  <data xml:space="preserve" name="CannotReadBuckets">
+    <value>Cannot read buckets</value>
+  </data>
+  <data xml:space="preserve" name="CannotReadCandidateBucketsCheckBucketReadPermissionsTheNetworkAndInstanceConfiguratio">
+    <value>Cannot read candidate buckets. Check bucket read permissions, the network, and instance configuration.</value>
+  </data>
+  <data xml:space="preserve" name="CannotReadObjectDetailsTryAgainOrDownloadToViewThem">
+    <value>Cannot read object details. Try again or download to view them.</value>
+  </data>
+  <data xml:space="preserve" name="CannotReadTheTextPreviewDownloadToViewIt">
+    <value>Cannot read the text preview. Download to view it.</value>
+  </data>
+  <data xml:space="preserve" name="CannotReadTheseConnectionCredentialsUseTheOriginalWindowsUserOrConfigureTheInstanceAg">
+    <value>Cannot read these connection credentials. Use the original Windows user or configure the instance again.</value>
+  </data>
+  <data xml:space="preserve" name="CannotReadThisInstanceConfigurationReopenAndTryAgain">
+    <value>Cannot read this instance configuration. Reopen and try again.</value>
+  </data>
+  <data xml:space="preserve" name="CannotRefreshTagsReopenSettingsAndTryAgain">
+    <value>Cannot refresh tags. Reopen settings and try again.</value>
+  </data>
+  <data xml:space="preserve" name="CannotSaveTheLanguagePreferenceTryAgain">
+    <value>Cannot save the language preference. Try again.</value>
+  </data>
+  <data xml:space="preserve" name="CannotSelectDownloadLocation">
+    <value>Cannot select download location</value>
+  </data>
+  <data xml:space="preserve" name="CannotStartHermodCheckLocalStorageConfigurationAndPermissions">
+    <value>Cannot start Hermod. Check local storage configuration and permissions.</value>
+  </data>
+  <data xml:space="preserve" name="CannotStartTheTerminalCheckTheShellAndAccessPermissionsThenTryAgain">
+    <value>Cannot start the terminal. Check the shell and access permissions, then try again.</value>
+  </data>
+  <data xml:space="preserve" name="CannotUploadADriveRootSelectAFolder">
+    <value>Cannot upload a drive root. Select a folder.</value>
+  </data>
+  <data xml:space="preserve" name="CannotUploadLinksOrReparsePointsSelectActualFilesAndFolders">
+    <value>Cannot upload links or reparse points. Select actual files and folders.</value>
+  </data>
+  <data xml:space="preserve" name="CannotWriteToTheClipboardTryAgain">
+    <value>Cannot write to the clipboard. Try again.</value>
+  </data>
+  <data xml:space="preserve" name="CannotWriteToTheClipboardTryAgainLater">
+    <value>Cannot write to the clipboard. Try again later.</value>
+  </data>
+  <data xml:space="preserve" name="CheckTheConnectionInformationAndEnsureYourIdentityHasTheRequiredAccessPermissions">
+    <value>Check the connection information and ensure your identity has the required access permissions.</value>
+  </data>
+  <data xml:space="preserve" name="CheckTheNetworkAndRAMPermissionsOrEditTheConnection">
+    <value>Check the network and RAM permissions, or edit the connection.</value>
+  </data>
+  <data xml:space="preserve" name="CheckTheNetworkAndRAMPermissionsToListObjectsInThisBucket">
+    <value>Check the network and RAM permissions to list objects in this bucket.</value>
+  </data>
+  <data xml:space="preserve" name="ChineseLanguage">
+    <value>简体中文</value>
+  </data>
+  <data xml:space="preserve" name="ChooseAProviderThenEnterConnectionInformationInTheNextStep">
+    <value>Choose a provider, then enter connection information in the next step.</value>
+  </data>
+  <data xml:space="preserve" name="ChooseAProviderToSeeTheConnectionTestDetails">
+    <value>Choose a provider to see the connection test details.</value>
+  </data>
+  <data xml:space="preserve" name="ChooseAnInstanceTypeThenItsProvider">
+    <value>Choose an instance type, then its provider.</value>
+  </data>
+  <data xml:space="preserve" name="ChooseProvider">
+    <value>Choose provider</value>
+  </data>
+  <data xml:space="preserve" name="ChooseTheRootOrAnotherCustomTag">
+    <value>Choose the root or another custom tag.</value>
+  </data>
+  <data xml:space="preserve" name="ChooseType">
+    <value>Choose type</value>
+  </data>
+  <data xml:space="preserve" name="ChooseTypeAndProvider">
+    <value>Choose type and provider</value>
+  </data>
+  <data xml:space="preserve" name="ChooseWhereToSaveThisInstance">
+    <value>Choose where to save this instance.</value>
+  </data>
+  <data xml:space="preserve" name="ClearAll">
+    <value>Clear all</value>
+  </data>
+  <data xml:space="preserve" name="ClearFilters">
+    <value>Clear filters</value>
+  </data>
+  <data xml:space="preserve" name="ClearObjectSelection">
+    <value>Clear object selection</value>
+  </data>
+  <data xml:space="preserve" name="ClearOptionFilter">
+    <value>Clear option filter</value>
+  </data>
+  <data xml:space="preserve" name="ClearSearch">
+    <value>Clear search</value>
+  </data>
+  <data xml:space="preserve" name="ClickAnObjectToViewItsDetails">
+    <value>Click an object to view its details.</value>
+  </data>
+  <data xml:space="preserve" name="ClickStartTestToVerifyConnectionInformationAndAccessPermissions">
+    <value>Click Start test to verify connection information and access permissions.</value>
+  </data>
+  <data xml:space="preserve" name="Close">
+    <value>Close</value>
+  </data>
+  <data xml:space="preserve" name="CloseObjectDetails">
+    <value>Close object details</value>
+  </data>
+  <data xml:space="preserve" name="CloseTab">
+    <value>Close tab</value>
+  </data>
+  <data xml:space="preserve" name="CloseWindow">
+    <value>Close window</value>
+  </data>
+  <data xml:space="preserve" name="ColdArchiveStorage">
+    <value>Cold archive storage</value>
+  </data>
+  <data xml:space="preserve" name="CollapseSidebar">
+    <value>Collapse sidebar</value>
+  </data>
+  <data xml:space="preserve" name="Color">
+    <value>Color</value>
+  </data>
+  <data xml:space="preserve" name="ColorsMustUseRGBOrRRGGBBHexadecimalFormat">
+    <value>Colors must use #RGB or #RRGGBB hexadecimal format.</value>
+  </data>
+  <data xml:space="preserve" name="CommonTagColors">
+    <value>Common tag colors</value>
+  </data>
+  <data xml:space="preserve" name="CompleteOrCancelTransfersBeforeEditingTheConnection">
+    <value>Complete or cancel transfers before editing the connection.</value>
+  </data>
+  <data xml:space="preserve" name="Completed">
+    <value>Completed</value>
+  </data>
+  <data xml:space="preserve" name="Configured">
+    <value>Configured</value>
+  </data>
+  <data xml:space="preserve" name="ConfirmChanges">
+    <value>Confirm changes</value>
+  </data>
+  <data xml:space="preserve" name="ConfirmCreation">
+    <value>Confirm creation</value>
+  </data>
+  <data xml:space="preserve" name="ConnectToObjectStorage">
+    <value>Connect to object storage</value>
+  </data>
+  <data xml:space="preserve" name="Connected">
+    <value>Connected</value>
+  </data>
+  <data xml:space="preserve" name="Connecting">
+    <value>Connecting</value>
+  </data>
+  <data xml:space="preserve" name="ConnectionInformation">
+    <value>Connection information</value>
+  </data>
+  <data xml:space="preserve" name="ConnectionSuccessful">
+    <value>Connection successful</value>
+  </data>
+  <data xml:space="preserve" name="ConnectionTest">
+    <value>Connection test</value>
+  </data>
+  <data xml:space="preserve" name="ConnectionTestFailedCheckTheConnectionInformationOrNetworkAndTryAgain">
+    <value>Connection test failed. Check the connection information or network and try again.</value>
+  </data>
+  <data xml:space="preserve" name="ConnectionTestTimedOutCheckTheNetworkAndTryAgain">
+    <value>Connection test timed out. Check the network and try again.</value>
+  </data>
+  <data xml:space="preserve" name="ConnectionTestTimedOutKnownTemporaryObjectsWereCleanedUpCheckTheNetworkAndTryAgain">
+    <value>Connection test timed out. Known temporary objects were cleaned up. Check the network and try again.</value>
+  </data>
+  <data xml:space="preserve" name="ConnectorNotConfiguredDeployWillBeAvailableAfterAServiceConnectionIsAdded">
+    <value>Connector not configured. Deploy will be available after a service connection is added.</value>
+  </data>
+  <data xml:space="preserve" name="ConnectorNotConfiguredRestartWillBeAvailableAfterAServiceConnectionIsAdded">
+    <value>Connector not configured. Restart will be available after a service connection is added.</value>
+  </data>
+  <data xml:space="preserve" name="ConnectorsMustProvideAValidConfigurationFieldList">
+    <value>Connectors must provide a valid configuration field list.</value>
+  </data>
+  <data xml:space="preserve" name="ContentType">
+    <value>Content-Type</value>
+  </data>
+  <data xml:space="preserve" name="CopyCompleteLink">
+    <value>Copy complete link</value>
+  </data>
+  <data xml:space="preserve" name="CopyFailed">
+    <value>Copy failed</value>
+  </data>
+  <data xml:space="preserve" name="CopyLink">
+    <value>Copy link</value>
+  </data>
+  <data xml:space="preserve" name="CopyObjectKey">
+    <value>Copy object key</value>
+  </data>
+  <data xml:space="preserve" name="CopyTemporaryLink">
+    <value>Copy temporary link</value>
+  </data>
+  <data xml:space="preserve" name="CopyTextPreview">
+    <value>Copy text preview</value>
+  </data>
+  <data xml:space="preserve" name="Create">
+    <value>Create</value>
+  </data>
+  <data xml:space="preserve" name="CreateCustomTagsWithoutChangingBuiltInEnvironmentTagsSavedTagsAppearImmediatelyInTagM">
+    <value>Create custom tags without changing built-in environment tags. Saved tags appear immediately in tag management and instance tag selectors.</value>
+  </data>
+  <data xml:space="preserve" name="CreateInstance">
+    <value>Create instance</value>
+  </data>
+  <data xml:space="preserve" name="CreateTag">
+    <value>Create tag</value>
+  </data>
+  <data xml:space="preserve" name="Creating">
+    <value>Creating…</value>
+  </data>
+  <data xml:space="preserve" name="CreationFailedTryAgainYourEntriesHaveBeenRetained">
+    <value>Creation failed. Try again. Your entries have been retained.</value>
+  </data>
+  <data xml:space="preserve" name="CurrentLanguage">
+    <value>Current language: {0}</value>
+  </data>
+  <data xml:space="preserve" name="Custom">
+    <value>Custom</value>
+  </data>
+  <data xml:space="preserve" name="Dark">
+    <value>Dark</value>
+  </data>
+  <data xml:space="preserve" name="DatabaseSchemaVersionIsUnsupportedThisVersionOfHermodSupportsSchema">
+    <value>Database schema version {0} is unsupported. This version of Hermod supports schema {1}.</value>
+  </data>
+  <data xml:space="preserve" name="DeepColdArchive">
+    <value>Deep cold archive</value>
+  </data>
+  <data xml:space="preserve" name="Delete">
+    <value>Delete</value>
+  </data>
+  <data xml:space="preserve" name="Delete2">
+    <value>Delete {0}?</value>
+  </data>
+  <data xml:space="preserve" name="DeleteAndItsChildTags">
+    <value>Delete {0} and its child tags?</value>
+  </data>
+  <data xml:space="preserve" name="DeleteObjects">
+    <value>Delete {0} objects</value>
+  </data>
+  <data xml:space="preserve" name="DeleteObjects2">
+    <value>Delete objects</value>
+  </data>
+  <data xml:space="preserve" name="DeleteObjects3">
+    <value>Delete objects…</value>
+  </data>
+  <data xml:space="preserve" name="DeleteTag">
+    <value>Delete tag</value>
+  </data>
+  <data xml:space="preserve" name="DeleteTags">
+    <value>Delete {0} tags</value>
+  </data>
+  <data xml:space="preserve" name="DeleteTheseObjects">
+    <value>Delete these {0} objects?</value>
+  </data>
+  <data xml:space="preserve" name="Deploy">
+    <value>Deploy</value>
+  </data>
+  <data xml:space="preserve" name="DescriptionsForTheSameInstanceTypeMustMatchCheckConnectorRegistration">
+    <value>Descriptions for the same instance type must match. Check connector registration.</value>
+  </data>
+  <data xml:space="preserve" name="DirectoryEnumerationReturnedAnIncompleteDeletionRangeRefreshAndTryAgain">
+    <value>Directory enumeration returned an incomplete deletion range. Refresh and try again.</value>
+  </data>
+  <data xml:space="preserve" name="DirectoryNamesCannotBeEmptyOrContainSlashesOrControlCharacters">
+    <value>Directory names cannot be empty or contain slashes or control characters.</value>
+  </data>
+  <data xml:space="preserve" name="Disconnected">
+    <value>Disconnected</value>
+  </data>
+  <data xml:space="preserve" name="DismissNotification">
+    <value>Dismiss notification</value>
+  </data>
+  <data xml:space="preserve" name="DoubleClickAFolderToOpenItsPrefix">
+    <value>Double-click a folder to open its prefix.</value>
+  </data>
+  <data xml:space="preserve" name="Download">
+    <value>Download</value>
+  </data>
+  <data xml:space="preserve" name="DownloadCurrentObject">
+    <value>Download current object</value>
+  </data>
+  <data xml:space="preserve" name="DropFilesHere">
+    <value>Drop files here</value>
+  </data>
+  <data xml:space="preserve" name="DuplicateProviderIdentifiersForTheSameInstanceTypeCheckConnectorRegistration">
+    <value>Duplicate provider identifiers for the same instance type. Check connector registration.</value>
+  </data>
+  <data xml:space="preserve" name="DuplicateTagPath">
+    <value>Duplicate tag path: {0}</value>
+  </data>
+  <data xml:space="preserve" name="Edit">
+    <value>Edit</value>
+  </data>
+  <data xml:space="preserve" name="EditConnection">
+    <value>Edit connection</value>
+  </data>
+  <data xml:space="preserve" name="EditInformation">
+    <value>Edit information</value>
+  </data>
+  <data xml:space="preserve" name="EditInstance">
+    <value>Edit instance</value>
+  </data>
+  <data xml:space="preserve" name="EditObjectStorageConnection">
+    <value>Edit object storage connection</value>
+  </data>
+  <data xml:space="preserve" name="EditTag">
+    <value>Edit tag</value>
+  </data>
+  <data xml:space="preserve" name="EditingCannotChangeTheInstanceTypeOrProviderCreateAnInstanceOfTheRequiredTypeInstead">
+    <value>Editing cannot change the instance type or provider. Create an instance of the required type instead.</value>
+  </data>
+  <data xml:space="preserve" name="English">
+    <value>English</value>
+  </data>
+  <data xml:space="preserve" name="Enter">
+    <value>Enter {0}.</value>
+  </data>
+  <data xml:space="preserve" name="EnterAColorInRGBOrRRGGBBFormat">
+    <value>Enter a color in #RGB or #RRGGBB format.</value>
+  </data>
+  <data xml:space="preserve" name="EnterAFolderName">
+    <value>Enter a folder name.</value>
+  </data>
+  <data xml:space="preserve" name="EnterATagName">
+    <value>Enter a tag name.</value>
+  </data>
+  <data xml:space="preserve" name="EnterAValidAccessKeyIDAndAccessKeySecret">
+    <value>Enter a valid AccessKey ID and AccessKey Secret.</value>
+  </data>
+  <data xml:space="preserve" name="EnterInformation">
+    <value>Enter information</value>
+  </data>
+  <data xml:space="preserve" name="EnterTheInstanceNameAndConnectionInformationFor">
+    <value>Enter the instance name and connection information for {0}.</value>
+  </data>
+  <data xml:space="preserve" name="EnteredHidden">
+    <value>Entered · Hidden</value>
+  </data>
+  <data xml:space="preserve" name="Environment">
+    <value>Environment</value>
+  </data>
+  <data xml:space="preserve" name="EnvironmentIsABuiltInTagGroupUseADifferentNameForCustomRootTags">
+    <value>Environment is a built-in tag group. Use a different name for custom root tags.</value>
+  </data>
+  <data xml:space="preserve" name="ExistingObjectPolicy">
+    <value>Existing object policy</value>
+  </data>
+  <data xml:space="preserve" name="Exited">
+    <value>Exited ({0})</value>
+  </data>
+  <data xml:space="preserve" name="ExpandOrCollapseCommonColors">
+    <value>Expand or collapse common colors</value>
+  </data>
+  <data xml:space="preserve" name="ExpandOrCollapseTag">
+    <value>Expand or collapse tag</value>
+  </data>
+  <data xml:space="preserve" name="ExpandSidebar">
+    <value>Expand sidebar</value>
+  </data>
+  <data xml:space="preserve" name="Failed">
+    <value>Failed</value>
+  </data>
+  <data xml:space="preserve" name="Failed2">
+    <value>Failed</value>
+  </data>
+  <data xml:space="preserve" name="FailedToStart">
+    <value>Failed to start</value>
+  </data>
+  <data xml:space="preserve" name="FilesSelected">
+    <value>{0} files selected</value>
+  </data>
+  <data xml:space="preserve" name="FilterByTags">
+    <value>Filter by tags</value>
+  </data>
+  <data xml:space="preserve" name="FilterInstancesByName">
+    <value>Filter instances by name</value>
+  </data>
+  <data xml:space="preserve" name="FilterInstancesByTags">
+    <value>Filter instances by tags</value>
+  </data>
+  <data xml:space="preserve" name="FilterOptions">
+    <value>Filter options</value>
+  </data>
+  <data xml:space="preserve" name="FilterTags">
+    <value>Filter tags</value>
+  </data>
+  <data xml:space="preserve" name="FindInstances">
+    <value>Find instances</value>
+  </data>
+  <data xml:space="preserve" name="FolderName">
+    <value>Folder name</value>
+  </data>
+  <data xml:space="preserve" name="FoldersObjects">
+    <value>{0} folders · {1} objects</value>
+  </data>
+  <data xml:space="preserve" name="FollowWindows">
+    <value>Follow Windows</value>
+  </data>
+  <data xml:space="preserve" name="FollowWindowsDisplayLanguageAutomaticallyOrChooseALanguageBelow">
+    <value>Follow Windows display language automatically, or choose a language below.</value>
+  </data>
+  <data xml:space="preserve" name="General">
+    <value>General</value>
+  </data>
+  <data xml:space="preserve" name="GenerateLink">
+    <value>Generate link</value>
+  </data>
+  <data xml:space="preserve" name="GenerateTemporaryLink">
+    <value>Generate temporary link</value>
+  </data>
+  <data xml:space="preserve" name="GenerateTemporaryLink2">
+    <value>Generate temporary link…</value>
+  </data>
+  <data xml:space="preserve" name="Generating">
+    <value>Generating…</value>
+  </data>
+  <data xml:space="preserve" name="GroupsExpandToBrowse">
+    <value>{0} groups · expand to browse</value>
+  </data>
+  <data xml:space="preserve" name="Hermod">
+    <value>Hermod</value>
+  </data>
+  <data xml:space="preserve" name="HermodLocalStorageRequiresADatabaseFilePath">
+    <value>Hermod local storage requires a database file path.</value>
+  </data>
+  <data xml:space="preserve" name="HermodLocalStorageRequiresAWritableDatabase">
+    <value>Hermod local storage requires a writable database.</value>
+  </data>
+  <data xml:space="preserve" name="HermodLocalStorageRequiresTheSQLiteProvider">
+    <value>Hermod local storage requires the SQLite provider.</value>
+  </data>
+  <data xml:space="preserve" name="HermodRequiresLocalDatabaseStorageToBeEnabled">
+    <value>Hermod requires local database storage to be enabled.</value>
+  </data>
+  <data xml:space="preserve" name="Home">
+    <value>Home</value>
+  </data>
+  <data xml:space="preserve" name="IdentityAndBucketListingPassedButNoBucketIsAvailableForReadWriteVerificationCreateOrA">
+    <value>Identity and bucket listing passed, but no bucket is available for read/write verification. Create or authorize at least one bucket.</value>
+  </data>
+  <data xml:space="preserve" name="InfrequentAccess">
+    <value>Infrequent access</value>
+  </data>
+  <data xml:space="preserve" name="Instance">
+    <value>Instance</value>
+  </data>
+  <data xml:space="preserve" name="InstanceConfigurationSaved">
+    <value>Instance configuration saved</value>
+  </data>
+  <data xml:space="preserve" name="InstanceConfigured">
+    <value>Instance configured</value>
+  </data>
+  <data xml:space="preserve" name="InstanceConnectorNotInstalled">
+    <value>Instance connector not installed</value>
+  </data>
+  <data xml:space="preserve" name="InstanceDetailsAreNotYetAvailable">
+    <value>Instance details are not yet available.</value>
+  </data>
+  <data xml:space="preserve" name="InstanceList">
+    <value>Instance list</value>
+  </data>
+  <data xml:space="preserve" name="InstanceName">
+    <value>Instance name</value>
+  </data>
+  <data xml:space="preserve" name="InstanceNamesMustContain1128CharactersAndNoControlCharacters">
+    <value>Instance names must contain 1–128 characters and no control characters.</value>
+  </data>
+  <data xml:space="preserve" name="InstanceProvider">
+    <value>Instance provider</value>
+  </data>
+  <data xml:space="preserve" name="InstanceType">
+    <value>Instance type</value>
+  </data>
+  <data xml:space="preserve" name="InstanceTypesAndProvidersMustSupplyValidStableIdentifiers">
+    <value>Instance types and providers must supply valid, stable identifiers.</value>
+  </data>
+  <data xml:space="preserve" name="Instances">
+    <value>{0} instances</value>
+  </data>
+  <data xml:space="preserve" name="InsufficientPermissionsCheckThatTheCurrentCredentialsPermitThisObjectOperation">
+    <value>Insufficient permissions. Check that the current credentials permit this object operation.</value>
+  </data>
+  <data xml:space="preserve" name="InsufficientPermissionsCheckTheInstanceCredentialsAndAccessPolicy">
+    <value>Insufficient permissions. Check the instance credentials and access policy.</value>
+  </data>
+  <data xml:space="preserve" name="InvalidBucketNameSelectTheBucketAgain">
+    <value>Invalid bucket name. Select the bucket again.</value>
+  </data>
+  <data xml:space="preserve" name="InvalidBucketRegionRefreshTheBucketList">
+    <value>Invalid bucket region. Refresh the bucket list.</value>
+  </data>
+  <data xml:space="preserve" name="InvalidConnectionCredentialsEditTheInstanceConfiguration">
+    <value>Invalid connection credentials. Edit the instance configuration.</value>
+  </data>
+  <data xml:space="preserve" name="InvalidConnectionParametersCheckTheFieldsRequiredByTheProvider">
+    <value>Invalid connection parameters. Check the fields required by the provider.</value>
+  </data>
+  <data xml:space="preserve" name="InvalidDirectoryDeletionRangeRefreshAndSelectAgain">
+    <value>Invalid directory deletion range. Refresh and select again.</value>
+  </data>
+  <data xml:space="preserve" name="InvalidDirectoryPagingCursorRefreshAndTryAgain">
+    <value>Invalid directory paging cursor. Refresh and try again.</value>
+  </data>
+  <data xml:space="preserve" name="InvalidDirectoryPathSelectTheDirectoryAgain">
+    <value>Invalid directory path. Select the directory again.</value>
+  </data>
+  <data xml:space="preserve" name="InvalidObjectListCursorRefreshTheList">
+    <value>Invalid object list cursor. Refresh the list.</value>
+  </data>
+  <data xml:space="preserve" name="InvalidObjectNameRefreshTheListOrChangeTheName">
+    <value>Invalid object name. Refresh the list or change the name.</value>
+  </data>
+  <data xml:space="preserve" name="InvalidOrDuplicateConnectorConfigurationFieldsCheckFieldDeclarations">
+    <value>Invalid or duplicate connector configuration fields. Check field declarations.</value>
+  </data>
+  <data xml:space="preserve" name="InvalidOrDuplicateObjectStorageConnectorIdentifiersCheckRegistration">
+    <value>Invalid or duplicate object storage connector identifiers. Check registration.</value>
+  </data>
+  <data xml:space="preserve" name="KeyboardShortcuts">
+    <value>Keyboard shortcuts</value>
+  </data>
+  <data xml:space="preserve" name="Language">
+    <value>Language</value>
+  </data>
+  <data xml:space="preserve" name="LanguageChangesTakeEffectAfterRestartingHermodYourChoiceIsSavedOnThisDevice">
+    <value>Language changes take effect after restarting Hermod. Your choice is saved on this device.</value>
+  </data>
+  <data xml:space="preserve" name="LanguagePreferenceSavedRestartHermodToApplyIt">
+    <value>Language preference saved. Restart Hermod to apply it.</value>
+  </data>
+  <data xml:space="preserve" name="Lifetime">
+    <value>Lifetime</value>
+  </data>
+  <data xml:space="preserve" name="Light">
+    <value>Light</value>
+  </data>
+  <data xml:space="preserve" name="LinkCopied">
+    <value>Link copied.</value>
+  </data>
+  <data xml:space="preserve" name="LinkedInstances">
+    <value>Linked instances</value>
+  </data>
+  <data xml:space="preserve" name="LoadObjectsInBatchesFromTheCurrentDirectory">
+    <value>Load objects in batches from the current directory.</value>
+  </data>
+  <data xml:space="preserve" name="Local">
+    <value>Local</value>
+  </data>
+  <data xml:space="preserve" name="Local2">
+    <value>Local · </value>
+  </data>
+  <data xml:space="preserve" name="LocalStorageRemainsAvailableAfterSigningInAndLocalDataIsRetained">
+    <value>Local storage remains available after signing in, and local data is retained.</value>
+  </data>
+  <data xml:space="preserve" name="LocalTerminal">
+    <value>Local terminal</value>
+  </data>
+  <data xml:space="preserve" name="LocalWorkspace">
+    <value>Local workspace</value>
+  </data>
+  <data xml:space="preserve" name="ManageTags">
+    <value>Manage tags</value>
+  </data>
+  <data xml:space="preserve" name="MatchAllSelected">
+    <value>Match all selected</value>
+  </data>
+  <data xml:space="preserve" name="MatchAnySelected">
+    <value>Match any selected</value>
+  </data>
+  <data xml:space="preserve" name="Maximize">
+    <value>Maximize</value>
+  </data>
+  <data xml:space="preserve" name="MaximizeWindow">
+    <value>Maximize window</value>
+  </data>
+  <data xml:space="preserve" name="Minimize">
+    <value>Minimize</value>
+  </data>
+  <data xml:space="preserve" name="MinimizeWindow">
+    <value>Minimize window</value>
+  </data>
+  <data xml:space="preserve" name="Modified">
+    <value>Modified ↓</value>
+  </data>
+  <data xml:space="preserve" name="MoreActionsForCurrentObject">
+    <value>More actions for current object</value>
+  </data>
+  <data xml:space="preserve" name="MoreObjectActions">
+    <value>More object actions</value>
+  </data>
+  <data xml:space="preserve" name="Name">
+    <value>Name</value>
+  </data>
+  <data xml:space="preserve" name="NamesCannotConsistOnlyOfDots">
+    <value>Names cannot consist only of dots.</value>
+  </data>
+  <data xml:space="preserve" name="NamesCannotContainControlCharacters">
+    <value>Names cannot contain control characters.</value>
+  </data>
+  <data xml:space="preserve" name="NamesCannotContainOr">
+    <value>Names cannot contain / or \.</value>
+  </data>
+  <data xml:space="preserve" name="NamesCannotContainOrChooseADifferentNameIfItAlreadyExistsInThisDirectory">
+    <value>Names cannot contain / or \. Choose a different name if it already exists in this directory.</value>
+  </data>
+  <data xml:space="preserve" name="NamesMustBeUniqueUnderTheSameParent">
+    <value>Names must be unique under the same parent.</value>
+  </data>
+  <data xml:space="preserve" name="NewFolder">
+    <value>New folder</value>
+  </data>
+  <data xml:space="preserve" name="NewObjectFolder">
+    <value>New object folder</value>
+  </data>
+  <data xml:space="preserve" name="NewTag">
+    <value>New tag</value>
+  </data>
+  <data xml:space="preserve" name="Next">
+    <value>Next</value>
+  </data>
+  <data xml:space="preserve" name="NextBatch">
+    <value>Next batch</value>
+  </data>
+  <data xml:space="preserve" name="NoAccessibleBuckets">
+    <value>No accessible buckets</value>
+  </data>
+  <data xml:space="preserve" name="NoActiveTasks">
+    <value>No active tasks</value>
+  </data>
+  <data xml:space="preserve" name="NoBucketsAreAvailableForReadWriteVerification">
+    <value>No buckets are available for read/write verification.</value>
+  </data>
+  <data xml:space="preserve" name="NoConnectorConfigured">
+    <value>No connector configured</value>
+  </data>
+  <data xml:space="preserve" name="NoContentViewIsRegisteredForPageType">
+    <value>No content view is registered for page type {0}.</value>
+  </data>
+  <data xml:space="preserve" name="NoCustomTagsYet">
+    <value>No custom tags yet</value>
+  </data>
+  <data xml:space="preserve" name="NoMatchingInstances">
+    <value>No matching instances</value>
+  </data>
+  <data xml:space="preserve" name="NoMatchingObjects">
+    <value>No matching objects</value>
+  </data>
+  <data xml:space="preserve" name="NoMatchingOptions">
+    <value>No matching options</value>
+  </data>
+  <data xml:space="preserve" name="NoMatchingTags">
+    <value>No matching tags</value>
+  </data>
+  <data xml:space="preserve" name="NoMatchingTags2">
+    <value>No matching tags</value>
+  </data>
+  <data xml:space="preserve" name="NotConfigured">
+    <value>Not configured</value>
+  </data>
+  <data xml:space="preserve" name="NotEntered">
+    <value>Not entered</value>
+  </data>
+  <data xml:space="preserve" name="NotSignedIn">
+    <value>Not signed in</value>
+  </data>
+  <data xml:space="preserve" name="NotYetPassed">
+    <value>Not yet passed</value>
+  </data>
+  <data xml:space="preserve" name="OK">
+    <value>OK</value>
+  </data>
+  <data xml:space="preserve" name="OSSConnectionTestFailedCheckTheConfigurationAndTryAgain">
+    <value>OSS connection test failed. Check the configuration and try again.</value>
+  </data>
+  <data xml:space="preserve" name="OSSDidNotConfirmPermanentDeletionOfTheExactTemporaryObjectVersionCheckTheProviderCons">
+    <value>OSS did not confirm permanent deletion of the exact temporary object version. Check the provider console.</value>
+  </data>
+  <data xml:space="preserve" name="OSSIsTemporarilyUnavailableTryAgainLater">
+    <value>OSS is temporarily unavailable. Try again later.</value>
+  </data>
+  <data xml:space="preserve" name="OSSRejectedTheTemporaryObjectWriteRequestNoTestObjectWasCreated">
+    <value>OSS rejected the temporary object write request. No test object was created.</value>
+  </data>
+  <data xml:space="preserve" name="OSSReturnedAnInvalidMultipartChecksumResponse">
+    <value>OSS returned an invalid multipart checksum response.</value>
+  </data>
+  <data xml:space="preserve" name="OSSReturnedAnInvalidMultipartUploadResponse">
+    <value>OSS returned an invalid multipart upload response.</value>
+  </data>
+  <data xml:space="preserve" name="OSSReturnedAnUnverifiableObjectResponseTryAgainLater">
+    <value>OSS returned an unverifiable object response. Try again later.</value>
+  </data>
+  <data xml:space="preserve" name="OSSReturnedAnUnverifiableResponseTryAgainLater">
+    <value>OSS returned an unverifiable response. Try again later.</value>
+  </data>
+  <data xml:space="preserve" name="ObjectDetails">
+    <value>Object details</value>
+  </data>
+  <data xml:space="preserve" name="ObjectKey">
+    <value>Object key</value>
+  </data>
+  <data xml:space="preserve" name="ObjectList">
+    <value>Object list</value>
+  </data>
+  <data xml:space="preserve" name="ObjectStorage">
+    <value>Object storage</value>
+  </data>
+  <data xml:space="preserve" name="ObjectStorageOperationFailedCheckTheNetworkInstanceConfigurationAndLocalFilePermissio">
+    <value>Object storage operation failed. Check the network, instance configuration, and local file permissions.</value>
+  </data>
+  <data xml:space="preserve" name="ObjectStorageOperationFailedCheckTheNetworkInstanceConfigurationAndOperationPermissio">
+    <value>Object storage operation failed. Check the network, instance configuration, and operation permissions.</value>
+  </data>
+  <data xml:space="preserve" name="ObjectsWillBeDeletedFromOSSThisActionCannotBeDirectlyUndone">
+    <value>Objects will be deleted from OSS. This action cannot be directly undone.</value>
+  </data>
+  <data xml:space="preserve" name="OrganizeYourInstancesWithCustomTags">
+    <value>Organize your instances with custom tags</value>
+  </data>
+  <data xml:space="preserve" name="OverwriteAndUpload">
+    <value>Overwrite and upload</value>
+  </data>
+  <data xml:space="preserve" name="OverwriteExistingObjects">
+    <value>Overwrite existing objects</value>
+  </data>
+  <data xml:space="preserve" name="OverwriteThisExistingObject">
+    <value>Overwrite this existing object?</value>
+  </data>
+  <data xml:space="preserve" name="ParentTag">
+    <value>Parent tag</value>
+  </data>
+  <data xml:space="preserve" name="Passed">
+    <value>Passed</value>
+  </data>
+  <data xml:space="preserve" name="Preview">
+    <value>Preview</value>
+  </data>
+  <data xml:space="preserve" name="Processing">
+    <value>Processing…</value>
+  </data>
+  <data xml:space="preserve" name="Provider">
+    <value>Provider</value>
+  </data>
+  <data xml:space="preserve" name="ReadFailed">
+    <value>Read failed</value>
+  </data>
+  <data xml:space="preserve" name="ReadOnlyObjectTextPreview">
+    <value>Read-only object text preview</value>
+  </data>
+  <data xml:space="preserve" name="ReadPermissionsUnknown">
+    <value>Read permissions unknown</value>
+  </data>
+  <data xml:space="preserve" name="ReadWriteConnectionTestCanceled">
+    <value>Read/write connection test canceled.</value>
+  </data>
+  <data xml:space="preserve" name="ReadWriteConnectionTestCanceledKnownTemporaryObjectsWereCleanedUp">
+    <value>Read/write connection test canceled. Known temporary objects were cleaned up.</value>
+  </data>
+  <data xml:space="preserve" name="ReadWriteConnectionTestPassedRandomTemporaryObjectWriteReadBackAndCleanupWereVerified">
+    <value>Read/write connection test passed: random temporary object write, read-back, and cleanup were verified in bucket {0}. Verification covers only this bucket.</value>
+  </data>
+  <data xml:space="preserve" name="ReadingDeletionImpact">
+    <value>Reading deletion impact…</value>
+  </data>
+  <data xml:space="preserve" name="ReadingObjectDetails">
+    <value>Reading object details…</value>
+  </data>
+  <data xml:space="preserve" name="ReadingObjects">
+    <value>Reading objects…</value>
+  </data>
+  <data xml:space="preserve" name="ReadingTags">
+    <value>Reading tags…</value>
+  </data>
+  <data xml:space="preserve" name="RecentEvents">
+    <value>Recent events</value>
+  </data>
+  <data xml:space="preserve" name="RefreshObjectList">
+    <value>Refresh object list</value>
+  </data>
+  <data xml:space="preserve" name="RelatedTagLinksWillAlsoBeRemovedFromInstancesInstancesAndConnectionInformationWillRem">
+    <value>Related tag links will also be removed from {0} instances. Instances and connection information will remain. This action cannot be undone.</value>
+  </data>
+  <data xml:space="preserve" name="Remove">
+    <value>Remove</value>
+  </data>
+  <data xml:space="preserve" name="RemoveUploadItem">
+    <value>Remove upload item</value>
+  </data>
+  <data xml:space="preserve" name="Restart">
+    <value>Restart</value>
+  </data>
+  <data xml:space="preserve" name="Restore">
+    <value>Restore</value>
+  </data>
+  <data xml:space="preserve" name="RestoreWindow">
+    <value>Restore window</value>
+  </data>
+  <data xml:space="preserve" name="Retry">
+    <value>Retry</value>
+  </data>
+  <data xml:space="preserve" name="ReviewTheInformationAndConfirmToCreateTheInstance">
+    <value>Review the information and confirm to create the instance.</value>
+  </data>
+  <data xml:space="preserve" name="ReviewTheInformationAndConfirmToSaveChanges">
+    <value>Review the information and confirm to save changes.</value>
+  </data>
+  <data xml:space="preserve" name="Root">
+    <value>Root</value>
+  </data>
+  <data xml:space="preserve" name="Running">
+    <value>Running</value>
+  </data>
+  <data xml:space="preserve" name="RuntimeConfiguration">
+    <value>Runtime configuration</value>
+  </data>
+  <data xml:space="preserve" name="SampleDataServiceIsNotConnected">
+    <value>Sample data · service is not connected.</value>
+  </data>
+  <data xml:space="preserve" name="SaveChanges">
+    <value>Save changes</value>
+  </data>
+  <data xml:space="preserve" name="SaveChanges2">
+    <value>Save changes</value>
+  </data>
+  <data xml:space="preserve" name="SaveFailedTryAgainYourEntriesHaveBeenRetained">
+    <value>Save failed. Try again. Your entries have been retained.</value>
+  </data>
+  <data xml:space="preserve" name="SaveLocation">
+    <value>Save location</value>
+  </data>
+  <data xml:space="preserve" name="SaveObject">
+    <value>Save object</value>
+  </data>
+  <data xml:space="preserve" name="Saving">
+    <value>Saving…</value>
+  </data>
+  <data xml:space="preserve" name="SearchFileNamePrefixes">
+    <value>Search file name prefixes…</value>
+  </data>
+  <data xml:space="preserve" name="SearchFileNamePrefixesInTheCurrentDirectory">
+    <value>Search file name prefixes in the current directory</value>
+  </data>
+  <data xml:space="preserve" name="SearchInstances">
+    <value>Search instances…</value>
+  </data>
+  <data xml:space="preserve" name="SearchOnlyFileNamePrefixesInTheCurrentDirectory">
+    <value>Search only file name prefixes in the current directory.</value>
+  </data>
+  <data xml:space="preserve" name="SearchOptions">
+    <value>Search options…</value>
+  </data>
+  <data xml:space="preserve" name="SearchServicesAndTasks">
+    <value>Search services and tasks</value>
+  </data>
+  <data xml:space="preserve" name="SearchTags">
+    <value>Search tags</value>
+  </data>
+  <data xml:space="preserve" name="SearchTags2">
+    <value>Search tags…</value>
+  </data>
+  <data xml:space="preserve" name="SearchTagsOrPaths">
+    <value>Search tags or paths</value>
+  </data>
+  <data xml:space="preserve" name="SearchTagsOrPaths2">
+    <value>Search tags or paths…</value>
+  </data>
+  <data xml:space="preserve" name="SelectAConfiguredInstanceFirst">
+    <value>Select a configured instance first.</value>
+  </data>
+  <data xml:space="preserve" name="SelectATagToViewDetails">
+    <value>Select a tag to view details</value>
+  </data>
+  <data xml:space="preserve" name="SelectATagToViewDetailsOrManageItUsing">
+    <value>Select a tag to view details, or manage it using ···.</value>
+  </data>
+  <data xml:space="preserve" name="SelectAValidLocalFileLocation">
+    <value>Select a valid local file location.</value>
+  </data>
+  <data xml:space="preserve" name="SelectAllObjectsOnThisPage">
+    <value>Select all objects on this page</value>
+  </data>
+  <data xml:space="preserve" name="SelectAnOption">
+    <value>Select an option</value>
+  </data>
+  <data xml:space="preserve" name="SelectDownloadFolder">
+    <value>Select download folder</value>
+  </data>
+  <data xml:space="preserve" name="SelectFiles">
+    <value>Select files</value>
+  </data>
+  <data xml:space="preserve" name="SelectFolder">
+    <value>Select folder</value>
+  </data>
+  <data xml:space="preserve" name="SelectTheRootOrAnotherAvailableCustomTag">
+    <value>Select the root or another available custom tag.</value>
+  </data>
+  <data xml:space="preserve" name="SelectUploadFiles">
+    <value>Select upload files</value>
+  </data>
+  <data xml:space="preserve" name="SelectUploadFolder">
+    <value>Select upload folder</value>
+  </data>
+  <data xml:space="preserve" name="SelectedIncludesNestedTags">
+    <value>{0} selected · includes nested tags</value>
+  </data>
+  <data xml:space="preserve" name="SelectedObjectKeysCannotBeSafelySavedAsLocalFileNamesChooseADestinationForEachObject">
+    <value>Selected object keys cannot be safely saved as local file names. Choose a destination for each object.</value>
+  </data>
+  <data xml:space="preserve" name="SelectedObjectsMapToDuplicateOrInvalidLocalPathsDownloadThemIndividually">
+    <value>Selected objects map to duplicate or invalid local paths. Download them individually.</value>
+  </data>
+  <data xml:space="preserve" name="Settings">
+    <value>Settings</value>
+  </data>
+  <data xml:space="preserve" name="ShowingOnlyTheFirst256KBDownloadToViewTheCompleteContent">
+    <value>Showing only the first 256 KB. Download to view the complete content.</value>
+  </data>
+  <data xml:space="preserve" name="SignIn">
+    <value>Sign in</value>
+  </data>
+  <data xml:space="preserve" name="SignInToYourAccount">
+    <value>Sign in to your account</value>
+  </data>
+  <data xml:space="preserve" name="Size">
+    <value>Size</value>
+  </data>
+  <data xml:space="preserve" name="SkipExistingObjects">
+    <value>Skip existing objects</value>
+  </data>
+  <data xml:space="preserve" name="Skipped">
+    <value>Skipped</value>
+  </data>
+  <data xml:space="preserve" name="SomeFilesWouldUploadToTheSameObjectKeyRemoveDuplicates">
+    <value>Some files would upload to the same object key. Remove duplicates.</value>
+  </data>
+  <data xml:space="preserve" name="SomeObjectsCouldNotBeDeletedRefreshTheListAndConfirmTheRemainingObjectsAgain">
+    <value>Some objects could not be deleted. Refresh the list and confirm the remaining objects again.</value>
+  </data>
+  <data xml:space="preserve" name="SomeObjectsWereDeletedButTheRemainingObjectsCouldNotBeDeletedRefreshAndConfirmAgain">
+    <value>Some objects were deleted, but the remaining objects could not be deleted. Refresh and confirm again.</value>
+  </data>
+  <data xml:space="preserve" name="StandardStorage">
+    <value>Standard storage</value>
+  </data>
+  <data xml:space="preserve" name="StartANewLocalPowerShellSession">
+    <value>Start a new local PowerShell session.</value>
+  </data>
+  <data xml:space="preserve" name="StartTest">
+    <value>Start test</value>
+  </data>
+  <data xml:space="preserve" name="StartUpload">
+    <value>Start upload</value>
+  </data>
+  <data xml:space="preserve" name="Starting">
+    <value>Starting</value>
+  </data>
+  <data xml:space="preserve" name="Step5">
+    <value>Step {0} / 5</value>
+  </data>
+  <data xml:space="preserve" name="Storage">
+    <value>Storage</value>
+  </data>
+  <data xml:space="preserve" name="StorageClass">
+    <value>Storage class</value>
+  </data>
+  <data xml:space="preserve" name="SupportsRGBAndRRGGBBSuchAs3AFOr33AAFF">
+    <value>Supports #RGB and #RRGGBB, such as #3AF or #33AAFF.</value>
+  </data>
+  <data xml:space="preserve" name="SwitchBucket">
+    <value>Switch bucket</value>
+  </data>
+  <data xml:space="preserve" name="SwitchToDarkMode">
+    <value>Switch to dark mode</value>
+  </data>
+  <data xml:space="preserve" name="SwitchToLightMode">
+    <value>Switch to light mode</value>
+  </data>
+  <data xml:space="preserve" name="SystemFixed">
+    <value>System fixed</value>
+  </data>
+  <data xml:space="preserve" name="SystemSettings">
+    <value>System settings</value>
+  </data>
+  <data xml:space="preserve" name="TAGDETAILS">
+    <value>TAG DETAILS</value>
+  </data>
+  <data xml:space="preserve" name="TagFilter">
+    <value>Tag Filter</value>
+  </data>
+  <data xml:space="preserve" name="TagHEXColor">
+    <value>Tag HEX color</value>
+  </data>
+  <data xml:space="preserve" name="TagHierarchyDataIsCorruptedCheckTheLocalDatabase">
+    <value>Tag hierarchy data is corrupted. Check the local database.</value>
+  </data>
+  <data xml:space="preserve" name="TagManagement">
+    <value>Tag management</value>
+  </data>
+  <data xml:space="preserve" name="TagMatchingMode">
+    <value>Tag matching mode</value>
+  </data>
+  <data xml:space="preserve" name="TagName">
+    <value>Tag name</value>
+  </data>
+  <data xml:space="preserve" name="TagNamesMustContain180CharactersAndNoSlashesOrControlCharacters">
+    <value>Tag names must contain 1–80 characters and no slashes or control characters.</value>
+  </data>
+  <data xml:space="preserve" name="Tags">
+    <value>{0} tags</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryLink">
+    <value>Temporary link</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryLinkLifetime">
+    <value>Temporary link lifetime</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryLinksCanLastOnly15Or60Minutes">
+    <value>Temporary links can last only 15 or 60 minutes.</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryObjectCleanup">
+    <value>Temporary object cleanup</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryObjectFailedInBucketCheckTheNetworkCredentialsAndObjectPermissions">
+    <value>Temporary object {1} failed in bucket {0}. Check the network, credentials, and object permissions.</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryObjectReadBack">
+    <value>Temporary object read-back</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryObjectReadBackDidNotMatchInBucketReadWriteVerificationFailed">
+    <value>Temporary object read-back did not match in bucket {0}. Read/write verification failed.</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryObjectTimedOutInBucketCheckYourNetworkAndTryAgain">
+    <value>Temporary object {1} timed out in bucket {0}. Check your network and try again.</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryObjectWasDeniedInBucketCheckTheCorrespondingObjectPermissions">
+    <value>Temporary object {1} was denied in bucket {0}. Check the corresponding object permissions.</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryObjectWrite">
+    <value>Temporary object write</value>
+  </data>
+  <data xml:space="preserve" name="TestAgain">
+    <value>Test again</value>
+  </data>
+  <data xml:space="preserve" name="TestAgainAfterChangingTheConnectionInformation">
+    <value>Test again after changing the connection information.</value>
+  </data>
+  <data xml:space="preserve" name="TestCanceledYouCanStartAgain">
+    <value>Test canceled. You can start again.</value>
+  </data>
+  <data xml:space="preserve" name="TestConnection">
+    <value>Test connection</value>
+  </data>
+  <data xml:space="preserve" name="TestConnectionNotTested">
+    <value>Test connection · Not tested</value>
+  </data>
+  <data xml:space="preserve" name="TestConnectionTesting">
+    <value>Test connection · Testing</value>
+  </data>
+  <data xml:space="preserve" name="TestConnectionVerificationFailed">
+    <value>Test connection · Verification failed</value>
+  </data>
+  <data xml:space="preserve" name="TextPreviewTimedOutTryAgainLater">
+    <value>Text preview timed out. Try again later.</value>
+  </data>
+  <data xml:space="preserve" name="TheBucketNoLongerExistsRefreshTheBucketList">
+    <value>The bucket no longer exists. Refresh the bucket list.</value>
+  </data>
+  <data xml:space="preserve" name="TheConnectionConfigurationDoesNotMatchTheSelectedInstanceTypeOrProvider">
+    <value>The connection configuration does not match the selected instance type or provider.</value>
+  </data>
+  <data xml:space="preserve" name="TheConnectionConfigurationIsCorruptedConfigureTheInstanceAgain">
+    <value>The connection configuration is corrupted. Configure the instance again.</value>
+  </data>
+  <data xml:space="preserve" name="TheConnectionInformationHasChangedTestAgain">
+    <value>The connection information has changed. Test again.</value>
+  </data>
+  <data xml:space="preserve" name="TheConnectionWillOpenInTheInstanceListAfterCreation">
+    <value>The connection will open in the instance list after creation.</value>
+  </data>
+  <data xml:space="preserve" name="TheConnectorForThisInstanceTypeIsNotRegisteredCheckTheProviderConfigurationOrInstallT">
+    <value>The connector for this instance type is not registered. Check the provider configuration or install the connector.</value>
+  </data>
+  <data xml:space="preserve" name="TheContentIsNotPreviewableUTF8TextDownloadToViewIt">
+    <value>The content is not previewable UTF-8 text. Download to view it.</value>
+  </data>
+  <data xml:space="preserve" name="TheCurrentConfigurationServiceDoesNotSupportEditingInstances">
+    <value>The current configuration service does not support editing instances.</value>
+  </data>
+  <data xml:space="preserve" name="TheCurrentInstanceProviderIsUnavailable">
+    <value>The current instance provider is unavailable.</value>
+  </data>
+  <data xml:space="preserve" name="TheCurrentInstanceTypeIsUnavailable">
+    <value>The current instance type is unavailable.</value>
+  </data>
+  <data xml:space="preserve" name="TheDirectoryContainsACycleSelectAnActualFolder">
+    <value>The directory contains a cycle. Select an actual folder.</value>
+  </data>
+  <data xml:space="preserve" name="TheDownloadDirectoryContainsAJunctionOrSymbolicLinkSelectARegularDirectory">
+    <value>The download directory contains a junction or symbolic link. Select a regular directory.</value>
+  </data>
+  <data xml:space="preserve" name="TheDownloadDirectoryHasChangedSelectTheDestinationAgain">
+    <value>The download directory has changed. Select the destination again.</value>
+  </data>
+  <data xml:space="preserve" name="TheDownloadIsIncompleteCheckYourNetworkAndTryAgain">
+    <value>The download is incomplete. Check your network and try again.</value>
+  </data>
+  <data xml:space="preserve" name="TheFileExceedsTheOSSMultipartUploadSizeLimit">
+    <value>The file exceeds the OSS multipart upload size limit.</value>
+  </data>
+  <data xml:space="preserve" name="TheFollowingCustomTagsWillBeDeleted">
+    <value>The following {0} custom tags will be deleted:</value>
+  </data>
+  <data xml:space="preserve" name="TheInstanceConfigurationNoLongerExistsConfigureTheInstanceAgain">
+    <value>The instance configuration no longer exists. Configure the instance again.</value>
+  </data>
+  <data xml:space="preserve" name="TheInstanceDoesNotMatchTheConnectionConfiguration">
+    <value>The instance does not match the connection configuration.</value>
+  </data>
+  <data xml:space="preserve" name="TheInstanceNoLongerExistsRefreshAndConfigureItAgain">
+    <value>The instance no longer exists. Refresh and configure it again.</value>
+  </data>
+  <data xml:space="preserve" name="TheInstanceToEditHasNoIdentifier">
+    <value>The instance to edit has no identifier.</value>
+  </data>
+  <data xml:space="preserve" name="TheObjectHasChangedRefreshBeforeTryingAgain">
+    <value>The object has changed. Refresh before trying again.</value>
+  </data>
+  <data xml:space="preserve" name="TheObjectIsArchivedRestoreItInTheProviderConsoleFirst">
+    <value>The object is archived. Restore it in the provider console first.</value>
+  </data>
+  <data xml:space="preserve" name="TheObjectListReturnedAnInvalidRangeRefreshAndTryAgain">
+    <value>The object list returned an invalid range. Refresh and try again.</value>
+  </data>
+  <data xml:space="preserve" name="TheObjectNoLongerExistsRefreshTheObjectList">
+    <value>The object no longer exists. Refresh the object list.</value>
+  </data>
+  <data xml:space="preserve" name="TheObjectOperationTimedOutCheckYourNetworkAndTryAgain">
+    <value>The object operation timed out. Check your network and try again.</value>
+  </data>
+  <data xml:space="preserve" name="TheObjectStorageResourceConnectorForThisInstanceIsNotInstalled">
+    <value>The object storage resource connector for this instance is not installed.</value>
+  </data>
+  <data xml:space="preserve" name="TheOperationFailedCheckTheNetworkAndAccessPermissionsThenTryAgain">
+    <value>The operation failed. Check the network and access permissions, then try again.</value>
+  </data>
+  <data xml:space="preserve" name="TheOperationFailedTryAgain">
+    <value>The operation failed. Try again.</value>
+  </data>
+  <data xml:space="preserve" name="ThePreWriteCheckFailedInBucketNoTestObjectWasCreatedCheckObjectReadPermissionsAndTheN">
+    <value>The pre-write check failed in bucket {0}. No test object was created. Check object read permissions and the network.</value>
+  </data>
+  <data xml:space="preserve" name="ThePreWriteCheckFailedNoTestObjectCreationWasAttempted">
+    <value>The pre-write check failed. No test object creation was attempted.</value>
+  </data>
+  <data xml:space="preserve" name="ThePreWriteCheckWasCanceledNoTestObjectCreationWasAttempted">
+    <value>The pre-write check was canceled. No test object creation was attempted.</value>
+  </data>
+  <data xml:space="preserve" name="TheRandomTestObjectAlreadyExistsNoWriteOrDeletionWasAttempted">
+    <value>The random test object already exists. No write or deletion was attempted.</value>
+  </data>
+  <data xml:space="preserve" name="TheRandomTestObjectNameConflictedInBucketItWasSkippedAndNoExistingObjectWasDeleted">
+    <value>The random test object name conflicted in bucket {0}. It was skipped and no existing object was deleted.</value>
+  </data>
+  <data xml:space="preserve" name="TheRequestedResourceNoLongerExistsRefreshTheList">
+    <value>The requested resource no longer exists. Refresh the list.</value>
+  </data>
+  <data xml:space="preserve" name="TheSelectedParentTagDoesNotExistRefreshAndTryAgain">
+    <value>The selected parent tag does not exist. Refresh and try again.</value>
+  </data>
+  <data xml:space="preserve" name="TheSelectedTagsNoLongerExistRefreshAndSelectAgain">
+    <value>The selected tags no longer exist. Refresh and select again.</value>
+  </data>
+  <data xml:space="preserve" name="TheSystemTimeDiffersFromOSSCorrectTheDeviceTime">
+    <value>The system time differs from OSS. Correct the device time.</value>
+  </data>
+  <data xml:space="preserve" name="TheSystemTimeDiffersFromOSSCorrectTheDeviceTimeAndTryAgain">
+    <value>The system time differs from OSS. Correct the device time and try again.</value>
+  </data>
+  <data xml:space="preserve" name="TheTagDoesNotExistRefreshAndTryAgain">
+    <value>The tag does not exist. Refresh and try again.</value>
+  </data>
+  <data xml:space="preserve" name="TheTagMatchingModeDoesNotExist">
+    <value>The tag matching mode does not exist.</value>
+  </data>
+  <data xml:space="preserve" name="TheTemporaryTestObjectMayRemainTheConnectionTestFailedCheckAndDeleteItInTheProviderCo">
+    <value>The temporary test object may remain. The connection test failed. Check and delete it in the provider console. Bucket: {0}; object key: {1}.</value>
+  </data>
+  <data xml:space="preserve" name="TheTerminalConnectionWasInterruptedOpenANewSessionOrTryAgain">
+    <value>The terminal connection was interrupted. Open a new session or try again.</value>
+  </data>
+  <data xml:space="preserve" name="TheTestListsBucketsCreatesARandomTemporaryObjectUnderHermodConnectionTestInAnAvailabl">
+    <value>The test lists buckets, creates a random temporary object under .hermod-connection-test/ in an available bucket, reads it back, and deletes it. Verification covers only the tested bucket.</value>
+  </data>
+  <data xml:space="preserve" name="TheTextExceedsThe256KBPreviewLimitDownloadAndViewItLocally">
+    <value>The text exceeds the 256 KB preview limit. Download and view it locally.</value>
+  </data>
+  <data xml:space="preserve" name="TheTypeAndProviderOfThisInstanceAreFixed">
+    <value>The type and provider of this instance are fixed.</value>
+  </data>
+  <data xml:space="preserve" name="TheUpdatedConnectionInformationWillBeUsedAfterSaving">
+    <value>The updated connection information will be used after saving.</value>
+  </data>
+  <data xml:space="preserve" name="TheUploadDestinationIsOutsideTheSelectedDirectorySelectTheFilesAgain">
+    <value>The upload destination is outside the selected directory. Select the files again.</value>
+  </data>
+  <data xml:space="preserve" name="TheUploadSourceStreamMustBeReadableAndSeekable">
+    <value>The upload source stream must be readable and seekable.</value>
+  </data>
+  <data xml:space="preserve" name="Theme">
+    <value>Theme</value>
+  </data>
+  <data xml:space="preserve" name="ThisDirectoryHasNoObjectsYet">
+    <value>This directory has no objects yet</value>
+  </data>
+  <data xml:space="preserve" name="ThisFileCannotBePreviewedYetDownloadAndViewItLocallyListOperationsRemainAvailable">
+    <value>This file cannot be previewed yet. Download and view it locally. List operations remain available.</value>
+  </data>
+  <data xml:space="preserve" name="ThisFileFormatDoesNotSupportTextPreview">
+    <value>This file format does not support text preview.</value>
+  </data>
+  <data xml:space="preserve" name="ThisInstanceNoLongerExistsRefreshTheInstanceList">
+    <value>This instance no longer exists. Refresh the instance list.</value>
+  </data>
+  <data xml:space="preserve" name="ThisInstanceTypeIsNotRegisteredInstallAConnectorForThisType">
+    <value>This instance type is not registered. Install a connector for this type.</value>
+  </data>
+  <data xml:space="preserve" name="ThisObjectAlreadyExistsUploadingWillReplaceItsCurrentContent">
+    <value>This object already exists. Uploading will replace its current content.</value>
+  </data>
+  <data xml:space="preserve" name="ThisProviderDoesNotYetOfferReadWriteTestsWithExactVersionCleanupFullConnectionCapabil">
+    <value>This provider does not yet offer read/write tests with exact version cleanup. Full connection capability cannot be confirmed.</value>
+  </data>
+  <data xml:space="preserve" name="ThisTagIsReferencedByInstancesSavingUpdatesItsNamePathAndColorWithoutChangingInstance">
+    <value>This tag is referenced by {0} instances. Saving updates its name, path, and color without changing instance links.</value>
+  </data>
+  <data xml:space="preserve" name="TransferFailedTaskRetainedTryAgain">
+    <value>Transfer failed · Task retained. Try again.</value>
+  </data>
+  <data xml:space="preserve" name="TransferTasks">
+    <value>Transfer tasks</value>
+  </data>
+  <data xml:space="preserve" name="Transferring">
+    <value>Transferring</value>
+  </data>
+  <data xml:space="preserve" name="TypeProvider">
+    <value>Type / Provider</value>
+  </data>
+  <data xml:space="preserve" name="TypeToFilter">
+    <value>{0} / {1} · Type to filter</value>
+  </data>
+  <data xml:space="preserve" name="UnableToStartHermod">
+    <value>Unable to start Hermod</value>
+  </data>
+  <data xml:space="preserve" name="Unknown">
+    <value>Unknown</value>
+  </data>
+  <data xml:space="preserve" name="UnknownInterfaceTheme">
+    <value>Unknown interface theme.</value>
+  </data>
+  <data xml:space="preserve" name="Updated">
+    <value>Updated</value>
+  </data>
+  <data xml:space="preserve" name="Upload">
+    <value>Upload</value>
+  </data>
+  <data xml:space="preserve" name="UploadFiles">
+    <value>Upload files</value>
+  </data>
+  <data xml:space="preserve" name="UploadFilesOrCreateAFolder">
+    <value>Upload files or create a folder.</value>
+  </data>
+  <data xml:space="preserve" name="UploadObjects">
+    <value>Upload objects</value>
+  </data>
+  <data xml:space="preserve" name="UploadTo">
+    <value>Upload to</value>
+  </data>
+  <data xml:space="preserve" name="UploadToCurrentBucket">
+    <value>Upload to current bucket</value>
+  </data>
+  <data xml:space="preserve" name="UseColorsAndHierarchyToKeepInstancesOrganized">
+    <value>Use colors and hierarchy to keep instances organized.</value>
+  </data>
+  <data xml:space="preserve" name="UseWithoutSigningInDataIsSavedOnThisDevice">
+    <value>Use without signing in. Data is saved on this device.</value>
+  </data>
+  <data xml:space="preserve" name="VerifyConnectionInformationAndAccessPermissions">
+    <value>Verify connection information and access permissions.</value>
+  </data>
+  <data xml:space="preserve" name="VerifyingConnectionInformationAndAccessPermissions">
+    <value>Verifying connection information and access permissions…</value>
+  </data>
+  <data xml:space="preserve" name="Waiting">
+    <value>Waiting</value>
+  </data>
+  <data xml:space="preserve" name="WhenAnObjectAlreadyExists">
+    <value>When an object already exists</value>
+  </data>
+  <data xml:space="preserve" name="WhereShouldThisBeSaved">
+    <value>Where should this be saved?</value>
+  </data>
+  <data xml:space="preserve" name="ObjectsSelected">
+    <value>{0} objects selected</value>
+  </data>
+  <data xml:space="preserve" name="SelectObject">
+    <value>Select {0}</value>
+  </data>
+  <data xml:space="preserve" name="MoreActionsForObject">
+    <value>More actions for {0}</value>
+  </data>
+  <data xml:space="preserve" name="SaveOnThisDevice">
+    <value>Save on this device</value>
+  </data>
+  <data xml:space="preserve" name="AvailableAfterSignIn">
+    <value>Available after signing in</value>
+  </data>
+  <data xml:space="preserve" name="Write">
+    <value>write</value>
+  </data>
+  <data xml:space="preserve" name="ReadBack">
+    <value>read-back</value>
+  </data>
+  <data xml:space="preserve" name="MessageWithErrorCode">
+    <value>{0} ({1})</value>
+  </data>
+  <data xml:space="preserve" name="ExpandTag">
+    <value>Expand {0}</value>
+  </data>
+  <data xml:space="preserve" name="RemoveTag">
+    <value>Remove {0}</value>
+  </data>
+  <data name="Production" xml:space="preserve">
+    <value>Production</value>
+  </data>
+  <data name="Staging" xml:space="preserve">
+    <value>Staging</value>
+  </data>
+  <data name="Development" xml:space="preserve">
+    <value>Development</value>
+  </data>
+  <data name="CpuMetric" xml:space="preserve">
+    <value>CPU</value>
+  </data>
+  <data name="MemoryMetric" xml:space="preserve">
+    <value>MEMORY</value>
+  </data>
+  <data name="RequestRateMetric" xml:space="preserve">
+    <value>REQUESTS</value>
+  </data>
+  <data name="P99LatencyMetric" xml:space="preserve">
+    <value>P99 LATENCY</value>
+  </data>
+</root>

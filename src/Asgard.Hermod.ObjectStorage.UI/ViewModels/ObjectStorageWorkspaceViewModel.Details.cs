@@ -28,10 +28,10 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     /// <summary>即使替换服务返回过大的字符串，也不将超出上限的文本放入控件。</summary>
     public bool HasTextPreview => Details?.PreviewText is { } text && Encoding.UTF8.GetByteCount(text) <= 256 * 1024;
     /// <summary>没有文本预览时显示原因，不影响列表或下载。</summary>
-    public string PreviewMessage => IsDetailLoading ? "正在读取对象详情…" : DetailError.Length > 0 ? DetailError
-        : SelectedEntry is null ? "单击对象查看详情。" : SelectedEntry.IsDirectory ? "双击文件夹进入目录前缀。"
-        : Details?.PreviewText is { } text && Encoding.UTF8.GetByteCount(text) > 256 * 1024 ? "文本超过 256KB 预览上限，请下载后在本地查看。"
-        : Details?.PreviewMessage ?? "此文件暂不支持预览。下载后在本地查看，不影响列表操作。";
+    public string PreviewMessage => IsDetailLoading ? Text.Get("ReadingObjectDetails") : DetailError.Length > 0 ? DetailError
+        : SelectedEntry is null ? Text.Get("ClickAnObjectToViewItsDetails") : SelectedEntry.IsDirectory ? Text.Get("DoubleClickAFolderToOpenItsPrefix")
+        : Details?.PreviewText is { } text && Encoding.UTF8.GetByteCount(text) > 256 * 1024 ? Text.Get("TheTextExceedsThe256KBPreviewLimitDownloadAndViewItLocally")
+        : Details?.PreviewMessage ?? Text.Get("ThisFileCannotBePreviewedYetDownloadAndViewItLocallyListOperationsRemainAvailable");
     /// <summary>按扩展名提示预览格式，不选择浏览器执行器。</summary>
     public string PreviewFormat => Details?.ContentType == "application/json" ? "JSON" : "TEXT";
 
@@ -65,7 +65,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
         catch (OperationCanceledException) when (operation.IsCancellationRequested) { }
         catch (Exception exception)
         {
-            if (!IsClosed && version == _detailVersion) DetailError = ObjectStoragePresentation.Error(exception, "无法读取对象详情，请重试或下载后查看。");
+            if (!IsClosed && version == _detailVersion) DetailError = ObjectStoragePresentation.Error(exception, Text.Get("CannotReadObjectDetailsTryAgainOrDownloadToViewThem"));
         }
         finally
         {

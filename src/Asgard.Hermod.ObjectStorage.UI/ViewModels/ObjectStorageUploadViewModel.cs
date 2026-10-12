@@ -36,8 +36,8 @@ public sealed class ObjectStorageUploadViewModel : ObjectStorageDialogViewModel
     public ObservableCollection<ObjectStorageUploadQueueItemViewModel> Items { get; } = [];
     /// <summary>首次打开时默认询问，同名覆盖必须遵循用户最后确认的策略。</summary>
     public IReadOnlyList<ObjectStorageOverwriteChoice> OverwriteChoices { get; } =
-        [new(ObjectStorageOverwritePolicy.Ask, "询问后再上传"), new(ObjectStorageOverwritePolicy.Skip, "跳过同名对象"),
-         new(ObjectStorageOverwritePolicy.Overwrite, "覆盖同名对象")];
+        [new(ObjectStorageOverwritePolicy.Ask, Text.Get("AskBeforeUploading")), new(ObjectStorageOverwritePolicy.Skip, Text.Get("SkipExistingObjects")),
+         new(ObjectStorageOverwritePolicy.Overwrite, Text.Get("OverwriteExistingObjects"))];
     /// <summary>用户明确确认的同名对象处理方式。</summary>
     public ObjectStorageOverwritePolicy OverwritePolicy
     {
@@ -53,12 +53,12 @@ public sealed class ObjectStorageUploadViewModel : ObjectStorageDialogViewModel
     /// <summary>至少选择一个文件，且目录枚举已经完成。</summary>
     public bool CanConfirm => CanAddPaths && Items.Count > 0 && !HasKeyConflicts;
     /// <summary>选择数量与大小只计算已选本地文件。</summary>
-    public string CountText => $"已选 {Items.Count} 个文件";
+    public string CountText => Text.Format("FilesSelected", Items.Count);
     /// <summary>待上传队列的可读总大小。</summary>
     public string SizeText => ObjectStoragePresentation.Size(Items.Sum(item => item.Item.Size));
     /// <summary>文件系统异常不回显内部路径或异常堆栈。</summary>
     public string Error => _operationError.Length > 0 ? _operationError : HasKeyConflicts
-        ? "有文件将上传到相同对象键，请移除重名项。" : "";
+        ? Text.Get("SomeFilesWouldUploadToTheSameObjectKeyRemoveDuplicates") : "";
     /// <summary>只有用户点击开始上传才返回不可变的文件快照。</summary>
     public ObjectStorageUploadSelection? Result { get; private set; }
     /// <summary>选择文件入口。</summary>
@@ -95,8 +95,7 @@ public sealed class ObjectStorageUploadViewModel : ObjectStorageDialogViewModel
         catch (Exception exception)
         {
             if (!IsDisposed)
-                _operationError = exception is ObjectStorageException safe ? safe.Message
-                    : "无法添加所选文件，请检查访问权限后重试。";
+                _operationError = Text.Error(exception, "CannotAddTheSelectedFilesCheckAccessPermissionsAndTryAgain");
         }
         finally
         {
@@ -110,7 +109,7 @@ public sealed class ObjectStorageUploadViewModel : ObjectStorageDialogViewModel
     {
         if (IsDisposed)
             return;
-        _operationError = "无法打开文件选择窗口，请稍后重试。";
+        _operationError = Text.Get("CannotOpenTheFilePickerTryAgainLater");
         RefreshQueue();
     }
 

@@ -1,3 +1,5 @@
+using Text = Asgard.Hermod.Abstractions.Localization.Text;
+
 namespace Asgard.Hermod.UI.Tests;
 
 /// <summary>验证删除完整影响、显式确认与失败重试边界。</summary>
@@ -38,7 +40,7 @@ public sealed class TagDeletionViewModelTests
         await model.DeleteCommand.ExecuteAsync();
 
         Assert.Same(preview, model.Preview);
-        Assert.Equal("删除未完成", model.Error);
+        Assert.Equal(Text.Get("TheOperationFailedTryAgain"), model.Error);
         Assert.False(model.WasDeleted);
         Assert.Empty(completions);
         Assert.True(model.CanDelete);

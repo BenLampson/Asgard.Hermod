@@ -23,7 +23,7 @@ internal static class ObjectStorageTextPreview
         if (!contentType.StartsWith("text/", StringComparison.OrdinalIgnoreCase) &&
             contentType is not "application/json" and not "application/xml" and not "application/javascript" &&
             !Extensions.Contains(Path.GetExtension(details.Key)))
-            return details with { PreviewMessage = "该文件格式不支持文本预览。" };
+            return details with { PreviewMessage = Text.Get("ThisFileFormatDoesNotSupportTextPreview") };
         if (details.Size == 0) return details with { PreviewText = "" };
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         deadline.CancelAfter(TimeSpan.FromSeconds(20));
@@ -45,17 +45,17 @@ internal static class ObjectStorageTextPreview
             int charCount = decoder.GetChars(bytes.AsSpan(0, read), characters, flush: !truncated);
             string text = new string(characters, 0, charCount).TrimStart('\uFEFF');
             if (text.Any(value => char.IsControl(value) && value is not '\r' and not '\n' and not '\t'))
-                return details with { PreviewMessage = "内容不是可预览的 UTF-8 文本，请下载查看。" };
-            return details with { PreviewText = text, PreviewMessage = truncated ? "仅显示前 256KB，完整内容请下载查看。" : null };
+                return details with { PreviewMessage = Text.Get("TheContentIsNotPreviewableUTF8TextDownloadToViewIt") };
+            return details with { PreviewText = text, PreviewMessage = truncated ? Text.Get("ShowingOnlyTheFirst256KBDownloadToViewTheCompleteContent") : null };
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
-        catch (OperationCanceledException) { return details with { PreviewMessage = "文本预览超时，请稍后重试。" }; }
-        catch (DecoderFallbackException) { return details with { PreviewMessage = "内容不是可预览的 UTF-8 文本，请下载查看。" }; }
-        catch (ObjectStorageException error) { return details with { PreviewMessage = error.Message }; }
+        catch (OperationCanceledException) { return details with { PreviewMessage = Text.Get("TextPreviewTimedOutTryAgainLater") }; }
+        catch (DecoderFallbackException) { return details with { PreviewMessage = Text.Get("TheContentIsNotPreviewableUTF8TextDownloadToViewIt") }; }
+        catch (ObjectStorageException error) { return details with { PreviewMessage = Text.Error(error, "CannotReadTheTextPreviewDownloadToViewIt") }; }
         catch (Exception)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            return details with { PreviewMessage = "无法读取文本预览，请下载查看。" };
+            return details with { PreviewMessage = Text.Get("CannotReadTheTextPreviewDownloadToViewIt") };
         }
     }
 }

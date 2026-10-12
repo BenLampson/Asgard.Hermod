@@ -1,5 +1,6 @@
 using System.Windows.Automation;
 using Asgard.Hermod.UI.Views.Dialogs;
+using Text = Asgard.Hermod.Abstractions.Localization.Text;
 
 namespace Asgard.Hermod.UI.Tests;
 
@@ -95,7 +96,7 @@ public sealed class TagDialogWindowTests
                 WindowTestVisuals.Invoke(save);
                 await WpfTestFixture.DrainDispatcherAsync();
                 Assert.True(window.IsVisible);
-                Assert.Equal("保存暂时失败", model.Error);
+                Assert.Equal(Text.Get("TheOperationFailedTryAgain"), model.Error);
                 Assert.Equal("#3af", color.Text);
                 Assert.Equal("Data", Assert.IsType<TextBox>(window.FindName("NameInput")).Text);
                 AssertContained(WindowTestVisuals.ScreenBounds(window), WindowTestVisuals.ScreenBounds(save));

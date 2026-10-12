@@ -1,0 +1,1533 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <data xml:space="preserve" name="100ItemsPerBatch">
+    <value>每批 100 项</value>
+  </data>
+  <data xml:space="preserve" name="15Minutes">
+    <value>15 分钟</value>
+  </data>
+  <data xml:space="preserve" name="1Hour">
+    <value>1 小时</value>
+  </data>
+  <data xml:space="preserve" name="AFileOrFolderWithThisNameAlreadyExistsChooseADifferentFolderName">
+    <value>同名文件或目录已经存在，请更换目录名称。</value>
+  </data>
+  <data xml:space="preserve" name="ATagCannotBeMovedUnderItselfOrOneOfItsDescendants">
+    <value>标签不能移动到自己或其后代之下。</value>
+  </data>
+  <data xml:space="preserve" name="ATagWithThisNameAlreadyExistsUnderThisParentNamesAreCaseInsensitive">
+    <value>同一父级下已存在同名标签，名称不区分大小写。</value>
+  </data>
+  <data xml:space="preserve" name="About">
+    <value>关于</value>
+  </data>
+  <data xml:space="preserve" name="AccessDeniedEnsureTheAccessKeyHasOssListBucketsPermission">
+    <value>访问被拒绝，请确认 AccessKey 具有 oss:ListBuckets 权限。</value>
+  </data>
+  <data xml:space="preserve" name="AccessPermissions">
+    <value>访问权限</value>
+  </data>
+  <data xml:space="preserve" name="Account">
+    <value>账户</value>
+  </data>
+  <data xml:space="preserve" name="AccountAndSynchronizationFeaturesWillBeEnabledAfterIdentityIntegration">
+    <value>账号与同步能力会在后续身份接入时启用。</value>
+  </data>
+  <data xml:space="preserve" name="AccountStorageIsNotAvailableYetSaveOnThisDevice">
+    <value>账户存储暂未接入，请选择保存在本地设备。</value>
+  </data>
+  <data xml:space="preserve" name="ActionFailed">
+    <value>操作失败</value>
+  </data>
+  <data xml:space="preserve" name="ActiveFailed">
+    <value>{0} 个进行中 · {1} 个失败</value>
+  </data>
+  <data xml:space="preserve" name="AddAServiceConnectionToViewConfigurationMetricsAndEvents">
+    <value>添加服务连接以查看配置、指标和事件。</value>
+  </data>
+  <data xml:space="preserve" name="AddChild">
+    <value>添加子级</value>
+  </data>
+  <data xml:space="preserve" name="AddInstance">
+    <value>添加实例</value>
+  </data>
+  <data xml:space="preserve" name="AddInstance2">
+    <value>添加 Instance</value>
+  </data>
+  <data xml:space="preserve" name="AlibabaCloudOSS">
+    <value>阿里云 OSS</value>
+  </data>
+  <data xml:space="preserve" name="AllFiles">
+    <value>所有文件|*.*</value>
+  </data>
+  <data xml:space="preserve" name="AnObjectWithThisNameAlreadyExistsConfirmOverwriteOrSkip">
+    <value>同名对象已经存在，请确认覆盖或跳过。</value>
+  </data>
+  <data xml:space="preserve" name="AnyoneWithThisLinkCanAccessTheObjectWhileItIsValidShareItCarefully">
+    <value>获得链接的人可在有效期内访问此对象，请谨慎分享。</value>
+  </data>
+  <data xml:space="preserve" name="Appearance">
+    <value>外观</value>
+  </data>
+  <data xml:space="preserve" name="ApplyFilters">
+    <value>应用筛选（{0}）</value>
+  </data>
+  <data xml:space="preserve" name="ArchiveStorage">
+    <value>归档存储</value>
+  </data>
+  <data xml:space="preserve" name="AsgardHermod">
+    <value>Asgard Hermod</value>
+  </data>
+  <data xml:space="preserve" name="AskBeforeUploading">
+    <value>询问后再上传</value>
+  </data>
+  <data xml:space="preserve" name="Authentication">
+    <value>身份认证</value>
+  </data>
+  <data xml:space="preserve" name="AuthenticationAndBucketListing">
+    <value>身份认证及容器读取</value>
+  </data>
+  <data xml:space="preserve" name="AuthenticationFailedCheckTheAccessKeyIDAndAccessKeySecret">
+    <value>身份验证失败，请检查 AccessKey ID 和 AccessKey Secret。</value>
+  </data>
+  <data xml:space="preserve" name="AuthenticationFailedCheckTheConnectionCredentials">
+    <value>身份验证失败，请检查连接凭据。</value>
+  </data>
+  <data xml:space="preserve" name="AuthenticationFailedEditTheInstanceConnectionCredentials">
+    <value>身份验证失败，请编辑实例连接凭据。</value>
+  </data>
+  <data xml:space="preserve" name="AvailableOptions">
+    <value>可选项</value>
+  </data>
+  <data xml:space="preserve" name="Back">
+    <value>上一步</value>
+  </data>
+  <data xml:space="preserve" name="BuiltInEnvironmentTag">
+    <value>系统固定环境 Tag</value>
+  </data>
+  <data xml:space="preserve" name="BuiltInEnvironmentTagsCannotBeDeleted">
+    <value>系统内置环境 Tag 不允许删除。</value>
+  </data>
+  <data xml:space="preserve" name="BuiltInEnvironmentTagsCannotBeEditedOrDeleted">
+    <value>内置环境标签不能修改或删除。</value>
+  </data>
+  <data xml:space="preserve" name="BuiltInEnvironmentTagsCannotBeParentsOfCustomTags">
+    <value>内置环境标签不能作为自定义标签的父级。</value>
+  </data>
+  <data xml:space="preserve" name="CanContainOnlyEnglishLettersAndDigits">
+    <value>{0} 只能包含英文字母和数字。</value>
+  </data>
+  <data xml:space="preserve" name="Cancel">
+    <value>取消</value>
+  </data>
+  <data xml:space="preserve" name="CancelCurrentTask">
+    <value>取消当前任务</value>
+  </data>
+  <data xml:space="preserve" name="CancelTagFilters">
+    <value>取消标签筛选</value>
+  </data>
+  <data xml:space="preserve" name="CancelTest">
+    <value>取消测试</value>
+  </data>
+  <data xml:space="preserve" name="Canceled">
+    <value>已取消</value>
+  </data>
+  <data xml:space="preserve" name="CandidateBucketListing">
+    <value>候选容器读取</value>
+  </data>
+  <data xml:space="preserve" name="CannotAddTheSelectedFilesCheckAccessPermissionsAndTryAgain">
+    <value>无法添加所选文件，请检查访问权限后重试。</value>
+  </data>
+  <data xml:space="preserve" name="CannotConnectToAlibabaCloudOSSCheckYourNetworkAndTryAgain">
+    <value>无法连接阿里云 OSS，请检查网络连接后重试。</value>
+  </data>
+  <data xml:space="preserve" name="CannotContainControlCharacters">
+    <value>{0} 不能包含控制字符。</value>
+  </data>
+  <data xml:space="preserve" name="CannotExceedCharacters">
+    <value>{0} 不能超过 {1} 个字符。</value>
+  </data>
+  <data xml:space="preserve" name="CannotGenerateATemporaryLinkTryAgainLater">
+    <value>生成临时链接失败，请稍后重试。</value>
+  </data>
+  <data xml:space="preserve" name="CannotOpenInstanceConfigurationTryAgain">
+    <value>无法打开实例配置，请重试。</value>
+  </data>
+  <data xml:space="preserve" name="CannotOpenTheFilePickerTryAgainLater">
+    <value>无法打开文件选择窗口，请稍后重试。</value>
+  </data>
+  <data xml:space="preserve" name="CannotOpenTheFolderPickerTryAgainLater">
+    <value>无法打开文件夹选择窗口，请稍后重试。</value>
+  </data>
+  <data xml:space="preserve" name="CannotOpenTheSaveDialogTryAgainLater">
+    <value>无法打开保存窗口，请稍后重试。</value>
+  </data>
+  <data xml:space="preserve" name="CannotProtectConnectionCredentialsCheckCredentialProtectionForTheCurrentWindowsUser">
+    <value>无法保护连接凭据，请检查当前 Windows 用户的凭据保护状态。</value>
+  </data>
+  <data xml:space="preserve" name="CannotReadBuckets">
+    <value>无法读取 Bucket</value>
+  </data>
+  <data xml:space="preserve" name="CannotReadCandidateBucketsCheckBucketReadPermissionsTheNetworkAndInstanceConfiguratio">
+    <value>无法读取候选容器，请检查容器读取权限、网络与实例配置。</value>
+  </data>
+  <data xml:space="preserve" name="CannotReadObjectDetailsTryAgainOrDownloadToViewThem">
+    <value>无法读取对象详情，请重试或下载后查看。</value>
+  </data>
+  <data xml:space="preserve" name="CannotReadTheTextPreviewDownloadToViewIt">
+    <value>无法读取文本预览，请下载查看。</value>
+  </data>
+  <data xml:space="preserve" name="CannotReadTheseConnectionCredentialsUseTheOriginalWindowsUserOrConfigureTheInstanceAg">
+    <value>无法读取此连接凭据，请使用原 Windows 用户或重新配置实例。</value>
+  </data>
+  <data xml:space="preserve" name="CannotReadThisInstanceConfigurationReopenAndTryAgain">
+    <value>无法读取这个实例的配置，请重新打开后重试。</value>
+  </data>
+  <data xml:space="preserve" name="CannotRefreshTagsReopenSettingsAndTryAgain">
+    <value>无法刷新标签，请重新打开系统设置后重试。</value>
+  </data>
+  <data xml:space="preserve" name="CannotSaveTheLanguagePreferenceTryAgain">
+    <value>无法保存语言偏好，请重试。</value>
+  </data>
+  <data xml:space="preserve" name="CannotSelectDownloadLocation">
+    <value>选择下载位置失败</value>
+  </data>
+  <data xml:space="preserve" name="CannotStartHermodCheckLocalStorageConfigurationAndPermissions">
+    <value>无法启动 Hermod，请检查本地存储配置和权限。</value>
+  </data>
+  <data xml:space="preserve" name="CannotStartTheTerminalCheckTheShellAndAccessPermissionsThenTryAgain">
+    <value>无法启动终端，请检查 Shell 和访问权限后重试。</value>
+  </data>
+  <data xml:space="preserve" name="CannotUploadADriveRootSelectAFolder">
+    <value>不能上传磁盘根目录，请选择文件夹。</value>
+  </data>
+  <data xml:space="preserve" name="CannotUploadLinksOrReparsePointsSelectActualFilesAndFolders">
+    <value>不能上传链接或重解析点，请选择真实文件和文件夹。</value>
+  </data>
+  <data xml:space="preserve" name="CannotWriteToTheClipboardTryAgain">
+    <value>无法写入剪贴板，请重试。</value>
+  </data>
+  <data xml:space="preserve" name="CannotWriteToTheClipboardTryAgainLater">
+    <value>无法写入剪贴板，请稍后重试。</value>
+  </data>
+  <data xml:space="preserve" name="CheckTheConnectionInformationAndEnsureYourIdentityHasTheRequiredAccessPermissions">
+    <value>检查连接信息是否正确，并确认当前身份拥有所需访问权限。</value>
+  </data>
+  <data xml:space="preserve" name="CheckTheNetworkAndRAMPermissionsOrEditTheConnection">
+    <value>请检查网络和 RAM 权限，或编辑连接。</value>
+  </data>
+  <data xml:space="preserve" name="CheckTheNetworkAndRAMPermissionsToListObjectsInThisBucket">
+    <value>请检查网络和 RAM 权限，确认可以列出此 Bucket 的对象。</value>
+  </data>
+  <data xml:space="preserve" name="ChineseLanguage">
+    <value>简体中文</value>
+  </data>
+  <data xml:space="preserve" name="ChooseAProviderThenEnterConnectionInformationInTheNextStep">
+    <value>选择服务商后，下一步填写连接信息。</value>
+  </data>
+  <data xml:space="preserve" name="ChooseAProviderToSeeTheConnectionTestDetails">
+    <value>选择服务商后可查看连接测试内容。</value>
+  </data>
+  <data xml:space="preserve" name="ChooseAnInstanceTypeThenItsProvider">
+    <value>先选择实例类型，再选择对应的服务商。</value>
+  </data>
+  <data xml:space="preserve" name="ChooseProvider">
+    <value>选择服务商</value>
+  </data>
+  <data xml:space="preserve" name="ChooseTheRootOrAnotherCustomTag">
+    <value>可选根级或其他自定义 Tag。</value>
+  </data>
+  <data xml:space="preserve" name="ChooseType">
+    <value>选择类型</value>
+  </data>
+  <data xml:space="preserve" name="ChooseTypeAndProvider">
+    <value>选择类型与服务商</value>
+  </data>
+  <data xml:space="preserve" name="ChooseWhereToSaveThisInstance">
+    <value>选择这个实例的保存位置。</value>
+  </data>
+  <data xml:space="preserve" name="ClearAll">
+    <value>全部清空</value>
+  </data>
+  <data xml:space="preserve" name="ClearFilters">
+    <value>清空筛选</value>
+  </data>
+  <data xml:space="preserve" name="ClearObjectSelection">
+    <value>清除对象选择</value>
+  </data>
+  <data xml:space="preserve" name="ClearOptionFilter">
+    <value>清空选项筛选</value>
+  </data>
+  <data xml:space="preserve" name="ClearSearch">
+    <value>清空搜索</value>
+  </data>
+  <data xml:space="preserve" name="ClickAnObjectToViewItsDetails">
+    <value>单击对象查看详情。</value>
+  </data>
+  <data xml:space="preserve" name="ClickStartTestToVerifyConnectionInformationAndAccessPermissions">
+    <value>点击开始测试，验证连接信息和访问权限。</value>
+  </data>
+  <data xml:space="preserve" name="Close">
+    <value>关闭</value>
+  </data>
+  <data xml:space="preserve" name="CloseObjectDetails">
+    <value>关闭对象详情</value>
+  </data>
+  <data xml:space="preserve" name="CloseTab">
+    <value>关闭页签</value>
+  </data>
+  <data xml:space="preserve" name="CloseWindow">
+    <value>关闭窗口</value>
+  </data>
+  <data xml:space="preserve" name="ColdArchiveStorage">
+    <value>冷归档存储</value>
+  </data>
+  <data xml:space="preserve" name="CollapseSidebar">
+    <value>收起侧边栏</value>
+  </data>
+  <data xml:space="preserve" name="Color">
+    <value>颜色</value>
+  </data>
+  <data xml:space="preserve" name="ColorsMustUseRGBOrRRGGBBHexadecimalFormat">
+    <value>颜色须使用 #RGB 或 #RRGGBB 十六进制格式。</value>
+  </data>
+  <data xml:space="preserve" name="CommonTagColors">
+    <value>常用 Tag 颜色</value>
+  </data>
+  <data xml:space="preserve" name="CompleteOrCancelTransfersBeforeEditingTheConnection">
+    <value>请先完成或取消传输，再编辑连接。</value>
+  </data>
+  <data xml:space="preserve" name="Completed">
+    <value>已完成</value>
+  </data>
+  <data xml:space="preserve" name="Configured">
+    <value>已配置</value>
+  </data>
+  <data xml:space="preserve" name="ConfirmChanges">
+    <value>确认修改</value>
+  </data>
+  <data xml:space="preserve" name="ConfirmCreation">
+    <value>确认创建</value>
+  </data>
+  <data xml:space="preserve" name="ConnectToObjectStorage">
+    <value>连接对象存储服务</value>
+  </data>
+  <data xml:space="preserve" name="Connected">
+    <value>已连接</value>
+  </data>
+  <data xml:space="preserve" name="Connecting">
+    <value>连接中</value>
+  </data>
+  <data xml:space="preserve" name="ConnectionInformation">
+    <value>连接信息</value>
+  </data>
+  <data xml:space="preserve" name="ConnectionSuccessful">
+    <value>连接成功</value>
+  </data>
+  <data xml:space="preserve" name="ConnectionTest">
+    <value>连接测试</value>
+  </data>
+  <data xml:space="preserve" name="ConnectionTestFailedCheckTheConnectionInformationOrNetworkAndTryAgain">
+    <value>连接测试失败，请检查连接信息或网络后重试。</value>
+  </data>
+  <data xml:space="preserve" name="ConnectionTestTimedOutCheckTheNetworkAndTryAgain">
+    <value>连接测试超时，请检查网络后重试。</value>
+  </data>
+  <data xml:space="preserve" name="ConnectionTestTimedOutKnownTemporaryObjectsWereCleanedUpCheckTheNetworkAndTryAgain">
+    <value>连接测试超时，已完成已知临时对象的清理，请检查网络后重试。</value>
+  </data>
+  <data xml:space="preserve" name="ConnectorNotConfiguredDeployWillBeAvailableAfterAServiceConnectionIsAdded">
+    <value>尚未配置连接器。添加服务连接后可部署。</value>
+  </data>
+  <data xml:space="preserve" name="ConnectorNotConfiguredRestartWillBeAvailableAfterAServiceConnectionIsAdded">
+    <value>尚未配置连接器。添加服务连接后可重启。</value>
+  </data>
+  <data xml:space="preserve" name="ConnectorsMustProvideAValidConfigurationFieldList">
+    <value>连接器必须提供有效的配置字段列表。</value>
+  </data>
+  <data xml:space="preserve" name="ContentType">
+    <value>内容类型</value>
+  </data>
+  <data xml:space="preserve" name="CopyCompleteLink">
+    <value>复制完整链接</value>
+  </data>
+  <data xml:space="preserve" name="CopyFailed">
+    <value>复制失败</value>
+  </data>
+  <data xml:space="preserve" name="CopyLink">
+    <value>复制链接</value>
+  </data>
+  <data xml:space="preserve" name="CopyObjectKey">
+    <value>复制 Object Key</value>
+  </data>
+  <data xml:space="preserve" name="CopyTemporaryLink">
+    <value>复制临时链接</value>
+  </data>
+  <data xml:space="preserve" name="CopyTextPreview">
+    <value>复制文本预览</value>
+  </data>
+  <data xml:space="preserve" name="Create">
+    <value>创建</value>
+  </data>
+  <data xml:space="preserve" name="CreateCustomTagsWithoutChangingBuiltInEnvironmentTagsSavedTagsAppearImmediatelyInTagM">
+    <value>仅创建自定义 Tag，不修改系统内置环境 Tag。保存后立即出现在 Tag 管理和实例 Tag 选择器中。</value>
+  </data>
+  <data xml:space="preserve" name="CreateInstance">
+    <value>创建实例</value>
+  </data>
+  <data xml:space="preserve" name="CreateTag">
+    <value>创建 Tag</value>
+  </data>
+  <data xml:space="preserve" name="Creating">
+    <value>创建中…</value>
+  </data>
+  <data xml:space="preserve" name="CreationFailedTryAgainYourEntriesHaveBeenRetained">
+    <value>创建失败，请重试。填写的信息已保留。</value>
+  </data>
+  <data xml:space="preserve" name="CurrentLanguage">
+    <value>当前语言：{0}</value>
+  </data>
+  <data xml:space="preserve" name="Custom">
+    <value>自定义</value>
+  </data>
+  <data xml:space="preserve" name="Dark">
+    <value>深色</value>
+  </data>
+  <data xml:space="preserve" name="DatabaseSchemaVersionIsUnsupportedThisVersionOfHermodSupportsSchema">
+    <value>不支持数据库结构版本 {0}。当前 Hermod 支持版本 {1}。</value>
+  </data>
+  <data xml:space="preserve" name="DeepColdArchive">
+    <value>深度冷归档</value>
+  </data>
+  <data xml:space="preserve" name="Delete">
+    <value>删除</value>
+  </data>
+  <data xml:space="preserve" name="Delete2">
+    <value>删除 {0}？</value>
+  </data>
+  <data xml:space="preserve" name="DeleteAndItsChildTags">
+    <value>删除 {0} 及其子 Tag？</value>
+  </data>
+  <data xml:space="preserve" name="DeleteObjects">
+    <value>删除 {0} 个对象</value>
+  </data>
+  <data xml:space="preserve" name="DeleteObjects2">
+    <value>删除对象</value>
+  </data>
+  <data xml:space="preserve" name="DeleteObjects3">
+    <value>删除对象…</value>
+  </data>
+  <data xml:space="preserve" name="DeleteTag">
+    <value>删除 Tag</value>
+  </data>
+  <data xml:space="preserve" name="DeleteTags">
+    <value>删除 {0} 个 Tag</value>
+  </data>
+  <data xml:space="preserve" name="DeleteTheseObjects">
+    <value>删除这 {0} 个对象？</value>
+  </data>
+  <data xml:space="preserve" name="Deploy">
+    <value>部署</value>
+  </data>
+  <data xml:space="preserve" name="DescriptionsForTheSameInstanceTypeMustMatchCheckConnectorRegistration">
+    <value>同一实例类型的描述必须一致，请检查连接器注册。</value>
+  </data>
+  <data xml:space="preserve" name="DirectoryEnumerationReturnedAnIncompleteDeletionRangeRefreshAndTryAgain">
+    <value>目录枚举返回了不完整的删除范围，请刷新重试。</value>
+  </data>
+  <data xml:space="preserve" name="DirectoryNamesCannotBeEmptyOrContainSlashesOrControlCharacters">
+    <value>目录名称不能为空，也不能包含斜杠或控制字符。</value>
+  </data>
+  <data xml:space="preserve" name="Disconnected">
+    <value>已断开</value>
+  </data>
+  <data xml:space="preserve" name="DismissNotification">
+    <value>关闭提示</value>
+  </data>
+  <data xml:space="preserve" name="DoubleClickAFolderToOpenItsPrefix">
+    <value>双击文件夹进入目录前缀。</value>
+  </data>
+  <data xml:space="preserve" name="Download">
+    <value>下载</value>
+  </data>
+  <data xml:space="preserve" name="DownloadCurrentObject">
+    <value>下载当前对象</value>
+  </data>
+  <data xml:space="preserve" name="DropFilesHere">
+    <value>将文件拖到这里</value>
+  </data>
+  <data xml:space="preserve" name="DuplicateProviderIdentifiersForTheSameInstanceTypeCheckConnectorRegistration">
+    <value>同一实例类型存在重复的服务商标识，请检查连接器注册。</value>
+  </data>
+  <data xml:space="preserve" name="DuplicateTagPath">
+    <value>标签路径重复：{0}</value>
+  </data>
+  <data xml:space="preserve" name="Edit">
+    <value>编辑</value>
+  </data>
+  <data xml:space="preserve" name="EditConnection">
+    <value>编辑连接</value>
+  </data>
+  <data xml:space="preserve" name="EditInformation">
+    <value>修改信息</value>
+  </data>
+  <data xml:space="preserve" name="EditInstance">
+    <value>编辑实例</value>
+  </data>
+  <data xml:space="preserve" name="EditObjectStorageConnection">
+    <value>编辑对象存储连接</value>
+  </data>
+  <data xml:space="preserve" name="EditTag">
+    <value>编辑 Tag</value>
+  </data>
+  <data xml:space="preserve" name="EditingCannotChangeTheInstanceTypeOrProviderCreateAnInstanceOfTheRequiredTypeInstead">
+    <value>编辑实例不能更改实例类型或服务商，请新增对应类型的实例。</value>
+  </data>
+  <data xml:space="preserve" name="English">
+    <value>English</value>
+  </data>
+  <data xml:space="preserve" name="Enter">
+    <value>请输入 {0}。</value>
+  </data>
+  <data xml:space="preserve" name="EnterAColorInRGBOrRRGGBBFormat">
+    <value>请输入 #RGB 或 #RRGGBB 格式的颜色。</value>
+  </data>
+  <data xml:space="preserve" name="EnterAFolderName">
+    <value>请输入文件夹名称。</value>
+  </data>
+  <data xml:space="preserve" name="EnterATagName">
+    <value>请输入 Tag 名称。</value>
+  </data>
+  <data xml:space="preserve" name="EnterAValidAccessKeyIDAndAccessKeySecret">
+    <value>请填写有效的 AccessKey ID 和 AccessKey Secret。</value>
+  </data>
+  <data xml:space="preserve" name="EnterInformation">
+    <value>输入信息</value>
+  </data>
+  <data xml:space="preserve" name="EnterTheInstanceNameAndConnectionInformationFor">
+    <value>填写实例名称与 {0} 的连接信息。</value>
+  </data>
+  <data xml:space="preserve" name="EnteredHidden">
+    <value>已填写 · 隐藏</value>
+  </data>
+  <data xml:space="preserve" name="Environment">
+    <value>环境</value>
+  </data>
+  <data xml:space="preserve" name="EnvironmentIsABuiltInTagGroupUseADifferentNameForCustomRootTags">
+    <value>Environment 是内置环境标签分组，请为自定义根标签使用其他名称。</value>
+  </data>
+  <data xml:space="preserve" name="ExistingObjectPolicy">
+    <value>同名对象处理方式</value>
+  </data>
+  <data xml:space="preserve" name="Exited">
+    <value>已退出（{0}）</value>
+  </data>
+  <data xml:space="preserve" name="ExpandOrCollapseCommonColors">
+    <value>展开或收起常用颜色</value>
+  </data>
+  <data xml:space="preserve" name="ExpandOrCollapseTag">
+    <value>展开或折叠 Tag</value>
+  </data>
+  <data xml:space="preserve" name="ExpandSidebar">
+    <value>展开侧边栏</value>
+  </data>
+  <data xml:space="preserve" name="Failed">
+    <value>失败</value>
+  </data>
+  <data xml:space="preserve" name="Failed2">
+    <value>未通过</value>
+  </data>
+  <data xml:space="preserve" name="FailedToStart">
+    <value>启动失败</value>
+  </data>
+  <data xml:space="preserve" name="FilesSelected">
+    <value>已选 {0} 个文件</value>
+  </data>
+  <data xml:space="preserve" name="FilterByTags">
+    <value>按标签筛选</value>
+  </data>
+  <data xml:space="preserve" name="FilterInstancesByName">
+    <value>按名称筛选实例</value>
+  </data>
+  <data xml:space="preserve" name="FilterInstancesByTags">
+    <value>按 Tag 筛选实例</value>
+  </data>
+  <data xml:space="preserve" name="FilterOptions">
+    <value>筛选选项</value>
+  </data>
+  <data xml:space="preserve" name="FilterTags">
+    <value>筛选 Tag</value>
+  </data>
+  <data xml:space="preserve" name="FindInstances">
+    <value>查找实例</value>
+  </data>
+  <data xml:space="preserve" name="FolderName">
+    <value>文件夹名称</value>
+  </data>
+  <data xml:space="preserve" name="FoldersObjects">
+    <value>{0} 个文件夹 · {1} 个对象</value>
+  </data>
+  <data xml:space="preserve" name="FollowWindows">
+    <value>跟随 Windows</value>
+  </data>
+  <data xml:space="preserve" name="FollowWindowsDisplayLanguageAutomaticallyOrChooseALanguageBelow">
+    <value>自动跟随 Windows 显示语言，也可以在下方手动选择。</value>
+  </data>
+  <data xml:space="preserve" name="General">
+    <value>通用</value>
+  </data>
+  <data xml:space="preserve" name="GenerateLink">
+    <value>生成链接</value>
+  </data>
+  <data xml:space="preserve" name="GenerateTemporaryLink">
+    <value>生成临时链接</value>
+  </data>
+  <data xml:space="preserve" name="GenerateTemporaryLink2">
+    <value>生成临时链接…</value>
+  </data>
+  <data xml:space="preserve" name="Generating">
+    <value>生成中…</value>
+  </data>
+  <data xml:space="preserve" name="GroupsExpandToBrowse">
+    <value>{0} 个分组 · 展开查看</value>
+  </data>
+  <data xml:space="preserve" name="Hermod">
+    <value>Hermod</value>
+  </data>
+  <data xml:space="preserve" name="HermodLocalStorageRequiresADatabaseFilePath">
+    <value>Hermod 本地存储需要数据库文件路径。</value>
+  </data>
+  <data xml:space="preserve" name="HermodLocalStorageRequiresAWritableDatabase">
+    <value>Hermod 本地存储需要可写的数据库。</value>
+  </data>
+  <data xml:space="preserve" name="HermodLocalStorageRequiresTheSQLiteProvider">
+    <value>Hermod 本地存储需要使用 SQLite。</value>
+  </data>
+  <data xml:space="preserve" name="HermodRequiresLocalDatabaseStorageToBeEnabled">
+    <value>Hermod 需要启用本地数据库存储。</value>
+  </data>
+  <data xml:space="preserve" name="Home">
+    <value>首页</value>
+  </data>
+  <data xml:space="preserve" name="IdentityAndBucketListingPassedButNoBucketIsAvailableForReadWriteVerificationCreateOrA">
+    <value>身份与容器列表读取已通过，但没有可用于验证读写的容器，请先创建或授权至少一个容器。</value>
+  </data>
+  <data xml:space="preserve" name="InfrequentAccess">
+    <value>低频访问</value>
+  </data>
+  <data xml:space="preserve" name="Instance">
+    <value>实例</value>
+  </data>
+  <data xml:space="preserve" name="InstanceConfigurationSaved">
+    <value>实例配置已保存</value>
+  </data>
+  <data xml:space="preserve" name="InstanceConfigured">
+    <value>实例已配置</value>
+  </data>
+  <data xml:space="preserve" name="InstanceConnectorNotInstalled">
+    <value>未安装的实例连接器</value>
+  </data>
+  <data xml:space="preserve" name="InstanceDetailsAreNotYetAvailable">
+    <value>实例详情页面待接入。</value>
+  </data>
+  <data xml:space="preserve" name="InstanceList">
+    <value>实例列表</value>
+  </data>
+  <data xml:space="preserve" name="InstanceName">
+    <value>实例名称</value>
+  </data>
+  <data xml:space="preserve" name="InstanceNamesMustContain1128CharactersAndNoControlCharacters">
+    <value>实例名称须为 1–128 个字符，且不能包含控制字符。</value>
+  </data>
+  <data xml:space="preserve" name="InstanceProvider">
+    <value>实例服务商</value>
+  </data>
+  <data xml:space="preserve" name="InstanceType">
+    <value>实例类型</value>
+  </data>
+  <data xml:space="preserve" name="InstanceTypesAndProvidersMustSupplyValidStableIdentifiers">
+    <value>实例类型与服务商必须提供有效的稳定标识。</value>
+  </data>
+  <data xml:space="preserve" name="Instances">
+    <value>{0} 个实例</value>
+  </data>
+  <data xml:space="preserve" name="InsufficientPermissionsCheckThatTheCurrentCredentialsPermitThisObjectOperation">
+    <value>权限不足，请确认当前凭据具有此对象操作权限。</value>
+  </data>
+  <data xml:space="preserve" name="InsufficientPermissionsCheckTheInstanceCredentialsAndAccessPolicy">
+    <value>权限不足，请检查实例凭据与访问策略。</value>
+  </data>
+  <data xml:space="preserve" name="InvalidBucketNameSelectTheBucketAgain">
+    <value>容器名称无效，请重新选择容器。</value>
+  </data>
+  <data xml:space="preserve" name="InvalidBucketRegionRefreshTheBucketList">
+    <value>容器区域无效，请刷新容器列表。</value>
+  </data>
+  <data xml:space="preserve" name="InvalidConnectionCredentialsEditTheInstanceConfiguration">
+    <value>连接凭据无效，请编辑实例配置。</value>
+  </data>
+  <data xml:space="preserve" name="InvalidConnectionParametersCheckTheFieldsRequiredByTheProvider">
+    <value>连接参数无效，请检查服务商要求的配置字段。</value>
+  </data>
+  <data xml:space="preserve" name="InvalidDirectoryDeletionRangeRefreshAndSelectAgain">
+    <value>目录删除范围无效，请刷新后重新选择。</value>
+  </data>
+  <data xml:space="preserve" name="InvalidDirectoryPagingCursorRefreshAndTryAgain">
+    <value>目录分页游标无效，请刷新后重试。</value>
+  </data>
+  <data xml:space="preserve" name="InvalidDirectoryPathSelectTheDirectoryAgain">
+    <value>目录路径无效，请重新选择目录。</value>
+  </data>
+  <data xml:space="preserve" name="InvalidObjectListCursorRefreshTheList">
+    <value>对象列表游标无效，请刷新列表。</value>
+  </data>
+  <data xml:space="preserve" name="InvalidObjectNameRefreshTheListOrChangeTheName">
+    <value>对象名称无效，请刷新列表或修改名称。</value>
+  </data>
+  <data xml:space="preserve" name="InvalidOrDuplicateConnectorConfigurationFieldsCheckFieldDeclarations">
+    <value>连接器配置字段无效或重复，请检查字段声明。</value>
+  </data>
+  <data xml:space="preserve" name="InvalidOrDuplicateObjectStorageConnectorIdentifiersCheckRegistration">
+    <value>对象存储连接器标识无效或重复，请检查注册。</value>
+  </data>
+  <data xml:space="preserve" name="KeyboardShortcuts">
+    <value>快捷键</value>
+  </data>
+  <data xml:space="preserve" name="Language">
+    <value>语言</value>
+  </data>
+  <data xml:space="preserve" name="LanguageChangesTakeEffectAfterRestartingHermodYourChoiceIsSavedOnThisDevice">
+    <value>语言选择保存在本机，重启 Hermod 后生效。</value>
+  </data>
+  <data xml:space="preserve" name="LanguagePreferenceSavedRestartHermodToApplyIt">
+    <value>语言偏好已保存，重启 Hermod 后生效。</value>
+  </data>
+  <data xml:space="preserve" name="Lifetime">
+    <value>有效期</value>
+  </data>
+  <data xml:space="preserve" name="Light">
+    <value>浅色</value>
+  </data>
+  <data xml:space="preserve" name="LinkCopied">
+    <value>已复制链接。</value>
+  </data>
+  <data xml:space="preserve" name="LinkedInstances">
+    <value>关联实例</value>
+  </data>
+  <data xml:space="preserve" name="LoadObjectsInBatchesFromTheCurrentDirectory">
+    <value>按当前目录分批加载对象。</value>
+  </data>
+  <data xml:space="preserve" name="Local">
+    <value>本地</value>
+  </data>
+  <data xml:space="preserve" name="Local2">
+    <value>本地 · </value>
+  </data>
+  <data xml:space="preserve" name="LocalStorageRemainsAvailableAfterSigningInAndLocalDataIsRetained">
+    <value>登录后仍可选择本地，也会保留本地信息。</value>
+  </data>
+  <data xml:space="preserve" name="LocalTerminal">
+    <value>本地终端</value>
+  </data>
+  <data xml:space="preserve" name="LocalWorkspace">
+    <value>本地工作区</value>
+  </data>
+  <data xml:space="preserve" name="ManageTags">
+    <value>管理 Tag</value>
+  </data>
+  <data xml:space="preserve" name="MatchAllSelected">
+    <value>匹配所有选中标签</value>
+  </data>
+  <data xml:space="preserve" name="MatchAnySelected">
+    <value>匹配任一选中标签</value>
+  </data>
+  <data xml:space="preserve" name="Maximize">
+    <value>最大化</value>
+  </data>
+  <data xml:space="preserve" name="MaximizeWindow">
+    <value>最大化窗口</value>
+  </data>
+  <data xml:space="preserve" name="Minimize">
+    <value>最小化</value>
+  </data>
+  <data xml:space="preserve" name="MinimizeWindow">
+    <value>最小化窗口</value>
+  </data>
+  <data xml:space="preserve" name="Modified">
+    <value>更新时间 ↓</value>
+  </data>
+  <data xml:space="preserve" name="MoreActionsForCurrentObject">
+    <value>当前对象更多操作</value>
+  </data>
+  <data xml:space="preserve" name="MoreObjectActions">
+    <value>对象更多操作</value>
+  </data>
+  <data xml:space="preserve" name="Name">
+    <value>名称</value>
+  </data>
+  <data xml:space="preserve" name="NamesCannotConsistOnlyOfDots">
+    <value>名称不能只包含点。</value>
+  </data>
+  <data xml:space="preserve" name="NamesCannotContainControlCharacters">
+    <value>名称不可包含控制字符。</value>
+  </data>
+  <data xml:space="preserve" name="NamesCannotContainOr">
+    <value>名称不可包含 / 或 \。</value>
+  </data>
+  <data xml:space="preserve" name="NamesCannotContainOrChooseADifferentNameIfItAlreadyExistsInThisDirectory">
+    <value>名称不可包含 / 或 \；当前目录下重名时提示更换名称。</value>
+  </data>
+  <data xml:space="preserve" name="NamesMustBeUniqueUnderTheSameParent">
+    <value>名称在同一父级下唯一。</value>
+  </data>
+  <data xml:space="preserve" name="NewFolder">
+    <value>新建文件夹</value>
+  </data>
+  <data xml:space="preserve" name="NewObjectFolder">
+    <value>新建对象文件夹</value>
+  </data>
+  <data xml:space="preserve" name="NewTag">
+    <value>新建 Tag</value>
+  </data>
+  <data xml:space="preserve" name="Next">
+    <value>下一步</value>
+  </data>
+  <data xml:space="preserve" name="NextBatch">
+    <value>下一批</value>
+  </data>
+  <data xml:space="preserve" name="NoAccessibleBuckets">
+    <value>没有可访问的 Bucket</value>
+  </data>
+  <data xml:space="preserve" name="NoActiveTasks">
+    <value>无进行中的任务</value>
+  </data>
+  <data xml:space="preserve" name="NoBucketsAreAvailableForReadWriteVerification">
+    <value>没有可用于验证读写的容器。</value>
+  </data>
+  <data xml:space="preserve" name="NoConnectorConfigured">
+    <value>尚未配置连接器</value>
+  </data>
+  <data xml:space="preserve" name="NoContentViewIsRegisteredForPageType">
+    <value>没有为页面类型 {0} 注册内容视图。</value>
+  </data>
+  <data xml:space="preserve" name="NoCustomTagsYet">
+    <value>尚无自定义 Tag</value>
+  </data>
+  <data xml:space="preserve" name="NoMatchingInstances">
+    <value>没有匹配的实例</value>
+  </data>
+  <data xml:space="preserve" name="NoMatchingObjects">
+    <value>没有匹配的对象</value>
+  </data>
+  <data xml:space="preserve" name="NoMatchingOptions">
+    <value>没有匹配的选项</value>
+  </data>
+  <data xml:space="preserve" name="NoMatchingTags">
+    <value>没有匹配的标签</value>
+  </data>
+  <data xml:space="preserve" name="NoMatchingTags2">
+    <value>没有匹配的 Tag</value>
+  </data>
+  <data xml:space="preserve" name="NotConfigured">
+    <value>未配置</value>
+  </data>
+  <data xml:space="preserve" name="NotEntered">
+    <value>未填写</value>
+  </data>
+  <data xml:space="preserve" name="NotSignedIn">
+    <value>未登录</value>
+  </data>
+  <data xml:space="preserve" name="NotYetPassed">
+    <value>尚未通过</value>
+  </data>
+  <data xml:space="preserve" name="OK">
+    <value>确定</value>
+  </data>
+  <data xml:space="preserve" name="OSSConnectionTestFailedCheckTheConfigurationAndTryAgain">
+    <value>OSS 连接测试失败，请检查配置后重试。</value>
+  </data>
+  <data xml:space="preserve" name="OSSDidNotConfirmPermanentDeletionOfTheExactTemporaryObjectVersionCheckTheProviderCons">
+    <value>OSS 未确认临时对象的精确版本已永久删除，请检查服务商控制台。</value>
+  </data>
+  <data xml:space="preserve" name="OSSIsTemporarilyUnavailableTryAgainLater">
+    <value>OSS 暂时不可用，请稍后重试。</value>
+  </data>
+  <data xml:space="preserve" name="OSSRejectedTheTemporaryObjectWriteRequestNoTestObjectWasCreated">
+    <value>OSS 已拒绝临时对象的写入请求，未创建测试对象。</value>
+  </data>
+  <data xml:space="preserve" name="OSSReturnedAnInvalidMultipartChecksumResponse">
+    <value>OSS 返回了无效的分片校验响应。</value>
+  </data>
+  <data xml:space="preserve" name="OSSReturnedAnInvalidMultipartUploadResponse">
+    <value>OSS 返回了无效的分片上传响应。</value>
+  </data>
+  <data xml:space="preserve" name="OSSReturnedAnUnverifiableObjectResponseTryAgainLater">
+    <value>OSS 返回了无法验证的对象响应，请稍后重试。</value>
+  </data>
+  <data xml:space="preserve" name="OSSReturnedAnUnverifiableResponseTryAgainLater">
+    <value>OSS 返回了无法验证的响应，请稍后重试。</value>
+  </data>
+  <data xml:space="preserve" name="ObjectDetails">
+    <value>对象详情</value>
+  </data>
+  <data xml:space="preserve" name="ObjectKey">
+    <value>对象键</value>
+  </data>
+  <data xml:space="preserve" name="ObjectList">
+    <value>对象列表</value>
+  </data>
+  <data xml:space="preserve" name="ObjectStorage">
+    <value>对象存储</value>
+  </data>
+  <data xml:space="preserve" name="ObjectStorageOperationFailedCheckTheNetworkInstanceConfigurationAndLocalFilePermissio">
+    <value>对象存储操作失败，请检查网络、实例配置与本地文件权限。</value>
+  </data>
+  <data xml:space="preserve" name="ObjectStorageOperationFailedCheckTheNetworkInstanceConfigurationAndOperationPermissio">
+    <value>对象存储操作失败，请检查网络、实例配置与操作权限。</value>
+  </data>
+  <data xml:space="preserve" name="ObjectsWillBeDeletedFromOSSThisActionCannotBeDirectlyUndone">
+    <value>将从 OSS 删除对象，操作不可直接撤销。</value>
+  </data>
+  <data xml:space="preserve" name="OrganizeYourInstancesWithCustomTags">
+    <value>用自定义 Tag 分类你的实例</value>
+  </data>
+  <data xml:space="preserve" name="OverwriteAndUpload">
+    <value>覆盖并上传</value>
+  </data>
+  <data xml:space="preserve" name="OverwriteExistingObjects">
+    <value>覆盖同名对象</value>
+  </data>
+  <data xml:space="preserve" name="OverwriteThisExistingObject">
+    <value>覆盖这个同名对象？</value>
+  </data>
+  <data xml:space="preserve" name="ParentTag">
+    <value>父级 Tag</value>
+  </data>
+  <data xml:space="preserve" name="Passed">
+    <value>通过</value>
+  </data>
+  <data xml:space="preserve" name="Preview">
+    <value>预览</value>
+  </data>
+  <data xml:space="preserve" name="Processing">
+    <value>处理中…</value>
+  </data>
+  <data xml:space="preserve" name="Provider">
+    <value>服务商</value>
+  </data>
+  <data xml:space="preserve" name="ReadFailed">
+    <value>读取失败</value>
+  </data>
+  <data xml:space="preserve" name="ReadOnlyObjectTextPreview">
+    <value>对象只读文本预览</value>
+  </data>
+  <data xml:space="preserve" name="ReadPermissionsUnknown">
+    <value>读取权限未知</value>
+  </data>
+  <data xml:space="preserve" name="ReadWriteConnectionTestCanceled">
+    <value>读写连接测试已取消。</value>
+  </data>
+  <data xml:space="preserve" name="ReadWriteConnectionTestCanceledKnownTemporaryObjectsWereCleanedUp">
+    <value>读写连接测试已取消，已完成已知临时对象的清理。</value>
+  </data>
+  <data xml:space="preserve" name="ReadWriteConnectionTestPassedRandomTemporaryObjectWriteReadBackAndCleanupWereVerified">
+    <value>读写连接测试通过：已在容器 {0} 验证随机临时对象的写入、回读和清理；验证结果仅覆盖该容器。</value>
+  </data>
+  <data xml:space="preserve" name="ReadingDeletionImpact">
+    <value>正在读取删除影响…</value>
+  </data>
+  <data xml:space="preserve" name="ReadingObjectDetails">
+    <value>正在读取对象详情…</value>
+  </data>
+  <data xml:space="preserve" name="ReadingObjects">
+    <value>正在读取对象…</value>
+  </data>
+  <data xml:space="preserve" name="ReadingTags">
+    <value>正在读取 Tag…</value>
+  </data>
+  <data xml:space="preserve" name="RecentEvents">
+    <value>最近事件</value>
+  </data>
+  <data xml:space="preserve" name="RefreshObjectList">
+    <value>刷新对象列表</value>
+  </data>
+  <data xml:space="preserve" name="RelatedTagLinksWillAlsoBeRemovedFromInstancesInstancesAndConnectionInformationWillRem">
+    <value>同时移除 {0} 个实例上的相关 Tag 关联；不会删除实例或连接信息。此操作不可撤销。</value>
+  </data>
+  <data xml:space="preserve" name="Remove">
+    <value>移除</value>
+  </data>
+  <data xml:space="preserve" name="RemoveUploadItem">
+    <value>移除上传项</value>
+  </data>
+  <data xml:space="preserve" name="Restart">
+    <value>重启</value>
+  </data>
+  <data xml:space="preserve" name="Restore">
+    <value>还原</value>
+  </data>
+  <data xml:space="preserve" name="RestoreWindow">
+    <value>还原窗口</value>
+  </data>
+  <data xml:space="preserve" name="Retry">
+    <value>重试</value>
+  </data>
+  <data xml:space="preserve" name="ReviewTheInformationAndConfirmToCreateTheInstance">
+    <value>检查信息，确认后创建实例。</value>
+  </data>
+  <data xml:space="preserve" name="ReviewTheInformationAndConfirmToSaveChanges">
+    <value>检查信息，确认后保存修改。</value>
+  </data>
+  <data xml:space="preserve" name="Root">
+    <value>根级</value>
+  </data>
+  <data xml:space="preserve" name="Running">
+    <value>运行中</value>
+  </data>
+  <data xml:space="preserve" name="RuntimeConfiguration">
+    <value>运行配置</value>
+  </data>
+  <data xml:space="preserve" name="SampleDataServiceIsNotConnected">
+    <value>示例数据 · 服务尚未连接。</value>
+  </data>
+  <data xml:space="preserve" name="SaveChanges">
+    <value>保存修改</value>
+  </data>
+  <data xml:space="preserve" name="SaveChanges2">
+    <value>保存更改</value>
+  </data>
+  <data xml:space="preserve" name="SaveFailedTryAgainYourEntriesHaveBeenRetained">
+    <value>保存失败，请重试。填写的信息已保留。</value>
+  </data>
+  <data xml:space="preserve" name="SaveLocation">
+    <value>保存位置</value>
+  </data>
+  <data xml:space="preserve" name="SaveObject">
+    <value>保存对象</value>
+  </data>
+  <data xml:space="preserve" name="Saving">
+    <value>保存中…</value>
+  </data>
+  <data xml:space="preserve" name="SearchFileNamePrefixes">
+    <value>搜索文件名前缀…</value>
+  </data>
+  <data xml:space="preserve" name="SearchFileNamePrefixesInTheCurrentDirectory">
+    <value>搜索当前目录文件名前缀</value>
+  </data>
+  <data xml:space="preserve" name="SearchInstances">
+    <value>搜索实例…</value>
+  </data>
+  <data xml:space="preserve" name="SearchOnlyFileNamePrefixesInTheCurrentDirectory">
+    <value>仅搜索当前目录中的文件名前缀。</value>
+  </data>
+  <data xml:space="preserve" name="SearchOptions">
+    <value>搜索选项…</value>
+  </data>
+  <data xml:space="preserve" name="SearchServicesAndTasks">
+    <value>搜索服务和任务</value>
+  </data>
+  <data xml:space="preserve" name="SearchTags">
+    <value>搜索 Tag</value>
+  </data>
+  <data xml:space="preserve" name="SearchTags2">
+    <value>搜索 Tag…</value>
+  </data>
+  <data xml:space="preserve" name="SearchTagsOrPaths">
+    <value>搜索标签或路径</value>
+  </data>
+  <data xml:space="preserve" name="SearchTagsOrPaths2">
+    <value>搜索标签或路径…</value>
+  </data>
+  <data xml:space="preserve" name="SelectAConfiguredInstanceFirst">
+    <value>请先选择一个已配置的实例。</value>
+  </data>
+  <data xml:space="preserve" name="SelectATagToViewDetails">
+    <value>选择 Tag 查看详情</value>
+  </data>
+  <data xml:space="preserve" name="SelectATagToViewDetailsOrManageItUsing">
+    <value>选择 Tag 查看详情，或通过 ··· 管理。</value>
+  </data>
+  <data xml:space="preserve" name="SelectAValidLocalFileLocation">
+    <value>请选择有效的本地文件位置。</value>
+  </data>
+  <data xml:space="preserve" name="SelectAllObjectsOnThisPage">
+    <value>选择本页全部对象</value>
+  </data>
+  <data xml:space="preserve" name="SelectAnOption">
+    <value>请选择</value>
+  </data>
+  <data xml:space="preserve" name="SelectDownloadFolder">
+    <value>选择下载文件夹</value>
+  </data>
+  <data xml:space="preserve" name="SelectFiles">
+    <value>选择文件</value>
+  </data>
+  <data xml:space="preserve" name="SelectFolder">
+    <value>选择文件夹</value>
+  </data>
+  <data xml:space="preserve" name="SelectTheRootOrAnotherAvailableCustomTag">
+    <value>请选择根级或其他可用的自定义 Tag。</value>
+  </data>
+  <data xml:space="preserve" name="SelectUploadFiles">
+    <value>选择上传文件</value>
+  </data>
+  <data xml:space="preserve" name="SelectUploadFolder">
+    <value>选择上传文件夹</value>
+  </data>
+  <data xml:space="preserve" name="SelectedIncludesNestedTags">
+    <value>已选 {0} 个 · 包含子标签</value>
+  </data>
+  <data xml:space="preserve" name="SelectedObjectKeysCannotBeSafelySavedAsLocalFileNamesChooseADestinationForEachObject">
+    <value>所选对象键无法安全保存为本地文件名，请逐个选择下载位置。</value>
+  </data>
+  <data xml:space="preserve" name="SelectedObjectsMapToDuplicateOrInvalidLocalPathsDownloadThemIndividually">
+    <value>所选对象映射到重复或无效的本地路径，请逐个下载。</value>
+  </data>
+  <data xml:space="preserve" name="Settings">
+    <value>设置</value>
+  </data>
+  <data xml:space="preserve" name="ShowingOnlyTheFirst256KBDownloadToViewTheCompleteContent">
+    <value>仅显示前 256KB，完整内容请下载查看。</value>
+  </data>
+  <data xml:space="preserve" name="SignIn">
+    <value>登录</value>
+  </data>
+  <data xml:space="preserve" name="SignInToYourAccount">
+    <value>登录账户</value>
+  </data>
+  <data xml:space="preserve" name="Size">
+    <value>大小</value>
+  </data>
+  <data xml:space="preserve" name="SkipExistingObjects">
+    <value>跳过同名对象</value>
+  </data>
+  <data xml:space="preserve" name="Skipped">
+    <value>已跳过</value>
+  </data>
+  <data xml:space="preserve" name="SomeFilesWouldUploadToTheSameObjectKeyRemoveDuplicates">
+    <value>有文件将上传到相同对象键，请移除重名项。</value>
+  </data>
+  <data xml:space="preserve" name="SomeObjectsCouldNotBeDeletedRefreshTheListAndConfirmTheRemainingObjectsAgain">
+    <value>部分对象删除失败，请刷新列表后重新确认剩余对象。</value>
+  </data>
+  <data xml:space="preserve" name="SomeObjectsWereDeletedButTheRemainingObjectsCouldNotBeDeletedRefreshAndConfirmAgain">
+    <value>部分对象已经删除，剩余对象删除失败；请刷新后重新确认。</value>
+  </data>
+  <data xml:space="preserve" name="StandardStorage">
+    <value>标准存储</value>
+  </data>
+  <data xml:space="preserve" name="StartANewLocalPowerShellSession">
+    <value>启动新的本地 PowerShell 会话。</value>
+  </data>
+  <data xml:space="preserve" name="StartTest">
+    <value>开始测试</value>
+  </data>
+  <data xml:space="preserve" name="StartUpload">
+    <value>开始上传</value>
+  </data>
+  <data xml:space="preserve" name="Starting">
+    <value>启动中</value>
+  </data>
+  <data xml:space="preserve" name="Step5">
+    <value>第 {0} / 5 步</value>
+  </data>
+  <data xml:space="preserve" name="Storage">
+    <value>存储</value>
+  </data>
+  <data xml:space="preserve" name="StorageClass">
+    <value>存储类型</value>
+  </data>
+  <data xml:space="preserve" name="SupportsRGBAndRRGGBBSuchAs3AFOr33AAFF">
+    <value>支持 #RGB 和 #RRGGBB，例如 #3AF 或 #33AAFF。</value>
+  </data>
+  <data xml:space="preserve" name="SwitchBucket">
+    <value>切换 Bucket</value>
+  </data>
+  <data xml:space="preserve" name="SwitchToDarkMode">
+    <value>切换为深色模式</value>
+  </data>
+  <data xml:space="preserve" name="SwitchToLightMode">
+    <value>切换为浅色模式</value>
+  </data>
+  <data xml:space="preserve" name="SystemFixed">
+    <value>系统固定</value>
+  </data>
+  <data xml:space="preserve" name="SystemSettings">
+    <value>系统设置</value>
+  </data>
+  <data xml:space="preserve" name="TAGDETAILS">
+    <value>TAG 详情</value>
+  </data>
+  <data xml:space="preserve" name="TagFilter">
+    <value>标签筛选</value>
+  </data>
+  <data xml:space="preserve" name="TagHEXColor">
+    <value>Tag HEX 颜色</value>
+  </data>
+  <data xml:space="preserve" name="TagHierarchyDataIsCorruptedCheckTheLocalDatabase">
+    <value>标签层级数据损坏，请检查本地数据库。</value>
+  </data>
+  <data xml:space="preserve" name="TagManagement">
+    <value>Tag 管理</value>
+  </data>
+  <data xml:space="preserve" name="TagMatchingMode">
+    <value>标签匹配模式</value>
+  </data>
+  <data xml:space="preserve" name="TagName">
+    <value>Tag 名称</value>
+  </data>
+  <data xml:space="preserve" name="TagNamesMustContain180CharactersAndNoSlashesOrControlCharacters">
+    <value>标签名称须为 1–80 个字符，且不能包含斜杠或控制字符。</value>
+  </data>
+  <data xml:space="preserve" name="Tags">
+    <value>{0} 个标签</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryLink">
+    <value>临时链接</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryLinkLifetime">
+    <value>临时链接有效期</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryLinksCanLastOnly15Or60Minutes">
+    <value>临时链接有效期只能选择 15 分钟或 60 分钟。</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryObjectCleanup">
+    <value>临时对象清理</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryObjectFailedInBucketCheckTheNetworkCredentialsAndObjectPermissions">
+    <value>容器 {0} 的临时对象{1}失败，请检查网络、凭据与对象权限。</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryObjectReadBack">
+    <value>临时对象回读</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryObjectReadBackDidNotMatchInBucketReadWriteVerificationFailed">
+    <value>容器 {0} 的临时对象回读内容不一致，未通过读写验证。</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryObjectTimedOutInBucketCheckYourNetworkAndTryAgain">
+    <value>容器 {0} 的临时对象{1}超时，请检查网络后重试。</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryObjectWasDeniedInBucketCheckTheCorrespondingObjectPermissions">
+    <value>容器 {0} 的临时对象{1}被拒绝，请确认对应对象权限。</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryObjectWrite">
+    <value>临时对象写入</value>
+  </data>
+  <data xml:space="preserve" name="TestAgain">
+    <value>重新测试</value>
+  </data>
+  <data xml:space="preserve" name="TestAgainAfterChangingTheConnectionInformation">
+    <value>修改连接信息后需重新测试。</value>
+  </data>
+  <data xml:space="preserve" name="TestCanceledYouCanStartAgain">
+    <value>测试已取消，可重新开始。</value>
+  </data>
+  <data xml:space="preserve" name="TestConnection">
+    <value>测试连接</value>
+  </data>
+  <data xml:space="preserve" name="TestConnectionNotTested">
+    <value>测试连接 · 尚未测试</value>
+  </data>
+  <data xml:space="preserve" name="TestConnectionTesting">
+    <value>测试连接 · 测试中</value>
+  </data>
+  <data xml:space="preserve" name="TestConnectionVerificationFailed">
+    <value>测试连接 · 验证失败</value>
+  </data>
+  <data xml:space="preserve" name="TextPreviewTimedOutTryAgainLater">
+    <value>文本预览超时，请稍后重试。</value>
+  </data>
+  <data xml:space="preserve" name="TheBucketNoLongerExistsRefreshTheBucketList">
+    <value>容器已不存在，请刷新容器列表。</value>
+  </data>
+  <data xml:space="preserve" name="TheConnectionConfigurationDoesNotMatchTheSelectedInstanceTypeOrProvider">
+    <value>连接配置与所选实例类型或服务商不匹配。</value>
+  </data>
+  <data xml:space="preserve" name="TheConnectionConfigurationIsCorruptedConfigureTheInstanceAgain">
+    <value>连接配置损坏，请重新配置实例。</value>
+  </data>
+  <data xml:space="preserve" name="TheConnectionInformationHasChangedTestAgain">
+    <value>连接信息已修改，请重新测试。</value>
+  </data>
+  <data xml:space="preserve" name="TheConnectionWillOpenInTheInstanceListAfterCreation">
+    <value>创建后将在实例列表中打开此连接。</value>
+  </data>
+  <data xml:space="preserve" name="TheConnectorForThisInstanceTypeIsNotRegisteredCheckTheProviderConfigurationOrInstallT">
+    <value>此实例类型的连接器未注册，请检查服务商配置或安装对应连接器。</value>
+  </data>
+  <data xml:space="preserve" name="TheContentIsNotPreviewableUTF8TextDownloadToViewIt">
+    <value>内容不是可预览的 UTF-8 文本，请下载查看。</value>
+  </data>
+  <data xml:space="preserve" name="TheCurrentConfigurationServiceDoesNotSupportEditingInstances">
+    <value>当前配置服务不支持编辑实例。</value>
+  </data>
+  <data xml:space="preserve" name="TheCurrentInstanceProviderIsUnavailable">
+    <value>当前实例服务商不可用。</value>
+  </data>
+  <data xml:space="preserve" name="TheCurrentInstanceTypeIsUnavailable">
+    <value>当前实例类型不可用。</value>
+  </data>
+  <data xml:space="preserve" name="TheDirectoryContainsACycleSelectAnActualFolder">
+    <value>目录存在循环，请选择真实文件夹。</value>
+  </data>
+  <data xml:space="preserve" name="TheDownloadDirectoryContainsAJunctionOrSymbolicLinkSelectARegularDirectory">
+    <value>下载目录包含目录联接或符号链接，请选择普通目录。</value>
+  </data>
+  <data xml:space="preserve" name="TheDownloadDirectoryHasChangedSelectTheDestinationAgain">
+    <value>下载目录已发生变化，请重新选择保存位置。</value>
+  </data>
+  <data xml:space="preserve" name="TheDownloadIsIncompleteCheckYourNetworkAndTryAgain">
+    <value>下载内容不完整，请检查网络后重试。</value>
+  </data>
+  <data xml:space="preserve" name="TheFileExceedsTheOSSMultipartUploadSizeLimit">
+    <value>文件超过 OSS 分片上传的大小限制。</value>
+  </data>
+  <data xml:space="preserve" name="TheFollowingCustomTagsWillBeDeleted">
+    <value>将删除 {0} 个自定义 Tag：</value>
+  </data>
+  <data xml:space="preserve" name="TheInstanceConfigurationNoLongerExistsConfigureTheInstanceAgain">
+    <value>实例配置已不存在，请重新配置实例。</value>
+  </data>
+  <data xml:space="preserve" name="TheInstanceDoesNotMatchTheConnectionConfiguration">
+    <value>实例与连接配置不匹配。</value>
+  </data>
+  <data xml:space="preserve" name="TheInstanceNoLongerExistsRefreshAndConfigureItAgain">
+    <value>实例已不存在，请刷新后重新配置。</value>
+  </data>
+  <data xml:space="preserve" name="TheInstanceToEditHasNoIdentifier">
+    <value>待编辑实例缺少标识。</value>
+  </data>
+  <data xml:space="preserve" name="TheObjectHasChangedRefreshBeforeTryingAgain">
+    <value>对象已发生变化，请刷新后重新操作。</value>
+  </data>
+  <data xml:space="preserve" name="TheObjectIsArchivedRestoreItInTheProviderConsoleFirst">
+    <value>对象处于归档状态，请先在服务商控制台解冻。</value>
+  </data>
+  <data xml:space="preserve" name="TheObjectListReturnedAnInvalidRangeRefreshAndTryAgain">
+    <value>对象列表返回了无效范围，请刷新重试。</value>
+  </data>
+  <data xml:space="preserve" name="TheObjectNoLongerExistsRefreshTheObjectList">
+    <value>对象已不存在，请刷新对象列表。</value>
+  </data>
+  <data xml:space="preserve" name="TheObjectOperationTimedOutCheckYourNetworkAndTryAgain">
+    <value>对象操作超时，请检查网络后重试。</value>
+  </data>
+  <data xml:space="preserve" name="TheObjectStorageResourceConnectorForThisInstanceIsNotInstalled">
+    <value>此实例尚未安装对象存储资源连接器。</value>
+  </data>
+  <data xml:space="preserve" name="TheOperationFailedCheckTheNetworkAndAccessPermissionsThenTryAgain">
+    <value>操作失败，请检查网络和访问权限后重试。</value>
+  </data>
+  <data xml:space="preserve" name="TheOperationFailedTryAgain">
+    <value>操作失败，请重试。</value>
+  </data>
+  <data xml:space="preserve" name="ThePreWriteCheckFailedInBucketNoTestObjectWasCreatedCheckObjectReadPermissionsAndTheN">
+    <value>容器 {0} 的临时对象写入前检查未通过，未创建测试对象，请检查对象读取权限或网络后重试。</value>
+  </data>
+  <data xml:space="preserve" name="ThePreWriteCheckFailedNoTestObjectCreationWasAttempted">
+    <value>临时对象写入前的检查失败，未尝试创建测试对象。</value>
+  </data>
+  <data xml:space="preserve" name="ThePreWriteCheckWasCanceledNoTestObjectCreationWasAttempted">
+    <value>临时对象写入前的检查已取消，未尝试创建测试对象。</value>
+  </data>
+  <data xml:space="preserve" name="TheRandomTestObjectAlreadyExistsNoWriteOrDeletionWasAttempted">
+    <value>随机测试对象已存在，未尝试写入或删除该对象。</value>
+  </data>
+  <data xml:space="preserve" name="TheRandomTestObjectNameConflictedInBucketItWasSkippedAndNoExistingObjectWasDeleted">
+    <value>容器 {0} 的随机测试对象发生名称冲突，已跳过且未删除既有对象。</value>
+  </data>
+  <data xml:space="preserve" name="TheRequestedResourceNoLongerExistsRefreshTheList">
+    <value>请求的资源已不存在，请刷新列表。</value>
+  </data>
+  <data xml:space="preserve" name="TheSelectedParentTagDoesNotExistRefreshAndTryAgain">
+    <value>所选父标签不存在，请刷新后重试。</value>
+  </data>
+  <data xml:space="preserve" name="TheSelectedTagsNoLongerExistRefreshAndSelectAgain">
+    <value>所选标签已不存在，请刷新后重新选择。</value>
+  </data>
+  <data xml:space="preserve" name="TheSystemTimeDiffersFromOSSCorrectTheDeviceTime">
+    <value>系统时间与 OSS 服务不一致，请校准设备时间。</value>
+  </data>
+  <data xml:space="preserve" name="TheSystemTimeDiffersFromOSSCorrectTheDeviceTimeAndTryAgain">
+    <value>系统时间与 OSS 服务不一致，请校准设备时间后重试。</value>
+  </data>
+  <data xml:space="preserve" name="TheTagDoesNotExistRefreshAndTryAgain">
+    <value>标签不存在，请刷新后重试。</value>
+  </data>
+  <data xml:space="preserve" name="TheTagMatchingModeDoesNotExist">
+    <value>标签匹配模式不存在。</value>
+  </data>
+  <data xml:space="preserve" name="TheTemporaryTestObjectMayRemainTheConnectionTestFailedCheckAndDeleteItInTheProviderCo">
+    <value>测试临时对象可能未清理，连接测试未通过。请在服务商控制台检查并删除。容器：{0}；对象 Key：{1}。</value>
+  </data>
+  <data xml:space="preserve" name="TheTerminalConnectionWasInterruptedOpenANewSessionOrTryAgain">
+    <value>终端连接已中断，请打开新会话或重试。</value>
+  </data>
+  <data xml:space="preserve" name="TheTestListsBucketsCreatesARandomTemporaryObjectUnderHermodConnectionTestInAnAvailabl">
+    <value>测试会读取容器列表，并在可用容器的 .hermod-connection-test/ 路径创建随机临时对象、回读后删除；验证结果仅覆盖通过测试的容器。</value>
+  </data>
+  <data xml:space="preserve" name="TheTextExceedsThe256KBPreviewLimitDownloadAndViewItLocally">
+    <value>文本超过 256KB 预览上限，请下载后在本地查看。</value>
+  </data>
+  <data xml:space="preserve" name="TheTypeAndProviderOfThisInstanceAreFixed">
+    <value>当前实例的类型与服务商已固定。</value>
+  </data>
+  <data xml:space="preserve" name="TheUpdatedConnectionInformationWillBeUsedAfterSaving">
+    <value>保存后将使用更新后的连接信息。</value>
+  </data>
+  <data xml:space="preserve" name="TheUploadDestinationIsOutsideTheSelectedDirectorySelectTheFilesAgain">
+    <value>上传目标不在已选择的目录中，请重新选择文件。</value>
+  </data>
+  <data xml:space="preserve" name="TheUploadSourceStreamMustBeReadableAndSeekable">
+    <value>上传源流必须可读且支持定位。</value>
+  </data>
+  <data xml:space="preserve" name="Theme">
+    <value>主题</value>
+  </data>
+  <data xml:space="preserve" name="ThisDirectoryHasNoObjectsYet">
+    <value>这个目录还没有对象</value>
+  </data>
+  <data xml:space="preserve" name="ThisFileCannotBePreviewedYetDownloadAndViewItLocallyListOperationsRemainAvailable">
+    <value>此文件暂不支持预览。下载后在本地查看，不影响列表操作。</value>
+  </data>
+  <data xml:space="preserve" name="ThisFileFormatDoesNotSupportTextPreview">
+    <value>该文件格式不支持文本预览。</value>
+  </data>
+  <data xml:space="preserve" name="ThisInstanceNoLongerExistsRefreshTheInstanceList">
+    <value>这个实例已经不存在，请刷新实例列表。</value>
+  </data>
+  <data xml:space="preserve" name="ThisInstanceTypeIsNotRegisteredInstallAConnectorForThisType">
+    <value>此实例类型未注册，请安装对应类型的连接器。</value>
+  </data>
+  <data xml:space="preserve" name="ThisObjectAlreadyExistsUploadingWillReplaceItsCurrentContent">
+    <value>此对象已存在，上传后将替换当前内容。</value>
+  </data>
+  <data xml:space="preserve" name="ThisProviderDoesNotYetOfferReadWriteTestsWithExactVersionCleanupFullConnectionCapabil">
+    <value>当前服务商尚未提供支持精确版本清理的读写连接测试，无法确认完整连接能力。</value>
+  </data>
+  <data xml:space="preserve" name="ThisTagIsReferencedByInstancesSavingUpdatesItsNamePathAndColorWithoutChangingInstance">
+    <value>此 Tag 被 {0} 个实例引用。保存后同步更新名称、路径与颜色，不改变这些实例的关联关系。</value>
+  </data>
+  <data xml:space="preserve" name="TransferFailedTaskRetainedTryAgain">
+    <value>传输失败 · 已保留任务，请重试。</value>
+  </data>
+  <data xml:space="preserve" name="TransferTasks">
+    <value>传输任务</value>
+  </data>
+  <data xml:space="preserve" name="Transferring">
+    <value>传输中</value>
+  </data>
+  <data xml:space="preserve" name="TypeProvider">
+    <value>类型 / 服务商</value>
+  </data>
+  <data xml:space="preserve" name="TypeToFilter">
+    <value>{0} / {1} · 输入以筛选</value>
+  </data>
+  <data xml:space="preserve" name="UnableToStartHermod">
+    <value>无法启动 Hermod</value>
+  </data>
+  <data xml:space="preserve" name="Unknown">
+    <value>未知</value>
+  </data>
+  <data xml:space="preserve" name="UnknownInterfaceTheme">
+    <value>未知的界面主题。</value>
+  </data>
+  <data xml:space="preserve" name="Updated">
+    <value>更新于</value>
+  </data>
+  <data xml:space="preserve" name="Upload">
+    <value>上传</value>
+  </data>
+  <data xml:space="preserve" name="UploadFiles">
+    <value>上传文件</value>
+  </data>
+  <data xml:space="preserve" name="UploadFilesOrCreateAFolder">
+    <value>上传文件，或新建一个文件夹。</value>
+  </data>
+  <data xml:space="preserve" name="UploadObjects">
+    <value>上传对象</value>
+  </data>
+  <data xml:space="preserve" name="UploadTo">
+    <value>上传到</value>
+  </data>
+  <data xml:space="preserve" name="UploadToCurrentBucket">
+    <value>上传到当前 Bucket</value>
+  </data>
+  <data xml:space="preserve" name="UseColorsAndHierarchyToKeepInstancesOrganized">
+    <value>用颜色和层级，让实例更有条理。</value>
+  </data>
+  <data xml:space="preserve" name="UseWithoutSigningInDataIsSavedOnThisDevice">
+    <value>无需登录即可使用，数据保存在本机。</value>
+  </data>
+  <data xml:space="preserve" name="VerifyConnectionInformationAndAccessPermissions">
+    <value>验证连接信息与服务访问权限。</value>
+  </data>
+  <data xml:space="preserve" name="VerifyingConnectionInformationAndAccessPermissions">
+    <value>正在验证连接信息和访问权限…</value>
+  </data>
+  <data xml:space="preserve" name="Waiting">
+    <value>等待中</value>
+  </data>
+  <data xml:space="preserve" name="WhenAnObjectAlreadyExists">
+    <value>遇到同名对象</value>
+  </data>
+  <data xml:space="preserve" name="WhereShouldThisBeSaved">
+    <value>保存到哪里？</value>
+  </data>
+  <data xml:space="preserve" name="ObjectsSelected">
+    <value>已选 {0} 个对象</value>
+  </data>
+  <data xml:space="preserve" name="SelectObject">
+    <value>勾选 {0}</value>
+  </data>
+  <data xml:space="preserve" name="MoreActionsForObject">
+    <value>{0} 更多操作</value>
+  </data>
+  <data xml:space="preserve" name="SaveOnThisDevice">
+    <value>保存在这台设备上</value>
+  </data>
+  <data xml:space="preserve" name="AvailableAfterSignIn">
+    <value>登录后可选择</value>
+  </data>
+  <data xml:space="preserve" name="Write">
+    <value>写入</value>
+  </data>
+  <data xml:space="preserve" name="ReadBack">
+    <value>回读</value>
+  </data>
+  <data xml:space="preserve" name="MessageWithErrorCode">
+    <value>{0}（{1}）</value>
+  </data>
+  <data xml:space="preserve" name="ExpandTag">
+    <value>展开 {0}</value>
+  </data>
+  <data xml:space="preserve" name="RemoveTag">
+    <value>移除 {0}</value>
+  </data>
+  <data name="Production" xml:space="preserve">
+    <value>生产</value>
+  </data>
+  <data name="Staging" xml:space="preserve">
+    <value>预发布</value>
+  </data>
+  <data name="Development" xml:space="preserve">
+    <value>开发</value>
+  </data>
+  <data name="CpuMetric" xml:space="preserve">
+    <value>CPU</value>
+  </data>
+  <data name="MemoryMetric" xml:space="preserve">
+    <value>内存</value>
+  </data>
+  <data name="RequestRateMetric" xml:space="preserve">
+    <value>请求量</value>
+  </data>
+  <data name="P99LatencyMetric" xml:space="preserve">
+    <value>P99 延迟</value>
+  </data>
+</root>

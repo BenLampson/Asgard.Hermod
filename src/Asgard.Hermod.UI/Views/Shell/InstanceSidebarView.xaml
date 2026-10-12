@@ -1,6 +1,7 @@
 <UserControl x:Class="Asgard.Hermod.UI.Views.Shell.InstanceSidebarView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization"
              xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
              x:Name="SidebarRoot">
     <UserControl.Resources>
@@ -47,10 +48,10 @@
                 </TextBlock.Style>
             </TextBlock>
             <Grid Margin="12,0">
-                <TextBlock Text="实例" FontSize="12" FontWeight="SemiBold"
+                <TextBlock Text="{loc:Loc Instance}" FontSize="12" FontWeight="SemiBold"
                            Foreground="{DynamicResource TextBodyBrush}" VerticalAlignment="Center" />
                 <Button Command="{Binding AddInstanceCommand}" Style="{DynamicResource IconButton}"
-                        Width="24" Height="24" Padding="0" HorizontalAlignment="Right" ToolTip="添加实例">
+                        Width="24" Height="24" Padding="0" HorizontalAlignment="Right" ToolTip="{loc:Loc AddInstance}">
                     <controls:IconView Kind="plus" Width="15" Height="15"
                                        Foreground="{DynamicResource TextMutedBrush}" />
                 </Button>
@@ -69,8 +70,8 @@
                     <TextBox x:Name="InstanceSearch" Grid.Column="2"
                              Style="{DynamicResource SearchTextBox}" FontSize="11"
                              Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}"
-                             AutomationProperties.Name="按名称筛选实例" />
-                    <TextBlock Grid.Column="2" Text="搜索实例…" FontSize="11"
+                             AutomationProperties.Name="{loc:Loc FilterInstancesByName}" />
+                    <TextBlock Grid.Column="2" Text="{loc:Loc SearchInstances}" FontSize="11"
                                Foreground="{DynamicResource TextFaintBrush}"
                                VerticalAlignment="Center" IsHitTestVisible="False">
                         <TextBlock.Style>
@@ -93,7 +94,7 @@
                 </Grid.RowDefinitions>
                 <Button x:Name="TagFilterButton" Style="{DynamicResource GhostButton}"
                         Height="35" Margin="8,0" Padding="12,8,12,14" HorizontalContentAlignment="Left"
-                        Click="OnTagFilterClick" ToolTip="按 Tag 筛选实例">
+                        Click="OnTagFilterClick" ToolTip="{loc:Loc FilterInstancesByTags}">
                     <StackPanel Orientation="Horizontal">
                         <controls:IconView Kind="tags" Width="13" Height="13"
                                            Foreground="{DynamicResource TextMutedBrush}" />
@@ -105,7 +106,7 @@
                                     <Setter Property="Text" Value="{Binding TagFilterLabel}" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding SelectedTagPaths.Count}" Value="0">
-                                            <Setter Property="Text" Value="筛选 Tag" />
+                                            <Setter Property="Text" Value="{loc:Loc FilterTags}" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -127,7 +128,7 @@
                               VerticalScrollBarVisibility="Auto">
                     <Grid>
                         <ItemsControl ItemsSource="{Binding Instances}" Margin="8,0"
-                                      AutomationProperties.Name="实例列表">
+                                      AutomationProperties.Name="{loc:Loc InstanceList}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Button Height="34"
@@ -172,7 +173,7 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-                        <TextBlock Text="No matching instances" FontSize="11.5" Margin="14,8"
+                        <TextBlock Text="{loc:Loc NoMatchingInstances}" FontSize="11.5" Margin="14,8"
                                    Foreground="{DynamicResource TextMutedBrush}">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
@@ -202,7 +203,7 @@
             </ScrollViewer.Style>
             <StackPanel Margin="0,12" HorizontalAlignment="Center">
                 <Button Style="{DynamicResource IconButton}" Width="36" Height="36"
-                        Margin="0,0,0,8" Click="OnCollapsedSearchClick" ToolTip="Find instances">
+                        Margin="0,0,0,8" Click="OnCollapsedSearchClick" ToolTip="{loc:Loc FindInstances}">
                     <controls:IconView Kind="search" Width="18" Height="18"
                                        Foreground="{DynamicResource TextMutedBrush}" />
                 </Button>
@@ -237,7 +238,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 <Button Style="{DynamicResource IconButton}" Width="36" Height="36"
-                        Command="{Binding AddInstanceCommand}" ToolTip="Add instance">
+                        Command="{Binding AddInstanceCommand}" ToolTip="{loc:Loc AddInstance}">
                     <controls:IconView Kind="plus" Width="18" Height="18"
                                        Foreground="{DynamicResource TextMutedBrush}" />
                 </Button>

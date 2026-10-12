@@ -1,3 +1,5 @@
+using Text = Asgard.Hermod.Abstractions.Localization.Text;
+
 namespace Asgard.Hermod.UI.Tests;
 
 /// <summary>验证用户可见的颜色、父级规则和失败恢复，不模拟内部计算步骤。</summary>
@@ -87,7 +89,7 @@ public sealed class TagEditorViewModelTests
 
         Assert.Empty(completions);
         Assert.Null(model.Result);
-        Assert.Equal("同一父级下已存在此名称。", model.Error);
+        Assert.Equal(Text.Get("TheOperationFailedTryAgain"), model.Error);
         Assert.Equal("  Core Platform  ", model.Name);
         Assert.Equal("team", model.ParentId);
         Assert.Equal("#3af", model.ColorText);
@@ -110,7 +112,7 @@ public sealed class TagEditorViewModelTests
         await model.InitializeAsync(TestContext.Current.CancellationToken);
         Assert.False(model.IsInitialized);
         Assert.False(model.CanSave);
-        Assert.Equal("读取失败", model.Error);
+        Assert.Equal(Text.Get("TheOperationFailedTryAgain"), model.Error);
 
         service.ReadFailure = null;
         await model.RetryCommand.ExecuteAsync();

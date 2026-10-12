@@ -15,3 +15,4 @@ global using Asgard.Hermod.UI.ViewModels;
 global using Asgard.Hermod.UI.Views.Dialogs;
 global using Asgard.Hermod.WinTerminal.Services;
 global using Microsoft.Extensions.DependencyInjection;
+global using Text = Asgard.Hermod.Abstractions.Localization.Text;

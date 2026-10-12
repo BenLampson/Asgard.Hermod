@@ -21,12 +21,12 @@ public sealed class InstanceProviderRegistry : IInstanceProviderRegistry
             InstanceProviderDescriptor descriptor = provider.Descriptor;
             if (descriptor is null || descriptor.Type is null || !IsValidKey(descriptor.Id, 80) ||
                 !IsValidKey(descriptor.Type.Id, 80))
-                throw new InvalidOperationException("实例类型与服务商必须提供有效的稳定标识。");
+                throw Text.Exception("InstanceTypesAndProvidersMustSupplyValidStableIdentifiers");
             if (types.TryGetValue(descriptor.Type.Id, out InstanceTypeDescriptor? knownType) && knownType != descriptor.Type)
-                throw new InvalidOperationException("同一实例类型的描述必须一致，请检查连接器注册。");
+                throw Text.Exception("DescriptionsForTheSameInstanceTypeMustMatchCheckConnectorRegistration");
             ValidateFields(descriptor.Fields);
             if (!entries.TryAdd((descriptor.Type.Id, descriptor.Id), provider))
-                throw new InvalidOperationException("同一实例类型存在重复的服务商标识，请检查连接器注册。");
+                throw Text.Exception("DuplicateProviderIdentifiersForTheSameInstanceTypeCheckConnectorRegistration");
             types.TryAdd(descriptor.Type.Id, descriptor.Type);
             if (!descriptors.TryGetValue(descriptor.Type.Id, out List<InstanceProviderDescriptor>? typeProviders))
                 descriptors.Add(descriptor.Type.Id, typeProviders = []);
@@ -45,7 +45,7 @@ public sealed class InstanceProviderRegistry : IInstanceProviderRegistry
     public IReadOnlyList<InstanceProviderDescriptor> GetProviders(string typeId)
     {
         if (typeId is null || !_descriptors.TryGetValue(typeId, out IReadOnlyList<InstanceProviderDescriptor>? descriptors))
-            throw new InvalidOperationException("此实例类型未注册，请安装对应类型的连接器。");
+            throw Text.Exception("ThisInstanceTypeIsNotRegisteredInstallAConnectorForThisType");
         return descriptors;
     }
 
@@ -53,7 +53,7 @@ public sealed class InstanceProviderRegistry : IInstanceProviderRegistry
     public IInstanceProvider GetProvider(string typeId, string providerId)
     {
         if (typeId is null || providerId is null || !_providers.TryGetValue((typeId, providerId), out IInstanceProvider? provider))
-            throw new InvalidOperationException("此实例类型的连接器未注册，请检查服务商配置或安装对应连接器。");
+            throw Text.Exception("TheConnectorForThisInstanceTypeIsNotRegisteredCheckTheProviderConfigurationOrInstallT");
         return provider;
     }
 
@@ -61,14 +61,14 @@ public sealed class InstanceProviderRegistry : IInstanceProviderRegistry
     private static void ValidateFields(IReadOnlyList<InstanceConfigurationField> fields)
     {
         if (fields is null || fields.Count > 100)
-            throw new InvalidOperationException("连接器必须提供有效的配置字段列表。");
+            throw Text.Exception("ConnectorsMustProvideAValidConfigurationFieldList");
         var keys = new HashSet<string>(StringComparer.Ordinal);
         foreach (InstanceConfigurationField field in fields)
         {
             if (field is null || !IsValidKey(field.Key, 128) || !keys.Add(field.Key) ||
                 string.IsNullOrWhiteSpace(field.Label) || field.Label.Any(char.IsControl) ||
                 field.MaxLength is < 0 or > 65536 || !Enum.IsDefined(field.Kind) || !Enum.IsDefined(field.ValidationRule))
-                throw new InvalidOperationException("连接器配置字段无效或重复，请检查字段声明。");
+                throw Text.Exception("InvalidOrDuplicateConnectorConfigurationFieldsCheckFieldDeclarations");
         }
     }
 

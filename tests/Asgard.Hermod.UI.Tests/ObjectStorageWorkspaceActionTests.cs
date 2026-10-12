@@ -84,7 +84,7 @@ public sealed class ObjectStorageWorkspaceActionTests
         int attempts = 0;
         var service = new ObjectStorageTestService
         {
-            ExistsHandler = (_, _) => ++attempts == 1 ? throw new ObjectStorageException("没有读取对象权限", "AccessDenied") : Task.FromResult(false)
+            ExistsHandler = (_, _) => ++attempts == 1 ? throw ObjectStorageException.FromResource("InsufficientPermissionsCheckTheInstanceCredentialsAndAccessPolicy", "AccessDenied") : Task.FromResult(false)
         };
         var dialogs = new ObjectStorageTestDialogs { UploadSelection = new([new("a.txt", "a.txt", 10)]) };
         await using var model = ObjectStorageWorkspaceNavigationTests.Create(service, dialogs);

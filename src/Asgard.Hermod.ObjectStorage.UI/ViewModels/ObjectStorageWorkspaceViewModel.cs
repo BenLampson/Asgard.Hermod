@@ -75,12 +75,12 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     /// <summary>实例编辑后立即更新标题。</summary>
     public string Name => _instance.DisplayName;
     /// <summary>区域随当前容器变化，未选择时仅显示服务身份。</summary>
-    public string Subtitle => (string.IsNullOrWhiteSpace(_instance.Summary.Endpoint) ? "对象存储" : _instance.Summary.Endpoint)
+    public string Subtitle => (string.IsNullOrWhiteSpace(_instance.Summary.Endpoint) ? Text.Get("ObjectStorage") : _instance.Summary.Endpoint)
         + (SelectedBucket is null ? "" : " / " + SelectedBucket.Region);
     /// <summary>保存的环境及自定义标签。</summary>
     public IReadOnlyList<string> Tags => _instance.Tags;
     /// <summary>只有实际读取成功才呈现已连接。</summary>
-    public string Status => ReadError.Length > 0 ? "读取失败" : _hasConnected ? "已连接" : IsLoading ? "连接中" : "已配置";
+    public string Status => ReadError.Length > 0 ? Text.Get("ReadFailed") : _hasConnected ? Text.Get("Connected") : IsLoading ? Text.Get("Connecting") : Text.Get("Configured");
     /// <summary>保存状态和真实访问成功使用不同色调。</summary>
     public StatusTone StatusTone => ReadError.Length > 0 ? StatusTone.Warning : _hasConnected ? StatusTone.Success : StatusTone.Muted;
     /// <summary>选择容器会进入根目录，旧的详情和勾选同步清除。</summary>
@@ -130,7 +130,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         set { foreach (var entry in Entries) entry.IsChecked = value == true; NotifyChecked(); }
     }
     /// <summary>本页已经读取的文件夹与对象数量。</summary>
-    public string ListSummary => $"{Entries.Count(entry => entry.IsDirectory)} 个文件夹 · {Entries.Count(entry => !entry.IsDirectory)} 个对象";
+    public string ListSummary => Text.Format("FoldersObjects", Entries.Count(entry => entry.IsDirectory), Entries.Count(entry => !entry.IsDirectory));
     /// <summary>当前查询仍有下一批，宿主不能把当前行当成目录的完整清单。</summary>
     public bool HasMore => _nextToken is not null;
     /// <summary>失败时仍保留恢复入口；有对象时错误作为行上方提示。</summary>
@@ -140,19 +140,19 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     /// <summary>错误和无容器状态显示恢复操作。</summary>
     public bool ShowRecovery => !IsLoading && (ReadError.Length > 0 || IsInitialized && Buckets.Count == 0);
     /// <summary>读取状态标题。</summary>
-    public string StateTitle => IsLoading ? "正在读取对象…" : ReadError.Length > 0 ? "无法读取 Bucket"
-        : IsInitialized && Buckets.Count == 0 ? "没有可访问的 Bucket" : SearchText.Length > 0 ? "没有匹配的对象" : "这个目录还没有对象";
+    public string StateTitle => IsLoading ? Text.Get("ReadingObjects") : ReadError.Length > 0 ? Text.Get("CannotReadBuckets")
+        : IsInitialized && Buckets.Count == 0 ? Text.Get("NoAccessibleBuckets") : SearchText.Length > 0 ? Text.Get("NoMatchingObjects") : Text.Get("ThisDirectoryHasNoObjectsYet");
     /// <summary>失败、搜索和空目录分别给出明确下一步。</summary>
-    public string StateDescription => IsLoading ? "按当前目录分批加载对象。" : ReadError.Length > 0 ? ReadError
-        : IsInitialized && Buckets.Count == 0 ? "请检查网络和 RAM 权限，或编辑连接。"
-        : SearchText.Length > 0 ? "仅搜索当前目录中的文件名前缀。" : "上传文件，或新建一个文件夹。";
+    public string StateDescription => IsLoading ? Text.Get("LoadObjectsInBatchesFromTheCurrentDirectory") : ReadError.Length > 0 ? ReadError
+        : IsInitialized && Buckets.Count == 0 ? Text.Get("CheckTheNetworkAndRAMPermissionsOrEditTheConnection")
+        : SearchText.Length > 0 ? Text.Get("SearchOnlyFileNamePrefixesInTheCurrentDirectory") : Text.Get("UploadFilesOrCreateAFolder");
     /// <summary>展开状态由用户控制，新增任务自动展开。</summary>
     public bool IsTransferExpanded { get => _isTransferExpanded; set => SetProperty(ref _isTransferExpanded, value); }
     /// <summary>传输折叠栏显示活动及失败任务数。</summary>
     public string TransferSummary => Transfers.Any(task => task.IsRunning || task.IsFailed)
-        ? $"{Transfers.Count(task => task.IsRunning)} 个进行中 · {Transfers.Count(task => task.IsFailed)} 个失败" : "无进行中的任务";
+        ? Text.Format("ActiveFailed", Transfers.Count(task => task.IsRunning), Transfers.Count(task => task.IsFailed)) : Text.Get("NoActiveTasks");
     /// <summary>编辑连接不能静默改变在途任务的凭据和目标。</summary>
-    public string EditConnectionHint => Transfers.Any(task => task.IsRunning) ? "请先完成或取消传输，再编辑连接。" : "编辑连接";
+    public string EditConnectionHint => Transfers.Any(task => task.IsRunning) ? Text.Get("CompleteOrCancelTransfersBeforeEditingTheConnection") : Text.Get("EditConnection");
     /// <summary>当前操作允许进入选择或确认窗体，浏览导航无需等待这些操作。</summary>
     private bool CanOperate => !IsClosed && !_dialogOpen && SelectedBucket is not null;
 
@@ -200,7 +200,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
             if (Buckets.Count > 0) await NavigateAsync(Buckets[0], "", operation.Token);
         }
         catch (OperationCanceledException) when (operation.IsCancellationRequested) { }
-        catch (Exception exception) { if (!IsClosed && version == _bucketVersion) ReadError = ObjectStoragePresentation.Error(exception, "请检查网络和 RAM 权限，确认可以列出此 Bucket 的对象。"); }
+        catch (Exception exception) { if (!IsClosed && version == _bucketVersion) ReadError = ObjectStoragePresentation.Error(exception, Text.Get("CheckTheNetworkAndRAMPermissionsToListObjectsInThisBucket")); }
         finally
         {
             if (ReferenceEquals(_bucketOperation, operation)) _bucketOperation = null;
@@ -287,7 +287,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
             loaded = true;
         }
         catch (OperationCanceledException) when (operation.IsCancellationRequested) { }
-        catch (Exception exception) { if (!IsClosed && version == _navigationVersion) ReadError = ObjectStoragePresentation.Error(exception, "请检查网络和 RAM 权限，确认可以列出此 Bucket 的对象。"); }
+        catch (Exception exception) { if (!IsClosed && version == _navigationVersion) ReadError = ObjectStoragePresentation.Error(exception, Text.Get("CheckTheNetworkAndRAMPermissionsToListObjectsInThisBucket")); }
         finally
         {
             if (ReferenceEquals(_listOperation, operation)) _listOperation = null;

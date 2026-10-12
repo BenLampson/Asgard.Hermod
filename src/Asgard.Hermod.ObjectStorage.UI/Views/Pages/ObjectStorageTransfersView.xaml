@@ -1,6 +1,7 @@
 <UserControl x:Class="Asgard.Hermod.ObjectStorage.UI.Views.Pages.ObjectStorageTransfersView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI"
              xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="OssTransferVisible" />
@@ -29,7 +30,7 @@
     <Expander IsExpanded="{Binding IsTransferExpanded, Mode=TwoWay}" Background="{DynamicResource AppBackgroundBrush}" Padding="10" BorderThickness="0">
         <Expander.Header><DockPanel Height="28" LastChildFill="False">
             <controls:IconView Kind="arrow-up-down" Width="14" Height="14" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,10,0" />
-            <TextBlock Text="传输任务" FontSize="11" VerticalAlignment="Center" Margin="0,0,10,0" />
+            <TextBlock Text="{loc:Loc TransferTasks}" FontSize="11" VerticalAlignment="Center" Margin="0,0,10,0" />
             <TextBlock Text="{Binding TransferSummary}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
         </DockPanel></Expander.Header>
         <ScrollViewer MaxHeight="210" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -46,8 +47,8 @@
                             <TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding IsFailed}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></TextBlock.Style>
                         </TextBlock>
                         <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
-                            <Button Content="重试" Command="{Binding RetryCommand}" Height="32" Margin="10,0,0,0" Visibility="{Binding CanRetry, Converter={StaticResource OssTransferVisible}}" />
-                            <Button Command="{Binding CancelCommand}" Style="{StaticResource IconButton}" Width="22" Height="22" Margin="8,0,0,0" ToolTip="取消当前任务" Visibility="{Binding IsRunning, Converter={StaticResource OssTransferVisible}}"><controls:IconView Kind="x" Width="13" Height="13" /></Button>
+                            <Button Content="{loc:Loc Retry}" Command="{Binding RetryCommand}" Height="32" Margin="10,0,0,0" Visibility="{Binding CanRetry, Converter={StaticResource OssTransferVisible}}" />
+                            <Button Command="{Binding CancelCommand}" Style="{StaticResource IconButton}" Width="22" Height="22" Margin="8,0,0,0" ToolTip="{loc:Loc CancelCurrentTask}" Visibility="{Binding IsRunning, Converter={StaticResource OssTransferVisible}}"><controls:IconView Kind="x" Width="13" Height="13" /></Button>
                         </StackPanel>
                         <ProgressBar Grid.Row="1" Grid.ColumnSpan="5" Value="{Binding Percent}" Maximum="100" Height="4" Margin="0,8,0,0"
                                      Foreground="{DynamicResource AccentBrush}" Background="{DynamicResource LineSoftBrush}" BorderThickness="0" Visibility="{Binding IsRunning, Converter={StaticResource OssTransferVisible}}" />

@@ -42,13 +42,13 @@ public sealed class TagEditorViewModel : ObservableObject, IDisposable
     /// <summary>保存成功的真实服务快照，取消和失败时为空。</summary>
     public ManagedTag? Result { get; private set; }
     /// <summary>显示新建或编辑标题。</summary>
-    public string Title => _original is null ? "新建 Tag" : "编辑 Tag";
+    public string Title => _original is null ? Text.Get("NewTag") : Text.Get("EditTag");
     /// <summary>设计稿中的主操作名称。</summary>
-    public string SaveLabel => IsBusy ? "保存中…" : _original is null ? "创建 Tag" : "保存更改";
+    public string SaveLabel => IsBusy ? Text.Get("Saving") : _original is null ? Text.Get("CreateTag") : Text.Get("SaveChanges2");
     /// <summary>保存说明保持关联规则可见。</summary>
     public string SaveHint => _original is null
-        ? "仅创建自定义 Tag，不修改系统内置环境 Tag。保存后立即出现在 Tag 管理和实例 Tag 选择器中。"
-        : $"此 Tag 被 {_original.InstanceCount} 个实例引用。保存后同步更新名称、路径与颜色，不改变这些实例的关联关系。";
+        ? Text.Get("CreateCustomTagsWithoutChangingBuiltInEnvironmentTagsSavedTagsAppearImmediatelyInTagM")
+        : Text.Format("ThisTagIsReferencedByInstancesSavingUpdatesItsNamePathAndColorWithoutChangingInstance", _original.InstanceCount);
     /// <summary>可选父级列表，始终含根级。</summary>
     public ObservableCollection<TagParentOption> ParentOptions { get; } = [];
     /// <summary>设计稿的八种快捷颜色。</summary>
@@ -111,12 +111,12 @@ public sealed class TagEditorViewModel : ObservableObject, IDisposable
     public string PreviewPath => string.IsNullOrWhiteSpace(SelectedParent?.Id)
         ? Name.Trim() : $"{SelectedParent.DisplayName} / {Name.Trim()}";
     /// <summary>名称长度与路径字符规则预先反馈，同级唯一由持久化服务校验。</summary>
-    public string NameError => string.IsNullOrWhiteSpace(Name) ? "请输入 Tag 名称。"
+    public string NameError => string.IsNullOrWhiteSpace(Name) ? Text.Get("EnterATagName")
         : Name.Trim().Length > 80 || Name.Contains('/') || Name.Any(char.IsControl)
-            ? "标签名称须为 1–80 个字符，且不能包含斜杠或控制字符。" : "";
+            ? Text.Get("TagNamesMustContain180CharactersAndNoSlashesOrControlCharacters") : "";
     /// <summary>父级必须来自过滤后的合法候选。</summary>
     public string ParentError => IsInitialized && !ParentOptions.Any(option => option.Id == ParentId)
-        ? "请选择根级或其他可用的自定义 Tag。" : "";
+        ? Text.Get("SelectTheRootOrAnotherAvailableCustomTag") : "";
     /// <summary>非法 HEX 只禁用保存，不清空上次有效预览。</summary>
     public string ColorError { get => _colorError; private set => SetProperty(ref _colorError, value); }
     /// <summary>读取和保存失败的服务消息。</summary>
@@ -178,7 +178,7 @@ public sealed class TagEditorViewModel : ObservableObject, IDisposable
                 } while (changed);
             }
             ParentOptions.Clear();
-            ParentOptions.Add(new TagParentOption(null, "根级"));
+            ParentOptions.Add(new TagParentOption(null, Text.Get("Root")));
             foreach (var candidate in tags.Where(tag => !tag.IsBuiltIn && !excluded.Contains(tag.Id))
                          .OrderBy(tag => tag.Path, StringComparer.OrdinalIgnoreCase))
                 ParentOptions.Add(new TagParentOption(candidate.Id, candidate.Path.Replace("/", " / ", StringComparison.Ordinal)));
@@ -189,7 +189,7 @@ public sealed class TagEditorViewModel : ObservableObject, IDisposable
             OnPropertyChanged(nameof(ParentError));
         }
         catch (OperationCanceledException) when (operation.IsCancellationRequested) { }
-        catch (Exception exception) { Error = exception.Message; }
+        catch (Exception exception) { Error = Text.Error(exception); }
         finally { IsBusy = false; }
     }
 
@@ -207,7 +207,7 @@ public sealed class TagEditorViewModel : ObservableObject, IDisposable
                 CloseRequested?.Invoke(this, true);
         }
         catch (OperationCanceledException) when (operation.IsCancellationRequested) { }
-        catch (Exception exception) { Error = exception.Message; }
+        catch (Exception exception) { Error = Text.Error(exception); }
         finally { IsBusy = false; }
     }
 
@@ -219,7 +219,7 @@ public sealed class TagEditorViewModel : ObservableObject, IDisposable
             PreviewColor = color;
             ColorError = "";
         }
-        else ColorError = "请输入 #RGB 或 #RRGGBB 格式的颜色。";
+        else ColorError = Text.Get("EnterAColorInRGBOrRRGGBBFormat");
         foreach (var swatch in Swatches)
             swatch.IsSelected = ColorError.Length == 0 && swatch.Color == PreviewColor;
         RefreshCommands();

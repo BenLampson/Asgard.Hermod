@@ -5,8 +5,7 @@ public sealed class TagPathDisplayConverter : IValueConverter
 {
     /// <summary>将相邻标签层级以带空格的斜杠连接，单层路径保留原名称。</summary>
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) =>
-        value is string path ? string.Join(" / ", path.Split('/',
-            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).TakeLast(2)) : "";
+        value is string path ? Localization.TagDisplayText.Summary(path) : "";
 
     /// <summary>摘要为只读显示，转换不会写回或改变筛选路径。</summary>
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) =>

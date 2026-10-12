@@ -60,7 +60,7 @@ public sealed class TagManagementViewModel : ObservableObject, IDisposable
     /// <summary>完整路径用间隔斜杠显示。</summary>
     public string SelectedPath => SelectedTag?.Path.Replace("/", " / ", StringComparison.Ordinal) ?? "";
     /// <summary>详情的关联数量。</summary>
-    public string SelectedInstanceLabel => $"{SelectedTag?.InstanceCount ?? 0} 个实例";
+    public string SelectedInstanceLabel => Text.Format("Instances", SelectedTag?.InstanceCount ?? 0);
     /// <summary>只有选择自定义标签才显示编辑操作。</summary>
     public bool HasSelection => SelectedTag is not null;
     /// <summary>仅搜索自定义标签，内置环境不受影响。</summary>
@@ -131,7 +131,7 @@ public sealed class TagManagementViewModel : ObservableObject, IDisposable
             OnPropertyChanged(nameof(CustomTagCount));
         }
         catch (OperationCanceledException) when (operation.IsCancellationRequested) { }
-        catch (Exception exception) { if (!_isDisposed) Error = exception.Message; }
+        catch (Exception exception) { if (!_isDisposed) Error = Text.Error(exception); }
         finally
         {
             if (entered)
@@ -210,7 +210,7 @@ public sealed class TagManagementViewModel : ObservableObject, IDisposable
             }
         }
         catch (OperationCanceledException) when (_isDisposed) { }
-        catch (Exception exception) { if (!_isDisposed) Error = exception.Message; }
+        catch (Exception exception) { if (!_isDisposed) Error = Text.Error(exception); }
         finally { _isDialogOpen = false; RefreshCommands(); }
     }
 
@@ -227,7 +227,7 @@ public sealed class TagManagementViewModel : ObservableObject, IDisposable
                 await ReloadAsync();
         }
         catch (OperationCanceledException) when (_isDisposed) { }
-        catch (Exception exception) { if (!_isDisposed) Error = exception.Message; }
+        catch (Exception exception) { if (!_isDisposed) Error = Text.Error(exception); }
         finally { _isDialogOpen = false; RefreshCommands(); }
     }
 

@@ -16,7 +16,7 @@ public sealed class ObjectStorageClientFactory : IObjectStorageClientFactory
             ArgumentNullException.ThrowIfNull(provider);
             if (string.IsNullOrWhiteSpace(provider.TypeId) || string.IsNullOrWhiteSpace(provider.ProviderId) ||
                 !entries.TryAdd((provider.TypeId, provider.ProviderId), provider))
-                throw new InvalidOperationException("对象存储连接器标识无效或重复，请检查注册。");
+                throw Text.Exception("InvalidOrDuplicateObjectStorageConnectorIdentifiersCheckRegistration");
         }
         _providers = entries;
     }
@@ -26,7 +26,7 @@ public sealed class ObjectStorageClientFactory : IObjectStorageClientFactory
     {
         ArgumentNullException.ThrowIfNull(options);
         if (!_providers.TryGetValue((options.TypeId, options.ProviderId), out IObjectStorageProvider? provider))
-            throw new ObjectStorageException("此实例尚未安装对象存储资源连接器。", "UnsupportedProvider");
+            throw ObjectStorageException.FromResource("TheObjectStorageResourceConnectorForThisInstanceIsNotInstalled", "UnsupportedProvider");
         return provider.CreateClient(options, region);
     }
 }

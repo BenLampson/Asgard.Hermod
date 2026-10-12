@@ -32,12 +32,12 @@ public sealed partial class NewInstanceViewModel
     /// <summary>创建期间冻结表单信息。</summary>
     public bool IsInformationEditable => !_disposed && !IsSaving;
     /// <summary>页脚的当前步骤提示。</summary>
-    public string StepCountText => $"第 {CurrentStep} / 5 步";
+    public string StepCountText => Text.Format("Step5", CurrentStep);
     /// <summary>页脚只有一个默认按钮，在末步切换为真实保存命令。</summary>
     public ICommand ContinueCommand => CurrentStep == 5 ? SubmitCommand : NextCommand;
     /// <summary>创建期间展示设计稿指定的提交状态。</summary>
-    public string ContinueLabel => CurrentStep != 5 ? "下一步"
-        : IsEditing ? IsSaving ? "保存中…" : "保存修改" : IsSaving ? "创建中…" : "创建实例";
+    public string ContinueLabel => CurrentStep != 5 ? Text.Get("Next")
+        : IsEditing ? IsSaving ? Text.Get("Saving") : Text.Get("SaveChanges") : IsSaving ? Text.Get("Creating") : Text.Get("CreateInstance");
     /// <summary>第一步不展示返回按钮。</summary>
     public bool HasPreviousStep => CurrentStep > 1;
     /// <summary>类型选择内容是否可见。</summary>
@@ -51,24 +51,24 @@ public sealed partial class NewInstanceViewModel
     /// <summary>脱敏确认内容是否可见。</summary>
     public bool IsConfirmationStep => CurrentStep == 5;
     /// <summary>当前服务商的展示名称。</summary>
-    public string ProviderName => SelectedProvider?.Name ?? "选择服务商";
+    public string ProviderName => SelectedProvider?.Name ?? Text.Get("ChooseProvider");
     /// <summary>确认页展示类型和服务商。</summary>
-    public string ProviderSummary => $"{SelectedType?.Name ?? "选择类型"} / {ProviderName}";
+    public string ProviderSummary => $"{SelectedType?.Name ?? Text.Get("ChooseType")} / {ProviderName}";
     /// <summary>真实测试成功后才展示通过。</summary>
-    public string TestSummary => HasSuccessfulConnectionTest ? "通过" : "尚未通过";
+    public string TestSummary => HasSuccessfulConnectionTest ? Text.Get("Passed") : Text.Get("NotYetPassed");
     /// <summary>测试状态标题对应设计稿的四种情况。</summary>
     public string TestHeading => TestState switch
     {
-        InstanceConnectionTestState.Running => "测试连接 · 测试中",
-        InstanceConnectionTestState.Succeeded => "连接成功",
-        InstanceConnectionTestState.Failed => "测试连接 · 验证失败",
-        _ => "测试连接 · 尚未测试",
+        InstanceConnectionTestState.Running => Text.Get("TestConnectionTesting"),
+        InstanceConnectionTestState.Succeeded => Text.Get("ConnectionSuccessful"),
+        InstanceConnectionTestState.Failed => Text.Get("TestConnectionVerificationFailed"),
+        _ => Text.Get("TestConnectionNotTested"),
     };
     /// <summary>所选服务商声明测试的访问范围与临时资源操作。</summary>
     public string TestDescription => SelectedProvider?.ConnectionTestDescription
-        ?? "选择服务商后可查看连接测试内容。";
+        ?? Text.Get("ChooseAProviderToSeeTheConnectionTestDetails");
     /// <summary>首次测试和重新测试复用同一命令。</summary>
-    public string TestActionLabel => TestState == InstanceConnectionTestState.NotStarted ? "开始测试" : "重新测试";
+    public string TestActionLabel => TestState == InstanceConnectionTestState.NotStarted ? Text.Get("StartTest") : Text.Get("TestAgain");
     /// <summary>失败时显示凭据与 RAM 权限的修正指引。</summary>
     public bool HasTestFailure => TestState == InstanceConnectionTestState.Failed;
     /// <summary>决定是否展示服务商安全错误码。</summary>
@@ -76,20 +76,20 @@ public sealed partial class NewInstanceViewModel
     /// <summary>步骤标题沿用 Pencil 中文原文。</summary>
     public string StepTitle => CurrentStep switch
     {
-        1 => "选择类型与服务商",
-        2 => "连接信息",
-        3 => "连接测试",
-        4 => "保存到哪里？",
-        _ => IsEditing ? "确认修改" : "确认创建",
+        1 => Text.Get("ChooseTypeAndProvider"),
+        2 => Text.Get("ConnectionInformation"),
+        3 => Text.Get("ConnectionTest"),
+        4 => Text.Get("WhereShouldThisBeSaved"),
+        _ => IsEditing ? Text.Get("ConfirmChanges") : Text.Get("ConfirmCreation"),
     };
     /// <summary>步骤说明匹配当前操作，具体测试范围由服务商描述。</summary>
     public string StepDescription => CurrentStep switch
     {
-        1 => IsEditing ? "当前实例的类型与服务商已固定。" : "先选择实例类型，再选择对应的服务商。",
-        2 => $"填写实例名称与 {ProviderName} 的连接信息。",
-        3 => "验证连接信息与服务访问权限。",
-        4 => "选择这个实例的保存位置。",
-        _ => IsEditing ? "检查信息，确认后保存修改。" : "检查信息，确认后创建实例。",
+        1 => IsEditing ? Text.Get("TheTypeAndProviderOfThisInstanceAreFixed") : Text.Get("ChooseAnInstanceTypeThenItsProvider"),
+        2 => Text.Format("EnterTheInstanceNameAndConnectionInformationFor", ProviderName),
+        3 => Text.Get("VerifyConnectionInformationAndAccessPermissions"),
+        4 => Text.Get("ChooseWhereToSaveThisInstance"),
+        _ => IsEditing ? Text.Get("ReviewTheInformationAndConfirmToSaveChanges") : Text.Get("ReviewTheInformationAndConfirmToCreateTheInstance"),
     };
 
     /// <summary>推进之前显示字段错误，并在测试步骤阻止绕过验证。</summary>
@@ -111,7 +111,7 @@ public sealed partial class NewInstanceViewModel
 
     /// <summary>名称规则与配置服务一致，最终保存之前就能定位字段错误。</summary>
     private string ValidateName() => InstanceFieldValidation.GetError(
-        new InstanceConfigurationField("name", "实例名称", MaxLength: 128), Name);
+        new InstanceConfigurationField("name", Text.Get("InstanceName"), MaxLength: 128), Name);
 
     /// <summary>内部步骤切换统一更新侧栏和正文绑定。</summary>
     private void SetCurrentStep(int step)
@@ -128,7 +128,7 @@ public sealed partial class NewInstanceViewModel
         _verifiedConfigurationRevision = -1;
         _testCancellation?.Cancel();
         TestState = InstanceConnectionTestState.NotStarted;
-        TestMessage = "连接信息已修改，请重新测试。";
+        TestMessage = Text.Get("TheConnectionInformationHasChangedTestAgain");
         TestErrorCode = "";
         TestChecks = [];
         SaveError = "";

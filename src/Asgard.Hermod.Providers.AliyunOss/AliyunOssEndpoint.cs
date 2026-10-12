@@ -9,7 +9,7 @@ public static class AliyunOssEndpoint
         string value = region?.StartsWith("oss-", StringComparison.Ordinal) == true ? region[4..] : region ?? "";
         if (value.Length is < 2 or > 48 || value[0] is < 'a' or > 'z' || value.EndsWith('-') ||
             value.Any(character => !char.IsAsciiLetterLower(character) && !char.IsAsciiDigit(character) && character != '-'))
-            throw new ObjectStorageException("容器区域无效，请刷新容器列表。", "InvalidRegion");
+            throw ObjectStorageException.FromResource("InvalidBucketRegionRefreshTheBucketList", "InvalidRegion");
         return value;
     }
 
@@ -18,6 +18,6 @@ public static class AliyunOssEndpoint
     {
         if (bucket is null || bucket.Length is < 3 or > 63 || bucket.StartsWith('-') || bucket.EndsWith('-') ||
             bucket.Any(character => !char.IsAsciiLetterLower(character) && !char.IsAsciiDigit(character) && character != '-'))
-            throw new ObjectStorageException("容器名称无效，请重新选择容器。", "InvalidBucket");
+            throw ObjectStorageException.FromResource("InvalidBucketNameSelectTheBucketAgain", "InvalidBucket");
     }
 }

@@ -1,6 +1,7 @@
 <UserControl x:Class="Asgard.Hermod.UI.Views.Pages.TerminalWorkspaceView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization"
              xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
              xmlns:terminal="clr-namespace:Asgard.Hermod.WinTerminal;assembly=Asgard.Hermod.WinTerminal"
              xmlns:models="clr-namespace:Asgard.Hermod.Abstractions.Models;assembly=Asgard.Hermod.Abstractions"
@@ -43,7 +44,7 @@
                 </controls:StatusBadge.Style>
             </controls:StatusBadge>
             <Button Grid.Column="6" Command="{Binding RetryCommand}" Padding="13,6" VerticalAlignment="Center"
-                    ToolTip="Start a new local PowerShell session.">
+                    ToolTip="{loc:Loc StartANewLocalPowerShellSession}">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource StandardButton}">
                         <Setter Property="Visibility" Value="Collapsed" />
@@ -56,7 +57,7 @@
                 </Button.Style>
                 <StackPanel Orientation="Horizontal">
                     <controls:IconView Kind="rotate-cw" Width="13" Height="13" Margin="0,0,6,0" />
-                    <TextBlock Text="Retry" FontSize="12.5"
+                    <TextBlock Text="{loc:Loc Retry}" FontSize="12.5"
                                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
                 </StackPanel>
             </Button>

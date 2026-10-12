@@ -14,7 +14,7 @@ public sealed partial class NewInstanceViewModel
         var connection = BuildConnection();
         IsTesting = true;
         TestState = InstanceConnectionTestState.Running;
-        TestMessage = "正在验证连接信息和访问权限…";
+        TestMessage = Text.Get("VerifyingConnectionInformationAndAccessPermissions");
         TestErrorCode = "";
         TestChecks = [];
         _verifiedConfigurationRevision = -1;
@@ -37,7 +37,7 @@ public sealed partial class NewInstanceViewModel
             if (!_disposed && revision == _configurationRevision)
             {
                 TestState = InstanceConnectionTestState.NotStarted;
-                TestMessage = "测试已取消，可重新开始。";
+                TestMessage = Text.Get("TestCanceledYouCanStartAgain");
             }
         }
         catch (Exception)
@@ -46,7 +46,7 @@ public sealed partial class NewInstanceViewModel
             if (!_disposed && revision == _configurationRevision && !cancellation.IsCancellationRequested)
             {
                 TestState = InstanceConnectionTestState.Failed;
-                TestMessage = "连接测试失败，请检查连接信息或网络后重试。";
+                TestMessage = Text.Get("ConnectionTestFailedCheckTheConnectionInformationOrNetworkAndTryAgain");
             }
         }
         finally
@@ -64,7 +64,7 @@ public sealed partial class NewInstanceViewModel
         _testCancellation?.Cancel();
         _verifiedConfigurationRevision = -1;
         TestState = InstanceConnectionTestState.NotStarted;
-        TestMessage = "测试已取消，可重新开始。";
+        TestMessage = Text.Get("TestCanceledYouCanStartAgain");
         TestErrorCode = "";
         TestChecks = [];
         RefreshState();
@@ -101,7 +101,7 @@ public sealed partial class NewInstanceViewModel
         catch (Exception)
         {
             if (!_disposed)
-                SaveError = IsEditing ? "保存失败，请重试。填写的信息已保留。" : "创建失败，请重试。填写的信息已保留。";
+                SaveError = IsEditing ? Text.Get("SaveFailedTryAgainYourEntriesHaveBeenRetained") : Text.Get("CreationFailedTryAgainYourEntriesHaveBeenRetained");
         }
         finally
         {
