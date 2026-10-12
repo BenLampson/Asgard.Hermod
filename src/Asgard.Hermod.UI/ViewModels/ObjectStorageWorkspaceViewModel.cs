@@ -58,9 +58,9 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         EditConnectionCommand = new AsyncRelayCommand(_ => EditConnectionAsync(), _ => !IsClosed && !_dialogOpen && _editor is not null && !Transfers.Any(task => task.IsRunning));
     }
 
-    /// <summary>目录变化通知宿主同步左侧树。</summary>
+    /// <summary>当前目录完成导航或读取，通知页面订阅者。</summary>
     public event EventHandler? NavigationChanged;
-    /// <summary>容器读取或编辑连接后通知宿主重建树。</summary>
+    /// <summary>容器读取或编辑连接后通知页面订阅者。</summary>
     public event EventHandler? BucketsChanged;
     /// <summary>服务返回的可见容器，不伪造示例数据。</summary>
     public ObservableCollection<ObjectStorageBucket> Buckets { get; } = [];
@@ -68,6 +68,8 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     public ObservableCollection<ObjectStorageEntryViewModel> Entries { get; } = [];
     /// <summary>当前前缀的可点击路径。</summary>
     public ObservableCollection<ObjectStorageBreadcrumbViewModel> Breadcrumbs { get; } = [];
+    /// <summary>右侧容器选择框后只显示目录段，避免重复展示 Bucket 名称。</summary>
+    public IEnumerable<ObjectStorageBreadcrumbViewModel> DirectoryBreadcrumbs => Breadcrumbs.Skip(1);
     /// <summary>失败、取消和完成的任务都保留在当前页签。</summary>
     public ObservableCollection<ObjectStorageTransferViewModel> Transfers { get; } = [];
     /// <summary>实例编辑后立即更新标题。</summary>
@@ -162,7 +164,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         return _initializeTask ??= ReadBucketsAsync(cancellationToken);
     }
 
-    /// <summary>强制重新读取容器和连接，通知宿主清理旧的目录缓存。</summary>
+    /// <summary>强制重新读取容器和连接，同步右侧选择器及目录路径。</summary>
     public async Task RefreshBucketsAsync(CancellationToken cancellationToken = default)
     {
         if (IsClosed) return;
@@ -173,6 +175,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         OnPropertyChanged(nameof(SelectedBucket)); OnPropertyChanged(nameof(Prefix));
         OnPropertyChanged(nameof(Location)); OnPropertyChanged(nameof(Subtitle));
         SelectedEntry = null; Entries.Clear(); Buckets.Clear(); Breadcrumbs.Clear();
+        OnPropertyChanged(nameof(DirectoryBreadcrumbs));
         NotifyChecked();
         BucketsChanged?.Invoke(this, EventArgs.Empty);
         _initializeTask = ReadBucketsAsync(cancellationToken);
@@ -243,6 +246,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     {
         if (IsClosed || SelectedBucket is null) return;
         _searchOperation?.Cancel(); _listOperation?.Cancel(); ++_navigationVersion;
+        _nextToken = null; NotifyListState();
         using var operation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
         _searchOperation = operation;
         try
@@ -263,7 +267,9 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         var prefix = Prefix;
         using var operation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token, cancellationToken);
         _listOperation = operation;
+        if (!append) _nextToken = null;
         IsLoading = true; ReadError = "";
+        NotifyListState();
         bool loaded = false;
         try
         {
@@ -319,8 +325,9 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         {
             prefix += part + "/";
             string target = prefix;
-            Breadcrumbs.Add(new(part, target, () => NavigateAsync(bucket, target)));
+            Breadcrumbs.Add(new(part, target, () => NavigateAsync(bucket, target), target == Prefix));
         }
+        OnPropertyChanged(nameof(DirectoryBreadcrumbs));
     }
     /// <summary>刷新勾选统计与批量操作条件。</summary>
     private void NotifyChecked()

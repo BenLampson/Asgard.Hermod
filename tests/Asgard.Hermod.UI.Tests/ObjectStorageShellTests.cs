@@ -13,16 +13,16 @@ public sealed class ObjectStorageShellTests(WpfTestFixture fixture)
         var service = new ObjectStorageTestService();
         var factory = new InstanceWorkspaceFactory([new ObjectStoragePageProvider(service, new ObjectStorageTestDialogs(), editor)]);
         await using var shell = new ShellViewModel(source, editor, new FakeTerminalSessionFactory(),
-            new ThemeService(Application.Current.Resources), pageFactory: factory, storage: service);
+            new ThemeService(Application.Current.Resources), pageFactory: factory);
         Assert.Equal(0, service.BucketReads);
         var item = Assert.Single(shell.Sidebar.AllInstances);
         shell.Workspace.OpenInstance(item);
         var page = Assert.IsType<ObjectStorageWorkspaceViewModel>(shell.Workspace.SelectedTab);
         await page.InitializeAsync(TestContext.Current.CancellationToken);
         Assert.Equal("已连接", page.Status);
-        Assert.NotNull(shell.Sidebar.ActiveStorageNavigation);
-        Assert.Equal(item.Id, shell.Sidebar.ActiveStorageNavigation.InstanceId);
+        Assert.Equal(item.Id, page.InstanceId);
         Assert.True(item.IsSelected);
+        Assert.Single(service.ListCalls);
 
         shell.Workspace.OpenInstance(item);
         Assert.Same(page, shell.Workspace.SelectedTab);
@@ -30,7 +30,7 @@ public sealed class ObjectStorageShellTests(WpfTestFixture fixture)
         Assert.Single(shell.Workspace.Tabs.OfType<ObjectStorageWorkspaceViewModel>());
         await shell.Workspace.CloseTabAsync(page);
         Assert.True(page.IsClosed);
-        Assert.Null(shell.Sidebar.ActiveStorageNavigation);
+        Assert.False(item.IsSelected);
     });
 
     /// <summary>提供者按顶层类型分派，第三方服务商不会被外壳硬编码。</summary>
@@ -50,7 +50,7 @@ public sealed class ObjectStorageShellTests(WpfTestFixture fixture)
         Assert.Equal(1, provider.CreatedPages);
     });
 
-    /// <summary>侧栏对象组件与工作页绑定共享模型，页面缓存保留同一视图。</summary>
+    /// <summary>对象浏览器仅由右侧工作区承载，页面缓存保留同一视图。</summary>
     [Fact]
     public Task ContentHost_UsesObjectBrowserForSavedStoragePage() => fixture.RunAsync(async () =>
     {
@@ -59,7 +59,7 @@ public sealed class ObjectStorageShellTests(WpfTestFixture fixture)
         var editor = new FakeInstanceEditor();
         var factory = new InstanceWorkspaceFactory([new ObjectStoragePageProvider(service, new ObjectStorageTestDialogs(), editor)]);
         await using var shell = new ShellViewModel(source, editor, new FakeTerminalSessionFactory(),
-            new ThemeService(Application.Current.Resources), pageFactory: factory, storage: service);
+            new ThemeService(Application.Current.Resources), pageFactory: factory);
         shell.Workspace.OpenInstance(shell.Sidebar.AllInstances[0]);
         var page = Assert.IsType<ObjectStorageWorkspaceViewModel>(shell.Workspace.SelectedTab);
         await page.InitializeAsync(TestContext.Current.CancellationToken);
@@ -71,5 +71,36 @@ public sealed class ObjectStorageShellTests(WpfTestFixture fixture)
         Assert.Same(currentView, host.Content);
         await shell.Workspace.CloseTabAsync(page);
         Assert.Null(host.Content);
+    });
+
+    /// <summary>编辑已打开的连接会刷新左侧实例摘要，并保留当前页和实例选中态。</summary>
+    [Fact]
+    public Task SavedEdit_RefreshesInstanceSidebarWithoutReopeningBrowser() => fixture.RunAsync(async () =>
+    {
+        var source = new ObjectStorageWorkspaceDataSource();
+        var editor = new ObjectStorageTestInstanceEditor();
+        var service = new ObjectStorageTestService();
+        var factory = new InstanceWorkspaceFactory([new ObjectStoragePageProvider(service, new ObjectStorageTestDialogs(), editor)]);
+        await using var shell = new ShellViewModel(source, editor, new FakeTerminalSessionFactory(),
+            new ThemeService(Application.Current.Resources), pageFactory: factory);
+        var item = Assert.Single(shell.Sidebar.AllInstances);
+        shell.Sidebar.OpenInstanceCommand.Execute(item);
+        var page = Assert.IsType<ObjectStorageWorkspaceViewModel>(shell.Workspace.SelectedTab);
+        await page.InitializeAsync(TestContext.Current.CancellationToken);
+        editor.Result = source.Instance with { Name = "生产 OSS", DisplayName = "生产 OSS", Tags = ["Production"] };
+        source.Instance = editor.Result;
+        var refreshed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        shell.Sidebar.InstancesChanged += (_, _) => refreshed.TrySetResult();
+
+        await page.EditConnectionCommand.ExecuteAsync();
+        await refreshed.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+
+        Assert.Same(item, Assert.Single(shell.Sidebar.AllInstances));
+        Assert.Same(page, shell.Workspace.SelectedTab);
+        Assert.True(item.IsSelected);
+        Assert.Equal("生产 OSS", item.Name);
+        Assert.Equal("Production", Assert.Single(item.Tags));
+        Assert.Equal(item.DisplayName, page.Header);
+        Assert.Equal(2, service.BucketReads);
     });
 }

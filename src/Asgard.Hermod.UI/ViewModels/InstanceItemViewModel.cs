@@ -22,6 +22,8 @@ public sealed class InstanceItemViewModel : ObservableObject
     public string DisplayName => Summary.DisplayName;
     /// <summary>矢量图标名称。</summary>
     public string Icon => Summary.Icon;
+    /// <summary>存储类型共用设计中的琥珀色图标，不绑定具体服务商。</summary>
+    public bool IsStorage => Summary.TypeId == "storage";
     /// <summary>过滤标签。</summary>
     public IReadOnlyList<string> Tags => Summary.Tags;
     /// <summary>是否可以打开本地终端。</summary>
@@ -39,7 +41,7 @@ public sealed class InstanceItemViewModel : ObservableObject
             throw new InvalidOperationException("An instance snapshot must keep its identifier.");
         Summary = summary;
         foreach (string property in new[] { nameof(Summary), nameof(Name), nameof(DisplayName),
-            nameof(Icon), nameof(Tags), nameof(IsLocal), nameof(HasAlert) })
+            nameof(Icon), nameof(IsStorage), nameof(Tags), nameof(IsLocal), nameof(HasAlert) })
             OnPropertyChanged(property);
     }
 }

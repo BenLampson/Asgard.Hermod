@@ -1,8 +1,9 @@
 using System.Windows.Automation;
+using Asgard.Hermod.UI.Views.Shell;
 
 namespace Asgard.Hermod.UI.Tests;
 
-/// <summary>用真实外壳核对对象浏览器两套主题、目录导航和固定详情的整体布局。</summary>
+/// <summary>用真实外壳核对纯实例侧栏与右侧对象浏览器在两套主题中的职责和布局。</summary>
 [Collection(WpfTestCollection.Name)]
 public sealed class ObjectStorageUiPreviewTests(WpfTestFixture fixture)
 {
@@ -25,7 +26,7 @@ public sealed class ObjectStorageUiPreviewTests(WpfTestFixture fixture)
         var editor = new FakeInstanceEditor();
         var factory = new InstanceWorkspaceFactory([new ObjectStoragePageProvider(service, new ObjectStorageTestDialogs(), editor)]);
         await using var shell = new ShellViewModel(source, editor, new FakeTerminalSessionFactory(), themes,
-            pageFactory: factory, storage: service);
+            pageFactory: factory);
         shell.Workspace.OpenInstance(shell.Sidebar.AllInstances[0]);
         var page = Assert.IsType<ObjectStorageWorkspaceViewModel>(shell.Workspace.SelectedTab);
         await page.InitializeAsync(TestContext.Current.CancellationToken);
@@ -43,7 +44,25 @@ public sealed class ObjectStorageUiPreviewTests(WpfTestFixture fixture)
                 box => AutomationProperties.GetName(box) == "对象只读文本预览");
             Assert.True(preview.IsVisible);
             Assert.Equal("已连接", page.Status);
-            Assert.Contains(shell.Sidebar.ActiveStorageNavigation!.Rows, row => row.IsCurrent && row.Prefix == page.Prefix);
+            var sidebar = Assert.Single(WindowTestVisuals.Descendants<InstanceSidebarView>(window));
+            var item = Assert.Single(shell.Sidebar.AllInstances);
+            Assert.True(item.IsSelected);
+            Assert.Equal(item.Id, page.InstanceId);
+            Assert.Same(page, view.DataContext);
+            Assert.DoesNotContain(WindowTestVisuals.Descendants<TextBlock>(sidebar), text => text.IsVisible
+                && (text.Text == "BUCKETS" || service.Buckets.Any(bucket => bucket.Name == text.Text)
+                    || text.Text == "releases" || text.Text == "v0.9.0"));
+            var instanceButton = Assert.Single(WindowTestVisuals.Descendants<Button>(sidebar),
+                button => button.IsVisible && ReferenceEquals(button.Command, shell.Sidebar.OpenInstanceCommand));
+            Assert.Same(item, instanceButton.CommandParameter);
+            Assert.Equal(34, instanceButton.ActualHeight);
+            var instanceName = Assert.Single(WindowTestVisuals.Descendants<TextBlock>(instanceButton), text => text.Text == item.Name);
+            Assert.Equal(12, instanceName.FontSize);
+            Assert.Equal(FontWeights.SemiBold, instanceName.FontWeight);
+            Assert.Same(Application.Current.Resources["AccentTextBrush"], instanceName.Foreground);
+            var instanceIcon = Assert.Single(WindowTestVisuals.Descendants<IconView>(instanceButton));
+            Assert.Equal(15, instanceIcon.ActualWidth);
+            Assert.Same(Application.Current.Resources["WarningBrush"], instanceIcon.Foreground);
             Assert.DoesNotContain(WindowTestVisuals.Descendants<TextBlock>(view),
                 text => text.IsVisible && text.Text == "No connector configured");
             var bounds = WindowTestVisuals.ScreenBounds(view);
@@ -66,6 +85,22 @@ public sealed class ObjectStorageUiPreviewTests(WpfTestFixture fixture)
             var copyKey = Assert.Single(WindowTestVisuals.Descendants<Button>(details), button => ReferenceEquals(button.Command, page.CopyKeyCommand));
             var copyBounds = WindowTestVisuals.ScreenBounds(copyKey);
             Assert.True(copyBounds.Top >= bounds.Top && copyBounds.Bottom <= bounds.Bottom);
+
+            // 收起导航仍使用同一实例命令，恢复后不重建或重新连接右侧浏览器。
+            shell.IsSidebarExpanded = false;
+            await WindowTestVisuals.UpdateLayoutAsync(window);
+            var collapsedButton = Assert.Single(WindowTestVisuals.Descendants<Button>(sidebar),
+                button => button.IsVisible && ReferenceEquals(button.Command, shell.Sidebar.OpenInstanceCommand));
+            Assert.Equal(36, collapsedButton.ActualWidth);
+            Assert.Same(item, collapsedButton.CommandParameter);
+            var collapsedIcon = Assert.Single(WindowTestVisuals.Descendants<IconView>(collapsedButton));
+            Assert.Same(Application.Current.Resources["WarningBrush"], collapsedIcon.Foreground);
+            WindowTestVisuals.Invoke(collapsedButton);
+            Assert.Same(page, shell.Workspace.SelectedTab);
+            Assert.Equal(1, service.BucketReads);
+            shell.IsSidebarExpanded = true;
+            await WindowTestVisuals.UpdateLayoutAsync(window);
+            Assert.True(item.IsSelected);
         }
         finally
         {

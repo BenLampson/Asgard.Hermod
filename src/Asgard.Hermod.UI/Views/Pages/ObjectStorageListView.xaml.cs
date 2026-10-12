@@ -53,6 +53,13 @@ public partial class ObjectStorageListView : UserControl
         SearchInput.Padding = new Thickness(30, 0, ShowSearchDecorations ? 25 : 8, 0);
     }
 
+    /// <summary>明确选择 Bucket 后进入根目录，筛选或取消选择不触发存储请求。</summary>
+    private async void OnBucketSelected(object sender, RoutedEventArgs args)
+    {
+        if (sender is SearchableSelect { SelectedItem: ObjectStorageBucket bucket } && DataContext is ObjectStorageWorkspaceViewModel model)
+            await model.NavigateAsync(bucket, "");
+    }
+
     /// <summary>仅双击实际目录行进入前缀，按钮和勾选不触发导航。</summary>
     private async void OnObjectDoubleClick(object sender, MouseButtonEventArgs args)
     {
@@ -60,16 +67,17 @@ public partial class ObjectStorageListView : UserControl
         if (ItemsControl.ContainerFromElement(ObjectRows, source) is ListBoxItem { DataContext: ObjectStorageEntryViewModel row }
             && DataContext is ObjectStorageWorkspaceViewModel model)
         {
-            await model.OpenEntryAsync(row);
             args.Handled = row.IsDirectory;
+            await model.OpenEntryAsync(row);
         }
     }
 
-    /// <summary>键盘 Enter 与目录双击一致。</summary>
+    /// <summary>行本身的 Enter 打开目录，更多按钮和复选框保留原生键盘行为。</summary>
     private async void OnRowKeyDown(object sender, KeyEventArgs args)
     {
+        if (args.OriginalSource is DependencyObject source && HasButtonAncestor(source)) return;
         if (args.Key == Key.Enter && ObjectRows.SelectedItem is ObjectStorageEntryViewModel row && DataContext is ObjectStorageWorkspaceViewModel model)
-        { await model.OpenEntryAsync(row); args.Handled = row.IsDirectory; }
+        { args.Handled = row.IsDirectory; await model.OpenEntryAsync(row); }
     }
 
     /// <summary>右键菜单明确针对当前点击行，避免操作前一次选中的对象。</summary>

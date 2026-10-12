@@ -7,7 +7,7 @@
     <Grid>
         <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
         <!-- 页头只使用安全摘要；在线状态由实际读取结果决定。 -->
-        <Border BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,0,0,1" Padding="24,22,24,18" MinHeight="96">
+        <Border BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,0,0,1" Padding="24,22,24,18" MinHeight="86">
             <Grid>
                 <Grid.ColumnDefinitions><ColumnDefinition Width="22" /><ColumnDefinition Width="12" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="32" /></Grid.ColumnDefinitions>
                 <controls:IconView Kind="{Binding Icon}" Width="22" Height="22" Foreground="{DynamicResource WarningBrush}" VerticalAlignment="Center" />
@@ -23,7 +23,7 @@
                         </Border>
                     </DataTemplate></ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <controls:StatusBadge Grid.Column="4" Text="{Binding Status}" Tone="{Binding StatusTone}" VerticalAlignment="Center" Margin="10,0,14,0" />
+                <controls:StatusBadge Grid.Column="4" Text="{Binding Status}" Tone="{Binding StatusTone}" IsInline="True" VerticalAlignment="Center" Margin="10,0,14,0" />
                 <Button Grid.Column="5" x:Name="EditConnectionButton" Command="{Binding EditConnectionCommand}" Width="32" Height="32" Padding="7"
                         ToolTip="{Binding EditConnectionHint}" ToolTipService.ShowOnDisabled="True" AutomationProperties.Name="编辑对象存储连接">
                     <controls:IconView Kind="settings-2" Width="16" Height="16" Foreground="{DynamicResource TextMutedBrush}" />
