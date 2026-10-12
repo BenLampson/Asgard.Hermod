@@ -93,6 +93,12 @@ The SQLite module retains the existing per-user database path, schema migrations
 and encrypted connection parameters. Windows DPAPI is selected through the
 separate credential protection module. See the [local storage guide](local-storage.md).
 
+Core manages isolated temporary files through `ITemporaryFileStorage`, including
+cross-process leases, usage snapshots and safe cleanup. Shared UI presents the
+Storage settings page, while object storage pages hold a managed file lease until
+viewing finishes or transfer it to the application for external opening. See the
+[storage settings guide](storage-settings.md).
+
 The terminal accepts raw output bytes, emits input bytes and grid-size changes,
 and maintains screen state. Its independent session adapter owns the local
 ConPTY process and terminal buffer. Cloud SDKs, connection profiles and

@@ -40,6 +40,14 @@
                                         <Style.Triggers>
                                             <MultiDataTrigger>
                                                 <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding Id}" Value="storage" />
+                                                    <Condition Binding="{Binding DataContext.IsStorageSelected, RelativeSource={RelativeSource AncestorType=Window}}" Value="True" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" />
+                                                <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
+                                            </MultiDataTrigger>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
                                                     <Condition Binding="{Binding Id}" Value="file-opening" />
                                                     <Condition Binding="{Binding DataContext.IsFileOpeningSelected, RelativeSource={RelativeSource AncestorType=Window}}" Value="True" />
                                                 </MultiDataTrigger.Conditions>
@@ -97,5 +105,7 @@
         </Grid>
         <dialogs:FileOpeningSettingsView Grid.Column="1" DataContext="{Binding FileOpening}"
             Visibility="{Binding DataContext.IsFileOpeningSelected, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource SettingsBooleanVisibility}}" />
+        <dialogs:StorageSettingsView Grid.Column="1" DataContext="{Binding Storage}"
+            Visibility="{Binding DataContext.IsStorageSelected, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource SettingsBooleanVisibility}}" />
     </Grid>
 </controls:HermodDialog>

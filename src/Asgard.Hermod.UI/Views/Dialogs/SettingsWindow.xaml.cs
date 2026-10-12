@@ -23,7 +23,7 @@ public partial class SettingsWindow : HermodDialog
     /// <summary>宿主未预加载时补足读取；预加载失败保留错误，等待用户主动重试。</summary>
     private async void OnLoaded(object sender, RoutedEventArgs args)
     {
-        if (!_model.Tags.IsInitialized && _model.Tags.Error.Length == 0)
+        if (!_model.Tags.IsInitialized && _model.Tags.Error.Length == 0 || _model.Storage is { IsInitialized: false, Message: "" })
             await _model.InitializeAsync();
     }
 

@@ -1658,9 +1658,6 @@
   <data xml:space="preserve" name="AccountInformation">
     <value>账户信息</value>
   </data>
-  <data xml:space="preserve" name="TemporaryStorageUnsafePath">
-    <value>临时目录包含不安全的路径或链接，Hermod 不会沿此路径执行清理。</value>
-  </data>
   <data xml:space="preserve" name="FileOpening">
     <value>打开方式</value>
   </data>
@@ -1783,5 +1780,110 @@
   </data>
   <data xml:space="preserve" name="ImageFit">
     <value>适应窗口</value>
+  </data>
+  <data xml:space="preserve" name="StorageDescription">
+    <value>管理 Hermod 在本机生成的临时文件。</value>
+  </data>
+  <data xml:space="preserve" name="StorageTemporaryFiles">
+    <value>临时文件</value>
+  </data>
+  <data xml:space="preserve" name="StorageUsageDetails">
+    <value>占用明细</value>
+  </data>
+  <data xml:space="preserve" name="StorageLocation">
+    <value>存储位置</value>
+  </data>
+  <data xml:space="preserve" name="StorageTemporaryDownloads">
+    <value>临时下载</value>
+  </data>
+  <data xml:space="preserve" name="StorageCachedFiles">
+    <value>缓存文件</value>
+  </data>
+  <data xml:space="preserve" name="StorageProcessingFiles">
+    <value>处理中间文件</value>
+  </data>
+  <data xml:space="preserve" name="StorageOpenFolder">
+    <value>打开文件夹</value>
+  </data>
+  <data xml:space="preserve" name="StorageCleanupTemporaryFiles">
+    <value>清理临时文件…</value>
+  </data>
+  <data xml:space="preserve" name="StorageCleanup">
+    <value>清理</value>
+  </data>
+  <data xml:space="preserve" name="StorageCleanupOnlyUnused">
+    <value>仅清理不再使用的临时文件</value>
+  </data>
+  <data xml:space="preserve" name="StorageCleanupSafeHint">
+    <value>不会删除本地工作区、账户配置或远端文件。</value>
+  </data>
+  <data xml:space="preserve" name="StorageConfirmCleanupTitle">
+    <value>清理临时文件？</value>
+  </data>
+  <data xml:space="preserve" name="StorageConfirmCleanupBody">
+    <value>预计释放 {0} 空间。正在使用的文件会自动跳过，缓存可在需要时重新生成。</value>
+  </data>
+  <data xml:space="preserve" name="StorageFileCount">
+    <value>共 {0:N0} 个文件</value>
+  </data>
+  <data xml:space="preserve" name="StorageCleanableSpace">
+    <value>可清理 {0}</value>
+  </data>
+  <data xml:space="preserve" name="StorageInUseSpace">
+    <value>使用中 {0} · 清理时跳过</value>
+  </data>
+  <data xml:space="preserve" name="StorageSizeBytes">
+    <value>{0:N0} B</value>
+  </data>
+  <data xml:space="preserve" name="StorageSizeKilobytes">
+    <value>{0:0.##} KB</value>
+  </data>
+  <data xml:space="preserve" name="StorageSizeMegabytes">
+    <value>{0:0.##} MB</value>
+  </data>
+  <data xml:space="preserve" name="StorageSizeGigabytes">
+    <value>{0:0.##} GB</value>
+  </data>
+  <data xml:space="preserve" name="StorageUnknownSize">
+    <value>—</value>
+  </data>
+  <data xml:space="preserve" name="StorageNotScanned">
+    <value>尚未扫描</value>
+  </data>
+  <data xml:space="preserve" name="StorageScanning">
+    <value>正在扫描临时文件…</value>
+  </data>
+  <data xml:space="preserve" name="StorageCleaning">
+    <value>正在清理不再使用的临时文件…</value>
+  </data>
+  <data xml:space="preserve" name="StorageNothingToClean">
+    <value>没有可清理的闲置临时文件。</value>
+  </data>
+  <data xml:space="preserve" name="StorageStatisticsPartial">
+    <value>部分项目无法读取，统计仅包含可读取的文件；无法访问的项目及链接会在清理时跳过。</value>
+  </data>
+  <data xml:space="preserve" name="StorageScanFailed">
+    <value>无法统计临时文件，请检查本机目录权限并刷新重试。</value>
+  </data>
+  <data xml:space="preserve" name="StorageCleanupFailed">
+    <value>无法完成临时文件清理，请刷新查看剩余文件后重试。</value>
+  </data>
+  <data xml:space="preserve" name="StorageOpenFolderFailed">
+    <value>无法打开临时目录，请检查本机目录权限后重试。</value>
+  </data>
+  <data xml:space="preserve" name="StorageOperationCanceled">
+    <value>临时文件扫描已取消。</value>
+  </data>
+  <data xml:space="preserve" name="StorageCleanupCompleted">
+    <value>已释放 {0}，删除 {1:N0} 个文件；跳过 {2:N0} 个使用中或无法访问的项目。</value>
+  </data>
+  <data xml:space="preserve" name="StorageCleanupRefreshFailed">
+    <value>已释放 {0}，删除 {1:N0} 个文件，但统计刷新失败，请手动刷新查看剩余占用。</value>
+  </data>
+  <data xml:space="preserve" name="TemporaryStorageUnsafePath">
+    <value>临时目录包含不安全的路径或链接，Hermod 不会沿此路径执行清理。</value>
+  </data>
+  <data xml:space="preserve" name="StorageSessionProtectionHint">
+    <value>下载、预览和本次会话中外部打开的文件会受到保护。重启 Hermod 后，其他程序不再占用的外部缓存即可清理。</value>
   </data>
 </root>

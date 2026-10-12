@@ -16,6 +16,9 @@ Files in object storage can be opened with configurable programs and previewed
 as images or text. Settings → Open with manages local extension rules. See the
 [file opening guide](docs/file-opening.md).
 
+Settings → Storage shows temporary file usage and safely cleans unused files.
+See the [storage settings guide](docs/storage-settings.md).
+
 Heimdall browser sign-in and manual encrypted workspace upload/download are
 available from the account menu. The separate Docker API checks user access with
 its own Heimdall service client. See the [identity and synchronization guide](docs/identity-and-sync.md).

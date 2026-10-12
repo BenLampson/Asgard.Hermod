@@ -50,7 +50,8 @@ preview files are removed when the window closes. Files opened externally remain
 available to the external application and are protected for the current Hermod
 session, even when the external program does not keep a file handle open. Startup
 cleans unused caches older than seven days. Editing a cached file does not upload
-it back to object storage.
+it back to object storage. See [storage settings](storage-settings.md) for manual
+cleanup and actual usage statistics.
 
 Contracts and validation live in Abstractions, rule persistence in
 Persistence.Sqlite, temporary file lifecycle in Core, Windows program launching

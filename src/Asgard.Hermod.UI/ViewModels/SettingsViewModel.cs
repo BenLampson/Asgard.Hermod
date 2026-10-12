@@ -10,19 +10,21 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
 
     /// <summary>由宿主提供统一标签来源和子窗口服务。</summary>
     public SettingsViewModel(ITagManagementService tags, ITagDialogService dialogs,
-        ILanguagePreferenceStore? languageStore = null, IFileOpenRuleStore? fileRules = null)
+        ILanguagePreferenceStore? languageStore = null, IFileOpenRuleStore? fileRules = null,
+        ITemporaryFileStorage? temporaryFiles = null, IStorageSettingsDialogs? storageDialogs = null)
     {
         ArgumentNullException.ThrowIfNull(tags);
         ArgumentNullException.ThrowIfNull(dialogs);
         Tags = new TagManagementViewModel(tags, dialogs);
         _languageStore = languageStore;
         FileOpening = fileRules is null ? null : new FileOpeningSettingsViewModel(fileRules);
+        Storage = temporaryFiles is not null && storageDialogs is not null ? new StorageSettingsViewModel(temporaryFiles, storageDialogs) : null;
         Categories =
         [
             new("general", Text.Get("General"), "sliders-horizontal", languageStore is not null),
             new("appearance", Text.Get("Appearance"), "palette", false),
             new("tags", Text.Get("TagManagement"), "tags", true),
-            new("storage", Text.Get("Storage"), "hard-drive", false),
+            new("storage", Text.Get("Storage"), "hard-drive", Storage is not null),
             new("file-opening", Text.Get("FileOpening"), "folder-open", fileRules is not null),
             new("account", Text.Get("Account"), "user-round", false),
             new("shortcuts", Text.Get("KeyboardShortcuts"), "keyboard", false),
@@ -84,6 +86,10 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
     public bool IsTagsSelected => SelectedCategory.Id == "tags";
     /// <summary>文件规则页面的可见性使用稳定分类标识。</summary>
     public bool IsFileOpeningSelected => SelectedCategory.Id == "file-opening";
+    /// <summary>存储设置仅在管理服务已装配时开放。</summary>
+    public bool IsStorageSelected => SelectedCategory.Id == "storage";
+    /// <summary>本机临时文件的统计和清理状态。</summary>
+    public StorageSettingsViewModel? Storage { get; }
     /// <summary>可选的本机文件规则管理状态。</summary>
     public FileOpeningSettingsViewModel? FileOpening { get; }
     /// <summary>当前设置分类。</summary>
@@ -96,6 +102,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
             OnPropertyChanged(nameof(IsGeneralSelected));
             OnPropertyChanged(nameof(IsTagsSelected));
             OnPropertyChanged(nameof(IsFileOpeningSelected));
+            OnPropertyChanged(nameof(IsStorageSelected));
         }
     }
     /// <summary>可复用的标签管理状态。</summary>
@@ -106,9 +113,9 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
     public RelayCommand CloseCommand { get; }
 
     /// <summary>宿主可在显示窗口前完成首次读取，失败信息由管理页面呈现。</summary>
-    public Task InitializeAsync(CancellationToken cancellationToken = default) =>
-        Tags.InitializeAsync(cancellationToken);
+    public Task InitializeAsync(CancellationToken cancellationToken = default) => Task.WhenAll(
+        Tags.InitializeAsync(cancellationToken), Storage?.InitializeAsync(cancellationToken) ?? Task.CompletedTask);
 
     /// <summary>窗口关闭时释放后台标签通知。</summary>
-    public void Dispose() => Tags.Dispose();
+    public void Dispose() { Tags.Dispose(); Storage?.Dispose(); }
 }
