@@ -21,6 +21,10 @@ public partial class App : Application
             services.AddHermodCore();
             services.AddWindowsSecretProtection();
             services.AddLocalStorage(LocalDatabaseConfiguration.Load(args.Args));
+            var configuration = new Asgard.Core.SystemConfig.AsgardConfigurationBuilder()
+                .AddYamlFile(Path.Combine(AppContext.BaseDirectory, "app.yaml"))
+                .AddEnvironmentVariables("HERMOD_").AddCommandLine(args.Args).Build();
+            services.AddHermodIdentity(configuration.LoadSection<HermodIdentityOptions>("identity"));
             services.AddObjectStorage();
             services.AddAliyunOss();
             services.AddSingleton<ITerminalSessionFactory, LocalTerminalSessionFactory>();

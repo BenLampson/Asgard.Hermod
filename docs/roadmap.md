@@ -7,7 +7,7 @@ This roadmap describes intended direction, not committed release dates.
 - [x] Establish the Windows WPF terminal component from selected VirtualTerminal source, with local ConPTY and automated checks.
 - [ ] Define supported Asgard services and management operations.
 - [ ] Add endpoint profiles and connection diagnostics.
-- [ ] Integrate authentication and authorization using the selected service contracts.
+- [x] Integrate Heimdall sign-in and user-bound encrypted workspace synchronization.
 - [ ] Add service administration views and meaningful automated tests.
 - [x] Agree on application architecture and multilingual behavior.
 - [x] Implement English/Chinese localization with Windows detection and saved preferences.

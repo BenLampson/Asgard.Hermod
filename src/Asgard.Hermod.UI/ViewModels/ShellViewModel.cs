@@ -6,6 +6,7 @@ namespace Asgard.Hermod.UI.ViewModels;
 public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
 {
     private readonly IThemeService _themes;
+    private readonly IAccountService? _accounts;
     private readonly HashSet<WorkspacePageViewModel> _instancePages = [];
     private bool _isSidebarExpanded = true;
     private string _globalSearchQuery = "";
@@ -15,14 +16,18 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     public ShellViewModel(IWorkspaceDataSource source, IInstanceEditor editor,
         ITerminalSessionFactory terminalFactory, IThemeService themes,
         ISettingsEditor? settings = null, ITagManagementService? tags = null,
-        IInstanceWorkspaceFactory? pageFactory = null)
+        IInstanceWorkspaceFactory? pageFactory = null, IAccountService? accounts = null, IAccountEditor? accountEditor = null)
     {
         ArgumentNullException.ThrowIfNull(themes);
         _themes = themes;
+        _accounts = accounts;
         Workspace = new WorkspaceViewModel(source, terminalFactory, pageFactory);
         Sidebar = new InstanceSidebarViewModel(source, editor, Workspace.OpenInstance, Workspace.OpenLocalTerminal, tags);
         OpenSettingsCommand = new AsyncRelayCommand(_ => settings?.OpenAsync() ?? Task.CompletedTask,
             _ => settings is not null);
+        OpenAccountCommand = new AsyncRelayCommand(_ => accountEditor?.OpenAsync() ?? Task.CompletedTask,
+            _ => accountEditor is not null);
+        if (accounts is not null) accounts.AccountChanged += OnAccountChanged;
         ToggleSidebarCommand = new RelayCommand(_ => IsSidebarExpanded = !IsSidebarExpanded);
         SetLightThemeCommand = new RelayCommand(_ => _themes.SetTheme(UiTheme.Light));
         SetDarkThemeCommand = new RelayCommand(_ => _themes.SetTheme(UiTheme.Dark));
@@ -52,10 +57,14 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     public WorkspaceViewModel Workspace { get; }
     /// <summary>当前使用设备上的用户级工作区。</summary>
     public string WorkspaceName => Text.Get("LocalWorkspace");
-    /// <summary>未接入身份服务时显示本地模式。</summary>
-    public string AccountName => Text.Get("Local");
-    /// <summary>当前未接入账户登录。</summary>
-    public bool IsSignedIn => false;
+    /// <summary>登录后显示已验证 JWT 用户名，否则显示本地模式。</summary>
+    public string AccountName => _accounts?.Account?.Username ?? Text.Get("Local");
+    /// <summary>当前是否持有经过验证的用户会话。</summary>
+    public bool IsSignedIn => _accounts?.Account is not null;
+    /// <summary>账号入口随登录状态更新，无原始异常信息。</summary>
+    public string AccountStatus => Text.Get(IsSignedIn ? "SignedIn" : "NotSignedIn");
+    /// <summary>登录恢复失败仍允许离线使用本地工作区。</summary>
+    public string AccountMessage { get; private set; } = "";
     /// <summary>当前程序集版本。</summary>
     public string Version => "v" + CompactVersion;
     /// <summary>收起侧栏使用紧凑版本文本。</summary>
@@ -92,13 +101,29 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     public RelayCommand OpenLocalTerminalCommand { get; }
     /// <summary>打开系统设置，共用账号菜单和标题栏入口。</summary>
     public AsyncRelayCommand OpenSettingsCommand { get; }
+    /// <summary>打开登录与同步窗口。</summary>
+    public AsyncRelayCommand OpenAccountCommand { get; }
     /// <summary>打开指定搜索结果。</summary>
     public RelayCommand OpenGlobalSearchResultCommand { get; }
     /// <summary>按 Enter 打开第一个匹配结果。</summary>
     public RelayCommand OpenFirstSearchResultCommand { get; }
 
     /// <summary>窗口显示前载入持久化标签目录。</summary>
-    public Task InitializeAsync() => Sidebar.RefreshAsync();
+    public async Task InitializeAsync()
+    {
+        await Sidebar.RefreshAsync();
+        if (_accounts is null) return;
+        try { await _accounts.RestoreAsync(); }
+        catch (Exception error) { AccountMessage = Text.Error(error, "AccountRestoreFailed"); OnPropertyChanged(nameof(AccountMessage)); }
+    }
+
+    /// <summary>发布 JWT 用户名与账号状态的绑定变化。</summary>
+    private void OnAccountChanged(object? sender, EventArgs args)
+    {
+        OnPropertyChanged(nameof(AccountName)); OnPropertyChanged(nameof(IsSignedIn)); OnPropertyChanged(nameof(AccountStatus));
+        AccountMessage = "";
+        OnPropertyChanged(nameof(AccountMessage));
+    }
 
     /// <summary>统一刷新主题相关计算属性。</summary>
     private void OnThemeChanged(object? sender, EventArgs args)
@@ -159,6 +184,7 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
             return;
         _disposed = true;
         _themes.ThemeChanged -= OnThemeChanged;
+        if (_accounts is not null) _accounts.AccountChanged -= OnAccountChanged;
         Sidebar.InstancesChanged -= OnInstancesChanged;
         Workspace.SelectedTabChanged -= OnSelectedTabChanged;
         foreach (var page in _instancePages)

@@ -40,7 +40,7 @@
     <value>Account and synchronization features will be enabled after identity integration.</value>
   </data>
   <data xml:space="preserve" name="AccountStorageIsNotAvailableYetSaveOnThisDevice">
-    <value>Account storage is not available yet. Save on this device.</value>
+    <value>Create the instance on this device, then open Account and synchronization to upload your encrypted workspace.</value>
   </data>
   <data xml:space="preserve" name="ActionFailed">
     <value>Action failed</value>
@@ -1530,4 +1530,102 @@
   <data name="P99LatencyMetric" xml:space="preserve">
     <value>P99 LATENCY</value>
   </data>
+  <data xml:space="preserve" name="IdentityConfigurationInvalid">
+    <value>The Heimdall sign-in configuration is invalid.</value>
+  </data>
+  <data xml:space="preserve" name="LoginCallbackReceived">
+    <value>The sign-in response was received. Return to Hermod to see the result.</value>
+  </data>
+  <data xml:space="preserve" name="LoginCallbackInvalid">
+    <value>This sign-in callback is invalid.</value>
+  </data>
+  <data xml:space="preserve" name="LoginIdentityIncomplete">
+    <value>The sign-in token does not contain the required username and identity.</value>
+  </data>
+  <data xml:space="preserve" name="SignInAgain">
+    <value>Your session is no longer valid. Sign in again.</value>
+  </data>
+  <data xml:space="preserve" name="AccountAndSync">
+    <value>Account and synchronization</value>
+  </data>
+  <data xml:space="preserve" name="SignOut">
+    <value>Sign out</value>
+  </data>
+  <data xml:space="preserve" name="SignedIn">
+    <value>Signed in</value>
+  </data>
+  <data xml:space="preserve" name="SignedOut">
+    <value>You have signed out of Hermod.</value>
+  </data>
+  <data xml:space="preserve" name="LoginSucceeded">
+    <value>You have signed in successfully.</value>
+  </data>
+  <data xml:space="preserve" name="AccountRestoreFailed">
+    <value>Your session could not be restored. Open Account and synchronization to sign in again. Local data is still available.</value>
+  </data>
+  <data xml:space="preserve" name="AccountOperationInProgress">
+    <value>Working. Complete sign-in in your browser if prompted.</value>
+  </data>
+  <data xml:space="preserve" name="AccountOperationCancelled">
+    <value>The operation was cancelled. Close this window and reopen it to try again.</value>
+  </data>
+  <data xml:space="preserve" name="AccountOperationFailed">
+    <value>The account operation failed. Check your connection and try again.</value>
+  </data>
+  <data xml:space="preserve" name="SyncExplanation">
+    <value>Sign-in keeps your local workspace. Upload and download are manual. Instances, tags and connection credentials are encrypted on this device before upload.</value>
+  </data>
+  <data xml:space="preserve" name="SyncPassword">
+    <value>Synchronization password</value>
+  </data>
+  <data xml:space="preserve" name="SyncPasswordHelp">
+    <value>Use 12–128 characters and the same password on every device. Hermod does not save this password. If it is lost, the cloud snapshot cannot be decrypted.</value>
+  </data>
+  <data xml:space="preserve" name="ConfirmWorkspaceRestore">
+    <value>I understand that downloading replaces all local instances and tags. Existing open connections should be closed first.</value>
+  </data>
+  <data xml:space="preserve" name="UploadWorkspace">
+    <value>Upload workspace</value>
+  </data>
+  <data xml:space="preserve" name="DownloadWorkspace">
+    <value>Download and replace local</value>
+  </data>
+  <data xml:space="preserve" name="SyncUploadSucceeded">
+    <value>The encrypted workspace was uploaded successfully.</value>
+  </data>
+  <data xml:space="preserve" name="SyncDownloadSucceeded">
+    <value>The cloud workspace was restored successfully. The instance and tag lists have been refreshed.</value>
+  </data>
+  <data xml:space="preserve" name="SyncPasswordInvalid">
+    <value>The synchronization password must contain 12–128 characters.</value>
+  </data>
+  <data xml:space="preserve" name="SyncSnapshotTooLarge">
+    <value>The workspace exceeds the 4 MiB synchronization limit.</value>
+  </data>
+  <data xml:space="preserve" name="SyncSnapshotInvalid">
+    <value>The synchronization snapshot is invalid or uses an unsupported format. Local data was not replaced.</value>
+  </data>
+  <data xml:space="preserve" name="SyncDecryptionFailed">
+    <value>The synchronization password is incorrect or the snapshot could not be verified. Local data was not replaced.</value>
+  </data>
+  <data xml:space="preserve" name="SyncCloudEmpty">
+    <value>There is no cloud workspace for this account yet.</value>
+  </data>
+  <data xml:space="preserve" name="SyncConflict">
+    <value>The cloud workspace has changed on another device. Download it before uploading again. Downloading replaces local data.</value>
+  </data>
+  <data xml:space="preserve" name="SyncForbidden">
+    <value>This account is not allowed to synchronize this workspace.</value>
+  </data>
+  <data xml:space="preserve" name="SyncRequestFailed">
+    <value>The synchronization service is unavailable. Try again later.</value>
+  </data>
+  <data xml:space="preserve" name="SyncDatabaseVersionUnsupported">
+    <value>The synchronization database uses an unsupported version.</value>
+  </data>
+  <data xml:space="preserve" name="ApiSuccess">
+    <value>The operation succeeded.</value>
+  </data>
+  <data xml:space="preserve" name="SystemClockOutOfSync"><value>Your device clock differs from the sign-in server by more than two minutes. Synchronize the Windows clock and try again.</value></data>
+  <data xml:space="preserve" name="SaveLocallyThenUploadFromAccountAndSync"><value>Create the instance on this device, then open Account and synchronization to upload your encrypted workspace.</value></data>
 </root>

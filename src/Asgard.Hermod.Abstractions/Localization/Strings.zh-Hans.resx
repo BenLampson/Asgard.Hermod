@@ -40,7 +40,7 @@
     <value>账号与同步能力会在后续身份接入时启用。</value>
   </data>
   <data xml:space="preserve" name="AccountStorageIsNotAvailableYetSaveOnThisDevice">
-    <value>账户存储暂未接入，请选择保存在本地设备。</value>
+    <value>请先在本机创建实例，再打开账户与同步上传加密工作区。</value>
   </data>
   <data xml:space="preserve" name="ActionFailed">
     <value>操作失败</value>
@@ -1530,4 +1530,102 @@
   <data name="P99LatencyMetric" xml:space="preserve">
     <value>P99 延迟</value>
   </data>
+  <data xml:space="preserve" name="IdentityConfigurationInvalid">
+    <value>Heimdall 登录配置无效。</value>
+  </data>
+  <data xml:space="preserve" name="LoginCallbackReceived">
+    <value>已收到登录回调，请返回 Hermod 查看结果。</value>
+  </data>
+  <data xml:space="preserve" name="LoginCallbackInvalid">
+    <value>此登录回调无效。</value>
+  </data>
+  <data xml:space="preserve" name="LoginIdentityIncomplete">
+    <value>登录令牌缺少用户名或必要身份信息。</value>
+  </data>
+  <data xml:space="preserve" name="SignInAgain">
+    <value>登录会话已失效，请重新登录。</value>
+  </data>
+  <data xml:space="preserve" name="AccountAndSync">
+    <value>账户与同步</value>
+  </data>
+  <data xml:space="preserve" name="SignOut">
+    <value>退出登录</value>
+  </data>
+  <data xml:space="preserve" name="SignedIn">
+    <value>已登录</value>
+  </data>
+  <data xml:space="preserve" name="SignedOut">
+    <value>已退出 Hermod 登录。</value>
+  </data>
+  <data xml:space="preserve" name="LoginSucceeded">
+    <value>登录成功。</value>
+  </data>
+  <data xml:space="preserve" name="AccountRestoreFailed">
+    <value>无法恢复登录会话，请打开账户与同步重新登录。本地数据仍可使用。</value>
+  </data>
+  <data xml:space="preserve" name="AccountOperationInProgress">
+    <value>正在处理，如已打开浏览器，请在浏览器中完成登录。</value>
+  </data>
+  <data xml:space="preserve" name="AccountOperationCancelled">
+    <value>操作已取消，关闭此窗口后重新打开即可重试。</value>
+  </data>
+  <data xml:space="preserve" name="AccountOperationFailed">
+    <value>账户操作失败，请检查网络连接后重试。</value>
+  </data>
+  <data xml:space="preserve" name="SyncExplanation">
+    <value>登录会保留本地工作区。上传与下载由你手动执行，实例、标签及连接凭据在本机加密后上传。</value>
+  </data>
+  <data xml:space="preserve" name="SyncPassword">
+    <value>同步密码</value>
+  </data>
+  <data xml:space="preserve" name="SyncPasswordHelp">
+    <value>请使用 12–128 个字符，并在各设备使用相同密码。Hermod 不保存此密码，遗失后无法解密云端快照。</value>
+  </data>
+  <data xml:space="preserve" name="ConfirmWorkspaceRestore">
+    <value>我确认下载将替换本地全部实例和标签，请先关闭已打开的连接。</value>
+  </data>
+  <data xml:space="preserve" name="UploadWorkspace">
+    <value>上传工作区</value>
+  </data>
+  <data xml:space="preserve" name="DownloadWorkspace">
+    <value>下载并替换本地</value>
+  </data>
+  <data xml:space="preserve" name="SyncUploadSucceeded">
+    <value>加密工作区已上传成功。</value>
+  </data>
+  <data xml:space="preserve" name="SyncDownloadSucceeded">
+    <value>云端工作区已恢复，实例与标签列表已刷新。</value>
+  </data>
+  <data xml:space="preserve" name="SyncPasswordInvalid">
+    <value>同步密码必须包含 12–128 个字符。</value>
+  </data>
+  <data xml:space="preserve" name="SyncSnapshotTooLarge">
+    <value>工作区超过 4 MiB 同步大小限制。</value>
+  </data>
+  <data xml:space="preserve" name="SyncSnapshotInvalid">
+    <value>同步快照无效或使用了不支持的格式，本地数据未被替换。</value>
+  </data>
+  <data xml:space="preserve" name="SyncDecryptionFailed">
+    <value>同步密码不正确或快照校验失败，本地数据未被替换。</value>
+  </data>
+  <data xml:space="preserve" name="SyncCloudEmpty">
+    <value>此账户还没有云端工作区。</value>
+  </data>
+  <data xml:space="preserve" name="SyncConflict">
+    <value>云端工作区已被其他设备更新，请先下载后再上传。下载会替换本地数据。</value>
+  </data>
+  <data xml:space="preserve" name="SyncForbidden">
+    <value>此账户无权同步该工作区。</value>
+  </data>
+  <data xml:space="preserve" name="SyncRequestFailed">
+    <value>同步服务暂不可用，请稍后重试。</value>
+  </data>
+  <data xml:space="preserve" name="SyncDatabaseVersionUnsupported">
+    <value>同步数据库使用了不支持的版本。</value>
+  </data>
+  <data xml:space="preserve" name="ApiSuccess">
+    <value>操作成功。</value>
+  </data>
+  <data xml:space="preserve" name="SystemClockOutOfSync"><value>设备与登录服务器的时钟相差超过两分钟，请同步 Windows 时间后重试。</value></data>
+  <data xml:space="preserve" name="SaveLocallyThenUploadFromAccountAndSync"><value>请先在本机创建实例，再打开账户与同步上传加密工作区。</value></data>
 </root>

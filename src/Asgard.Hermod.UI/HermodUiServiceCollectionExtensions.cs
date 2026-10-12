@@ -20,6 +20,9 @@ public static class HermodUiServiceCollectionExtensions
             provider.GetRequiredService<ITagManagementService>(),
             provider.GetRequiredService<ILanguagePreferenceStore>()));
         services.TryAddSingleton<IInstanceWorkspaceFactory, InstanceWorkspaceFactory>();
+        if (services.Any(service => service.ServiceType == typeof(IAccountService)))
+            services.TryAddSingleton<IAccountEditor>(provider => new AccountEditorService(owner,
+                provider.GetRequiredService<IAccountService>(), provider.GetRequiredService<IWorkspaceSyncService>()));
         services.TryAddSingleton<IThemeService>(_ => new ThemeService(resources));
         return services;
     }

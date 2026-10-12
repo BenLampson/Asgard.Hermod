@@ -19,6 +19,7 @@
     <RuntimeHostConfigurationOption Include="Switch.System.Windows.Controls.Text.UseAdornerForTextboxSelectionRendering" Value="false" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Asgard.Hermod.Identity\Asgard.Hermod.Identity.csproj" />
     <ProjectReference Include="..\Asgard.Hermod.UI\Asgard.Hermod.UI.csproj" />
     <ProjectReference Include="..\Asgard.Hermod.Core\Asgard.Hermod.Core.csproj" />
     <ProjectReference Include="..\Asgard.Hermod.Persistence.Sqlite\Asgard.Hermod.Persistence.Sqlite.csproj" />

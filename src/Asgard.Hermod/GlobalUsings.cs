@@ -1,7 +1,9 @@
+global using System.IO;
 global using System.Windows;
 global using Asgard.Hermod.Abstractions.Models;
 global using Asgard.Hermod.Abstractions.Services;
 global using Asgard.Hermod.Core;
+global using Asgard.Hermod.Identity;
 global using Asgard.Hermod.ObjectStorage;
 global using Asgard.Hermod.ObjectStorage.UI;
 global using Asgard.Hermod.Persistence.Sqlite;

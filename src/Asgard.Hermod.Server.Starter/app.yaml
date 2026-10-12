@@ -1,0 +1,53 @@
+Asgard:
+  Encryption:
+    # 通过 ASGARD__ENCRYPTION__KEY / ASGARD__ENCRYPTION__IV 提供宿主密钥。
+    Key: ""
+    Iv: ""
+database:
+  enabled: false
+plugin:
+  enabled: true
+  enableHotReload: false
+  enableIsolation: false
+  scanDirectories: []
+caching:
+  enabled: false
+messaging:
+  enabled: false
+job:
+  enabled: false
+logging:
+  enabled: true
+  minimumLevel: Information
+  console:
+    enabled: true
+  file:
+    enabled: false
+host:
+  staticFiles:
+    enabled: false
+  kestrel:
+    endpoints:
+      http:
+        url: "http://127.0.0.1:5086"
+  auth:
+    enabled: true
+    jwt:
+      issuerTemplate: "https://idp.mudou.tech/{tenant}"
+      audience: "hermod-api"
+      requireHttpsMetadata: true
+  swagger:
+    enabled: false
+  healthCheck:
+    enabled: true
+hermodServer:
+  authority: "https://idp.mudou.tech/a922e624-c532-43ae-b4a5-c4f9153f24cf"
+  identityApiBaseUrl: "https://idp.mudou.tech"
+  tenantId: "a922e624-c532-43ae-b4a5-c4f9153f24cf"
+  applicationId: "083f96e2-a9d7-4300-9386-f7ef470d2378"
+  desktopClientId: "8d793a47-0790-4a1d-a535-4382e32bc1c7"
+  serviceClientId: "34c7b580-1f77-4753-b7f5-654b856170fb"
+  # 必须通过 HERMODSERVER__SERVICECLIENTSECRET 提供；桌面配置不得包含此密钥。
+  serviceClientSecret: ""
+  serviceCredentialVersion: "1"
+  databasePath: "hermod-sync.db"

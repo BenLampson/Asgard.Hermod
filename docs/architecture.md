@@ -15,6 +15,9 @@ storage and owns application startup and shutdown.
 | `Asgard.Hermod.UI` | WPF shell, shared controls, configuration and tag dialogs, workspace factory | Shared contracts, terminal, DI abstractions |
 | `Asgard.Hermod.Persistence.Sqlite` | SQLite configuration, migrations, repository, local instance and tag services | Shared contracts, Asgard.Core, FreeSql SQLite |
 | `Asgard.Hermod.Security.Windows` | Windows current-user DPAPI protection | Shared contracts, ProtectedData, DI abstractions |
+| `Asgard.Hermod.Identity` | Heimdall desktop login, protected session coordination and encrypted snapshot synchronization | Shared contracts, official Heimdall SDK |
+| `Asgard.Hermod.Server` | Independent sync API plugin, online identity checks and encrypted server persistence | Shared contracts, identity module, Asgard PluginSdk, Microsoft.Data.Sqlite |
+| `Asgard.Hermod.Server.Starter` | Yggdrasil API composition and process lifetime | Sync API plugin |
 | `Asgard.Hermod.WinTerminal` | VT engine, rendering, WPF terminal control, ConPTY connections and local session adapter | Windows desktop framework |
 | `Asgard.Hermod.ObjectStorage.Abstractions` | Object storage models, service and client contracts | Shared contracts |
 | `Asgard.Hermod.ObjectStorage` | Resource client factory, connection probe, transfers, previews and deletion policies | Object storage contracts, DI abstractions |
@@ -35,6 +38,7 @@ The application calls the independently owned registration entry points:
 services.AddHermodCore();
 services.AddWindowsSecretProtection();
 services.AddLocalStorage(configuration);
+services.AddHermodIdentity(identityOptions);
 services.AddObjectStorage();
 services.AddAliyunOss();
 services.AddSingleton<ITerminalSessionFactory, LocalTerminalSessionFactory>();
@@ -60,6 +64,12 @@ Closing the application waits for workspace
 resources to be released before disposing the service container.
 
 ## Adding capabilities
+
+Desktop login and the independent API are described in the
+[identity and synchronization guide](identity-and-sync.md). The public desktop
+Client and confidential server Client remain separate. The API stores encrypted
+personal snapshots; local instance editing continues through the desktop storage
+module. Neither the server nor shared UI references the WPF executable.
 
 A new instance connector references `Asgard.Hermod.Abstractions` and implements
 `IInstanceProvider`, including its metadata, configuration fields and connection

@@ -5,18 +5,19 @@
              xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls">
     <Button x:Name="AccountButton" Click="OnAccountClick"
             Style="{DynamicResource IconButton}" Width="Auto" Height="28" Padding="4,0"
-            ToolTip="{loc:Loc LocalWorkspace}">
+            ToolTip="{loc:Loc AccountAndSync}">
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
             <Border Width="22" Height="22" CornerRadius="11"
                     Background="{DynamicResource LineSoftBrush}">
                 <controls:IconView Kind="laptop" Width="13" Height="13"
                                    Foreground="{DynamicResource TextMutedBrush}" />
             </Border>
-            <TextBlock Text="{Binding AccountName}" FontSize="12"
+            <TextBlock Text="{Binding AccountName}" FontSize="12" MaxWidth="140"
+                       TextTrimming="CharacterEllipsis" ToolTip="{Binding AccountName}"
                        Foreground="{DynamicResource TextBodyBrush}"
                        VerticalAlignment="Center" Margin="6,0,0,0" />
             <Border Width="1" Height="12" Background="{DynamicResource LineBrush}" Margin="8,0" />
-            <TextBlock Text="{loc:Loc SignIn}" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
+            <TextBlock Text="{Binding AccountStatus}" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
             <controls:IconView Kind="chevron-down" Width="12" Height="12" Margin="8,0,0,0"
                                Foreground="{DynamicResource TextMutedBrush}" />
         </StackPanel>
@@ -24,10 +25,20 @@
             <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"
                          MinWidth="280" Placement="Bottom" HorizontalOffset="-120">
                 <MenuItem Header="{Binding AccountName}" IsEnabled="False" />
-                <MenuItem Header="{loc:Loc NotSignedIn}" IsEnabled="False" />
+                <MenuItem Header="{Binding AccountStatus}" IsEnabled="False" />
                 <Separator />
-                <MenuItem Header="{loc:Loc SignInToYourAccount}" IsEnabled="False"
-                          ToolTip="{loc:Loc AccountAndSynchronizationFeaturesWillBeEnabledAfterIdentityIntegration}" />
+                <MenuItem Header="{loc:Loc AccountAndSync}" Command="{Binding OpenAccountCommand}" />
+                <MenuItem Header="{Binding AccountMessage}" IsEnabled="False">
+                    <MenuItem.Style>
+                        <Style TargetType="MenuItem">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding AccountMessage}" Value="">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </MenuItem.Style>
+                </MenuItem>
                 <MenuItem Header="{loc:Loc SystemSettings}" Command="{Binding OpenSettingsCommand}">
                     <MenuItem.Icon><controls:IconView Kind="settings" /></MenuItem.Icon>
                 </MenuItem>

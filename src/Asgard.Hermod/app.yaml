@@ -3,3 +3,14 @@ database:
   enabled: true
   provider: sqlite
   connectionString: "Data Source=hermod.db;Version=3;Pooling=False;Default Timeout=5;Journal Mode=Wal;"
+identity:
+  authority: "https://idp.mudou.tech/a922e624-c532-43ae-b4a5-c4f9153f24cf"
+  tenantId: "a922e624-c532-43ae-b4a5-c4f9153f24cf"
+  applicationId: "083f96e2-a9d7-4300-9386-f7ef470d2378"
+  clientId: "8d793a47-0790-4a1d-a535-4382e32bc1c7"
+  audience: "hermod-api"
+  scope: "openid profile offline_access hermod.sync"
+  redirectUri: "http://127.0.0.1:43821/callback/"
+  apiBaseUrl: "https://hermod.mudou.tech"
+  # DNS 传播期间显式连接部署服务器，继续按上面的域名验证 TLS；留空则使用系统 DNS。
+  apiServerAddress: "47.109.145.141"

@@ -76,9 +76,8 @@ public sealed class NewInstanceDialogTests
                 continueButton.Focus();
                 await PressEnterAsync(dialog);
                 Assert.Equal(4, model.CurrentStep);
-                var account = Assert.Single(WindowTestVisuals.Descendants<SelectionCard>(dialog),
-                    card => card.Heading == "账户");
-                Assert.False(account.IsEnabled);
+                Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(dialog),
+                    text => text.Text == Asgard.Hermod.Abstractions.Localization.Text.Get("SaveLocallyThenUploadFromAccountAndSync"));
                 Assert.True(model.IsLocalSave);
                 await PressEnterAsync(dialog);
                 Assert.Equal(5, model.CurrentStep);

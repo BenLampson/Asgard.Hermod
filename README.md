@@ -12,6 +12,10 @@ Cloud OSS is the first object storage connector. The executable owns startup and
 composition; provider SDKs and persistence dependencies belong to their respective
 implementation projects. See the [architecture guide](docs/architecture.md).
 
+Heimdall browser sign-in and manual encrypted workspace upload/download are
+available from the account menu. The separate Docker API checks user access with
+its own Heimdall service client. See the [identity and synchronization guide](docs/identity-and-sync.md).
+
 ## Requirements
 
 - Windows with support for .NET 10 desktop applications.

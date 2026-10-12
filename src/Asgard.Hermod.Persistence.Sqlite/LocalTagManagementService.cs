@@ -43,7 +43,7 @@ public sealed class LocalTagManagementService : ITagManagementService
     }
 
     /// <summary>已提交的数据操作保持成功反馈；单个刷新订阅者异常不能阻断其余订阅者。</summary>
-    private void NotifyTagsChanged()
+    internal void NotifyTagsChanged()
     {
         EventHandler? handlers = TagsChanged;
         if (handlers is null) return;
