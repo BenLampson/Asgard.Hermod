@@ -50,7 +50,7 @@
                             <Button Content="{loc:Loc Retry}" Command="{Binding RetryCommand}" Height="32" Margin="10,0,0,0" Visibility="{Binding CanRetry, Converter={StaticResource OssTransferVisible}}" />
                             <Button Command="{Binding CancelCommand}" Style="{StaticResource IconButton}" Width="22" Height="22" Margin="8,0,0,0" ToolTip="{loc:Loc CancelCurrentTask}" Visibility="{Binding IsRunning, Converter={StaticResource OssTransferVisible}}"><controls:IconView Kind="x" Width="13" Height="13" /></Button>
                         </StackPanel>
-                        <ProgressBar Grid.Row="1" Grid.ColumnSpan="5" Value="{Binding Percent}" Maximum="100" Height="4" Margin="0,8,0,0"
+                        <ProgressBar Grid.Row="1" Grid.ColumnSpan="5" Value="{Binding Percent, Mode=OneWay}" Maximum="100" Height="4" Margin="0,8,0,0"
                                      Foreground="{DynamicResource AccentBrush}" Background="{DynamicResource LineSoftBrush}" BorderThickness="0" Visibility="{Binding IsRunning, Converter={StaticResource OssTransferVisible}}" />
                     </Grid>
                 </DataTemplate></ItemsControl.ItemTemplate>
