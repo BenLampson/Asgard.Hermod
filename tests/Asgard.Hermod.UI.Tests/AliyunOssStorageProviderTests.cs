@@ -4,7 +4,7 @@ using Asgard.Hermod.Infrastructure.Storage;
 
 namespace Asgard.Hermod.UI.Tests;
 
-/// <summary>以官方向量和 HTTP 边界替身验证 OSS V4 签名、只读请求、失败脱敏及取消。</summary>
+/// <summary>以官方向量和 HTTP 边界替身验证 OSS V4 身份请求、读写要求、失败脱敏及取消。</summary>
 public sealed class AliyunOssStorageProviderTests
 {
     /// <summary>使用官方 C# SDK 测试的完整 ak/sk 向量，避免把文档中的占位密钥视为真实向量。</summary>
@@ -22,24 +22,28 @@ public sealed class AliyunOssStorageProviderTests
         Assert.Equal("e21d18daa82167720f9b1047ae7e7f1ce7cb77a31e8203a7d5f4624fa0284afe", signature);
     }
 
-    /// <summary>成功必须来自有签名的官方 HTTPS GET 和合法 OSS XML，空 Bucket 列表同样有效。</summary>
+    /// <summary>身份请求仍使用已验证的 V4 签名；空容器列表不能冒充完整读写连接成功。</summary>
     [Fact]
-    public async Task TestConnectionAsync_SendsReadOnlySignedListBucketsRequest()
+    public async Task TestConnectionAsync_RequiresWritableBucketAfterSignedIdentityCheck()
     {
         int calls = 0;
         using var handler = new StorageTestHttpHandler((request, _) =>
         {
             Interlocked.Increment(ref calls);
             Assert.Equal(HttpMethod.Get, request.Method);
-            Assert.Equal("https://oss-cn-hangzhou.aliyuncs.com/?max-keys=1", request.RequestUri?.AbsoluteUri);
             Assert.DoesNotContain("test-private", request.RequestUri?.AbsoluteUri ?? "");
             Assert.Null(request.Content);
-            Assert.Equal("20250411T064124Z", Assert.Single(request.Headers.GetValues("x-oss-date")));
-            Assert.Equal("UNSIGNED-PAYLOAD", Assert.Single(request.Headers.GetValues("x-oss-content-sha256")));
-            string authorization = Assert.Single(request.Headers.GetValues("Authorization"));
-            Assert.Equal("OSS4-HMAC-SHA256 Credential=LTAITestPrivateKey/20250411/cn-hangzhou/oss/aliyun_v4_request," +
-                "Signature=9f743cb3c5e0b1dd478a49453187a768221fa1012a2a3d0bc8d1df4cfa4853dc", authorization);
-            Assert.DoesNotContain("test-private-secret", authorization);
+            if (calls == 1)
+            {
+                Assert.Equal("https://oss-cn-hangzhou.aliyuncs.com/?max-keys=1", request.RequestUri?.AbsoluteUri);
+                Assert.Equal("20250411T064124Z", Assert.Single(request.Headers.GetValues("x-oss-date")));
+                Assert.Equal("UNSIGNED-PAYLOAD", Assert.Single(request.Headers.GetValues("x-oss-content-sha256")));
+                string authorization = Assert.Single(request.Headers.GetValues("Authorization"));
+                Assert.Equal("OSS4-HMAC-SHA256 Credential=LTAITestPrivateKey/20250411/cn-hangzhou/oss/aliyun_v4_request," +
+                    "Signature=9f743cb3c5e0b1dd478a49453187a768221fa1012a2a3d0bc8d1df4cfa4853dc", authorization);
+                Assert.DoesNotContain("test-private-secret", authorization);
+            }
+            else Assert.Contains("max-keys=100", request.RequestUri?.Query);
             return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent("<ListAllMyBucketsResult><Owner><ID>private-owner</ID></Owner><Buckets /></ListAllMyBucketsResult>"),
@@ -49,10 +53,11 @@ public sealed class AliyunOssStorageProviderTests
 
         InstanceConnectionTestResult result = await provider.TestConnectionAsync(CreateOptions(), TestContext.Current.CancellationToken);
 
-        Assert.True(result.IsSuccessful);
-        Assert.Equal(1, calls);
+        Assert.False(result.IsSuccessful);
+        Assert.Equal("oss_probe_no_bucket", result.ErrorCode);
+        Assert.Equal(2, calls);
         Assert.NotNull(result.Checks);
-        Assert.All(result.Checks, check => Assert.True(check.IsSuccessful));
+        Assert.Contains(result.Checks, check => !check.IsSuccessful);
         Assert.DoesNotContain("private-owner", result.Message);
     }
 

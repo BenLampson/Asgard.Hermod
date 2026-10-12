@@ -4,7 +4,7 @@ using OssModels = AlibabaCloud.OSS.V2.Models;
 namespace Asgard.Hermod.Infrastructure.Storage;
 
 /// <summary>将官方 SDK 的远程对象能力转换为通用资源模型与安全错误。</summary>
-public sealed class AliyunOssObjectStorageClient(Oss.Client client) : IObjectStorageClient
+public sealed partial class AliyunOssObjectStorageClient(Oss.Client client) : IObjectStorageConnectionProbeClient
 {
     /// <summary>元数据和列表请求采用短期限；流上传由工厂提供较长传输期限。</summary>
     private static readonly Oss.OperationOptions ReadOptions = new() { ReadWriteTimeout = TimeSpan.FromSeconds(20) };

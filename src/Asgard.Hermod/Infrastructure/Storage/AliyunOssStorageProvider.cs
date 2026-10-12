@@ -7,7 +7,7 @@ using Polly.Timeout;
 
 namespace Asgard.Hermod.Infrastructure.Storage;
 
-/// <summary>对官方 OSS 地址发起 V4 签名 ListBuckets，真实验证身份与只读权限。</summary>
+/// <summary>先验证官方 V4 身份，再使用通用对象探测器验证临时对象的写入、回读和清理。</summary>
 public sealed class AliyunOssStorageProvider : IStorageProvider
 {
     /// <summary>供 DI 配置的专属客户端名称；连接参数永不进入请求 URL。</summary>
@@ -45,7 +45,10 @@ public sealed class AliyunOssStorageProvider : IStorageProvider
             new("accessKeyId", "AccessKey ID", InstanceFieldKind.Text, MaxLength: 128,
                 IsSensitive: true, ValidationRule: InstanceFieldValidationRule.AsciiLettersAndDigits),
             new("accessKeySecret", "AccessKey Secret", InstanceFieldKind.Secret, MaxLength: 256, IsSensitive: true),
-        ]));
+        ]))
+    {
+        ConnectionTestDescription = "测试会读取容器列表，并在可用容器的 .hermod-connection-test/ 路径创建随机临时对象、回读后删除；验证结果仅覆盖通过测试的容器。",
+    };
 
     /// <inheritdoc />
     public async Task<InstanceConnectionTestResult> TestConnectionAsync(InstanceConnectionOptions options,
@@ -78,8 +81,30 @@ public sealed class AliyunOssStorageProvider : IStorageProvider
             if (response.StatusCode != HttpStatusCode.OK || document?.Root?.Name.LocalName != "ListAllMyBucketsResult" ||
                 document.Root.Element("Owner") is null || document.Root.Element("Buckets") is null)
                 return Failure("oss_invalid_response", "OSS 返回了无法验证的响应，请稍后重试。");
-            return new InstanceConnectionTestResult(true, "连接成功，已通过 ListBuckets 只读请求验证身份及权限。",
-                Checks: [new("身份认证", true), new("ListBuckets 只读权限", true)]);
+            // 固定此次已验证的凭据，避免测试期间外部字典变更导致不同请求使用不同身份。
+            var snapshot = new InstanceConnectionOptions
+            {
+                TypeId = TypeId,
+                ProviderId = ProviderId,
+                Parameters = new Dictionary<string, string>
+                {
+                    ["accessKeyId"] = accessKeyId,
+                    ["accessKeySecret"] = accessKeySecret,
+                },
+            };
+            var probe = new ObjectStorageConnectionProbe(new AliyunOssObjectStorageProvider(_clients));
+            InstanceConnectionTestResult result = await probe.TestAsync(snapshot, deadline.Token).ConfigureAwait(false);
+            result = result with
+            {
+                ErrorCode = result.ErrorCode?.Replace("storage_probe_", "oss_probe_", StringComparison.Ordinal),
+                Checks = Array.AsReadOnly<InstanceConnectionCheck>([new("身份认证", true), .. (result.Checks ?? [])]),
+            };
+            // 清理失败须在用户取消后仍返回安全位置；普通取消继续遵循原有取消契约。
+            if (result.RequiresAttentionAfterCancellation) return result;
+            cancellationToken.ThrowIfCancellationRequested();
+            if (deadline.IsCancellationRequested || result.ErrorCode == "oss_probe_cancelled")
+                return result with { IsSuccessful = false, ErrorCode = "oss_timeout", Message = "连接测试超时，已完成已知临时对象的清理，请检查网络后重试。" };
+            return result;
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -109,7 +134,7 @@ public sealed class AliyunOssStorageProvider : IStorageProvider
         }
     }
 
-    /// <summary>只构造固定 GET 请求，Query 不含凭据，也不会执行远程写操作。</summary>
+    /// <summary>身份验证只构造固定 GET 请求，Query 不含凭据；读写验证由通用探测器完成。</summary>
     private HttpRequestMessage CreateRequest(string accessKeyId, string accessKeySecret)
     {
         string timestamp = _time.GetUtcNow().ToString("yyyyMMdd'T'HHmmss'Z'", CultureInfo.InvariantCulture);
@@ -158,5 +183,5 @@ public sealed class AliyunOssStorageProvider : IStorageProvider
 
     /// <summary>失败不提供伪造的成功检查，也不携带任何请求参数。</summary>
     private static InstanceConnectionTestResult Failure(string code, string message) =>
-        new(false, message, code, [new("ListBuckets 只读权限", false)]);
+        new(false, message, code, [new("身份认证及容器读取", false)]);
 }
