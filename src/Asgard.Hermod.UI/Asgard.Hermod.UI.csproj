@@ -9,6 +9,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Asgard.Hermod.WinTerminal\Asgard.Hermod.WinTerminal.csproj" />
     <Resource Include="Assets\Fonts\*.ttf" />
+    <Resource Include="Assets\Brand\hermod.ico" />
+    <Resource Include="Assets\Brand\hermod.png" />
     <None Update="Assets\**\*.txt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
