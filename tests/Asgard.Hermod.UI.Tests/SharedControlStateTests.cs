@@ -61,14 +61,13 @@ public sealed class SharedControlStateTests(WpfTestFixture fixture)
             "TextBox" => new TextBox { Text = "instance-001" },
             _ => new SecretInput { Value = "example" },
         };
-        var window = CreateWindow(input);
+        var host = new Grid();
+        host.Children.Add(input);
+        var window = CreateWindow(host);
         try
         {
             window.Show();
             await WindowTestVisuals.UpdateLayoutAsync(window);
-            var focus = Assert.IsType<Border>(input.Template.FindName("FocusRing", input));
-            Assert.Equal(new Thickness(2), focus.BorderThickness);
-            Assert.False(focus.IsHitTestVisible);
             var content = WindowTestVisuals.Descendants<FrameworkElement>(input).First(element => kind switch
             {
                 "Button" => element is ContentPresenter,
@@ -77,6 +76,17 @@ public sealed class SharedControlStateTests(WpfTestFixture fixture)
             });
             Point before = content.TranslatePoint(new Point(), input);
             Size sizeBefore = new(content.ActualWidth, content.ActualHeight);
+            Control? cue = null;
+            if (kind == "Button")
+            {
+                // 按钮的焦点层由 WPF 叠加；此处只验证叠层模板不会改变正文排版。
+                cue = new Control { Style = input.FocusVisualStyle, IsHitTestVisible = false };
+                host.Children.Add(cue);
+                cue.ApplyTemplate();
+            }
+            var focus = Assert.IsType<Border>((cue ?? input).Template.FindName("FocusRing", cue ?? input));
+            Assert.Equal(new Thickness(2), focus.BorderThickness);
+            Assert.False(cue?.IsHitTestVisible ?? focus.IsHitTestVisible);
             focus.Visibility = Visibility.Visible;
             await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.Equal(before, content.TranslatePoint(new Point(), input));
@@ -104,6 +114,41 @@ public sealed class SharedControlStateTests(WpfTestFixture fixture)
             await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.Equal(BrushColor("SidebarBrush"), Assert.IsType<SolidColorBrush>(input.Background).Color);
             Assert.False(input.Focus());
+        }
+        finally { window.Close(); }
+    });
+
+    /// <summary>标题、正文和页脚都能承载原生键盘焦点层，鼠标恢复焦点时清理而不移动正文。</summary>
+    [Theory]
+    [InlineData("Caption")]
+    [InlineData("Body")]
+    [InlineData("Footer")]
+    public Task WindowSlots_ShareKeyboardOnlyButtonDecoration(string slot) => fixture.RunAsync(async () =>
+    {
+        using var focus = new KeyboardFocusPreviewScope();
+        var button = new Button { Content = "保存" };
+        var window = CreateWindow(new Grid());
+        if (slot == "Caption") window.CaptionContent = button;
+        else if (slot == "Footer") window.FooterContent = button;
+        else window.Content = button;
+        try
+        {
+            window.Show();
+            await WindowTestVisuals.UpdateLayoutAsync(window);
+            var content = Assert.Single(WindowTestVisuals.Descendants<ContentPresenter>(button));
+            Point before = content.TranslatePoint(new Point(), button);
+            Size sizeBefore = content.RenderSize;
+            focus.ShowKeyboard(button);
+            await WindowTestVisuals.UpdateLayoutAsync(window);
+            var adorner = Assert.Single(KeyboardFocusPreviewScope.Adorners(button));
+            Assert.False(adorner.IsHitTestVisible);
+            var ring = Assert.Single(WindowTestVisuals.Descendants<Border>(adorner));
+            Assert.Equal(new Thickness(2), ring.BorderThickness);
+            Assert.Equal(button.RenderSize, ring.RenderSize);
+            Assert.Equal(before, content.TranslatePoint(new Point(), button));
+            Assert.Equal(sizeBefore, content.RenderSize);
+            focus.ShowMouseFocus(button);
+            Assert.Empty(KeyboardFocusPreviewScope.Adorners(button));
         }
         finally { window.Close(); }
     });

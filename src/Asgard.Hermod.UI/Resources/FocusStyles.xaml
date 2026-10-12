@@ -1,0 +1,23 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- 由 WPF 管理键盘导航提示：鼠标操作和菜单恢复焦点不会留下蓝框，描边不参与正文布局。 -->
+    <Style x:Key="KeyboardFocusVisual" TargetType="Control">
+        <Setter Property="IsHitTestVisible" Value="False" />
+        <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Control">
+            <Border x:Name="FocusRing" CornerRadius="6" BorderThickness="2"
+                    BorderBrush="{DynamicResource AccentTextBrush}" SnapsToDevicePixels="True" />
+        </ControlTemplate></Setter.Value></Setter>
+    </Style>
+    <Style x:Key="TabKeyboardFocusVisual" TargetType="Control" BasedOn="{StaticResource KeyboardFocusVisual}">
+        <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Control">
+            <Border x:Name="FocusRing" CornerRadius="6,6,0,0" BorderThickness="2"
+                    BorderBrush="{DynamicResource AccentTextBrush}" SnapsToDevicePixels="True" />
+        </ControlTemplate></Setter.Value></Setter>
+    </Style>
+    <Style x:Key="RowKeyboardFocusVisual" TargetType="Control" BasedOn="{StaticResource KeyboardFocusVisual}">
+        <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Control">
+            <Border x:Name="FocusRing" CornerRadius="4" BorderThickness="0,0,0,1"
+                    BorderBrush="{DynamicResource AccentBrush}" SnapsToDevicePixels="True" />
+        </ControlTemplate></Setter.Value></Setter>
+    </Style>
+</ResourceDictionary>

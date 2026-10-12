@@ -24,24 +24,25 @@
                     <Border x:Name="PART_WindowFrame" Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="{Binding CaptionHeight, RelativeSource={RelativeSource TemplatedParent}}" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <ContentPresenter x:Name="PART_Caption"
-                                              Content="{TemplateBinding CaptionContent}"
-                                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                            <AdornerDecorator Grid.Row="1">
-                                <ContentPresenter ContentSource="Content" Margin="{TemplateBinding Padding}"
+                        <!-- 统一承载正文、标题和页脚的键盘焦点层，所有窗体按钮保持相同导航语义。 -->
+                        <AdornerDecorator>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="{Binding CaptionHeight, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <ContentPresenter x:Name="PART_Caption"
+                                                  Content="{TemplateBinding CaptionContent}"
+                                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                                <ContentPresenter Grid.Row="1" ContentSource="Content" Margin="{TemplateBinding Padding}"
                                                   HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                            </AdornerDecorator>
-                            <ContentPresenter x:Name="PART_Footer" Grid.Row="2"
-                                              Content="{TemplateBinding FooterContent}"
-                                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                        </Grid>
+                                <ContentPresenter x:Name="PART_Footer" Grid.Row="2"
+                                                  Content="{TemplateBinding FooterContent}"
+                                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                            </Grid>
+                        </AdornerDecorator>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="CaptionContent" Value="{x:Null}">
