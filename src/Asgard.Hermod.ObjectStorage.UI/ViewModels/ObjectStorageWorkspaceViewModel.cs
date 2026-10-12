@@ -7,6 +7,8 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     private readonly IObjectStorageService _service;
     private readonly IObjectStorageDialogService _dialogs;
     private readonly IInstanceEditor? _editor;
+    private readonly IFileOpenService? _files;
+    private readonly ITemporaryFileStorage? _temporaryFiles;
     private readonly CancellationTokenSource _lifetime = new();
     private readonly SemaphoreSlim _transferGate = new(1, 1);
     private CancellationTokenSource? _listOperation;
@@ -35,17 +37,24 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
 
     /// <summary>页面只依赖安全实例摘要、存储服务及可替换的交互服务。</summary>
     public ObjectStorageWorkspaceViewModel(InstanceItemViewModel instance, IObjectStorageService service,
-        IObjectStorageDialogService dialogs, IInstanceEditor? editor = null)
+        IObjectStorageDialogService dialogs, IInstanceEditor? editor = null, IFileOpenService? files = null,
+        ITemporaryFileStorage? temporaryFiles = null)
         : base("instance:" + instance.Id, instance.DisplayName, instance.Icon, instance.Id, hasAlert: instance.HasAlert)
     {
         ArgumentNullException.ThrowIfNull(service);
         ArgumentNullException.ThrowIfNull(dialogs);
         _instance = instance; _service = service; _dialogs = dialogs; _editor = editor;
+        _files = files;
+        _temporaryFiles = temporaryFiles;
         RefreshCommand = new AsyncRelayCommand(_ => RefreshAsync(), _ => !IsClosed);
         LoadMoreCommand = new AsyncRelayCommand(_ => LoadPageAsync(true), _ => !IsClosed && !IsLoading && _nextToken is not null);
         UploadCommand = new AsyncRelayCommand(_ => SelectUploadAsync(), _ => CanOperate);
         NewFolderCommand = new AsyncRelayCommand(_ => CreateFolderAsync(), _ => CanOperate);
         DownloadCommand = new AsyncRelayCommand(DownloadAsync, parameter => CanOperate && Target(parameter) is not null);
+        OpenFileCommand = new AsyncRelayCommand(parameter => QueueFileOpenAsync(parameter, false),
+            parameter => CanOperate && _files is not null && _temporaryFiles is not null && Target(parameter) is { IsDirectory: false });
+        PreviewFileCommand = new AsyncRelayCommand(parameter => QueueFileOpenAsync(parameter, true),
+            parameter => CanOperate && _files is not null && _temporaryFiles is not null && Target(parameter) is { IsDirectory: false } entry && _files.CanPreview(entry.Name));
         BatchDownloadCommand = new AsyncRelayCommand(_ => DownloadCheckedAsync(), _ => CanOperate && HasCheckedEntries);
         DeleteCommand = new AsyncRelayCommand(DeleteAsync, parameter => CanOperate && (Target(parameter) is not null || HasCheckedEntries));
         TemporaryLinkCommand = new AsyncRelayCommand(ShowTemporaryLinkAsync, parameter => CanOperate && Target(parameter) is { IsDirectory: false });
@@ -344,7 +353,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     /// <summary>业务条件变化后同步所有操作入口。</summary>
     private void RefreshCommands()
     {
-        foreach (var command in new[] { RefreshCommand, LoadMoreCommand, UploadCommand, NewFolderCommand, DownloadCommand, BatchDownloadCommand, DeleteCommand, TemporaryLinkCommand, EditConnectionCommand, ClearSearchCommand }) command.NotifyCanExecuteChanged();
+        foreach (var command in new[] { RefreshCommand, LoadMoreCommand, UploadCommand, NewFolderCommand, DownloadCommand, OpenFileCommand, PreviewFileCommand, BatchDownloadCommand, DeleteCommand, TemporaryLinkCommand, EditConnectionCommand, ClearSearchCommand }) command.NotifyCanExecuteChanged();
         CopyKeyCommand.NotifyCanExecuteChanged(); CopyPreviewCommand.NotifyCanExecuteChanged();
     }
     /// <summary>关闭取消所有读取和传输，过期响应不会更新已释放页面。</summary>

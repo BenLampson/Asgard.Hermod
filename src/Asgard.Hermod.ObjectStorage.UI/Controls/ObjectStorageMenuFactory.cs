@@ -10,6 +10,12 @@ internal static class ObjectStorageMenuFactory
         FrameworkElement target, bool includeDownload = true, PlacementMode placement = PlacementMode.Bottom)
     {
         var menu = new ContextMenu { PlacementTarget = target, Placement = placement, Width = 244 };
+        if (!row.IsDirectory)
+        {
+            menu.Items.Add(Item(Text.Get("OpenFile"), "folder-open", model.OpenFileCommand, row));
+            menu.Items.Add(Item(Text.Get("PreviewFile"), "file-text", model.PreviewFileCommand, row));
+            menu.Items.Add(new Separator());
+        }
         if (includeDownload) menu.Items.Add(Item(Text.Get("Download"), "download", model.DownloadCommand, row));
         menu.Items.Add(Item(Text.Get("CopyObjectKey"), "copy", model.CopyKeyCommand, row));
         menu.Items.Add(Item(Text.Get("GenerateTemporaryLink2"), "link", model.TemporaryLinkCommand, row));

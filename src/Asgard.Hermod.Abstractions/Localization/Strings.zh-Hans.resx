@@ -1661,4 +1661,127 @@
   <data xml:space="preserve" name="TemporaryStorageUnsafePath">
     <value>临时目录包含不安全的路径或链接，Hermod 不会沿此路径执行清理。</value>
   </data>
+  <data xml:space="preserve" name="FileOpening">
+    <value>打开方式</value>
+  </data>
+  <data xml:space="preserve" name="FileOpeningDescription">
+    <value>为指定文件后缀选择打开程序，仅在 Hermod 内生效，保存后立即可用。</value>
+  </data>
+  <data xml:space="preserve" name="ConfiguredFileRules">
+    <value>已配置规则</value>
+  </data>
+  <data xml:space="preserve" name="FileExtension">
+    <value>文件后缀</value>
+  </data>
+  <data xml:space="preserve" name="FileProgram">
+    <value>打开程序（.exe）</value>
+  </data>
+  <data xml:space="preserve" name="Actions">
+    <value>操作</value>
+  </data>
+  <data xml:space="preserve" name="AddFileRule">
+    <value>添加打开规则</value>
+  </data>
+  <data xml:space="preserve" name="EditFileRule">
+    <value>编辑打开规则</value>
+  </data>
+  <data xml:space="preserve" name="FileExtensionHint">
+    <value>例如 md 或 .md，每条规则仅填写一个后缀，不区分大小写。</value>
+  </data>
+  <data xml:space="preserve" name="NoFileRules">
+    <value>尚未配置规则。添加文件后缀并选择打开程序。</value>
+  </data>
+  <data xml:space="preserve" name="FileOpeningFallbackHint">
+    <value>未配置的后缀使用 Windows 默认程序；移除规则不会删除文件或程序。</value>
+  </data>
+  <data xml:space="preserve" name="FileRuleRemoved">
+    <value>规则已移除，将使用 Windows 默认程序。</value>
+  </data>
+  <data xml:space="preserve" name="FileRuleLoadFailed">
+    <value>无法读取打开规则，请点击刷新重试。</value>
+  </data>
+  <data xml:space="preserve" name="FileRuleSaveFailed">
+    <value>无法保存打开规则，请重试。</value>
+  </data>
+  <data xml:space="preserve" name="FileRuleDuplicate">
+    <value>后缀 {0} 已有规则，请编辑现有规则。</value>
+  </data>
+  <data xml:space="preserve" name="FileRuleMissing">
+    <value>此规则已不存在，请刷新列表后重试。</value>
+  </data>
+  <data xml:space="preserve" name="FileExtensionInvalid">
+    <value>请输入单个文件后缀，例如 txt 或 .txt，不可包含路径或通配符。</value>
+  </data>
+  <data xml:space="preserve" name="FileProgramInvalid">
+    <value>请选择 .exe 程序的完整路径，不支持命令行参数。</value>
+  </data>
+  <data xml:space="preserve" name="FileProgramMissing">
+    <value>所选程序不存在，请选择已安装的程序。</value>
+  </data>
+  <data xml:space="preserve" name="FileProgramSelectFailed">
+    <value>无法打开程序选择器，请重试。</value>
+  </data>
+  <data xml:space="preserve" name="SelectFileProgram">
+    <value>选择打开程序</value>
+  </data>
+  <data xml:space="preserve" name="ExecutableFiles">
+    <value>程序 (*.exe)|*.exe</value>
+  </data>
+  <data xml:space="preserve" name="Browse">
+    <value>浏览…</value>
+  </data>
+  <data xml:space="preserve" name="Save">
+    <value>保存</value>
+  </data>
+  <data xml:space="preserve" name="Refresh">
+    <value>刷新</value>
+  </data>
+  <data xml:space="preserve" name="OpenFile">
+    <value>打开文件</value>
+  </data>
+  <data xml:space="preserve" name="PreviewFile">
+    <value>预览文件</value>
+  </data>
+  <data xml:space="preserve" name="FileOpenMissing">
+    <value>下载的文件已不可用，请重新下载。</value>
+  </data>
+  <data xml:space="preserve" name="FileOpenExecutableBlocked">
+    <value>此文件类型可执行代码，请使用文本预览、在打开方式中指定编辑器，或下载后在本地处理。</value>
+  </data>
+  <data xml:space="preserve" name="FileOpenFailed">
+    <value>无法打开文件，请检查设置中的打开方式，或配置 Windows 默认程序。</value>
+  </data>
+  <data xml:space="preserve" name="FilePreviewUnsupported">
+    <value>此格式暂不支持内置预览，请使用其他程序打开或下载文件。</value>
+  </data>
+  <data xml:space="preserve" name="FilePreviewTooLarge">
+    <value>内置预览支持最多 2 MB 文本和 20 MB 且尺寸可解码的图片，请下载此文件或使用其他程序打开。</value>
+  </data>
+  <data xml:space="preserve" name="FilePreviewNotText">
+    <value>此文件包含二进制内容，无法作为文本预览。</value>
+  </data>
+  <data xml:space="preserve" name="FilePreviewFailed">
+    <value>无法预览文件，文件可能已损坏或使用不支持的编码，请下载或使用其他程序打开。</value>
+  </data>
+  <data xml:space="preserve" name="FilePreviewTitle">
+    <value>预览 · {0}</value>
+  </data>
+  <data xml:space="preserve" name="FilePreviewReadOnly">
+    <value>只读预览，不会将修改上传到对象存储。</value>
+  </data>
+  <data xml:space="preserve" name="FileTextPreview">
+    <value>只读文本文件</value>
+  </data>
+  <data xml:space="preserve" name="FileImagePreview">
+    <value>图片预览</value>
+  </data>
+  <data xml:space="preserve" name="ImageZoom">
+    <value>缩放</value>
+  </data>
+  <data xml:space="preserve" name="ImageZoomPercent">
+    <value>{0:P0}</value>
+  </data>
+  <data xml:space="preserve" name="ImageFit">
+    <value>适应窗口</value>
+  </data>
 </root>

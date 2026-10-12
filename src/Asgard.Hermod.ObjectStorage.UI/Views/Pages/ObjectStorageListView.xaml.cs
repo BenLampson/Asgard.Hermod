@@ -60,24 +60,24 @@ public partial class ObjectStorageListView : UserControl
             await model.NavigateAsync(bucket, "");
     }
 
-    /// <summary>仅双击实际目录行进入前缀，按钮和勾选不触发导航。</summary>
+    /// <summary>双击目录进入前缀，双击文件下载并打开；按钮和勾选保持独立行为。</summary>
     private async void OnObjectDoubleClick(object sender, MouseButtonEventArgs args)
     {
         if (args.OriginalSource is not DependencyObject source || HasButtonAncestor(source)) return;
         if (ItemsControl.ContainerFromElement(ObjectRows, source) is ListBoxItem { DataContext: ObjectStorageEntryViewModel row }
             && DataContext is ObjectStorageWorkspaceViewModel model)
         {
-            args.Handled = row.IsDirectory;
+            args.Handled = true;
             await model.OpenEntryAsync(row);
         }
     }
 
-    /// <summary>行本身的 Enter 打开目录，更多按钮和复选框保留原生键盘行为。</summary>
+    /// <summary>行本身的 Enter 打开文件或目录，更多按钮和复选框保留原生键盘行为。</summary>
     private async void OnRowKeyDown(object sender, KeyEventArgs args)
     {
         if (args.OriginalSource is DependencyObject source && HasButtonAncestor(source)) return;
         if (args.Key == Key.Enter && ObjectRows.SelectedItem is ObjectStorageEntryViewModel row && DataContext is ObjectStorageWorkspaceViewModel model)
-        { args.Handled = row.IsDirectory; await model.OpenEntryAsync(row); }
+        { args.Handled = true; await model.OpenEntryAsync(row); }
     }
 
     /// <summary>右键菜单明确针对当前点击行，避免操作前一次选中的对象。</summary>

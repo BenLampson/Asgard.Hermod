@@ -12,6 +12,10 @@ Cloud OSS is the first object storage connector. The executable owns startup and
 composition; provider SDKs and persistence dependencies belong to their respective
 implementation projects. See the [architecture guide](docs/architecture.md).
 
+Files in object storage can be opened with configurable programs and previewed
+as images or text. Settings → Open with manages local extension rules. See the
+[file opening guide](docs/file-opening.md).
+
 Heimdall browser sign-in and manual encrypted workspace upload/download are
 available from the account menu. The separate Docker API checks user access with
 its own Heimdall service client. See the [identity and synchronization guide](docs/identity-and-sync.md).

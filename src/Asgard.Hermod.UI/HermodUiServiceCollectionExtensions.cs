@@ -18,7 +18,10 @@ public static class HermodUiServiceCollectionExtensions
             provider.GetRequiredService<IInstanceConfigurationService>()));
         services.TryAddSingleton<ISettingsEditor>(provider => new SettingsEditorService(owner,
             provider.GetRequiredService<ITagManagementService>(),
-            provider.GetRequiredService<ILanguagePreferenceStore>()));
+            provider.GetRequiredService<ILanguagePreferenceStore>(),
+            provider.GetRequiredService<IFileOpenRuleStore>()));
+        services.TryAddSingleton<IFileOpenService>(provider => new WindowsFileOpenService(owner,
+            provider.GetRequiredService<IFileOpenRuleStore>()));
         services.TryAddSingleton<IInstanceWorkspaceFactory, InstanceWorkspaceFactory>();
         if (services.Any(service => service.ServiceType == typeof(IAccountService)))
             services.TryAddSingleton<IAccountEditor>(provider => new AccountEditorService(owner,

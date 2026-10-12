@@ -69,7 +69,8 @@ internal sealed class ObjectStorageTestService : IObjectStorageService
     }
     /// <inheritdoc />
     public Task DownloadAsync(string instanceId, ObjectStorageBucket bucket, string key, string localPath,
-        IProgress<ObjectStorageTransferProgress>? progress = null, CancellationToken cancellationToken = default) =>
+        IProgress<ObjectStorageTransferProgress>? progress = null, CancellationToken cancellationToken = default,
+        long? maxBytes = null) =>
         DownloadHandler?.Invoke(key, localPath, progress, cancellationToken) ?? Task.CompletedTask;
     /// <inheritdoc />
     public Task CreateFolderAsync(string instanceId, ObjectStorageBucket bucket, string prefix, string name, CancellationToken cancellationToken = default) =>

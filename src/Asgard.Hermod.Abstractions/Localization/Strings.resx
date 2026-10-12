@@ -1661,4 +1661,127 @@
   <data xml:space="preserve" name="TemporaryStorageUnsafePath">
     <value>The temporary folder contains an unsafe path or link. Hermod will not follow it for cleanup.</value>
   </data>
+  <data xml:space="preserve" name="FileOpening">
+    <value>Open with</value>
+  </data>
+  <data xml:space="preserve" name="FileOpeningDescription">
+    <value>Choose a program for a file extension. These rules apply only within Hermod and are saved immediately.</value>
+  </data>
+  <data xml:space="preserve" name="ConfiguredFileRules">
+    <value>Configured rules</value>
+  </data>
+  <data xml:space="preserve" name="FileExtension">
+    <value>File extension</value>
+  </data>
+  <data xml:space="preserve" name="FileProgram">
+    <value>Program (.exe)</value>
+  </data>
+  <data xml:space="preserve" name="Actions">
+    <value>Actions</value>
+  </data>
+  <data xml:space="preserve" name="AddFileRule">
+    <value>Add rule</value>
+  </data>
+  <data xml:space="preserve" name="EditFileRule">
+    <value>Edit rule</value>
+  </data>
+  <data xml:space="preserve" name="FileExtensionHint">
+    <value>Enter one extension, such as md or .md. Matching is case insensitive.</value>
+  </data>
+  <data xml:space="preserve" name="NoFileRules">
+    <value>No rules yet. Add an extension and choose a program to open it.</value>
+  </data>
+  <data xml:space="preserve" name="FileOpeningFallbackHint">
+    <value>Unconfigured extensions use the Windows default program. Removing a rule does not delete files or programs.</value>
+  </data>
+  <data xml:space="preserve" name="FileRuleRemoved">
+    <value>Rule removed. The Windows default program will be used.</value>
+  </data>
+  <data xml:space="preserve" name="FileRuleLoadFailed">
+    <value>Cannot load file rules. Refresh to try again.</value>
+  </data>
+  <data xml:space="preserve" name="FileRuleSaveFailed">
+    <value>Cannot save file rules. Try again.</value>
+  </data>
+  <data xml:space="preserve" name="FileRuleDuplicate">
+    <value>A rule for {0} already exists. Edit the existing rule instead.</value>
+  </data>
+  <data xml:space="preserve" name="FileRuleMissing">
+    <value>This rule no longer exists. Refresh the list and try again.</value>
+  </data>
+  <data xml:space="preserve" name="FileExtensionInvalid">
+    <value>Enter a single extension, such as txt or .txt, without paths or wildcards.</value>
+  </data>
+  <data xml:space="preserve" name="FileProgramInvalid">
+    <value>Choose an .exe file using its full path. Command arguments are not supported.</value>
+  </data>
+  <data xml:space="preserve" name="FileProgramMissing">
+    <value>The selected program no longer exists. Choose an installed program.</value>
+  </data>
+  <data xml:space="preserve" name="FileProgramSelectFailed">
+    <value>Cannot open the program picker. Try again.</value>
+  </data>
+  <data xml:space="preserve" name="SelectFileProgram">
+    <value>Choose a program</value>
+  </data>
+  <data xml:space="preserve" name="ExecutableFiles">
+    <value>Programs (*.exe)|*.exe</value>
+  </data>
+  <data xml:space="preserve" name="Browse">
+    <value>Browse…</value>
+  </data>
+  <data xml:space="preserve" name="Save">
+    <value>Save</value>
+  </data>
+  <data xml:space="preserve" name="Refresh">
+    <value>Refresh</value>
+  </data>
+  <data xml:space="preserve" name="OpenFile">
+    <value>Open file</value>
+  </data>
+  <data xml:space="preserve" name="PreviewFile">
+    <value>Preview file</value>
+  </data>
+  <data xml:space="preserve" name="FileOpenMissing">
+    <value>The downloaded file is unavailable. Try downloading it again.</value>
+  </data>
+  <data xml:space="preserve" name="FileOpenExecutableBlocked">
+    <value>This file type can run code. Preview it as text, choose an editor in Open with settings, or download it for local handling.</value>
+  </data>
+  <data xml:space="preserve" name="FileOpenFailed">
+    <value>Cannot open this file. Check the program in Settings → Open with or configure its Windows default program.</value>
+  </data>
+  <data xml:space="preserve" name="FilePreviewUnsupported">
+    <value>This format does not support built-in preview. Open it with another program or download it.</value>
+  </data>
+  <data xml:space="preserve" name="FilePreviewTooLarge">
+    <value>Preview supports text up to 2 MB and images up to 20 MB with supported dimensions. Download this file or open it with another program.</value>
+  </data>
+  <data xml:space="preserve" name="FilePreviewNotText">
+    <value>This file contains binary data and cannot be previewed as text.</value>
+  </data>
+  <data xml:space="preserve" name="FilePreviewFailed">
+    <value>Cannot preview this file. It may be damaged or use an unsupported encoding. Download it or open it with another program.</value>
+  </data>
+  <data xml:space="preserve" name="FilePreviewTitle">
+    <value>Preview · {0}</value>
+  </data>
+  <data xml:space="preserve" name="FilePreviewReadOnly">
+    <value>Read-only preview. Changes are not uploaded to object storage.</value>
+  </data>
+  <data xml:space="preserve" name="FileTextPreview">
+    <value>Read-only text file</value>
+  </data>
+  <data xml:space="preserve" name="FileImagePreview">
+    <value>Image preview</value>
+  </data>
+  <data xml:space="preserve" name="ImageZoom">
+    <value>Zoom</value>
+  </data>
+  <data xml:space="preserve" name="ImageZoomPercent">
+    <value>{0:P0}</value>
+  </data>
+  <data xml:space="preserve" name="ImageFit">
+    <value>Fit to window</value>
+  </data>
 </root>

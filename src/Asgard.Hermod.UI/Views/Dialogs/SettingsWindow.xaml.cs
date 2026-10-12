@@ -15,6 +15,7 @@ public partial class SettingsWindow : HermodDialog
         InitializeComponent();
         DataContext = model;
         model.CloseRequested += OnCloseRequested;
+        if (model.FileOpening is { } files) files.EditRequested += OnEditFileRule;
         Loaded += OnLoaded;
         Closed += OnClosed;
     }
@@ -29,10 +30,20 @@ public partial class SettingsWindow : HermodDialog
     /// <summary>转换通用关闭命令，不把关闭视为写入确认。</summary>
     private void OnCloseRequested(object? sender, bool accepted) => Close();
 
+    /// <summary>编辑器只在保存成功后刷新列表，取消不修改规则。</summary>
+    private void OnEditFileRule(object? sender, FileOpenRule? rule)
+    {
+        if (_model.FileOpening is not { } files) return;
+        var editor = files.CreateEditor(rule);
+        var window = new FileOpenRuleWindow(editor) { Owner = this };
+        if (window.ShowDialog() == true) files.Reload();
+    }
+
     /// <summary>解除窗口与状态订阅，结束后台刷新。</summary>
     private void OnClosed(object? sender, EventArgs args)
     {
         _model.CloseRequested -= OnCloseRequested;
+        if (_model.FileOpening is { } files) files.EditRequested -= OnEditFileRule;
         Loaded -= OnLoaded;
         Closed -= OnClosed;
         _model.Dispose();

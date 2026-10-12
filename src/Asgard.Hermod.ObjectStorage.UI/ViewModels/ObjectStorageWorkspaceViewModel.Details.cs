@@ -43,9 +43,10 @@ public sealed partial class ObjectStorageWorkspaceViewModel
         await LoadDetailsAsync(entry, cancellationToken);
     }
 
-    /// <summary>双击目录只导航，不将目录当成可下载的单个文件。</summary>
+    /// <summary>双击目录进入前缀，双击文件下载后按打开规则处理。</summary>
     public Task OpenEntryAsync(ObjectStorageEntryViewModel entry, CancellationToken cancellationToken = default) =>
-        entry.IsDirectory && SelectedBucket is { } bucket ? NavigateAsync(bucket, entry.Key, cancellationToken) : Task.CompletedTask;
+        entry.IsDirectory && SelectedBucket is { } bucket ? NavigateAsync(bucket, entry.Key, cancellationToken)
+        : OpenFileCommand.ExecuteAsync(entry);
 
     /// <summary>每一次对象选择都有自己的取消令牌和版本号。</summary>
     private async Task LoadDetailsAsync(ObjectStorageEntryViewModel? entry, CancellationToken cancellationToken = default)

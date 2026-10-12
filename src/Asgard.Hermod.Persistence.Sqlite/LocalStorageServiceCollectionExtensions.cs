@@ -20,6 +20,7 @@ public static class LocalStorageServiceCollectionExtensions
         services.TryAddSingleton<LocalTagManagementService>();
         services.TryAddSingleton<ITagManagementService>(provider => provider.GetRequiredService<LocalTagManagementService>());
         services.TryAddSingleton<ILanguagePreferenceStore, SqliteLanguagePreferenceStore>();
+        services.TryAddSingleton<IFileOpenRuleStore, SqliteFileOpenRuleStore>();
         services.TryAddSingleton<IAccountSessionStore, SqliteAccountSessionStore>();
         services.TryAddSingleton<ILocalWorkspaceStore, SqliteWorkspaceStore>();
         return services;

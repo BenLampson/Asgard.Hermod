@@ -25,10 +25,10 @@ public interface IObjectStorageService
         bool overwrite, IProgress<ObjectStorageTransferProgress>? progress = null,
         CancellationToken cancellationToken = default);
 
-    /// <summary>下载到用户明确选择的位置，取消或失败时清理未完成的文件。</summary>
+    /// <summary>下载到明确位置，取消或失败时清理未完成文件；预览可限制实际接收字节数。</summary>
     Task DownloadAsync(string instanceId, ObjectStorageBucket bucket, string key, string localPath,
         IProgress<ObjectStorageTransferProgress>? progress = null,
-        CancellationToken cancellationToken = default);
+        CancellationToken cancellationToken = default, long? maxBytes = null);
 
     /// <summary>创建以斜杠结尾的目录占位对象，不覆盖当前目录下的重名对象。</summary>
     Task CreateFolderAsync(string instanceId, ObjectStorageBucket bucket, string prefix, string name,

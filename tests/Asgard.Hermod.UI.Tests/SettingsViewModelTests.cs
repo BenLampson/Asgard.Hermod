@@ -9,7 +9,8 @@ public sealed class SettingsViewModelTests
     {
         var service = new TagManagementTestService();
         using var model = new SettingsViewModel(service, new TagDialogTestService());
-        Assert.Equal(new[] { "通用", "外观", "Tag 管理", "存储", "账户", "快捷键", "关于" }, model.Categories.Select(category => category.Name));
+        Assert.Equal(new[] { "general", "appearance", "tags", "storage", "file-opening", "account", "shortcuts", "about" },
+            model.Categories.Select(category => category.Id));
         Assert.Equal("tags", Assert.Single(model.Categories, category => category.IsAvailable).Id);
         model.SelectCategoryCommand.Execute(model.Categories[0]);
         Assert.Equal("tags", model.SelectedCategory.Id);

@@ -75,11 +75,13 @@ public sealed class LocalObjectStorageService : IObjectStorageService
 
     /// <inheritdoc />
     public Task DownloadAsync(string instanceId, ObjectStorageBucket bucket, string key, string localPath,
-        IProgress<ObjectStorageTransferProgress>? progress = null, CancellationToken cancellationToken = default) =>
+        IProgress<ObjectStorageTransferProgress>? progress = null, CancellationToken cancellationToken = default,
+        long? maxBytes = null) =>
         ExecuteAsync(instanceId, bucket, async client =>
         {
             ValidateKey(key);
             ValidateLocalPath(localPath);
+            if (maxBytes is <= 0) throw new ArgumentOutOfRangeException(nameof(maxBytes));
             string destination = Path.GetFullPath(localPath);
             string directory = Path.GetDirectoryName(destination)!;
             EnsureDownloadDirectory(directory, createMissing: true);
@@ -93,6 +95,8 @@ public sealed class LocalObjectStorageService : IObjectStorageService
                     cancellationToken).ConfigureAwait(false))
                 {
                     totalBytes = remote.Size;
+                    if (maxBytes is { } limit && remote.Size > limit)
+                        throw ObjectStorageException.FromResource("FilePreviewTooLarge", "PreviewLimitExceeded");
                     await using var file = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None,
                         64 * 1024, FileOptions.Asynchronous | FileOptions.SequentialScan);
                     ObjectStorageProgress.Report(progress, 0, remote.Size);
@@ -101,6 +105,8 @@ public sealed class LocalObjectStorageService : IObjectStorageService
                     {
                         int read = await remote.Body.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
                         if (read == 0) break;
+                        if (maxBytes is { } bodyLimit && transferred > bodyLimit - read)
+                            throw ObjectStorageException.FromResource("FilePreviewTooLarge", "PreviewLimitExceeded");
                         await file.WriteAsync(buffer.AsMemory(0, read), cancellationToken).ConfigureAwait(false);
                         transferred += read;
                         ObjectStorageProgress.Report(progress, transferred, remote.Size);

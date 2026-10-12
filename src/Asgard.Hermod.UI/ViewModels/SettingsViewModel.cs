@@ -10,18 +10,20 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
 
     /// <summary>由宿主提供统一标签来源和子窗口服务。</summary>
     public SettingsViewModel(ITagManagementService tags, ITagDialogService dialogs,
-        ILanguagePreferenceStore? languageStore = null)
+        ILanguagePreferenceStore? languageStore = null, IFileOpenRuleStore? fileRules = null)
     {
         ArgumentNullException.ThrowIfNull(tags);
         ArgumentNullException.ThrowIfNull(dialogs);
         Tags = new TagManagementViewModel(tags, dialogs);
         _languageStore = languageStore;
+        FileOpening = fileRules is null ? null : new FileOpeningSettingsViewModel(fileRules);
         Categories =
         [
             new("general", Text.Get("General"), "sliders-horizontal", languageStore is not null),
             new("appearance", Text.Get("Appearance"), "palette", false),
             new("tags", Text.Get("TagManagement"), "tags", true),
             new("storage", Text.Get("Storage"), "hard-drive", false),
+            new("file-opening", Text.Get("FileOpening"), "folder-open", fileRules is not null),
             new("account", Text.Get("Account"), "user-round", false),
             new("shortcuts", Text.Get("KeyboardShortcuts"), "keyboard", false),
             new("about", Text.Get("About"), "info", false),
@@ -80,6 +82,10 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
     public bool IsGeneralSelected => SelectedCategory.Id == "general";
     /// <summary>控制标签管理页面可见性。</summary>
     public bool IsTagsSelected => SelectedCategory.Id == "tags";
+    /// <summary>文件规则页面的可见性使用稳定分类标识。</summary>
+    public bool IsFileOpeningSelected => SelectedCategory.Id == "file-opening";
+    /// <summary>可选的本机文件规则管理状态。</summary>
+    public FileOpeningSettingsViewModel? FileOpening { get; }
     /// <summary>当前设置分类。</summary>
     public SettingsCategoryViewModel SelectedCategory
     {
@@ -89,6 +95,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
             if (!SetProperty(ref _selectedCategory, value)) return;
             OnPropertyChanged(nameof(IsGeneralSelected));
             OnPropertyChanged(nameof(IsTagsSelected));
+            OnPropertyChanged(nameof(IsFileOpeningSelected));
         }
     }
     /// <summary>可复用的标签管理状态。</summary>
