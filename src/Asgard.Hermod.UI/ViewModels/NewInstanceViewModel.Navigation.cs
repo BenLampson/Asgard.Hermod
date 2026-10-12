@@ -64,6 +64,9 @@ public sealed partial class NewInstanceViewModel
         InstanceConnectionTestState.Failed => "测试连接 · 验证失败",
         _ => "测试连接 · 尚未测试",
     };
+    /// <summary>所选服务商声明测试的访问范围与临时资源操作。</summary>
+    public string TestDescription => SelectedProvider?.ConnectionTestDescription
+        ?? "选择服务商后可查看连接测试内容。";
     /// <summary>首次测试和重新测试复用同一命令。</summary>
     public string TestActionLabel => TestState == InstanceConnectionTestState.NotStarted ? "开始测试" : "重新测试";
     /// <summary>失败时显示凭据与 RAM 权限的修正指引。</summary>
@@ -79,12 +82,12 @@ public sealed partial class NewInstanceViewModel
         4 => "保存到哪里？",
         _ => IsEditing ? "确认修改" : "确认创建",
     };
-    /// <summary>步骤说明沿用 Pencil 中文原文。</summary>
+    /// <summary>步骤说明匹配当前操作，具体测试范围由服务商描述。</summary>
     public string StepDescription => CurrentStep switch
     {
         1 => IsEditing ? "当前实例的类型与服务商已固定。" : "先选择实例类型，再选择对应的服务商。",
         2 => $"填写实例名称与 {ProviderName} 的连接信息。",
-        3 => "验证连接，不修改远程资源。",
+        3 => "验证连接信息与服务访问权限。",
         4 => "选择这个实例的保存位置。",
         _ => IsEditing ? "检查信息，确认后保存修改。" : "检查信息，确认后创建实例。",
     };
@@ -144,7 +147,7 @@ public sealed partial class NewInstanceViewModel
             nameof(StepCountText), nameof(ContinueCommand), nameof(ContinueLabel), nameof(HasPreviousStep),
             nameof(IsTypeStep), nameof(IsInformationStep), nameof(IsTestStep), nameof(IsSaveLocationStep),
             nameof(IsConfirmationStep), nameof(ProviderName), nameof(ProviderSummary),
-            nameof(TestSummary), nameof(TestHeading), nameof(TestActionLabel),
+            nameof(TestSummary), nameof(TestHeading), nameof(TestDescription), nameof(TestActionLabel),
             nameof(HasTestFailure), nameof(HasTestErrorCode), nameof(StepTitle), nameof(StepDescription),
             nameof(IsLocalSave), nameof(TestState), nameof(TestMessage), nameof(TestErrorCode), nameof(TestChecks),
             nameof(IsTesting), nameof(IsSaving), nameof(SaveError), nameof(CreatedInstance) })

@@ -3,7 +3,7 @@ namespace Asgard.Hermod.UI.ViewModels;
 /// <summary>管理可取消的真实连接测试和实例保存，异常信息不包含第三方请求或凭据。</summary>
 public sealed partial class NewInstanceViewModel
 {
-    /// <summary>对当前信息快照进行只读验证，版本变化或取消后的结果一律忽略。</summary>
+    /// <summary>验证当前信息快照，取消后仅保留必须告知用户的资源清理失败。</summary>
     private async Task TestConnectionAsync()
     {
         if (!CanTest)
@@ -23,7 +23,8 @@ public sealed partial class NewInstanceViewModel
         {
             var provider = _registry.GetProvider(connection.TypeId, connection.ProviderId);
             var result = await provider.TestConnectionAsync(connection, cancellation.Token);
-            if (_disposed || cancellation.IsCancellationRequested || revision != _configurationRevision)
+            if (_disposed || revision != _configurationRevision || cancellation.IsCancellationRequested
+                && (result.IsSuccessful || !result.RequiresAttentionAfterCancellation))
                 return;
             TestState = result.IsSuccessful ? InstanceConnectionTestState.Succeeded : InstanceConnectionTestState.Failed;
             TestMessage = Redact(result.Message);

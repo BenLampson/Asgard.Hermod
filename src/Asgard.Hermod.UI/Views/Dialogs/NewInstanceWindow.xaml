@@ -264,9 +264,8 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <TextBlock Text="检查连接信息是否正确，并确认当前身份拥有所需访问权限。"
-                               Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,0,0,16"
-                               Visibility="{Binding HasTestFailure, Converter={StaticResource WizardVisibility}}" />
+                    <TextBlock x:Name="ConnectionTestDescription" Text="{Binding TestDescription}"
+                               Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,0,0,16" />
                     <StackPanel Orientation="Horizontal">
                         <Button Content="修改信息" Command="{Binding ModifyInformationCommand}" Height="32" Padding="14,0" Margin="0,0,10,0"
                                 Visibility="{Binding HasTestFailure, Converter={StaticResource WizardVisibility}}" />

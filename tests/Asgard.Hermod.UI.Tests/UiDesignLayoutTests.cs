@@ -31,7 +31,13 @@ public sealed class UiDesignLayoutTests(WpfTestFixture fixture)
                     model.Fields.Single(field => field.Key == "accessKeyId").Value = "LTAIPREVIEW00000000";
                     model.Fields.Single(field => field.Key == "accessKeySecret").Value = "preview-secret";
                 }
-                if (step == 3) await model.TestConnectionCommand.ExecuteAsync();
+                if (step == 3)
+                {
+                    var description = Assert.IsType<TextBlock>(window.FindName("ConnectionTestDescription"));
+                    Assert.True(description.IsVisible);
+                    Assert.Equal(model.TestDescription, description.Text);
+                    await model.TestConnectionCommand.ExecuteAsync();
+                }
                 if (step < 5) model.NextCommand.Execute(null);
             }
             Assert.DoesNotContain(WindowTestVisuals.Descendants<TextBlock>(window),

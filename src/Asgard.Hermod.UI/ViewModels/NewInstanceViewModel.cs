@@ -137,7 +137,7 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
     public RelayCommand CancelCommand { get; }
     /// <summary>失败后返回填写页修正凭据。</summary>
     public RelayCommand ModifyInformationCommand { get; }
-    /// <summary>调用选中服务商的真实只读连接测试。</summary>
+    /// <summary>调用选中服务商声明的真实连接测试。</summary>
     public AsyncRelayCommand TestConnectionCommand { get; }
     /// <summary>取消正在进行的连接测试。</summary>
     public RelayCommand CancelTestCommand { get; }
