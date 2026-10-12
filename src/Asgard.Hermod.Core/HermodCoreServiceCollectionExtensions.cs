@@ -11,6 +11,7 @@ public static class HermodCoreServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         services.TryAddSingleton<IInstanceProviderRegistry, InstanceProviderRegistry>();
         services.TryAddSingleton<IWorkspaceDataSource, LocalWorkspaceDataSource>();
+        services.TryAddSingleton<ITemporaryFileStorage>(_ => new LocalTemporaryFileStorage());
         return services;
     }
 }

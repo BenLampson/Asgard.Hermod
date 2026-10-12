@@ -40,6 +40,9 @@ public partial class App : Application
             await Task.Run(() => provider.GetRequiredService<LocalDatabaseInitializer>().Initialize());
             var languageStore = provider.GetRequiredService<ILanguagePreferenceStore>();
             Text.Initialize(languageStore.Load(), systemCulture);
+            // 临时文件维护失败不阻断登录或工作区；设置页可重新扫描并给出安全提示。
+            try { await provider.GetRequiredService<ITemporaryFileStorage>().CleanupAsync(expiredOnly: true); }
+            catch (Exception) { }
             // 外壳由窗口拥有，窗口会在关闭前异步释放终端。
             var shell = ActivatorUtilities.CreateInstance<ShellViewModel>(provider);
             await shell.InitializeAsync();

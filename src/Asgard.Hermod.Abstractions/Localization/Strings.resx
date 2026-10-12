@@ -1658,4 +1658,7 @@
   <data xml:space="preserve" name="AccountInformation">
     <value>Account information</value>
   </data>
+  <data xml:space="preserve" name="TemporaryStorageUnsafePath">
+    <value>The temporary folder contains an unsafe path or link. Hermod will not follow it for cleanup.</value>
+  </data>
 </root>
