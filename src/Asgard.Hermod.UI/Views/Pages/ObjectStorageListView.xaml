@@ -12,6 +12,7 @@
         </Style>
         <Style x:Key="OssRow" TargetType="ListBoxItem">
             <Setter Property="Height" Value="44" />
+            <Setter Property="FocusVisualStyle" Value="{StaticResource RowKeyboardFocusVisual}" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" /><Setter Property="Padding" Value="0" />
             <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
                 <Border x:Name="Row" Background="Transparent" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,0,0,1" CornerRadius="4">
@@ -20,7 +21,6 @@
                 <ControlTemplate.Triggers>
                     <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Row" Property="Background" Value="{DynamicResource AppBackgroundBrush}" /></Trigger>
                     <Trigger Property="IsSelected" Value="True"><Setter TargetName="Row" Property="Background" Value="{DynamicResource AccentWeakBrush}" /></Trigger>
-                    <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource AccentBrush}" /></Trigger>
                 </ControlTemplate.Triggers>
             </ControlTemplate></Setter.Value></Setter>
         </Style>
@@ -109,7 +109,8 @@
                         <TextBlock Grid.Column="2" Text="{Binding Size}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
                         <TextBlock Grid.Column="3" Text="{Binding StorageClass}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Visibility="{Binding StorageColumnVisibility, RelativeSource={RelativeSource AncestorType=pages:ObjectStorageListView}}" />
                         <TextBlock Grid.Column="4" Text="{Binding Modified}" FontSize="10.5" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Visibility="{Binding ModifiedColumnVisibility, RelativeSource={RelativeSource AncestorType=pages:ObjectStorageListView}}" />
-                        <Button Grid.Column="5" Click="OnMoreClick" Style="{StaticResource IconButton}" Width="28" Height="28" HorizontalAlignment="Center" ToolTip="对象更多操作" AutomationProperties.Name="{Binding Name, StringFormat={}{0} 更多操作}"><controls:IconView Kind="ellipsis" Width="16" Height="16" /></Button>
+                        <!-- 保留 16px 图标列对齐，同时为 28px 按钮释放完整命中和焦点描边空间。 -->
+                        <Button Grid.Column="5" Click="OnMoreClick" Style="{StaticResource IconButton}" Width="28" Height="28" Margin="-6,0" HorizontalAlignment="Center" ToolTip="对象更多操作" AutomationProperties.Name="{Binding Name, StringFormat={}{0} 更多操作}"><controls:IconView Kind="ellipsis" Width="16" Height="16" /></Button>
                     </Grid>
                 </DataTemplate></ListBox.ItemTemplate>
             </ListBox>
