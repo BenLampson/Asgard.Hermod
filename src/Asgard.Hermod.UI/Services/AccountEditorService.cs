@@ -6,9 +6,16 @@ namespace Asgard.Hermod.UI.Services;
 public sealed class AccountEditorService(Func<Window?> owner, IAccountService accounts, IWorkspaceSyncService sync) : IAccountEditor
 {
     /// <inheritdoc />
-    public async Task OpenAsync()
+    public Task OpenAsync() => ShowAsync(false);
+    /// <inheritdoc />
+    public Task OpenForSignInAsync() => ShowAsync(true);
+
+    /// <summary>本地模式入口在窗口可取消之后启动浏览器，已登录入口只展示账号与同步。</summary>
+    private async Task ShowAsync(bool signIn)
     {
         await using var model = new AccountViewModel(accounts, sync);
-        new AccountWindow(model) { Owner = owner() }.ShowDialog();
+        var window = new AccountWindow(model) { Owner = owner() };
+        if (signIn) window.Loaded += (_, _) => model.SignInCommand.Execute(null);
+        window.ShowDialog();
     }
 }

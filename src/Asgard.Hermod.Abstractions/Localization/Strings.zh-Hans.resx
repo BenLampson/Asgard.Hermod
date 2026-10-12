@@ -1655,4 +1655,7 @@
   <data xml:space="preserve" name="LoginCallbackSuccessTitle">
     <value>登录成功</value>
   </data>
+  <data xml:space="preserve" name="AccountInformation">
+    <value>账户信息</value>
+  </data>
 </root>

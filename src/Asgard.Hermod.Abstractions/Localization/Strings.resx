@@ -1655,4 +1655,7 @@
   <data xml:space="preserve" name="LoginCallbackSuccessTitle">
     <value>Signed in successfully</value>
   </data>
+  <data xml:space="preserve" name="AccountInformation">
+    <value>Account information</value>
+  </data>
 </root>

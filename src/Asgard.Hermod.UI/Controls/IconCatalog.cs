@@ -90,6 +90,9 @@ internal static partial class IconCatalog
             "m10 17 5-5-5-5",
             "M15 12H3",
             "M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"),
+        ["log-out"] = Create(
+            "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4",
+            "m16 17 5-5-5-5", "M21 12H9"),
         ["maximize-2"] = Create(
             "M15 3h6v6",
             "m21 3-7 7",

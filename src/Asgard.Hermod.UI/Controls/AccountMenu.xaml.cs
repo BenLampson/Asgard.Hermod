@@ -11,6 +11,8 @@ public partial class AccountMenu : UserControl
     public AccountMenu()
     {
         InitializeComponent();
+        AccountButton.ContextMenu.CustomPopupPlacementCallback = (popup, target, _) =>
+            [new(new Point(target.Width - popup.Width + 16, target.Height - 12), System.Windows.Controls.Primitives.PopupPrimaryAxis.Vertical)];
     }
 
     /// <summary>
@@ -18,10 +20,22 @@ public partial class AccountMenu : UserControl
     /// </summary>
     private void OnAccountClick(object sender, RoutedEventArgs e)
     {
+        if (DataContext is not ShellViewModel { IsSignedIn: true })
+        {
+            if (DataContext is ShellViewModel shell && shell.OpenAccountCommand.CanExecute(null))
+                shell.OpenAccountCommand.Execute(null);
+            return;
+        }
         if (AccountButton.ContextMenu is { } menu)
         {
             menu.PlacementTarget = AccountButton;
             menu.IsOpen = true;
         }
+    }
+
+    /// <summary>未登录时右键或菜单键也不能展开仅适用于登录用户的菜单。</summary>
+    private void OnContextMenuOpening(object sender, ContextMenuEventArgs e)
+    {
+        if (DataContext is not ShellViewModel { IsSignedIn: true }) e.Handled = true;
     }
 }

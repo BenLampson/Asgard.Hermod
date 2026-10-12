@@ -69,11 +69,12 @@ public sealed class AccountWindowTests(WpfTestFixture fixture)
             await WpfTestFixture.DrainDispatcherAsync();
             Assert.Equal("JWT-用户名", shell.AccountName);
             Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(menu), text => text.Text == "JWT-用户名");
-            Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(menu), text => text.Text == Text.Get("SignedIn"));
+            Assert.Equal(Visibility.Visible, Assert.IsType<TextBlock>(menu.FindName("AvatarInitials")).Visibility);
+            Assert.Equal(Visibility.Collapsed, Assert.IsType<StackPanel>(menu.FindName("LocalSignIn")).Visibility);
             await model.SignOutCommand.ExecuteAsync();
             await WpfTestFixture.DrainDispatcherAsync();
             Assert.Equal(Text.Get("Local"), shell.AccountName);
-            Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(menu), text => text.Text == Text.Get("NotSignedIn"));
+            Assert.Equal(Visibility.Visible, Assert.IsType<StackPanel>(menu.FindName("LocalSignIn")).Visibility);
         }
         finally { window?.Close(); CultureInfo.CurrentUICulture = previous; }
     });

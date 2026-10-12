@@ -1,3 +1,4 @@
+using System.Globalization;
 using Asgard.Hermod.UI.Themes;
 
 namespace Asgard.Hermod.UI.ViewModels;
@@ -25,8 +26,13 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
         Sidebar = new InstanceSidebarViewModel(source, editor, Workspace.OpenInstance, Workspace.OpenLocalTerminal, tags);
         OpenSettingsCommand = new AsyncRelayCommand(_ => settings?.OpenAsync() ?? Task.CompletedTask,
             _ => settings is not null);
-        OpenAccountCommand = new AsyncRelayCommand(_ => accountEditor?.OpenAsync() ?? Task.CompletedTask,
+        OpenAccountCommand = new AsyncRelayCommand(_ => (IsSignedIn ? accountEditor?.OpenAsync() : accountEditor?.OpenForSignInAsync()) ?? Task.CompletedTask,
             _ => accountEditor is not null);
+        SignOutAccountCommand = new AsyncRelayCommand(async _ =>
+        {
+            try { if (_accounts is not null) await _accounts.SignOutAsync(); }
+            catch (Exception error) { AccountMessage = Text.Error(error, "AccountOperationFailed"); OnPropertyChanged(nameof(AccountMessage)); }
+        }, _ => IsSignedIn);
         if (accounts is not null) accounts.AccountChanged += OnAccountChanged;
         ToggleSidebarCommand = new RelayCommand(_ => IsSidebarExpanded = !IsSidebarExpanded);
         SetLightThemeCommand = new RelayCommand(_ => _themes.SetTheme(UiTheme.Light));
@@ -59,6 +65,18 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     public string WorkspaceName => Text.Get("LocalWorkspace");
     /// <summary>登录后显示已验证 JWT 用户名，否则显示本地模式。</summary>
     public string AccountName => _accounts?.Account?.Username ?? Text.Get("Local");
+    /// <summary>头像取 JWT 用户名的前两个完整字素，不拆分中文、组合字符或 Emoji。</summary>
+    public string AccountInitials
+    {
+        get
+        {
+            if (_accounts?.Account is not { } account) return "";
+            var characters = StringInfo.GetTextElementEnumerator(account.Username);
+            string initials = "";
+            for (int i = 0; i < 2 && characters.MoveNext(); i++) initials += characters.GetTextElement();
+            return initials;
+        }
+    }
     /// <summary>当前是否持有经过验证的用户会话。</summary>
     public bool IsSignedIn => _accounts?.Account is not null;
     /// <summary>账号入口随登录状态更新，无原始异常信息。</summary>
@@ -103,6 +121,8 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     public AsyncRelayCommand OpenSettingsCommand { get; }
     /// <summary>打开登录与同步窗口。</summary>
     public AsyncRelayCommand OpenAccountCommand { get; }
+    /// <summary>用户菜单退出本应用，失败反馈仍为安全的本地化文案。</summary>
+    public AsyncRelayCommand SignOutAccountCommand { get; }
     /// <summary>打开指定搜索结果。</summary>
     public RelayCommand OpenGlobalSearchResultCommand { get; }
     /// <summary>按 Enter 打开第一个匹配结果。</summary>
@@ -120,7 +140,9 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     /// <summary>发布 JWT 用户名与账号状态的绑定变化。</summary>
     private void OnAccountChanged(object? sender, EventArgs args)
     {
-        OnPropertyChanged(nameof(AccountName)); OnPropertyChanged(nameof(IsSignedIn)); OnPropertyChanged(nameof(AccountStatus));
+        OnPropertyChanged(nameof(AccountName)); OnPropertyChanged(nameof(AccountInitials));
+        OnPropertyChanged(nameof(IsSignedIn)); OnPropertyChanged(nameof(AccountStatus));
+        SignOutAccountCommand.NotifyCanExecuteChanged();
         AccountMessage = "";
         OnPropertyChanged(nameof(AccountMessage));
     }

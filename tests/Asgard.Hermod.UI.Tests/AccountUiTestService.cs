@@ -5,6 +5,8 @@ internal sealed class AccountUiTestService : IAccountService, IWorkspaceSyncServ
 {
     /// <inheritdoc />
     public HermodAccount? Account { get; private set; }
+    /// <summary>测试不同长度与字符的 JWT 用户名，不伪造显示名称或邮箱。</summary>
+    public string Username { get; set; } = "JWT-用户名";
     /// <inheritdoc />
     public event EventHandler? AccountChanged;
     /// <summary>记录实际上传次数。</summary>
@@ -16,7 +18,7 @@ internal sealed class AccountUiTestService : IAccountService, IWorkspaceSyncServ
     /// <inheritdoc />
     public Task SignInAsync(CancellationToken cancellationToken = default)
     {
-        Account = new("sub", "tenant", "app", "JWT-用户名"); AccountChanged?.Invoke(this, EventArgs.Empty); return Task.CompletedTask;
+        Account = new("sub", "tenant", "app", Username); AccountChanged?.Invoke(this, EventArgs.Empty); return Task.CompletedTask;
     }
     /// <inheritdoc />
     public Task SignOutAsync(CancellationToken cancellationToken = default)
