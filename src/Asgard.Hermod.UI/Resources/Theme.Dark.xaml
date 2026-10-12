@@ -1,6 +1,11 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!-- 与明亮主题共享资源键，换肤只替换字典，不重建视图和会话。 -->
+    <!-- 透明底浅色标志随主题字典更新，现有窗口无需重建。 -->
+    <BitmapImage x:Key="HermodLogo" CacheOption="OnLoad"
+                 UriSource="pack://application:,,,/Asgard.Hermod.UI;component/Assets/Brand/hermod-dark.png" />
+    <BitmapImage x:Key="HermodWindowIcon" CacheOption="OnLoad"
+                 UriSource="pack://application:,,,/Asgard.Hermod.UI;component/Assets/Brand/hermod-dark.ico" />
     <SolidColorBrush x:Key="SurfaceBrush" Color="#20252C" />
     <SolidColorBrush x:Key="AppBackgroundBrush" Color="#15181D" />
     <SolidColorBrush x:Key="SidebarBrush" Color="#1A1E25" />

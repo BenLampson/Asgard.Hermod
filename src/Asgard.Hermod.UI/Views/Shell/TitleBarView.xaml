@@ -16,7 +16,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <Image Source="pack://application:,,,/Asgard.Hermod.UI;component/Assets/Brand/hermod.png"
+                <Image x:Name="BrandLogo" Source="{DynamicResource HermodLogo}"
                        Width="17" Height="17" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality" />
                 <TextBlock Text="{loc:Loc Hermod}" FontSize="13" FontWeight="Bold"
                            Foreground="{DynamicResource TextPrimaryBrush}"

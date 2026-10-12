@@ -1,30 +1,29 @@
-# Hermod application icon
+# Hermod application icons
 
 Selected concept: **01 — Winged Helm**, from `design/Hermod.pen`.
+Every shipped icon has a transparent background; only the helmet and crest are drawn.
 
-- `hermod-logo.svg`: editable vector mark on a transparent 196 × 196 canvas.
-- `hermod.png`: 512 × 512 application icon with the approved dark rounded background.
-- `hermod.ico`: RGBA Windows icon containing 16, 20, 24, 32, 40, 48, 64, 128, and 256 pixel frames.
+| Asset | Purpose | Primary / accent |
+| --- | --- | --- |
+| `hermod-logo.svg` | Editable vector master, 196 × 196 canvas | Ivory / amber |
+| `hermod.png`, `hermod.ico` | Light theme; default executable icon | `#243247` / `#A3651C` |
+| `hermod-dark.png`, `hermod-dark.ico` | Dark theme | `#E9E2D4` / `#D6A760` |
 
-The palette is ivory `#E9E2D4`, amber `#D6A760`, and dark background `#10131A`.
-The icon keeps the original composition and transparent rounded corners.
+Both PNG files are 512 × 512. Each ICO contains RGBA frames at 16, 20, 24, 32,
+40, 48, 64, 128, and 256 pixels.
 
-The executable uses `hermod.ico` through `ApplicationIcon`. The UI assembly embeds
-the ICO and PNG as WPF resources. `HermodWindow` supplies the default native window
-icon to all derived windows; the shared dialog caption displays that window icon.
-The main caption uses the PNG for smooth scaling on high DPI displays.
+The theme dictionaries supply `HermodLogo` and `HermodWindowIcon`. Dynamic WPF
+resources update the main caption and native window icons immediately when the
+theme changes. Dialog captions inherit their window icon. Windows Explorer uses
+the light variant embedded in the executable through `ApplicationIcon`;
+the executable's static file icon does not change with Hermod's theme.
 
-To regenerate the raster assets, export the `01 · Winged Helm · editable vector`
-frame (`LxL8a`) from Pencil as a PNG at 4× scale to `design/exports`, then run from
-the repository root with Python and Pillow installed:
+To regenerate all four raster files from the vector master, run from the repository
+root on Windows with Python and Pillow installed:
 
-```python
-from pathlib import Path
-from PIL import Image
-
-target = Path("src/Asgard.Hermod.UI/Assets/Brand")
-image = Image.open("design/exports/LxL8a.png").convert("RGBA")
-image.resize((512, 512), Image.Resampling.LANCZOS).save(target / "hermod.png")
-image.save(target / "hermod.ico", format="ICO",
-           sizes=[(s, s) for s in (16, 20, 24, 32, 40, 48, 64, 128, 256)])
+```powershell
+powershell.exe -NoProfile -STA -Command "& ([scriptblock]::Create((Get-Content -LiteralPath 'design/export-brand-icons.ps1' -Raw -Encoding UTF8)))"
 ```
+
+The script renders SVG path geometry with WPF on a transparent canvas, then uses
+Pillow to encode the ICO frames. It keeps the approved shape and composition.

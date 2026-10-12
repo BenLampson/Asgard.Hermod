@@ -13,6 +13,8 @@
     <Resource Include="Assets\Fonts\*.ttf" />
     <Resource Include="Assets\Brand\hermod.ico" />
     <Resource Include="Assets\Brand\hermod.png" />
+    <Resource Include="Assets\Brand\hermod-dark.ico" />
+    <Resource Include="Assets\Brand\hermod-dark.png" />
     <None Update="Assets\**\*.txt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

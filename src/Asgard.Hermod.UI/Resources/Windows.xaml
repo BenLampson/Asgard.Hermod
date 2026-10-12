@@ -7,7 +7,7 @@
     </DataTemplate>
 
     <Style TargetType="controls:HermodWindow">
-        <Setter Property="Icon" Value="pack://application:,,,/Asgard.Hermod.UI;component/Assets/Brand/hermod.ico" />
+        <Setter Property="Icon" Value="{DynamicResource HermodWindowIcon}" />
         <Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="FontFamily" Value="{DynamicResource UiFont}" />
