@@ -23,7 +23,7 @@ internal static class ObjectStorageTextPreview
         if (!contentType.StartsWith("text/", StringComparison.OrdinalIgnoreCase) &&
             contentType is not "application/json" and not "application/xml" and not "application/javascript" &&
             !Extensions.Contains(Path.GetExtension(details.Key)))
-            return details with { PreviewMessage = Text.Get("ThisFileFormatDoesNotSupportTextPreview") };
+            return details with { PreviewMessage = Text.Get("ThisFileFormatDoesNotSupportPreview") };
         if (details.Size == 0) return details with { PreviewText = "" };
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         deadline.CancelAfter(TimeSpan.FromSeconds(20));
