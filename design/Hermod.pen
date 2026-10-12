@@ -18492,7 +18492,7 @@
                 {
                   "type": "frame",
                   "id": "uYF6E",
-                  "name": "Bucket 路径导航",
+                  "name": "右侧内容区 · Bucket 切换与目录面包屑",
                   "width": "fill_container",
                   "height": 32,
                   "gap": 8,
@@ -18501,7 +18501,10 @@
                     {
                       "type": "icon",
                       "id": "n1Nhw4",
+                      "x": 0,
+                      "y": 8.5,
                       "name": "Bucket 路径起始图标",
+                      "enabled": false,
                       "width": 15,
                       "height": 15,
                       "icon": "database",
@@ -18509,9 +18512,63 @@
                       "fill": "$muted"
                     },
                     {
+                      "type": "frame",
+                      "id": "NDax1",
+                      "name": "内容区 Bucket 切换器",
+                      "width": 170,
+                      "height": 32,
+                      "fill": "$app-bg",
+                      "cornerRadius": 5,
+                      "stroke": "$line-soft",
+                      "strokeWidth": 1,
+                      "gap": 8,
+                      "padding": [
+                        0,
+                        10
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "R0rj0",
+                          "name": "Bucket 切换图标",
+                          "width": 14,
+                          "height": 14,
+                          "icon": "database",
+                          "library": "lucide",
+                          "fill": "$muted"
+                        },
+                        {
+                          "type": "text",
+                          "id": "u6uAwk",
+                          "name": "当前 Bucket 名称",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "assets-dev",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "z9ypcG",
+                          "name": "展开 Bucket 选择",
+                          "width": 13,
+                          "height": 13,
+                          "icon": "chevron-down",
+                          "library": "lucide",
+                          "fill": "$muted"
+                        }
+                      ]
+                    },
+                    {
                       "type": "text",
                       "id": "muyNC",
+                      "x": 23,
+                      "y": 8.5,
                       "name": "Bucket 根路径",
+                      "enabled": false,
                       "fill": "$body",
                       "content": "assets-dev",
                       "fontFamily": "Inter",
@@ -18570,6 +18627,8 @@
                       "type": "ref",
                       "ref": "WH5j4",
                       "name": "刷新对象列表",
+                      "width": 32,
+                      "height": 32,
                       "descendants": {
                         "yIeTC": {
                           "icon": "refresh-cw"
@@ -20248,7 +20307,7 @@
             "YOCUE": {
               "type": "frame",
               "id": "BkMkH",
-              "name": "OSS 实例与Bucket目录导航",
+              "name": "Instance 列表 · 仅实例",
               "width": "fill_container",
               "height": "fill_container",
               "layout": "vertical",
@@ -20299,20 +20358,23 @@
                   "id": "XU1Mc",
                   "name": "当前 OSS 实例",
                   "width": "fill_container",
-                  "height": 32,
+                  "height": 34,
                   "fill": "$accent-weak",
                   "cornerRadius": 5,
                   "gap": 7,
                   "padding": [
                     0,
-                    10
+                    12
                   ],
                   "alignItems": "center",
                   "children": [
                     {
                       "type": "icon",
                       "id": "Wwi2m",
+                      "x": 12,
+                      "y": 11.5,
                       "name": "当前 OSS 实例展开图标",
+                      "enabled": false,
                       "width": 11,
                       "height": 11,
                       "icon": "chevron-down",
@@ -20346,8 +20408,11 @@
                 {
                   "type": "frame",
                   "id": "IRf26",
+                  "x": 8,
+                  "y": 71,
                   "name": "Bucket 标题栏",
-                  "width": "fill_container",
+                  "enabled": false,
+                  "width": "fill_container(224)",
                   "gap": 6,
                   "padding": [
                     16,
@@ -20400,8 +20465,11 @@
                 {
                   "type": "frame",
                   "id": "WilHD",
+                  "x": 8,
+                  "y": 109,
                   "name": "assets-dev Bucket",
-                  "width": "fill_container",
+                  "enabled": false,
+                  "width": "fill_container(224)",
                   "height": 32,
                   "fill": "#00000000",
                   "cornerRadius": 5,
@@ -20417,7 +20485,10 @@
                     {
                       "type": "icon",
                       "id": "QOxfg",
+                      "x": 22,
+                      "y": 10.5,
                       "name": "assets-dev Bucket展开图标",
+                      "enabled": false,
                       "width": 11,
                       "height": 11,
                       "icon": "chevron-down",
@@ -20451,8 +20522,11 @@
                 {
                   "type": "frame",
                   "id": "v8lNH",
+                  "x": 8,
+                  "y": 143,
                   "name": "releases 前缀",
-                  "width": "fill_container",
+                  "enabled": false,
+                  "width": "fill_container(224)",
                   "height": 32,
                   "fill": "#00000000",
                   "cornerRadius": 5,
@@ -20468,7 +20542,10 @@
                     {
                       "type": "icon",
                       "id": "IGsem",
+                      "x": 38,
+                      "y": 10.5,
                       "name": "releases 前缀展开图标",
+                      "enabled": false,
                       "width": 11,
                       "height": 11,
                       "icon": "chevron-down",
@@ -20502,8 +20579,11 @@
                 {
                   "type": "frame",
                   "id": "f2FY7",
+                  "x": 8,
+                  "y": 177,
                   "name": "当前 v0.9.0 前缀",
-                  "width": "fill_container",
+                  "enabled": false,
+                  "width": "fill_container(224)",
                   "height": 32,
                   "fill": "$accent-weak",
                   "cornerRadius": 5,
@@ -20543,8 +20623,11 @@
                 {
                   "type": "frame",
                   "id": "hyeYf",
+                  "x": 8,
+                  "y": 211,
                   "name": "v0.8.0 前缀",
-                  "width": "fill_container",
+                  "enabled": false,
+                  "width": "fill_container(224)",
                   "height": 32,
                   "fill": "#00000000",
                   "cornerRadius": 5,
@@ -20584,8 +20667,11 @@
                 {
                   "type": "frame",
                   "id": "mcOmR",
+                  "x": 8,
+                  "y": 245,
                   "name": "images 根前缀",
-                  "width": "fill_container",
+                  "enabled": false,
+                  "width": "fill_container(224)",
                   "height": 32,
                   "fill": "#00000000",
                   "cornerRadius": 5,
@@ -20625,8 +20711,11 @@
                 {
                   "type": "frame",
                   "id": "rUL25",
+                  "x": 8,
+                  "y": 279,
                   "name": "logs-dev Bucket",
-                  "width": "fill_container",
+                  "enabled": false,
+                  "width": "fill_container(224)",
                   "height": 32,
                   "fill": "#00000000",
                   "cornerRadius": 5,
@@ -20642,7 +20731,10 @@
                     {
                       "type": "icon",
                       "id": "kgtr4",
+                      "x": 22,
+                      "y": 10.5,
                       "name": "logs-dev Bucket展开图标",
+                      "enabled": false,
                       "width": 11,
                       "height": 11,
                       "icon": "chevron-right",
@@ -20676,8 +20768,11 @@
                 {
                   "type": "frame",
                   "id": "F2h2D",
+                  "x": 8,
+                  "y": 313,
                   "name": "archives Bucket",
-                  "width": "fill_container",
+                  "enabled": false,
+                  "width": "fill_container(224)",
                   "height": 32,
                   "fill": "#00000000",
                   "cornerRadius": 5,
@@ -20693,7 +20788,10 @@
                     {
                       "type": "icon",
                       "id": "IWJQV",
+                      "x": 22,
+                      "y": 10.5,
                       "name": "archives Bucket展开图标",
+                      "enabled": false,
                       "width": 11,
                       "height": 11,
                       "icon": "chevron-right",
@@ -20727,8 +20825,11 @@
                 {
                   "type": "frame",
                   "id": "Mhosi",
+                  "x": 8,
+                  "y": 347,
                   "name": "其他实例前分隔",
-                  "width": "fill_container",
+                  "enabled": false,
+                  "width": "fill_container(224)",
                   "height": 1,
                   "fill": "$line-soft"
                 },
@@ -20737,20 +20838,23 @@
                   "id": "n5GoT",
                   "name": "生产 OSS 实例",
                   "width": "fill_container",
-                  "height": 32,
+                  "height": 34,
                   "fill": "#00000000",
                   "cornerRadius": 5,
                   "gap": 7,
                   "padding": [
                     0,
-                    10
+                    12
                   ],
                   "alignItems": "center",
                   "children": [
                     {
                       "type": "icon",
                       "id": "K0KQ8",
+                      "x": 12,
+                      "y": 11.5,
                       "name": "生产 OSS 实例展开图标",
+                      "enabled": false,
                       "width": 11,
                       "height": 11,
                       "icon": "chevron-right",
@@ -20786,20 +20890,23 @@
                   "id": "scu5H",
                   "name": "测试 OSS 实例",
                   "width": "fill_container",
-                  "height": 32,
+                  "height": 34,
                   "fill": "#00000000",
                   "cornerRadius": 5,
                   "gap": 7,
                   "padding": [
                     0,
-                    10
+                    12
                   ],
                   "alignItems": "center",
                   "children": [
                     {
                       "type": "icon",
                       "id": "NWTIj",
+                      "x": 12,
+                      "y": 11.5,
                       "name": "测试 OSS 实例展开图标",
+                      "enabled": false,
                       "width": 11,
                       "height": 11,
                       "icon": "chevron-right",
@@ -20921,7 +21028,7 @@
             "YOCUE": {
               "type": "frame",
               "id": "d1GHRn",
-              "name": "OSS 实例与Bucket目录导航",
+              "name": "Instance 列表 · 仅实例",
               "width": "fill_container",
               "height": "fill_container",
               "layout": "vertical",
@@ -20972,20 +21079,23 @@
                   "id": "H3qls",
                   "name": "当前 OSS 实例",
                   "width": "fill_container",
-                  "height": 32,
+                  "height": 34,
                   "fill": "$accent-weak",
                   "cornerRadius": 5,
                   "gap": 7,
                   "padding": [
                     0,
-                    10
+                    12
                   ],
                   "alignItems": "center",
                   "children": [
                     {
                       "type": "icon",
                       "id": "GSxac",
+                      "x": 12,
+                      "y": 11.5,
                       "name": "当前 OSS 实例展开图标",
+                      "enabled": false,
                       "width": 11,
                       "height": 11,
                       "icon": "chevron-down",
@@ -21019,8 +21129,11 @@
                 {
                   "type": "frame",
                   "id": "TOwSW",
+                  "x": 8,
+                  "y": 71,
                   "name": "Bucket 标题栏",
-                  "width": "fill_container",
+                  "enabled": false,
+                  "width": "fill_container(224)",
                   "gap": 6,
                   "padding": [
                     16,
@@ -21073,8 +21186,11 @@
                 {
                   "type": "frame",
                   "id": "aKaVr",
+                  "x": 8,
+                  "y": 109,
                   "name": "assets-dev Bucket",
-                  "width": "fill_container",
+                  "enabled": false,
+                  "width": "fill_container(224)",
                   "height": 32,
                   "fill": "#00000000",
                   "cornerRadius": 5,
@@ -21090,7 +21206,10 @@
                     {
                       "type": "icon",
                       "id": "t4CwK1",
+                      "x": 22,
+                      "y": 10.5,
                       "name": "assets-dev Bucket展开图标",
+                      "enabled": false,
                       "width": 11,
                       "height": 11,
                       "icon": "chevron-down",
@@ -21124,8 +21243,11 @@
                 {
                   "type": "frame",
                   "id": "riU1G",
+                  "x": 8,
+                  "y": 143,
                   "name": "releases 前缀",
-                  "width": "fill_container",
+                  "enabled": false,
+                  "width": "fill_container(224)",
                   "height": 32,
                   "fill": "#00000000",
                   "cornerRadius": 5,
@@ -21141,7 +21263,10 @@
                     {
                       "type": "icon",
                       "id": "z4uHc",
+                      "x": 38,
+                      "y": 10.5,
                       "name": "releases 前缀展开图标",
+                      "enabled": false,
                       "width": 11,
                       "height": 11,
                       "icon": "chevron-down",
@@ -21175,8 +21300,11 @@
                 {
                   "type": "frame",
                   "id": "EfSyG",
+                  "x": 8,
+                  "y": 177,
                   "name": "当前 v0.9.0 前缀",
-                  "width": "fill_container",
+                  "enabled": false,
+                  "width": "fill_container(224)",
                   "height": 32,
                   "fill": "$accent-weak",
                   "cornerRadius": 5,
@@ -21216,8 +21344,11 @@
                 {
                   "type": "frame",
                   "id": "I5JWh",
+                  "x": 8,
+                  "y": 211,
                   "name": "v0.8.0 前缀",
-                  "width": "fill_container",
+                  "enabled": false,
+                  "width": "fill_container(224)",
                   "height": 32,
                   "fill": "#00000000",
                   "cornerRadius": 5,
@@ -21257,8 +21388,11 @@
                 {
                   "type": "frame",
                   "id": "g0LtmN",
+                  "x": 8,
+                  "y": 245,
                   "name": "images 根前缀",
-                  "width": "fill_container",
+                  "enabled": false,
+                  "width": "fill_container(224)",
                   "height": 32,
                   "fill": "#00000000",
                   "cornerRadius": 5,
@@ -21298,8 +21432,11 @@
                 {
                   "type": "frame",
                   "id": "rAtGZ",
+                  "x": 8,
+                  "y": 279,
                   "name": "logs-dev Bucket",
-                  "width": "fill_container",
+                  "enabled": false,
+                  "width": "fill_container(224)",
                   "height": 32,
                   "fill": "#00000000",
                   "cornerRadius": 5,
@@ -21315,7 +21452,10 @@
                     {
                       "type": "icon",
                       "id": "v30xn",
+                      "x": 22,
+                      "y": 10.5,
                       "name": "logs-dev Bucket展开图标",
+                      "enabled": false,
                       "width": 11,
                       "height": 11,
                       "icon": "chevron-right",
@@ -21349,8 +21489,11 @@
                 {
                   "type": "frame",
                   "id": "LviV7",
+                  "x": 8,
+                  "y": 313,
                   "name": "archives Bucket",
-                  "width": "fill_container",
+                  "enabled": false,
+                  "width": "fill_container(224)",
                   "height": 32,
                   "fill": "#00000000",
                   "cornerRadius": 5,
@@ -21366,7 +21509,10 @@
                     {
                       "type": "icon",
                       "id": "oNbqH",
+                      "x": 22,
+                      "y": 10.5,
                       "name": "archives Bucket展开图标",
+                      "enabled": false,
                       "width": 11,
                       "height": 11,
                       "icon": "chevron-right",
@@ -21400,8 +21546,11 @@
                 {
                   "type": "frame",
                   "id": "r6Z7E",
+                  "x": 8,
+                  "y": 347,
                   "name": "其他实例前分隔",
-                  "width": "fill_container",
+                  "enabled": false,
+                  "width": "fill_container(224)",
                   "height": 1,
                   "fill": "$line-soft"
                 },
@@ -21410,20 +21559,23 @@
                   "id": "ImdGU",
                   "name": "生产 OSS 实例",
                   "width": "fill_container",
-                  "height": 32,
+                  "height": 34,
                   "fill": "#00000000",
                   "cornerRadius": 5,
                   "gap": 7,
                   "padding": [
                     0,
-                    10
+                    12
                   ],
                   "alignItems": "center",
                   "children": [
                     {
                       "type": "icon",
                       "id": "MSoFe",
+                      "x": 12,
+                      "y": 11.5,
                       "name": "生产 OSS 实例展开图标",
+                      "enabled": false,
                       "width": 11,
                       "height": 11,
                       "icon": "chevron-right",
@@ -21459,20 +21611,23 @@
                   "id": "tBFWh",
                   "name": "测试 OSS 实例",
                   "width": "fill_container",
-                  "height": 32,
+                  "height": 34,
                   "fill": "#00000000",
                   "cornerRadius": 5,
                   "gap": 7,
                   "padding": [
                     0,
-                    10
+                    12
                   ],
                   "alignItems": "center",
                   "children": [
                     {
                       "type": "icon",
                       "id": "m4WS4a",
+                      "x": 12,
+                      "y": 11.5,
                       "name": "测试 OSS 实例展开图标",
+                      "enabled": false,
                       "width": 11,
                       "height": 11,
                       "icon": "chevron-right",
