@@ -42,6 +42,7 @@ public sealed class ObjectStorageViewTests
             Assert.True(download.IsVisible);
             AssertContained(WindowTestVisuals.ScreenBounds(view), WindowTestVisuals.ScreenBounds(download));
             var search = Assert.Single(WindowTestVisuals.Descendants<TextBox>(view), box => AutomationProperties.GetName(box) == "搜索当前目录文件名前缀");
+            Assert.Equal(32, search.ActualHeight);
             AssertContained(WindowTestVisuals.ScreenBounds(view), WindowTestVisuals.ScreenBounds(search));
             var checkbox = Assert.Single(WindowTestVisuals.Descendants<CheckBox>(rows), box => AutomationProperties.GetName(box) == "勾选 config.json");
             checkbox.IsChecked = true;
