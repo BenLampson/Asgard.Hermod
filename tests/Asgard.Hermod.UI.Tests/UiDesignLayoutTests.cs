@@ -37,6 +37,7 @@ public sealed class UiDesignLayoutTests(WpfTestFixture fixture)
                     Assert.True(description.IsVisible);
                     Assert.Equal(model.TestDescription, description.Text);
                     await model.TestConnectionCommand.ExecuteAsync();
+                    await WindowPreviewCapture.VerifyAsync(window, $"wizard-{theme}-{step}-verified");
                 }
                 if (step < 5) model.NextCommand.Execute(null);
             }
