@@ -23479,6 +23479,709 @@
           "fontWeight": "normal"
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "aGbWV",
+      "x": 11864,
+      "y": -2850,
+      "name": "Hermod · 图标方案 10 选",
+      "width": 1292,
+      "fill": "#0E1015",
+      "cornerRadius": 20,
+      "layout": "vertical",
+      "gap": 28,
+      "padding": 48,
+      "children": [
+        {
+          "type": "frame",
+          "id": "j3ZK27",
+          "name": "Header",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "Sfxg6",
+              "name": "Title",
+              "fill": "#F2EBDD",
+              "content": "Hermod · 图标概念 ×10",
+              "fontFamily": "Inter",
+              "fontSize": 28,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "TIdcP",
+              "name": "Subtitle",
+              "fill": "#8A93A6",
+              "content": "10 个概念方向 · 图像生成暂未成功，当前为空白方案位",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "epJPs",
+          "name": "Row 1",
+          "width": "fill_container",
+          "gap": 24,
+          "children": [
+            {
+              "type": "frame",
+              "id": "mMWy5",
+              "name": "01 · 翼盔信使",
+              "width": "fill_container",
+              "fill": "#171A21",
+              "cornerRadius": 16,
+              "stroke": "#262B36",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "LxL8a",
+                  "name": "Icon canvas",
+                  "clip": true,
+                  "width": 196,
+                  "height": 196,
+                  "fill": "#10131A",
+                  "cornerRadius": 12,
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "u5kdU",
+                  "name": "Labels",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    2,
+                    0,
+                    4,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "YBuHK",
+                      "name": "ZH",
+                      "fill": "#E9E2D4",
+                      "content": "01 · 翼盔信使",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "mjiT7",
+                      "name": "EN",
+                      "fill": "#6E778C",
+                      "content": "Winged Helm",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "DPIIA",
+              "name": "02 · 八足天马",
+              "width": "fill_container",
+              "fill": "#171A21",
+              "cornerRadius": 16,
+              "stroke": "#262B36",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "i9sVmC",
+                  "name": "Icon canvas",
+                  "clip": true,
+                  "width": 196,
+                  "height": 196,
+                  "fill": "#10131A",
+                  "cornerRadius": 12,
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "M2MAqq",
+                  "name": "Labels",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    2,
+                    0,
+                    4,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "IGYaj",
+                      "name": "ZH",
+                      "fill": "#E9E2D4",
+                      "content": "02 · 八足天马",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "LUw5r",
+                      "name": "EN",
+                      "fill": "#6E778C",
+                      "content": "Sleipnir Stride",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "AOUlc",
+              "name": "03 · 符文之杖",
+              "width": "fill_container",
+              "fill": "#171A21",
+              "cornerRadius": 16,
+              "stroke": "#262B36",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "NdW5I",
+                  "name": "Icon canvas",
+                  "clip": true,
+                  "width": 196,
+                  "height": 196,
+                  "fill": "#10131A",
+                  "cornerRadius": 12,
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "c9QCOI",
+                  "name": "Labels",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    2,
+                    0,
+                    4,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "oyEq9",
+                      "name": "ZH",
+                      "fill": "#E9E2D4",
+                      "content": "03 · 符文之杖",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "a0L9qS",
+                      "name": "EN",
+                      "fill": "#6E778C",
+                      "content": "Gambanteinn",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "IqrFT",
+              "name": "04 · 彩虹之门",
+              "width": "fill_container",
+              "fill": "#171A21",
+              "cornerRadius": 16,
+              "stroke": "#262B36",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "hp0ld",
+                  "name": "Icon canvas",
+                  "clip": true,
+                  "width": 196,
+                  "height": 196,
+                  "fill": "#10131A",
+                  "cornerRadius": 12,
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "BQWNd",
+                  "name": "Labels",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    2,
+                    0,
+                    4,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "R9DPxD",
+                      "name": "ZH",
+                      "fill": "#E9E2D4",
+                      "content": "04 · 彩虹之门",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "TCoFn",
+                      "name": "EN",
+                      "fill": "#6E778C",
+                      "content": "Bifröst Portal",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "P86Xi",
+              "name": "05 · 号角传讯",
+              "width": "fill_container",
+              "fill": "#171A21",
+              "cornerRadius": 16,
+              "stroke": "#262B36",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "t6mYo",
+                  "name": "Icon canvas",
+                  "clip": true,
+                  "width": 196,
+                  "height": 196,
+                  "fill": "#10131A",
+                  "cornerRadius": 12,
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "IhQ44",
+                  "name": "Labels",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    2,
+                    0,
+                    4,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Lkxa9",
+                      "name": "ZH",
+                      "fill": "#E9E2D4",
+                      "content": "05 · 号角传讯",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "torGN",
+                      "name": "EN",
+                      "fill": "#6E778C",
+                      "content": "Gjallar Signal",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "sE3Bn",
+          "name": "Row 2",
+          "width": "fill_container",
+          "gap": 24,
+          "children": [
+            {
+              "type": "frame",
+              "id": "bC12l",
+              "name": "06 · 如尼翼印",
+              "width": "fill_container",
+              "fill": "#171A21",
+              "cornerRadius": 16,
+              "stroke": "#262B36",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "slzlA",
+                  "name": "Icon canvas",
+                  "clip": true,
+                  "width": 196,
+                  "height": 196,
+                  "fill": "#10131A",
+                  "cornerRadius": 12,
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "h1Ajd4",
+                  "name": "Labels",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    2,
+                    0,
+                    4,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "f0A22c",
+                      "name": "ZH",
+                      "fill": "#E9E2D4",
+                      "content": "06 · 如尼翼印",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "HF9BC",
+                      "name": "EN",
+                      "fill": "#6E778C",
+                      "content": "Runic H Wing",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "i8j2d",
+              "name": "07 · 疾飞之矛",
+              "width": "fill_container",
+              "fill": "#171A21",
+              "cornerRadius": 16,
+              "stroke": "#262B36",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "c6WN0",
+                  "name": "Icon canvas",
+                  "clip": true,
+                  "width": 196,
+                  "height": 196,
+                  "fill": "#10131A",
+                  "cornerRadius": 12,
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "xZG88",
+                  "name": "Labels",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    2,
+                    0,
+                    4,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "nouwe",
+                      "name": "ZH",
+                      "fill": "#E9E2D4",
+                      "content": "07 · 疾飞之矛",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "jE8hB",
+                      "name": "EN",
+                      "fill": "#6E778C",
+                      "content": "Spear in Flight",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "pOrpW",
+              "name": "08 · 敬畏之盔",
+              "width": "fill_container",
+              "fill": "#171A21",
+              "cornerRadius": 16,
+              "stroke": "#262B36",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "jfh0S",
+                  "name": "Icon canvas",
+                  "clip": true,
+                  "width": 196,
+                  "height": 196,
+                  "fill": "#10131A",
+                  "cornerRadius": 12,
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "FSIGI",
+                  "name": "Labels",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    2,
+                    0,
+                    4,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "HvwGS",
+                      "name": "ZH",
+                      "fill": "#E9E2D4",
+                      "content": "08 · 敬畏之盔",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Pw8eI",
+                      "name": "EN",
+                      "fill": "#6E778C",
+                      "content": "Ægishjálmur",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "I9MYU",
+              "name": "09 · 神殿之门",
+              "width": "fill_container",
+              "fill": "#171A21",
+              "cornerRadius": 16,
+              "stroke": "#262B36",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "p2kWJj",
+                  "name": "Icon canvas",
+                  "clip": true,
+                  "width": 196,
+                  "height": 196,
+                  "fill": "#10131A",
+                  "cornerRadius": 12,
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "c03ABa",
+                  "name": "Labels",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    2,
+                    0,
+                    4,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "GbYgD",
+                      "name": "ZH",
+                      "fill": "#E9E2D4",
+                      "content": "09 · 神殿之门",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "A0oPAd",
+                      "name": "EN",
+                      "fill": "#6E778C",
+                      "content": "Valhalla Gate",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qEqqV",
+              "name": "10 · 世界树链路",
+              "width": "fill_container",
+              "fill": "#171A21",
+              "cornerRadius": 16,
+              "stroke": "#262B36",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "mPUQ8",
+                  "name": "Icon canvas",
+                  "clip": true,
+                  "width": 196,
+                  "height": 196,
+                  "fill": "#10131A",
+                  "cornerRadius": 12,
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "rrLqy",
+                  "name": "Labels",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    2,
+                    0,
+                    4,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "aXuXK",
+                      "name": "ZH",
+                      "fill": "#E9E2D4",
+                      "content": "10 · 世界树链路",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "oBfI4",
+                      "name": "EN",
+                      "fill": "#6E778C",
+                      "content": "Yggdrasil Route",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "themes": {
