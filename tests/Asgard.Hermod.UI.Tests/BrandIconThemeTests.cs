@@ -1,3 +1,4 @@
+using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using Asgard.Hermod.UI.Views.Shell;
 
@@ -60,6 +61,10 @@ public sealed class BrandIconThemeTests(WpfTestFixture fixture)
                 var icon = Assert.IsAssignableFrom<ImageSource>(Application.Current.Resources["HermodWindowIcon"]);
                 Assert.Same(icon, owner.Icon);
                 Assert.Same(icon, dialog.Icon);
+                VerifyNativeIcon(owner, 0);
+                VerifyNativeIcon(owner, 1);
+                VerifyNativeIcon(dialog, 0);
+                VerifyNativeIcon(dialog, 1);
                 Assert.Same(Application.Current.Resources["HermodLogo"], Assert.IsType<Image>(title.FindName("BrandLogo")).Source);
                 var caption = Assert.Single(WindowTestVisuals.Descendants<HermodTitleBar>(dialog));
                 Assert.Same(icon, Assert.Single(WindowTestVisuals.Descendants<Image>(caption)).Source);
@@ -76,6 +81,39 @@ public sealed class BrandIconThemeTests(WpfTestFixture fixture)
             themes.SetTheme(UiTheme.Light);
         }
     });
+
+    /// <summary>读取 Windows 实际使用的大、小图标，防止最小帧居中贴入大画布导致主体缩小。</summary>
+    private static void VerifyNativeIcon(Window window, int kind)
+    {
+        var handle = WindowIconNativeMethods.SendMessage(new WindowInteropHelper(window).Handle, 0x007F, kind, 0);
+        Assert.NotEqual(nint.Zero, handle);
+        var bitmap = Imaging.CreateBitmapSourceFromHIcon(handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+        var pixels = ReadPixels(bitmap);
+        var minX = bitmap.PixelWidth;
+        var minY = bitmap.PixelHeight;
+        var maxX = -1;
+        var maxY = -1;
+        for (var y = 0; y < bitmap.PixelHeight; y++)
+            for (var x = 0; x < bitmap.PixelWidth; x++)
+            {
+                // 忽略低透明度的重采样边缘，只计算实际可见轮廓。
+                if (pixels[(y * bitmap.PixelWidth + x) * 4 + 3] < 96) continue;
+                minX = Math.Min(minX, x);
+                minY = Math.Min(minY, y);
+                maxX = Math.Max(maxX, x);
+                maxY = Math.Max(maxY, y);
+            }
+        Assert.True(maxX - minX + 1 >= bitmap.PixelWidth * 0.75, "Native icon must fill its width.");
+        Assert.True(maxY - minY + 1 >= bitmap.PixelHeight * 0.85, "Native icon must fill its height.");
+
+        string? directory = Environment.GetEnvironmentVariable("HERMOD_UI_PREVIEW_DIR");
+        if (string.IsNullOrWhiteSpace(directory)) return;
+        Directory.CreateDirectory(directory);
+        var encoder = new PngBitmapEncoder();
+        encoder.Frames.Add(BitmapFrame.Create(bitmap));
+        using var stream = File.Create(Path.Combine(directory, $"brand-native-{kind}.png"));
+        encoder.Save(stream);
+    }
 
     /// <summary>转换为非预乘 BGRA，使透明度和配色断言不依赖原始编码格式。</summary>
     private static byte[] ReadPixels(BitmapSource source)
