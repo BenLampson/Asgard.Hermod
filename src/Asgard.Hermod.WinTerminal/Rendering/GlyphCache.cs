@@ -77,10 +77,18 @@ public sealed class GlyphCache : IDisposable
     /// <summary>处理 ResolveTypeface 对应的终端协议或渲染逻辑。</summary>
     private static GlyphTypeface ResolveTypeface(FontFamily fontFamily, FontWeight weight, FontStyle style, FontStretch stretch)
     {
-        Typeface typeface = new(fontFamily, style, weight, stretch);
-        if (!typeface.TryGetGlyphTypeface(out GlyphTypeface? glyphTypeface) || glyphTypeface is null)
-            throw new InvalidOperationException($"Unable to resolve glyph typeface for '{fontFamily.Source}'.");
-        return glyphTypeface;
+        // 复合 FontFamily 不提供单一 GlyphTypeface；逐项解析才能保留打包等宽主字体的度量。
+        // pack://application:,,, 内的三个逗号属于 URI，不是字体分隔符。
+        foreach (string candidate in System.Text.RegularExpressions.Regex.Split(fontFamily.Source, @"(?<![:,]),(?!,)").Select(value => value.Trim()).Where(value => value.Length != 0))
+        {
+            const string packRoot = "pack://application:,,,/";
+            var resolved = candidate.StartsWith(packRoot, StringComparison.OrdinalIgnoreCase)
+                ? new FontFamily(new Uri(packRoot), "./" + candidate[packRoot.Length..]) : new FontFamily(candidate);
+            Typeface typeface = new(resolved, style, weight, stretch);
+            if (typeface.TryGetGlyphTypeface(out GlyphTypeface? glyphTypeface) && glyphTypeface is not null)
+                return glyphTypeface;
+        }
+        throw new InvalidOperationException($"Unable to resolve glyph typeface for '{fontFamily.Source}'.");
     }
 
     /// <summary>处理 MeasureMetrics 对应的终端协议或渲染逻辑。</summary>
