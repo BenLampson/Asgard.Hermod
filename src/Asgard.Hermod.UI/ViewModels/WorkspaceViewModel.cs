@@ -32,7 +32,8 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
                 SelectedTab = page;
         });
         CloseTabCommand = new AsyncRelayCommand(value =>
-            value is WorkspacePageViewModel page ? CloseTabAsync(page) : Task.CompletedTask);
+            value is WorkspacePageViewModel page ? CloseTabAsync(page) : Task.CompletedTask,
+            value => _disposeTask is null && value is WorkspacePageViewModel { CanClose: true, IsClosed: false } page && Tabs.Contains(page));
     }
 
     /// <summary>活动页变化后同步侧栏状态。</summary>
