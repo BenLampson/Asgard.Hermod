@@ -3,6 +3,78 @@ namespace Asgard.Hermod.Sync.Tests;
 /// <summary>自动同步通过真实 HTTP API 验证跨设备合并、冲突和本机账户隔离。</summary>
 public sealed class ConfigurationSyncServiceTests
 {
+    /// <summary>同步标记刷新失败只能保守隐藏已同步状态，不能把成功保存误报成失败。</summary>
+    [Fact]
+    public async Task InstanceStatus_ExportFailureDoesNotFailCommittedLocalChange()
+    {
+        await using var host = new ApiTestHost(); await host.InitializeAsync();
+        var states = new MemoryConfigurationSyncStateStore();
+        var local = new MemorySyncWorkspace(states) { Value = Initial };
+        using var sync = new ConfigurationSyncService(Account(host), local, states, new SyncTestClientFactory(host), Options(host), new ConfigurationTestRegistry());
+        await sync.EnableAsync(Password, TestContext.Current.CancellationToken);
+        await sync.SynchronizeAsync(TestContext.Current.CancellationToken);
+        await sync.RunLocalChangeAsync(() =>
+        {
+            local.Value = Initial with { Instances = [Initial.Instances[0] with { Name = "Committed change" }] };
+            local.RejectExport = true;
+            return Task.CompletedTask;
+        }, TestContext.Current.CancellationToken);
+        Assert.Equal("Committed change", local.Value.Instances[0].Name);
+        Assert.Equal(ConfigurationSyncStatus.Pending, sync.GetInstanceStatus("one"));
+        local.RejectExport = false;
+        await sync.SynchronizeAsync(TestContext.Current.CancellationToken);
+        Assert.Equal(ConfigurationSyncStatus.Synced, sync.GetInstanceStatus("one"));
+    }
+
+    /// <summary>实例独立比较配置及关联标签；其他实例待上传不能清除已同步标志。</summary>
+    [Fact]
+    public async Task InstanceStatus_FollowsOwnContentAndHidesAfterSignOut()
+    {
+        await using var host = new ApiTestHost(); await host.InitializeAsync();
+        var states = new MemoryConfigurationSyncStateStore();
+        var second = Initial.Instances[0] with { Id = "two", Name = "Second" };
+        var root = new SyncedTag("root", "Root", null, "#112233", false);
+        var child = new SyncedTag("child", "Child", "root", "#112233", false);
+        var local = new MemorySyncWorkspace(states)
+        {
+            Value = Initial with
+            {
+                Instances = [Initial.Instances[0] with { TagIds = ["child"] }, second],
+                Tags = [root, child],
+            }
+        };
+        var account = Account(host);
+        using var sync = new ConfigurationSyncService(account, local, states, new SyncTestClientFactory(host), Options(host), new ConfigurationTestRegistry());
+        await sync.PrepareWorkspaceAsync(TestContext.Current.CancellationToken);
+        Assert.Equal(ConfigurationSyncStatus.PasswordRequired, sync.GetInstanceStatus("one"));
+        await sync.EnableAsync(Password, TestContext.Current.CancellationToken);
+        await sync.SynchronizeAsync(TestContext.Current.CancellationToken);
+        Assert.Equal(ConfigurationSyncStatus.Synced, sync.GetInstanceStatus("one"));
+        Assert.Equal(ConfigurationSyncStatus.Synced, sync.GetInstanceStatus("two"));
+        await sync.RunLocalChangeAsync(() =>
+        {
+            local.Value = local.Value with { Tags = [root with { Name = "Renamed root" }, child] };
+            return Task.CompletedTask;
+        }, TestContext.Current.CancellationToken);
+        Assert.Equal(ConfigurationSyncStatus.Pending, sync.GetInstanceStatus("one"));
+        Assert.Equal(ConfigurationSyncStatus.Synced, sync.GetInstanceStatus("two"));
+        await sync.SynchronizeAsync(TestContext.Current.CancellationToken);
+        await sync.RunLocalChangeAsync(() =>
+        {
+            local.Value = local.Value with { Instances = [local.Value.Instances[0], second with { Name = "Edited second" }, second with { Id = "three" }] };
+            return Task.CompletedTask;
+        }, TestContext.Current.CancellationToken);
+        Assert.Equal(ConfigurationSyncStatus.Synced, sync.GetInstanceStatus("one"));
+        Assert.Equal(ConfigurationSyncStatus.Pending, sync.GetInstanceStatus("two"));
+        Assert.Equal(ConfigurationSyncStatus.Pending, sync.GetInstanceStatus("three"));
+        await sync.SynchronizeAsync(TestContext.Current.CancellationToken);
+        Assert.Equal(ConfigurationSyncStatus.Synced, sync.GetInstanceStatus("three"));
+        account.Change("user-b");
+        Assert.NotEqual(ConfigurationSyncStatus.Synced, sync.GetInstanceStatus("one"));
+        account.Change(null);
+        Assert.Equal(ConfigurationSyncStatus.Local, sync.GetInstanceStatus("one"));
+    }
+
     /// <summary>后台服务在密码设置和本地更改后自行上传，不需要手动同步命令。</summary>
     [Fact]
     public async Task BackgroundSync_UploadsAfterUnlockAndLocalChanges()
@@ -64,6 +136,7 @@ public sealed class ConfigurationSyncServiceTests
         l2.Value = Initial with { Instances = [Initial.Instances[0] with { Name = "Local change" }] };
         await first.SynchronizeAsync(TestContext.Current.CancellationToken); await second.SynchronizeAsync(TestContext.Current.CancellationToken); Assert.Equal(ConfigurationSyncStatus.Conflict, second.Status);
         var conflict = Assert.Single(second.Conflicts); Assert.Equal("Local change", l2.Value.Instances[0].Name);
+        Assert.Equal(ConfigurationSyncStatus.Conflict, second.GetInstanceStatus("one"));
         await second.ResolveAsync(new Dictionary<string, bool> { [conflict.Key] = true }, TestContext.Current.CancellationToken); Assert.Equal("Cloud change", l2.Value.Instances[0].Name);
         await Assert.ThrowsAsync<InvalidOperationException>(() => second.EnableAsync("wrong-password-123", TestContext.Current.CancellationToken)); Assert.True(second.HasPassword);
         await second.SynchronizeAsync(TestContext.Current.CancellationToken); Assert.Equal(ConfigurationSyncStatus.Synced, second.Status);
@@ -93,6 +166,7 @@ public sealed class ConfigurationSyncServiceTests
         l1.Value = Initial with { Instances = [Initial.Instances[0] with { Name = "Cloud update" }] }; await first.SynchronizeAsync(TestContext.Current.CancellationToken);
         l2.RejectApply = true; await Assert.ThrowsAsync<InvalidOperationException>(() => second.SynchronizeAsync(TestContext.Current.CancellationToken));
         Assert.Equal("Original", l2.Value.Instances[0].Name); l2.RejectApply = false;
+        Assert.Equal(ConfigurationSyncStatus.Failed, second.GetInstanceStatus("one"));
         await second.SynchronizeAsync(TestContext.Current.CancellationToken); Assert.Equal("Cloud update", l2.Value.Instances[0].Name);
     }
 }

@@ -41,6 +41,13 @@ the replacement account.
   sign-in badge: password required, pending, synchronizing, synchronized, conflict,
   or failed. Its tooltip shows the full status message. The account window shows
   the last fully successful synchronization time.
+- Each instance has its own cloud status mark. Signed-out local mode and the
+  built-in local terminal have no cloud mark. A green cloud check means its
+  configuration and related tags match confirmed cloud content, using the last
+  successful baseline until a fresh cloud read completes. New or edited content
+  remains pending until confirmed. An unrelated instance's pending edit does not
+  clear an already synchronized instance's mark. Tooltips distinguish password
+  required, pending, synchronizing, failed, and conflict states.
 - Each device keeps a DPAPI-protected last synchronized baseline. The client
   compares baseline, current local content and latest cloud content by stable IDs
   and fields. Independent changes merge automatically; identical final values

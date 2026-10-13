@@ -41,6 +41,14 @@ Both editors preserve the same two-way binding and maximum length. Hiding the
 password, hiding or closing the window, and reapplying the template clear the
 plain-text editor; its undo history is disabled. Visibility is never persisted.
 
+Instance navigation puts the registered type icon before the instance name and
+the provider brand after it. The collapsed rail retains the type icon with small
+brand and cloud status marks. Tooltips and accessibility labels identify each
+role. The creation wizard uses one outer scroll viewer for its body; type and
+provider card lists do not intercept the mouse wheel with nested scroll viewers.
+Save notifications and creation callbacks update navigation by stable instance
+ID, preserving the existing item and preventing duplicate rows.
+
 ## Composition
 
 The application calls the independently owned registration entry points:

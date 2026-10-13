@@ -2115,4 +2115,16 @@
   <data name="SyncBadgeSynced" xml:space="preserve"><value>已同步</value></data>
   <data name="SyncBadgeConflict" xml:space="preserve"><value>同步冲突</value></data>
   <data name="SyncBadgeFailed" xml:space="preserve"><value>同步失败</value></data>
+  <data name="InstanceTypeHint" xml:space="preserve"><value>类型：{0}</value></data>
+  <data name="InstanceProviderHint" xml:space="preserve"><value>服务商：{0}</value></data>
+  <data name="InstanceNavigationInfo" xml:space="preserve"><value>{0} · {1} · {2}</value></data>
+  <data name="InstanceNavigationTypeInfo" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="InstanceNavigationCloudInfo" xml:space="preserve"><value>{0} · {1} · {2}。{3}</value></data>
+  <data name="InstanceSyncLocal" xml:space="preserve"><value>保存在本机。</value></data>
+  <data name="InstanceSyncSynced" xml:space="preserve"><value>此配置已同步到云端。</value></data>
+  <data name="InstanceSyncPending" xml:space="preserve"><value>此配置的更改等待同步。</value></data>
+  <data name="InstanceSyncSynchronizing" xml:space="preserve"><value>正在同步此配置。</value></data>
+  <data name="InstanceSyncPasswordRequired" xml:space="preserve"><value>此配置尚未同步，请设置或解锁同步密码。</value></data>
+  <data name="InstanceSyncConflict" xml:space="preserve"><value>此配置尚未同步，请处理同步冲突。</value></data>
+  <data name="InstanceSyncFailed" xml:space="preserve"><value>此配置尚未同步，本机更改已保留，等待重试。</value></data>
 </root>

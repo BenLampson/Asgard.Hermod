@@ -28,7 +28,8 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
         _sync = sync;
         if (sync is not null) sync.Changed += OnSyncChanged;
         Workspace = new WorkspaceViewModel(source, terminalFactory, pageFactory, registry, recentInstances);
-        Sidebar = new InstanceSidebarViewModel(source, editor, Workspace.OpenInstance, Workspace.OpenLocalTerminal, tags);
+        Sidebar = new InstanceSidebarViewModel(source, editor, Workspace.OpenInstance, Workspace.OpenLocalTerminal, tags,
+            registry, id => IsSignedIn ? _sync?.GetInstanceStatus(id) ?? ConfigurationSyncStatus.PasswordRequired : ConfigurationSyncStatus.Local);
         Workspace.Home.AddInstanceCommand = Sidebar.AddInstanceCommand;
         Workspace.Home.OpenLocalTerminalCommand = Sidebar.OpenLocalTerminalCommand;
         Workspace.Home.Refresh(Sidebar.AllInstances);
@@ -161,6 +162,9 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     /// <summary>发布 JWT 用户名与账号状态的绑定变化。</summary>
     private void OnAccountChanged(object? sender, EventArgs args)
     {
+        if (!_dispatcher.CheckAccess()) { _dispatcher.BeginInvoke(() => OnAccountChanged(sender, args)); return; }
+        if (_disposed) return;
+        Sidebar.RefreshSyncStates();
         OnPropertyChanged(nameof(AccountName)); OnPropertyChanged(nameof(AccountInitials));
         OnPropertyChanged(nameof(IsSignedIn)); OnPropertyChanged(nameof(AccountStatus));
         OnPropertyChanged(nameof(WorkspaceName)); OnPropertyChanged(nameof(SyncStatusText)); OnPropertyChanged(nameof(HasSyncStatus));
@@ -175,6 +179,7 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     {
         if (!_dispatcher.CheckAccess()) { _dispatcher.BeginInvoke(() => OnSyncChanged(sender, args)); return; }
         if (_disposed) return;
+        Sidebar.RefreshSyncStates();
         OnPropertyChanged(nameof(SyncStatusText)); OnPropertyChanged(nameof(HasSyncStatus));
         OnPropertyChanged(nameof(SyncStatus)); OnPropertyChanged(nameof(SyncStatusLabel));
         if (_sync?.Status is ConfigurationSyncStatus.Synced or ConfigurationSyncStatus.Local or ConfigurationSyncStatus.PasswordRequired)

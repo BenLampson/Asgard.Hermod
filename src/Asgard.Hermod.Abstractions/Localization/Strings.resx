@@ -2115,4 +2115,16 @@
   <data name="SyncBadgeSynced" xml:space="preserve"><value>Synced</value></data>
   <data name="SyncBadgeConflict" xml:space="preserve"><value>Sync conflict</value></data>
   <data name="SyncBadgeFailed" xml:space="preserve"><value>Sync failed</value></data>
+  <data name="InstanceTypeHint" xml:space="preserve"><value>Type: {0}</value></data>
+  <data name="InstanceProviderHint" xml:space="preserve"><value>Provider: {0}</value></data>
+  <data name="InstanceNavigationInfo" xml:space="preserve"><value>{0} · {1} · {2}</value></data>
+  <data name="InstanceNavigationTypeInfo" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="InstanceNavigationCloudInfo" xml:space="preserve"><value>{0} · {1} · {2}. {3}</value></data>
+  <data name="InstanceSyncLocal" xml:space="preserve"><value>Stored on this device.</value></data>
+  <data name="InstanceSyncSynced" xml:space="preserve"><value>This configuration is synchronized to the cloud.</value></data>
+  <data name="InstanceSyncPending" xml:space="preserve"><value>Changes to this configuration are waiting to synchronize.</value></data>
+  <data name="InstanceSyncSynchronizing" xml:space="preserve"><value>This configuration is synchronizing.</value></data>
+  <data name="InstanceSyncPasswordRequired" xml:space="preserve"><value>This configuration has not synchronized. Set or unlock the synchronization password.</value></data>
+  <data name="InstanceSyncConflict" xml:space="preserve"><value>This configuration has not synchronized. Resolve the synchronization conflicts.</value></data>
+  <data name="InstanceSyncFailed" xml:space="preserve"><value>This configuration has not synchronized. Local changes are preserved for retry.</value></data>
 </root>

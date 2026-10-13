@@ -7,6 +7,7 @@ internal sealed class AutomaticSyncUiTestService : IConfigurationSyncService
     public string Message => Asgard.Hermod.Abstractions.Localization.Text.Get("SyncStatus" + Status);
     public DateTime? LastSyncedAt { get; private set; }
     public bool HasPassword { get; private set; }
+    public ConfigurationSyncStatus GetInstanceStatus(string instanceId) => Status;
     public IReadOnlyList<ConfigurationConflict> Conflicts { get; set; } = [];
     public event EventHandler? Changed;
     public int Checks { get; private set; }

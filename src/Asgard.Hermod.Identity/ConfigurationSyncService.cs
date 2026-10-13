@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 namespace Asgard.Hermod.Identity;
 
 /// <summary>同步与账户工作区切换串行；离线修改保留，只有无歧义的合并才提交。</summary>
-public sealed class ConfigurationSyncService : BackgroundService, IConfigurationSyncService
+public sealed partial class ConfigurationSyncService : BackgroundService, IConfigurationSyncService
 {
     private readonly IAccountService _accounts;
     private readonly ILocalWorkspaceStore _local;
@@ -85,7 +85,10 @@ public sealed class ConfigurationSyncService : BackgroundService, IConfiguration
     public Task RunLocalChangeAsync(Func<Task> action, CancellationToken cancellationToken = default) => RunAsync(async (account, _) =>
     {
         await SwitchWorkspaceAsync(account, cancellationToken);
-        await action(); RequestSync();
+        var state = _store.Load(account is null ? "" : Owner(account));
+        await action();
+        await RefreshCloudInstanceStateAsync(account, state.Baseline, cancellationToken);
+        RequestSync();
     }, cancellationToken, false);
 
     /// <summary>登录前配置保留为本地副本；不同账户绝不共享当前工作区。</summary>
@@ -104,6 +107,7 @@ public sealed class ConfigurationSyncService : BackgroundService, IConfiguration
         }
         var state = _store.Load(owner);
         HasPassword = account is not null && state.Password is not null; LastSyncedAt = state.LastSyncedAt;
+        await RefreshCloudInstanceStateAsync(account, state.Baseline, cancellationToken);
         if (account is null) { Conflicts = []; SetStatus(ConfigurationSyncStatus.Local); }
         else if (!HasPassword) { Conflicts = []; SetStatus(ConfigurationSyncStatus.PasswordRequired); }
     }
@@ -151,6 +155,7 @@ public sealed class ConfigurationSyncService : BackgroundService, IConfiguration
             if (cloud.Protection is null && cloud.LegacyWorkspace is null)
                 remote = remote with { Tags = local.Tags.Where(tag => tag.IsBuiltIn).ToArray() };
             _local.Validate(remote);
+            UpdateCloudInstanceState(account, local, remote);
             if (choices is not null && (cloud.Revision != _conflictRevision || !WorkspaceContent.Equal(local, _conflictLocal))) choices = null;
             var merge = new WorkspaceMerge(); var candidate = merge.Merge(state.Baseline, local, remote, choices);
             Conflicts = merge.Conflicts.ToArray();
@@ -178,7 +183,9 @@ public sealed class ConfigurationSyncService : BackgroundService, IConfiguration
                 candidate = await Task.Run(() => _codec.Decode(cloud, state.Password!, owner), cancellationToken);
             }
             // 应用失败保留旧共同基准，下次仍能区分云端新增与网络期间的本机编辑。
+            UpdateCloudInstanceState(account, local, candidate);
             if (!WorkspaceContent.Equal(local, candidate)) await _local.RestoreIfUnchangedAsync(candidate, local, cancellationToken);
+            UpdateCloudInstanceState(account, candidate, candidate);
             _store.Save(owner, state with { Baseline = candidate, WorkingCopy = candidate, Revision = cloud.Revision, LastSyncedAt = DateTime.UtcNow });
             LastSyncedAt = DateTime.UtcNow; Conflicts = []; _conflictLocal = null; _conflictRevision = null;
             SetStatus(ConfigurationSyncStatus.Synced);

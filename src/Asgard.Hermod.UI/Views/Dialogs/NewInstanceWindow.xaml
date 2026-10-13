@@ -57,6 +57,17 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        <!-- 卡片共用正文滚动区域，列表内部不创建会吞掉滚轮的 ScrollViewer。 -->
+        <Style x:Key="WizardCardList" TargetType="ListBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBox"><ItemsPresenter /></ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemsPanel">
+                <Setter.Value><ItemsPanelTemplate><StackPanel /></ItemsPanelTemplate></Setter.Value>
+            </Setter>
+        </Style>
         <!-- 列表负责服务商选中同步，卡片复用全局选项外观。 -->
         <Style x:Key="ProviderListItem" TargetType="ListBoxItem">
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -154,14 +165,14 @@
                 </ItemsControl>
             </StackPanel>
         </Border>
-        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <ScrollViewer x:Name="WizardScroll" Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel Margin="28" IsEnabled="{Binding IsInformationEditable}">
                 <TextBlock Text="{Binding StepTitle}" FontSize="24" FontWeight="SemiBold" />
                 <TextBlock Text="{Binding StepDescription}" FontSize="13" TextWrapping="Wrap"
                            Foreground="{DynamicResource TextMutedBrush}" Margin="0,16,0,24" />
                 <StackPanel Visibility="{Binding IsTypeStep, Converter={StaticResource WizardVisibility}}">
                     <TextBlock Text="{loc:Loc InstanceType}" Margin="0,0,0,8" />
-                    <ListBox x:Name="TypeList" ItemsSource="{Binding Types}" SelectedItem="{Binding SelectedType}"
+                    <ListBox x:Name="TypeList" Style="{StaticResource WizardCardList}" ItemsSource="{Binding Types}" SelectedItem="{Binding SelectedType}"
                              IsEnabled="{Binding IsTypeSelectionEditable}"
                              BorderThickness="0" Padding="0" Background="Transparent"
                              ItemContainerStyle="{StaticResource ProviderListItem}" HorizontalContentAlignment="Stretch"
@@ -177,7 +188,7 @@
                     </ListBox>
                     <StackPanel Visibility="{Binding HasTypeSelection, Converter={StaticResource WizardVisibility}}">
                     <TextBlock Text="{loc:Loc Provider}" Margin="0,16,0,8" />
-                    <ListBox x:Name="ProviderList" ItemsSource="{Binding Providers}" SelectedItem="{Binding SelectedProvider}"
+                    <ListBox x:Name="ProviderList" Style="{StaticResource WizardCardList}" ItemsSource="{Binding Providers}" SelectedItem="{Binding SelectedProvider}"
                              IsEnabled="{Binding IsTypeSelectionEditable}"
                              BorderThickness="0" Padding="0"
                              Background="Transparent" ItemContainerStyle="{StaticResource ProviderListItem}"

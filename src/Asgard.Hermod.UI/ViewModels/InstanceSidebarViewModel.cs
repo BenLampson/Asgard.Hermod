@@ -8,6 +8,8 @@ public sealed class InstanceSidebarViewModel : ObservableObject, IDisposable
     private readonly Action<InstanceItemViewModel> _openInstance;
     private readonly IWorkspaceDataSource _source;
     private readonly ITagManagementService? _tagService;
+    private readonly IInstanceProviderRegistry? _registry;
+    private readonly Func<string, ConfigurationSyncStatus>? _syncStatus;
     private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
     private IReadOnlyList<ManagedTag> _managedTags = [];
     private long _refreshRevision;
@@ -19,7 +21,8 @@ public sealed class InstanceSidebarViewModel : ObservableObject, IDisposable
 
     /// <summary>将应用层实例转换为共享导航条目。</summary>
     public InstanceSidebarViewModel(IWorkspaceDataSource source, IInstanceEditor editor,
-        Action<InstanceItemViewModel> openInstance, Action openLocalTerminal, ITagManagementService? tags = null)
+        Action<InstanceItemViewModel> openInstance, Action openLocalTerminal, ITagManagementService? tags = null,
+        IInstanceProviderRegistry? registry = null, Func<string, ConfigurationSyncStatus>? syncStatus = null)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(editor);
@@ -29,8 +32,10 @@ public sealed class InstanceSidebarViewModel : ObservableObject, IDisposable
         _openInstance = openInstance;
         _source = source;
         _tagService = tags;
+        _registry = registry;
+        _syncStatus = syncStatus;
         _items = new ObservableCollection<InstanceItemViewModel>(
-            source.GetInstances().Select(instance => new InstanceItemViewModel(instance)));
+            source.GetInstances().DistinctBy(instance => instance.Id).Select(CreateItem));
         Instances = new CollectionViewSource { Source = _items }.View;
         Instances.Filter = MatchesFilter;
         Instances.CollectionChanged += (_, _) => OnPropertyChanged(nameof(IsEmpty));
@@ -124,16 +129,18 @@ public sealed class InstanceSidebarViewModel : ObservableObject, IDisposable
         string[] selectedPaths = _selectedTagPaths.Where(path => !oldCatalog.Any(tag =>
             tag.Path.Equals(path, StringComparison.OrdinalIgnoreCase))).Concat(tags
             .Where(tag => selectedIds.Contains(tag.Id)).Select(tag => tag.Path)).ToArray();
+        var existingIds = new HashSet<string>(StringComparer.Ordinal);
         foreach (var item in _items.ToArray())
         {
             var summary = summaries.FirstOrDefault(value => value.Id == item.Id);
-            if (summary is null)
+            if (summary is null || !existingIds.Add(item.Id))
                 _items.Remove(item);
             else
                 item.UpdateSnapshot(summary);
         }
         foreach (var summary in summaries.Where(value => _items.All(item => item.Id != value.Id)))
-            _items.Add(new InstanceItemViewModel(summary));
+            _items.Add(CreateItem(summary));
+        RefreshSyncStates();
         ApplyTagFilter(selectedPaths, TagMatchMode);
         RefreshTags();
         RefreshFilter();
@@ -228,17 +235,36 @@ public sealed class InstanceSidebarViewModel : ObservableObject, IDisposable
     private async Task AddInstanceAsync()
     {
         InstanceSummary? created = await _editor.CreateAsync();
-        if (created is null)
+        if (created is null || _disposed)
             return;
         OperationError = "";
-        var instance = new InstanceItemViewModel(created);
-        _items.Add(instance);
+        // 保存通知可能已经刷新并插入该实例；按稳定 ID 更新，且淘汰保存前启动的旧刷新。
+        Interlocked.Increment(ref _refreshRevision);
+        var instance = _items.FirstOrDefault(item => item.Id == created.Id);
+        if (instance is null) { instance = CreateItem(created); _items.Add(instance); }
+        else instance.UpdateSnapshot(created);
+        RefreshSyncStates();
         Query = "";
         SelectedTag = null;
         RefreshTags();
         RefreshFilter();
         InstancesChanged?.Invoke(this, EventArgs.Empty);
         _openInstance(instance);
+    }
+
+    /// <summary>所有创建路径复用类型元数据和当前账户同步状态。</summary>
+    private InstanceItemViewModel CreateItem(InstanceSummary summary)
+    {
+        var item = new InstanceItemViewModel(summary, _registry);
+        item.UpdateSyncStatus(_syncStatus?.Invoke(summary.Id) ?? ConfigurationSyncStatus.Local);
+        return item;
+    }
+
+    /// <summary>后台状态变化只更新标记，不需要重新读取实例或重建集合。</summary>
+    public void RefreshSyncStates()
+    {
+        foreach (var item in _items)
+            item.UpdateSyncStatus(_syncStatus?.Invoke(item.Id) ?? ConfigurationSyncStatus.Local);
     }
 
     /// <summary>关闭外壳时释放目录订阅，不让持久化事件继续访问已销毁视图。</summary>

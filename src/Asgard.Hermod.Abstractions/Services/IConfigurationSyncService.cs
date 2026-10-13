@@ -11,6 +11,8 @@ public interface IConfigurationSyncService
     DateTime? LastSyncedAt { get; }
     /// <summary>当前账户是否已经在本机保存同步密码。</summary>
     bool HasPassword { get; }
+    /// <summary>比较当前实例配置与最近成功云端基准；本地账户没有同步概念。</summary>
+    ConfigurationSyncStatus GetInstanceStatus(string instanceId);
     /// <summary>当前版本中等待用户处理的冲突。</summary>
     IReadOnlyList<ConfigurationConflict> Conflicts { get; }
     /// <summary>后台状态与云端应用后的更新通知。</summary>

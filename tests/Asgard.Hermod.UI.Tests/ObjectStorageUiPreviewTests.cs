@@ -19,7 +19,7 @@ public sealed class ObjectStorageUiPreviewTests(WpfTestFixture fixture)
         themes.SetTheme(theme);
         var source = new ObjectStorageWorkspaceDataSource
         {
-            Instance = new("oss-instance", "生产资源", "生产资源", "cloud", ["Production"],
+            Instance = new("oss-instance", "生产资源", "生产资源", "provider-aliyun-oss", ["Production"],
                 Endpoint: "阿里云 OSS", TypeId: "storage", ProviderId: "aliyun-oss")
         };
         var service = CreateService();
@@ -60,7 +60,11 @@ public sealed class ObjectStorageUiPreviewTests(WpfTestFixture fixture)
             Assert.Equal(12, instanceName.FontSize);
             Assert.Equal(FontWeights.SemiBold, instanceName.FontWeight);
             Assert.Same(Application.Current.Resources["AccentTextBrush"], instanceName.Foreground);
-            var instanceIcon = Assert.Single(WindowTestVisuals.Descendants<IconView>(instanceButton));
+            var instanceIcon = Assert.Single(WindowTestVisuals.Descendants<IconView>(instanceButton), icon => icon.Name == "InstanceTypeIcon");
+            Assert.Equal("database", instanceIcon.Kind);
+            var brand = Assert.Single(WindowTestVisuals.Descendants<IconView>(instanceButton), icon => icon.Name == "InstanceProviderIcon");
+            Assert.Equal("provider-aliyun-oss", brand.Kind);
+            Assert.True(brand.IsVisible);
             Assert.Equal(15, instanceIcon.ActualWidth);
             Assert.Same(Application.Current.Resources["WarningBrush"], instanceIcon.Foreground);
             Assert.DoesNotContain(WindowTestVisuals.Descendants<TextBlock>(view),
@@ -93,7 +97,7 @@ public sealed class ObjectStorageUiPreviewTests(WpfTestFixture fixture)
                 button => button.IsVisible && ReferenceEquals(button.Command, shell.Sidebar.OpenInstanceCommand));
             Assert.Equal(36, collapsedButton.ActualWidth);
             Assert.Same(item, collapsedButton.CommandParameter);
-            var collapsedIcon = Assert.Single(WindowTestVisuals.Descendants<IconView>(collapsedButton));
+            var collapsedIcon = Assert.Single(WindowTestVisuals.Descendants<IconView>(collapsedButton), icon => icon.Kind == "database");
             Assert.Same(Application.Current.Resources["WarningBrush"], collapsedIcon.Foreground);
             WindowTestVisuals.Invoke(collapsedButton);
             Assert.Same(page, shell.Workspace.SelectedTab);

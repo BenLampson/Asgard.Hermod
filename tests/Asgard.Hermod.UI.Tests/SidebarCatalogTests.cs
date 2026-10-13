@@ -4,6 +4,32 @@ namespace Asgard.Hermod.UI.Tests;
 [Collection(WpfTestCollection.Name)]
 public sealed class SidebarCatalogTests(WpfTestFixture fixture)
 {
+    /// <summary>保存通知先刷新侧栏时，创建回调复用同一个条目，不追加重复实例。</summary>
+    [Fact]
+    public Task Create_AfterSaveNotificationRefresh_UpdatesExistingItemOnce() => fixture.RunAsync(async () =>
+    {
+        var source = new ObjectStorageWorkspaceDataSource();
+        var created = source.Instance with { Id = "new-instance", Name = "New instance" };
+        var editor = new FakeInstanceEditor();
+        InstanceItemViewModel? opened = null;
+        InstanceItemViewModel? refreshed = null;
+        using var sidebar = new InstanceSidebarViewModel(source, editor, item => opened = item, () => { });
+        editor.CreateHandler = async () =>
+        {
+            source.Instance = created;
+            await sidebar.RefreshAsync();
+            refreshed = Assert.Single(sidebar.AllInstances);
+            refreshed.IsSelected = true;
+            return created;
+        };
+        await sidebar.AddInstanceCommand.ExecuteAsync();
+        Assert.Null(sidebar.AddInstanceCommand.LastException);
+        Assert.Same(refreshed, Assert.Single(sidebar.AllInstances));
+        Assert.Same(refreshed, opened);
+        Assert.True(opened!.IsSelected);
+        Assert.Single(sidebar.Instances.Cast<InstanceItemViewModel>());
+    });
+
     /// <summary>尚未关联实例的标签也出现，改名和改色按稳定标识保留过滤及选中态。</summary>
     [Fact]
     public Task Refresh_PreservesSelectionAndFollowsTagRenameAndColor() => fixture.RunAsync(async () =>
