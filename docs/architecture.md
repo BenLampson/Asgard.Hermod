@@ -35,6 +35,12 @@ terminal and DPAPI projects target `net10.0-windows`. No module references the
 application executable. Shared UI does not reference object storage, persistence
 or cloud connectors.
 
+Password fields use the shared UI `SecretInput` control. It masks values by
+default and provides a localized eye button to show or hide the password.
+Both editors preserve the same two-way binding and maximum length. Hiding the
+password, hiding or closing the window, and reapplying the template clear the
+plain-text editor; its undo history is disabled. Visibility is never persisted.
+
 ## Composition
 
 The application calls the independently owned registration entry points:

@@ -2083,4 +2083,6 @@
   <data name="SyncSecretValue" xml:space="preserve"><value>Hidden value</value></data>
   <data name="SyncAccountChanged" xml:space="preserve"><value>Your account changed while this editor was open. Reopen the instance editor before saving; your entries have been retained.</value></data>
   <data name="SyncRememberedPasswordHelp" xml:space="preserve"><value>Use 12–128 characters and the same password on every device. This device remembers the password securely for automatic synchronization. Forgetting the saved password pauses synchronization without resetting the cloud password.</value></data>
+  <data name="ShowPassword" xml:space="preserve"><value>Show password</value></data>
+  <data name="HidePassword" xml:space="preserve"><value>Hide password</value></data>
 </root>

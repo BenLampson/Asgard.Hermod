@@ -26,6 +26,11 @@ public sealed class AutomaticSyncWindowTests(WpfTestFixture fixture)
             model.Password = "remembered-password"; Assert.True(model.CanConfirm);
             await WindowPreviewCapture.VerifyAsync(window, "automatic-password-" + language);
             window.Width = 480; window.Height = 480; await WindowPreviewCapture.VerifyAsync(window, "automatic-password-compact-" + language);
+            var input = Assert.IsType<SecretInput>(window.FindName("PasswordInput"));
+            var toggle = Assert.IsType<Button>(input.Template.FindName("PART_RevealButton", input));
+            toggle.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Assert.Equal("remembered-password", Assert.IsType<TextBox>(input.Template.FindName("PART_PlainEditor", input)).Text);
+            await WindowPreviewCapture.VerifyAsync(window, "automatic-password-visible-" + language);
         }
         finally { window?.Close(); CultureInfo.CurrentUICulture = previous; }
     });

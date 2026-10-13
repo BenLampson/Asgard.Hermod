@@ -2083,4 +2083,6 @@
   <data name="SyncSecretValue" xml:space="preserve"><value>已遮蔽的值</value></data>
   <data name="SyncAccountChanged" xml:space="preserve"><value>打开编辑器后账户发生了变化。请重新打开实例编辑器后保存，当前填写内容已保留。</value></data>
   <data name="SyncRememberedPasswordHelp" xml:space="preserve"><value>请使用 12–128 个字符，并在所有设备使用相同密码。本机安全记住密码以便自动同步。忘记本机密码会暂停同步，不会重置云端密码。</value></data>
+  <data name="ShowPassword" xml:space="preserve"><value>显示密码</value></data>
+  <data name="HidePassword" xml:space="preserve"><value>隐藏密码</value></data>
 </root>

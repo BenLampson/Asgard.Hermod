@@ -81,7 +81,7 @@
                         <Border x:Name="Chrome" CornerRadius="6" Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
                             <Grid>
-                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                                 <PasswordBox x:Name="PART_Editor" Background="Transparent" BorderThickness="0"
                                              FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}"
                                              Foreground="{TemplateBinding Foreground}" Padding="{TemplateBinding Padding}"
@@ -90,7 +90,18 @@
                                              CaretBrush="{DynamicResource TextPrimaryBrush}"
                                              SelectionBrush="{DynamicResource AccentWeakBrush}"
                                              AutomationProperties.Name="{Binding Path=(AutomationProperties.Name), RelativeSource={RelativeSource TemplatedParent}}" />
-                                <controls:IconView x:Name="ErrorIcon" Grid.Column="1" Kind="circle-alert"
+                                <TextBox x:Name="PART_PlainEditor" Style="{x:Null}" Visibility="Collapsed" IsUndoEnabled="False"
+                                         Background="Transparent" BorderThickness="0" FocusVisualStyle="{x:Null}"
+                                         FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}"
+                                         Foreground="{TemplateBinding Foreground}" Padding="{TemplateBinding Padding}"
+                                         VerticalContentAlignment="Center" MaxLength="{TemplateBinding MaxLength}"
+                                         CaretBrush="{DynamicResource TextPrimaryBrush}" SelectionBrush="{DynamicResource AccentWeakBrush}"
+                                         AutomationProperties.Name="{Binding Path=(AutomationProperties.Name), RelativeSource={RelativeSource TemplatedParent}}" />
+                                <Button x:Name="PART_RevealButton" Grid.Column="1" Style="{DynamicResource IconButton}"
+                                        Margin="0,0,4,0" VerticalAlignment="Center" IsDefault="False">
+                                    <controls:IconView x:Name="RevealIcon" Kind="eye" Width="16" Height="16" />
+                                </Button>
+                                <controls:IconView x:Name="ErrorIcon" Grid.Column="2" Kind="circle-alert"
                                                    Width="16" Height="16" Margin="0,0,10,0" Visibility="Collapsed"
                                                    Foreground="{DynamicResource DangerBrush}" VerticalAlignment="Center" />
                             </Grid>
@@ -100,6 +111,11 @@
                                 IsHitTestVisible="False" SnapsToDevicePixels="True" />
                     </Grid>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="IsPasswordVisible" Value="True">
+                            <Setter TargetName="PART_Editor" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_PlainEditor" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="RevealIcon" Property="Kind" Value="eye-off" />
+                        </Trigger>
                         <Trigger Property="IsKeyboardFocusWithin" Value="True">
                             <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                             <Setter TargetName="FocusRing" Property="Visibility" Value="Visible" />

@@ -46,7 +46,8 @@ public sealed class NewInstanceDialogEditTests(WpfTestFixture fixture)
                 var editor = Assert.IsType<PasswordBox>(secret.Template.FindName("PART_Editor", secret));
                 Assert.Equal("existing-modal-secret", editor.Password);
                 Assert.DoesNotContain(WindowTestVisuals.Descendants<TextBox>(dialog),
-                    control => control.DataContext is InstanceConfigurationFieldViewModel { Key: "accessKeySecret" });
+                    control => control.DataContext is InstanceConfigurationFieldViewModel { Key: "accessKeySecret" }
+                        && (control.IsVisible || control.Text.Length > 0));
                 model.CancelCommand.Execute(null);
                 await WpfTestFixture.DrainDispatcherAsync();
             });

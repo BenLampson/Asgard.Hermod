@@ -59,7 +59,8 @@ public sealed class NewInstanceDialogTests
                 Assert.Equal(128, key.MaxLength);
                 Assert.Equal(256, editor.MaxLength);
                 Assert.DoesNotContain(WindowTestVisuals.Descendants<TextBox>(dialog),
-                    input => input.DataContext is InstanceConfigurationFieldViewModel { Key: "accessKeySecret" });
+                    input => input.DataContext is InstanceConfigurationFieldViewModel { Key: "accessKeySecret" }
+                        && (input.IsVisible || input.Text.Length > 0));
 
                 await PressEnterAsync(dialog);
                 Assert.Equal(3, model.CurrentStep);
