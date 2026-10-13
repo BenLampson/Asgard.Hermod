@@ -79,6 +79,10 @@ carry stable icon IDs, with no UI assembly dependency. See the
 Startup validates the service container, initializes the database off the UI
 thread, applies the saved language preference and opens the main window. Windows
 display language is the default; unsupported languages fall back to English.
+Each launch opens only Home and does not save or restore the previous tabs.
+All tabs, including Home and tag pages, can be closed. Closing the last tab
+leaves an empty workspace; instances can still be opened from the sidebar.
+The Home recent-instance history remains persisted separately from open tabs.
 See [the localization guide](localization.md) for resource and extension rules.
 Closing the application waits for workspace
 resources to be released before disposing the service container.

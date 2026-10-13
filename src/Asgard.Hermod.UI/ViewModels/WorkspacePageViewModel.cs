@@ -28,7 +28,7 @@ public abstract class WorkspacePageViewModel : ObservableObject, IAsyncDisposabl
     public string Icon { get; }
     /// <summary>关联实例标识。</summary>
     public string? InstanceId { get; }
-    /// <summary>常驻页签禁止用户关闭。</summary>
+    /// <summary>是否允许用户关闭页签。</summary>
     public bool CanClose { get; }
     /// <summary>展示异常状态圆点。</summary>
     public bool HasAlert { get; }

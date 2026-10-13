@@ -168,7 +168,7 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     /// <summary>将页签选中态同步到展开和收起导航。</summary>
     private void OnSelectedTabChanged(object? sender, EventArgs args)
     {
-        Sidebar.SelectInstance(Workspace.SelectedTab.InstanceId);
+        Sidebar.SelectInstance(Workspace.SelectedTab?.InstanceId);
         if (Workspace.SelectedTab is { InstanceId: not null } page)
         {
             // 外壳只协调通用生命周期，功能模块自行处理远程资源。
@@ -176,8 +176,6 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
                 page.PropertyChanged += OnInstancePageChanged;
             _ = page.InitializeAsync();
         }
-        if (Workspace.SelectedTab.Id == "tag:production")
-            Sidebar.SelectedTag = "Production";
     }
 
     /// <summary>编辑连接改变标题时刷新实例快照，页签关闭及时移除更新订阅。</summary>

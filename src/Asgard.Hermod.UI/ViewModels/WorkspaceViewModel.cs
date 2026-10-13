@@ -6,11 +6,11 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
     private readonly IWorkspaceDataSource _source;
     private readonly ITerminalSessionFactory _terminalFactory;
     private readonly IInstanceWorkspaceFactory? _pageFactory;
-    private WorkspacePageViewModel _selectedTab;
+    private WorkspacePageViewModel? _selectedTab;
     private Task? _disposeTask;
     private int _terminalNumber;
 
-    /// <summary>建立 Pencil 中的初始页签，但不自动连接任何服务。</summary>
+    /// <summary>启动时仅打开首页，实例页签由用户主动打开。</summary>
     public WorkspaceViewModel(IWorkspaceDataSource source, ITerminalSessionFactory terminalFactory,
         IInstanceWorkspaceFactory? pageFactory = null, IInstanceProviderRegistry? registry = null,
         IRecentInstanceStore? recentInstances = null)
@@ -25,9 +25,6 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
         _selectedTab = Home;
         _selectedTab.IsSelected = true;
         Tabs.Add(_selectedTab);
-        foreach (var instance in source.GetInstances().Where(instance => !instance.IsLocal).Take(3))
-            Tabs.Add(CreateServicePage(new InstanceItemViewModel(instance)));
-        Tabs.Add(new EmptyWorkspaceViewModel("tag:production", Text.Get("Production"), "tag"));
         SelectTabCommand = new RelayCommand(value =>
         {
             if (value is WorkspacePageViewModel page && Tabs.Contains(page) && !page.IsClosed)
@@ -41,20 +38,19 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
     public event EventHandler? SelectedTabChanged;
     /// <summary>按显示顺序排列的页签。</summary>
     public ObservableCollection<WorkspacePageViewModel> Tabs { get; } = [];
-    /// <summary>常驻首页负责统计与本机最近访问。</summary>
+    /// <summary>首页负责统计与本机最近访问，关闭页签后仍维护访问记录。</summary>
     public HomeWorkspaceViewModel Home { get; }
-    /// <summary>当前工作页。</summary>
-    public WorkspacePageViewModel SelectedTab
+    /// <summary>当前工作页；全部页签关闭后为空。</summary>
+    public WorkspacePageViewModel? SelectedTab
     {
         get => _selectedTab;
         set
         {
-            ArgumentNullException.ThrowIfNull(value);
-            if (!Tabs.Contains(value) || value.IsClosed || ReferenceEquals(_selectedTab, value))
+            if (ReferenceEquals(_selectedTab, value) || value is not null && (!Tabs.Contains(value) || value.IsClosed))
                 return;
-            _selectedTab.IsSelected = false;
+            _selectedTab?.IsSelected = false;
             _selectedTab = value;
-            _selectedTab.IsSelected = true;
+            _selectedTab?.IsSelected = true;
             OnPropertyChanged();
             SelectedTabChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -91,14 +87,14 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
         Home.RecordOpened(local);
     }
 
-    /// <summary>关闭活动页时选择邻近页，常驻首页和分组保持存在。</summary>
+    /// <summary>关闭活动页时选择邻近页，最后一个页签关闭后清空内容。</summary>
     public async Task CloseTabAsync(WorkspacePageViewModel page)
     {
         if (!page.CanClose || !Tabs.Contains(page))
             return;
         int index = Tabs.IndexOf(page);
         if (ReferenceEquals(SelectedTab, page))
-            SelectedTab = Tabs[index > 0 ? index - 1 : 1];
+            SelectedTab = Tabs.Count == 1 ? null : Tabs[index > 0 ? index - 1 : 1];
         Tabs.Remove(page);
         await page.CloseAsync();
     }
@@ -111,7 +107,7 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
     private TerminalWorkspaceViewModel CreateTerminalPage(InstanceItemViewModel instance) =>
         new("terminal:" + ++_terminalNumber, instance, _terminalFactory);
 
-    /// <summary>应用退出时关闭所有页，包括常驻导航页。</summary>
+    /// <summary>应用退出时关闭所有页，不保存或恢复已打开的页签。</summary>
     public ValueTask DisposeAsync()
     {
         _disposeTask ??= CloseAllAsync();
@@ -121,6 +117,7 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
     /// <summary>统一启动关闭，让所有终端的清理都得到等待。</summary>
     private async Task CloseAllAsync()
     {
+        SelectedTab = null;
         Task[] closing = Tabs.Select(page => page.CloseAsync()).ToArray();
         Tabs.Clear();
         await Task.WhenAll(closing);

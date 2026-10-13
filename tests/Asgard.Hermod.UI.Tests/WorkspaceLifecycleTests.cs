@@ -83,7 +83,7 @@ public sealed class WorkspaceLifecycleTests
         await using var environment = new ShellTestEnvironment();
         var workspace = environment.Shell.Workspace;
         workspace.OpenInstance(environment.Local);
-        var originalPage = workspace.SelectedTab;
+        var originalPage = Assert.IsType<TerminalWorkspaceViewModel>(workspace.SelectedTab);
         var originalSession = Assert.Single(environment.Factory.Sessions);
 
         workspace.OpenInstance(environment.Local);

@@ -14,7 +14,7 @@ public sealed class HomeWorkspaceViewModel : WorkspacePageViewModel
     /// <summary>最近访问读取失败不阻止离线工作区启动。</summary>
     public HomeWorkspaceViewModel(Action<InstanceItemViewModel> openInstance,
         IInstanceProviderRegistry? registry = null, IRecentInstanceStore? store = null)
-        : base("home", "", "house", canClose: false)
+        : base("home", "", "house")
     {
         ArgumentNullException.ThrowIfNull(openInstance);
         _registry = registry;

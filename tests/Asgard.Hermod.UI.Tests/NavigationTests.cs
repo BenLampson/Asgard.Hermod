@@ -9,17 +9,20 @@ public sealed class NavigationTests
     /// <summary>使用集合级 STA 应用环境。</summary>
     public NavigationTests(WpfTestFixture fixture) => _fixture = fixture;
 
-    /// <summary>本地实例即使排在前三项，也不能在打开应用时自动启动。</summary>
+    /// <summary>启动和初始化仅保留选中的首页，不预打开实例或标签页签。</summary>
     [Fact]
-    public Task Construction_DoesNotStartShell_WhenLocalInstanceIsSecond() => _fixture.RunAsync(async () =>
+    public Task Startup_OpensOnlyHome_WhenInstancesAreAvailable() => _fixture.RunAsync(async () =>
     {
         await using var environment = new ShellTestEnvironment();
+        await environment.Shell.InitializeAsync();
 
         Assert.True(environment.Source.GetInstances()[1].IsLocal);
         Assert.Equal(0, environment.Factory.OpenAttempts);
-        Assert.DoesNotContain(environment.Shell.Workspace.Tabs, page => page is TerminalWorkspaceViewModel);
-        Assert.Equal(new[] { "heimdall", "bridge", "tyr" }, environment.Shell.Workspace.Tabs
-            .OfType<ServiceDetailViewModel>().Select(page => page.InstanceId));
+        var workspace = environment.Shell.Workspace;
+        Assert.Same(workspace.Home, Assert.Single(workspace.Tabs));
+        Assert.Same(workspace.Home, workspace.SelectedTab);
+        Assert.True(workspace.Home.IsSelected);
+        Assert.Null(environment.Shell.Sidebar.SelectedTag);
     });
 
     /// <summary>名称和标签必须同时匹配；清除其中一项不能覆盖另一项。</summary>
@@ -55,7 +58,7 @@ public sealed class NavigationTests
         Assert.Equal("tyr", Assert.Single(shell.Sidebar.Instances.Cast<InstanceItemViewModel>()).Id);
 
         shell.OpenGlobalSearchResultCommand.Execute(result);
-        Assert.Equal("heimdall", shell.Workspace.SelectedTab.InstanceId);
+        Assert.Equal("heimdall", Assert.IsType<ServiceDetailViewModel>(shell.Workspace.SelectedTab).InstanceId);
         Assert.Empty(shell.GlobalSearchQuery);
         Assert.Equal("Staging", shell.Sidebar.SelectedTag);
         Assert.Equal("Tyr", shell.Sidebar.Query);
@@ -96,7 +99,7 @@ public sealed class NavigationTests
         Assert.Null(shell.Sidebar.SelectedTag);
         Assert.Contains(shell.Sidebar.AllInstances, item => item.Id == "new-prod");
         Assert.Contains("New region", shell.Sidebar.AvailableTags);
-        Assert.Equal("new-prod", shell.Workspace.SelectedTab.InstanceId);
+        Assert.Equal("new-prod", Assert.IsType<ServiceDetailViewModel>(shell.Workspace.SelectedTab).InstanceId);
         Assert.Equal(0, environment.Factory.OpenAttempts);
     });
 }
