@@ -5,18 +5,17 @@
  xmlns:terminal="clr-namespace:Asgard.Hermod.WinTerminal;assembly=Asgard.Hermod.WinTerminal"
  Background="{DynamicResource SurfaceBrush}" SizeChanged="OnViewportSizeChanged">
  <UserControl.Resources><BooleanToVisibilityConverter x:Key="Visible" /></UserControl.Resources>
- <Grid>
-  <Grid.RowDefinitions><RowDefinition Height="64" /><RowDefinition Height="*" /><RowDefinition Height="28" /></Grid.RowDefinitions>
-  <Border BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,0,0,1" Padding="18,0">
+ <controls:WorkspacePageLayout x:Name="WorkspaceLayout" IsDetailsOpen="{Binding IsDetailsOpen}">
+  <controls:WorkspacePageLayout.Toolbar>
    <Grid>
-    <Grid.ColumnDefinitions><ColumnDefinition Width="32" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+    <Grid.ColumnDefinitions><ColumnDefinition Width="32" /><ColumnDefinition x:Name="IdentityColumn" Width="260" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
     <Border Width="32" Height="32" CornerRadius="7" Background="{DynamicResource AccentWeakBrush}"><controls:IconView Kind="terminal" Width="18" Height="18" Foreground="{DynamicResource AccentBrush}" /></Border>
     <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0" MaxWidth="300" HorizontalAlignment="Left">
      <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
      <TextBlock Text="{Binding RemoteIdentity}" FontSize="11" FontFamily="{DynamicResource MonoFont}" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
     </StackPanel>
     <controls:StatusBadge Grid.Column="2" Text="{Binding Status}" Tone="{Binding Tone}" VerticalAlignment="Center" Margin="0,0,12,0" />
-    <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
+    <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
      <Button x:Name="SearchAction" Click="OnSearchClick" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshSearchOutput}" AutomationProperties.Name="{loc:Loc SshSearchOutput}"><controls:IconView Kind="search" Width="15" Height="15" /></Button>
      <Button x:Name="CopyAction" Click="OnCopyClick" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshCopySelection}" AutomationProperties.Name="{loc:Loc SshCopySelection}"><controls:IconView Kind="copy" Width="15" Height="15" /></Button>
      <Button x:Name="PasteAction" Click="OnPasteClick" IsEnabled="{Binding IsConnected}" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshPaste}" AutomationProperties.Name="{loc:Loc SshPaste}"><controls:IconView Kind="clipboard" Width="15" Height="15" /></Button>
@@ -26,9 +25,8 @@
      <Button x:Name="MoreAction" Click="OnMoreClick" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshMore}" AutomationProperties.Name="{loc:Loc SshMore}"><controls:IconView Kind="ellipsis" Width="15" Height="15" /></Button>
     </StackPanel>
    </Grid>
-  </Border>
-  <Grid Grid.Row="1">
-   <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+  </controls:WorkspacePageLayout.Toolbar>
+  <controls:WorkspacePageLayout.Notification>
    <Border Visibility="{Binding IsEnded, Converter={StaticResource Visible}}" Background="{DynamicResource WarningWeakBrush}" Padding="18,8">
     <DockPanel><Button DockPanel.Dock="Right" Content="{loc:Loc SshReconnect}" Command="{Binding ReconnectCommand}" Style="{StaticResource PrimaryButton}" Margin="12,0,0,0" />
      <StackPanel><TextBlock Text="{Binding EndedMessage}" TextWrapping="Wrap" Foreground="{DynamicResource WarningBrush}" AutomationProperties.LiveSetting="Polite" />
@@ -36,9 +34,40 @@
      </StackPanel>
     </DockPanel>
    </Border>
-   <Grid Grid.Row="1" x:Name="TerminalAndDetails">
-    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition x:Name="DetailsColumn" Width="0" /></Grid.ColumnDefinitions>
-    <Grid x:Name="TerminalSurface" Background="{DynamicResource TerminalSurfaceBrush}">
+  </controls:WorkspacePageLayout.Notification>
+  <controls:WorkspacePageLayout.Details>
+    <Border x:Name="DetailsPanel" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="1,0,0,0" Background="{DynamicResource SurfaceBrush}">
+     <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="20">
+      <DockPanel Margin="0,0,0,20"><Button DockPanel.Dock="Right" Command="{Binding ToggleDetailsCommand}" Style="{StaticResource IconButton}" ToolTip="{loc:Loc Close}" AutomationProperties.Name="{loc:Loc Close}"><controls:IconView Kind="x" Width="14" Height="14" /></Button><TextBlock Text="{loc:Loc SshConnectionDetails}" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" /></DockPanel>
+      <TextBlock Text="{loc:Loc SshHost}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" />
+      <TextBlock Text="{Binding HostEndpoint}" FontFamily="{DynamicResource MonoFont}" TextWrapping="Wrap" Margin="0,5,0,16" />
+      <TextBlock Text="{loc:Loc SshUser}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" />
+      <TextBlock Text="{Binding UserName}" TextWrapping="Wrap" Margin="0,5,0,16" />
+      <TextBlock Text="{loc:Loc SshConnectionMethod}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" />
+      <TextBlock Text="{Binding RouteDescription}" TextWrapping="Wrap" Margin="0,5,0,20" />
+      <ItemsControl ItemsSource="{Binding HostKeys}"><ItemsControl.ItemTemplate><DataTemplate>
+       <StackPanel Margin="0,0,0,18">
+        <DockPanel><controls:IconView Kind="shield-check" Width="15" Height="15" Foreground="{DynamicResource SuccessBrush}" Margin="0,0,7,0" /><TextBlock Text="{Binding Host}" TextWrapping="Wrap" Foreground="{DynamicResource SuccessBrush}" /></DockPanel>
+        <TextBlock Text="{Binding Algorithm}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,5" />
+        <TextBlock Text="{Binding Fingerprint}" FontSize="11" FontFamily="{DynamicResource MonoFont}" TextWrapping="Wrap" />
+        <Button Content="{loc:Loc SshCopyFingerprint}" Click="OnCopyFingerprint" Tag="{Binding Fingerprint}" Style="{StaticResource GhostButton}" HorizontalAlignment="Left" Margin="0,6,0,0" />
+       </StackPanel>
+      </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+      <Button Content="{loc:Loc SshEditConnection}" Command="{Binding EditConnectionCommand}" Margin="0,12,0,8" />
+      <TextBlock Text="{loc:Loc SshEditHint}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" TextWrapping="Wrap" />
+     </StackPanel></ScrollViewer>
+    </Border>
+  </controls:WorkspacePageLayout.Details>
+  <controls:WorkspacePageLayout.StatusContent>
+   <DockPanel LastChildFill="False">
+    <TextBlock Text="{Binding Elapsed}" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" Margin="0,0,14,0" />
+    <TextBlock x:Name="FooterRoute" Text="{Binding RouteLabel}" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" />
+    <TextBlock DockPanel.Dock="Right" Text="{Binding GridSize}" VerticalAlignment="Center" FontSize="10" FontFamily="{DynamicResource MonoFont}" Foreground="{DynamicResource TextMutedBrush}" />
+    <TextBlock x:Name="FooterTerminalType" DockPanel.Dock="Right" Text="{loc:Loc SshTerminalType}" VerticalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" Margin="14,0" />
+    <TextBlock DockPanel.Dock="Right" Text="{loc:Loc SshEncoding}" VerticalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" Margin="14,0,0,0" />
+   </DockPanel>
+  </controls:WorkspacePageLayout.StatusContent>
+    <Grid x:Name="TerminalSurface" Background="{DynamicResource TerminalSurfaceBrush}" SizeChanged="OnTerminalSizeChanged">
      <terminal:TerminalControl x:Name="TerminalView" Session="{Binding Session}" IsReadOnly="{Binding IsReadOnly}" Margin="20,18"
       FontFamily="{DynamicResource MonoFont}" FontSize="14" Background="{DynamicResource TerminalSurfaceBrush}" Foreground="{DynamicResource TerminalTextBrush}"
       AutomationProperties.Name="{loc:Loc SshTerminalLabel}" PreviewPaste="OnPreviewPaste" />
@@ -62,37 +91,5 @@
       </DockPanel>
      </Border>
     </Grid>
-    <Border x:Name="DetailsPanel" Grid.Column="1" Width="300" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="1,0,0,0" Background="{DynamicResource SurfaceBrush}" Visibility="{Binding IsDetailsOpen, Converter={StaticResource Visible}}">
-     <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="20">
-      <DockPanel Margin="0,0,0,20"><Button DockPanel.Dock="Right" Command="{Binding ToggleDetailsCommand}" Style="{StaticResource IconButton}" ToolTip="{loc:Loc Close}" AutomationProperties.Name="{loc:Loc Close}"><controls:IconView Kind="x" Width="14" Height="14" /></Button><TextBlock Text="{loc:Loc SshConnectionDetails}" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" /></DockPanel>
-      <TextBlock Text="{loc:Loc SshHost}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" />
-      <TextBlock Text="{Binding HostEndpoint}" FontFamily="{DynamicResource MonoFont}" TextWrapping="Wrap" Margin="0,5,0,16" />
-      <TextBlock Text="{loc:Loc SshUser}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" />
-      <TextBlock Text="{Binding UserName}" TextWrapping="Wrap" Margin="0,5,0,16" />
-      <TextBlock Text="{loc:Loc SshConnectionMethod}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" />
-      <TextBlock Text="{Binding RouteDescription}" TextWrapping="Wrap" Margin="0,5,0,20" />
-      <ItemsControl ItemsSource="{Binding HostKeys}"><ItemsControl.ItemTemplate><DataTemplate>
-       <StackPanel Margin="0,0,0,18">
-        <DockPanel><controls:IconView Kind="shield-check" Width="15" Height="15" Foreground="{DynamicResource SuccessBrush}" Margin="0,0,7,0" /><TextBlock Text="{Binding Host}" TextWrapping="Wrap" Foreground="{DynamicResource SuccessBrush}" /></DockPanel>
-        <TextBlock Text="{Binding Algorithm}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,5" />
-        <TextBlock Text="{Binding Fingerprint}" FontSize="11" FontFamily="{DynamicResource MonoFont}" TextWrapping="Wrap" />
-        <Button Content="{loc:Loc SshCopyFingerprint}" Click="OnCopyFingerprint" Tag="{Binding Fingerprint}" Style="{StaticResource GhostButton}" HorizontalAlignment="Left" Margin="0,6,0,0" />
-       </StackPanel>
-      </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
-      <Button Content="{loc:Loc SshEditConnection}" Command="{Binding EditConnectionCommand}" Margin="0,12,0,8" />
-      <TextBlock Text="{loc:Loc SshEditHint}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" TextWrapping="Wrap" />
-     </StackPanel></ScrollViewer>
-    </Border>
-   </Grid>
-  </Grid>
-  <Border Grid.Row="2" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,1,0,0" Padding="16,0">
-   <DockPanel LastChildFill="False">
-    <TextBlock Text="{Binding Elapsed}" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" Margin="0,0,14,0" />
-    <TextBlock x:Name="FooterRoute" Text="{Binding RouteLabel}" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" />
-    <TextBlock DockPanel.Dock="Right" Text="{Binding GridSize}" VerticalAlignment="Center" FontSize="10" FontFamily="{DynamicResource MonoFont}" Foreground="{DynamicResource TextMutedBrush}" />
-    <TextBlock x:Name="FooterTerminalType" DockPanel.Dock="Right" Text="{loc:Loc SshTerminalType}" VerticalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" Margin="14,0" />
-    <TextBlock DockPanel.Dock="Right" Text="{loc:Loc SshEncoding}" VerticalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" Margin="14,0,0,0" />
-   </DockPanel>
-  </Border>
- </Grid>
+ </controls:WorkspacePageLayout>
 </UserControl>

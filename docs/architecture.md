@@ -81,6 +81,20 @@ in region 04 from storage connection screens and states in region 05A. Storage
 and other type-specific regions reference the common container; browsing,
 transfers and previews remain in the object storage regions.
 
+`SegmentedSelector` implements the shared Pencil `ui/segmented` control. Both
+provider-declared choice fields and SSH target/jump/proxy pane selection reference
+it; modules supply stable IDs and localized labels instead of copying selection
+templates. It retains native ListBox keyboard navigation without an inner scroll
+viewer.
+
+`WorkspacePageLayout` provides the shared content layout: a 64-pixel toolbar,
+optional notification, fill-sized body, 300-pixel details panel and 28-pixel status
+bar. Below 760 pixels the details overlay the body rather than reducing its width.
+SSH supplies only slot content and terminal actions. The main shell continues to
+own instance navigation, themes and outer tabs; its content host owns page reuse
+and cleanup. Module views must not recreate those shell elements or duplicate the
+shared details layout.
+
 ## Composition
 
 The application calls the independently owned registration entry points:

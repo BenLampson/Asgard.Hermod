@@ -19,12 +19,10 @@ public partial class SshWorkspaceView : UserControl, IDisposable
         PreviewKeyDown += OnKeyDown;
         TerminalView.ScreenUpdated += OnTerminalUpdated;
     }
-    /// <summary>从旧页面解除订阅，绑定新页面的详情显隐。</summary>
+    /// <summary>读取当前协议模型；详情显隐直接绑定公共布局，不订阅后重画布局。</summary>
     private void OnModelChanged(object sender, DependencyPropertyChangedEventArgs args)
     {
-        if (_model is not null) _model.PropertyChanged -= OnModelChanged;
         _model = args.NewValue as SshWorkspaceViewModel;
-        if (_model is not null) _model.PropertyChanged += OnModelChanged;
         UpdateLayoutMode();
     }
     /// <summary>内容宿主与外壳都可触发初始化，模型保证只连接一次。</summary>
@@ -33,27 +31,25 @@ public partial class SshWorkspaceView : UserControl, IDisposable
         if (_model is not null) await _model.InitializeAsync();
         if (!_disposed) { UpdateLayoutMode(); TerminalView.Focus(); }
     }
-    /// <summary>详情面板变更需要同步 PTY 网格；终端会自行报告新尺寸。</summary>
-    private void OnModelChanged(object? sender, PropertyChangedEventArgs args)
-    {
-        if (args.PropertyName == nameof(SshWorkspaceViewModel.IsDetailsOpen)) UpdateLayoutMode();
-    }
-    /// <summary>窄窗口把次要动作收进更多，详情改为覆盖式面板。</summary>
+    /// <summary>窄窗口把次要动作收进更多；详情布局由公共控件负责。</summary>
     private void OnViewportSizeChanged(object sender, SizeChangedEventArgs args) => UpdateLayoutMode();
     /// <summary>窗口缩小时保留连接状态和主操作，避免横向溢出。</summary>
     private void UpdateLayoutMode()
     {
-        if (DetailsColumn is null) return;
-        bool wide = ActualWidth >= 760;
-        bool open = _model?.IsDetailsOpen == true;
-        DetailsColumn.Width = open && wide ? new GridLength(300) : new GridLength(0);
-        Grid.SetColumn(DetailsPanel, wide ? 1 : 0);
-        Grid.SetColumnSpan(DetailsPanel, wide ? 1 : 2);
-        DetailsPanel.HorizontalAlignment = HorizontalAlignment.Right;
+        if (WorkspaceLayout is null) return;
+        bool wide = ActualWidth >= WorkspaceLayout.CompactBreakpoint;
+        IdentityColumn.Width = new GridLength(wide ? 260 : Math.Max(80, Math.Min(220, ActualWidth - 320)));
         CopyAction.Visibility = PasteAction.Visibility = wide ? Visibility.Visible : Visibility.Collapsed;
         DetailsActionLabel.Visibility = ActualWidth >= 900 ? Visibility.Visible : Visibility.Collapsed;
         FooterRoute.Visibility = FooterTerminalType.Visibility = ActualWidth >= 600 ? Visibility.Visible : Visibility.Collapsed;
-        SearchOverlay.Width = Math.Max(240, Math.Min(484, TerminalSurface.ActualWidth - 28));
+        ResizeSearchOverlay();
+    }
+    /// <summary>公共详情栏展开会改变正文宽度，搜索浮层跟随实际终端空间。</summary>
+    private void OnTerminalSizeChanged(object sender, SizeChangedEventArgs args) => ResizeSearchOverlay();
+    /// <summary>浮层宽度受终端视口限制，避免在详情切换后沿用旧窗口尺寸。</summary>
+    private void ResizeSearchOverlay()
+    {
+        if (SearchOverlay is not null) SearchOverlay.Width = Math.Max(0, Math.Min(484, TerminalSurface.ActualWidth - 28));
     }
     /// <summary>复制仅操作当前选区，不改变远端状态。</summary>
     private void OnCopyClick(object sender, RoutedEventArgs args) { TerminalView.CopySelection(); TerminalView.Focus(); }
@@ -126,7 +122,6 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     public void Dispose()
     {
         if (_disposed) return; _disposed = true;
-        if (_model is not null) _model.PropertyChanged -= OnModelChanged;
         if (MoreAction.ContextMenu is { } menu) { menu.IsOpen = false; menu.Items.Clear(); }
         TerminalView.ScreenUpdated -= OnTerminalUpdated;
         TerminalView.Dispose(); DataContextChanged -= OnModelChanged; Loaded -= OnLoaded; PreviewKeyDown -= OnKeyDown;

@@ -5,5 +5,7 @@
         <ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/Windows.xaml" />
         <ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/Forms.xaml" />
         <ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/InstanceWizard.xaml" />
+        <ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/SegmentedSelector.xaml" />
+        <ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/WorkspacePageLayout.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

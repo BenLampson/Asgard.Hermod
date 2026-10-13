@@ -4,6 +4,7 @@ namespace Asgard.Hermod.Ssh.UI.ViewModels;
 public sealed class SshConnectionEditorViewModel : ObservableObject, IDisposable
 {
     private string _pane = "target";
+    private string? _panesRoute = "";
     private bool _attached;
     private readonly InstanceConfigurationFieldViewModel _absent = new(new("absent", "", IsRequired: false));
 
@@ -25,6 +26,10 @@ public sealed class SshConnectionEditorViewModel : ObservableObject, IDisposable
     public bool IsProxy => Wizard.SelectedProvider?.Id == SshIds.Proxy;
     /// <summary>只有多节点路径需要分区切换。</summary>
     public bool HasPanes => IsJump || IsProxy;
+    /// <summary>公共分段控件显示协议需要的分区，不插入隐藏的第三个选项。</summary>
+    public IReadOnlyList<InstanceFieldChoice> Panes { get; private set; } = [];
+    /// <summary>以稳定标识绑定公共分段控件，切换分区不清除输入。</summary>
+    public string SelectedPane { get => _pane; set => SelectPane(value); }
     /// <summary>目标节点分区。</summary>
     public bool IsTargetPane { get => _pane == "target"; set { if (value) SelectPane("target"); } }
     /// <summary>跳板节点分区。</summary>
@@ -68,7 +73,12 @@ public sealed class SshConnectionEditorViewModel : ObservableObject, IDisposable
     /// <summary>通过稳定字段标识引用公共状态。</summary>
     private InstanceConfigurationFieldViewModel Field(string key) => Wizard.Fields.FirstOrDefault(item => item.Key == key) ?? _absent;
     /// <summary>切换仅改变可见分区，保留所有已填写值。</summary>
-    private void SelectPane(string pane) { if (_pane == pane) return; _pane = pane; Refresh(); }
+    private void SelectPane(string pane)
+    {
+        if (_pane == pane || !Panes.Any(item => item.Id == pane)) return;
+        _pane = pane;
+        Refresh();
+    }
     /// <summary>字段变化同时刷新路径摘要和所选认证的说明。</summary>
     private void OnWizardChanged(object? sender, PropertyChangedEventArgs args)
     {
@@ -78,7 +88,16 @@ public sealed class SshConnectionEditorViewModel : ObservableObject, IDisposable
     /// <summary>字段引用由协议标识决定，不在视图里比较翻译标签。</summary>
     private void Refresh()
     {
-        foreach (string name in new[] { nameof(RouteSummary), nameof(IsJump), nameof(IsProxy), nameof(HasPanes), nameof(IsTargetPane),
+        // 切换分区时保留选项集合，避免重建 ListBoxItem 后丢失键盘焦点。
+        if (_panesRoute != Wizard.SelectedProvider?.Id)
+        {
+            _panesRoute = Wizard.SelectedProvider?.Id;
+            Panes = IsJump ? [new("target", Text.Get("SshHost")), new("jump", Text.Get("SshJumpHost"))]
+                : IsProxy ? [new("target", Text.Get("SshHost")), new("proxy", Text.Get("SshProxySettings"))]
+                : [new("target", Text.Get("SshHost"))];
+            OnPropertyChanged(nameof(Panes));
+        }
+        foreach (string name in new[] { nameof(RouteSummary), nameof(IsJump), nameof(IsProxy), nameof(HasPanes), nameof(SelectedPane), nameof(IsTargetPane),
             nameof(IsJumpPane), nameof(IsProxyPane), nameof(IsHostPane), nameof(Host), nameof(Port), nameof(User), nameof(Authentication),
             nameof(Password), nameof(KeyFile), nameof(Passphrase), nameof(UsesAgent), nameof(ProxyType), nameof(ProxyHost), nameof(ProxyPort),
             nameof(ProxyUser), nameof(ProxyPassword), nameof(ProxyDns), nameof(Timeout) }) OnPropertyChanged(name);

@@ -46,7 +46,7 @@
             </Grid>
         </controls:DialogActionBar>
     </controls:HermodDialog.FooterContent>
-    <controls:InstanceWizard x:Name="WizardLayout" Heading="{Binding WizardHeading}" Description="{Binding SelectedType.Name}"
+    <controls:InstanceWizard x:Name="WizardLayout" Heading="{Binding SelectedType.Name}" Description="{Binding SelectedType.Description}"
                              Steps="{Binding Steps}" ShowProgress="{Binding HasTypeSelection}">
         <Grid IsEnabled="{Binding IsInformationEditable}">
             <StackPanel Margin="28" Visibility="{Binding IsChoosingType, Converter={StaticResource WizardVisibility}}">

@@ -8,7 +8,7 @@ public sealed class SshConfigurationContentProvider : IInstanceConfigurationCont
     /// <inheritdoc />
     public string TypeId => SshIds.Type;
     /// <inheritdoc />
-    public Size PreferredWizardSize => new(920, 720);
+    public Size PreferredWizardSize => new(912, 720);
     /// <inheritdoc />
     public FrameworkElement CreateContent(NewInstanceViewModel model) => new SshConnectionEditor(model);
 }

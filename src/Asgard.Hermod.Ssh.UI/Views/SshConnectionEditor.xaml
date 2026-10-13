@@ -13,13 +13,10 @@
   <controls:FormField Label="{loc:Loc InstanceName}" IsRequired="True" Error="{Binding Wizard.NameError}" Margin="0,0,0,14">
    <TextBox x:Name="SshNameInput" Text="{Binding Wizard.Name, UpdateSourceTrigger=PropertyChanged}" MaxLength="128" AutomationProperties.Name="{loc:Loc InstanceName}" />
   </controls:FormField>
-  <Border Visibility="{Binding HasPanes, Converter={StaticResource Visible}}" Background="{DynamicResource AppBackgroundBrush}" CornerRadius="6" Padding="4" Margin="0,0,0,14">
-   <UniformGrid Rows="1">
-    <RadioButton Content="{loc:Loc SshHost}" IsChecked="{Binding IsTargetPane}" GroupName="SshConnectionPane" Padding="12,6" />
-    <RadioButton Content="{loc:Loc SshJumpHost}" IsChecked="{Binding IsJumpPane}" GroupName="SshConnectionPane" Padding="12,6" Visibility="{Binding IsJump, Converter={StaticResource Visible}}" />
-    <RadioButton Content="{loc:Loc SshProxySettings}" IsChecked="{Binding IsProxyPane}" GroupName="SshConnectionPane" Padding="12,6" Visibility="{Binding IsProxy, Converter={StaticResource Visible}}" />
-   </UniformGrid>
-  </Border>
+  <controls:SegmentedSelector x:Name="ConnectionPaneSelector" ItemsSource="{Binding Panes}" DisplayMemberPath="Name"
+                              SelectedValue="{Binding SelectedPane, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="Id"
+                              Visibility="{Binding HasPanes, Converter={StaticResource Visible}}" Margin="0,0,0,14"
+                              AutomationProperties.Name="{loc:Loc SshConnectionDetails}" />
   <StackPanel Visibility="{Binding IsHostPane, Converter={StaticResource Visible}}">
    <Grid Margin="0,0,0,14"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="106" /></Grid.ColumnDefinitions>
     <controls:InstanceConfigurationFieldEditor DataContext="{Binding Host}" Margin="0,0,12,0" />

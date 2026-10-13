@@ -6,31 +6,9 @@
              Focusable="False">
     <UserControl.Resources>
         <DataTemplate x:Key="ChoiceFieldTemplate">
-            <ListBox ItemsSource="{Binding Choices}" SelectedValue="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     SelectedValuePath="Id" Height="36" BorderThickness="0" Padding="3"
-                     Background="{DynamicResource AppBackgroundBrush}" AutomationProperties.Name="{Binding Label}">
-                <ListBox.Template><ControlTemplate TargetType="ListBox"><Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}"><ItemsPresenter /></Border></ControlTemplate></ListBox.Template>
-                <ListBox.ItemsPanel><ItemsPanelTemplate><UniformGrid Rows="1" /></ItemsPanelTemplate></ListBox.ItemsPanel>
-                <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem">
-                    <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
-                    <Setter Property="HorizontalContentAlignment" Value="Center" />
-                    <Setter Property="VerticalContentAlignment" Value="Center" />
-                    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
-                        <Border x:Name="OptionBorder" CornerRadius="4" Background="Transparent" BorderThickness="1" BorderBrush="Transparent" Margin="1,0">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers><Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="OptionBorder" Property="Background" Value="{DynamicResource SurfaceBrush}" />
-                            <Setter TargetName="OptionBorder" Property="BorderBrush" Value="{DynamicResource LineBrush}" />
-                            <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
-                        </Trigger><Trigger Property="IsKeyboardFocusWithin" Value="True">
-                            <Setter TargetName="OptionBorder" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                        </Trigger></ControlTemplate.Triggers>
-                    </ControlTemplate></Setter.Value></Setter>
-                </Style></ListBox.ItemContainerStyle>
-                <ListBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Name}" FontSize="11" TextTrimming="CharacterEllipsis"
-                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" /></DataTemplate></ListBox.ItemTemplate>
-            </ListBox>
+            <controls:SegmentedSelector ItemsSource="{Binding Choices}" DisplayMemberPath="Name"
+                                        SelectedValue="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        SelectedValuePath="Id" AutomationProperties.Name="{Binding Label}" />
         </DataTemplate>
         <DataTemplate x:Key="FileFieldTemplate">
             <DockPanel>

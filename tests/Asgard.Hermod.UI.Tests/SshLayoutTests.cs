@@ -31,7 +31,9 @@ public sealed class SshLayoutTests(WpfTestFixture fixture)
     [InlineData("zh-Hans", UiTheme.Dark)]
     public Task WizardRendersBothLanguagesAndThemes(string language, UiTheme theme) => fixture.RunAsync(async () =>
     {
-        var previous = CultureInfo.CurrentUICulture; CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(language);
+        var previous = CultureInfo.CurrentUICulture;
+        var previousDefault = CultureInfo.DefaultThreadCurrentUICulture;
+        Text.Initialize(language, CultureInfo.InvariantCulture);
         var themes = new ThemeService(Application.Current.Resources); themes.SetTheme(theme);
         try
         {
@@ -68,7 +70,7 @@ public sealed class SshLayoutTests(WpfTestFixture fixture)
                 finally { window.Close(); }
             }
         }
-        finally { themes.SetTheme(UiTheme.Light); CultureInfo.CurrentUICulture = previous; }
+        finally { themes.SetTheme(UiTheme.Light); CultureInfo.CurrentUICulture = previous; CultureInfo.DefaultThreadCurrentUICulture = previousDefault; }
     });
 
     /// <summary>窄窗口改为覆盖详情，终端不被侧栏挤没，工具按钮可通过更多入口使用。</summary>
@@ -77,7 +79,9 @@ public sealed class SshLayoutTests(WpfTestFixture fixture)
     [InlineData("zh-Hans", UiTheme.Dark)]
     public Task TerminalDetailsResizeAndKeyboardSearch(string language, UiTheme theme) => fixture.RunAsync(async () =>
     {
-        var previous = CultureInfo.CurrentUICulture; CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(language);
+        var previous = CultureInfo.CurrentUICulture;
+        var previousDefault = CultureInfo.DefaultThreadCurrentUICulture;
+        Text.Initialize(language, CultureInfo.InvariantCulture);
         var themes = new ThemeService(Application.Current.Resources); themes.SetTheme(theme);
         var factory = new SshTestFactory(); await using var model = SshWorkspaceTests.Create(factory);
         using var view = new SshWorkspaceView { DataContext = model };
@@ -89,6 +93,11 @@ public sealed class SshLayoutTests(WpfTestFixture fixture)
             await SshWorkspaceTests.UntilAsync(() => model.Session!.GetVisibleText().Contains("你好", StringComparison.Ordinal));
             model.IsDetailsOpen = true; await WindowPreviewCapture.VerifyAsync(window, $"ssh-terminal-wide-{language}-{theme}");
             var terminal = Assert.IsType<TerminalControl>(view.FindName("TerminalView"));
+            var layout = Assert.IsType<WorkspacePageLayout>(view.FindName("WorkspaceLayout"));
+            Assert.False(layout.IsCompact);
+            Assert.Equal(64, WindowTestVisuals.Named(layout, "PART_Toolbar").ActualHeight);
+            Assert.Equal(28, WindowTestVisuals.Named(layout, "PART_StatusBar").ActualHeight);
+            Assert.Equal(300, WindowTestVisuals.Named(layout, "PART_Details").ActualWidth);
             Assert.True(terminal.ActualWidth > 500); Assert.False(terminal.IsReadOnly);
             var search = Assert.IsType<Button>(view.FindName("SearchAction")); search.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             var input = Assert.IsType<TextBox>(view.FindName("SearchInput")); input.Text = "你好";
@@ -97,12 +106,14 @@ public sealed class SshLayoutTests(WpfTestFixture fixture)
             Assert.Empty(factory.Connections[0].Inputs);
             await WindowPreviewCapture.VerifyAsync(window, $"ssh-terminal-search-{language}-{theme}");
             window.Width = 680; window.Height = 540; await WindowPreviewCapture.VerifyAsync(window, $"ssh-terminal-narrow-{language}-{theme}");
+            Assert.True(layout.IsCompact);
+            Assert.Equal(WindowTestVisuals.Named(layout, "PART_Body").ActualWidth, terminal.ActualWidth + 40, 2);
             Assert.True(terminal.ActualWidth > 560); Assert.False(Assert.IsType<Button>(view.FindName("CopyAction")).IsVisible);
             Assert.True(Assert.IsType<Button>(view.FindName("MoreAction")).IsVisible);
             await model.DisconnectCommand.ExecuteAsync(); await WindowPreviewCapture.VerifyAsync(window, $"ssh-terminal-ended-{language}-{theme}");
             Assert.True(terminal.IsReadOnly); Assert.Contains("你好 Hermod", model.Session!.GetVisibleText());
         }
-        finally { window.Close(); themes.SetTheme(UiTheme.Light); CultureInfo.CurrentUICulture = previous; }
+        finally { window.Close(); themes.SetTheme(UiTheme.Light); CultureInfo.CurrentUICulture = previous; CultureInfo.DefaultThreadCurrentUICulture = previousDefault; }
     });
 
     /// <summary>主机身份变更必须显式核验，取消为默认焦点且完整指纹可选择复制。</summary>
