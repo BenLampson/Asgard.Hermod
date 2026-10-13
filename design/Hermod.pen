@@ -3,10 +3,290 @@
   "children": [
     {
       "type": "frame",
-      "id": "XOpCH",
+      "id": "HHqul",
       "x": 0,
-      "y": 0,
-      "name": "component/App Shell",
+      "y": 12521,
+      "name": "07 · 品牌与备选稿 / 区域",
+      "width": 5000,
+      "height": 1051,
+      "fill": "#EEF1F5",
+      "cornerRadius": 24,
+      "stroke": "#CBD3DF",
+      "strokeWidth": 2,
+      "layout": "none",
+      "children": [
+        {
+          "type": "text",
+          "id": "K856O",
+          "x": 60,
+          "y": 40,
+          "name": "07 · 区域标题",
+          "fill": "#17243A",
+          "content": "07  品牌与备选稿",
+          "fontFamily": "Inter",
+          "fontSize": 42,
+          "fontWeight": "bold"
+        },
+        {
+          "type": "text",
+          "id": "n8n2l",
+          "x": 60,
+          "y": 106,
+          "name": "07 · 阅读顺序",
+          "fill": "#53657D",
+          "content": "Brand · Logo 与历史候选方案",
+          "fontFamily": "Inter",
+          "fontSize": 22,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "MNyGz",
+      "x": 5400,
+      "y": 8082,
+      "name": "06 · 系统设置 / 区域",
+      "width": 5000,
+      "height": 6400,
+      "fill": "#EEF1F5",
+      "cornerRadius": 24,
+      "stroke": "#CBD3DF",
+      "strokeWidth": 2,
+      "layout": "none",
+      "children": [
+        {
+          "type": "text",
+          "id": "W25gx",
+          "x": 60,
+          "y": 40,
+          "name": "06 · 区域标题",
+          "fill": "#17243A",
+          "content": "06  系统设置",
+          "fontFamily": "Inter",
+          "fontSize": 42,
+          "fontWeight": "bold"
+        },
+        {
+          "type": "text",
+          "id": "cJ8Qc",
+          "x": 60,
+          "y": 106,
+          "name": "06 · 阅读顺序",
+          "fill": "#53657D",
+          "content": "Settings · 语言、标签、打开方式、临时文件",
+          "fontFamily": "Inter",
+          "fontSize": 22,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "D1vbQa",
+      "x": 0,
+      "y": 8082,
+      "name": "05 · 对象存储 / 区域",
+      "width": 5000,
+      "height": 4179,
+      "fill": "#EEF1F5",
+      "cornerRadius": 24,
+      "stroke": "#CBD3DF",
+      "strokeWidth": 2,
+      "layout": "none",
+      "children": [
+        {
+          "type": "text",
+          "id": "SSXhH",
+          "x": 60,
+          "y": 40,
+          "name": "05 · 区域标题",
+          "fill": "#17243A",
+          "content": "05  对象存储",
+          "fontFamily": "Inter",
+          "fontSize": 42,
+          "fontWeight": "bold"
+        },
+        {
+          "type": "text",
+          "id": "crv9d",
+          "x": 60,
+          "y": 106,
+          "name": "05 · 阅读顺序",
+          "fill": "#53657D",
+          "content": "Object storage · 浏览与搜索 → 对象操作 → 扫描与边界状态",
+          "fontFamily": "Inter",
+          "fontSize": 22,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "wFEx6",
+      "x": 5400,
+      "y": 5610,
+      "name": "04 · 实例连接向导 / 区域",
+      "width": 5000,
+      "height": 1670,
+      "fill": "#EEF1F5",
+      "cornerRadius": 24,
+      "stroke": "#CBD3DF",
+      "strokeWidth": 2,
+      "layout": "none",
+      "children": [
+        {
+          "type": "text",
+          "id": "XRK8h",
+          "x": 60,
+          "y": 40,
+          "name": "04 · 区域标题",
+          "fill": "#17243A",
+          "content": "04  实例连接向导",
+          "fontFamily": "Inter",
+          "fontSize": 42,
+          "fontWeight": "bold"
+        },
+        {
+          "type": "text",
+          "id": "Ss9Jv",
+          "x": 60,
+          "y": 106,
+          "name": "04 · 阅读顺序",
+          "fill": "#53657D",
+          "content": "Connections · 从左到右按步骤阅读",
+          "fontFamily": "Inter",
+          "fontSize": 22,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "UVGhJ",
+      "x": 5400,
+      "y": 3603,
+      "name": "03 · 账号与登录 / 区域",
+      "width": 5000,
+      "height": 1747,
+      "fill": "#EEF1F5",
+      "cornerRadius": 24,
+      "stroke": "#CBD3DF",
+      "strokeWidth": 2,
+      "layout": "none",
+      "children": [
+        {
+          "type": "text",
+          "id": "I9sEVY",
+          "x": 60,
+          "y": 40,
+          "name": "03 · 区域标题",
+          "fill": "#17243A",
+          "content": "03  账号与登录",
+          "fontFamily": "Inter",
+          "fontSize": 42,
+          "fontWeight": "bold"
+        },
+        {
+          "type": "text",
+          "id": "YB9Ue",
+          "x": 60,
+          "y": 106,
+          "name": "03 · 阅读顺序",
+          "fill": "#53657D",
+          "content": "Account · 浅色与深色并排，交互状态置于下方",
+          "fontFamily": "Inter",
+          "fontSize": 22,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "goW0t",
+      "x": 0,
+      "y": 3603,
+      "name": "02 · 首页与主框架 / 区域",
+      "width": 5000,
+      "height": 4219,
+      "fill": "#EEF1F5",
+      "cornerRadius": 24,
+      "stroke": "#CBD3DF",
+      "strokeWidth": 2,
+      "layout": "none",
+      "children": [
+        {
+          "type": "text",
+          "id": "KgC2b",
+          "x": 60,
+          "y": 40,
+          "name": "02 · 区域标题",
+          "fill": "#17243A",
+          "content": "02  首页与主框架",
+          "fontFamily": "Inter",
+          "fontSize": 42,
+          "fontWeight": "bold"
+        },
+        {
+          "type": "text",
+          "id": "r9Lahl",
+          "x": 60,
+          "y": 106,
+          "name": "02 · 阅读顺序",
+          "fill": "#53657D",
+          "content": "Home & shell · 主题、首页与通用页面",
+          "fontFamily": "Inter",
+          "fontSize": 22,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "dl35Y",
+      "x": 0,
+      "y": 550,
+      "name": "01 · 设计规范与组件 / 区域",
+      "width": 10400,
+      "height": 2793,
+      "fill": "#EEF1F5",
+      "cornerRadius": 24,
+      "stroke": "#CBD3DF",
+      "strokeWidth": 2,
+      "layout": "none",
+      "children": [
+        {
+          "type": "text",
+          "id": "EH0Jd",
+          "x": 60,
+          "y": 40,
+          "name": "01 · 区域标题",
+          "fill": "#17243A",
+          "content": "01  设计规范与组件",
+          "fontFamily": "Inter",
+          "fontSize": 42,
+          "fontWeight": "bold"
+        },
+        {
+          "type": "text",
+          "id": "oaJXW",
+          "x": 60,
+          "y": 106,
+          "name": "01 · 阅读顺序",
+          "fill": "#53657D",
+          "content": "Design system · 复用组件集中管理",
+          "fontFamily": "Inter",
+          "fontSize": 22,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "XOpCH",
+      "x": 3788,
+      "y": 750,
+      "name": "01 / component/App Shell",
       "reusable": true,
       "clip": true,
       "width": 1360,
@@ -1272,9 +1552,9 @@
     {
       "type": "frame",
       "id": "tPuhC",
-      "x": 0,
-      "y": 980,
-      "name": "Themes showcase",
+      "x": 60,
+      "y": 4763,
+      "name": "02 / Themes showcase",
       "fill": "#00000000",
       "layout": "vertical",
       "gap": 28,
@@ -1611,9 +1891,9 @@
     {
       "type": "frame",
       "id": "Z8tKES",
-      "x": 1480,
-      "y": 0,
-      "name": "component/Service Detail",
+      "x": 3896,
+      "y": 2461,
+      "name": "01 / component/Service Detail",
       "reusable": true,
       "clip": true,
       "width": "fill_container(0)",
@@ -2620,9 +2900,9 @@
     {
       "type": "frame",
       "id": "AKnZN",
-      "x": 2988,
-      "y": 0,
-      "name": "component/Tag tree picker",
+      "x": 5212,
+      "y": 750,
+      "name": "01 / component/Tag tree picker",
       "reusable": true,
       "clip": true,
       "width": 380,
@@ -3837,9 +4117,9 @@
     {
       "type": "frame",
       "id": "A9dYYr",
-      "x": 3448,
-      "y": 0,
-      "name": "component/Child window",
+      "x": 5656,
+      "y": 750,
+      "name": "01 / component/Child window",
       "reusable": true,
       "clip": true,
       "width": 620,
@@ -4016,9 +4296,9 @@
     {
       "type": "frame",
       "id": "f9cZV",
-      "x": 2988,
-      "y": 750,
-      "name": "Detail patterns · Light and Dark",
+      "x": 3012,
+      "y": 4763,
+      "name": "02 / Detail patterns · Light and Dark",
       "width": 1420,
       "layout": "vertical",
       "gap": 24,
@@ -4411,9 +4691,9 @@
     {
       "type": "frame",
       "id": "qI03R",
-      "x": 4508,
-      "y": 750,
-      "name": "Tag filter · Open in main window",
+      "x": 60,
+      "y": 6862,
+      "name": "02 / Tag filter · Open in main window",
       "theme": {
         "mode": "light"
       },
@@ -4455,9 +4735,9 @@
     {
       "type": "frame",
       "id": "o1NZwZ",
-      "x": 0,
-      "y": -750,
-      "name": "Hermod UI · Primitive components",
+      "x": 2124,
+      "y": 750,
+      "name": "01 / Hermod UI · Primitive components",
       "clip": true,
       "width": 1600,
       "fill": "$app-bg",
@@ -5631,9 +5911,9 @@
     {
       "type": "frame",
       "id": "F9GToI",
-      "x": 0,
-      "y": -2850,
-      "name": "Hermod UI · Style and state specification",
+      "x": 60,
+      "y": 750,
+      "name": "01 / Hermod UI · Style and state specification",
       "clip": true,
       "width": 2000,
       "fill": "$app-bg",
@@ -9365,9 +9645,9 @@
     {
       "type": "frame",
       "id": "DKShZ",
-      "x": 5968,
-      "y": -2850,
-      "name": "用户区 · 登录 / 未登录 · Light",
+      "x": 5460,
+      "y": 3803,
+      "name": "03 / 用户区 · 登录 / 未登录 · Light",
       "theme": {
         "mode": "light"
       },
@@ -9881,9 +10161,9 @@
     {
       "type": "frame",
       "id": "p4p91",
-      "x": 7392,
-      "y": -2850,
-      "name": "用户区 · 登录 / 未登录 · Dark",
+      "x": 6884,
+      "y": 3803,
+      "name": "03 / 用户区 · 登录 / 未登录 · Dark",
       "theme": {
         "mode": "dark"
       },
@@ -10266,9 +10546,9 @@
     {
       "type": "frame",
       "id": "HpPpC",
-      "x": 5968,
-      "y": -2326,
-      "name": "用户区 · 已登录下拉 / 未登录直达登录",
+      "x": 5460,
+      "y": 4347,
+      "name": "03 / 用户区 · 已登录下拉 / 未登录直达登录",
       "theme": {
         "mode": "light"
       },
@@ -10837,9 +11117,9 @@
     {
       "type": "frame",
       "id": "x9EYk",
-      "x": 7428,
-      "y": -2326,
-      "name": "component/添加 Instance · 五步向导",
+      "x": 60,
+      "y": 2461,
+      "name": "01 / component/添加 Instance · 五步向导",
       "reusable": true,
       "clip": true,
       "width": 820,
@@ -11507,9 +11787,9 @@
     {
       "type": "frame",
       "id": "VUaZH",
-      "x": 7428,
-      "y": 3300,
-      "name": "添加 OSS Instance · 1 / 5",
+      "x": 5460,
+      "y": 5810,
+      "name": "04 / 添加 OSS Instance · 1 / 5",
       "theme": {
         "mode": "light"
       },
@@ -11684,9 +11964,9 @@
     {
       "type": "frame",
       "id": "Yrn15",
-      "x": 8312,
-      "y": 3300,
-      "name": "添加 OSS Instance · 2 / 5",
+      "x": 6344,
+      "y": 5810,
+      "name": "04 / 添加 OSS Instance · 2 / 5",
       "theme": {
         "mode": "light"
       },
@@ -12048,9 +12328,9 @@
     {
       "type": "frame",
       "id": "SYXNh",
-      "x": 9196,
-      "y": 3300,
-      "name": "添加 OSS Instance · 3 / 5",
+      "x": 7228,
+      "y": 5810,
+      "name": "04 / 添加 OSS Instance · 3 / 5",
       "theme": {
         "mode": "light"
       },
@@ -12521,9 +12801,9 @@
     {
       "type": "frame",
       "id": "lYijL",
-      "x": 10080,
-      "y": 3300,
-      "name": "添加 OSS Instance · 4 / 5",
+      "x": 8112,
+      "y": 5810,
+      "name": "04 / 添加 OSS Instance · 4 / 5",
       "theme": {
         "mode": "light"
       },
@@ -12913,9 +13193,9 @@
     {
       "type": "frame",
       "id": "LwTa4",
-      "x": 10964,
-      "y": 3300,
-      "name": "添加 OSS Instance · 5 / 5",
+      "x": 8996,
+      "y": 5810,
+      "name": "04 / 添加 OSS Instance · 5 / 5",
       "theme": {
         "mode": "light"
       },
@@ -13378,9 +13658,9 @@
     {
       "type": "frame",
       "id": "vdIwv",
-      "x": 7428,
-      "y": 4090,
-      "name": "OSS 向导 · 测试与保存状态",
+      "x": 5460,
+      "y": 6620,
+      "name": "04 / OSS 向导 · 测试与保存状态",
       "clip": true,
       "width": 1760,
       "fill": "$app-bg",
@@ -13920,9 +14200,9 @@
     {
       "type": "frame",
       "id": "uTNYW",
-      "x": 7428,
-      "y": 128,
-      "name": "系统设置 · Tag 管理 · Light",
+      "x": 5460,
+      "y": 9432,
+      "name": "06 / 系统设置 · Tag 管理 · Light",
       "theme": {
         "mode": "light"
       },
@@ -15484,9 +15764,9 @@
     {
       "type": "frame",
       "id": "VBzXB",
-      "x": 8592,
-      "y": 128,
-      "name": "系统设置 · Tag 管理 · Dark",
+      "x": 6624,
+      "y": 9432,
+      "name": "06 / 系统设置 · Tag 管理 · Dark",
       "theme": {
         "mode": "dark"
       },
@@ -16709,9 +16989,9 @@
     {
       "type": "frame",
       "id": "YUhEg",
-      "x": 7428,
-      "y": 1048,
-      "name": "component/自定义 Tag 编辑窗口",
+      "x": 944,
+      "y": 2461,
+      "name": "01 / component/自定义 Tag 编辑窗口",
       "reusable": true,
       "clip": true,
       "width": 520,
@@ -17272,9 +17552,9 @@
     {
       "type": "frame",
       "id": "ImXvY",
-      "x": 8012,
-      "y": 1048,
-      "name": "新建自定义 Tag · 操作窗口",
+      "x": 5460,
+      "y": 10272,
+      "name": "06 / 新建自定义 Tag · 操作窗口",
       "clip": true,
       "width": 520,
       "height": 660,
@@ -17323,9 +17603,9 @@
     {
       "type": "frame",
       "id": "yIKWd",
-      "x": 8596,
-      "y": 1048,
-      "name": "编辑自定义 Tag · 操作窗口",
+      "x": 6044,
+      "y": 10272,
+      "name": "06 / 编辑自定义 Tag · 操作窗口",
       "clip": true,
       "width": 520,
       "height": 660,
@@ -17427,9 +17707,9 @@
     {
       "type": "frame",
       "id": "u3wFv",
-      "x": 9180,
-      "y": 1048,
-      "name": "删除自定义 Tag · 操作窗口",
+      "x": 6628,
+      "y": 10272,
+      "name": "06 / 删除自定义 Tag · 操作窗口",
       "clip": true,
       "width": 520,
       "height": 750,
@@ -17719,9 +17999,9 @@
     {
       "type": "frame",
       "id": "G6ESwJ",
-      "x": 8012,
-      "y": 1878,
-      "name": "Tag 管理 · 空态与自定义颜色",
+      "x": 7212,
+      "y": 10272,
+      "name": "06 / Tag 管理 · 空态与自定义颜色",
       "clip": true,
       "width": 1100,
       "fill": "$app-bg",
@@ -18064,9 +18344,9 @@
     {
       "type": "frame",
       "id": "vGYHU",
-      "x": 7428,
-      "y": 4730,
-      "name": "component/OSS 对象浏览器",
+      "x": 1528,
+      "y": 2461,
+      "name": "01 / component/OSS 对象浏览器",
       "reusable": true,
       "clip": true,
       "width": 1120,
@@ -20118,9 +20398,9 @@
     {
       "type": "frame",
       "id": "fZStW",
-      "x": 7428,
-      "y": 5592,
-      "name": "OSS 数据页 · Light",
+      "x": 60,
+      "y": 8282,
+      "name": "05 / OSS 数据页 · Light",
       "theme": {
         "mode": "light"
       },
@@ -20839,9 +21119,9 @@
     {
       "type": "frame",
       "id": "zDj2W",
-      "x": 8852,
-      "y": 5592,
-      "name": "OSS 数据页 · Dark",
+      "x": 1484,
+      "y": 8282,
+      "name": "05 / OSS 数据页 · Dark",
       "theme": {
         "mode": "dark"
       },
@@ -21566,9 +21846,9 @@
     {
       "type": "frame",
       "id": "X6KYY",
-      "x": 7428,
-      "y": 6532,
-      "name": "OSS · 上传对象窗口",
+      "x": 60,
+      "y": 9242,
+      "name": "05 / OSS · 上传对象窗口",
       "clip": true,
       "width": 600,
       "height": 620,
@@ -22049,9 +22329,9 @@
     {
       "type": "frame",
       "id": "Dj26h",
-      "x": 8092,
-      "y": 6532,
-      "name": "OSS · 传输任务与对象操作",
+      "x": 724,
+      "y": 9242,
+      "name": "05 / OSS · 传输任务与对象操作",
       "clip": true,
       "width": 1360,
       "fill": "$app-bg",
@@ -22866,9 +23146,9 @@
     {
       "type": "frame",
       "id": "ENC0G",
-      "x": 8092,
-      "y": 7327,
-      "name": "OSS · 空态与访问边界",
+      "x": 2148,
+      "y": 9242,
+      "name": "05 / OSS · 空态与访问边界",
       "clip": true,
       "width": 1360,
       "height": 640,
@@ -23337,9 +23617,9 @@
     {
       "type": "frame",
       "id": "aGbWV",
-      "x": 11864,
-      "y": -2850,
-      "name": "Hermod · 图标方案 10 选",
+      "x": 60,
+      "y": 12721,
+      "name": "07 / Hermod · 图标方案 10 选",
       "width": 1292,
       "fill": "#0E1015",
       "cornerRadius": 20,
@@ -26066,9 +26346,9 @@
     {
       "type": "frame",
       "id": "Bud1x",
-      "x": 13236,
-      "y": -2850,
-      "name": "Hermod logo · transparent asset",
+      "x": 1416,
+      "y": 12721,
+      "name": "07 / Hermod logo · transparent asset",
       "clip": true,
       "width": 196,
       "height": 196,
@@ -26158,9 +26438,9 @@
     {
       "type": "frame",
       "id": "flrBX",
-      "x": 13532,
-      "y": -2850,
-      "name": "系统设置 · 界面语言 · Light",
+      "x": 5460,
+      "y": 8282,
+      "name": "06 / 系统设置 · 界面语言 · Light",
       "theme": {
         "mode": "light"
       },
@@ -26589,9 +26869,9 @@
     {
       "type": "frame",
       "id": "o0msF",
-      "x": 14712,
-      "y": -2850,
-      "name": "系统设置 · 界面语言展开 · Dark",
+      "x": 6624,
+      "y": 8282,
+      "name": "06 / 系统设置 · 界面语言展开 · Dark",
       "theme": {
         "mode": "dark"
       },
@@ -27221,9 +27501,9 @@
     {
       "type": "frame",
       "id": "YklOD",
-      "x": 15892,
-      "y": -2850,
-      "name": "Settings · Language changed · English",
+      "x": 7788,
+      "y": 8282,
+      "name": "06 / Settings · Language changed · English",
       "theme": {
         "mode": "light"
       },
@@ -27726,9 +28006,9 @@
     {
       "type": "frame",
       "id": "tD0Yy",
-      "x": 13532,
-      "y": -2050,
-      "name": "界面语言 · 交互与实现说明",
+      "x": 5460,
+      "y": 9122,
+      "name": "06 / 界面语言 · 交互与实现说明",
       "theme": {
         "mode": "light"
       },
@@ -27896,9 +28176,9 @@
     {
       "type": "frame",
       "id": "Es6If",
-      "x": 13532,
-      "y": -1740,
-      "name": "系统设置 · 打开方式 · Light",
+      "x": 5460,
+      "y": 11122,
+      "name": "06 / 系统设置 · 打开方式 · Light",
       "theme": {
         "mode": "light"
       },
@@ -28777,9 +29057,9 @@
     {
       "type": "frame",
       "id": "rPGoi",
-      "x": 14732,
-      "y": -1740,
-      "name": "系统设置 · 打开方式 · Dark",
+      "x": 6624,
+      "y": 11122,
+      "name": "06 / 系统设置 · 打开方式 · Dark",
       "theme": {
         "mode": "dark"
       },
@@ -29658,9 +29938,9 @@
     {
       "type": "frame",
       "id": "t9WYK",
-      "x": 13532,
-      "y": -900,
-      "name": "系统设置 · 打开方式 · 添加规则弹窗 · Light",
+      "x": 5460,
+      "y": 11962,
+      "name": "06 / 系统设置 · 打开方式 · 添加规则弹窗 · Light",
       "theme": {
         "mode": "light"
       },
@@ -30778,9 +31058,9 @@
     {
       "type": "frame",
       "id": "NvrIU",
-      "x": 14732,
-      "y": -900,
-      "name": "系统设置 · 打开方式 · 添加规则弹窗 · Dark",
+      "x": 6624,
+      "y": 11962,
+      "name": "06 / 系统设置 · 打开方式 · 添加规则弹窗 · Dark",
       "theme": {
         "mode": "dark"
       },
@@ -31898,9 +32178,9 @@
     {
       "type": "frame",
       "id": "PIJaZ",
-      "x": 13532,
-      "y": -60,
-      "name": "系统设置 · 存储与临时文件 · Light",
+      "x": 5460,
+      "y": 12802,
+      "name": "06 / 系统设置 · 存储与临时文件 · Light",
       "theme": {
         "mode": "light"
       },
@@ -32800,9 +33080,9 @@
     {
       "type": "frame",
       "id": "P3ZyRu",
-      "x": 14732,
-      "y": -60,
-      "name": "系统设置 · 存储与临时文件 · Dark",
+      "x": 6624,
+      "y": 12802,
+      "name": "06 / 系统设置 · 存储与临时文件 · Dark",
       "theme": {
         "mode": "dark"
       },
@@ -33702,9 +33982,9 @@
     {
       "type": "frame",
       "id": "M0kd2H",
-      "x": 13532,
-      "y": 780,
-      "name": "系统设置 · 清理临时文件确认 · Light",
+      "x": 5460,
+      "y": 13642,
+      "name": "06 / 系统设置 · 清理临时文件确认 · Light",
       "theme": {
         "mode": "light"
       },
@@ -34722,9 +35002,9 @@
     {
       "type": "frame",
       "id": "J7YS0L",
-      "x": 14732,
-      "y": 780,
-      "name": "系统设置 · 清理临时文件确认 · Dark",
+      "x": 6624,
+      "y": 13642,
+      "name": "06 / 系统设置 · 清理临时文件确认 · Dark",
       "theme": {
         "mode": "dark"
       },
@@ -35742,9 +36022,9 @@
     {
       "type": "frame",
       "id": "w2WIu",
-      "x": 7428,
-      "y": 8047,
-      "name": "OSS · 获取更新时间 · 扫描中",
+      "x": 60,
+      "y": 10057,
+      "name": "05 / OSS · 获取更新时间 · 扫描中",
       "theme": {
         "mode": "light"
       },
@@ -36497,9 +36777,9 @@
     {
       "type": "frame",
       "id": "zanF6",
-      "x": 8852,
-      "y": 8047,
-      "name": "OSS · 获取更新时间 · 文件较多",
+      "x": 1484,
+      "y": 10057,
+      "name": "05 / OSS · 获取更新时间 · 文件较多",
       "theme": {
         "mode": "light"
       },
@@ -37252,9 +37532,9 @@
     {
       "type": "frame",
       "id": "WW7rV",
-      "x": 10276,
-      "y": 8047,
-      "name": "OSS · 获取更新时间 · 完成排序",
+      "x": 2908,
+      "y": 10057,
+      "name": "05 / OSS · 获取更新时间 · 完成排序",
       "theme": {
         "mode": "light"
       },
@@ -38018,9 +38298,9 @@
     {
       "type": "frame",
       "id": "iaJf2",
-      "x": 7428,
-      "y": 8987,
-      "name": "OSS · 获取更新时间 · 扫描中 · Dark",
+      "x": 60,
+      "y": 11017,
+      "name": "05 / OSS · 获取更新时间 · 扫描中 · Dark",
       "theme": {
         "mode": "dark"
       },
@@ -38773,9 +39053,9 @@
     {
       "type": "frame",
       "id": "be8j0",
-      "x": 8852,
-      "y": 8987,
-      "name": "OSS · 获取更新时间 · 文件较多 · Dark",
+      "x": 1484,
+      "y": 11017,
+      "name": "05 / OSS · 获取更新时间 · 文件较多 · Dark",
       "theme": {
         "mode": "dark"
       },
@@ -39528,9 +39808,9 @@
     {
       "type": "frame",
       "id": "nGRqc",
-      "x": 10276,
-      "y": 8987,
-      "name": "OSS · 获取更新时间 · 完成排序 · Dark",
+      "x": 2908,
+      "y": 11017,
+      "name": "05 / OSS · 获取更新时间 · 完成排序 · Dark",
       "theme": {
         "mode": "dark"
       },
@@ -40294,9 +40574,9 @@
     {
       "type": "frame",
       "id": "wrUFH",
-      "x": 7428,
-      "y": 9927,
-      "name": "OSS · 目录更新时间扫描交互说明",
+      "x": 60,
+      "y": 11977,
+      "name": "05 / OSS · 目录更新时间扫描交互说明",
       "theme": {
         "mode": "light"
       },
@@ -40372,9 +40652,9 @@
     {
       "type": "frame",
       "id": "h1r5l",
-      "x": 17112,
-      "y": -2850,
-      "name": "component/Home · 欢迎与实例概览",
+      "x": 2712,
+      "y": 2461,
+      "name": "01 / component/Home · 欢迎与实例概览",
       "reusable": true,
       "width": 1120,
       "height": 782,
@@ -41216,9 +41496,9 @@
     {
       "type": "frame",
       "id": "vfIzj",
-      "x": 17112,
-      "y": -1968,
-      "name": "首页 · 实例概览 · Light",
+      "x": 60,
+      "y": 3803,
+      "name": "02 / 首页 · 实例概览 · Light",
       "theme": {
         "mode": "light"
       },
@@ -41266,9 +41546,9 @@
     {
       "type": "frame",
       "id": "q3UYh",
-      "x": 18552,
-      "y": -1968,
-      "name": "首页 · 实例概览 · Dark",
+      "x": 1484,
+      "y": 3803,
+      "name": "02 / 首页 · 实例概览 · Dark",
       "theme": {
         "mode": "dark"
       },
@@ -41326,9 +41606,9 @@
     {
       "type": "frame",
       "id": "anYwN",
-      "x": 17112,
-      "y": -1028,
-      "name": "首页 · 首次使用空状态 · Light",
+      "x": 2908,
+      "y": 3803,
+      "name": "02 / 首页 · 首次使用空状态 · Light",
       "theme": {
         "mode": "light"
       },
@@ -41521,9 +41801,9 @@
     {
       "type": "frame",
       "id": "hSaIR",
-      "x": 18552,
-      "y": -1028,
-      "name": "首页 · 数据与交互说明",
+      "x": 1484,
+      "y": 6862,
+      "name": "02 / 首页 · 数据与交互说明",
       "theme": {
         "mode": "light"
       },
@@ -41632,9 +41912,9 @@
     {
       "type": "frame",
       "id": "z3e6X",
-      "x": 9512,
-      "y": 7327,
-      "name": "OSS 搜索帮助 · Tooltip",
+      "x": 2908,
+      "y": 8282,
+      "name": "05 / OSS 搜索帮助 · Tooltip",
       "clip": true,
       "width": 420,
       "height": 300,
@@ -41727,6 +42007,42 @@
               "fontWeight": "normal"
             }
           ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "pWCrq",
+      "x": 0,
+      "y": 0,
+      "name": "00 · Hermod 设计导航",
+      "width": 10400,
+      "height": 350,
+      "fill": "#17243A",
+      "cornerRadius": 24,
+      "layout": "vertical",
+      "gap": 26,
+      "padding": 60,
+      "children": [
+        {
+          "type": "text",
+          "id": "fT1lG",
+          "name": "设计总览标题",
+          "fill": "#FFFFFF",
+          "content": "HERMOD / DESIGN ATLAS",
+          "fontFamily": "Inter",
+          "fontSize": 64,
+          "fontWeight": "bold"
+        },
+        {
+          "type": "text",
+          "id": "i3P4pa",
+          "name": "分区导航",
+          "fill": "#CDD7E6",
+          "content": "01 设计规范与组件    02 首页与主框架    03 账号与登录    04 实例连接向导    05 对象存储    06 系统设置    07 品牌与备选稿",
+          "fontFamily": "Inter",
+          "fontSize": 28,
+          "fontWeight": "normal"
         }
       ]
     }
