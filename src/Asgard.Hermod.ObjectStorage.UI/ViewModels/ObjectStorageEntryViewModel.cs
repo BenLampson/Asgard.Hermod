@@ -4,11 +4,13 @@ namespace Asgard.Hermod.ObjectStorage.UI.ViewModels;
 public sealed class ObjectStorageEntryViewModel : ObservableObject
 {
     private bool _isChecked;
+    private FileTypeInfo _fileType;
 
     /// <summary>保存安全快照，并把勾选变化通知页面。</summary>
     public ObjectStorageEntryViewModel(ObjectStorageEntry entry, Action selectionChanged)
     {
         Entry = entry;
+        _fileType = FileTypeCatalog.Resolve(entry.Key, entry.IsDirectory);
         PropertyChanged += (_, args) => { if (args.PropertyName == nameof(IsChecked)) selectionChanged(); };
     }
 
@@ -21,7 +23,22 @@ public sealed class ObjectStorageEntryViewModel : ObservableObject
     /// <summary>目录前缀只在双击时进入。</summary>
     public bool IsDirectory => Entry.IsDirectory;
     /// <summary>对象类型对应的官方图标。</summary>
-    public string Icon => ObjectStoragePresentation.Icon(Key, IsDirectory);
+    public string Icon => _fileType.Icon;
+    /// <summary>图标颜色使用动态主题资源，不因勾选或详情选择变成其他类别颜色。</summary>
+    public string IconBrushKey => _fileType.BrushKey;
+    /// <summary>类型名称由公共资源本地化，扩展名保持可辨识。</summary>
+    public string TypeName => _fileType.DisplayName;
+
+    /// <summary>已读取的元数据补充无后缀类型，不额外请求对象或重置行选择。</summary>
+    internal void ApplyContentType(string? contentType)
+    {
+        var type = FileTypeCatalog.Resolve(Key, IsDirectory, contentType);
+        if (_fileType == type) return;
+        _fileType = type;
+        OnPropertyChanged(nameof(Icon));
+        OnPropertyChanged(nameof(IconBrushKey));
+        OnPropertyChanged(nameof(TypeName));
+    }
     /// <summary>目录不显示虚构的汇总大小。</summary>
     public string Size => IsDirectory ? "—" : ObjectStoragePresentation.Size(Entry.Size);
     /// <summary>目录没有对象存储类型。</summary>

@@ -2085,4 +2085,27 @@
   <data name="SyncRememberedPasswordHelp" xml:space="preserve"><value>Use 12–128 characters and the same password on every device. This device remembers the password securely for automatic synchronization. Forgetting the saved password pauses synchronization without resetting the cloud password.</value></data>
   <data name="ShowPassword" xml:space="preserve"><value>Show password</value></data>
   <data name="HidePassword" xml:space="preserve"><value>Hide password</value></data>
+  <data name="FileTypeColumn" xml:space="preserve"><value>File type</value></data>
+  <data name="FileTypeWithExtension" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="FileTypeVideo" xml:space="preserve"><value>Video</value></data>
+  <data name="FileTypeAudio" xml:space="preserve"><value>Audio</value></data>
+  <data name="FileTypeImage" xml:space="preserve"><value>Image</value></data>
+  <data name="FileTypeDesign" xml:space="preserve"><value>Vector / design</value></data>
+  <data name="FileTypePdf" xml:space="preserve"><value>PDF</value></data>
+  <data name="FileTypeDocument" xml:space="preserve"><value>Document</value></data>
+  <data name="FileTypeSpreadsheet" xml:space="preserve"><value>Spreadsheet</value></data>
+  <data name="FileTypePresentation" xml:space="preserve"><value>Presentation</value></data>
+  <data name="FileTypeText" xml:space="preserve"><value>Text / Markdown</value></data>
+  <data name="FileTypeArchive" xml:space="preserve"><value>Archive</value></data>
+  <data name="FileTypeCode" xml:space="preserve"><value>Code</value></data>
+  <data name="FileTypeWeb" xml:space="preserve"><value>Web / styles</value></data>
+  <data name="FileTypeData" xml:space="preserve"><value>Configuration / data</value></data>
+  <data name="FileTypeDatabase" xml:space="preserve"><value>Database</value></data>
+  <data name="FileTypeFont" xml:space="preserve"><value>Font</value></data>
+  <data name="FileTypeApplication" xml:space="preserve"><value>Application / installer</value></data>
+  <data name="FileTypeScript" xml:space="preserve"><value>Script / terminal</value></data>
+  <data name="FileTypeCertificate" xml:space="preserve"><value>Certificate / key</value></data>
+  <data name="FileTypeDiskImage" xml:space="preserve"><value>Disk image</value></data>
+  <data name="FileTypeUnknown" xml:space="preserve"><value>Unknown file</value></data>
+  <data name="FileTypeFolder" xml:space="preserve"><value>Folder</value></data>
 </root>

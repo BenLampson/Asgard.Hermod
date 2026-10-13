@@ -6,6 +6,15 @@ namespace Asgard.Hermod.ObjectStorage.UI.Views.Pages;
 /// <summary>处理列表鼠标与键盘语义，业务操作统一委托页面命令。</summary>
 public partial class ObjectStorageListView : UserControl
 {
+    /// <summary>文件类型只在宽视口显示，窄窗优先保留名称与操作。</summary>
+    public static readonly DependencyProperty FileTypeColumnWidthProperty = DependencyProperty.Register(nameof(FileTypeColumnWidth), typeof(GridLength), typeof(ObjectStorageListView), new PropertyMetadata(new GridLength(120)));
+    /// <summary>类型文字与列宽同步隐藏。</summary>
+    public static readonly DependencyProperty FileTypeColumnVisibilityProperty = DependencyProperty.Register(nameof(FileTypeColumnVisibility), typeof(Visibility), typeof(ObjectStorageListView), new PropertyMetadata(Visibility.Visible));
+    /// <summary>文件类型列的当前宽度。</summary>
+    public GridLength FileTypeColumnWidth { get => (GridLength)GetValue(FileTypeColumnWidthProperty); private set => SetValue(FileTypeColumnWidthProperty, value); }
+    /// <summary>文件类型列的当前显示状态。</summary>
+    public Visibility FileTypeColumnVisibility { get => (Visibility)GetValue(FileTypeColumnVisibilityProperty); private set => SetValue(FileTypeColumnVisibilityProperty, value); }
+
     /// <summary>窄视口隐藏次要列，业务模型仍保留完整元数据。</summary>
     public static readonly DependencyProperty StorageColumnWidthProperty = DependencyProperty.Register(nameof(StorageColumnWidth), typeof(GridLength), typeof(ObjectStorageListView), new PropertyMetadata(new GridLength(84)));
     /// <summary>更新时间列在足够宽的列表中显示。</summary>
@@ -54,6 +63,9 @@ public partial class ObjectStorageListView : UserControl
     /// <summary>保持设计尺寸的列宽，窄窗优先留出文件名与行操作空间。</summary>
     private void OnListSizeChanged(object sender, SizeChangedEventArgs args)
     {
+        bool fileType = ActualWidth >= 800;
+        FileTypeColumnWidth = new(fileType ? 120 : 0);
+        FileTypeColumnVisibility = fileType ? Visibility.Visible : Visibility.Collapsed;
         bool storage = ActualWidth >= 520;
         bool modified = ActualWidth >= 650;
         StorageColumnWidth = new(storage ? 84 : 0);

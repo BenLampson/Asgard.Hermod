@@ -9,6 +9,8 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     public string DetailName => SelectedEntry?.Name ?? "";
     /// <summary>详情类型图标。</summary>
     public string DetailIcon => SelectedEntry?.Icon ?? "file";
+    /// <summary>详情与列表共享文件类别的主题色。</summary>
+    public string DetailIconBrushKey => SelectedEntry?.IconBrushKey ?? "TextMutedBrush";
     /// <summary>没有选择时呈现对象详情的空态。</summary>
     public bool HasDetailSelection => SelectedEntry is not null;
     /// <summary>详情支持关闭后保留面板框架。</summary>
@@ -61,7 +63,11 @@ public sealed partial class ObjectStorageWorkspaceViewModel
         try
         {
             var details = await _service.GetObjectDetailsAsync(_instance.Id, bucket, entry.Key, operation.Token);
-            if (!IsClosed && !operation.IsCancellationRequested && version == _detailVersion && ReferenceEquals(SelectedEntry, entry)) Details = details;
+            if (!IsClosed && !operation.IsCancellationRequested && version == _detailVersion && ReferenceEquals(SelectedEntry, entry))
+            {
+                entry.ApplyContentType(details.ContentType);
+                Details = details;
+            }
         }
         catch (OperationCanceledException) when (operation.IsCancellationRequested) { }
         catch (Exception exception)
@@ -78,7 +84,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     /// <summary>刷新所有元数据、预览和详情操作启用条件。</summary>
     private void NotifyDetails()
     {
-        foreach (string property in new[] { nameof(DetailName), nameof(DetailIcon), nameof(HasDetailSelection), nameof(HasFileSelection),
+        foreach (string property in new[] { nameof(DetailName), nameof(DetailIcon), nameof(DetailIconBrushKey), nameof(HasDetailSelection), nameof(HasFileSelection),
             nameof(DetailSize), nameof(DetailModified), nameof(DetailStorageClass), nameof(DetailAccess), nameof(DetailContentType),
             nameof(PreviewText), nameof(HasTextPreview), nameof(PreviewMessage), nameof(PreviewFormat) }) OnPropertyChanged(property);
         RefreshCommands();

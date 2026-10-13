@@ -34,4 +34,11 @@
     <SolidColorBrush x:Key="OnAccentSoftBrush" Color="#C2D4FF" />
     <SolidColorBrush x:Key="TerminalSurfaceBrush" Color="#20252C" />
     <SolidColorBrush x:Key="TerminalTextBrush" Color="#EAEEF5" />
+    <!-- 文件类别保留辨识色，深色主题提高对比度。 -->
+    <SolidColorBrush x:Key="FileVideoBrush" Color="#B59AF5" />
+    <SolidColorBrush x:Key="FileAudioBrush" Color="#E792CC" />
+    <SolidColorBrush x:Key="FileDesignBrush" Color="#D9AA5F" />
+    <SolidColorBrush x:Key="FilePresentationBrush" Color="#EBA06A" />
+    <SolidColorBrush x:Key="FileCodeBrush" Color="#71C2DE" />
+    <SolidColorBrush x:Key="FileDataBrush" Color="#A5A9EF" />
 </ResourceDictionary>

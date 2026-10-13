@@ -35,4 +35,11 @@
     <!-- Shell 的 ANSI 浅色字符需要深色底，以保持两种外壳主题下的可读性。 -->
     <SolidColorBrush x:Key="TerminalSurfaceBrush" Color="#20252C" />
     <SolidColorBrush x:Key="TerminalTextBrush" Color="#EAEEF5" />
+    <!-- 文件类别保留辨识色，深色主题提高对比度。 -->
+    <SolidColorBrush x:Key="FileVideoBrush" Color="#7956C5" />
+    <SolidColorBrush x:Key="FileAudioBrush" Color="#B44D99" />
+    <SolidColorBrush x:Key="FileDesignBrush" Color="#A56A16" />
+    <SolidColorBrush x:Key="FilePresentationBrush" Color="#C36728" />
+    <SolidColorBrush x:Key="FileCodeBrush" Color="#2E82A1" />
+    <SolidColorBrush x:Key="FileDataBrush" Color="#6970B9" />
 </ResourceDictionary>

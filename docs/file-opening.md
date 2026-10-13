@@ -41,6 +41,25 @@ They can be previewed as text where supported, opened by an explicitly configure
 editor, or downloaded for local handling. Custom programs receive the file as one
 argument through `ProcessStartInfo.ArgumentList`, without shell interpolation.
 
+## Built-in file type icons
+
+Object rows and details share a bundled Lucide icon catalog. It covers video,
+audio, images, vector/design files, PDF, documents, spreadsheets, presentations,
+text/Markdown, archives, source code, web/styles, configuration/data, databases,
+fonts, applications/installers, scripts, certificates and disk images. Unknown
+files use a generic file icon; directories retain their folder icon. MP4 and MOV
+use the purple video icon, including while selected. Theme-specific colors also
+remain readable in dark mode. Wide lists show a localized file type column;
+narrow lists hide it before reducing the file name and action space.
+
+Extension matching ignores case and handles compound archive suffixes such as
+`.tar.gz` before their final suffix. `.env` and common extensionless project
+files are recognized. Extensionless objects can use Content-Type from details
+already requested by the user; rendering a row never downloads contents or
+requests metadata. Known extensions take priority over conflicting Content-Type.
+The ambiguous `.key` extension defaults to Keynote presentations. Icon recognition
+does not grant preview support or change file-opening security policies.
+
 ## Cache lifetime
 
 Each open operation uses a separate directory beneath

@@ -10,6 +10,23 @@ public sealed class IconView : Control
         nameof(Kind), typeof(string), typeof(IconView),
         new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.AffectsRender));
 
+    /// <summary>绑定主题资源键后使用动态资源，使文件类型颜色随换肤更新。</summary>
+    public static readonly DependencyProperty ForegroundResourceKeyProperty = DependencyProperty.Register(
+        nameof(ForegroundResourceKey), typeof(string), typeof(IconView),
+        new PropertyMetadata(null, (target, args) =>
+        {
+            var icon = (IconView)target;
+            if (args.NewValue is string { Length: > 0 } key) icon.SetResourceReference(ForegroundProperty, key);
+            else icon.ClearValue(ForegroundProperty);
+        }));
+
+    /// <summary>文件类型提供的稳定主题色键；普通图标仍可直接设置 Foreground。</summary>
+    public string? ForegroundResourceKey
+    {
+        get => (string?)GetValue(ForegroundResourceKeyProperty);
+        set => SetValue(ForegroundResourceKeyProperty, value);
+    }
+
     /// <summary>设置默认尺寸和装饰性行为，使图标不抢占键盘焦点。</summary>
     static IconView()
     {

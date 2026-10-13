@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.IO;
 
 namespace Asgard.Hermod.ObjectStorage.UI.ViewModels;
 
@@ -22,14 +21,8 @@ internal static class ObjectStoragePresentation
     /// <summary>仅显示文件名，目录保留结尾的斜杠。</summary>
     internal static string Name(string key) => key.TrimEnd('/').Split('/').LastOrDefault() + (key.EndsWith('/') ? "/" : "");
 
-    /// <summary>通过扩展名选择官方图标，文件内容不会参与执行。</summary>
-    internal static string Icon(string key, bool directory = false) => directory ? "folder" : Path.GetExtension(key).ToLowerInvariant() switch
-    {
-        ".json" => "file-json",
-        ".zip" or ".gz" or ".7z" or ".tar" => "file-archive",
-        ".png" or ".jpg" or ".jpeg" or ".gif" or ".webp" => "image",
-        _ => "file-text"
-    };
+    /// <summary>上传队列与对象列表共享内置扩展名映射。</summary>
+    internal static string Icon(string key, bool directory = false) => FileTypeCatalog.Resolve(key, directory).Icon;
 
     /// <summary>存储类型协议值映射到当前界面语言。</summary>
     internal static string StorageClass(string value) => value switch
