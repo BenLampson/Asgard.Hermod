@@ -66,11 +66,20 @@ public sealed class SqliteConfigurationRepository : ILocalConfigurationRepositor
     }
 
     /// <inheritdoc />
-    public void UpdateInstance(StoredInstanceConfiguration instance, CancellationToken cancellationToken = default)
+    public void UpdateInstance(StoredInstanceConfiguration instance, CancellationToken cancellationToken = default) =>
+        UpdateInstance(instance, false, cancellationToken);
+
+    /// <inheritdoc />
+    public void UpdateInstance(StoredInstanceConfiguration instance, bool replaceTags, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(instance);
         InTransaction(true, command =>
         {
+            // 配置与标签在同一事务中验证和替换，目录并发删除不能留下半次更新。
+            var knownTags = ReadTags(command).Select(tag => tag.Id).ToHashSet(StringComparer.Ordinal);
+            string[] tagIds = instance.TagIds.Distinct(StringComparer.Ordinal).ToArray();
+            if (replaceTags && tagIds.Any(id => !knownTags.Contains(id)))
+                throw Text.Exception("TheSelectedTagsNoLongerExistRefreshAndSelectAgain");
             SetCommand(command, """
                 UPDATE instance_configuration
                 SET name = @name, type_id = @type, provider_id = @provider, protected_parameters = @parameters
@@ -79,6 +88,16 @@ public sealed class SqliteConfigurationRepository : ILocalConfigurationRepositor
                 ("@provider", instance.ProviderId), ("@parameters", instance.ProtectedParameters));
             if (command.ExecuteNonQuery() != 1)
                 throw Text.Exception("TheInstanceNoLongerExistsRefreshAndConfigureItAgain");
+            if (!replaceTags) return true;
+            SetCommand(command, "DELETE FROM instance_tag WHERE instance_id = @instance;", ("@instance", instance.Id));
+            command.ExecuteNonQuery();
+            foreach (string tagId in tagIds)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                SetCommand(command, "INSERT INTO instance_tag (instance_id, tag_id) VALUES (@instance, @tag);",
+                    ("@instance", instance.Id), ("@tag", tagId));
+                command.ExecuteNonQuery();
+            }
             return true;
         }, cancellationToken);
     }

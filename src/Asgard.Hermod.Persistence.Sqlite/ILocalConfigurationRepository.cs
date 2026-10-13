@@ -11,6 +11,12 @@ public interface ILocalConfigurationRepository
     void CreateInstance(StoredInstanceConfiguration instance, CancellationToken cancellationToken = default);
     /// <summary>只原子更新名称、类型和密文参数，保留原实例标识、创建时间与全部标签关联。</summary>
     void UpdateInstance(StoredInstanceConfiguration instance, CancellationToken cancellationToken = default);
+    /// <summary>显式替换标签时配置与关联同事务提交；未替换时沿用原连接更新语义。</summary>
+    void UpdateInstance(StoredInstanceConfiguration instance, bool replaceTags, CancellationToken cancellationToken = default)
+    {
+        if (replaceTags) throw new NotSupportedException(Text.Get("TheCurrentConfigurationServiceDoesNotSupportEditingInstances"));
+        UpdateInstance(instance, cancellationToken);
+    }
     /// <summary>在写事务中执行标签验证和新增或更新，返回稳定标识的快照。</summary>
     ManagedTag SaveTag(string? tagId, TagEditDraft draft, CancellationToken cancellationToken = default);
     /// <summary>读取删除子树及去重后的受影响实例数。</summary>

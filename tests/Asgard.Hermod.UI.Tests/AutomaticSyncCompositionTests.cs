@@ -35,7 +35,16 @@ public sealed class AutomaticSyncCompositionTests
         Assert.Contains(configurations.GetInstances(), value => value.Id == instance.Id);
         Assert.Equal(ConfigurationSyncStatus.Local, provider.GetRequiredService<IConfigurationSyncService>().Status);
         Assert.IsType<SyncedTagManagementService>(provider.GetRequiredService<ITagManagementService>());
-        await provider.GetRequiredService<ITagManagementService>().SaveAsync(null, new("Local tag", null, "#123456"), TestContext.Current.CancellationToken);
+        var tag = await provider.GetRequiredService<ITagManagementService>().SaveAsync(null, new("Local tag", null, "#123456"), TestContext.Current.CancellationToken);
+        // 装饰器必须传递显式标签替换，并保留读取标识的真实持久化语义。
+        await configurations.UpdateAsync(instance.Id, new()
+        {
+            Name = instance.Name,
+            Connection = (await configurations.GetConnectionAsync(instance.Id, TestContext.Current.CancellationToken))!,
+            TagIds = [tag.Id],
+            ReplaceTags = true,
+        }, TestContext.Current.CancellationToken);
+        Assert.Equal([tag.Id], await configurations.GetTagIdsAsync(instance.Id, TestContext.Current.CancellationToken));
         Assert.Null(provider.GetRequiredService<IAccountService>().Account);
     }
 }

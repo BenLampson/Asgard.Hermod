@@ -15,6 +15,8 @@ public sealed class InstanceConfigurationDraft
     public bool CheckExpectedAccount { get; init; }
     /// <summary>稳定的标签标识，改名或调整层级不会改变关联。</summary>
     public IReadOnlyList<string> TagIds { get; init; } = [];
+    /// <summary>编辑时明确替换标签关系；兼容只更新连接信息的旧调用方。</summary>
+    public bool ReplaceTags { get; init; }
 
     /// <summary>避免草稿诊断输出包含连接凭据。</summary>
     public override string ToString() => $"Instance draft ({SaveLocation}, connection hidden)";

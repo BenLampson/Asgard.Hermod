@@ -39,6 +39,14 @@ public sealed class LocalInstanceConfigurationService : IInstanceConfigurationSe
         CancellationToken cancellationToken = default) => SaveAsync(null, draft, cancellationToken);
 
     /// <inheritdoc />
+    public Task<IReadOnlyList<string>> GetTagIdsAsync(string instanceId, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(instanceId);
+        return Task.Run<IReadOnlyList<string>>(() => _repository.GetInstance(instanceId, cancellationToken)?.TagIds.ToArray()
+            ?? throw Text.Exception("TheInstanceNoLongerExistsRefreshAndConfigureItAgain"), cancellationToken);
+    }
+
+    /// <inheritdoc />
     public Task<InstanceSummary> UpdateAsync(string instanceId, InstanceConfigurationDraft draft,
         CancellationToken cancellationToken = default)
     {
@@ -93,11 +101,12 @@ public sealed class LocalInstanceConfigurationService : IInstanceConfigurationSe
                     throw Text.Exception("EditingCannotChangeTheInstanceTypeOrProviderCreateAnInstanceOfTheRequiredTypeInstead");
                 var instance = new StoredInstanceConfiguration(existing?.Id ?? Guid.NewGuid().ToString("N"), name,
                     provider.Descriptor.Type.Id, provider.Descriptor.Id, protectedParameters,
-                    existing?.CreatedAt ?? DateTime.UtcNow, existing?.TagIds ?? requestedTagIds);
+                    existing?.CreatedAt ?? DateTime.UtcNow,
+                    existing is not null && !draft.ReplaceTags ? existing.TagIds : requestedTagIds);
                 // 提交前准备所有导航字段；提交后再查询可能把已保存操作误报成失败。
                 InstanceSummary summary = ToSummary(instance, snapshot.Tags);
                 if (existing is null) _repository.CreateInstance(instance, cancellationToken);
-                else _repository.UpdateInstance(instance, cancellationToken);
+                else _repository.UpdateInstance(instance, draft.ReplaceTags, cancellationToken);
                 // 后续标签改名通过 GetInstances 刷新路径，保存结果不依赖额外数据库读取。
                 return summary;
             }

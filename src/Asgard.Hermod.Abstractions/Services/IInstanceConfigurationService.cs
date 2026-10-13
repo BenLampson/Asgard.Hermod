@@ -5,6 +5,10 @@ public interface IInstanceConfigurationService
 {
     /// <summary>读取不包含凭据的导航快照。</summary>
     IReadOnlyList<InstanceSummary> GetInstances();
+    /// <summary>读取实例关联的稳定标签标识，编辑器不从显示路径反推身份。</summary>
+    Task<IReadOnlyList<string>> GetTagIdsAsync(string instanceId,
+        CancellationToken cancellationToken = default) =>
+        throw new NotSupportedException(Text.Get("TheCurrentConfigurationServiceDoesNotSupportEditingInstances"));
     /// <summary>保存配置与标签关联，成功后返回安全的导航快照。</summary>
     Task<InstanceSummary> CreateAsync(InstanceConfigurationDraft draft,
         CancellationToken cancellationToken = default);
