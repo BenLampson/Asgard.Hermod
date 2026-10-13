@@ -114,7 +114,7 @@
           "y": 106,
           "name": "05 · 阅读顺序",
           "fill": "#53657D",
-          "content": "Object storage · 浏览与搜索 → 对象操作 → 扫描与边界状态",
+          "content": "Object storage · 浏览与搜索 → 对象操作 → 扫描与边界 · 自动图片预览 / 可收起详情见下方 05B",
           "fontFamily": "Inter",
           "fontSize": 22,
           "fontWeight": "normal"
@@ -50414,6 +50414,198 @@
           "fontFamily": "Inter",
           "fontSize": 13,
           "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "k8GAj",
+          "name": "ForcePreviewRetryImage中英文资源",
+          "width": "fill_container",
+          "gap": 24,
+          "children": [
+            {
+              "type": "text",
+              "id": "ALcH6",
+              "name": "ForcePreviewRetryImage键",
+              "fill": "$accent-ink",
+              "textGrowth": "fixed-width",
+              "width": 280,
+              "content": "ForcePreviewRetryImage",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "V78ULr",
+              "name": "ForcePreviewRetryImage中文",
+              "fill": "$body",
+              "textGrowth": "fixed-width",
+              "width": 750,
+              "content": "重新加载图片",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "vB5RW",
+              "name": "ForcePreviewRetryImage英文",
+              "fill": "$body",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Retry image preview",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "e0Qvo",
+          "name": "ShowObjectDetails中英文资源",
+          "width": "fill_container",
+          "gap": 24,
+          "children": [
+            {
+              "type": "text",
+              "id": "td2o7",
+              "name": "ShowObjectDetails键",
+              "fill": "$accent-ink",
+              "textGrowth": "fixed-width",
+              "width": 280,
+              "content": "ShowObjectDetails",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "bNNW6",
+              "name": "ShowObjectDetails中文",
+              "fill": "$body",
+              "textGrowth": "fixed-width",
+              "width": 750,
+              "content": "展开对象详情",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "jfGA8",
+              "name": "ShowObjectDetails英文",
+              "fill": "$body",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Show object details",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "x2Cufr",
+          "name": "HideObjectDetails中英文资源",
+          "width": "fill_container",
+          "gap": 24,
+          "children": [
+            {
+              "type": "text",
+              "id": "s3FpH",
+              "name": "HideObjectDetails键",
+              "fill": "$accent-ink",
+              "textGrowth": "fixed-width",
+              "width": 280,
+              "content": "HideObjectDetails",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "LOKhN",
+              "name": "HideObjectDetails中文",
+              "fill": "$body",
+              "textGrowth": "fixed-width",
+              "width": 750,
+              "content": "收起对象详情",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "nOJyq",
+              "name": "HideObjectDetails英文",
+              "fill": "$body",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Hide object details",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "J1KCf",
+          "name": "ResizeObjectDetails中英文资源",
+          "width": "fill_container",
+          "gap": 24,
+          "children": [
+            {
+              "type": "text",
+              "id": "WeU1K",
+              "name": "ResizeObjectDetails键",
+              "fill": "$accent-ink",
+              "textGrowth": "fixed-width",
+              "width": 280,
+              "content": "ResizeObjectDetails",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "fGa51",
+              "name": "ResizeObjectDetails中文",
+              "fill": "$body",
+              "textGrowth": "fixed-width",
+              "width": 750,
+              "content": "向左或向右拖动以调整对象详情宽度；聚焦后可使用左右方向键。",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "j3vor",
+              "name": "ResizeObjectDetails英文",
+              "fill": "$body",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Drag left or right to resize object details; use the Left and Right arrow keys when focused.",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
         }
       ]
     },
