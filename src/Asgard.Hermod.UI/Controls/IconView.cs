@@ -1,11 +1,11 @@
 namespace Asgard.Hermod.UI.Controls;
 
 /// <summary>
-/// 使用官方 Lucide 几何绘制图标，并继承容器前景色以响应主题切换。
+/// 绘制内置官方品牌资源或 Lucide 几何；只有通用图标继承主题前景色。
 /// </summary>
 public sealed class IconView : Control
 {
-    /// <summary>图标名称，对应 Pencil 的 Lucide 图标名。</summary>
+    /// <summary>图标名称，对应内置品牌标识或 Pencil 的 Lucide 图标名。</summary>
     public static readonly DependencyProperty KindProperty = DependencyProperty.Register(
         nameof(Kind), typeof(string), typeof(IconView),
         new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.AffectsRender));
@@ -32,6 +32,15 @@ public sealed class IconView : Control
     protected override void OnRender(DrawingContext drawingContext)
     {
         base.OnRender(drawingContext);
+        if (ProviderIconCatalog.TryGet(Kind, out var brand))
+        {
+            double imageScale = Math.Min(ActualWidth / brand.Width, ActualHeight / brand.Height);
+            if (imageScale <= 0) return;
+            double width = brand.Width * imageScale;
+            double height = brand.Height * imageScale;
+            drawingContext.DrawImage(brand, new Rect((ActualWidth - width) / 2, (ActualHeight - height) / 2, width, height));
+            return;
+        }
         if (!IconCatalog.TryGet(Kind, out var geometry) || Foreground is null)
         {
             return;

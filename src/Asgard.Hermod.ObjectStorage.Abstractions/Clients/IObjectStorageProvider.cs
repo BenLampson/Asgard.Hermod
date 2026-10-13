@@ -7,6 +7,6 @@ public interface IObjectStorageProvider
     string TypeId { get; }
     /// <summary>对应通用实例注册表中的服务商标识。</summary>
     string ProviderId { get; }
-    /// <summary>为一次业务操作创建隔离客户端；区域取自容器信息而非任意用户地址。</summary>
+    /// <summary>为一次业务操作创建隔离客户端；连接器负责验证容器区域及自建服务地址。</summary>
     IObjectStorageClient CreateClient(InstanceConnectionOptions options, string? region);
 }

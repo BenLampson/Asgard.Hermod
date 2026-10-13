@@ -23,9 +23,14 @@ storage and owns application startup and shutdown.
 | `Asgard.Hermod.ObjectStorage` | Resource client factory, connection probe, transfers, previews and deletion policies | Object storage contracts, DI abstractions |
 | `Asgard.Hermod.ObjectStorage.UI` | Object browser, feature dialogs, view models and page template | Shared UI, object storage contracts, DI abstractions |
 | `Asgard.Hermod.Providers.AliyunOss` | OSS signing, SDK clients, multipart upload and provider-specific HTTP policies | Object storage module, AlibabaCloud.OSS.V2, HTTP resilience |
+| `Asgard.Hermod.Providers.S3` | Shared S3 SDK client, streaming, multipart transfers, safe errors and narrow protocol adapters; generic S3-compatible profile | Object storage module, AWSSDK.S3, HTTP resilience |
+| `Asgard.Hermod.Providers.AwsS3` | AWS endpoint profile and independent registration | S3 provider module |
+| `Asgard.Hermod.Providers.TencentCos` | COS endpoint, bucket-list dialect and conditional-write profile | S3 provider module |
+| `Asgard.Hermod.Providers.VolcengineTos` | TOS S3 endpoint and conditional-write profile | S3 provider module |
+| `Asgard.Hermod.Providers.Minio` | MinIO custom endpoint and addressing profile | S3 provider module |
 
 Shared contracts, core services, SQLite persistence, and object storage contracts,
-operations and the OSS connector target `net10.0` without WPF. Presentation,
+operations and all storage connectors target `net10.0` without WPF. Presentation,
 terminal and DPAPI projects target `net10.0-windows`. No module references the
 application executable. Shared UI does not reference object storage, persistence
 or cloud connectors.
@@ -41,6 +46,11 @@ services.AddLocalStorage(configuration);
 services.AddHermodIdentity(identityOptions);
 services.AddObjectStorage();
 services.AddAliyunOss();
+services.AddTencentCos();
+services.AddVolcengineTos();
+services.AddAwsS3();
+services.AddMinio();
+services.AddS3Connector<S3CompatibleStorageProvider>();
 services.AddSingleton<ITerminalSessionFactory, LocalTerminalSessionFactory>();
 services.AddHermodUi(() => MainWindow, Resources);
 services.AddObjectStorageUi(() => MainWindow);
@@ -55,6 +65,16 @@ clients, remote operations or presentation components.
 HTTP clients and resilience policies. Other providers can be registered alongside
 it using the same contracts. Provider keys are indexed by instance type and
 provider identity; duplicate registrations fail during startup validation.
+
+The S3-based connectors share the official AWS SDK for signing, XML serialization,
+requests and presigned links. Each vendor module owns its profile and registration.
+The S3 module owns client configuration, bucket discovery, transfers, connection
+probes and safe error translation in separate files. COS bucket-list field names
+and COS/TOS conditional-write headers are small adapters around the SDK. These
+details do not enter object browser view models, persistence or shared contracts.
+Provider brand images are embedded WPF resources in shared UI; provider descriptors
+carry stable icon IDs, with no UI assembly dependency. See the
+[provider guide](object-storage-providers.md) and [asset sources](../src/Asgard.Hermod.UI/Assets/Providers/README.md).
 
 Startup validates the service container, initializes the database off the UI
 thread, applies the saved language preference and opens the main window. Windows
@@ -144,6 +164,10 @@ persistence remain outside the terminal project. See the
 
 Run the solution build, format verification and test suite documented in the
 repository README. Module composition tests verify local startup without cloud
-providers, independent OSS registration, and assembly dependency boundaries.
+providers, independent connector registration, and assembly dependency boundaries.
 Workspace tests exercise feature templates, cached page reuse, lazy loading,
 connection editing and resource cleanup across project boundaries.
+S3 protocol tests run the real SDK against controlled HTTP responses, covering
+signing, regional endpoints, pagination, conditional writes, multipart cancellation,
+partial deletion failures and version-aware probe cleanup. Live cloud accounts are
+not required by the test suite.

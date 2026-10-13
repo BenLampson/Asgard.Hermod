@@ -27,6 +27,11 @@ public partial class App : Application
             services.AddHermodIdentity(configuration.LoadSection<HermodIdentityOptions>("identity"));
             services.AddObjectStorage();
             services.AddAliyunOss();
+            services.AddTencentCos();
+            services.AddVolcengineTos();
+            services.AddAwsS3();
+            services.AddMinio();
+            services.AddS3Connector<S3CompatibleStorageProvider>();
             services.AddSingleton<ITerminalSessionFactory, LocalTerminalSessionFactory>();
             services.AddHermodUi(() => MainWindow, Resources);
             services.AddObjectStorageUi(() => MainWindow);

@@ -48,7 +48,7 @@ public sealed class ObjectStorageConfirmationDialogViewModel : ObjectStorageDial
         ArgumentNullException.ThrowIfNull(plan);
         return new(Text.Get("DeleteObjects2"), Text.Format("DeleteTheseObjects", plan.Keys.Count),
             bucket.Name + (prefix.Length == 0 ? " /" : " / " + prefix.TrimEnd('/')), plan.Keys,
-            Text.Get("ObjectsWillBeDeletedFromOSSThisActionCannotBeDirectlyUndone"), Text.Format("DeleteObjects", plan.Keys.Count), true, true);
+            Text.Get("ObjectsWillBeDeletedFromStorage"), Text.Format("DeleteObjects", plan.Keys.Count), true, true);
     }
 
     /// <summary>逐项询问策略下清楚展示将被覆盖的对象键。</summary>

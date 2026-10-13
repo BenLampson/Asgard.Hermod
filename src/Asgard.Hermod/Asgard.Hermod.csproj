@@ -28,6 +28,10 @@
     <ProjectReference Include="..\Asgard.Hermod.ObjectStorage\Asgard.Hermod.ObjectStorage.csproj" />
     <ProjectReference Include="..\Asgard.Hermod.ObjectStorage.UI\Asgard.Hermod.ObjectStorage.UI.csproj" />
     <ProjectReference Include="..\Asgard.Hermod.Providers.AliyunOss\Asgard.Hermod.Providers.AliyunOss.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Providers.AwsS3\Asgard.Hermod.Providers.AwsS3.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Providers.TencentCos\Asgard.Hermod.Providers.TencentCos.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Providers.VolcengineTos\Asgard.Hermod.Providers.VolcengineTos.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Providers.Minio\Asgard.Hermod.Providers.Minio.csproj" />
     <ProjectReference Include="..\Asgard.Hermod.WinTerminal\Asgard.Hermod.WinTerminal.csproj" />
   </ItemGroup>
 </Project>

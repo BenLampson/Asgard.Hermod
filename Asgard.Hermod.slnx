@@ -10,6 +10,11 @@
     <Project Path="src/Asgard.Hermod.ObjectStorage.UI/Asgard.Hermod.ObjectStorage.UI.csproj" />
     <Project Path="src/Asgard.Hermod.Persistence.Sqlite/Asgard.Hermod.Persistence.Sqlite.csproj" />
     <Project Path="src/Asgard.Hermod.Providers.AliyunOss/Asgard.Hermod.Providers.AliyunOss.csproj" />
+    <Project Path="src/Asgard.Hermod.Providers.AwsS3/Asgard.Hermod.Providers.AwsS3.csproj" />
+    <Project Path="src/Asgard.Hermod.Providers.Minio/Asgard.Hermod.Providers.Minio.csproj" />
+    <Project Path="src/Asgard.Hermod.Providers.S3/Asgard.Hermod.Providers.S3.csproj" />
+    <Project Path="src/Asgard.Hermod.Providers.TencentCos/Asgard.Hermod.Providers.TencentCos.csproj" />
+    <Project Path="src/Asgard.Hermod.Providers.VolcengineTos/Asgard.Hermod.Providers.VolcengineTos.csproj" />
     <Project Path="src/Asgard.Hermod.Security.Windows/Asgard.Hermod.Security.Windows.csproj" />
     <Project Path="src/Asgard.Hermod/Asgard.Hermod.csproj" />
     <Project Path="src/Asgard.Hermod.UI/Asgard.Hermod.UI.csproj" />

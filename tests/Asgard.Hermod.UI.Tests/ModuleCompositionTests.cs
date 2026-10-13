@@ -1,3 +1,9 @@
+using Asgard.Hermod.Providers.AwsS3;
+using Asgard.Hermod.Providers.Minio;
+using Asgard.Hermod.Providers.S3;
+using Asgard.Hermod.Providers.TencentCos;
+using Asgard.Hermod.Providers.VolcengineTos;
+
 namespace Asgard.Hermod.UI.Tests;
 
 /// <summary>验证基础模块可独立组合，持久化不会隐式安装远程连接器。</summary>
@@ -47,6 +53,38 @@ public sealed class ModuleCompositionTests
         Assert.Null(services.GetService<IInstancePageProvider>());
     }
 
+    /// <summary>每个云连接器独立装配且可重复调用注册入口，不依赖数据库、界面或其他厂商。</summary>
+    [Theory]
+    [InlineData("aws-s3")]
+    [InlineData("tencent-cos")]
+    [InlineData("volcengine-tos")]
+    [InlineData("minio")]
+    [InlineData("s3-compatible")]
+    public void S3Connectors_RegisterIndependentlyAndOnce(string id)
+    {
+        var registration = new ServiceCollection();
+        for (int i = 0; i < 2; i++)
+        {
+            _ = id switch
+            {
+                "aws-s3" => registration.AddAwsS3(),
+                "tencent-cos" => registration.AddTencentCos(),
+                "volcengine-tos" => registration.AddVolcengineTos(),
+                "minio" => registration.AddMinio(),
+                _ => registration.AddS3Connector<S3CompatibleStorageProvider>(),
+            };
+        }
+        using var services = registration.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
+        var instanceProvider = Assert.Single(services.GetServices<IInstanceProvider>());
+        var objectProvider = Assert.Single(services.GetServices<IObjectStorageProvider>());
+        Assert.Same(instanceProvider, objectProvider);
+        Assert.Equal(id, instanceProvider.Descriptor.Id);
+        using var client = objectProvider.CreateClient(S3TestClient.Options(id), null);
+        Assert.Null(services.GetService<ILocalConfigurationRepository>());
+        Assert.Null(services.GetService<IInstancePageProvider>());
+        Assert.Null(services.GetService<IObjectStorageService>());
+    }
+
     /// <summary>业务及契约程序集不得反向引用宿主、WPF 或服务商实现。</summary>
     [Theory]
     [InlineData(typeof(InstanceSummary))]
@@ -62,7 +100,7 @@ public sealed class ModuleCompositionTests
             name.StartsWith("Asgard.Hermod.UI", StringComparison.Ordinal) ||
             name.StartsWith("Asgard.Hermod.ObjectStorage.UI", StringComparison.Ordinal) ||
             name.StartsWith("Asgard.Hermod.Providers.", StringComparison.Ordinal) ||
-            name.StartsWith("AlibabaCloud", StringComparison.Ordinal) ||
+            name.StartsWith("AlibabaCloud", StringComparison.Ordinal) || name.StartsWith("AWSSDK", StringComparison.Ordinal) ||
             name is "PresentationFramework" or "PresentationCore" or "WindowsBase");
     }
 
@@ -77,6 +115,6 @@ public sealed class ModuleCompositionTests
             name.StartsWith("Asgard.Hermod.ObjectStorage", StringComparison.Ordinal) ||
             name.StartsWith("Asgard.Hermod.Persistence", StringComparison.Ordinal) ||
             name.StartsWith("Asgard.Hermod.Providers", StringComparison.Ordinal) ||
-            name.StartsWith("AlibabaCloud", StringComparison.Ordinal));
+            name.StartsWith("AlibabaCloud", StringComparison.Ordinal) || name.StartsWith("AWSSDK", StringComparison.Ordinal));
     }
 }

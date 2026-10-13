@@ -2000,4 +2000,43 @@
   <data name="HomeOpenedYesterday" xml:space="preserve">
     <value>昨天 {0}</value>
   </data>
+  <data name="AwsS3Name" xml:space="preserve"><value>亚马逊 S3</value></data>
+  <data name="AwsS3Description" xml:space="preserve"><value>AWS 对象存储</value></data>
+  <data name="TencentCosName" xml:space="preserve"><value>腾讯云 COS</value></data>
+  <data name="TencentCosDescription" xml:space="preserve"><value>腾讯云对象存储</value></data>
+  <data name="VolcengineTosName" xml:space="preserve"><value>火山引擎 TOS</value></data>
+  <data name="VolcengineTosDescription" xml:space="preserve"><value>火山引擎对象存储</value></data>
+  <data name="MinioName" xml:space="preserve"><value>MinIO</value></data>
+  <data name="MinioDescription" xml:space="preserve"><value>自建 S3 兼容存储</value></data>
+  <data name="S3CompatibleName" xml:space="preserve"><value>S3 兼容存储</value></data>
+  <data name="S3CompatibleDescription" xml:space="preserve"><value>连接自定义 S3 服务</value></data>
+  <data name="StorageEndpoint" xml:space="preserve"><value>服务地址</value></data>
+  <data name="StorageEndpointHint" xml:space="preserve"><value>填写 S3 API 根地址，包含 http:// 或 https:// 及可选端口，请勿填写网页控制台地址。</value></data>
+  <data name="StorageEndpointInvalid" xml:space="preserve"><value>请填写有效的 HTTP 或 HTTPS 服务根地址，不得包含凭据、路径、查询参数或片段。</value></data>
+  <data name="StorageRegion" xml:space="preserve"><value>区域</value></data>
+  <data name="StorageRegionHint" xml:space="preserve"><value>留空使用 {0}。指定存储桶时，请填写该桶的实际区域。</value></data>
+  <data name="StorageRegionInvalid" xml:space="preserve"><value>请使用小写字母、数字和连字符填写有效区域标识。</value></data>
+  <data name="StorageAccessKeyId" xml:space="preserve"><value>访问密钥 ID</value></data>
+  <data name="StorageSecretAccessKey" xml:space="preserve"><value>访问密钥 Secret</value></data>
+  <data name="StorageSessionToken" xml:space="preserve"><value>会话令牌（可选）</value></data>
+  <data name="StorageSessionTokenHint" xml:space="preserve"><value>使用临时凭据时必填。Hermod 不会自动续期已过期的凭据。</value></data>
+  <data name="StorageOptionalBucket" xml:space="preserve"><value>存储桶（可选）</value></data>
+  <data name="StorageOptionalBucketHint" xml:space="preserve"><value>指定存储桶可免于申请账户级列桶权限。留空自动发现存储桶。</value></data>
+  <data name="StorageBucketInvalid" xml:space="preserve"><value>请填写有效存储桶名称，不得包含网址或对象路径。</value></data>
+  <data name="StorageAddressingStyle" xml:space="preserve"><value>寻址方式（可选）</value></data>
+  <data name="StorageAddressingStyleHint" xml:space="preserve"><value>留空或填写 path 使用 endpoint/bucket；填写 virtual 使用 bucket.endpoint。</value></data>
+  <data name="StorageAddressingInvalid" xml:space="preserve"><value>寻址方式请填写 path 或 virtual。</value></data>
+  <data name="StorageConnectionTestHint" xml:space="preserve"><value>测试会列举可用对象或存储桶，写入随机临时对象、回读并清理其精确版本。只读凭据无法通过此读写测试。</value></data>
+  <data name="StorageClockSkew" xml:space="preserve"><value>设备时间与存储服务不一致，请校正设备时间后重试。</value></data>
+  <data name="StorageOperationUnsupported" xml:space="preserve"><value>此存储服务不支持所请求的操作。</value></data>
+  <data name="StorageServiceUnavailable" xml:space="preserve"><value>存储服务暂时不可用，请稍后重试。</value></data>
+  <data name="StorageInvalidResponse" xml:space="preserve"><value>存储服务返回了无法验证的响应，请稍后重试。</value></data>
+  <data name="StorageAccessPolicyHint" xml:space="preserve"><value>由存储桶策略和访问控制共同决定</value></data>
+  <data name="StorageDeletePartialFailure" xml:space="preserve"><value>部分对象未能删除，请刷新列表后重试。</value></data>
+  <data name="StorageLinkLifetimeInvalid" xml:space="preserve"><value>临时链接有效期必须在七天内；临时凭据可能会更早过期。</value></data>
+  <data name="StorageConditionalVersionedUnsupported" xml:space="preserve"><value>此服务无法保证在版本化存储桶中上传时不覆盖对象。请明确选择覆盖，或使用未开启版本控制的存储桶。</value></data>
+  <data name="StorageFileTooLarge" xml:space="preserve"><value>文件超过支持的分片上传大小限制。</value></data>
+  <data name="StorageProbeWriteRejected" xml:space="preserve"><value>存储服务拒绝了临时对象写入，未创建测试对象。</value></data>
+  <data name="StorageProbeCleanupIncomplete" xml:space="preserve"><value>服务未确认测试对象精确版本已永久删除，请在服务商控制台检查。</value></data>
+  <data name="ObjectsWillBeDeletedFromStorage" xml:space="preserve"><value>所选对象将从对象存储中删除，此操作无法直接撤销。</value></data>
 </root>

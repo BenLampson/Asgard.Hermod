@@ -2000,4 +2000,43 @@
   <data name="HomeOpenedYesterday" xml:space="preserve">
     <value>Yesterday {0}</value>
   </data>
+  <data name="AwsS3Name" xml:space="preserve"><value>Amazon S3</value></data>
+  <data name="AwsS3Description" xml:space="preserve"><value>AWS object storage</value></data>
+  <data name="TencentCosName" xml:space="preserve"><value>Tencent Cloud COS</value></data>
+  <data name="TencentCosDescription" xml:space="preserve"><value>Tencent Cloud object storage</value></data>
+  <data name="VolcengineTosName" xml:space="preserve"><value>Volcengine TOS</value></data>
+  <data name="VolcengineTosDescription" xml:space="preserve"><value>Volcengine object storage</value></data>
+  <data name="MinioName" xml:space="preserve"><value>MinIO</value></data>
+  <data name="MinioDescription" xml:space="preserve"><value>Self-hosted S3-compatible storage</value></data>
+  <data name="S3CompatibleName" xml:space="preserve"><value>S3-compatible storage</value></data>
+  <data name="S3CompatibleDescription" xml:space="preserve"><value>Connect to a custom S3 endpoint</value></data>
+  <data name="StorageEndpoint" xml:space="preserve"><value>Service endpoint</value></data>
+  <data name="StorageEndpointHint" xml:space="preserve"><value>Enter the S3 API root URL, including http:// or https:// and an optional port. Do not use the web console address.</value></data>
+  <data name="StorageEndpointInvalid" xml:space="preserve"><value>Enter a valid HTTP or HTTPS service root URL without credentials, a path, query, or fragment.</value></data>
+  <data name="StorageRegion" xml:space="preserve"><value>Region</value></data>
+  <data name="StorageRegionHint" xml:space="preserve"><value>Leave empty to use {0}. For a specified bucket, enter its actual region.</value></data>
+  <data name="StorageRegionInvalid" xml:space="preserve"><value>Enter a valid region identifier using lowercase letters, digits, and hyphens.</value></data>
+  <data name="StorageAccessKeyId" xml:space="preserve"><value>Access key ID</value></data>
+  <data name="StorageSecretAccessKey" xml:space="preserve"><value>Secret access key</value></data>
+  <data name="StorageSessionToken" xml:space="preserve"><value>Session token (optional)</value></data>
+  <data name="StorageSessionTokenHint" xml:space="preserve"><value>Required when using temporary credentials. Hermod does not automatically renew expired credentials.</value></data>
+  <data name="StorageOptionalBucket" xml:space="preserve"><value>Bucket (optional)</value></data>
+  <data name="StorageOptionalBucketHint" xml:space="preserve"><value>Specify a bucket to connect without account-wide bucket listing permission. Leave empty to discover buckets.</value></data>
+  <data name="StorageBucketInvalid" xml:space="preserve"><value>Enter a valid bucket name, without a URL or object path.</value></data>
+  <data name="StorageAddressingStyle" xml:space="preserve"><value>Addressing style (optional)</value></data>
+  <data name="StorageAddressingStyleHint" xml:space="preserve"><value>Leave empty or enter path for endpoint/bucket. Enter virtual for bucket.endpoint.</value></data>
+  <data name="StorageAddressingInvalid" xml:space="preserve"><value>Enter path or virtual for the addressing style.</value></data>
+  <data name="StorageConnectionTestHint" xml:space="preserve"><value>The test lists available objects or buckets, writes a random temporary object, reads it back, and removes its exact version. Read-only credentials cannot pass this read/write test.</value></data>
+  <data name="StorageClockSkew" xml:space="preserve"><value>The device time differs from the storage service. Correct the device time and retry.</value></data>
+  <data name="StorageOperationUnsupported" xml:space="preserve"><value>This storage service does not support the requested operation.</value></data>
+  <data name="StorageServiceUnavailable" xml:space="preserve"><value>The storage service is temporarily unavailable. Try again later.</value></data>
+  <data name="StorageInvalidResponse" xml:space="preserve"><value>The storage service returned an unverifiable response. Try again later.</value></data>
+  <data name="StorageAccessPolicyHint" xml:space="preserve"><value>Determined by bucket policies and access controls</value></data>
+  <data name="StorageDeletePartialFailure" xml:space="preserve"><value>Some objects could not be deleted. Refresh the list before retrying.</value></data>
+  <data name="StorageLinkLifetimeInvalid" xml:space="preserve"><value>Temporary links must expire within seven days. Temporary credentials may expire sooner.</value></data>
+  <data name="StorageConditionalVersionedUnsupported" xml:space="preserve"><value>This service cannot guarantee a non-overwriting upload to a versioned bucket. Explicitly choose overwrite, or use an unversioned bucket.</value></data>
+  <data name="StorageFileTooLarge" xml:space="preserve"><value>The file exceeds the supported multipart upload size limit.</value></data>
+  <data name="StorageProbeWriteRejected" xml:space="preserve"><value>The storage service rejected the temporary object write. No test object was created.</value></data>
+  <data name="StorageProbeCleanupIncomplete" xml:space="preserve"><value>The service did not confirm permanent deletion of the exact test version. Check the provider console.</value></data>
+  <data name="ObjectsWillBeDeletedFromStorage" xml:space="preserve"><value>The selected objects will be deleted from object storage. This action cannot be directly undone.</value></data>
 </root>

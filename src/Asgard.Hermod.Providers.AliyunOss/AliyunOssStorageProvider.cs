@@ -39,7 +39,7 @@ public sealed class AliyunOssStorageProvider : IStorageProvider
     }
 
     /// <inheritdoc />
-    public InstanceProviderDescriptor Descriptor { get; } = new(ProviderId, Text.Get("AlibabaCloudOSS"), "Object Storage Service", "cloud",
+    public InstanceProviderDescriptor Descriptor { get; } = new(ProviderId, Text.Get("AlibabaCloudOSS"), "Object Storage Service", "provider-aliyun-oss",
         new(TypeId, Text.Get("Storage"), Text.Get("ConnectToObjectStorage"), "database"),
         Array.AsReadOnly<InstanceConfigurationField>([
             new("accessKeyId", "AccessKey ID", InstanceFieldKind.Text, MaxLength: 128,

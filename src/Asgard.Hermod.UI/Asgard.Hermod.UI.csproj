@@ -15,6 +15,8 @@
     <Resource Include="Assets\Brand\hermod.png" />
     <Resource Include="Assets\Brand\hermod-dark.ico" />
     <Resource Include="Assets\Brand\hermod-dark.png" />
+    <Resource Include="Assets\Providers\*.png" />
+    <Resource Include="Assets\Providers\*.ico" />
     <None Update="Assets\**\*.txt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

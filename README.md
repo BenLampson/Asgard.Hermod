@@ -7,8 +7,10 @@ English is the primary language for repository documentation, issues, and pull r
 ## Status
 
 The application combines independently compiled modules for the WPF shell, local
-configuration and tags, Windows terminal sessions, and object storage. Alibaba
-Cloud OSS is the first object storage connector. The executable owns startup and
+configuration and tags, Windows terminal sessions, and object storage. Connectors
+cover Alibaba Cloud OSS, Tencent COS, Volcengine TOS, AWS S3, MinIO and custom
+S3-compatible endpoints. See the [provider guide](docs/object-storage-providers.md)
+for connection fields and permissions. The executable owns startup and
 composition; provider SDKs and persistence dependencies belong to their respective
 implementation projects. See the [architecture guide](docs/architecture.md).
 
@@ -61,6 +63,12 @@ src/Asgard.Hermod.ObjectStorage.Abstractions/  Object storage contracts
 src/Asgard.Hermod.ObjectStorage/       Provider-independent operations and factory
 src/Asgard.Hermod.ObjectStorage.UI/    Object storage pages and dialogs
 src/Asgard.Hermod.Providers.AliyunOss/  Alibaba Cloud OSS connector and SDK
+src/Asgard.Hermod.Providers.S3/         Shared AWS SDK transport and S3-compatible connector
+src/Asgard.Hermod.Providers.AwsS3/      AWS S3 profile and registration
+src/Asgard.Hermod.Providers.TencentCos/ Tencent COS profile and registration
+src/Asgard.Hermod.Providers.VolcengineTos/ Volcengine TOS profile and registration
+src/Asgard.Hermod.Providers.Minio/      MinIO profile and registration
+design/Hermod.pen                     Single design source, organized into seven regions
 tests/                  Terminal behavior and Windows integration tests
 ```
 
