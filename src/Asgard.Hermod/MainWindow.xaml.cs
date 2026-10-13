@@ -1,3 +1,5 @@
+using Asgard.Hermod.UI.Windowing;
+
 namespace Asgard.Hermod;
 
 /// <summary>
@@ -21,6 +23,14 @@ public partial class MainWindow : HermodWindow
         model.Sidebar.AddInstanceCommand.ExecutionFailed += OnCommandFailed;
         model.Workspace.CloseTabCommand.ExecutionFailed += OnCommandFailed;
         Closing += OnWindowClosing;
+    }
+
+    /// <summary>WPF 已选择启动显示器并取得真实 DPI 后，限制默认尺寸，首次显示即完整可见。</summary>
+    protected override void OnSourceInitialized(EventArgs args)
+    {
+        base.OnSourceInitialized(args);
+        if (WindowStartupLocation == WindowStartupLocation.CenterScreen)
+            WindowStartupPlacement.Apply(this);
     }
 
     /// <summary>实际交互失败时由宿主提供用户可见反馈。</summary>
