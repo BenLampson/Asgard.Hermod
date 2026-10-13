@@ -91,6 +91,13 @@ selection; otherwise it reaches the shell. `Ctrl+Shift+C` always copies.
 `Ctrl+V` pastes, `Ctrl+Shift+A` selects all, and `Ctrl+wheel` changes font size.
 Shift bypasses application mouse reporting for local selection.
 
+Number-row and numeric-keypad digits use the current Windows keyboard layout at
+the key event boundary, so they work even when an input method does not commit a
+normal text event. Handled keys suppress the subsequent text event, avoiding
+duplicate input. During IME composition, digits, Enter and arrow keys stay with
+the candidate chooser; committed Unicode text is sent once. Focus loss or Escape
+ends the composition guard. Disconnected/read-only sessions never send input.
+
 ConPTY requires Windows 10 version 1809 or later. Inputs, outputs, and control-plane
 teardown use separate workers. Startup explicitly resets inherited standard
 handles so terminals also work when launched from a test runner or an IDE with

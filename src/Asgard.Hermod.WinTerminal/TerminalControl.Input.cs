@@ -12,10 +12,16 @@ public sealed partial class TerminalControl
     protected override void OnPreviewKeyDown(KeyEventArgs args)
     {
         base.OnPreviewKeyDown(args);
-        if (_disposed || _session is not { IsDisposed: false } session)
+        if (args.Handled || _disposed || _session is not { IsDisposed: false } session)
             return;
         Key key = args.Key == Key.System ? args.SystemKey
             : args.Key == Key.ImeProcessed ? args.ImeProcessedKey : args.Key;
+        if (_isComposing)
+        {
+            // Enter、箭头和数字都属于输入法候选操作；取消组合不把 Escape 转发给 Shell。
+            if (key == Key.Escape) _isComposing = false;
+            return;
+        }
         var modifiers = Keyboard.Modifiers;
         bool control = modifiers.HasFlag(ModifierKeys.Control);
         bool shift = modifiers.HasFlag(ModifierKeys.Shift);
@@ -28,7 +34,6 @@ public sealed partial class TerminalControl
             args.Handled = true;
             return;
         }
-        if (key == Key.Escape) _isComposing = false;
         if (control && key == Key.C && (shift || _selection is not null))
         {
             CopySelection();
@@ -161,6 +166,7 @@ public sealed partial class TerminalControl
     protected override void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs args)
     {
         base.OnIsKeyboardFocusWithinChanged(args);
+        if (!IsKeyboardFocusWithin) _isComposing = false;
         if (!IsReadOnly && _session is { IsDisposed: false } session)
         {
             lock (session.Buffer.SyncRoot)

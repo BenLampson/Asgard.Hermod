@@ -35,8 +35,11 @@ public sealed class TerminalNumericInputTests
         var sent = new List<string>(); session.InputReceived += (_, bytes) => sent.Add(Encoding.UTF8.GetString(bytes.Span));
         var composition = new TextComposition(InputManager.Current, control, "中文123");
         control.RaiseEvent(new TextCompositionEventArgs(Keyboard.PrimaryDevice, composition) { RoutedEvent = TextCompositionManager.PreviewTextInputStartEvent });
-        var digit = new KeyEventArgs(Keyboard.PrimaryDevice, source, 0, Key.D1) { RoutedEvent = Keyboard.PreviewKeyDownEvent };
-        control.RaiseEvent(digit); Assert.False(digit.Handled); Assert.Empty(sent);
+        foreach (var key in new[] { Key.D1, Key.Enter, Key.Left, Key.Down })
+        {
+            var candidate = new KeyEventArgs(Keyboard.PrimaryDevice, source, 0, key) { RoutedEvent = Keyboard.PreviewKeyDownEvent };
+            control.RaiseEvent(candidate); Assert.False(candidate.Handled); Assert.Empty(sent);
+        }
         control.RaiseEvent(new TextCompositionEventArgs(Keyboard.PrimaryDevice, composition) { RoutedEvent = TextCompositionManager.PreviewTextInputEvent });
         Assert.Equal(["中文123"], sent);
         control.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, source, 0, Key.D0) { RoutedEvent = Keyboard.PreviewKeyDownEvent });
@@ -53,5 +56,20 @@ public sealed class TerminalNumericInputTests
         control.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, source, 0, Key.NumPad1) { RoutedEvent = Keyboard.PreviewKeyDownEvent });
         control.RaiseEvent(new TextCompositionEventArgs(Keyboard.PrimaryDevice, new TextComposition(InputManager.Current, control, "123中文")) { RoutedEvent = TextCompositionManager.PreviewTextInputEvent });
         Assert.Equal(0, sent);
+    });
+
+    /// <summary>Escape 只取消输入法候选；恢复数字键时不会把取消键或候选文本发给远端。</summary>
+    [Fact]
+    public void CancelledCompositionRestoresNumericInputWithoutSendingEscape() => WpfTestThread.Run(() =>
+    {
+        using var session = new TerminalSession(); using var control = new TerminalControl { Session = session };
+        using var source = new HwndSource(new HwndSourceParameters("Cancelled IME test") { Width = 100, Height = 100 }); source.RootVisual = control;
+        var sent = new List<string>(); session.InputReceived += (_, bytes) => sent.Add(Encoding.UTF8.GetString(bytes.Span));
+        control.RaiseEvent(new TextCompositionEventArgs(Keyboard.PrimaryDevice, new TextComposition(InputManager.Current, control, "候选"))
+        { RoutedEvent = TextCompositionManager.PreviewTextInputStartEvent });
+        var cancel = new KeyEventArgs(Keyboard.PrimaryDevice, source, 0, Key.Escape) { RoutedEvent = Keyboard.PreviewKeyDownEvent };
+        control.RaiseEvent(cancel); Assert.False(cancel.Handled); Assert.Empty(sent);
+        control.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, source, 0, Key.NumPad0) { RoutedEvent = Keyboard.PreviewKeyDownEvent });
+        Assert.Equal(["0"], sent);
     });
 }
