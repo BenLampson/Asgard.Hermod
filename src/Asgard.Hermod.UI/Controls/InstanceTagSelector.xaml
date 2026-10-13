@@ -56,7 +56,7 @@
                    Foreground="{DynamicResource TextMutedBrush}" />
         <Popup x:Name="TagPopup" PlacementTarget="{Binding ElementName=TagTrigger}" Placement="Top" VerticalOffset="-6"
                AllowsTransparency="True" StaysOpen="False" Opened="OnPopupOpened" Closed="OnPopupClosed">
-            <Border x:Name="PopupPanel" Width="420" Height="420" Margin="8" Padding="16" CornerRadius="8"
+            <Border x:Name="PopupPanel" DataContext="{x:Null}" Width="420" Height="420" Margin="8" Padding="16" CornerRadius="8"
                     Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1"
                     KeyboardNavigation.TabNavigation="Cycle" PreviewKeyDown="OnPopupKeyDown">
                 <Border.Effect><DropShadowEffect BlurRadius="16" ShadowDepth="4" Opacity="0.14" /></Border.Effect>
