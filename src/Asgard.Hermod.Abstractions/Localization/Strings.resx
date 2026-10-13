@@ -2518,4 +2518,17 @@
   <data name="SshEditConfiguration" xml:space="preserve"><value>Edit configuration</value></data>
   <data name="ConfigurationAppliesToNextConnection" xml:space="preserve"><value>Changes apply to the next connection. The current session continues with its original configuration.</value></data>
   <data name="SshConfigurationSaved" xml:space="preserve"><value>Configuration saved. Applies to the next connection.</value></data>
+  <data name="WorkspaceTools" xml:space="preserve"><value>Tools</value></data>
+  <data name="WorkspaceSessionTools" xml:space="preserve"><value>Session tools</value></data>
+  <data name="WorkspaceFindTool" xml:space="preserve"><value>Find a tool…</value></data>
+  <data name="WorkspaceNoMatchingTools" xml:space="preserve"><value>No matching tools</value></data>
+  <data name="WorkspaceToolsScope" xml:space="preserve"><value>Tools apply to this session.</value></data>
+  <data name="WorkspaceTerminalTools" xml:space="preserve"><value>Terminal</value></data>
+  <data name="WorkspaceDisplayTools" xml:space="preserve"><value>Display</value></data>
+  <data name="WorkspaceConnectionTools" xml:space="preserve"><value>Connection</value></data>
+  <data name="SshAdjustFont" xml:space="preserve"><value>Adjust font size</value></data>
+  <data name="SshTerminalFontSizeValue" xml:space="preserve"><value>{0:0} px</value></data>
+  <data name="SshTerminalFocused" xml:space="preserve"><value>Terminal focused</value></data>
+  <data name="SshTerminalUnfocused" xml:space="preserve"><value>Click the terminal to type</value></data>
+  <data name="SshSearchShortcut" xml:space="preserve"><value>Ctrl+Shift+F</value></data>
 </root>

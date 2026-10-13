@@ -95,6 +95,20 @@ own instance navigation, themes and outer tabs; its content host owns page reuse
 and cleanup. Module views must not recreate those shell elements or duplicate the
 shared details layout.
 
+SSH exposes configuration editing only in its Content toolbar. The shared wizard
+uses type-declared edit capabilities: SSH permits route changes and has four edit
+steps, while other types retain their existing provider lock and save-location
+step. Editing preserves the instance ID, encrypted credentials and current
+connection; a verified save applies when the user explicitly reconnects.
+
+`WorkspaceTools` is a shared filtered popup with observable `WorkspaceTool`
+entries. Modules provide stable IDs, localized titles/groups, icons and existing
+commands; the control handles scrolling, Escape and focus restoration. SSH
+registers output search, font size, local display clearing and connection details.
+`Ctrl+Shift+F` opens output search; `Ctrl+F` continues to reach the remote terminal.
+Compact toolbars preserve Edit and Tools and move secondary actions into these
+shared entry points. The tools never inject shell commands.
+
 ## Composition
 
 The application calls the independently owned registration entry points:

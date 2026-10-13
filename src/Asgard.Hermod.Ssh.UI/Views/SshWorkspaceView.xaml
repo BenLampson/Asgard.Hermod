@@ -8,21 +8,22 @@
  <controls:WorkspacePageLayout x:Name="WorkspaceLayout" IsDetailsOpen="{Binding IsDetailsOpen}">
   <controls:WorkspacePageLayout.Toolbar>
    <Grid>
-    <Grid.ColumnDefinitions><ColumnDefinition Width="32" /><ColumnDefinition x:Name="IdentityColumn" Width="260" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+    <Grid.ColumnDefinitions><ColumnDefinition Width="32" /><ColumnDefinition x:Name="IdentityColumn" Width="220" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
     <Border Width="32" Height="32" CornerRadius="7" Background="{DynamicResource AccentWeakBrush}"><controls:IconView Kind="terminal" Width="18" Height="18" Foreground="{DynamicResource AccentBrush}" /></Border>
-    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0" MaxWidth="300" HorizontalAlignment="Left">
+    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0" HorizontalAlignment="Stretch">
      <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
      <TextBlock Text="{Binding RemoteIdentity}" FontSize="11" FontFamily="{DynamicResource MonoFont}" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
     </StackPanel>
-    <controls:StatusBadge Grid.Column="2" Text="{Binding Status}" Tone="{Binding Tone}" VerticalAlignment="Center" Margin="0,0,12,0" />
-    <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+    <controls:StatusBadge x:Name="ConnectionBadge" Grid.Column="2" Text="{Binding Status}" Tone="{Binding Tone}" VerticalAlignment="Center" Margin="0,0,12,0" />
+    <StackPanel x:Name="ToolbarActions" Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center" SizeChanged="OnToolbarActionsSizeChanged">
      <Button x:Name="SearchAction" Click="OnSearchClick" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshSearchOutput}" AutomationProperties.Name="{loc:Loc SshSearchOutput}"><controls:IconView Kind="search" Width="15" Height="15" /></Button>
      <Button x:Name="CopyAction" Click="OnCopyClick" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshCopySelection}" AutomationProperties.Name="{loc:Loc SshCopySelection}"><controls:IconView Kind="copy" Width="15" Height="15" /></Button>
      <Button x:Name="PasteAction" Click="OnPasteClick" IsEnabled="{Binding IsConnected}" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshPaste}" AutomationProperties.Name="{loc:Loc SshPaste}"><controls:IconView Kind="clipboard" Width="15" Height="15" /></Button>
-     <Button x:Name="EditAction" Command="{Binding EditConnectionCommand}" Style="{StaticResource GhostButton}" ToolTip="{loc:Loc SshEditConfiguration}" AutomationProperties.Name="{loc:Loc SshEditConfiguration}" Margin="6,0,0,0" Padding="8,0">
+     <Button x:Name="EditAction" Command="{Binding EditConnectionCommand}" Style="{StaticResource StandardButton}" ToolTip="{loc:Loc SshEditConfiguration}" AutomationProperties.Name="{loc:Loc SshEditConfiguration}" Margin="6,0,0,0" Padding="8,0">
       <StackPanel Orientation="Horizontal"><controls:IconView Kind="settings-2" Width="15" Height="15" /><TextBlock Text="{loc:Loc SshEditConfiguration}" Margin="7,0,0,0" /></StackPanel>
      </Button>
-     <Button Command="{Binding ToggleDetailsCommand}" Style="{StaticResource GhostButton}" ToolTip="{loc:Loc SshConnectionDetails}" AutomationProperties.Name="{loc:Loc SshConnectionDetails}" Margin="6,0,0,0" Padding="8,0">
+     <controls:WorkspaceTools x:Name="SessionTools" FocusTarget="{Binding ElementName=TerminalView}" VerticalAlignment="Center" Margin="6,0,0,0" />
+     <Button x:Name="DetailsAction" Command="{Binding ToggleDetailsCommand}" Style="{StaticResource StandardButton}" ToolTip="{loc:Loc SshConnectionDetails}" AutomationProperties.Name="{loc:Loc SshConnectionDetails}" Margin="6,0,0,0" Padding="8,0">
       <StackPanel Orientation="Horizontal"><controls:IconView Kind="panel-right" Width="15" Height="15" /><TextBlock x:Name="DetailsActionLabel" Text="{loc:Loc SshConnectionDetails}" Margin="7,0,0,0" /></StackPanel>
      </Button>
      <Button x:Name="MoreAction" Click="OnMoreClick" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshMore}" AutomationProperties.Name="{loc:Loc SshMore}"><controls:IconView Kind="ellipsis" Width="15" Height="15" /></Button>
@@ -68,12 +69,18 @@
    <DockPanel LastChildFill="False">
     <TextBlock Text="{Binding Elapsed}" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" Margin="0,0,14,0" />
     <TextBlock x:Name="FooterRoute" Text="{Binding RouteLabel}" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" />
-    <TextBlock DockPanel.Dock="Right" Text="{Binding GridSize}" VerticalAlignment="Center" FontSize="10" FontFamily="{DynamicResource MonoFont}" Foreground="{DynamicResource TextMutedBrush}" />
+    <TextBlock x:Name="FooterFocus" Margin="14,0,0,0" VerticalAlignment="Center" FontSize="11" Visibility="{Binding IsConnected, Converter={StaticResource Visible}}">
+     <TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Text" Value="{loc:Loc SshTerminalUnfocused}" /><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+      <Style.Triggers><DataTrigger Binding="{Binding IsKeyboardFocusWithin, ElementName=TerminalView}" Value="True"><Setter Property="Text" Value="{loc:Loc SshTerminalFocused}" /><Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" /></DataTrigger></Style.Triggers>
+     </Style></TextBlock.Style>
+    </TextBlock>
+    <TextBlock DockPanel.Dock="Right" Text="{Binding GridSize}" Margin="14,0,0,0" VerticalAlignment="Center" FontSize="10" FontFamily="{DynamicResource MonoFont}" Foreground="{DynamicResource TextMutedBrush}" />
     <TextBlock x:Name="FooterTerminalType" DockPanel.Dock="Right" Text="{loc:Loc SshTerminalType}" VerticalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" Margin="14,0" />
     <TextBlock DockPanel.Dock="Right" Text="{loc:Loc SshEncoding}" VerticalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" Margin="14,0,0,0" />
    </DockPanel>
   </controls:WorkspacePageLayout.StatusContent>
     <Grid x:Name="TerminalSurface" Background="{DynamicResource TerminalSurfaceBrush}" SizeChanged="OnTerminalSizeChanged">
+     <Border BorderThickness="1" IsHitTestVisible="False"><Border.Style><Style TargetType="Border"><Setter Property="BorderBrush" Value="Transparent" /><Style.Triggers><DataTrigger Binding="{Binding IsKeyboardFocusWithin, ElementName=TerminalView}" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" /></DataTrigger></Style.Triggers></Style></Border.Style></Border>
      <terminal:TerminalControl x:Name="TerminalView" Session="{Binding Session}" IsReadOnly="{Binding IsReadOnly}" Margin="20,18"
       FontFamily="{DynamicResource MonoFont}" FontSize="14" Background="{DynamicResource TerminalSurfaceBrush}" Foreground="{DynamicResource TerminalTextBrush}"
       AutomationProperties.Name="{loc:Loc SshTerminalLabel}" PreviewPaste="OnPreviewPaste" />

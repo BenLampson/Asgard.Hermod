@@ -45,7 +45,7 @@ Configuration editing has one entry in the Content toolbar. Connection details,
 session menus and the shared instance list do not add duplicate edit entries. The tools
 popover has a shared list slot, filtering, light/dark examples and a compact
 toolbar state. Terminal focus and keyboard rules are design acceptance criteria;
-the numeric-input runtime bug still needs a separate implementation fix.
+the matching runtime behavior and regression tests live in WinTerminal and Ssh.UI.
 
 Region backgrounds and numbered screen names aid navigation. Screen contents,
 including the object-search help added on `dev`, are preserved when arranging

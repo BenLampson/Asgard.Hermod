@@ -2518,4 +2518,17 @@
   <data name="SshEditConfiguration" xml:space="preserve"><value>编辑配置</value></data>
   <data name="ConfigurationAppliesToNextConnection" xml:space="preserve"><value>下次连接生效。当前会话继续使用原配置。</value></data>
   <data name="SshConfigurationSaved" xml:space="preserve"><value>配置已保存，下次连接生效。</value></data>
+  <data name="WorkspaceTools" xml:space="preserve"><value>工具</value></data>
+  <data name="WorkspaceSessionTools" xml:space="preserve"><value>会话工具</value></data>
+  <data name="WorkspaceFindTool" xml:space="preserve"><value>查找工具…</value></data>
+  <data name="WorkspaceNoMatchingTools" xml:space="preserve"><value>没有匹配的工具</value></data>
+  <data name="WorkspaceToolsScope" xml:space="preserve"><value>工具仅作用于当前会话。</value></data>
+  <data name="WorkspaceTerminalTools" xml:space="preserve"><value>终端</value></data>
+  <data name="WorkspaceDisplayTools" xml:space="preserve"><value>显示</value></data>
+  <data name="WorkspaceConnectionTools" xml:space="preserve"><value>连接</value></data>
+  <data name="SshAdjustFont" xml:space="preserve"><value>调整字体大小</value></data>
+  <data name="SshTerminalFontSizeValue" xml:space="preserve"><value>{0:0} px</value></data>
+  <data name="SshTerminalFocused" xml:space="preserve"><value>输入焦点 · 终端</value></data>
+  <data name="SshTerminalUnfocused" xml:space="preserve"><value>点击终端开始输入</value></data>
+  <data name="SshSearchShortcut" xml:space="preserve"><value>Ctrl+Shift+F</value></data>
 </root>

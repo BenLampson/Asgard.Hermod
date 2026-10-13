@@ -23,6 +23,7 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     private void OnModelChanged(object sender, DependencyPropertyChangedEventArgs args)
     {
         _model = args.NewValue as SshWorkspaceViewModel;
+        ConfigureTools();
         UpdateLayoutMode();
     }
     /// <summary>内容宿主与外壳都可触发初始化，模型保证只连接一次。</summary>
@@ -33,15 +34,20 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     }
     /// <summary>窄窗口把次要动作收进更多；详情布局由公共控件负责。</summary>
     private void OnViewportSizeChanged(object sender, SizeChangedEventArgs args) => UpdateLayoutMode();
+    /// <summary>翻译后的动作宽度改变时重新分配标题空间，不用固定英文宽度猜测。</summary>
+    private void OnToolbarActionsSizeChanged(object sender, SizeChangedEventArgs args) => UpdateLayoutMode();
     /// <summary>窗口缩小时保留连接状态和主操作，避免横向溢出。</summary>
     private void UpdateLayoutMode()
     {
         if (WorkspaceLayout is null) return;
-        bool wide = ActualWidth >= WorkspaceLayout.CompactBreakpoint;
-        IdentityColumn.Width = new GridLength(wide ? 260 : Math.Max(80, Math.Min(220, ActualWidth - 320)));
+        bool wide = ActualWidth >= 1000;
         CopyAction.Visibility = PasteAction.Visibility = wide ? Visibility.Visible : Visibility.Collapsed;
+        SearchAction.Visibility = DetailsAction.Visibility = ActualWidth >= 600 ? Visibility.Visible : Visibility.Collapsed;
+        ConnectionBadge.Visibility = ActualWidth >= 500 ? Visibility.Visible : Visibility.Collapsed;
         DetailsActionLabel.Visibility = ActualWidth >= 900 ? Visibility.Visible : Visibility.Collapsed;
-        FooterRoute.Visibility = FooterTerminalType.Visibility = ActualWidth >= 600 ? Visibility.Visible : Visibility.Collapsed;
+        FooterRoute.Visibility = FooterTerminalType.Visibility = ActualWidth >= 800 ? Visibility.Visible : Visibility.Collapsed;
+        double statusWidth = ConnectionBadge.Visibility == Visibility.Visible ? ConnectionBadge.ActualWidth + 12 : 0;
+        IdentityColumn.Width = new GridLength(Math.Clamp(ActualWidth - 68 - statusWidth - ToolbarActions.ActualWidth, 0, 220));
         ResizeSearchOverlay();
     }
     /// <summary>公共详情栏展开会改变正文宽度，搜索浮层跟随实际终端空间。</summary>
@@ -66,7 +72,7 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     /// <summary>在终端接收 Ctrl+F 前打开本机输出搜索。</summary>
     private void OnKeyDown(object sender, KeyEventArgs args)
     {
-        if (args.Key == Key.F && Keyboard.Modifiers.HasFlag(ModifierKeys.Control)) { OpenSearch(); args.Handled = true; }
+        if (args.Key == Key.F && Keyboard.Modifiers.HasFlag(ModifierKeys.Control) && Keyboard.Modifiers.HasFlag(ModifierKeys.Shift)) { OpenSearch(); args.Handled = true; }
         else if (SearchOverlay.IsVisible && args.Key == Key.Escape) { CloseSearch(); args.Handled = true; }
         else if (ReferenceEquals(args.OriginalSource, SearchInput) && args.Key == Key.Enter)
         { Search(!Keyboard.Modifiers.HasFlag(ModifierKeys.Shift)); args.Handled = true; }
@@ -74,7 +80,7 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     /// <summary>打开搜索不会向服务器发送任何命令。</summary>
     private void OnSearchClick(object sender, RoutedEventArgs args) => OpenSearch();
     /// <summary>给搜索框明确焦点，键盘输入不落入远端 shell。</summary>
-    private void OpenSearch() { SearchOverlay.Visibility = Visibility.Visible; SearchInput.Focus(); SearchInput.SelectAll(); }
+    private void OpenSearch() { SessionTools.Close(false); SearchOverlay.Visibility = Visibility.Visible; SearchInput.Focus(); SearchInput.SelectAll(); }
     /// <summary>关闭搜索后恢复终端焦点。</summary>
     private void OnCloseSearch(object sender, RoutedEventArgs args) => CloseSearch();
     /// <summary>清除搜索选区，但不清空终端输出。</summary>
@@ -110,8 +116,8 @@ public partial class SshWorkspaceView : UserControl, IDisposable
         Add("SshCopySelection", new RelayCommand(_ => TerminalView.CopySelection()));
         Add("SshPaste", new RelayCommand(_ => TerminalView.Paste(), _ => _model?.IsConnected == true));
         menu.Items.Add(new Separator());
-        Add("SshIncreaseFont", new RelayCommand(_ => TerminalView.FontSize = Math.Min(28, TerminalView.FontSize + 1)));
-        Add("SshDecreaseFont", new RelayCommand(_ => TerminalView.FontSize = Math.Max(9, TerminalView.FontSize - 1)));
+        Add("SshIncreaseFont", _increaseFont);
+        Add("SshDecreaseFont", _decreaseFont);
         Add("SshClearDisplay", new RelayCommand(_ => TerminalView.ClearDisplay()));
         menu.Items.Add(new Separator());
         Add("SshDisconnect", _model?.DisconnectCommand);
@@ -122,6 +128,8 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     public void Dispose()
     {
         if (_disposed) return; _disposed = true;
+        SessionTools.Close(false);
+        if (SessionTools.ContextMenu is { } toolsMenu) { toolsMenu.IsOpen = false; toolsMenu.Items.Clear(); }
         if (MoreAction.ContextMenu is { } menu) { menu.IsOpen = false; menu.Items.Clear(); }
         TerminalView.ScreenUpdated -= OnTerminalUpdated;
         TerminalView.Dispose(); DataContextChanged -= OnModelChanged; Loaded -= OnLoaded; PreviewKeyDown -= OnKeyDown;
