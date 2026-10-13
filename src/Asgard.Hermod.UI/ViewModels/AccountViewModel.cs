@@ -41,7 +41,15 @@ public sealed class AccountViewModel : ObservableObject, IAsyncDisposable
     /// <summary>用户明确确认下载将替换本地实例与标签。</summary>
     public bool ConfirmRestore { get => _confirmRestore; set { SetProperty(ref _confirmRestore, value); RefreshCommands(); } }
     /// <summary>安全的进度与结果，禁止展示原始异常。</summary>
-    public string Message { get => _message; private set => SetProperty(ref _message, value); }
+    public string Message
+    {
+        get => _message;
+        private set { if (SetProperty(ref _message, value)) OnPropertyChanged(nameof(HasMessage)); }
+    }
+    /// <summary>没有操作结果时收起固定状态区，不占用表单空间。</summary>
+    public bool HasMessage => !string.IsNullOrEmpty(Message);
+    /// <summary>用稳定状态控制错误强调，不通过翻译后的提示文本判断结果。</summary>
+    public bool IsError { get; private set => SetProperty(ref field, value); }
     /// <summary>浏览器登录与账号切换。</summary>
     public AsyncRelayCommand SignInCommand { get; }
     /// <summary>退出本应用。</summary>
@@ -63,10 +71,10 @@ public sealed class AccountViewModel : ObservableObject, IAsyncDisposable
     /// <summary>对取消、安全业务错误和未知网络错误分别给出本地化反馈。</summary>
     private async Task ExecuteAsync(Func<Task> action, string success)
     {
-        IsBusy = true; Message = Text.Get("AccountOperationInProgress");
+        IsError = false; IsBusy = true; Message = Text.Get("AccountOperationInProgress");
         try { await action(); Message = Text.Get(success); }
         catch (OperationCanceledException) { Message = Text.Get("AccountOperationCancelled"); }
-        catch (Exception error) { Message = Text.Error(error, "AccountOperationFailed"); }
+        catch (Exception error) { IsError = true; Message = Text.Error(error, "AccountOperationFailed"); }
         finally { IsBusy = false; }
     }
     /// <summary>服务事件发生在窗口 Dispatcher 的异步上下文中。</summary>

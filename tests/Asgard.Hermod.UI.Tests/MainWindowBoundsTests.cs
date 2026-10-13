@@ -12,6 +12,56 @@ public sealed class MainWindowBoundsTests
     /// <summary>使用既有的独立 STA 应用与真实界面资源。</summary>
     public MainWindowBoundsTests(WpfTestFixture fixture) => _fixture = fixture;
 
+    /// <summary>保持真实启动方式，首次显示与人为超大尺寸都必须完整位于当前工作区内。</summary>
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public Task Startup_KeepsCaptionAndFooterWithinWorkArea(bool oversized) => _fixture.RunAsync(async () =>
+    {
+        await using var environment = new ShellTestEnvironment();
+        var window = new Asgard.Hermod.MainWindow(environment.Shell)
+        {
+            Opacity = 0,
+            ShowInTaskbar = false,
+            ShowActivated = false,
+        };
+        if (oversized)
+        {
+            window.Width = 10000;
+            window.Height = 10000;
+            window.MinWidth = 5000;
+            window.MinHeight = 5000;
+        }
+        var closed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        window.Closed += (_, _) => closed.TrySetResult();
+        try
+        {
+            window.Show();
+            await WindowTestVisuals.UpdateLayoutAsync(window);
+            var work = WindowBoundsNativeMethods.GetWorkArea(new WindowInteropHelper(window).Handle);
+            var frame = WindowTestVisuals.ScreenBounds(WindowTestVisuals.Frame(window));
+            var title = Assert.Single(WindowTestVisuals.Descendants<TitleBarView>(window));
+            var controls = Assert.Single(WindowTestVisuals.Descendants<WindowControls>(title));
+            var footer = Assert.Single(WindowTestVisuals.Descendants<SidebarFooterView>(window));
+            foreach (var element in new FrameworkElement[] { WindowTestVisuals.Frame(window), title, controls, footer })
+            {
+                var bounds = WindowTestVisuals.ScreenBounds(element);
+                Assert.True(bounds.Left >= work.Left - 1 && bounds.Top >= work.Top - 1
+                    && bounds.Right <= work.Right + 1 && bounds.Bottom <= work.Bottom + 1,
+                    $"Startup content must fit: Work={work}; Element={bounds}");
+            }
+            Assert.InRange(frame.Left + frame.Width / 2, work.Left + work.Width / 2 - 1, work.Left + work.Width / 2 + 1);
+            Assert.InRange(frame.Top + frame.Height / 2, work.Top + work.Height / 2 - 1, work.Top + work.Height / 2 + 1);
+            Assert.True(window.MinWidth <= window.Width && window.MinHeight <= window.Height);
+            await WindowPreviewCapture.VerifyAsync(window, $"startup-window-{oversized}");
+        }
+        finally
+        {
+            window.Close();
+            await closed.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+        }
+    });
+
     /// <summary>最大化必须保留完整标题栏与底部，随后还原原始内容边界。</summary>
     [Fact]
     public Task MaximizeAndRestore_KeepEntireShellInsideMonitorWorkArea() => _fixture.RunAsync(async () =>

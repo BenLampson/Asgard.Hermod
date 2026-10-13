@@ -63,6 +63,13 @@ See [the localization guide](localization.md) for resource and extension rules.
 Closing the application waits for workspace
 resources to be released before disposing the service container.
 
+The main window's 1360 × 860 logical-pixel size is a preferred startup size.
+After WPF selects the startup monitor and creates the HWND, shared UI uses that
+monitor's taskbar-excluded work area and the window's DPI to limit and center the
+initial bounds. Small work areas also lower the window's minimum size, so the
+caption and footer remain visible. The executable declares Per-Monitor V2 DPI
+awareness; WPF handles scaling when the window moves between monitors.
+
 ## Adding capabilities
 
 Desktop login and the independent API are described in the

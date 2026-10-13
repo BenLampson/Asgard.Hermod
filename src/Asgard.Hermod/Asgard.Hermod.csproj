@@ -6,6 +6,7 @@
     <RootNamespace>Asgard.Hermod</RootNamespace>
     <AssemblyName>Asgard.Hermod</AssemblyName>
     <ApplicationIcon>..\Asgard.Hermod.UI\Assets\Brand\hermod.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
     <Product>Asgard Hermod</Product>
     <Description>Open-source Windows management terminal for the Asgard ecosystem.</Description>
     <NeutralLanguage>en</NeutralLanguage>

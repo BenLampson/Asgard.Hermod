@@ -4,8 +4,8 @@
     <!-- 透明底浅色标志随主题字典更新，现有窗口无需重建。 -->
     <BitmapImage x:Key="HermodLogo" CacheOption="OnLoad"
                  UriSource="pack://application:,,,/Asgard.Hermod.UI;component/Assets/Brand/hermod-dark.png" />
-    <BitmapImage x:Key="HermodWindowIcon" CacheOption="OnLoad"
-                 UriSource="pack://application:,,,/Asgard.Hermod.UI;component/Assets/Brand/hermod-dark.ico" />
+    <!-- ImageSource 转换器保留 ICO 的全部帧，原生窗口可选择合适的大、小图标。 -->
+    <ImageSource x:Key="HermodWindowIcon">pack://application:,,,/Asgard.Hermod.UI;component/Assets/Brand/hermod-dark.ico</ImageSource>
     <SolidColorBrush x:Key="SurfaceBrush" Color="#20252C" />
     <SolidColorBrush x:Key="AppBackgroundBrush" Color="#15181D" />
     <SolidColorBrush x:Key="SidebarBrush" Color="#1A1E25" />

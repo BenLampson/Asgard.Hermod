@@ -11,10 +11,16 @@ Every shipped icon has a transparent background; only the helmet and crest are d
 
 Both PNG files are 512 × 512. Each ICO contains RGBA frames at 16, 20, 24, 32,
 40, 48, 64, 128, and 256 pixels.
+The PNGs retain the vector master's presentation spacing. ICO frames use a
+centered square crop with the visible mark filling approximately 92% of its
+height, so the taskbar and Explorer icons remain legible at small sizes.
 
 The theme dictionaries supply `HermodLogo` and `HermodWindowIcon`. Dynamic WPF
 resources update the main caption and native window icons immediately when the
-theme changes. Dialog captions inherit their window icon. Windows Explorer uses
+theme changes. Load the ICO resources as `ImageSource`, which preserves the
+decoder's frames for WPF's native large/small icon selection. `BitmapImage`
+only exposes the first 16-pixel frame and causes undersized native icons.
+Dialog captions inherit their window icon. Windows Explorer uses
 the light variant embedded in the executable through `ApplicationIcon`;
 the executable's static file icon does not change with Hermod's theme.
 

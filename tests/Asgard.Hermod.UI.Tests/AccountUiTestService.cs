@@ -13,6 +13,8 @@ internal sealed class AccountUiTestService : IAccountService, IWorkspaceSyncServ
     public int Uploads { get; private set; }
     /// <summary>记录实际恢复次数。</summary>
     public int Downloads { get; private set; }
+    /// <summary>模拟异步同步边界的失败、取消和重试，不访问真实云端。</summary>
+    public Func<string, CancellationToken, Task>? SyncAction { get; set; }
     /// <inheritdoc />
     public Task RestoreAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
     /// <inheritdoc />
@@ -30,7 +32,9 @@ internal sealed class AccountUiTestService : IAccountService, IWorkspaceSyncServ
     /// <inheritdoc />
     public Task RunAuthenticatedAsync(Func<HermodAccount, string, Task> action, CancellationToken cancellationToken = default) => action(Account!, "test");
     /// <inheritdoc />
-    public Task UploadAsync(string password, CancellationToken cancellationToken = default) { Uploads++; return Task.CompletedTask; }
+    public Task UploadAsync(string password, CancellationToken cancellationToken = default)
+    { Uploads++; return SyncAction?.Invoke(password, cancellationToken) ?? Task.CompletedTask; }
     /// <inheritdoc />
-    public Task DownloadAsync(string password, CancellationToken cancellationToken = default) { Downloads++; return Task.CompletedTask; }
+    public Task DownloadAsync(string password, CancellationToken cancellationToken = default)
+    { Downloads++; return SyncAction?.Invoke(password, cancellationToken) ?? Task.CompletedTask; }
 }

@@ -38,7 +38,7 @@ foreach ($variant in $variants) {
     try { $encoder.Save($stream) } finally { $stream.Dispose() }
 }
 
-# Pillow 把同一透明 PNG 编成多尺寸 Windows ICO，不参与标志绘制。
+# 标题栏 PNG 保留设计画布；ICO 收紧留白，让任务栏中的主体占据约 92% 的高度。
 @'
 from pathlib import Path
 from PIL import Image
@@ -48,6 +48,12 @@ directory = Path(sys.argv[1])
 sizes = [(s, s) for s in (16, 20, 24, 32, 40, 48, 64, 128, 256)]
 for name in ('hermod', 'hermod-dark'):
     image = Image.open(directory / (name + '.png')).convert('RGBA')
-    image.save(directory / (name + '.ico'), format='ICO', sizes=sizes)
+    bounds = image.getchannel('A').getbbox()
+    left, top, right, bottom = bounds
+    side = round(max(right - left, bottom - top) / 0.92)
+    x = round((left + right - side) / 2)
+    y = round((top + bottom - side) / 2)
+    icon = image.crop((x, y, x + side, y + side))
+    icon.save(directory / (name + '.ico'), format='ICO', sizes=sizes)
 '@ | & $Python - $assetDirectory
 if ($LASTEXITCODE -ne 0) { throw 'ICO export failed.' }
