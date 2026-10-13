@@ -29,6 +29,8 @@ public sealed class ObjectStorageDetailsSplitViewTests(WpfTestFixture fixture)
         {
             await model.InitializeAsync(TestContext.Current.CancellationToken);
             await model.SelectEntryAsync(model.Entries.Single(row => row.Name == "image.png"), TestContext.Current.CancellationToken);
+            Assert.Empty(service.DownloadLimits);
+            await model.ForcePreviewCommand.ExecuteAsync();
             window.Show();
             await WindowTestVisuals.UpdateLayoutAsync(window);
             var details = Assert.Single(WindowTestVisuals.Descendants<ObjectStorageDetailsView>(view));
@@ -60,7 +62,8 @@ public sealed class ObjectStorageDetailsSplitViewTests(WpfTestFixture fixture)
             await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.True(details.IsVisible);
             Assert.InRange(details.ActualWidth, resized - 1, resized + 1);
-            Assert.True(model.HasImagePreview);
+            Assert.False(model.HasImagePreview);
+            Assert.Single(service.DownloadLimits);
             window.Width = 620;
             await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.True(details.ActualWidth <= view.ActualWidth - 265,

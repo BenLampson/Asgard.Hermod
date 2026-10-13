@@ -47,6 +47,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     /// <summary>没有文本预览时显示原因，不影响列表或下载。</summary>
     public string PreviewMessage => IsImagePreviewLoading ? Text.Get("ForcePreviewLoading") : _imagePreviewMessage.Length > 0 ? _imagePreviewMessage
         : IsDetailLoading ? Text.Get("ReadingObjectDetails") : DetailError.Length > 0 ? DetailError
+        : IsRecognizedPreviewImage ? Text.Get("ForcePreviewClickToLoadImage")
         : SelectedEntry is null ? Text.Get("ClickAnObjectToViewItsDetails") : SelectedEntry.IsDirectory ? Text.Get("DoubleClickAFolderToOpenItsPrefix")
         : Details?.PreviewText is { } text && Encoding.UTF8.GetByteCount(text) > 256 * 1024 ? Text.Get("TheTextExceedsThe256KBPreviewLimitDownloadAndViewItLocally")
         : Details?.PreviewMessage ?? Text.Get("ThisFileCannotBePreviewedYetDownloadAndViewItLocallyListOperationsRemainAvailable");
@@ -84,8 +85,6 @@ public sealed partial class ObjectStorageWorkspaceViewModel
             {
                 entry.ApplyContentType(details.ContentType);
                 Details = details;
-                IsDetailLoading = false;
-                await PreviewRecognizedImageAsync(entry, bucket, details, operation.Token);
             }
         }
         catch (OperationCanceledException) when (operation.IsCancellationRequested) { }

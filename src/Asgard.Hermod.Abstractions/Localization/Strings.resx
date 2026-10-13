@@ -2502,4 +2502,5 @@
   </data>
   <data name="SshTerminalType" xml:space="preserve"><value>xterm-256color</value></data>
   <data name="SshEncoding" xml:space="preserve"><value>UTF-8</value></data>
+  <data name="ForcePreviewClickToLoadImage" xml:space="preserve"><value>This object is recognized as an image. Click Force preview to load it.</value></data>
 </root>

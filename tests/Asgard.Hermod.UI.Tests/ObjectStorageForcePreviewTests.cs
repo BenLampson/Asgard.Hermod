@@ -7,14 +7,14 @@ namespace Asgard.Hermod.UI.Tests;
 /// <summary>费用确认、按实际内容解码、大小上限、重试和缓存释放。</summary>
 public sealed class ObjectStorageForcePreviewTests
 {
-    /// <summary>已识别图片选中即显示，未知类型确认前不下载，两种路径均按实际内容解码。</summary>
+    /// <summary>所有图片点击按钮才读取，已识别类型不弹窗，未知类型才询问，两者均按实际内容解码。</summary>
     [Theory]
     [InlineData("image.PNG", "application/octet-stream", true)]
     [InlineData("image.dat", "IMAGE/PNG; charset=binary", true)]
     [InlineData("image", "image/jpeg", true)]
     [InlineData("image.dat", "application/octet-stream", false)]
     [InlineData("image.svg", "image/svg+xml", false)]
-    public async Task Selection_PreviewsKnownImagesAndOnlyAsksForUnknownTypes(string name, string contentType, bool inferred)
+    public async Task Button_PreviewsKnownImagesAndOnlyAsksForUnknownTypes(string name, string contentType, bool inferred)
     {
         using var environment = new TemporaryStorageTestEnvironment();
         var service = ObjectStorageForcePreviewTestData.Service(name, contentType);
@@ -41,13 +41,12 @@ public sealed class ObjectStorageForcePreviewTests
         await using var model = ObjectStorageForcePreviewTestData.Model(service, dialogs, environment.Storage);
         await model.InitializeAsync(TestContext.Current.CancellationToken);
         await model.SelectEntryAsync(model.Entries.Single(row => row.Name == name), TestContext.Current.CancellationToken);
-        if (!inferred)
-        {
-            Assert.True(model.ForcePreviewCommand.CanExecute(null));
-            Assert.True(model.ShowForcePreviewActions);
-            Assert.Empty(service.DownloadLimits);
-            await model.ForcePreviewCommand.ExecuteAsync();
-        }
+        Assert.True(model.ForcePreviewCommand.CanExecute(null));
+        Assert.True(model.ShowForcePreviewActions);
+        Assert.False(model.HasImagePreview);
+        Assert.Empty(service.DownloadLimits);
+        Assert.Equal(Text.Get("ForcePreview"), model.ForcePreviewLabel);
+        await model.ForcePreviewCommand.ExecuteAsync();
         Assert.Equal(inferred ? 0 : 1, confirmations);
         Assert.Equal(FilePreviewPolicy.ImageLimit, Assert.Single(service.DownloadLimits));
         var image = Assert.IsAssignableFrom<BitmapSource>(model.ImagePreview);

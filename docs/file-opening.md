@@ -33,10 +33,11 @@ Text preview is limited to 2 MiB; image preview is limited to 20 MiB and support
 dimensions. Downloads enforce the limit against actual bytes, including streams
 without a trustworthy length. Large images are decoded at a maximum dimension
 of 4096 pixels. The existing details panel retains its 256 KiB text preview.
-Selecting a supported raster image previews it directly in the details panel,
-without a type selector or confirmation dialog. Recognition uses its file name or
+Selecting a supported raster image only loads its metadata. Clicking **Force
+preview** then loads the image directly, without a type selector or confirmation
+dialog. Recognition uses its file name or
 already loaded Content-Type and makes no additional content request for inference.
-The preview area displays a traffic-charge notice during and after loading.
+The preview area displays a traffic-charge notice before, during and after loading.
 Unknown types retain **Force preview**: the user must select Image and confirm the
 object size and provider traffic charges before downloading content.
 
@@ -53,7 +54,8 @@ are never modified.
 Object details can be temporarily hidden with the close button and reopened with
 the panel button next to Refresh. Hiding details preserves the selected row,
 cancels previews and skips detail/content reads while browsing other objects.
-Reopening loads the currently selected object. The vertical splitter changes the
+Reopening loads the currently selected object's metadata; image content is read
+only after the user clicks the preview button. The vertical splitter changes the
 details width by dragging horizontally or using Left/Right when focused. The
 panel restores its last width on reopening and clamps it when the window becomes
 narrower. Visibility and width are local to the current page and are not saved.

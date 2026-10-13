@@ -2,7 +2,7 @@ using Asgard.Hermod.ObjectStorage.UI.Models;
 
 namespace Asgard.Hermod.ObjectStorage.UI.ViewModels;
 
-/// <summary>已识别图片直接预览，未知类型明确确认后预览；选择变化时隔离旧对象的返回。</summary>
+/// <summary>点击预览后已识别图片直接读取，未知类型确认后读取；选择变化时隔离旧对象的返回。</summary>
 public sealed partial class ObjectStorageWorkspaceViewModel
 {
     private CancellationTokenSource? _imagePreviewOperation;
@@ -12,7 +12,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     private long _imagePreviewBytes;
     private long _imagePreviewSize;
 
-    /// <summary>已识别图片直接重试，未知类型先确认类型与费用再读取内容。</summary>
+    /// <summary>用户点击后，已识别图片直接读取，未知类型先确认类型与费用。</summary>
     public AsyncRelayCommand ForcePreviewCommand { get; private set; } = null!;
     /// <summary>取消本次图片读取，不影响其他传输任务。</summary>
     public RelayCommand CancelImagePreviewCommand { get; private set; } = null!;
@@ -35,8 +35,8 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     /// <summary>只在未知类型且没有文本预览时说明手动类型选择。</summary>
     public bool ShowForcePreviewIntroduction => ShowForcePreviewActions && !IsRecognizedPreviewImage && !HasTextPreview && _imagePreviewMessage.Length == 0;
     /// <summary>已识别图片只需重新加载，未知类型才需再次选择。</summary>
-    public string ForcePreviewLabel => Text.Get(IsRecognizedPreviewImage ? "ForcePreviewRetryImage"
-        : _imagePreviewMessage.Length == 0 ? "ForcePreview" : "ForcePreviewChooseTypeAgain");
+    public string ForcePreviewLabel => Text.Get(_imagePreviewMessage.Length == 0 ? "ForcePreview"
+        : IsRecognizedPreviewImage ? "ForcePreviewRetryImage" : "ForcePreviewChooseTypeAgain");
     /// <summary>显示实际读取进度，未知总大小时不编造百分比。</summary>
     public string ImagePreviewProgress => _imagePreviewSize > 0
         ? Text.Format("ForcePreviewProgress", ObjectStoragePresentation.Size(_imagePreviewBytes), ObjectStoragePresentation.Size(_imagePreviewSize))
@@ -63,15 +63,6 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     /// <summary>识别只依据文件名与已经读取的元数据，不为识别类型嗅探远程内容。</summary>
     private bool IsRecognizedPreviewImage => SelectedEntry is { IsDirectory: false } entry
         && InferPreviewType(entry.Name, Details?.ContentType) == ObjectStoragePreviewType.Image;
-
-    /// <summary>选中已识别图片后直接加载；未知文件保留原有文本预览或手动选择入口。</summary>
-    private Task PreviewRecognizedImageAsync(ObjectStorageEntryViewModel entry, ObjectStorageBucket bucket,
-        ObjectStorageObjectDetails details, CancellationToken cancellationToken)
-    {
-        if (_temporaryFiles is null || InferPreviewType(entry.Name, details.ContentType) != ObjectStoragePreviewType.Image)
-            return Task.CompletedTask;
-        return StartImagePreviewAsync(entry, bucket, details.Size, cancellationToken);
-    }
 
     /// <summary>每次读取使用独立版本，并跟踪仍在结束的旧下载，页签关闭等待全部缓存释放。</summary>
     private Task StartImagePreviewAsync(ObjectStorageEntryViewModel entry, ObjectStorageBucket bucket, long size,
