@@ -41,6 +41,7 @@ public partial class RedisWorkspaceView : UserControl
     }
     private async void OnTreeSelection(object sender, RoutedPropertyChangedEventArgs<object> args)
     {
+        if (_model is not null) _model.CreatePrefix = args.NewValue is RedisTreeNode { IsGroup: true } group ? group.Prefix : "";
         if (_model is not null && args.NewValue is RedisTreeNode { Key: { } key }) await _model.OpenAsync(key);
     }
     private async void OnTreeKeyDown(object sender, KeyEventArgs args)
@@ -62,6 +63,8 @@ public partial class RedisWorkspaceView : UserControl
     { if (IsLoaded && _model?.IsConnected == true) await _model.QueryAsync(); }
     private async void OnDatabaseChanged(object sender, SelectionChangedEventArgs args)
     { if (IsLoaded && _model is { IsConnected: true, IsConnecting: false }) await _model.QueryAsync(); }
+    private async void OnDatabasesOpened(object? sender, EventArgs args)
+    { if (_model is { IsConnected: true }) await _model.RefreshDatabaseCountsAsync(); }
     private void OnSearchChanged(object sender, TextChangedEventArgs args)
     { if (!IsLoaded || _model?.IsConnected != true) return; _searchDelay.Stop(); _searchDelay.Start(); }
     private void OnCollapseGroups(object sender, RoutedEventArgs args) => _model?.Tree?.CollapseAll();
@@ -140,8 +143,9 @@ public partial class RedisWorkspaceView : UserControl
         bool compact = args.NewSize.Width < 760;
         if (!_compact && compact) _treeWidth = TreeColumn.ActualWidth;
         _compact = compact; UpdateLayoutMode();
-        ConnectionBadge.Visibility = args.NewSize.Width < 620 ? Visibility.Collapsed : Visibility.Visible;
-        IdentityColumn.Width = new(args.NewSize.Width < 620 ? 150 : 225);
+        ConnectionBadge.Visibility = args.NewSize.Width < 760 ? Visibility.Collapsed : Visibility.Visible;
+        ToolbarTypeIcon.Visibility = args.NewSize.Width < 760 ? Visibility.Collapsed : Visibility.Visible;
+        IdentityColumn.Width = new(args.NewSize.Width < 600 ? 0 : args.NewSize.Width < 760 ? 70 : 225);
     }
     private void OnCompactChanged(object sender, SelectionChangedEventArgs args)
     { if (_model is not null) _model.ShowTree = CompactSelector.SelectedValue as string == "tree"; }

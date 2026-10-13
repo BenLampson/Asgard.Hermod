@@ -15,6 +15,7 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
     private readonly Dictionary<string, RedisKeyTree> _trees = new(StringComparer.Ordinal);
     private bool _initialized;
     private int _database;
+    private bool _readingDatabaseCounts;
 
     /// <summary>不打开真实连接，首次激活时由公共页签生命周期初始化。</summary>
     public RedisWorkspaceViewModel(InstanceItemViewModel instance, IInstanceConfigurationService configurations, IRedisSessionFactory connections,
@@ -47,7 +48,25 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
     /// <summary>数据库文本使用 invariant，不随界面语言改变。</summary>
     public string DatabaseText { get; set => SetProperty(ref field, value); } = "0";
     /// <summary>选项来自服务器实际数据库数量，不假设固定十六个数据库。</summary>
-    public IReadOnlyList<InstanceFieldChoice> Databases { get; private set; } = [];
+    public IReadOnlyList<RedisDatabaseViewModel> Databases { get; private set; } = [];
+    /// <summary>DBSIZE 不遍历键或加载值；独立更新标签，不改变数据库选择。</summary>
+    public async Task RefreshDatabaseCountsAsync()
+    {
+        if (_session is not { } session || _readingDatabaseCounts) return;
+        _readingDatabaseCounts = true;
+        try
+        {
+            var choices = Databases;
+            foreach (var choice in choices)
+            {
+                long? count = await session.ReadDatabaseKeyCountAsync(choice.Database, _lifetime.Token);
+                if (!ReferenceEquals(session, _session) || IsClosed) return;
+                choice.SetCount(count);
+            }
+        }
+        catch (OperationCanceledException) when (_lifetime.IsCancellationRequested) { }
+        finally { _readingDatabaseCounts = false; }
+    }
     /// <summary>状态栏只展示协议提供的拓扑和公开认证身份。</summary>
     public string ConnectionSummary => _session is null ? Status : Text.Format("RedisConnectionSummary",
         Text.Get(_session.Options.Topology switch { RedisIds.Cluster => "RedisCluster", RedisIds.Sentinel => "RedisSentinel", _ => "RedisStandalone" }),
@@ -62,6 +81,8 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
     public string SelectedType { get; set => SetProperty(ref field, value); } = "";
     /// <summary>已知键即使没有 SCAN 权限，也可直接读取。</summary>
     public string KnownKey { get; set { if (SetProperty(ref field, value)) OpenKnownCommand.NotifyCanExecuteChanged(); } } = "";
+    /// <summary>选中的树分组仅作为新增键名的字面前缀。</summary>
+    public string CreatePrefix { get; set => SetProperty(ref field, value); } = "";
     /// <summary>本查询范围的懒加载树。</summary>
     public RedisKeyTree? Tree { get; private set; }
     /// <summary>页签顺序保持打开顺序，重复点击只激活。</summary>
@@ -115,8 +136,9 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
             var session = await _connections.OpenAsync(options, linked.Token);
             if (linked.IsCancellationRequested || IsClosed) { await session.DisposeAsync(); return; }
             _session = session; _database = session.Options.Database; DatabaseText = _database.ToString(CultureInfo.InvariantCulture);
-            Databases = Enumerable.Range(0, session.DatabaseCount).Select(database => new InstanceFieldChoice(database.ToString(CultureInfo.InvariantCulture), Text.Format("RedisDatabaseLabel", database))).ToArray();
+            Databases = Enumerable.Range(0, session.DatabaseCount).Select(database => new RedisDatabaseViewModel(database)).ToArray();
             OnPropertyChanged(nameof(Databases));
+            await RefreshDatabaseCountsAsync();
             Endpoint = string.Join(", ", session.Options.Endpoints); await QueryAsync();
         }
         catch (OperationCanceledException) when (linked.IsCancellationRequested) { }
@@ -184,13 +206,14 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
     }
     private async Task CreateAsync()
     {
-        var request = await _dialogs.CreateAsync(); if (request is null || _session is null) return;
+        if (_session is null) return;
+        int database = _database;
         try
         {
-            var key = RedisKeyId.FromText(request.Key);
-            byte[] name = Encoding.UTF8.GetBytes(request.Type == "set" || request.Type == "zset" ? request.Value : request.Field);
-            var initial = new RedisSnapshot(request.Type, 1, -1, [new(name, Encoding.UTF8.GetBytes(request.Value), request.Score)], true);
-            await _session.SaveAsync(_database, key, RedisSnapshot.Missing, initial, _lifetime.Token); await OpenAsync(key); await QueryAsync();
+            var key = await _dialogs.CreateAsync(_session, database, CreatePrefix, _lifetime.Token);
+            if (key is null || IsClosed) return;
+            DatabaseText = database.ToString(CultureInfo.InvariantCulture); _database = database;
+            await OpenAsync(key); Pattern = ""; SelectedType = ""; await QueryAsync(); Tree?.Reveal(key); await RefreshDatabaseCountsAsync();
         }
         catch (Exception error) { Error = Text.Error(error, "RedisCommandFailed"); Refresh(); }
     }

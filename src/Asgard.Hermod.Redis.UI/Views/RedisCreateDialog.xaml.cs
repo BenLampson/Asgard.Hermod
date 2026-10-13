@@ -2,29 +2,31 @@ using Asgard.Hermod.Redis.UI.ViewModels;
 
 namespace Asgard.Hermod.Redis.UI.Views;
 
-/// <summary>收集最小初始值，原子创建及权限校验由协议模块完成。</summary>
+/// <summary>公共窗口承载新增草稿；只在服务端确认成功后关闭，错误保留所有输入。</summary>
 public partial class RedisCreateDialog : HermodDialog
 {
-    /// <summary>真实类型名不翻译，控件文字来自共享资源。</summary>
-    public RedisCreateDialog()
+    private readonly RedisCreateViewModel _model;
+    /// <summary>协议提交与校验属于视图模型，视图负责焦点、列布局及关闭。</summary>
+    public RedisCreateDialog(RedisCreateViewModel model)
     {
-        InitializeComponent(); TypeInput.ItemsSource = new[] { "string", "hash", "list", "set", "zset", "stream" };
-        TypeInput.SelectedItem = "string"; Loaded += (_, _) => KeyInput.Focus();
+        _model = model; InitializeComponent(); DataContext = model;
+        model.PropertyChanged += OnModelChanged; model.Created += OnCreated;
+        Loaded += (_, _) => KeyInput.Focus();
+        Closed += (_, _) => { model.PropertyChanged -= OnModelChanged; model.Created -= OnCreated; };
+        UpdateColumns();
     }
-    /// <summary>未接受窗口时没有创建请求。</summary>
-    public RedisCreateRequest? Request { get; private set; }
-    private void OnTypeChanged(object sender, SelectionChangedEventArgs args)
+    /// <summary>成功或主动核对冲突键时返回原始键身份。</summary>
+    public RedisKeyId? ResultKey { get; private set; }
+    private void OnModelChanged(object? sender, PropertyChangedEventArgs args)
+    { if (args.PropertyName is nameof(RedisCreateViewModel.HasName) or nameof(RedisCreateViewModel.HasValue) or nameof(RedisCreateViewModel.HasScore)) UpdateColumns(); }
+    private void UpdateColumns()
     {
-        if (FieldControl is null || ScoreControl is null) return;
-        FieldControl.Visibility = TypeInput.SelectedItem is "hash" or "stream" ? Visibility.Visible : Visibility.Collapsed;
-        ScoreControl.Visibility = TypeInput.SelectedItem is "zset" ? Visibility.Visible : Visibility.Collapsed;
+        NameColumn.Visibility = _model.HasName ? Visibility.Visible : Visibility.Collapsed; NameColumn.Header = _model.NameLabel;
+        ValueColumn.Visibility = _model.HasValue ? Visibility.Visible : Visibility.Collapsed;
+        ScoreColumn.Visibility = _model.HasScore ? Visibility.Visible : Visibility.Collapsed;
     }
-    private void OnCreate(object sender, RoutedEventArgs args)
-    {
-        if (KeyInput.Text.Length == 0) { KeyField.Error = Text.Get("RedisDraftInvalid"); return; }
-        string type = (string)TypeInput.SelectedItem;
-        if (type == "zset" && (!double.TryParse(ScoreInput.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out double score) || !double.IsFinite(score)))
-        { ScoreControl.Error = Text.Get("RedisDraftInvalid"); return; }
-        Request = new(KeyInput.Text, type, FieldInput.Text, ValueInput.Text, ScoreInput.Text); DialogResult = true;
-    }
+    private void OnCreated() { ResultKey = _model.CreatedKey; Accept(); }
+    private void OnInspect(object sender, RoutedEventArgs args) { ResultKey = _model.SubmittedKey; Accept(); }
+    private void Accept() { if (System.Windows.Interop.ComponentDispatcher.IsThreadModal) DialogResult = true; else Close(); }
+    private void OnClosing(object? sender, CancelEventArgs args) { if (_model.IsBusy) args.Cancel = true; }
 }

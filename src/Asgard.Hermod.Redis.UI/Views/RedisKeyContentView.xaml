@@ -4,17 +4,15 @@
  xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI">
  <UserControl.Resources>
   <BooleanToVisibilityConverter x:Key="Visible" />
-  <Style TargetType="DataGridColumnHeader"><Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}" /><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" /><Setter Property="Padding" Value="12,10" /><Setter Property="BorderBrush" Value="{DynamicResource LineBrush}" /><Setter Property="BorderThickness" Value="0,0,0,1" /></Style>
-  <Style TargetType="DataGridCell"><Setter Property="Padding" Value="10,8" /><Setter Property="BorderThickness" Value="0" /><Setter Property="Foreground" Value="{DynamicResource TextBodyBrush}" /><Setter Property="Background" Value="Transparent" /><Style.Triggers><Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" /></Trigger></Style.Triggers></Style>
-  <Style TargetType="DataGridRow"><Setter Property="Background" Value="{DynamicResource SurfaceBrush}" /><Setter Property="Foreground" Value="{DynamicResource TextBodyBrush}" /><Setter Property="MinHeight" Value="38" /></Style>
+  <Style TargetType="DataGrid" BasedOn="{StaticResource WorkspaceDataGrid}" />
  </UserControl.Resources>
  <Grid Margin="0,10,0,0">
   <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-  <DockPanel Grid.Row="0" Margin="0,0,0,14"><StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+  <DockPanel Grid.Row="0" Margin="0,0,0,14"><StackPanel x:Name="KeyActions" DockPanel.Dock="Right" Orientation="Horizontal">
    <Button Click="OnCopyKey" Style="{StaticResource IconButton}" ToolTip="{loc:Loc RedisCopyKey}" AutomationProperties.Name="{loc:Loc RedisCopyKey}" Margin="0,0,4,0"><controls:IconView Kind="copy" Width="16" Height="16" /></Button>
    <Button Click="OnKeyMenu" Style="{StaticResource IconButton}" ToolTip="{loc:Loc RedisKeyActions}" AutomationProperties.Name="{loc:Loc RedisKeyActions}" Margin="0,0,8,0"><controls:IconView Kind="ellipsis" Width="16" Height="16" /></Button>
-   <Button Content="{loc:Loc RedisEditValue}" Command="{Binding EditCommand}" Style="{StaticResource StandardButton}" />
-   <Button Content="{loc:Loc RedisAppendStream}" Command="{Binding AppendCommand}" Visibility="{Binding IsStream, Converter={StaticResource Visible}}" Margin="8,0,0,0" />
+   <Button Content="{loc:Loc RedisEditValue}" Command="{Binding OpenEditorCommand}" Style="{StaticResource StandardButton}" />
+   <Button Content="{loc:Loc RedisAppendStream}" Command="{Binding OpenAppendCommand}" Visibility="{Binding IsStream, Converter={StaticResource Visible}}" Margin="8,0,0,0" />
   </StackPanel><StackPanel Orientation="Horizontal" VerticalAlignment="Center">
    <controls:StatusBadge Text="{Binding Type}" Tone="Accent" ShowIndicator="False" />
    <TextBlock Text="{Binding Ttl}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="10,0,0,0" />
@@ -27,8 +25,8 @@
     <Button DockPanel.Dock="Right" Click="OnCopyValue" Style="{StaticResource IconButton}" ToolTip="{loc:Loc RedisCopyValue}" AutomationProperties.Name="{loc:Loc RedisCopyValue}" Margin="8,0,0,0"><controls:IconView Kind="copy" Width="16" Height="16" /></Button>
     <controls:SectionSelector ItemsSource="{Binding Formats}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding Format, Mode=TwoWay}" AutomationProperties.Name="{loc:Loc RedisValue}" />
    </DockPanel>
-   <controls:CodeEditor Grid.Row="1" x:Name="StringEditor" Text="{Binding EditorText, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding IsReadOnly}" Visibility="{Binding IsString, Converter={StaticResource Visible}}" MaxLength="4194304" AutomationProperties.Name="{loc:Loc RedisEntryValue}" />
-   <DataGrid Grid.Row="1" x:Name="CollectionGrid" ItemsSource="{Binding Entries}" IsReadOnly="{Binding IsReadOnly}" Visibility="{Binding IsCollection, Converter={StaticResource Visible}}"
+   <controls:CodeEditor Grid.Row="1" x:Name="StringEditor" Text="{Binding EditorText, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsString, Converter={StaticResource Visible}}" MaxLength="4194304" AutomationProperties.Name="{loc:Loc RedisEntryValue}" />
+   <DataGrid Grid.Row="1" x:Name="CollectionGrid" ItemsSource="{Binding Entries}" Visibility="{Binding IsCollection, Converter={StaticResource Visible}}"
     AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="False" CanUserReorderColumns="False" SelectionMode="Single" SelectionUnit="FullRow"
     HeadersVisibility="Column" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="{DynamicResource LineSoftBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1" Background="{DynamicResource SurfaceBrush}"
     FontFamily="{DynamicResource MonoFont}" FontSize="12" AutomationProperties.Name="{loc:Loc RedisValue}">
@@ -41,7 +39,7 @@
    </DataGrid>
    <TextBlock Grid.Row="1" Text="{loc:Loc RedisMissing}" Visibility="{Binding IsMissing, Converter={StaticResource Visible}}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}" />
    <StackPanel Grid.Row="2" Margin="0,10,0,0">
-    <WrapPanel><Button Content="{loc:Loc RedisNextPage}" Command="{Binding NextPageCommand}" Visibility="{Binding HasMore, Converter={StaticResource Visible}}" Margin="0,0,8,0" />
+    <WrapPanel x:Name="RowActions"><Button Content="{loc:Loc RedisNextPage}" Command="{Binding NextPageCommand}" Visibility="{Binding HasMore, Converter={StaticResource Visible}}" Margin="0,0,8,0" />
      <Button Content="{Binding AddEntryLabel}" Command="{Binding AddEntryCommand}" Margin="0,0,8,0" Visibility="{Binding CanAddRows, Converter={StaticResource Visible}}" />
      <Button Content="{loc:Loc RedisAppendHead}" Command="{Binding AddHeadCommand}" Margin="0,0,8,0" Visibility="{Binding CanAddHead, Converter={StaticResource Visible}}" />
      <Button Content="{loc:Loc RedisRemoveEntry}" Command="{Binding RemoveEntryCommand}" CommandParameter="{Binding SelectedItem, ElementName=CollectionGrid}" Visibility="{Binding CanAddRows, Converter={StaticResource Visible}}" />
@@ -58,11 +56,11 @@
    <Button Content="{loc:Loc RedisChangeExpiry}" Command="{Binding ExpiryCommand}" HorizontalAlignment="Left" />
   </StackPanel></ScrollViewer>
   <StackPanel Grid.Row="5" Margin="0,14,0,0">
-   <DockPanel><StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Visibility="{Binding IsEditing, Converter={StaticResource Visible}}">
+   <DockPanel><StackPanel x:Name="InlineSaveActions" DockPanel.Dock="Right" Orientation="Horizontal" Visibility="Collapsed">
     <Button Content="{loc:Loc RedisDiscard}" Command="{Binding DiscardCommand}" Margin="0,0,8,0" />
     <Button Content="{loc:Loc RedisSaveValue}" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButton}" />
    </StackPanel><TextBlock Text="{Binding PreviewInfo}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" /></DockPanel>
-   <TextBlock Text="{loc:Loc RedisEditingHint}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,8,0,0" Visibility="{Binding IsEditing, Converter={StaticResource Visible}}" />
+   <TextBlock x:Name="EditingHint" Text="{loc:Loc RedisEditingHint}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,8,0,0" Visibility="Collapsed" />
   </StackPanel>
  </Grid>
 </UserControl>

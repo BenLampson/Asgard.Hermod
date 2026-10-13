@@ -22,6 +22,7 @@ public sealed partial class RedisKeyTabViewModel : ObservableObject, IDisposable
     {
         _session = session; Database = database; Key = key; _dialogs = dialogs;
         EditCommand = new AsyncRelayCommand(_ => EditAsync(), _ => CanEdit);
+        OpenEditorCommand = new AsyncRelayCommand(_ => _dialogs.EditAsync(this), _ => CanEdit && !IsBusy);
         SaveCommand = new AsyncRelayCommand(_ => SaveAsync(), _ => CanSave);
         DiscardCommand = new RelayCommand(_ => Discard(), _ => IsEditing && !IsBusy);
         RefreshCommand = new AsyncRelayCommand(_ => RefreshAsync(), _ => !IsBusy);
@@ -30,6 +31,7 @@ public sealed partial class RedisKeyTabViewModel : ObservableObject, IDisposable
         AddHeadCommand = new RelayCommand(_ => AddEntry(true), _ => IsEditing && IsList && !IsBusy);
         RemoveEntryCommand = new RelayCommand(row => RemoveEntry(row as RedisEntryViewModel), _ => IsEditing && !IsBusy);
         AppendCommand = new RelayCommand(_ => BeginAppend(), _ => IsStream && !IsEditing && !IsBusy && !_permissionDenied && !_unknownWrite);
+        OpenAppendCommand = new AsyncRelayCommand(_ => _dialogs.EditAsync(this, true), _ => AppendCommand.CanExecute(null));
         ExpiryCommand = new AsyncRelayCommand(_ => ChangeExpiryAsync(), _ => !IsBusy && !_permissionDenied && !_unknownWrite && Type != "none");
         DeleteCommand = new AsyncRelayCommand(_ => DeleteAsync(), _ => !IsBusy && !_permissionDenied && !_unknownWrite && !IsDirty && Type != "none");
     }
@@ -124,6 +126,10 @@ public sealed partial class RedisKeyTabViewModel : ObservableObject, IDisposable
     public event Action<RedisKeyTabViewModel>? Deleted;
     /// <summary>命令复用公共异步与同步命令实现。</summary>
     public AsyncRelayCommand EditCommand { get; }
+    /// <summary>内容页只打开编辑窗口，不切换成内联可写控件。</summary>
+    public AsyncRelayCommand OpenEditorCommand { get; }
+    /// <summary>Stream 追加也在独立窗口内收集字段。</summary>
+    public AsyncRelayCommand OpenAppendCommand { get; }
     public AsyncRelayCommand SaveCommand { get; }
     public RelayCommand DiscardCommand { get; }
     public AsyncRelayCommand RefreshCommand { get; }
@@ -191,6 +197,7 @@ public sealed partial class RedisKeyTabViewModel : ObservableObject, IDisposable
             nameof(Ttl), nameof(IsMissing), nameof(Formats), nameof(Format), nameof(IsEditing), nameof(IsDirty), nameof(IsBusy), nameof(IsReadOnly), nameof(CanEdit), nameof(CanSave), nameof(Error), nameof(StateLabel),
             nameof(HasError), nameof(HasMore), nameof(AddEntryLabel), nameof(CanAddRows), nameof(CanAddHead) }) OnPropertyChanged(name);
         EditCommand.NotifyCanExecuteChanged(); SaveCommand.NotifyCanExecuteChanged(); DiscardCommand.NotifyCanExecuteChanged(); RefreshCommand.NotifyCanExecuteChanged();
+        OpenEditorCommand.NotifyCanExecuteChanged(); OpenAppendCommand.NotifyCanExecuteChanged();
         NextPageCommand.NotifyCanExecuteChanged(); AddEntryCommand.NotifyCanExecuteChanged(); AddHeadCommand.NotifyCanExecuteChanged(); RemoveEntryCommand.NotifyCanExecuteChanged();
         AppendCommand.NotifyCanExecuteChanged(); ExpiryCommand.NotifyCanExecuteChanged(); DeleteCommand.NotifyCanExecuteChanged();
     }

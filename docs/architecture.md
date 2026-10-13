@@ -137,6 +137,20 @@ Closing a key, instance or application confirms unsaved drafts. Read-only ACL
 fallback permits known-key inspection without exposing credentials or raw SDK
 errors. Larger or incomplete results remain previews.
 
+The Redis content page always remains read-only. Creating keys and editing values
+use separate shared dialogs; failed writes retain the open dialog and its inputs.
+Creation supports all six types, lossless text/JSON/Hex/Base64 string formats,
+multi-row collection input, and permanent or timed expiry. A create-if-missing
+Lua script validates write and expiry permissions before atomically creating the
+value and initial TTL; it never deletes an existing key. Successful creation opens
+its key tab and reveals only that known prefix path in the lazy tree.
+
+The labeled database selector shows `DB number (key count)` from primary-node
+DBSIZE replies, aggregating primaries in Cluster. Unavailable counts are explicit
+and never replaced with invented zeroes. Count refresh updates existing option
+objects, preserving database selection and tree cursors. Shared table styles and
+selector containers cover both themes without detached-container binding errors.
+
 ## Composition
 
 The application calls the independently owned registration entry points:

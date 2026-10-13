@@ -33,10 +33,22 @@ public sealed class WindowsRedisWorkspaceDialogs(Func<Window?> owner) : IRedisWo
         Text.Format("RedisDeleteConfirm", key, database), Text.Get("RedisDeleteKey"), true)
     { Owner = owner() }.ShowDialog() == true);
     /// <inheritdoc />
-    public Task<RedisCreateRequest?> CreateAsync()
+    public Task<RedisKeyId?> CreateAsync(IRedisSession session, int database, string prefix, CancellationToken cancellationToken = default)
     {
-        var dialog = new RedisCreateDialog { Owner = owner() };
-        return Task.FromResult(dialog.ShowDialog() == true ? dialog.Request : null);
+        using var model = new RedisCreateViewModel(session, database, prefix, cancellationToken);
+        var dialog = new RedisCreateDialog(model) { Owner = owner() };
+        return Task.FromResult(dialog.ShowDialog() == true ? dialog.ResultKey : null);
+    }
+    /// <inheritdoc />
+    public async Task EditAsync(RedisKeyTabViewModel tab, bool append = false)
+    {
+        if (!tab.IsEditing)
+        {
+            if (append) tab.AppendCommand.Execute(null);
+            else await tab.EditCommand.ExecuteAsync();
+        }
+        if (!tab.IsEditing) return;
+        new RedisEditDialog(tab) { Owner = owner() }.ShowDialog();
     }
     /// <inheritdoc />
     public Task<string?> ExpiryAsync(string key)

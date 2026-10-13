@@ -10,7 +10,9 @@ public interface IRedisWorkspaceDialogs
     /// <summary>删除展示完整键和数据库。</summary>
     Task<bool> DeleteAsync(string key, int database);
     /// <summary>新建使用 create-if-missing，不覆盖既有数据。</summary>
-    Task<RedisCreateRequest?> CreateAsync();
+    Task<RedisKeyId?> CreateAsync(IRedisSession session, int database, string prefix, CancellationToken cancellationToken = default);
+    /// <summary>已有键在公共模态窗口中编辑，内容页保持只读。</summary>
+    Task EditAsync(RedisKeyTabViewModel tab, bool append = false);
     /// <summary>空文本为永久，正数为秒。</summary>
     Task<string?> ExpiryAsync(string key);
     /// <summary>对比最新读取结果时保留草稿。</summary>

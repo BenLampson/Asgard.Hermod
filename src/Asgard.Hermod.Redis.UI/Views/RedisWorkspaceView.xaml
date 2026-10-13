@@ -48,12 +48,14 @@
  <controls:WorkspacePageLayout>
   <controls:WorkspacePageLayout.Toolbar>
    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="24" /><ColumnDefinition x:Name="IdentityColumn" Width="225" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-    <controls:IconView Kind="database" Width="24" Height="24" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
+    <controls:IconView x:Name="ToolbarTypeIcon" Kind="database" Width="24" Height="24" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
     <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center"><TextBlock Text="{Binding Name}" FontSize="15" TextTrimming="CharacterEllipsis" /><TextBlock Text="{Binding Endpoint}" FontSize="11" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource TextMutedBrush}" Margin="0,2,0,0" /></StackPanel>
     <controls:StatusBadge Grid.Column="2" x:Name="ConnectionBadge" Text="{Binding Status}" Tone="Success" ShowIndicator="False" VerticalAlignment="Center" Margin="12,0" />
     <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
-     <ComboBox ItemsSource="{Binding Databases}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding DatabaseText, Mode=TwoWay}" Width="90" MinHeight="32" Height="32" SelectionChanged="OnDatabaseChanged" ToolTip="{loc:Loc RedisDatabase}" AutomationProperties.Name="{loc:Loc RedisDatabase}" />
-     <Button Content="{loc:Loc RedisNewKey}" Command="{Binding NewKeyCommand}" Margin="12,0" />
+     <StackPanel Width="190"><TextBlock Text="{loc:Loc RedisDatabase}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,3" />
+      <ComboBox x:Name="DatabaseSelector" ItemsSource="{Binding Databases}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding DatabaseText, Mode=TwoWay}" MinHeight="32" Height="32" SelectionChanged="OnDatabaseChanged" DropDownOpened="OnDatabasesOpened" ToolTip="{loc:Loc RedisDatabaseCountHint}" AutomationProperties.Name="{loc:Loc RedisDatabase}" />
+     </StackPanel>
+     <Button Command="{Binding NewKeyCommand}" Margin="12,0"><StackPanel Orientation="Horizontal"><controls:IconView Kind="plus" Width="14" Height="14" Margin="0,0,6,0" /><TextBlock Text="{loc:Loc RedisNewKey}" /></StackPanel></Button>
      <Button Click="OnConnectionMenu" Style="{StaticResource IconButton}" ToolTip="{loc:Loc RedisConnectionInformation}" AutomationProperties.Name="{loc:Loc RedisConnectionInformation}"><controls:IconView Kind="settings-2" Width="16" Height="16" /></Button>
     </StackPanel>
    </Grid>

@@ -44,8 +44,12 @@ public sealed class RedisLayoutTests(WpfTestFixture fixture)
             Assert.Same(firstView, host.Content); Assert.True(editor.VerticalOffset > 0);
             await first.EditCommand.ExecuteAsync(); first.EditorText = "unsaved value";
             await WindowPreviewCapture.VerifyAsync(window, $"redis-workspace-edit-{language}-{theme}");
-            Assert.False(editor.IsReadOnly); Assert.True(first.IsDirty);
+            Assert.True(editor.IsReadOnly); Assert.True(first.IsDirty);
             window.Width = 620; window.Height = 640; await WindowPreviewCapture.VerifyAsync(window, $"redis-workspace-narrow-{language}-{theme}");
+            var database = Assert.IsType<ComboBox>(view.FindName("DatabaseSelector")); Assert.True(database.ActualWidth >= 180);
+            Assert.Equal(Text.Get("RedisDatabase"), System.Windows.Automation.AutomationProperties.GetName(database));
+            var create = Assert.Single(WindowTestVisuals.Descendants<Button>(view), button => ReferenceEquals(button.Command, model.NewKeyCommand));
+            Assert.True(WindowTestVisuals.ScreenBounds(create).Right <= WindowTestVisuals.ScreenBounds(view).Right + 1);
             Assert.False(treePanel.IsVisible); Assert.True(host.ActualWidth > 500);
             Assert.True(Assert.IsType<SegmentedSelector>(view.FindName("CompactSelector")).IsVisible);
             model.ShowTree = true; await WindowPreviewCapture.VerifyAsync(window, $"redis-workspace-narrow-tree-{language}-{theme}");

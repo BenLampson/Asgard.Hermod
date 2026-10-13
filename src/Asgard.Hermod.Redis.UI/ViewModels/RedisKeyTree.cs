@@ -110,6 +110,23 @@ public sealed class RedisKeyTree : ObservableObject, IDisposable
     {
         _metadata[key.Identity] = (type, ttl); Apply(Root);
     }
+    /// <summary>已确认的新键直接沿实际前缀定位，不为展开其他分组进行额外扫描。</summary>
+    public void Reveal(RedisKeyId key)
+    {
+        var parent = Root;
+        while (true)
+        {
+            AddKey(parent, key);
+            var leaf = parent.Children.FirstOrDefault(child => child.Key?.Equals(key) == true);
+            if (leaf is not null) break;
+            var group = parent.Children.First(child => child.IsGroup && !child.Placeholder && key.DisplayName.StartsWith(child.Prefix, StringComparison.Ordinal));
+            group.Loaded = true; group.Children.Remove(group.Children.FirstOrDefault(child => child.Placeholder)!);
+            if (group.Children.Count == 0) group.Seen.Clear();
+            group.ExpansionChanged -= OnExpansion; group.IsExpanded = true; group.ExpansionChanged += OnExpansion;
+            group.Status = group.HasMore ? Text.Get("RedisMoreGroups") : ""; parent = group;
+        }
+        SetActiveKey(key); OnPropertyChanged(nameof(CountLabel));
+    }
     /// <summary>活动页签决定键高亮，选择一个前缀不会把前缀当成业务键。</summary>
     public void SetActiveKey(RedisKeyId? key) { _activeKey = key; Apply(Root); }
     private void Apply(RedisTreeNode parent)

@@ -15,7 +15,7 @@ public sealed class RedisCollectionLayoutTests(WpfTestFixture fixture)
         using var trace = new WpfBindingTrace();
         var session = new RedisTestSession { Snapshot = new(type, 1, -1, [new("field"u8.ToArray(), "value"u8.ToArray(), "1.5", "123-0")], true) };
         var dialogs = new RedisTestDialogs(); using var tab = new RedisKeyTabViewModel(session, 0, RedisKeyId.FromText("test:" + type), dialogs);
-        var view = new RedisKeyContentView { DataContext = tab }; var window = new HermodWindow { Width = 760, Height = 600, Content = view };
+        var view = new RedisKeyContentView { DataContext = tab, IsEditorHost = true }; var window = new HermodWindow { Width = 760, Height = 600, Content = view };
         try
         {
             WindowPreviewCapture.Show(window); await tab.ReadAsync();
