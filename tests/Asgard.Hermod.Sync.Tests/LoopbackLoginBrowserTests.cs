@@ -44,6 +44,7 @@ public sealed class LoopbackLoginBrowserTests
             Assert.Contains(Text.Get("LoginCallbackSuccessTitle"), WebUtility.HtmlDecode(body));
             Assert.Contains("data-state=\"success\"", body);
             Assert.Equal("text/html", response.Content.Headers.ContentType!.MediaType);
+            Assert.True(response.Headers.ConnectionClose);
             Assert.Equal("no-store", response.Headers.CacheControl!.ToString());
             Assert.Contains("script-src 'nonce-", response.Headers.GetValues("Content-Security-Policy").Single());
             Assert.DoesNotContain("private-code", body); Assert.DoesNotContain(request.State, body);

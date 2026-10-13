@@ -76,6 +76,8 @@ public sealed class LoopbackLoginBrowser : ILoginBrowser
             response.StatusCode = status == LoginCallbackStatus.Invalid ? 400 : 200;
             response.ContentType = "text/html; charset=utf-8";
             response.ContentLength64 = body.Length;
+            // 一次性监听结束后不会复用连接，正常关闭可避免释放监听时重置浏览器连接。
+            response.KeepAlive = false;
             response.Headers["Cache-Control"] = "no-store";
             response.Headers["Referrer-Policy"] = "no-referrer";
             response.Headers["X-Content-Type-Options"] = "nosniff";
