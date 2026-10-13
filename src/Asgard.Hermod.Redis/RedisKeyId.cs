@@ -17,7 +17,7 @@ public sealed class RedisKeyId : IEquatable<RedisKeyId>
         get { return IsText ? StrictUtf8.GetString(_bytes) : "base64:" + Convert.ToBase64String(_bytes); }
     }
     /// <summary>只允许无损文本参与冒号树分组，二进制键作为独立叶节点。</summary>
-    public bool IsText { get { try { return !StrictUtf8.GetString(_bytes).Any(char.IsControl); } catch (DecoderFallbackException) { return false; } } }
+    public bool IsText { get { try { return _bytes.Length > 0 && !StrictUtf8.GetString(_bytes).Any(char.IsControl); } catch (DecoderFallbackException) { return false; } } }
     /// <summary>每个标签的稳定键标识。</summary>
     public string Identity => Convert.ToBase64String(_bytes);
     /// <inheritdoc />

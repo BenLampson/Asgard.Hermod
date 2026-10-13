@@ -29,8 +29,11 @@ internal sealed class RedisTunnel(RedisSessionOptions options, ISshTcpStreamFact
             var stream = client.GetStream();
             await SshProxyProtocol.ConnectAsync(stream, new SshConnectionOptions
             {
-                Route = SshIds.Proxy, Target = new() { Host = target.Host, Port = target.Port, User = "", Authentication = SshIds.Password },
-                ProxyType = options.Value("proxy.type", "socks5"), ProxyUser = options.Value("proxy.user"), ProxyPassword = options.Value("proxy.password"),
+                Route = SshIds.Proxy,
+                Target = new() { Host = target.Host, Port = target.Port, User = "", Authentication = SshIds.Password },
+                ProxyType = options.Value("proxy.type", "socks5"),
+                ProxyUser = options.Value("proxy.user"),
+                ProxyPassword = options.Value("proxy.password"),
                 RemoteDns = options.Value("proxy.dns", "remote") == "remote",
             }, cancellationToken).ConfigureAwait(false);
             // NetworkStream 拥有 socket，连接成功后不再持有 TcpClient 包装对象。

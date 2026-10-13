@@ -23,8 +23,9 @@ internal static class RedisTls
             certificate = options.Value(prefix + "certificatePassword").Length == 0
                 ? X509Certificate2.CreateFromPemFile(options.Value(prefix + "certificate"), options.Value(prefix + "privateKey"))
                 : X509Certificate2.CreateFromEncryptedPemFile(options.Value(prefix + "certificate"), options.Value(prefix + "certificatePassword"), options.Value(prefix + "privateKey"));
-            // Windows SslStream 需要持久的临时 PFX 句柄，私钥不落盘。
-            var portable = X509CertificateLoader.LoadPkcs12(certificate.Export(X509ContentType.Pfx), null, X509KeyStorageFlags.EphemeralKeySet);
+            // Windows Schannel 不支持临时内存私钥；使用随证书释放清理的用户密钥容器，不设 PersistKeySet。
+            var portable = X509CertificateLoader.LoadPkcs12(certificate.Export(X509ContentType.Pfx), null,
+                OperatingSystem.IsWindows() ? X509KeyStorageFlags.UserKeySet : X509KeyStorageFlags.EphemeralKeySet);
             certificate.Dispose(); certificate = portable; owned.Add(certificate);
         }
         configuration.SslClientAuthenticationOptions = host => new SslClientAuthenticationOptions
@@ -34,7 +35,9 @@ internal static class RedisTls
             CertificateChainPolicy = authorities.Count == 0 ? null : new X509ChainPolicy
             {
                 TrustMode = X509ChainTrustMode.CustomRootTrust,
-                CustomTrustStore = { }, RevocationMode = X509RevocationMode.Online,
+                CustomTrustStore = { },
+                // 用户提供的本地 CA 可能不发布 CRL；仍验证链、用途、有效期及主机名，不依赖公网吊销服务。
+                RevocationMode = X509RevocationMode.NoCheck,
             },
         };
         if (authorities.Count != 0)

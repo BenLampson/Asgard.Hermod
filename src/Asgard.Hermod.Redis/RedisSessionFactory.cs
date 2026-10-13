@@ -48,10 +48,18 @@ public sealed class RedisSessionFactory(ISshTcpStreamFactory ssh) : IRedisSessio
         {
             var configuration = new ConfigurationOptions
             {
-                AbortOnConnectFail = true, ConnectRetry = 0, ConnectTimeout = profile.TimeoutSeconds * 1000,
-                AsyncTimeout = profile.TimeoutSeconds * 1000, SyncTimeout = profile.TimeoutSeconds * 1000,
-                DefaultDatabase = profile.Database, BacklogPolicy = BacklogPolicy.FailFast, IncludeDetailInExceptions = false,
-                IncludePerformanceCountersInExceptions = false, ClientName = "Hermod", TieBreaker = "", ConfigurationChannel = "",
+                AbortOnConnectFail = true,
+                ConnectRetry = 0,
+                ConnectTimeout = profile.TimeoutSeconds * 1000,
+                AsyncTimeout = profile.TimeoutSeconds * 1000,
+                SyncTimeout = profile.TimeoutSeconds * 1000,
+                DefaultDatabase = profile.Database,
+                BacklogPolicy = BacklogPolicy.FailFast,
+                IncludeDetailInExceptions = false,
+                IncludePerformanceCountersInExceptions = false,
+                ClientName = "Hermod",
+                TieBreaker = "",
+                ConfigurationChannel = "",
                 User = profile.Value(prefix + "auth", "none") == "acl" ? profile.Value(prefix + "user") : null,
                 Password = profile.Value(prefix + "auth", "none") switch { "acl" => profile.Value(prefix + "acl.password"), "password" => profile.Value(prefix + "password"), _ => null },
                 Tunnel = profile.Route == "direct" ? null : new RedisTunnel(profile, ssh, cancellationToken),

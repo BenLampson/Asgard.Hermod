@@ -43,8 +43,15 @@ public sealed class RedisSessionOptions
         if (connection.ProviderId == RedisIds.Sentinel && string.IsNullOrWhiteSpace(Get("service"))) throw Text.Exception("RedisServiceRequired");
         if (Get("auth", "none") is not ("none" or "password" or "acl") || Get("auth") == "acl" && string.IsNullOrWhiteSpace(Get("user")))
             throw Text.Exception("RedisConfigurationInvalid");
-        return new() { Connection = connection, Topology = connection.ProviderId, Endpoints = endpoints, Database = database,
-            Route = route, TimeoutSeconds = Number("timeout", 10, 1, 300) };
+        return new()
+        {
+            Connection = connection,
+            Topology = connection.ProviderId,
+            Endpoints = endpoints,
+            Database = database,
+            Route = route,
+            TimeoutSeconds = Number("timeout", 10, 1, 300)
+        };
     }
     /// <summary>凭据、私钥路径及完整连接字符串均不显示。</summary>
     public override string ToString() => "Redis configuration (credentials hidden)";

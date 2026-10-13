@@ -52,6 +52,7 @@ public sealed class SshTcpStreamFactory(IHostKeyTrustStore trust, ISshHostKeyPro
                 client.Dispose();
                 if (!await prompt.ConfirmAsync(challenge, cancellationToken).ConfigureAwait(false))
                     throw new SshException("SshHostNotTrusted", "SSH_HOST_NOT_TRUSTED");
+                cancellationToken.ThrowIfCancellationRequested();
                 if (!await trust.TrustAsync(challenge.Presented, challenge.Previous?.Fingerprint, cancellationToken).ConfigureAwait(false))
                     throw new SshException("SshTrustChanged", "SSH_TRUST_CHANGED");
             }

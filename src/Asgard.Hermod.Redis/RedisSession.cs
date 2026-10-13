@@ -5,7 +5,9 @@ internal sealed class RedisSession(ConnectionMultiplexer connection, RedisSessio
     IReadOnlyList<IDisposable> owned) : IRedisSession
 {
     public RedisSessionOptions Options { get; } = options;
-    public IReadOnlyList<string> ScanNodes { get; } = servers.Select(server => server.EndPoint.ToString()!).ToArray();
+    // Sentinel 切主或 Cluster 更新后，下一次查询应使用 SDK 当前发现的主节点。
+    public IReadOnlyList<string> ScanNodes => connection.GetServers().Where(server => !server.IsReplica && server.ServerType != ServerType.Sentinel)
+        .Select(server => server.EndPoint.ToString()!).ToArray();
     public int DatabaseCount => Options.Topology == RedisIds.Cluster ? 1 : servers[0].DatabaseCount;
 
     public async Task<RedisScanPage> ScanAsync(string node, int database, string cursor, string pattern, string type, CancellationToken cancellationToken)
@@ -13,7 +15,8 @@ internal sealed class RedisSession(ConnectionMultiplexer connection, RedisSessio
         try
         {
             CheckDatabase(database); cancellationToken.ThrowIfCancellationRequested();
-            var server = servers.Single(item => item.EndPoint.ToString() == node);
+            var server = connection.GetServers().Single(item => item.EndPoint.ToString() == node);
+            if (server.IsReplica) throw new RedisException("RedisTopologyFailed", "REDIS_TOPOLOGY");
             var args = new List<object> { cursor, "MATCH", pattern, "COUNT", 100 };
             if (type.Length > 0) { args.Add("TYPE"); args.Add(type); }
             var result = (RedisResult[])(await server.ExecuteAsync(database, "SCAN", args, CommandFlags.DemandMaster).WaitAsync(cancellationToken).ConfigureAwait(false))!;

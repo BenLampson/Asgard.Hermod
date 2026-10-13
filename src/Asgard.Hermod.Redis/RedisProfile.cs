@@ -9,11 +9,13 @@ public static class RedisProfile
     public static InstanceProviderDescriptor Descriptor(string topology) => new(topology,
         Text.Get(topology switch { RedisIds.Sentinel => "RedisSentinel", RedisIds.Cluster => "RedisCluster", _ => "RedisStandalone" }),
         Text.Get(topology switch { RedisIds.Sentinel => "RedisSentinelHint", RedisIds.Cluster => "RedisClusterHint", _ => "RedisStandaloneHint" }),
-        "database", new(RedisIds.Type, "Redis", Text.Get("RedisTypeHint"), "database")
+        topology switch { RedisIds.Sentinel => "radar", RedisIds.Cluster => "network", _ => "database" }, new(RedisIds.Type, "Redis", Text.Get("RedisTypeHint"), "database")
         {
-            ProviderSelectionTitleResourceKey = "RedisTopology", ProviderSelectionDescriptionResourceKey = "RedisTopologyHint",
+            ProviderSelectionTitleResourceKey = "RedisTopology",
+            ProviderSelectionDescriptionResourceKey = "RedisTopologyHint",
             ProviderLabelResourceKey = "RedisTopology",
-        }, Fields(topology)) { ConnectionTestDescription = Text.Get("RedisTestHint") };
+        }, Fields(topology))
+    { ConnectionTestDescription = Text.Get("RedisTestHint") };
 
     /// <summary>Sentinel 与数据节点使用独立认证及 TLS 配置。</summary>
     public static IReadOnlyList<InstanceConfigurationField> Fields(string topology)
@@ -36,9 +38,12 @@ public static class RedisProfile
             fields.Add(definition with { Conditions = [new("route", "proxy")] });
         if (topology == RedisIds.Standalone)
             foreach (var definition in SshProfile.Fields(SshIds.Direct).Where(item => item.Key != "timeout"))
-                fields.Add(definition with { Key = "ssh." + definition.Key,
+                fields.Add(definition with
+                {
+                    Key = "ssh." + definition.Key,
                     VisibleWhenKey = definition.VisibleWhenKey is null ? null : "ssh." + definition.VisibleWhenKey,
-                    Conditions = [new("route", "ssh")] });
+                    Conditions = [new("route", "ssh")]
+                });
         fields.Add(new("timeout", Text.Get("SshTimeout"), MaxLength: 3, ValidationRule: InstanceFieldValidationRule.ConnectionTimeout) { DefaultValue = "10" });
         return fields;
     }
@@ -62,13 +67,15 @@ public static class RedisProfile
         fields.Add(Choice(prefix + "tls", prefix.Length == 0 ? "RedisTls" : "RedisSentinelTls", "no",
             [new("no", Text.Get("RedisDisabled")), new("yes", Text.Get("RedisEnabled"))]));
         fields.Add(Choice(prefix + "trust", "RedisTrust", "system", [new("system", Text.Get("RedisSystemTrust")), new("custom", Text.Get("RedisCustomTrust"))])
-            with { Conditions = [new(prefix + "tls", "yes")] });
+            with
+        { Conditions = [new(prefix + "tls", "yes")] });
         fields.Add(new(prefix + "ca", Text.Get("RedisCa"), InstanceFieldKind.File, MaxLength: 4096, Hint: Text.Get("RedisDeviceFileHint"), IsSensitive: true)
         { Conditions = [new(prefix + "tls", "yes"), new(prefix + "trust", "custom")] });
         fields.Add(new(prefix + "tls.host", Text.Get("RedisTlsHost"), IsRequired: false, MaxLength: 253, ValidationRule: InstanceFieldValidationRule.Host)
         { Conditions = [new(prefix + "tls", "yes")] });
         fields.Add(Choice(prefix + "mtls", "RedisClientAuthentication", "no", [new("no", Text.Get("RedisDisabled")), new("yes", Text.Get("RedisEnabled"))])
-            with { Conditions = [new(prefix + "tls", "yes")] });
+            with
+        { Conditions = [new(prefix + "tls", "yes")] });
         foreach (string name in new[] { "certificate", "privateKey", "certificatePassword" })
             fields.Add(new(prefix + name, Text.Get("Redis" + char.ToUpperInvariant(name[0]) + name[1..]),
                 name == "certificatePassword" ? InstanceFieldKind.Secret : InstanceFieldKind.File, name != "certificatePassword", 4096,
