@@ -11,4 +11,6 @@ public enum StatusTone
     Danger,
     /// <summary>未配置或中性状态。</summary>
     Muted,
+    /// <summary>连接中或正在执行的强调状态。</summary>
+    Accent,
 }

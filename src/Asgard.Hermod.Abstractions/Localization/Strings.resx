@@ -2161,4 +2161,345 @@
   <data name="ChooseInstanceTypeDescription" xml:space="preserve"><value>Choose the type of instance you want to connect.</value></data>
   <data name="ChooseProviderForInstanceType" xml:space="preserve"><value>Choose a provider for this instance type, then enter the connection information.</value></data>
   <data name="WizardStepOfTotal" xml:space="preserve"><value>Step {0} / {1}</value></data>
+  <data name="ChooseFile" xml:space="preserve">
+    <value>Choose file</value>
+  </data>
+  <data name="ChooseFileForField" xml:space="preserve">
+    <value>Choose a file for {0}</value>
+  </data>
+  <data name="SshTypeName" xml:space="preserve">
+    <value>SSH</value>
+  </data>
+  <data name="SshAgentAuthentication" xml:space="preserve">
+    <value>SSH Agent</value>
+  </data>
+  <data name="SshTypeDescription" xml:space="preserve">
+    <value>Connect to a remote host and open an SSH terminal.</value>
+  </data>
+  <data name="SshConnectionMethod" xml:space="preserve">
+    <value>Connection method</value>
+  </data>
+  <data name="SshChooseMethodDescription" xml:space="preserve">
+    <value>Choose a connection path. Configure the host and authentication next.</value>
+  </data>
+  <data name="SshDirect" xml:space="preserve">
+    <value>Direct connection</value>
+  </data>
+  <data name="SshJump" xml:space="preserve">
+    <value>SSH jump host</value>
+  </data>
+  <data name="SshProxy" xml:space="preserve">
+    <value>Proxy connection</value>
+  </data>
+  <data name="SshDirectDescription" xml:space="preserve">
+    <value>Connect from this device to the target host.</value>
+  </data>
+  <data name="SshJumpDescription" xml:space="preserve">
+    <value>Authenticate with a jump host, then connect to the target.</value>
+  </data>
+  <data name="SshProxyDescription" xml:space="preserve">
+    <value>Connect through SOCKS5 or HTTP CONNECT.</value>
+  </data>
+  <data name="SshHost" xml:space="preserve">
+    <value>Target host</value>
+  </data>
+  <data name="SshJumpHost" xml:space="preserve">
+    <value>Jump host</value>
+  </data>
+  <data name="SshPort" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="SshUser" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="SshAuthentication" xml:space="preserve">
+    <value>Authentication</value>
+  </data>
+  <data name="SshPasswordAuthentication" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="SshKeyAuthentication" xml:space="preserve">
+    <value>Private key</value>
+  </data>
+  <data name="SshPassword" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="SshKeyFile" xml:space="preserve">
+    <value>Private key file</value>
+  </data>
+  <data name="SshPassphrase" xml:space="preserve">
+    <value>Passphrase (optional)</value>
+  </data>
+  <data name="SshKeyDeviceHint" xml:space="preserve">
+    <value>The key stays on this device. Other devices must select their own file.</value>
+  </data>
+  <data name="SshProxyType" xml:space="preserve">
+    <value>Proxy type</value>
+  </data>
+  <data name="SshProxyHost" xml:space="preserve">
+    <value>Proxy host</value>
+  </data>
+  <data name="SshProxyUser" xml:space="preserve">
+    <value>Proxy username (optional)</value>
+  </data>
+  <data name="SshProxyPassword" xml:space="preserve">
+    <value>Proxy password (optional)</value>
+  </data>
+  <data name="SshDns" xml:space="preserve">
+    <value>Target name resolution</value>
+  </data>
+  <data name="SshDnsRemote" xml:space="preserve">
+    <value>Through proxy</value>
+  </data>
+  <data name="SshDnsLocal" xml:space="preserve">
+    <value>On this device</value>
+  </data>
+  <data name="SshTimeout" xml:space="preserve">
+    <value>Connection timeout (seconds)</value>
+  </data>
+  <data name="SshPortInvalid" xml:space="preserve">
+    <value>Port must be between 1 and 65535.</value>
+  </data>
+  <data name="SshTimeoutInvalid" xml:space="preserve">
+    <value>Connection timeout must be between 1 and 300 seconds.</value>
+  </data>
+  <data name="SshHostInvalid" xml:space="preserve">
+    <value>Enter a host name or IP address without a scheme or port.</value>
+  </data>
+  <data name="SshConfigurationInvalid" xml:space="preserve">
+    <value>The SSH configuration is incomplete or invalid. Check the connection fields.</value>
+  </data>
+  <data name="SshTrustUnavailable" xml:space="preserve">
+    <value>The local host trust record is unavailable. Check local storage before connecting.</value>
+  </data>
+  <data name="SshHostNotTrusted" xml:space="preserve">
+    <value>The host identity was not accepted. The connection was stopped.</value>
+  </data>
+  <data name="SshTrustChanged" xml:space="preserve">
+    <value>The host identity changed during verification. Verify it again before connecting.</value>
+  </data>
+  <data name="SshKeyUnavailable" xml:space="preserve">
+    <value>The private key file is unavailable. Select an accessible key on this device.</value>
+  </data>
+  <data name="SshConnectionTimeout" xml:space="preserve">
+    <value>The SSH connection timed out. Check the route and try again.</value>
+  </data>
+  <data name="SshNetworkFailed" xml:space="preserve">
+    <value>Cannot reach the SSH host or proxy. Check the address and network.</value>
+  </data>
+  <data name="SshConnectionFailed" xml:space="preserve">
+    <value>Cannot establish the SSH session. Check the route, login credentials and server settings.</value>
+  </data>
+  <data name="SshProxyFailed" xml:space="preserve">
+    <value>The proxy could not establish the tunnel. Check its protocol and credentials.</value>
+  </data>
+  <data name="SshProxyCredentialsInvalid" xml:space="preserve">
+    <value>SOCKS5 credentials must each contain at most 255 UTF-8 bytes.</value>
+  </data>
+  <data name="SshTestDescription" xml:space="preserve">
+    <value>Verify host identities, authenticate, open a PTY and close the test session. No custom command is sent.</value>
+  </data>
+  <data name="SshJumpVerified" xml:space="preserve">
+    <value>Jump host identity verified</value>
+  </data>
+  <data name="SshTargetVerified" xml:space="preserve">
+    <value>Target host identity verified</value>
+  </data>
+  <data name="SshAuthenticationVerified" xml:space="preserve">
+    <value>SSH login accepted</value>
+  </data>
+  <data name="SshTerminalVerified" xml:space="preserve">
+    <value>Interactive terminal available</value>
+  </data>
+  <data name="SshTestPassed" xml:space="preserve">
+    <value>Connection verified. Continue to the save location.</value>
+  </data>
+  <data name="SshHostIdentityTitle" xml:space="preserve">
+    <value>Verify host identity</value>
+  </data>
+  <data name="SshHostIdentityFirst" xml:space="preserve">
+    <value>This host is not yet trusted. Compare the fingerprint with one obtained through a trusted channel.</value>
+  </data>
+  <data name="SshHostIdentityChanged" xml:space="preserve">
+    <value>The host fingerprint differs from the trusted record. Verify the change before updating trust.</value>
+  </data>
+  <data name="SshHostRole" xml:space="preserve">
+    <value>Connection role</value>
+  </data>
+  <data name="SshFingerprint" xml:space="preserve">
+    <value>SHA256 fingerprint</value>
+  </data>
+  <data name="SshPreviousFingerprint" xml:space="preserve">
+    <value>Previously trusted fingerprint</value>
+  </data>
+  <data name="SshAlgorithm" xml:space="preserve">
+    <value>Key algorithm</value>
+  </data>
+  <data name="SshVerifiedCheckbox" xml:space="preserve">
+    <value>I have verified this fingerprint through a trusted channel.</value>
+  </data>
+  <data name="SshTrustContinue" xml:space="preserve">
+    <value>Trust and continue</value>
+  </data>
+  <data name="SshUpdateTrust" xml:space="preserve">
+    <value>Update trust and continue</value>
+  </data>
+  <data name="SshStopConnection" xml:space="preserve">
+    <value>Stop connection</value>
+  </data>
+  <data name="SshCopyFingerprint" xml:space="preserve">
+    <value>Copy fingerprint</value>
+  </data>
+  <data name="SshRouteSummary" xml:space="preserve">
+    <value>This device → {0}</value>
+  </data>
+  <data name="SshJumpRouteSummary" xml:space="preserve">
+    <value>This device → {0} → {1}</value>
+  </data>
+  <data name="SshChangeRoute" xml:space="preserve">
+    <value>Change</value>
+  </data>
+  <data name="SshProxySettings" xml:space="preserve">
+    <value>Proxy settings</value>
+  </data>
+  <data name="SshAdvanced" xml:space="preserve">
+    <value>Advanced settings</value>
+  </data>
+  <data name="SshCredentialHint" xml:space="preserve">
+    <value>Passwords are stored encrypted. Test the connection before saving.</value>
+  </data>
+  <data name="SshAgentHint" xml:space="preserve">
+    <value>Use identities from the local SSH Agent. Private keys are not saved by Hermod.</value>
+  </data>
+  <data name="SshConnected" xml:space="preserve">
+    <value>Connected</value>
+  </data>
+  <data name="SshConnecting" xml:space="preserve">
+    <value>Connecting</value>
+  </data>
+  <data name="SshDisconnected" xml:space="preserve">
+    <value>Disconnected</value>
+  </data>
+  <data name="SshConnectionCanceled" xml:space="preserve">
+    <value>Connection canceled. You can reconnect when ready.</value>
+  </data>
+  <data name="SshStartingTitle" xml:space="preserve">
+    <value>Connecting to {0}</value>
+  </data>
+  <data name="SshStartingDescription" xml:space="preserve">
+    <value>Verifying the connection route, host identities and login credentials…</value>
+  </data>
+  <data name="SshDisconnectedHint" xml:space="preserve">
+    <value>The session has ended. Output is preserved; reconnect to start a new session.</value>
+  </data>
+  <data name="SshOutputPreserved" xml:space="preserve">
+    <value>Output is preserved. Reconnecting creates a new session.</value>
+  </data>
+  <data name="SshReconnect" xml:space="preserve">
+    <value>Reconnect</value>
+  </data>
+  <data name="SshDisconnect" xml:space="preserve">
+    <value>Disconnect</value>
+  </data>
+  <data name="SshConnectionDetails" xml:space="preserve">
+    <value>Connection details</value>
+  </data>
+  <data name="SshSearchOutput" xml:space="preserve">
+    <value>Search output</value>
+  </data>
+  <data name="SshCopySelection" xml:space="preserve">
+    <value>Copy selection</value>
+  </data>
+  <data name="SshPaste" xml:space="preserve">
+    <value>Paste</value>
+  </data>
+  <data name="SshMore" xml:space="preserve">
+    <value>More actions</value>
+  </data>
+  <data name="SshNewSession" xml:space="preserve">
+    <value>New session</value>
+  </data>
+  <data name="SshFontSize" xml:space="preserve">
+    <value>Font size</value>
+  </data>
+  <data name="SshIncreaseFont" xml:space="preserve">
+    <value>Increase font size</value>
+  </data>
+  <data name="SshDecreaseFont" xml:space="preserve">
+    <value>Decrease font size</value>
+  </data>
+  <data name="SshClearDisplay" xml:space="preserve">
+    <value>Clear display</value>
+  </data>
+  <data name="SshSessionElapsed" xml:space="preserve">
+    <value>Session {0:hh\:mm\:ss}</value>
+  </data>
+  <data name="SshViaJump" xml:space="preserve">
+    <value>Via SSH jump host</value>
+  </data>
+  <data name="SshViaProxy" xml:space="preserve">
+    <value>Via proxy</value>
+  </data>
+  <data name="SshDirectRoute" xml:space="preserve">
+    <value>Direct</value>
+  </data>
+  <data name="SshSessionEnded" xml:space="preserve">
+    <value>Session ended</value>
+  </data>
+  <data name="SshHostVerified" xml:space="preserve">
+    <value>Host identity verified</value>
+  </data>
+  <data name="SshEditConnection" xml:space="preserve">
+    <value>Edit connection</value>
+  </data>
+  <data name="SshEditHint" xml:space="preserve">
+    <value>Changes take effect on your next connection.</value>
+  </data>
+  <data name="SshCloseTitle" xml:space="preserve">
+    <value>Close SSH session</value>
+  </data>
+  <data name="SshCloseQuestion" xml:space="preserve">
+    <value>Close this SSH session?</value>
+  </data>
+  <data name="SshCloseDescription" xml:space="preserve">
+    <value>Closing terminates this connection and removes the tab. Whether remote tasks continue depends on the remote program.</value>
+  </data>
+  <data name="SshCloseConfirm" xml:space="preserve">
+    <value>Close session</value>
+  </data>
+  <data name="SshPasteTitle" xml:space="preserve">
+    <value>Confirm multiline paste</value>
+  </data>
+  <data name="SshPasteDescription" xml:space="preserve">
+    <value>This text contains line breaks and may execute commands immediately. Review it before pasting.</value>
+  </data>
+  <data name="SshPasteConfirm" xml:space="preserve">
+    <value>Paste text</value>
+  </data>
+  <data name="SshInputOverflow" xml:space="preserve">
+    <value>The input queue is full. The connection was stopped without replaying input.</value>
+  </data>
+  <data name="SshSearchMatches" xml:space="preserve">
+    <value>{0} / {1}</value>
+  </data>
+  <data name="SshSearchPrevious" xml:space="preserve">
+    <value>Previous match</value>
+  </data>
+  <data name="SshSearchNext" xml:space="preserve">
+    <value>Next match</value>
+  </data>
+  <data name="SshSearchClose" xml:space="preserve">
+    <value>Close search</value>
+  </data>
+  <data name="SshTerminalLabel" xml:space="preserve">
+    <value>Remote SSH terminal</value>
+  </data>
+  <data name="SshClipboardUnavailable" xml:space="preserve">
+    <value>The clipboard is unavailable. Try again.</value>
+  </data>
+  <data name="SshConnectionMissing" xml:space="preserve">
+    <value>The connection configuration is unavailable. Edit the instance before connecting.</value>
+  </data>
+  <data name="SshTerminalType" xml:space="preserve"><value>xterm-256color</value></data>
+  <data name="SshEncoding" xml:space="preserve"><value>UTF-8</value></data>
 </root>

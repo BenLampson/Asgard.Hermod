@@ -69,7 +69,14 @@ public sealed class InstanceProviderRegistry : IInstanceProviderRegistry
                 string.IsNullOrWhiteSpace(field.Label) || field.Label.Any(char.IsControl) ||
                 field.MaxLength is < 0 or > 65536 || !Enum.IsDefined(field.Kind) || !Enum.IsDefined(field.ValidationRule))
                 throw Text.Exception("InvalidOrDuplicateConnectorConfigurationFieldsCheckFieldDeclarations");
+            if (field.Kind == InstanceFieldKind.Choice && (field.Choices.Count == 0
+                || field.Choices.Any(option => !IsValidKey(option.Id, 128) || string.IsNullOrWhiteSpace(option.Name))
+                || field.Choices.Select(option => option.Id).Distinct(StringComparer.Ordinal).Count() != field.Choices.Count))
+                throw Text.Exception("InvalidOrDuplicateConnectorConfigurationFieldsCheckFieldDeclarations");
         }
+        if (fields.Any(item => item.VisibleWhenKey is not null && (!keys.Contains(item.VisibleWhenKey)
+            || item.VisibleWhenKey == item.Key || item.VisibleWhenValue is null)))
+            throw Text.Exception("InvalidOrDuplicateConnectorConfigurationFieldsCheckFieldDeclarations");
     }
 
     /// <summary>稳定标识限定为通用 ASCII 字符，不依赖语言或文化区域。</summary>

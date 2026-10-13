@@ -69,6 +69,11 @@ public sealed class LocalInstanceConfigurationService : IInstanceConfigurationSe
         var parameters = new Dictionary<string, string>(draft.Connection.Parameters, StringComparer.Ordinal);
         foreach (InstanceConfigurationField field in provider.Descriptor.Fields)
         {
+            if (!InstanceFieldValidation.IsApplicable(field, parameters))
+            {
+                parameters.Remove(field.Key);
+                continue;
+            }
             string error = InstanceFieldValidation.GetError(field, parameters.GetValueOrDefault(field.Key));
             if (error.Length != 0) throw new InvalidOperationException(error);
         }

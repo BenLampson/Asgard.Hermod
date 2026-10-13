@@ -7,4 +7,10 @@ public enum InstanceFieldValidationRule
     None,
     /// <summary>只允许 ASCII 字母和数字，例如 OSS AccessKey ID。</summary>
     AsciiLettersAndDigits,
+    /// <summary>TCP 端口，范围为 1 到 65535。</summary>
+    Port,
+    /// <summary>连接超时秒数，范围为 1 到 300。</summary>
+    ConnectionTimeout,
+    /// <summary>主机名或 IP 地址，不接收 URL 或端口。</summary>
+    Host,
 }

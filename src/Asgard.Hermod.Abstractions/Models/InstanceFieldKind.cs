@@ -7,4 +7,8 @@ public enum InstanceFieldKind
     Text,
     /// <summary>密钥或令牌。</summary>
     Secret,
+    /// <summary>稳定标识对应的选择选项。</summary>
+    Choice,
+    /// <summary>本机文件引用，文件内容不进入实例配置。</summary>
+    File,
 }
