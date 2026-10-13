@@ -1,12 +1,13 @@
 namespace Asgard.Hermod.UI.Tests;
 
 /// <summary>可控的连接器替身，不执行网络请求并允许验证取消与迟到结果。</summary>
-internal sealed class NewInstanceWizardTestProvider(string id = "aliyun-oss", string name = "阿里云 OSS") : IInstanceProvider
+internal sealed class NewInstanceWizardTestProvider(string id = "aliyun-oss", string name = "阿里云 OSS",
+    InstanceTypeDescriptor? type = null) : IInstanceProvider
 {
     /// <summary>存储处于顶层，OSS 是其下的具体服务。</summary>
     public static InstanceTypeDescriptor StorageType { get; } = new("storage", "存储", "对象存储服务", "database");
     /// <summary>向导从真实注册表契约读取此展示信息。</summary>
-    public InstanceProviderDescriptor Descriptor { get; } = new(id, name, "Object Storage Service", "cloud", StorageType,
+    public InstanceProviderDescriptor Descriptor { get; } = new(id, name, "Object Storage Service", "cloud", type ?? StorageType,
         [new("accessKeyId", "AccessKey ID（AK）", MaxLength: 128, IsSensitive: true,
             ValidationRule: InstanceFieldValidationRule.AsciiLettersAndDigits),
          new("accessKeySecret", "AccessKey Secret（SK）", InstanceFieldKind.Secret, MaxLength: 256,

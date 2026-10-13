@@ -2157,4 +2157,8 @@
   <data name="HideObjectDetails" xml:space="preserve"><value>收起对象详情</value></data>
   <data name="ShowObjectDetails" xml:space="preserve"><value>展开对象详情</value></data>
   <data name="ResizeObjectDetails" xml:space="preserve"><value>向左或向右拖动以调整对象详情宽度；聚焦后可使用左右方向键。</value></data>
+  <data name="ChooseInstanceType" xml:space="preserve"><value>选择实例类型</value></data>
+  <data name="ChooseInstanceTypeDescription" xml:space="preserve"><value>选择要连接的实例类型。</value></data>
+  <data name="ChooseProviderForInstanceType" xml:space="preserve"><value>选择该实例类型的服务商，然后填写连接信息。</value></data>
+  <data name="WizardStepOfTotal" xml:space="preserve"><value>第 {0} / {1} 步</value></data>
 </root>

@@ -49,6 +49,26 @@ provider card lists do not intercept the mouse wheel with nested scroll viewers.
 Save notifications and creation callbacks update navigation by stable instance
 ID, preserving the existing item and preventing duplicate rows.
 
+Instance creation begins with the independent `InstanceTypePicker`, which lays
+out registered types in two columns. This entrance has no steps or total count.
+Selecting a type opens its connection flow; returning from the first flow step
+clears the previous connection fields, name and test result before showing the
+type entrance again. Editing retains the saved type and provider.
+
+`InstanceWizard` is a shared presentation container with a caller-supplied title,
+description, step collection and content. It does not prescribe five steps or
+perform navigation or validation. The storage connection flow is its first
+consumer: `InstanceConnectionWizardContent` renders provider-declared fields,
+connection tests and confirmation, while `NewInstanceViewModel` owns the guarded
+connection workflow and persistence. Future type-specific views can reuse the
+same picker and container with their own step collections and content without
+putting their protocol behavior into these shared controls.
+
+The editable Pencil source separates public connection components and rules
+in region 04 from storage connection screens and states in region 05A. Storage
+and other type-specific regions reference the common container; browsing,
+transfers and previews remain in the object storage regions.
+
 ## Composition
 
 The application calls the independently owned registration entry points:

@@ -14,16 +14,18 @@ public sealed class NewInstanceWizardScrollTests(WpfTestFixture fixture)
     [InlineData("ProviderList", true)]
     public Task WheelOverCard_ScrollsWizardBody(string listName, bool overText) => fixture.RunAsync(async () =>
     {
-        var providers = Enumerable.Range(0, 10).Select(index => new NewInstanceWizardTestProvider("provider-" + index, "Provider " + index)).ToArray();
+        var providers = Enumerable.Range(0, 10).Select(index => new NewInstanceWizardTestProvider("provider-" + index, "Provider " + index,
+            listName == "TypeList" ? new("type-" + index, "Type " + index, "Description", "database") : null)).ToArray();
         using var model = new NewInstanceViewModel(new NewInstanceWizardTestRegistry(providers), new NewInstanceWizardTestConfigurationService());
-        model.SelectedType = model.Types[0];
+        if (listName != "TypeList")
+            model.SelectedType = model.Types[0];
         var window = new NewInstanceWindow(model) { Height = 520 };
         try
         {
             WindowPreviewCapture.Show(window);
             await WindowTestVisuals.UpdateLayoutAsync(window);
-            var scroll = Assert.IsType<ScrollViewer>(window.FindName("WizardScroll"));
-            var list = Assert.IsType<ListBox>(window.FindName(listName));
+            var scroll = Assert.IsType<ScrollViewer>(WindowTestVisuals.Named(window, "PART_BodyScroll"));
+            var list = Assert.IsAssignableFrom<ListBox>(WindowTestVisuals.Named(window, listName));
             Assert.Empty(WindowTestVisuals.Descendants<ScrollViewer>(list));
             Assert.True(scroll.ScrollableHeight > 0);
             var card = WindowTestVisuals.Descendants<SelectionCard>(list).First();

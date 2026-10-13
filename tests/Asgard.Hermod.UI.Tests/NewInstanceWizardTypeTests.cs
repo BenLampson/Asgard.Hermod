@@ -13,11 +13,18 @@ public sealed class NewInstanceWizardTypeTests
             new NewInstanceWizardTestConfigurationService());
         Assert.Equal(new[] { "storage", "docker" }, model.Types.Select(type => type.Id));
         Assert.Null(model.SelectedType);
+        Assert.True(model.IsChoosingType);
+        Assert.Empty(model.Steps);
+        Assert.Empty(model.StepCountText);
+        Assert.False(model.HasPreviousStep);
         Assert.Empty(model.Providers);
         Assert.Empty(model.Fields);
         Assert.False(model.NextCommand.CanExecute(null));
 
         model.SelectedType = model.Types.Single(type => type.Id == "storage");
+        Assert.False(model.IsChoosingType);
+        Assert.Equal(5, model.Steps.Count);
+        Assert.True(model.HasPreviousStep);
         Assert.Same(oss.Descriptor, Assert.Single(model.Providers));
         Assert.Same(oss.Descriptor, model.SelectedProvider);
         Assert.Equal(new[] { "accessKeyId", "accessKeySecret" }, model.Fields.Select(field => field.Key));
@@ -36,6 +43,35 @@ public sealed class NewInstanceWizardTypeTests
         Assert.Empty(previousKey.Value);
         Assert.Empty(previousSecret.Value);
         Assert.True(model.HasProviderSelection);
+    }
+
+    /// <summary>返回公共入口会清空旧连接，重新选择任何类型都从它的首步开始。</summary>
+    [Fact]
+    public async Task BackFromFirstStep_ReturnsToTypePickerAndClearsVerifiedConnection()
+    {
+        using var model = new NewInstanceViewModel(new NewInstanceWizardTestRegistry(new NewInstanceWizardTestProvider(),
+            new NewInstanceWizardTestDockerProvider()), new NewInstanceWizardTestConfigurationService());
+        await NewInstanceWizardTests.ReachConfirmationAsync(model);
+        var oldFields = model.Fields.ToArray();
+        while (model.CurrentStep > 1)
+            model.PreviousCommand.Execute(null);
+        model.PreviousCommand.Execute(null);
+        Assert.True(model.IsChoosingType);
+        Assert.Null(model.SelectedType);
+        Assert.Null(model.SelectedProvider);
+        Assert.Empty(model.Providers);
+        Assert.Empty(model.Steps);
+        Assert.Empty(model.StepCountText);
+        Assert.Empty(model.Name);
+        Assert.Empty(model.Fields);
+        Assert.All(oldFields, item => Assert.Empty(item.Value));
+        Assert.False(model.HasSuccessfulConnectionTest);
+        Assert.False(model.CanGoNext);
+        Assert.False(model.CanGoPrevious);
+        model.SelectedType = model.Types.Single(type => type.Id == "docker");
+        Assert.Equal(1, model.CurrentStep);
+        Assert.Equal(5, model.Steps.Count);
+        Assert.All(model.Fields, item => Assert.Empty(item.Value));
     }
 
     /// <summary>多个服务商需要明确选择，跨类型或未知服务不能绕过类型限制。</summary>
@@ -134,7 +170,8 @@ public sealed class NewInstanceWizardTypeTests
         completion.SetResult(new(true, "旧类型成功"));
         await running;
         Assert.False(model.HasSuccessfulConnectionTest);
-        Assert.False(model.CanGoNext);
+        Assert.Equal(1, model.CurrentStep);
+        Assert.False(model.CanTest);
         Assert.Equal(InstanceConnectionTestState.NotStarted, model.TestState);
         Assert.All(model.Fields, field => Assert.Empty(field.Value));
     }

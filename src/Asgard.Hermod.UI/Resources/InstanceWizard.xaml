@@ -1,0 +1,137 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls">
+        <!-- 侧栏只显示进度，不提供绕过步骤校验的跳转入口。 -->
+        <Style x:Key="WizardStepContainer" TargetType="Border">
+            <Setter Property="Height" Value="42" />
+            <Setter Property="Margin" Value="0,0,0,10" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="8,0" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="WizardStepBadge" TargetType="Border">
+            <Setter Property="Width" Value="20" />
+            <Setter Property="Height" Value="20" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Background" Value="{DynamicResource LineSoftBrush}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource SuccessWeakBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="WizardStepNumber" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource InverseTextBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="WizardStepLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
+                    <Setter Property="FontWeight" Value="SemiBold" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    <!-- 公共容器只负责显示进度和滚动正文，步骤数量由调用者的集合决定。 -->
+    <Style TargetType="controls:InstanceWizard">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="Template"><Setter.Value>
+            <ControlTemplate TargetType="controls:InstanceWizard">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition x:Name="ProgressColumn" Width="176" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Background="{DynamicResource AppBackgroundBrush}" BorderBrush="{DynamicResource LineSoftBrush}"
+                            BorderThickness="0,0,1,0" x:Name="ProgressSidebar" Padding="16,28">
+                        <StackPanel>
+                            <TextBlock Text="{TemplateBinding Heading}" FontSize="18" FontWeight="SemiBold" />
+                            <TextBlock Text="{TemplateBinding Description}" Foreground="{DynamicResource TextMutedBrush}"
+                                       FontSize="12" Margin="0,12,0,24" TextWrapping="Wrap" />
+                            <ItemsControl ItemsSource="{Binding Steps, RelativeSource={RelativeSource TemplatedParent}}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Style="{StaticResource WizardStepContainer}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="20" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Border Style="{StaticResource WizardStepBadge}">
+                                                    <TextBlock Text="{Binding Badge}" Style="{StaticResource WizardStepNumber}" />
+                                                </Border>
+                                                <TextBlock Grid.Column="1" Text="{Binding Title}" Margin="10,0,0,0"
+                                                           Style="{StaticResource WizardStepLabel}" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+                    <ScrollViewer x:Name="PART_BodyScroll" Grid.Column="1" VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                        <ContentPresenter ContentSource="Content" HorizontalAlignment="Stretch" />
+                    </ScrollViewer>
+                </Grid>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="ShowProgress" Value="False">
+                        <Setter TargetName="ProgressColumn" Property="Width" Value="0" />
+                        <Setter TargetName="ProgressSidebar" Property="Visibility" Value="Collapsed" />
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+        </Setter.Value></Setter>
+    </Style>
+    <!-- UniformGrid 固定两列，最后一张也保留半行宽度；卡片列表不创建内层 ScrollViewer。 -->
+    <Style TargetType="controls:InstanceTypePicker">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Margin" Value="-8,0" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template"><Setter.Value>
+            <ControlTemplate TargetType="controls:InstanceTypePicker"><ItemsPresenter /></ControlTemplate>
+        </Setter.Value></Setter>
+        <Setter Property="ItemsPanel"><Setter.Value>
+            <ItemsPanelTemplate><UniformGrid Columns="2" /></ItemsPanelTemplate>
+        </Setter.Value></Setter>
+        <Setter Property="ItemContainerStyle"><Setter.Value>
+            <Style TargetType="ListBoxItem">
+                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                <Setter Property="Margin" Value="8,0,8,16" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="Template"><Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem"><ContentPresenter /></ControlTemplate>
+                </Setter.Value></Setter>
+            </Style>
+        </Setter.Value></Setter>
+        <Setter Property="ItemTemplate"><Setter.Value>
+            <DataTemplate>
+                <controls:SelectionCard Heading="{Binding Name}" Description="{Binding Description}" Icon="{Binding Icon}"
+                                        Height="112" GroupName="InstanceType" Padding="20" IsNavigation="True"
+                                        AutomationProperties.Name="{Binding Name}"
+                                        IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Mode=OneWay}" />
+            </DataTemplate>
+        </Setter.Value></Setter>
+    </Style>
+</ResourceDictionary>

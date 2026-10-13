@@ -4,5 +4,6 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/Windows.xaml" />
         <ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/Forms.xaml" />
+        <ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/InstanceWizard.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

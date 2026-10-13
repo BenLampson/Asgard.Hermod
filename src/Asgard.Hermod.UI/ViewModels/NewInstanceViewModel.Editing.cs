@@ -23,8 +23,7 @@ public sealed partial class NewInstanceViewModel
         foreach (var field in Fields)
             field.Value = initialConnection.Parameters.TryGetValue(field.Key, out string? value) ? value : "";
         _editingInstance = existing;
-        Steps = [new(1, Text.Get("ChooseType")), new(2, Text.Get("EnterInformation")), new(3, Text.Get("TestConnection")),
-            new(4, Text.Get("SaveLocation")), new(5, Text.Get("ConfirmChanges"))];
+        RebuildSteps();
         RefreshState();
     }
 

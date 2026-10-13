@@ -5,6 +5,10 @@ namespace Asgard.Hermod.UI.Tests;
 /// <summary>读取真实窗口的显示树和屏幕边界，不使用静态 XAML 尺寸代替布局。</summary>
 internal static class WindowTestVisuals
 {
+    /// <summary>按实际显示树查找嵌套组件中的命名控件，不依赖宿主 XAML 的名称作用域。</summary>
+    internal static FrameworkElement Named(DependencyObject root, string name) =>
+        Assert.Single(Descendants<FrameworkElement>(root), element => element.Name == name);
+
     /// <summary>遍历已实例化的显示树，包含模板创建的控件。</summary>
     internal static IEnumerable<T> Descendants<T>(DependencyObject root) where T : DependencyObject
     {

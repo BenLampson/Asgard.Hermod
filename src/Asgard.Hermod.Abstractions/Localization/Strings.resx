@@ -2157,4 +2157,8 @@
   <data name="HideObjectDetails" xml:space="preserve"><value>Hide object details</value></data>
   <data name="ShowObjectDetails" xml:space="preserve"><value>Show object details</value></data>
   <data name="ResizeObjectDetails" xml:space="preserve"><value>Drag left or right to resize object details; use the Left and Right arrow keys when focused.</value></data>
+  <data name="ChooseInstanceType" xml:space="preserve"><value>Choose instance type</value></data>
+  <data name="ChooseInstanceTypeDescription" xml:space="preserve"><value>Choose the type of instance you want to connect.</value></data>
+  <data name="ChooseProviderForInstanceType" xml:space="preserve"><value>Choose a provider for this instance type, then enter the connection information.</value></data>
+  <data name="WizardStepOfTotal" xml:space="preserve"><value>Step {0} / {1}</value></data>
 </root>

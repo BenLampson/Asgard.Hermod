@@ -2,7 +2,7 @@ using Asgard.Hermod.UI.Controls;
 
 namespace Asgard.Hermod.UI.Views.Dialogs;
 
-/// <summary>添加实例五步向导，仅处理窗口、控件选择和焦点生命周期。</summary>
+/// <summary>独立类型入口与可复用连接向导，仅处理窗口、控件选择和焦点生命周期。</summary>
 public partial class NewInstanceWindow : HermodDialog
 {
     private readonly NewInstanceViewModel _model;
@@ -42,18 +42,16 @@ public partial class NewInstanceWindow : HermodDialog
         base.OnClosed(args);
     }
 
-    /// <summary>共享单选卡的鼠标与键盘选择同步到服务商列表。</summary>
-    private void OnProviderChecked(object sender, RoutedEventArgs args)
+    /// <summary>在列表处理 Escape 之前取消向导，保证类型卡片获得焦点时仍可关闭模态窗口。</summary>
+    protected override void OnPreviewKeyDown(KeyEventArgs args)
     {
-        if (sender is SelectionCard { DataContext: InstanceProviderDescriptor provider })
-            ProviderList.SelectedItem = provider;
-    }
-
-    /// <summary>顶层类型选择使用独立卡片集合，不把 Docker 等类型放进存储服务商列表。</summary>
-    private void OnTypeChecked(object sender, RoutedEventArgs args)
-    {
-        if (sender is SelectionCard { DataContext: InstanceTypeDescriptor type })
-            TypeList.SelectedItem = type;
+        if (args.Key == Key.Escape && _model.CancelCommand.CanExecute(null))
+        {
+            args.Handled = true;
+            _model.CancelCommand.Execute(null);
+            return;
+        }
+        base.OnPreviewKeyDown(args);
     }
 
     /// <summary>窗口加载后聚焦当前步骤的首个操作。</summary>
@@ -63,7 +61,11 @@ public partial class NewInstanceWindow : HermodDialog
     private void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs args)
     {
         if (args.PropertyName == nameof(NewInstanceViewModel.CurrentStep))
-            Dispatcher.InvokeAsync(FocusCurrentStep, DispatcherPriority.Loaded);
+            Dispatcher.InvokeAsync(() =>
+            {
+                (WizardLayout.Template.FindName("PART_BodyScroll", WizardLayout) as ScrollViewer)?.ScrollToTop();
+                FocusCurrentStep();
+            }, DispatcherPriority.Loaded);
     }
 
     /// <summary>保持键盘导航与当前展示步骤一致。</summary>
@@ -71,15 +73,10 @@ public partial class NewInstanceWindow : HermodDialog
     {
         if (!IsVisible)
             return;
-        Control target = _model.CurrentStep switch
-        {
-            1 => _model.IsEditing ? ContinueButton : TypeList,
-            2 => NameInput,
-            3 => StartTestButton,
-            4 => ContinueButton,
-            _ => ContinueButton,
-        };
-        target.Focus();
+        if (!_model.HasTypeSelection)
+            TypeList.Focus();
+        else if (!ConnectionContent.FocusCurrentStep(_model.CurrentStep, _model.IsEditing))
+            ContinueButton.Focus();
     }
 
     /// <summary>持久化成功才返回确认结果，取消则返回 false。</summary>

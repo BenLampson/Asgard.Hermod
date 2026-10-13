@@ -32,12 +32,12 @@ public sealed class NewInstanceDialogTests
                 Assert.Equal(600d, dialog.ActualHeight);
                 Assert.Equal(36d, WindowTestVisuals.Caption(dialog).ActualHeight);
                 Assert.Equal(56d, WindowTestVisuals.Footer(dialog).ActualHeight);
-                var types = Assert.IsType<ListBox>(dialog.FindName("TypeList"));
+                var types = Assert.IsAssignableFrom<ListBox>(WindowTestVisuals.Named(dialog, "TypeList"));
                 types.SelectedItem = model.Types.Single(type => type.Id == "storage");
                 await WindowTestVisuals.UpdateLayoutAsync(dialog);
                 await PressEnterAsync(dialog);
                 Assert.Equal(2, model.CurrentStep);
-                var name = Assert.IsType<TextBox>(dialog.FindName("NameInput"));
+                var name = Assert.IsType<TextBox>(WindowTestVisuals.Named(dialog, "NameInput"));
                 Assert.Same(name, Keyboard.FocusedElement);
                 await PressEnterAsync(dialog);
                 Assert.Equal(2, model.CurrentStep);
@@ -64,10 +64,10 @@ public sealed class NewInstanceDialogTests
 
                 await PressEnterAsync(dialog);
                 Assert.Equal(3, model.CurrentStep);
-                var continueButton = Assert.IsType<Button>(dialog.FindName("ContinueButton"));
+                var continueButton = Assert.IsType<Button>(WindowTestVisuals.Named(dialog, "ContinueButton"));
                 Assert.False(continueButton.IsEnabled);
                 Assert.Equal(0, configurations.CallCount);
-                var test = Assert.IsType<Button>(dialog.FindName("StartTestButton"));
+                var test = Assert.IsType<Button>(WindowTestVisuals.Named(dialog, "StartTestButton"));
                 WindowTestVisuals.Invoke(test);
                 await WindowTestVisuals.UpdateLayoutAsync(dialog);
                 Assert.Equal(1, provider.CallCount);
@@ -248,7 +248,7 @@ public sealed class NewInstanceDialogTests
     {
         Assert.Same(owner, dialog.Owner);
         Assert.False(WindowInteractionNativeMethods.IsEnabled(owner));
-        var types = Assert.IsType<ListBox>(dialog.FindName("TypeList"));
+        var types = Assert.IsAssignableFrom<ListBox>(WindowTestVisuals.Named(dialog, "TypeList"));
         Assert.True(types.IsKeyboardFocusWithin);
     }
 

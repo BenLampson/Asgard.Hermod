@@ -23,7 +23,8 @@ public sealed partial class NewInstanceViewModel
         _ => false,
     });
     /// <summary>测试和保存期间不能切换步骤。</summary>
-    public bool CanGoPrevious => !_disposed && !IsTesting && !IsSaving && CurrentStep > 1;
+    public bool CanGoPrevious => !_disposed && !IsTesting && !IsSaving && HasTypeSelection
+        && (!IsEditing || CurrentStep > 1);
     /// <summary>测试只能从信息已完整的测试步骤开始。</summary>
     public bool CanTest => !_disposed && !IsTesting && !IsSaving && CurrentStep == 3 && IsInformationComplete;
     /// <summary>提交必须处于确认页，并且当前配置已经验证成功。</summary>
@@ -32,16 +33,18 @@ public sealed partial class NewInstanceViewModel
     /// <summary>创建期间冻结表单信息。</summary>
     public bool IsInformationEditable => !_disposed && !IsSaving;
     /// <summary>页脚的当前步骤提示。</summary>
-    public string StepCountText => Text.Format("Step5", CurrentStep);
+    public string StepCountText => HasTypeSelection ? Text.Format("WizardStepOfTotal", CurrentStep, Steps.Count) : "";
     /// <summary>页脚只有一个默认按钮，在末步切换为真实保存命令。</summary>
     public ICommand ContinueCommand => CurrentStep == 5 ? SubmitCommand : NextCommand;
     /// <summary>创建期间展示设计稿指定的提交状态。</summary>
     public string ContinueLabel => CurrentStep != 5 ? Text.Get("Next")
         : IsEditing ? IsSaving ? Text.Get("Saving") : Text.Get("SaveChanges") : IsSaving ? Text.Get("Creating") : Text.Get("CreateInstance");
-    /// <summary>第一步不展示返回按钮。</summary>
-    public bool HasPreviousStep => CurrentStep > 1;
-    /// <summary>类型选择内容是否可见。</summary>
-    public bool IsTypeStep => CurrentStep == 1;
+    /// <summary>添加流程的首步可以返回类型入口，编辑模式不允许更换类型。</summary>
+    public bool HasPreviousStep => HasTypeSelection && (!IsEditing || CurrentStep > 1);
+    /// <summary>未选择类型时只展示公共入口，不显示任何流程进度。</summary>
+    public bool IsChoosingType => !HasTypeSelection;
+    /// <summary>所选类型的服务商选择页是否可见。</summary>
+    public bool IsProviderStep => HasTypeSelection && CurrentStep == 1;
     /// <summary>连接信息内容是否可见。</summary>
     public bool IsInformationStep => CurrentStep == 2;
     /// <summary>连接测试内容是否可见。</summary>
@@ -76,7 +79,7 @@ public sealed partial class NewInstanceViewModel
     /// <summary>步骤标题沿用 Pencil 中文原文。</summary>
     public string StepTitle => CurrentStep switch
     {
-        1 => Text.Get("ChooseTypeAndProvider"),
+        1 => Text.Get("ChooseProvider"),
         2 => Text.Get("ConnectionInformation"),
         3 => Text.Get("ConnectionTest"),
         4 => Text.Get("SaveLocation"),
@@ -85,12 +88,32 @@ public sealed partial class NewInstanceViewModel
     /// <summary>步骤说明匹配当前操作，具体测试范围由服务商描述。</summary>
     public string StepDescription => CurrentStep switch
     {
-        1 => IsEditing ? Text.Get("TheTypeAndProviderOfThisInstanceAreFixed") : Text.Get("ChooseAnInstanceTypeThenItsProvider"),
+        1 => IsEditing ? Text.Get("TheTypeAndProviderOfThisInstanceAreFixed") : Text.Get("ChooseProviderForInstanceType"),
         2 => Text.Format("EnterTheInstanceNameAndConnectionInformationFor", ProviderName),
         3 => Text.Get("VerifyConnectionInformationAndAccessPermissions"),
         4 => Text.Get("SyncSaveAutomaticHint"),
         _ => IsEditing ? Text.Get("ReviewTheInformationAndConfirmToSaveChanges") : Text.Get("ReviewTheInformationAndConfirmToCreateTheInstance"),
     };
+
+    /// <summary>连接流程自行声明步骤；类型入口与公共布局都不预设连接步骤。</summary>
+    private void RebuildSteps()
+    {
+        Steps = SelectedType is null ? [] :
+            [new(1, Text.Get("ChooseProvider")), new(2, Text.Get("EnterInformation")), new(3, Text.Get("TestConnection")),
+             new(4, Text.Get("SaveLocation")), new(5, Text.Get(IsEditing ? "ConfirmChanges" : "ConfirmCreation"))];
+        OnPropertyChanged(nameof(Steps));
+    }
+
+    /// <summary>首步返回公共类型入口并清除原类型配置；编辑模式始终保留已有类型。</summary>
+    private void GoPrevious()
+    {
+        if (!CanGoPrevious)
+            return;
+        if (CurrentStep == 1)
+            SelectedType = null;
+        else
+            SetCurrentStep(CurrentStep - 1);
+    }
 
     /// <summary>推进之前显示字段错误，并在测试步骤阻止绕过验证。</summary>
     private void GoNext()
@@ -116,7 +139,7 @@ public sealed partial class NewInstanceViewModel
     /// <summary>内部步骤切换统一更新侧栏和正文绑定。</summary>
     private void SetCurrentStep(int step)
     {
-        CurrentStep = Math.Clamp(step, 1, 5);
+        CurrentStep = Math.Clamp(step, 1, Math.Max(1, Steps.Count));
         OnPropertyChanged(nameof(CurrentStep));
         RefreshState();
     }
@@ -140,12 +163,12 @@ public sealed partial class NewInstanceViewModel
     {
         foreach (var step in Steps)
             step.Update(CurrentStep);
-        foreach (string property in new[] { nameof(NameError), nameof(HasTypeSelection),
+        foreach (string property in new[] { nameof(NameError), nameof(HasTypeSelection), nameof(IsChoosingType),
             nameof(HasProviderSelection), nameof(IsInformationComplete), nameof(HasSuccessfulConnectionTest),
             nameof(CanGoNext), nameof(CanGoPrevious), nameof(CanTest), nameof(CanCreate), nameof(IsInformationEditable),
             nameof(IsTypeSelectionEditable), nameof(WindowTitle), nameof(WizardHeading), nameof(ConfirmationHint),
             nameof(StepCountText), nameof(ContinueCommand), nameof(ContinueLabel), nameof(HasPreviousStep),
-            nameof(IsTypeStep), nameof(IsInformationStep), nameof(IsTestStep), nameof(IsSaveLocationStep),
+            nameof(IsProviderStep), nameof(IsInformationStep), nameof(IsTestStep), nameof(IsSaveLocationStep),
             nameof(IsConfirmationStep), nameof(ProviderName), nameof(ProviderSummary),
             nameof(TestSummary), nameof(TestHeading), nameof(TestDescription), nameof(TestActionLabel),
             nameof(HasTestFailure), nameof(HasTestErrorCode), nameof(StepTitle), nameof(StepDescription),

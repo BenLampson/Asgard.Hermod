@@ -37,8 +37,8 @@ public sealed class StorageProviderUiTests(WpfTestFixture fixture)
             WindowPreviewCapture.Show(dialog);
             await WindowPreviewCapture.VerifyAsync(dialog, $"providers-{language}-{theme}");
             Assert.Equal(6, model.Providers.Count);
-            var providerList = Assert.IsType<ListBox>(dialog.FindName("ProviderList"));
-            var scroll = Assert.Single(WindowTestVisuals.Descendants<ScrollViewer>(dialog), item => item.Content is StackPanel);
+            var providerList = Assert.IsType<ListBox>(WindowTestVisuals.Named(dialog, "ProviderList"));
+            var scroll = Assert.IsType<ScrollViewer>(WindowTestVisuals.Named(dialog, "PART_BodyScroll"));
             Assert.True(scroll.ScrollableHeight > 0);
             scroll.ScrollToEnd();
             await WindowPreviewCapture.VerifyAsync(dialog, $"providers-end-{language}-{theme}");
@@ -50,7 +50,7 @@ public sealed class StorageProviderUiTests(WpfTestFixture fixture)
             Assert.Equal(2, model.CurrentStep);
             Assert.Equal(7, model.Fields.Count);
             Assert.All(model.Fields, field => Assert.NotEqual(field.Key, field.Label));
-            var name = Assert.IsType<TextBox>(dialog.FindName("NameInput"));
+            var name = Assert.IsType<TextBox>(WindowTestVisuals.Named(dialog, "NameInput"));
             Assert.True(name.Focus());
             Assert.True(name.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)));
             Assert.IsAssignableFrom<FrameworkElement>(Keyboard.FocusedElement);

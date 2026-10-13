@@ -34,11 +34,11 @@ public sealed class NewInstanceDialogEditTests(WpfTestFixture fixture)
             bool? result = await ModalWindowTestInteraction.ShowAsync(dialog, async () =>
             {
                 Assert.Equal("编辑实例", dialog.Title);
-                Assert.False(Assert.IsType<ListBox>(dialog.FindName("TypeList")).IsEnabled);
-                Assert.False(Assert.IsType<ListBox>(dialog.FindName("ProviderList")).IsEnabled);
+                Assert.False(Assert.IsAssignableFrom<ListBox>(WindowTestVisuals.Named(dialog, "TypeList")).IsEnabled);
+                Assert.False(Assert.IsType<ListBox>(WindowTestVisuals.Named(dialog, "ProviderList")).IsEnabled);
                 model.NextCommand.Execute(null);
                 await WindowTestVisuals.UpdateLayoutAsync(dialog);
-                Assert.Equal("Existing modal OSS", Assert.IsType<TextBox>(dialog.FindName("NameInput")).Text);
+                Assert.Equal("Existing modal OSS", Assert.IsType<TextBox>(WindowTestVisuals.Named(dialog, "NameInput")).Text);
                 var key = Assert.Single(WindowTestVisuals.Descendants<TextBox>(dialog),
                     control => control.DataContext is InstanceConfigurationFieldViewModel { Key: "accessKeyId" });
                 Assert.Equal("LTAIexistingmodal0000", key.Text);

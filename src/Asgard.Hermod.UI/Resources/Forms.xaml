@@ -168,6 +168,11 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="IsNavigation" Value="True">
+                            <Setter TargetName="SelectedMark" Property="Kind" Value="chevron-right" />
+                            <Setter TargetName="SelectedMark" Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+                            <Setter TargetName="SelectedMark" Property="Visibility" Value="Visible" />
+                        </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource AppBackgroundBrush}" />
                         </Trigger>
@@ -175,6 +180,8 @@
                             <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                             <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
                             <Setter TargetName="SelectedMark" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="SelectedMark" Property="Kind" Value="circle-check" />
+                            <Setter TargetName="SelectedMark" Property="Foreground" Value="{DynamicResource AccentBrush}" />
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
                             <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />

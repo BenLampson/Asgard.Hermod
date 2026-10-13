@@ -1,6 +1,6 @@
 namespace Asgard.Hermod.UI.ViewModels;
 
-/// <summary>通过五步向导收集实例配置，连接测试和持久化都由注入服务处理。</summary>
+/// <summary>选择类型后通过连接向导收集实例配置，连接测试和持久化都由注入服务处理。</summary>
 public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
 {
     private readonly IInstanceProviderRegistry _registry;
@@ -29,10 +29,8 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
         if (accounts is not null) accounts.AccountChanged += OnSaveAccountChanged;
         if (sync is not null) sync.Changed += OnSaveAccountChanged;
         Types = registry.Types.ToArray();
-        Steps = [new(1, Text.Get("ChooseType")), new(2, Text.Get("EnterInformation")), new(3, Text.Get("TestConnection")),
-            new(4, Text.Get("SaveLocation")), new(5, Text.Get("ConfirmCreation"))];
         NextCommand = new RelayCommand(_ => GoNext(), _ => CanGoNext);
-        PreviousCommand = new RelayCommand(_ => SetCurrentStep(CurrentStep - 1), _ => CanGoPrevious);
+        PreviousCommand = new RelayCommand(_ => GoPrevious(), _ => CanGoPrevious);
         CancelCommand = new RelayCommand(_ => Cancel(), _ => !_disposed && !IsSaving);
         ModifyInformationCommand = new RelayCommand(_ => SetCurrentStep(2),
             _ => !_disposed && !IsTesting && !IsSaving && CurrentStep == 3);
@@ -50,8 +48,8 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
     public IReadOnlyList<InstanceProviderDescriptor> Providers { get; private set; } = [];
     /// <summary>当前服务商声明的配置字段，每次切换类型或服务重新创建。</summary>
     public IReadOnlyList<InstanceConfigurationFieldViewModel> Fields { get; private set; } = [];
-    /// <summary>侧边五步进度。</summary>
-    public IReadOnlyList<InstanceWizardStep> Steps { get; }
+    /// <summary>所选连接流程的进度，类型入口没有步骤集合。</summary>
+    public IReadOnlyList<InstanceWizardStep> Steps { get; private set; } = [];
     /// <summary>当前步骤只允许导航命令改变，无法跳过连接测试。</summary>
     public int CurrentStep { get; private set; } = 1;
     /// <summary>先选择顶层类型，再发现对应服务；不把旧类型凭据带到新类型。</summary>
@@ -72,6 +70,10 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
             SelectedProvider = null;
             if (Providers.Count == 1)
                 SelectedProvider = Providers[0];
+            Name = "";
+            CurrentStep = 1;
+            RebuildSteps();
+            OnPropertyChanged(nameof(CurrentStep));
             InvalidateConnection();
         }
     }

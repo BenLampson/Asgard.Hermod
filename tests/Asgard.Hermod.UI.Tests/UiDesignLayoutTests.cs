@@ -33,7 +33,7 @@ public sealed class UiDesignLayoutTests(WpfTestFixture fixture)
                 }
                 if (step == 3)
                 {
-                    var description = Assert.IsType<TextBlock>(window.FindName("ConnectionTestDescription"));
+                    var description = Assert.IsType<TextBlock>(WindowTestVisuals.Named(window, "ConnectionTestDescription"));
                     Assert.True(description.IsVisible);
                     Assert.Equal(model.TestDescription, description.Text);
                     await model.TestConnectionCommand.ExecuteAsync();

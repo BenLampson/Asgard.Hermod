@@ -12,6 +12,9 @@ public class SelectionCard : RadioButton
     /// <summary>选项图标名称。</summary>
     public static readonly DependencyProperty IconProperty = DependencyProperty.Register(
         nameof(Icon), typeof(string), typeof(SelectionCard), new PropertyMetadata("database"));
+    /// <summary>类型入口使用进入图标，普通单选卡片保持选中标记。</summary>
+    public static readonly DependencyProperty IsNavigationProperty = DependencyProperty.Register(
+        nameof(IsNavigation), typeof(bool), typeof(SelectionCard), new PropertyMetadata(false));
 
     /// <summary>将卡片模板纳入控件默认主题。</summary>
     static SelectionCard() => DefaultStyleKeyProperty.OverrideMetadata(typeof(SelectionCard),
@@ -23,4 +26,6 @@ public class SelectionCard : RadioButton
     public string Description { get => (string)GetValue(DescriptionProperty); set => SetValue(DescriptionProperty, value); }
     /// <summary>使用已有图标目录的矢量图标。</summary>
     public string Icon { get => (string)GetValue(IconProperty); set => SetValue(IconProperty, value); }
+    /// <summary>是否以入口卡片展示进入箭头。</summary>
+    public bool IsNavigation { get => (bool)GetValue(IsNavigationProperty); set => SetValue(IsNavigationProperty, value); }
 }

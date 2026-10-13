@@ -70,7 +70,7 @@ src/Asgard.Hermod.Providers.AwsS3/      AWS S3 profile and registration
 src/Asgard.Hermod.Providers.TencentCos/ Tencent COS profile and registration
 src/Asgard.Hermod.Providers.VolcengineTos/ Volcengine TOS profile and registration
 src/Asgard.Hermod.Providers.Minio/      MinIO profile and registration
-design/Hermod.pen                     Single design source, organized into seven regions
+design/Hermod.pen                     Single design source, with shared components and separate capability regions
 tests/                  Terminal behavior and Windows integration tests
 ```
 
