@@ -4,29 +4,85 @@
     xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
     xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization"
     Title="{loc:Loc AccountAndSync}" Width="620" Height="630" MinWidth="520" MinHeight="520">
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="28">
-            <TextBlock Text="{loc:Loc AccountAndSync}" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,20" />
-            <TextBlock Text="{Binding Username}" FontSize="18" TextTrimming="CharacterEllipsis" Margin="0,0,0,6" />
-            <TextBlock Text="{Binding AccountStatus}" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,12" />
-            <WrapPanel Margin="0,0,0,22">
-                <Button x:Name="SignInButton" Content="{Binding SignInButtonText}" Command="{Binding SignInCommand}" MinWidth="140" Margin="0,0,12,0" />
-                <Button Content="{loc:Loc SignOut}" Command="{Binding SignOutCommand}" MinWidth="100" />
-            </WrapPanel>
-            <TextBlock Text="{loc:Loc SyncExplanation}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,20" />
-            <TextBlock Text="{loc:Loc SyncPassword}" FontWeight="SemiBold" Margin="0,0,0,8" />
-            <controls:SecretInput Value="{Binding Password, UpdateSourceTrigger=PropertyChanged}" MaxLength="128" Height="36"
-                AutomationProperties.Name="{loc:Loc SyncPassword}" />
-            <TextBlock Text="{loc:Loc SyncPasswordHelp}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,18" />
-            <CheckBox IsChecked="{Binding ConfirmRestore}" Margin="0,0,0,18" AutomationProperties.Name="{loc:Loc ConfirmWorkspaceRestore}">
-                <TextBlock Text="{loc:Loc ConfirmWorkspaceRestore}" TextWrapping="Wrap" MaxWidth="510" />
-            </CheckBox>
-            <WrapPanel>
-                <Button Content="{loc:Loc UploadWorkspace}" Command="{Binding UploadCommand}" MinWidth="150" Margin="0,0,12,8" />
-                <Button Content="{loc:Loc DownloadWorkspace}" Command="{Binding DownloadCommand}" MinWidth="150" Margin="0,0,12,8" />
-                <Button Content="{loc:Loc Cancel}" Command="{Binding CancelCommand}" MinWidth="80" Margin="0,0,0,8" />
-            </WrapPanel>
-            <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Margin="0,16,0,0" AutomationProperties.LiveSetting="Polite" />
-        </StackPanel>
-    </ScrollViewer>
+    <controls:HermodDialog.Resources>
+        <BooleanToVisibilityConverter x:Key="AccountBooleanVisibility" />
+    </controls:HermodDialog.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ScrollViewer x:Name="AccountForm" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="28">
+                <TextBlock Text="{loc:Loc AccountAndSync}" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,20" />
+                <TextBlock Text="{Binding Username}" FontSize="18" TextTrimming="CharacterEllipsis" Margin="0,0,0,6" />
+                <TextBlock Text="{Binding AccountStatus}" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,12" />
+                <WrapPanel Margin="0,0,0,22">
+                    <Button x:Name="SignInButton" Content="{Binding SignInButtonText}" Command="{Binding SignInCommand}" MinWidth="140" Margin="0,0,12,0" />
+                    <Button Content="{loc:Loc SignOut}" Command="{Binding SignOutCommand}" MinWidth="100" />
+                </WrapPanel>
+                <TextBlock Text="{loc:Loc SyncExplanation}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,20" />
+                <TextBlock Text="{loc:Loc SyncPassword}" FontWeight="SemiBold" Margin="0,0,0,8" />
+                <controls:SecretInput Value="{Binding Password, UpdateSourceTrigger=PropertyChanged}" MaxLength="128" Height="36"
+                    AutomationProperties.Name="{loc:Loc SyncPassword}" />
+                <TextBlock Text="{loc:Loc SyncPasswordHelp}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,18" />
+                <CheckBox IsChecked="{Binding ConfirmRestore}" Margin="0,0,0,18" AutomationProperties.Name="{loc:Loc ConfirmWorkspaceRestore}">
+                    <TextBlock Text="{loc:Loc ConfirmWorkspaceRestore}" TextWrapping="Wrap" MaxWidth="510" />
+                </CheckBox>
+                <WrapPanel>
+                    <Button Content="{loc:Loc UploadWorkspace}" Command="{Binding UploadCommand}" MinWidth="150" Margin="0,0,12,8" />
+                    <Button Content="{loc:Loc DownloadWorkspace}" Command="{Binding DownloadCommand}" MinWidth="150" Margin="0,0,12,8" />
+                    <Button Content="{loc:Loc Cancel}" Command="{Binding CancelCommand}" MinWidth="80" Margin="0,0,0,8" />
+                </WrapPanel>
+            </StackPanel>
+        </ScrollViewer>
+        <!-- 操作状态固定在滚动表单之外，最小窗口与任意滚动位置均可读。 -->
+        <Border x:Name="OperationStatus" Grid.Row="1" Margin="28,0,28,20" Padding="12" CornerRadius="6"
+                Visibility="{Binding HasMessage, Converter={StaticResource AccountBooleanVisibility}}">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsError}" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource DangerWeakBrush}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <controls:IconView Width="18" Height="18" Margin="0,0,10,0" VerticalAlignment="Top">
+                    <controls:IconView.Style>
+                        <Style TargetType="controls:IconView">
+                            <Setter Property="Kind" Value="info" />
+                            <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsError}" Value="True">
+                                    <Setter Property="Kind" Value="triangle-alert" />
+                                    <Setter Property="Foreground" Value="{DynamicResource DangerBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </controls:IconView.Style>
+                </controls:IconView>
+                <TextBlock x:Name="OperationMessage" Grid.Column="1" Text="{Binding Message}" TextWrapping="Wrap">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
+                            <Setter Property="AutomationProperties.LiveSetting" Value="Polite" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsError}" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource DangerBrush}" />
+                                    <Setter Property="AutomationProperties.LiveSetting" Value="Assertive" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+        </Border>
+    </Grid>
 </controls:HermodDialog>

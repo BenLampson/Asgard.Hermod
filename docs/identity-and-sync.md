@@ -24,6 +24,12 @@ storage complete. It removes the callback query from the address bar and offers
 that the user can close it manually. Failed or cancelled authentication shows a
 safe failure page, without protocol fields or raw errors.
 
+The account window keeps progress and results in a fixed status area outside the
+scrolling form. Errors are highlighted and remain visible at the minimum window
+size. A failed synchronization leaves the actions available for retry; starting
+another operation clears the previous error indication. Unknown errors use a
+safe localized message rather than displaying exception details.
+
 - Upload includes instances, connection parameters and their credentials, tags
   and instance/tag associations. Language preferences, local terminal output,
   logs, object contents and OAuth credentials are excluded.
