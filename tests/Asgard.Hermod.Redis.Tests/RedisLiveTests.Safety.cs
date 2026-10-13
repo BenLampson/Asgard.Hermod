@@ -38,7 +38,7 @@ public sealed partial class RedisLiveTests
         try
         {
             await db.StringSetAsync(key.ToBytes(),"readable");
-            await db.ExecuteAsync("ACL","SETUSER",user,"on",">isolated-test-only","~hermod-test:*","+@all","-scan","-eval_ro","-eval");
+            await db.ExecuteAsync("ACL","SETUSER",user,"on",">isolated-test-only","~hermod-test:*","+@all","-scan","-eval_ro","-eval","-evalsha_ro","-evalsha");
             var values=new Dictionary<string,string>(Options.Parameters) { ["auth"]="acl",["user"]=user,["acl.password"]="isolated-test-only" };
             var options=new InstanceConnectionOptions { TypeId=RedisIds.Type,ProviderId=RedisIds.Standalone,Parameters=values };
             var result=await new RedisInstanceProvider(RedisIds.Standalone,new RedisSessionFactory(new UnusedSsh())).TestConnectionAsync(options,token);

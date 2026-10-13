@@ -110,6 +110,23 @@ internal sealed class RedisSession(ConnectionMultiplexer connection, RedisSessio
     private Task<RedisResult> ExecuteAsync(int database, string command, ICollection<object> args, CancellationToken token)
     {
         CheckDatabase(database); token.ThrowIfCancellationRequested();
+        if (command is "EVAL" or "EVAL_RO")
+        {
+            var items = args.ToArray();
+            RedisValue Value(object value) => value switch
+            {
+                byte[] bytes => bytes,
+                string text => text,
+                int number => number,
+                long number => number,
+                _ => throw new InvalidOperationException()
+            };
+            var keys = new RedisKey[] { (byte[])items[2] };
+            var values = items.Skip(3).Select(Value).ToArray();
+            // 专用 SDK 入口保留 Cluster 键槽路由；通用 Execute 的 byte[] 不声明键身份。
+            return (command == "EVAL_RO" ? connection.GetDatabase(database).ScriptEvaluateReadOnlyAsync((string)items[0], keys, values, CommandFlags.DemandMaster)
+                : connection.GetDatabase(database).ScriptEvaluateAsync((string)items[0], keys, values, CommandFlags.DemandMaster)).WaitAsync(token);
+        }
         return connection.GetDatabase(database).ExecuteAsync(command, args, CommandFlags.DemandMaster).WaitAsync(token);
     }
     private void CheckDatabase(int database)

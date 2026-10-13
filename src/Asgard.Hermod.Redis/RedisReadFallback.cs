@@ -5,7 +5,11 @@ internal static class RedisReadFallback
 {
     internal static async Task<RedisSnapshot> ReadAsync(IDatabase database, RedisKeyId key, string cursor, long offset, CancellationToken token)
     {
-        async Task<RedisResult> Call(string command, params object[] args) => await database.ExecuteAsync(command, args, CommandFlags.DemandMaster).WaitAsync(token).ConfigureAwait(false);
+        async Task<RedisResult> Call(string command, params object[] args)
+        {
+            args[0] = (RedisKey)key.ToBytes();
+            return await database.ExecuteAsync(command, args, CommandFlags.DemandMaster).WaitAsync(token).ConfigureAwait(false);
+        }
         var raw = key.ToBytes(); string type = (string)(await Call("TYPE", raw).ConfigureAwait(false))!;
         if (type == "none") return RedisSnapshot.Missing;
         var rows = new List<RedisEntry>(); bool more = false; string next = "0";
