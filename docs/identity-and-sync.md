@@ -12,46 +12,68 @@ workspace ownership use stable identifiers, independently of the displayed name.
 
 ## Desktop behavior
 
-Open **Account and synchronization** from the title bar account menu. Sign-in
-keeps the local workspace. Instances are still created and edited locally;
-uploading and downloading are explicit actions in the account window.
-Clicking either action opens a password dialog explaining local encryption or
-decryption. Each dialog starts with an empty, masked password field; cancelling
-or closing it does not start synchronization. The download dialog also requires
-explicit confirmation that all local instances and tags will be replaced.
+Open **Account and synchronization** from the title bar account menu. On first
+sign-in, Hermod asks for a synchronization password. After the password is
+validated, it is protected with current-user Windows DPAPI in SQLite `app_setting`,
+separately for each issuer/application/tenant/user. Reopening Hermod restores the
+saved password and resumes synchronization without another password prompt.
+Existing signed-in installations show **Set synchronization password** until
+unlocked once. Cancelling password setup keeps changes locally and shows that
+cloud synchronization still needs a password.
 
-After sign-in, the account window shows the verified JWT username and **Signed
-in** status; the sign-in action becomes **Switch account**. The browser callback
-shows a localized Hermod result page only after token validation and local session
-storage complete. It removes the callback query from the address bar and offers
-**Close this page**. If the browser prevents closing the tab, the page explains
-that the user can close it manually. Failed or cancelled authentication shows a
-safe failure page, without protocol fields or raw errors.
+The instance creation/editing wizard does not offer a save-location choice.
+Its save-location step and confirmation describe the result determined by the
+current account: signed-out configurations remain local; signed-in configurations
+belong to the account and have a protected local offline copy. When the password
+is not configured, the hint explicitly describes this pending state rather than
+claiming that an upload succeeded. Saving locally never requires token refresh or
+network access. A draft opened under a different account cannot be submitted into
+the replacement account.
 
-The account window keeps progress and results in a fixed status area outside the
-scrolling form. Errors are highlighted and remain visible at the minimum window
-size. A failed synchronization leaves the actions available for retry; starting
-another operation clears the previous error indication. Unknown errors use a
-safe localized message rather than displaying exception details.
+- Instance and tag changes queue synchronization with a two-second delay. The
+  background service also checks for other devices every 30 seconds. Offline or
+  failed requests retain local changes and retry. **Sync now** checks immediately.
+- The title bar shows pending, synchronizing, synchronized, conflict, or failed
+  status. The account window shows the last fully successful synchronization time.
+- Each device keeps a DPAPI-protected last synchronized baseline. The client
+  compares baseline, current local content and latest cloud content by stable IDs
+  and fields. Independent changes merge automatically; identical final values
+  do not conflict. Modify/delete and differing changes to the same field require
+  a per-item decision. Connection parameter previews remain hidden.
+- **Resolve synchronization conflicts** lists the actual conflicting entries.
+  Every item requires a choice before **Merge and synchronize** is enabled.
+  Cancelling preserves both sides. A changed cloud revision or changed local
+  content invalidates previous choices and recalculates conflicts. If combined
+  tag names, hierarchy or associations are invalid, the dialog explicitly asks
+  which complete configuration to retain.
+- Before uploading or applying a merge, Hermod validates the complete snapshot.
+  Conditional restoration compares the current local content inside the write
+  transaction, so an edit made during network requests cannot be overwritten.
+  Failed application does not advance the shared merge baseline.
+- Switching accounts saves the departing account's protected offline copy and
+  restores the arriving account's own copy. A new account does not inherit a
+  different signed-in account's data. First sign-in imports the signed-out local
+  configuration while preserving that separate local workspace. Signing out
+  returns to the signed-out workspace. Ownership and workspace replacement commit
+  in the same SQLite transaction.
+- **Forget saved password** removes the remembered password and pauses automatic
+  synchronization without deleting local configurations or the merge baseline.
+  It works offline. Use the same 12–128 character password on every device. The
+  password is never sent to the server. Forgetting the local password does not
+  reset the cloud password; this version does not offer password rotation.
+- Synchronization includes instances, connection parameters, tags and their
+  associations. Language preferences, terminal output, logs, object contents and
+  OAuth credentials are excluded.
+- The old manual snapshot endpoints remain for pre-migration clients. Once an
+  account migrates to detailed storage, old uploads return 409 instead of replacing
+  the new data. The old encrypted snapshot is decrypted and migrated by the client
+  that knows its password, never by the server.
 
-- Upload includes instances, connection parameters and their credentials, tags
-  and instance/tag associations. Language preferences, local terminal output,
-  logs, object contents and OAuth credentials are excluded.
-- Use the same 12–128 character synchronization password on all devices. The
-  password is not saved or sent to the server. Losing it makes the cloud copy
-  unreadable. Uploading with another password replaces the cloud copy's password.
-- A download replaces all local instances and tags. Close open connections first
-  and check the explicit replacement confirmation. Decryption, schema, tag
-  hierarchy and association validation all finish before the database is changed.
-  Restoration is transactional and connection parameters receive new local DPAPI
-  protection. Local settings and the login session are preserved.
-- A stale device receives HTTP 409 instead of overwriting another device's
-  changes. The first upload on a new device also conflicts if the cloud already
-  contains data. Preserve any local changes before downloading the cloud copy.
-  This first version provides full snapshots, rather than automatic merging.
-- Ordinary sign-out clears this application's saved session and attempts to
-  revoke its refresh and access tokens. A failed remote revocation is reported;
-  it does not restore the local session. Other Heimdall applications stay signed in.
+The account window shows the verified JWT username and **Signed in** status;
+the sign-in action becomes **Switch account**. The browser callback shows a
+localized Hermod result page only after token validation and local session storage
+complete. Failed or cancelled authentication shows safe localized messages,
+without protocol fields or raw exceptions.
 
 OAuth sessions use current-user DPAPI and the local SQLite `app_setting` table.
 Restoration validates the saved issuer/client binding and JWT, or refreshes an
@@ -114,22 +136,44 @@ failures fail closed. No caller-provided tenant or user identity determines stor
 | Method | Route | Result |
 | --- | --- | --- |
 | GET | `/api/me` | Current stable identity and JWT username |
-| GET | `/api/sync/workspace` | Revision, encrypted snapshot and UTC update time |
-| PUT | `/api/sync/workspace` | Save only when `expectedRevision` matches |
+| GET | `/api/sync/configuration` | Collection revision, individually versioned instances/tags, encrypted password verification envelope, UTC update time; legacy ciphertext when awaiting migration |
+| PUT | `/api/sync/configuration` | Atomically commit the complete merged collection when collection and entry versions match |
+| GET / PUT | `/api/sync/workspace` | Legacy encrypted snapshot protocol, uploads blocked after detailed migration |
 
 Responses use Asgard's `Response<T>` envelope. An empty workspace has revision
-`"0"`; subsequent revisions are opaque strings. Uploads send
-`{ "expectedRevision": "...", "workspace": { ... } }`. The server does not accept
-a synchronization password or plaintext connection parameters. Errors are safe
-resource-backed messages; the desktop localizes known status codes without
-displaying server or SDK exception messages.
+`"0"`; subsequent collection and entry versions are opaque strings generated by
+the server. Uploads send `{ "expectedRevision": "...", "configuration": { ... } }`.
+The server binds storage to the verified identity; ownership and audit fields are
+server controlled. A SQLite write transaction covers version reads, all upserts,
+removals, and collection revision updates. Unmodified entry versions and creation
+audits are preserved. Any stale version rejects the complete upload with HTTP 409.
 
-Format 1 uses PBKDF2-SHA256 with 600,000 iterations, a random 16-byte salt and
-AES-256-GCM with a random 12-byte nonce and a 16-byte authentication tag. Additional
-authenticated data binds the issuer, application, tenant and user. Plaintext is
-limited to 4 MiB, and HTTP upload bodies to 8 MiB. The server saves only the
-encrypted envelope, stable ownership, revision and UTC audit timestamps in its
-dedicated SQLite database. A write transaction covers the version read and update.
+Schema version 2 adds `sync_configuration`, `sync_instance`, and `sync_tag`. Each
+instance and tag is a separate readable JSON record with its own version and
+server create/update audit timestamps. Names, types, providers, tag relationships
+and parameters explicitly declared non-sensitive by a registered connector are
+readable. Sensitive fields, secret input fields and undeclared parameters are
+encrypted on the client. Access key IDs marked sensitive stay encrypted too.
+
+Credential envelopes use PBKDF2-SHA256 with 600,000 iterations and AES-256-GCM.
+A password verification envelope supplies the random 16-byte salt; the client
+validates it and derives a shared key once per operation. Each instance envelope
+uses a fresh random 12-byte nonce and 16-byte authentication tag. Authenticated
+data binds issuer/application/tenant/user, instance ID, type and provider, so an
+envelope cannot be moved to another instance or connector. Unchanged instances
+reuse their original envelope to avoid artificial changes. Ordinary uploads
+cannot replace an existing verification envelope. Legacy format-1 whole-snapshot
+encryption remains readable for migration.
+
+Each encrypted payload is limited to 4 MiB and HTTP request/response bodies to
+8 MiB. Validation rejects duplicate identifiers, invalid tag hierarchies and
+associations, malformed envelopes and excessive payloads before storage. Unknown
+server/SDK errors use safe localized desktop messages; raw response messages are
+never shown.
+
+The desktop and API must be upgraded together for the detailed protocol. The
+October 13 production deployment below includes the detailed API; older desktop
+clients remain compatible until their account migrates to detailed storage.
 
 ## Docker deployment
 
@@ -157,9 +201,27 @@ Its container is `asgard-hermod-starter`, with persistent data in `data/hermod-s
 The verified initial image is `asgard-hermod:0.1.0-20261012-heimdall-sync-r4`,
 content digest `sha256:a1c248bcd578a51e4ab6602eedfc425ca3b8a0c954978d9d4a9fa32c450306b9`.
 It was built on MD-Core; no registry publication is claimed.
-Record the image content hash for each deployment. Keep a stopped copy of the
-previous image and back up the database before future schema upgrades; rollback
-must use a version compatible with the persisted schema.
+The detailed synchronization API was deployed on October 13, 2026, at 14:49
+(Asia/Shanghai) as `asgard-hermod:0.1.0-20261013-autosync-r1`, content digest
+`sha256:3e012b47ec2f97e67b88751d23e759ab08f4628b50b45d9f924136681756b2b5`.
+The Linux publish payload was built from this feature's source and the image was
+built on MD-Core; no registry publication is claimed. Its payload archive SHA-256
+is `3824aa6dd09cb68baff4b3c5bfb468b1bab1d433fd8a0349f6f8821fe09bd669`.
+
+Before replacement, the old container was stopped and SQLite's backup API copied
+the database into `/root/deploy/hermod/backups/20261013-autosync-r1/hermod-sync.db`.
+The protected backup directory also contains the previous Compose environment
+and deployment metadata. The old image is retained in a stopped container named
+`asgard-hermod-rollback-20261013-autosync-r1`. The new container runs with the
+existing UID 1654, volume, network, reverse proxy and credentials. Startup migrated
+the database from schema 1 to schema 2; integrity checks passed and the original
+legacy record matched the backup exactly before client migration.
+
+Rollback across this schema migration requires stopping the new container,
+preserving any post-deployment data, restoring the schema-1 database backup and
+its ownership, restoring the previous image setting, and starting the old image.
+Starting the schema-1 image directly against a schema-2 database is unsupported.
+Record image content hashes and create a fresh backup for every deployment.
 
 ## Verification
 
@@ -174,3 +236,24 @@ the `hermod-admin` JWT username, server-client directory authorization, HTTPS
 current-user response and encrypted upload/download with actual local SQLite
 restoration. The API connection used the configured server IP while preserving
 the domain's certificate verification; public DNS propagation is a separate check.
+
+The October 13, 2026 production verification used the existing test account and
+two isolated local SQLite directories to simulate devices. Both used genuine
+hosted Heimdall Authorization Code + PKCE authentication with the official SDK,
+JWT validation, real DPAPI persistence and the production HTTPS API. The existing
+one-instance workspace migrated without changing its logical content. The run
+verified automatic uploads after instance creation and editing, cross-device
+decryption, independent name/credential merging, and same-field conflict handling
+through the real WPF account and merge view models/windows. Cancelling retained
+both versions; explicit cloud selection merged and synchronized successfully.
+Recreating the client service container restored the login and saved password and
+resumed background synchronization without another password prompt. Only the
+newly created probe instance was removed afterwards; the original instance and
+all three tags remained, and database integrity passed with no container restart.
+Credentials, synchronization passwords and local verification artifacts are not
+part of the repository or image.
+
+The verification connection used the configured production IP while preserving
+the `hermod.mudou.tech` hostname, SNI and certificate validation. This workstation's
+local proxy resolves the hostname to a virtual address that failed its direct TLS
+handshake; verification therefore does not claim that the proxy's DNS route works.

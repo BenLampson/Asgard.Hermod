@@ -80,6 +80,8 @@ public sealed partial class NewInstanceViewModel
             Name = Name.Trim(),
             Connection = BuildConnection(),
             SaveLocation = SaveLocation,
+            ExpectedAccount = _initialAccount,
+            CheckExpectedAccount = _accounts is not null,
         };
         IsSaving = true;
         SaveError = "";
@@ -98,10 +100,10 @@ public sealed partial class NewInstanceViewModel
         {
             // 宿主释放模型后不会继续保存，也不会将迟到结果当作用户确认。
         }
-        catch (Exception)
+        catch (Exception error)
         {
             if (!_disposed)
-                SaveError = IsEditing ? Text.Get("SaveFailedTryAgainYourEntriesHaveBeenRetained") : Text.Get("CreationFailedTryAgainYourEntriesHaveBeenRetained");
+                SaveError = Text.Error(error, IsEditing ? "SaveFailedTryAgainYourEntriesHaveBeenRetained" : "CreationFailedTryAgainYourEntriesHaveBeenRetained");
         }
         finally
         {

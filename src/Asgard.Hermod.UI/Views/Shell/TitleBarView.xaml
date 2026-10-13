@@ -30,6 +30,16 @@
                                      chrome:WindowChrome.IsHitTestVisibleInChrome="True" />
             <StackPanel Grid.Column="2" Orientation="Horizontal"
                         HorizontalAlignment="Right" VerticalAlignment="Center">
+                <Button Command="{Binding OpenAccountCommand}" ToolTip="{Binding SyncStatusText}" MaxWidth="150" Margin="0,0,8,0" Padding="6,0"
+                        chrome:WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers><DataTrigger Binding="{Binding HasSyncStatus}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <TextBlock Text="{Binding SyncStatusText}" TextTrimming="CharacterEllipsis" FontSize="11" />
+                </Button>
                 <Button x:Name="SettingsButton" Style="{DynamicResource IconButton}"
                         Width="26" Height="28" Padding="0" Margin="0,0,6,0" ToolTip="{loc:Loc SystemSettings}"
                         Command="{Binding OpenSettingsCommand}"

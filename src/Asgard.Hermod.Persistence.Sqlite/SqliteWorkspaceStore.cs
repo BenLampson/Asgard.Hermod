@@ -8,9 +8,17 @@ public sealed class SqliteWorkspaceStore(IFreeSql database, ILocalConfigurationR
     ISecretProtector protector, LocalTagManagementService tags) : ILocalWorkspaceStore
 {
     /// <inheritdoc />
+    public void Validate(WorkspaceSnapshot snapshot) => WorkspaceSnapshotValidation.Validate(snapshot);
+    /// <inheritdoc />
     public Task<WorkspaceSnapshot> ExportAsync(CancellationToken cancellationToken = default) => Task.Run(() =>
     {
         var snapshot = repository.GetSnapshot(cancellationToken);
+        return ToSnapshot(snapshot, cancellationToken);
+    }, cancellationToken);
+
+    /// <summary>事务读取结果转为明文内存快照，不写日志。</summary>
+    private WorkspaceSnapshot ToSnapshot(LocalConfigurationSnapshot snapshot, CancellationToken cancellationToken)
+    {
         var instances = snapshot.Instances.Select(instance =>
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -26,7 +34,7 @@ public sealed class SqliteWorkspaceStore(IFreeSql database, ILocalConfigurationR
         }).ToArray();
         return new WorkspaceSnapshot(1, instances, snapshot.Tags.Select(tag =>
             new SyncedTag(tag.Id, tag.Name, tag.ParentId, tag.Color, tag.IsBuiltIn)).ToArray());
-    }, cancellationToken);
+    }
 
     /// <inheritdoc />
     public async Task RestoreAsync(WorkspaceSnapshot snapshot, CancellationToken cancellationToken = default)
@@ -35,8 +43,21 @@ public sealed class SqliteWorkspaceStore(IFreeSql database, ILocalConfigurationR
         tags.NotifyTagsChanged();
     }
 
+    /// <inheritdoc />
+    public async Task RestoreIfUnchangedAsync(WorkspaceSnapshot snapshot, WorkspaceSnapshot expected, CancellationToken cancellationToken = default)
+    {
+        await Task.Run(() => Restore(snapshot, cancellationToken, expected), cancellationToken).ConfigureAwait(false);
+        tags.NotifyTagsChanged();
+    }
+    /// <inheritdoc />
+    public async Task SwitchOwnerAsync(string owner, WorkspaceSnapshot snapshot, WorkspaceSnapshot expected, CancellationToken cancellationToken = default)
+    {
+        await Task.Run(() => Restore(snapshot, cancellationToken, expected, owner), cancellationToken).ConfigureAwait(false);
+        tags.NotifyTagsChanged();
+    }
+
     /// <summary>先完成验证和 DPAPI 保护，任何失败都不删除原配置。</summary>
-    private void Restore(WorkspaceSnapshot snapshot, CancellationToken cancellationToken)
+    private void Restore(WorkspaceSnapshot snapshot, CancellationToken cancellationToken, WorkspaceSnapshot? expected = null, string? owner = null)
     {
         var orderedTags = WorkspaceSnapshotValidation.Validate(snapshot);
         var protectedInstances = snapshot.Instances.Select(instance =>
@@ -54,6 +75,9 @@ public sealed class SqliteWorkspaceStore(IFreeSql database, ILocalConfigurationR
         using var transaction = lease.Value.BeginTransaction(IsolationLevel.Serializable);
         using var command = lease.Value.CreateCommand();
         command.Transaction = transaction;
+        if (expected is not null && !WorkspaceContent.Equal(expected,
+            ToSnapshot(SqliteConfigurationRepository.ReadSnapshot(command, cancellationToken), cancellationToken)))
+            throw Text.Exception("SyncLocalChanged");
         Set(command, "DELETE FROM instance_tag; DELETE FROM instance_configuration; DELETE FROM managed_tag;");
         command.ExecuteNonQuery();
         foreach (var tag in orderedTags)
@@ -81,6 +105,14 @@ public sealed class SqliteWorkspaceStore(IFreeSql database, ILocalConfigurationR
             }
         }
         cancellationToken.ThrowIfCancellationRequested();
+        if (owner is not null)
+        {
+            Set(command, """
+                INSERT INTO app_setting (id, value, update_time) VALUES ('sync.activeOwner', @owner, @time)
+                ON CONFLICT(id) DO UPDATE SET value = excluded.value, update_time = excluded.update_time;
+                """, ("@owner", owner), ("@time", DateTime.UtcNow.ToString("O", CultureInfo.InvariantCulture)));
+            command.ExecuteNonQuery();
+        }
         transaction.Commit();
     }
     /// <summary>参数化写入，SQL 片段全部由本模块固定。</summary>

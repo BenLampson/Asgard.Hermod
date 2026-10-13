@@ -31,6 +31,20 @@ public sealed class WorkspaceSyncApplicationService(CurrentHermodUser current, I
             JsonSerializer.Serialize(upload.Workspace), cancellationToken), cancellationToken);
         return stored is null ? throw new HermodApiException(409, "SyncConflict") : ToSnapshot(stored);
     }
+    /// <summary>明细接口保持同样的身份与在线目录门禁。</summary>
+    public async Task<CloudConfiguration> ReadConfigurationAsync(CancellationToken cancellationToken)
+    {
+        var account = await GetAccountAsync(cancellationToken);
+        return await Task.Run(() => repository.ReadConfiguration(Owner(account), cancellationToken), cancellationToken);
+    }
+    /// <summary>验证后原子提交明细；版本冲突不覆盖任何条目。</summary>
+    public async Task<CloudConfiguration> UploadConfigurationAsync(ConfigurationUpload upload, CancellationToken cancellationToken)
+    {
+        var account = await GetAccountAsync(cancellationToken);
+        ConfigurationValidation.Validate(upload);
+        return await Task.Run(() => repository.SaveConfiguration(Owner(account), account, upload, cancellationToken), cancellationToken)
+            ?? throw new HermodApiException(409, "SyncConflict");
+    }
     /// <summary>发行者、租户、应用和主体共同限定服务器归属，不依赖可变用户名。</summary>
     private string Owner(HermodAccount account) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(
         JsonSerializer.Serialize(new[] { options.Value.Authority, account.TenantId, account.ApplicationId, account.SubjectId }))));

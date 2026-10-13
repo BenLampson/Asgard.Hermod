@@ -4,24 +4,60 @@ namespace Asgard.Hermod.UI.ViewModels;
 public sealed class AccountViewModel : ObservableObject, IAsyncDisposable
 {
     private readonly IAccountService _accounts;
+    private readonly IConfigurationSyncService? _automatic;
     private readonly CancellationTokenSource _lifetime = new();
     private Task _operation = Task.CompletedTask;
     private string _message = "";
     private bool _isBusy;
 
     /// <summary>注入公共服务，不读取令牌或数据库。</summary>
-    public AccountViewModel(IAccountService accounts, IWorkspaceSyncService sync, Func<bool, string?> requestPassword)
+    public AccountViewModel(IAccountService accounts, IWorkspaceSyncService sync, Func<bool, string?> requestPassword,
+        IConfigurationSyncService? automatic = null,
+        Func<IReadOnlyList<ConfigurationConflict>, IReadOnlyDictionary<string, bool>?>? requestMerge = null)
     {
         ArgumentNullException.ThrowIfNull(accounts);
         ArgumentNullException.ThrowIfNull(sync);
         ArgumentNullException.ThrowIfNull(requestPassword);
         _accounts = accounts;
-        SignInCommand = new AsyncRelayCommand(_ => RunAsync(() => accounts.SignInAsync(_lifetime.Token), "LoginSucceeded"), _ => !IsBusy && !_lifetime.IsCancellationRequested);
+        _automatic = automatic;
+        SignInCommand = new AsyncRelayCommand(_ => RunAsync(async () =>
+        {
+            await accounts.SignInAsync(_lifetime.Token);
+            if (automatic is null) return;
+            await automatic.PrepareWorkspaceAsync(_lifetime.Token);
+            if (!automatic.HasPassword) await EnableAutomaticAsync();
+            else await automatic.SynchronizeAsync(_lifetime.Token);
+        }, "LoginSucceeded"), _ => !IsBusy && !_lifetime.IsCancellationRequested);
         SignOutCommand = new AsyncRelayCommand(_ => RunAsync(() => accounts.SignOutAsync(_lifetime.Token), "SignedOut"), _ => !IsBusy && IsSignedIn && !_lifetime.IsCancellationRequested);
         UploadCommand = new AsyncRelayCommand(_ => RunAsync(() => SynchronizeAsync(false), "SyncUploadSucceeded"), _ => CanSync);
         DownloadCommand = new AsyncRelayCommand(_ => RunAsync(() => SynchronizeAsync(true), "SyncDownloadSucceeded"), _ => CanSync);
         CancelCommand = new RelayCommand(_ => _lifetime.Cancel(), _ => IsBusy);
+        EnableSyncCommand = new AsyncRelayCommand(_ => RunAsync(EnableAutomaticAsync, "SyncEnabled"), _ => CanSync && automatic is not null);
+        SyncNowCommand = new AsyncRelayCommand(_ => RunAsync(() => automatic!.SynchronizeAsync(_lifetime.Token), "SyncChecked"), _ => CanSync && automatic?.HasPassword == true);
+        ForgetSyncPasswordCommand = new AsyncRelayCommand(_ => RunAsync(() => automatic!.ForgetPasswordAsync(_lifetime.Token), "SyncPasswordForgotten"), _ => CanSync && automatic?.HasPassword == true);
+        MergeCommand = new AsyncRelayCommand(_ => RunAsync(async () =>
+        {
+            var choices = requestMerge?.Invoke(automatic!.Conflicts);
+            if (choices is not null) await automatic!.ResolveAsync(choices, _lifetime.Token);
+        }, "SyncChecked"), _ => CanSync && automatic?.Conflicts.Count > 0 && requestMerge is not null);
         accounts.AccountChanged += OnAccountChanged;
+        if (automatic is not null) automatic.Changed += OnSyncChanged;
+
+        // 只在首次解锁时索取密码，取消保持登录和待同步内容。
+        async Task EnableAutomaticAsync()
+        {
+            if (automatic is null) return;
+            var account = accounts.Account;
+            string? password = requestPassword(false);
+            try
+            {
+                if (password is null) return;
+                if (account != accounts.Account) throw new OperationCanceledException();
+                await automatic.EnableAsync(password, _lifetime.Token);
+                await automatic.SynchronizeAsync(_lifetime.Token);
+            }
+            finally { password = null; }
+        }
 
         // 密码只属于这次同步操作；模态窗口取消后不访问云端。
         async Task SynchronizeAsync(bool download)
@@ -46,6 +82,16 @@ public sealed class AccountViewModel : ObservableObject, IAsyncDisposable
     public string SignInButtonText => Text.Get(IsSignedIn ? "SwitchAccount" : "SignInToYourAccount");
     /// <summary>账号窗口同时显示用户名与认证状态。</summary>
     public string AccountStatus => Text.Get(IsSignedIn ? "SignedIn" : "NotSignedIn");
+    /// <summary>生产界面使用自动同步面板，旧接口仅为兼容旧客户端保留。</summary>
+    public bool HasAutomaticSync => _automatic is not null;
+    public bool HasManualSync => _automatic is null;
+    public string SyncMessage => _automatic?.Message ?? "";
+    public string LastSyncText => _automatic?.LastSyncedAt is { } value ? Text.Format("SyncLastSuccess", value.ToLocalTime()) : Text.Get("SyncNeverSucceeded");
+    public bool HasConflicts => _automatic?.Conflicts.Count > 0;
+    public AsyncRelayCommand EnableSyncCommand { get; }
+    public AsyncRelayCommand SyncNowCommand { get; }
+    public AsyncRelayCommand ForgetSyncPasswordCommand { get; }
+    public AsyncRelayCommand MergeCommand { get; }
     /// <summary>互斥操作执行状态。</summary>
     public bool IsBusy { get => _isBusy; private set { SetProperty(ref _isBusy, value); RefreshCommands(); } }
     /// <summary>安全的进度与结果，禁止展示原始异常。</summary>
@@ -97,6 +143,15 @@ public sealed class AccountViewModel : ObservableObject, IAsyncDisposable
     {
         SignInCommand.NotifyCanExecuteChanged(); SignOutCommand.NotifyCanExecuteChanged();
         UploadCommand.NotifyCanExecuteChanged(); DownloadCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged();
+        EnableSyncCommand.NotifyCanExecuteChanged(); SyncNowCommand.NotifyCanExecuteChanged();
+        ForgetSyncPasswordCommand.NotifyCanExecuteChanged(); MergeCommand.NotifyCanExecuteChanged();
+    }
+    /// <summary>后台服务通知通过 Dispatcher 更新绑定。</summary>
+    private void OnSyncChanged(object? sender, EventArgs args)
+    {
+        if (Application.Current?.Dispatcher is { } dispatcher && !dispatcher.CheckAccess())
+        { dispatcher.BeginInvoke(() => OnSyncChanged(sender, args)); return; }
+        OnPropertyChanged(nameof(SyncMessage)); OnPropertyChanged(nameof(LastSyncText)); OnPropertyChanged(nameof(HasConflicts)); RefreshCommands();
     }
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
@@ -104,6 +159,7 @@ public sealed class AccountViewModel : ObservableObject, IAsyncDisposable
         _lifetime.Cancel();
         await _operation;
         _accounts.AccountChanged -= OnAccountChanged;
+        if (_automatic is not null) _automatic.Changed -= OnSyncChanged;
         _lifetime.Dispose();
     }
 }

@@ -21,8 +21,21 @@
                     <Button x:Name="SignInButton" Content="{Binding SignInButtonText}" Command="{Binding SignInCommand}" MinWidth="140" Margin="0,0,12,0" />
                     <Button Content="{loc:Loc SignOut}" Command="{Binding SignOutCommand}" MinWidth="100" />
                 </WrapPanel>
-                <TextBlock Text="{loc:Loc SyncExplanation}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,20" />
-                <WrapPanel>
+                <StackPanel Visibility="{Binding HasAutomaticSync, Converter={StaticResource AccountBooleanVisibility}}">
+                    <TextBlock Text="{loc:Loc SyncAutomaticExplanation}" TextWrapping="Wrap" Margin="0,0,0,16" />
+                    <TextBlock Text="{Binding SyncMessage}" TextWrapping="Wrap" FontWeight="SemiBold" AutomationProperties.LiveSetting="Polite" Margin="0,0,0,8" />
+                    <TextBlock Text="{Binding LastSyncText}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,16" />
+                    <WrapPanel>
+                        <Button Content="{loc:Loc SyncEnable}" Command="{Binding EnableSyncCommand}" Margin="0,0,12,8" Padding="14,0" />
+                        <Button Content="{loc:Loc SyncNow}" Command="{Binding SyncNowCommand}" Margin="0,0,12,8" Padding="14,0" />
+                        <Button Content="{loc:Loc SyncForgetPassword}" Command="{Binding ForgetSyncPasswordCommand}" Margin="0,0,0,8" Padding="14,0" />
+                    </WrapPanel>
+                    <Button Content="{loc:Loc SyncMerge}" Command="{Binding MergeCommand}" HorizontalAlignment="Left" Padding="14,0" Margin="0,4,0,8"
+                            Visibility="{Binding HasConflicts, Converter={StaticResource AccountBooleanVisibility}}" />
+                </StackPanel>
+                <TextBlock Text="{loc:Loc SyncExplanation}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,20"
+                    Visibility="{Binding HasManualSync, Converter={StaticResource AccountBooleanVisibility}}" />
+                <WrapPanel Visibility="{Binding HasManualSync, Converter={StaticResource AccountBooleanVisibility}}">
                     <Button Content="{loc:Loc UploadWorkspace}" Command="{Binding UploadCommand}" MinWidth="150" Margin="0,0,12,8" />
                     <Button Content="{loc:Loc DownloadWorkspace}" Command="{Binding DownloadCommand}" MinWidth="150" Margin="0,0,12,8" />
                     <Button Content="{loc:Loc Cancel}" Command="{Binding CancelCommand}" MinWidth="80" Margin="0,0,0,8" />

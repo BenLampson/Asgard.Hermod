@@ -5,6 +5,9 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
 {
     private readonly IInstanceProviderRegistry _registry;
     private readonly IInstanceConfigurationService _configurations;
+    private readonly IAccountService? _accounts;
+    private readonly IConfigurationSyncService? _sync;
+    private readonly HermodAccount? _initialAccount;
     private readonly InstanceSummary? _editingInstance;
     private readonly CancellationTokenSource _lifetimeCancellation = new();
     private CancellationTokenSource? _testCancellation;
@@ -15,12 +18,16 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
 
     /// <summary>由宿主提供顶层类型连接器与配置服务。</summary>
     public NewInstanceViewModel(IInstanceProviderRegistry registry,
-        IInstanceConfigurationService configurations)
+        IInstanceConfigurationService configurations, IAccountService? accounts = null, IConfigurationSyncService? sync = null)
     {
         ArgumentNullException.ThrowIfNull(registry);
         ArgumentNullException.ThrowIfNull(configurations);
         _registry = registry;
         _configurations = configurations;
+        _accounts = accounts; _sync = sync;
+        _initialAccount = accounts?.Account;
+        if (accounts is not null) accounts.AccountChanged += OnSaveAccountChanged;
+        if (sync is not null) sync.Changed += OnSaveAccountChanged;
         Types = registry.Types.ToArray();
         Steps = [new(1, Text.Get("ChooseType")), new(2, Text.Get("EnterInformation")), new(3, Text.Get("TestConnection")),
             new(4, Text.Get("SaveLocation")), new(5, Text.Get("ConfirmCreation"))];
@@ -91,26 +98,24 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
         get;
         set { if (SetProperty(ref field, value ?? "")) InvalidateConnection(); }
     } = "";
-    /// <summary>目前本地是唯一可用保存范围，账户未登录时拒绝切换。</summary>
-    public InstanceSaveLocation SaveLocation
+    /// <summary>保存范围由当前登录状态决定，界面没有选择控件。</summary>
+    public InstanceSaveLocation SaveLocation => _accounts?.Account is null ? InstanceSaveLocation.Local : InstanceSaveLocation.Account;
+    /// <summary>当前保存结果是否属于未登录本地工作区。</summary>
+    public bool IsLocalSave => SaveLocation == InstanceSaveLocation.Local;
+    /// <summary>当前账户状态只决定提示，不允许手动切换保存范围。</summary>
+    public bool CanSaveToAccount => _accounts?.Account is not null;
+    /// <summary>当前保存结果名称。</summary>
+    public string SaveLocationLabel => Text.Get(CanSaveToAccount ? "SyncCloud" : "Local");
+    /// <summary>提示密码尚未设置时的真实状态，不伪称已经上传。</summary>
+    public string SaveLocationDescription => Text.Get(!CanSaveToAccount ? "SyncSaveLocalHint"
+        : _sync?.HasPassword == true ? "SyncSaveCloudHint" : "SyncSavePasswordHint");
+    /// <summary>服务事件切回 UI 上下文更新提示。</summary>
+    private void OnSaveAccountChanged(object? sender, EventArgs args)
     {
-        get;
-        set
-        {
-            if (value != InstanceSaveLocation.Local)
-                return;
-            if (SetProperty(ref field, value))
-                RefreshState();
-        }
-    } = InstanceSaveLocation.Local;
-    /// <summary>共享选择卡绑定的本地保存选中状态。</summary>
-    public bool IsLocalSave
-    {
-        get => SaveLocation == InstanceSaveLocation.Local;
-        set { if (value) SaveLocation = InstanceSaveLocation.Local; }
+        if (Application.Current?.Dispatcher is { } dispatcher && !dispatcher.CheckAccess())
+        { dispatcher.BeginInvoke(() => { if (!_disposed) RefreshState(); }); return; }
+        if (!_disposed) RefreshState();
     }
-    /// <summary>账户连接尚未接入，保持设计中的未登录禁用状态。</summary>
-    public bool CanSaveToAccount => false;
     /// <summary>名称缺失时显示就地错误。</summary>
     public string NameError => _showValidation ? ValidateName() : "";
     /// <summary>连接测试的当前结果。</summary>
@@ -150,6 +155,8 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
         if (_disposed)
             return;
         _disposed = true;
+        if (_accounts is not null) _accounts.AccountChanged -= OnSaveAccountChanged;
+        if (_sync is not null) _sync.Changed -= OnSaveAccountChanged;
         _lifetimeCancellation.Cancel();
         _lifetimeCancellation.Dispose();
         foreach (var field in Fields)

@@ -145,7 +145,7 @@ public sealed class SqliteConfigurationRepository : ILocalConfigurationRepositor
     }
 
     /// <summary>实例、标签路径和计数由同一个读取事务提供，不会出现跨快照的关联。</summary>
-    private static LocalConfigurationSnapshot ReadSnapshot(DbCommand command, CancellationToken cancellationToken)
+    internal static LocalConfigurationSnapshot ReadSnapshot(DbCommand command, CancellationToken cancellationToken)
     {
         var tags = ReadTags(command);
         var associations = ReadAssociations(command);

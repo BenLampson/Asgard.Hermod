@@ -5,7 +5,8 @@ public sealed partial class NewInstanceViewModel
 {
     /// <summary>预填当前配置；保存前仍必须测试，更新时不会创建另一个实例。</summary>
     public NewInstanceViewModel(IInstanceProviderRegistry registry, IInstanceConfigurationService configurations,
-        InstanceSummary existing, InstanceConnectionOptions initialConnection) : this(registry, configurations)
+        InstanceSummary existing, InstanceConnectionOptions initialConnection, IAccountService? accounts = null,
+        IConfigurationSyncService? sync = null) : this(registry, configurations, accounts, sync)
     {
         ArgumentNullException.ThrowIfNull(existing);
         ArgumentNullException.ThrowIfNull(initialConnection);

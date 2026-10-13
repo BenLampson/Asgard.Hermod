@@ -28,7 +28,7 @@ public sealed partial class NewInstanceViewModel
     public bool CanTest => !_disposed && !IsTesting && !IsSaving && CurrentStep == 3 && IsInformationComplete;
     /// <summary>提交必须处于确认页，并且当前配置已经验证成功。</summary>
     public bool CanCreate => !_disposed && !IsTesting && !IsSaving && CurrentStep == 5
-        && HasSuccessfulConnectionTest && SaveLocation == InstanceSaveLocation.Local;
+        && HasSuccessfulConnectionTest;
     /// <summary>创建期间冻结表单信息。</summary>
     public bool IsInformationEditable => !_disposed && !IsSaving;
     /// <summary>页脚的当前步骤提示。</summary>
@@ -79,7 +79,7 @@ public sealed partial class NewInstanceViewModel
         1 => Text.Get("ChooseTypeAndProvider"),
         2 => Text.Get("ConnectionInformation"),
         3 => Text.Get("ConnectionTest"),
-        4 => Text.Get("WhereShouldThisBeSaved"),
+        4 => Text.Get("SaveLocation"),
         _ => IsEditing ? Text.Get("ConfirmChanges") : Text.Get("ConfirmCreation"),
     };
     /// <summary>步骤说明匹配当前操作，具体测试范围由服务商描述。</summary>
@@ -88,7 +88,7 @@ public sealed partial class NewInstanceViewModel
         1 => IsEditing ? Text.Get("TheTypeAndProviderOfThisInstanceAreFixed") : Text.Get("ChooseAnInstanceTypeThenItsProvider"),
         2 => Text.Format("EnterTheInstanceNameAndConnectionInformationFor", ProviderName),
         3 => Text.Get("VerifyConnectionInformationAndAccessPermissions"),
-        4 => Text.Get("ChooseWhereToSaveThisInstance"),
+        4 => Text.Get("SyncSaveAutomaticHint"),
         _ => IsEditing ? Text.Get("ReviewTheInformationAndConfirmToSaveChanges") : Text.Get("ReviewTheInformationAndConfirmToCreateTheInstance"),
     };
 
@@ -149,7 +149,8 @@ public sealed partial class NewInstanceViewModel
             nameof(IsConfirmationStep), nameof(ProviderName), nameof(ProviderSummary),
             nameof(TestSummary), nameof(TestHeading), nameof(TestDescription), nameof(TestActionLabel),
             nameof(HasTestFailure), nameof(HasTestErrorCode), nameof(StepTitle), nameof(StepDescription),
-            nameof(IsLocalSave), nameof(TestState), nameof(TestMessage), nameof(TestErrorCode), nameof(TestChecks),
+            nameof(IsLocalSave), nameof(CanSaveToAccount), nameof(SaveLocationLabel), nameof(SaveLocationDescription),
+            nameof(TestState), nameof(TestMessage), nameof(TestErrorCode), nameof(TestChecks),
             nameof(IsTesting), nameof(IsSaving), nameof(SaveError), nameof(CreatedInstance) })
             OnPropertyChanged(property);
         NextCommand.NotifyCanExecuteChanged();

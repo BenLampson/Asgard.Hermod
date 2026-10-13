@@ -89,6 +89,14 @@ public sealed class HeimdallAccountService(HeimdallOAuthClient oauth, HermodIden
         finally { _gate.Release(); }
     }
 
+    /// <inheritdoc />
+    public async Task RunWithAccountAsync(Func<HermodAccount?, Task> action, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(action);
+        await _gate.WaitAsync(cancellationToken);
+        try { await action(Account); }
+        finally { _gate.Release(); }
+    }
     /// <summary>调用方已经持有会话锁，刷新结果只能更新同一身份。</summary>
     private async Task<string> GetTokenLockedAsync(CancellationToken cancellationToken)
     {

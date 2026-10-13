@@ -76,7 +76,7 @@ public partial class NewInstanceWindow : HermodDialog
             1 => _model.IsEditing ? ContinueButton : TypeList,
             2 => NameInput,
             3 => StartTestButton,
-            4 => LocalSaveChoice,
+            4 => ContinueButton,
             _ => ContinueButton,
         };
         target.Focus();

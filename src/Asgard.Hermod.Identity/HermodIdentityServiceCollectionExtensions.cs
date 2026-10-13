@@ -35,6 +35,24 @@ public static class HermodIdentityServiceCollectionExtensions
         }).ConfigurePrimaryHttpMessageHandler(() => HermodApiTransport.CreateHandler(options))
             .AddStandardResilienceHandler(value => value.Retry.DisableForUnsafeHttpMethods());
         services.AddSingleton<IWorkspaceSyncService, WorkspaceSyncService>();
+        services.AddSingleton<IConfigurationSyncService, ConfigurationSyncService>();
+        // 装饰现有本地服务，Identity 不引用 SQLite 实现类型。
+        var local = services.LastOrDefault(service => service.ServiceType == typeof(IInstanceConfigurationService));
+        if (local is not null)
+        {
+            services.Remove(local);
+            services.AddSingleton<IInstanceConfigurationService>(provider => new SyncedInstanceConfigurationService(
+                (IInstanceConfigurationService)(local.ImplementationInstance ?? local.ImplementationFactory?.Invoke(provider)
+                    ?? ActivatorUtilities.CreateInstance(provider, local.ImplementationType!)), provider.GetRequiredService<IConfigurationSyncService>(), provider.GetRequiredService<IAccountService>()));
+        }
+        var localTags = services.LastOrDefault(service => service.ServiceType == typeof(ITagManagementService));
+        if (localTags is not null)
+        {
+            services.Remove(localTags);
+            services.AddSingleton<ITagManagementService>(provider => new SyncedTagManagementService(
+                (ITagManagementService)(localTags.ImplementationInstance ?? localTags.ImplementationFactory?.Invoke(provider)
+                    ?? ActivatorUtilities.CreateInstance(provider, localTags.ImplementationType!)), provider.GetRequiredService<IConfigurationSyncService>()));
+        }
         return services;
     }
 }

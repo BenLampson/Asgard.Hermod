@@ -2039,4 +2039,48 @@
   <data name="StorageProbeWriteRejected" xml:space="preserve"><value>The storage service rejected the temporary object write. No test object was created.</value></data>
   <data name="StorageProbeCleanupIncomplete" xml:space="preserve"><value>The service did not confirm permanent deletion of the exact test version. Check the provider console.</value></data>
   <data name="ObjectsWillBeDeletedFromStorage" xml:space="preserve"><value>The selected objects will be deleted from object storage. This action cannot be directly undone.</value></data>
+  <data name="SyncCloud" xml:space="preserve"><value>Cloud</value></data>
+  <data name="SyncCloudWorkspace" xml:space="preserve"><value>Cloud workspace</value></data>
+  <data name="SyncSaveAutomaticHint" xml:space="preserve"><value>Your sign-in status determines where this instance is saved.</value></data>
+  <data name="SyncSaveLocalHint" xml:space="preserve"><value>You are not signed in. This instance is saved on this device.</value></data>
+  <data name="SyncSaveCloudHint" xml:space="preserve"><value>This instance is saved to your account and synchronized automatically. A protected local copy remains available offline; network failures leave changes queued for retry.</value></data>
+  <data name="SyncSavePasswordHint" xml:space="preserve"><value>This instance belongs to your signed-in account. Set the synchronization password in Account and synchronization to enable cloud saving. Until then, changes stay protected on this device.</value></data>
+  <data name="SyncEnable" xml:space="preserve"><value>Set synchronization password</value></data>
+  <data name="SyncEnableExplanation" xml:space="preserve"><value>Enter the same synchronization password on every device. Hermod protects and remembers it for this account on this Windows device, then synchronizes automatically. The server receives readable configuration details and encrypted credentials, never this password. Losing the password makes cloud credentials unreadable.</value></data>
+  <data name="SyncAutomaticExplanation" xml:space="preserve"><value>Signed-in configuration synchronizes automatically after local changes and checks for other devices every 30 seconds. Independent changes merge automatically; conflicting changes wait for your decision. Signing out returns to the separate local workspace. Passwords are remembered only on this Windows device.</value></data>
+  <data name="SyncNow" xml:space="preserve"><value>Sync now</value></data>
+  <data name="SyncForgetPassword" xml:space="preserve"><value>Forget saved password</value></data>
+  <data name="SyncEnabled" xml:space="preserve"><value>Synchronization is enabled. Check the synchronization status for the result.</value></data>
+  <data name="SyncChecked" xml:space="preserve"><value>Synchronization check finished. Check the synchronization status for the result.</value></data>
+  <data name="SyncPasswordForgotten" xml:space="preserve"><value>The saved password was removed. Automatic synchronization is paused; your configurations are preserved.</value></data>
+  <data name="SyncAutoFailed" xml:space="preserve"><value>Synchronization failed. Your local changes are preserved and will be retried. Open Account and synchronization for details.</value></data>
+  <data name="SyncStateInvalid" xml:space="preserve"><value>The saved synchronization state cannot be read. Your configurations have not been replaced.</value></data>
+  <data name="SyncLocalChanged" xml:space="preserve"><value>Configuration changed during synchronization. Your edits are preserved; synchronization will recalculate and retry.</value></data>
+  <data name="SyncStatusLocal" xml:space="preserve"><value>Saved locally</value></data>
+  <data name="SyncStatusPasswordRequired" xml:space="preserve"><value>Set a password to start cloud sync</value></data>
+  <data name="SyncStatusPending" xml:space="preserve"><value>Waiting to sync</value></data>
+  <data name="SyncStatusSynchronizing" xml:space="preserve"><value>Synchronizing…</value></data>
+  <data name="SyncStatusSynced" xml:space="preserve"><value>Synchronized</value></data>
+  <data name="SyncStatusConflict" xml:space="preserve"><value>Conflicts need your decision</value></data>
+  <data name="SyncStatusFailed" xml:space="preserve"><value>Synchronization failed; changes preserved</value></data>
+  <data name="SyncLastSuccess" xml:space="preserve"><value>Last successful synchronization: {0:g}</value></data>
+  <data name="SyncNeverSucceeded" xml:space="preserve"><value>No successful synchronization yet.</value></data>
+  <data name="SyncMerge" xml:space="preserve"><value>Resolve synchronization conflicts</value></data>
+  <data name="SyncMergeAndSync" xml:space="preserve"><value>Merge and synchronize</value></data>
+  <data name="SyncMergeHint" xml:space="preserve"><value>Choose which value to keep for each conflicting item. All independent changes merge automatically. Credential values are hidden. Cancelling preserves both sides.</value></data>
+  <data name="SyncKeepLocal" xml:space="preserve"><value>Keep this device’s value</value></data>
+  <data name="SyncKeepCloud" xml:space="preserve"><value>Keep the cloud value</value></data>
+  <data name="SyncConflictLocalValue" xml:space="preserve"><value>This device: {0}</value></data>
+  <data name="SyncConflictCloudValue" xml:space="preserve"><value>Cloud: {0}</value></data>
+  <data name="SyncConflictEntry" xml:space="preserve"><value>Addition, deletion or replacement</value></data>
+  <data name="SyncConflictParameters" xml:space="preserve"><value>Connection parameters</value></data>
+  <data name="SyncConflictParameter" xml:space="preserve"><value>Connection parameter: {0}</value></data>
+  <data name="SyncConflictTagName" xml:space="preserve"><value>Tag name</value></data>
+  <data name="SyncConflictParent" xml:space="preserve"><value>Parent tag</value></data>
+  <data name="SyncConflictColor" xml:space="preserve"><value>Tag color</value></data>
+  <data name="SyncConflictStructure" xml:space="preserve"><value>The combined tag hierarchy or associations are inconsistent. Choose which complete configuration to keep.</value></data>
+  <data name="SyncDeleted" xml:space="preserve"><value>Deleted or absent</value></data>
+  <data name="SyncSecretValue" xml:space="preserve"><value>Hidden value</value></data>
+  <data name="SyncAccountChanged" xml:space="preserve"><value>Your account changed while this editor was open. Reopen the instance editor before saving; your entries have been retained.</value></data>
+  <data name="SyncRememberedPasswordHelp" xml:space="preserve"><value>Use 12–128 characters and the same password on every device. This device remembers the password securely for automatic synchronization. Forgetting the saved password pauses synchronization without resetting the cloud password.</value></data>
 </root>

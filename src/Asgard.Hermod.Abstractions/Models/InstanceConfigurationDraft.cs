@@ -7,8 +7,12 @@ public sealed class InstanceConfigurationDraft
     public required string Name { get; init; }
     /// <summary>服务商专属连接参数。</summary>
     public required InstanceConnectionOptions Connection { get; init; }
-    /// <summary>由用户明确选择的保存范围。</summary>
+    /// <summary>由登录状态决定的保存范围，客户端不能指定任意账户归属。</summary>
     public InstanceSaveLocation SaveLocation { get; init; } = InstanceSaveLocation.Local;
+    /// <summary>编辑器打开时的账户边界，防止等待保存期间切换账户造成配置串入。</summary>
+    public HermodAccount? ExpectedAccount { get; init; }
+    /// <summary>区分未登录边界与未指定边界的兼容调用。</summary>
+    public bool CheckExpectedAccount { get; init; }
     /// <summary>稳定的标签标识，改名或调整层级不会改变关联。</summary>
     public IReadOnlyList<string> TagIds { get; init; } = [];
 

@@ -35,6 +35,8 @@ internal sealed class ApiTestHost : IAsyncDisposable
     public TestUserAccessVerifier Verifier { get; } = new();
     /// <summary>实际 HTTP 客户端。</summary>
     public HttpClient Client { get; private set; } = null!;
+    /// <summary>同步客户端工厂取得独立可释放 HTTP 客户端。</summary>
+    internal HttpClient CreateClient() => _app.GetTestClient();
     /// <summary>创建最小请求管线，生产控制器和业务服务保持原样。</summary>
     public async Task InitializeAsync()
     {

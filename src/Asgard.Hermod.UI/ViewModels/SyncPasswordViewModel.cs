@@ -6,9 +6,10 @@ public sealed class SyncPasswordViewModel : ObservableObject, IDisposable
     private bool _disposed;
 
     /// <summary>根据操作显示加密或解密说明；下载必须额外确认替换本地数据。</summary>
-    public SyncPasswordViewModel(bool download)
+    public SyncPasswordViewModel(bool download, bool automatic = false)
     {
         IsDownload = download;
+        IsAutomatic = automatic;
         ConfirmCommand = new RelayCommand(_ => CloseRequested?.Invoke(this, true), _ => CanConfirm);
         CancelCommand = new RelayCommand(_ => CloseRequested?.Invoke(this, false), _ => !_disposed);
     }
@@ -17,10 +18,14 @@ public sealed class SyncPasswordViewModel : ObservableObject, IDisposable
     public event EventHandler<bool>? CloseRequested;
     /// <summary>稳定操作标识，界面文案不参与业务判断。</summary>
     public bool IsDownload { get; }
+    /// <summary>自动同步配置只需一次解锁，明确说明本机保护保存。</summary>
+    public bool IsAutomatic { get; }
     /// <summary>标题与确认按钮明确指出将执行的动作。</summary>
-    public string Title => Text.Get(IsDownload ? "DownloadWorkspace" : "UploadWorkspace");
+    public string Title => Text.Get(IsAutomatic ? "SyncEnable" : IsDownload ? "DownloadWorkspace" : "UploadWorkspace");
     /// <summary>解释密码的用途、保存方式与当前操作的影响。</summary>
-    public string Explanation => Text.Get(IsDownload ? "SyncDownloadPasswordExplanation" : "SyncUploadPasswordExplanation");
+    public string Explanation => Text.Get(IsAutomatic ? "SyncEnableExplanation" : IsDownload ? "SyncDownloadPasswordExplanation" : "SyncUploadPasswordExplanation");
+    /// <summary>自动与旧手动模式分别说明密码保存方式，避免相互矛盾。</summary>
+    public string PasswordHelp => Text.Get(IsAutomatic ? "SyncRememberedPasswordHelp" : "SyncPasswordHelp");
     /// <summary>只在这次弹窗中使用的密码，不用于下一次操作。</summary>
     public string Password
     {

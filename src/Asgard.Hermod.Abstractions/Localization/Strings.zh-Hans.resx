@@ -2039,4 +2039,48 @@
   <data name="StorageProbeWriteRejected" xml:space="preserve"><value>存储服务拒绝了临时对象写入，未创建测试对象。</value></data>
   <data name="StorageProbeCleanupIncomplete" xml:space="preserve"><value>服务未确认测试对象精确版本已永久删除，请在服务商控制台检查。</value></data>
   <data name="ObjectsWillBeDeletedFromStorage" xml:space="preserve"><value>所选对象将从对象存储中删除，此操作无法直接撤销。</value></data>
+  <data name="SyncCloud" xml:space="preserve"><value>云端</value></data>
+  <data name="SyncCloudWorkspace" xml:space="preserve"><value>云端工作区</value></data>
+  <data name="SyncSaveAutomaticHint" xml:space="preserve"><value>根据当前登录状态自动确定此实例的保存位置。</value></data>
+  <data name="SyncSaveLocalHint" xml:space="preserve"><value>当前未登录，此实例保存到本机。</value></data>
+  <data name="SyncSaveCloudHint" xml:space="preserve"><value>此实例保存到当前账户并自动同步。本机保留受保护的离线副本；网络不可用时，更改保留在本机并等待重试。</value></data>
+  <data name="SyncSavePasswordHint" xml:space="preserve"><value>此实例归属于当前登录账户。请在“账户与同步”中设置同步密码以启用云端保存；设置前，更改以受保护的方式保留在本机。</value></data>
+  <data name="SyncEnable" xml:space="preserve"><value>设置同步密码</value></data>
+  <data name="SyncEnableExplanation" xml:space="preserve"><value>请在所有设备使用相同的同步密码。Hermod 会为此账户在当前 Windows 设备上保护并记住密码，之后自动同步。服务器保存可读的配置详情和加密凭据，不接收此密码。遗失密码后，云端凭据将无法解密。</value></data>
+  <data name="SyncAutomaticExplanation" xml:space="preserve"><value>登录账户的配置在本机修改后自动同步，并每 30 秒检查其他设备的更新。互不冲突的修改自动合并；有分歧时等待你决定。退出登录会返回独立的本地工作区。同步密码仅在当前 Windows 设备上记住。</value></data>
+  <data name="SyncNow" xml:space="preserve"><value>立即同步</value></data>
+  <data name="SyncForgetPassword" xml:space="preserve"><value>忘记本机密码</value></data>
+  <data name="SyncEnabled" xml:space="preserve"><value>已启用同步，请查看同步状态了解结果。</value></data>
+  <data name="SyncChecked" xml:space="preserve"><value>同步检查已结束，请查看同步状态了解结果。</value></data>
+  <data name="SyncPasswordForgotten" xml:space="preserve"><value>已移除本机保存的密码。自动同步已暂停，配置保留。</value></data>
+  <data name="SyncAutoFailed" xml:space="preserve"><value>同步失败。本机修改已保留，将自动重试。请打开“账户与同步”查看详情。</value></data>
+  <data name="SyncStateInvalid" xml:space="preserve"><value>无法读取保存的同步状态，配置未被替换。</value></data>
+  <data name="SyncLocalChanged" xml:space="preserve"><value>同步过程中配置发生了变化。修改已保留，同步将重新计算并重试。</value></data>
+  <data name="SyncStatusLocal" xml:space="preserve"><value>已保存到本地</value></data>
+  <data name="SyncStatusPasswordRequired" xml:space="preserve"><value>设置密码后开始云端同步</value></data>
+  <data name="SyncStatusPending" xml:space="preserve"><value>等待同步</value></data>
+  <data name="SyncStatusSynchronizing" xml:space="preserve"><value>正在同步…</value></data>
+  <data name="SyncStatusSynced" xml:space="preserve"><value>已同步</value></data>
+  <data name="SyncStatusConflict" xml:space="preserve"><value>存在冲突，需要合并</value></data>
+  <data name="SyncStatusFailed" xml:space="preserve"><value>同步失败，修改已保留</value></data>
+  <data name="SyncLastSuccess" xml:space="preserve"><value>上次成功同步：{0:g}</value></data>
+  <data name="SyncNeverSucceeded" xml:space="preserve"><value>尚未成功同步。</value></data>
+  <data name="SyncMerge" xml:space="preserve"><value>合并同步冲突</value></data>
+  <data name="SyncMergeAndSync" xml:space="preserve"><value>合并并同步</value></data>
+  <data name="SyncMergeHint" xml:space="preserve"><value>请逐项选择保留哪一端的冲突内容。互不冲突的修改会自动合并，凭据值保持遮蔽。取消会保留双方数据。</value></data>
+  <data name="SyncKeepLocal" xml:space="preserve"><value>保留本机内容</value></data>
+  <data name="SyncKeepCloud" xml:space="preserve"><value>保留云端内容</value></data>
+  <data name="SyncConflictLocalValue" xml:space="preserve"><value>本机：{0}</value></data>
+  <data name="SyncConflictCloudValue" xml:space="preserve"><value>云端：{0}</value></data>
+  <data name="SyncConflictEntry" xml:space="preserve"><value>新增、删除或替换</value></data>
+  <data name="SyncConflictParameters" xml:space="preserve"><value>连接参数</value></data>
+  <data name="SyncConflictParameter" xml:space="preserve"><value>连接参数：{0}</value></data>
+  <data name="SyncConflictTagName" xml:space="preserve"><value>标签名称</value></data>
+  <data name="SyncConflictParent" xml:space="preserve"><value>上级标签</value></data>
+  <data name="SyncConflictColor" xml:space="preserve"><value>标签颜色</value></data>
+  <data name="SyncConflictStructure" xml:space="preserve"><value>合并后的标签层级或关联不一致，请选择保留哪一端的完整配置。</value></data>
+  <data name="SyncDeleted" xml:space="preserve"><value>已删除或不存在</value></data>
+  <data name="SyncSecretValue" xml:space="preserve"><value>已遮蔽的值</value></data>
+  <data name="SyncAccountChanged" xml:space="preserve"><value>打开编辑器后账户发生了变化。请重新打开实例编辑器后保存，当前填写内容已保留。</value></data>
+  <data name="SyncRememberedPasswordHelp" xml:space="preserve"><value>请使用 12–128 个字符，并在所有设备使用相同密码。本机安全记住密码以便自动同步。忘记本机密码会暂停同步，不会重置云端密码。</value></data>
 </root>

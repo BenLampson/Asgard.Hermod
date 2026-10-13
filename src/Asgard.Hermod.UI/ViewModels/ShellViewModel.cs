@@ -8,6 +8,8 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
 {
     private readonly IThemeService _themes;
     private readonly IAccountService? _accounts;
+    private readonly IConfigurationSyncService? _sync;
+    private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
     private readonly HashSet<WorkspacePageViewModel> _instancePages = [];
     private bool _isSidebarExpanded = true;
     private string _globalSearchQuery = "";
@@ -18,11 +20,13 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
         ITerminalSessionFactory terminalFactory, IThemeService themes,
         ISettingsEditor? settings = null, ITagManagementService? tags = null,
         IInstanceWorkspaceFactory? pageFactory = null, IAccountService? accounts = null, IAccountEditor? accountEditor = null,
-        IInstanceProviderRegistry? registry = null, IRecentInstanceStore? recentInstances = null)
+        IInstanceProviderRegistry? registry = null, IRecentInstanceStore? recentInstances = null, IConfigurationSyncService? sync = null)
     {
         ArgumentNullException.ThrowIfNull(themes);
         _themes = themes;
         _accounts = accounts;
+        _sync = sync;
+        if (sync is not null) sync.Changed += OnSyncChanged;
         Workspace = new WorkspaceViewModel(source, terminalFactory, pageFactory, registry, recentInstances);
         Sidebar = new InstanceSidebarViewModel(source, editor, Workspace.OpenInstance, Workspace.OpenLocalTerminal, tags);
         Workspace.Home.AddInstanceCommand = Sidebar.AddInstanceCommand;
@@ -66,7 +70,10 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     /// <summary>工作页状态。</summary>
     public WorkspaceViewModel Workspace { get; }
     /// <summary>当前使用设备上的用户级工作区。</summary>
-    public string WorkspaceName => Text.Get("LocalWorkspace");
+    public string WorkspaceName => Text.Get(IsSignedIn ? "SyncCloudWorkspace" : "LocalWorkspace");
+    /// <summary>标题栏持续呈现同步状态，错误与冲突不能隐藏在账号弹窗中。</summary>
+    public string SyncStatusText => IsSignedIn ? _sync?.Message ?? "" : "";
+    public bool HasSyncStatus => IsSignedIn && _sync is not null;
     /// <summary>登录后显示已验证 JWT 用户名，否则显示本地模式。</summary>
     public string AccountName => _accounts?.Account?.Username ?? Text.Get("Local");
     /// <summary>头像取 JWT 用户名的前两个完整字素，不拆分中文、组合字符或 Emoji。</summary>
@@ -139,6 +146,11 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
         if (_accounts is null) return;
         try { await _accounts.RestoreAsync(); }
         catch (Exception error) { AccountMessage = Text.Error(error, "AccountRestoreFailed"); OnPropertyChanged(nameof(AccountMessage)); }
+        if (_sync is not null)
+        {
+            try { await _sync.StartAsync(); await Sidebar.RefreshAsync(); }
+            catch (Exception error) { AccountMessage = Text.Error(error, "SyncAutoFailed"); OnPropertyChanged(nameof(AccountMessage)); }
+        }
     }
 
     /// <summary>发布 JWT 用户名与账号状态的绑定变化。</summary>
@@ -146,9 +158,26 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     {
         OnPropertyChanged(nameof(AccountName)); OnPropertyChanged(nameof(AccountInitials));
         OnPropertyChanged(nameof(IsSignedIn)); OnPropertyChanged(nameof(AccountStatus));
+        OnPropertyChanged(nameof(WorkspaceName)); OnPropertyChanged(nameof(SyncStatusText)); OnPropertyChanged(nameof(HasSyncStatus));
         SignOutAccountCommand.NotifyCanExecuteChanged();
         AccountMessage = "";
         OnPropertyChanged(nameof(AccountMessage));
+    }
+
+    /// <summary>后台事件切回外壳 Dispatcher，云端应用后刷新安全导航快照。</summary>
+    private void OnSyncChanged(object? sender, EventArgs args)
+    {
+        if (!_dispatcher.CheckAccess()) { _dispatcher.BeginInvoke(() => OnSyncChanged(sender, args)); return; }
+        if (_disposed) return;
+        OnPropertyChanged(nameof(SyncStatusText)); OnPropertyChanged(nameof(HasSyncStatus));
+        if (_sync?.Status is ConfigurationSyncStatus.Synced or ConfigurationSyncStatus.Local or ConfigurationSyncStatus.PasswordRequired)
+            _ = RefreshSyncSidebarAsync();
+    }
+    /// <summary>导航失败保留旧视图，下一次状态变化再次读取。</summary>
+    private async Task RefreshSyncSidebarAsync()
+    {
+        try { await Sidebar.RefreshAsync(); }
+        catch (Exception) { }
     }
 
     /// <summary>统一刷新主题相关计算属性。</summary>
@@ -213,6 +242,8 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
         _disposed = true;
         _themes.ThemeChanged -= OnThemeChanged;
         if (_accounts is not null) _accounts.AccountChanged -= OnAccountChanged;
+        if (_sync is not null) _sync.Changed -= OnSyncChanged;
+        if (_sync is not null) await _sync.StopAsync();
         Sidebar.InstancesChanged -= OnInstancesChanged;
         Workspace.SelectedTabChanged -= OnSelectedTabChanged;
         foreach (var page in _instancePages)

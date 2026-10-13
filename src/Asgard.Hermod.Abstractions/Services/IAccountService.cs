@@ -17,4 +17,7 @@ public interface IAccountService
     Task<string> GetAccessTokenAsync(CancellationToken cancellationToken = default);
     /// <summary>在捕获的会话范围内完成操作，期间不允许登录或退出改变数据归属。</summary>
     Task RunAuthenticatedAsync(Func<HermodAccount, string, Task> action, CancellationToken cancellationToken = default);
+    /// <summary>在稳定身份内执行离线操作，不为本机保存刷新网络令牌。</summary>
+    Task RunWithAccountAsync(Func<HermodAccount?, Task> action, CancellationToken cancellationToken = default)
+        => RunAuthenticatedAsync((account, _) => action(account), cancellationToken);
 }

@@ -300,13 +300,12 @@ public sealed class NewInstanceWizardTests
         Assert.False(model.IsSaving);
     }
 
-    /// <summary>当前未登录时不能选择账户保存，最终提交明确携带本地范围。</summary>
+    /// <summary>未登录状态自动决定本地范围，最终提交不能手动指定账户。</summary>
     [Fact]
-    public async Task SaveLocation_RemainsLocalUntilAccountStorageIsAvailable()
+    public async Task SaveLocation_IsDerivedFromSignedOutState()
     {
         var configurations = new NewInstanceWizardTestConfigurationService();
         using var model = CreateModel(configurations: configurations);
-        model.SaveLocation = InstanceSaveLocation.Account;
         Assert.False(model.CanSaveToAccount);
         Assert.Equal(InstanceSaveLocation.Local, model.SaveLocation);
         await ReachConfirmationAsync(model);

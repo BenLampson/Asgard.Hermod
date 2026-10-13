@@ -4,7 +4,7 @@ using Microsoft.Data.Sqlite;
 namespace Asgard.Hermod.Server;
 
 /// <summary>独立 SQLite WAL 文件；写锁覆盖先查后改，可跨进程拒绝过期设备覆盖。</summary>
-public sealed class SqliteCloudWorkspaceRepository(IOptions<HermodServerOptions> options) : ICloudWorkspaceRepository
+public sealed partial class SqliteCloudWorkspaceRepository(IOptions<HermodServerOptions> options) : ICloudWorkspaceRepository
 {
     /// <inheritdoc />
     public void Initialize()
@@ -16,7 +16,7 @@ public sealed class SqliteCloudWorkspaceRepository(IOptions<HermodServerOptions>
         using var command = connection.CreateCommand(); command.Transaction = transaction;
         command.CommandText = "PRAGMA user_version;";
         long version = (long)command.ExecuteScalar()!;
-        if (version > 1) throw Text.Exception("SyncDatabaseVersionUnsupported");
+        if (version > 2) throw Text.Exception("SyncDatabaseVersionUnsupported");
         if (version == 0)
         {
             command.CommandText = """
@@ -30,6 +30,7 @@ public sealed class SqliteCloudWorkspaceRepository(IOptions<HermodServerOptions>
                 """;
             command.ExecuteNonQuery();
         }
+        if (version < 2) InitializeConfiguration(command);
         command.CommandText = "SELECT owner_key, tenant_id, application_id, subject_id, revision, protected_json, create_time, update_time FROM sync_workspace LIMIT 0;";
         using (command.ExecuteReader()) { }
         transaction.Commit();
@@ -48,6 +49,13 @@ public sealed class SqliteCloudWorkspaceRepository(IOptions<HermodServerOptions>
         using var connection = Open();
         using var transaction = connection.BeginTransaction();
         var previous = Read(connection, transaction, ownerKey);
+        using (var check = connection.CreateCommand())
+        {
+            check.Transaction = transaction;
+            check.CommandText = "SELECT 1 FROM sync_configuration WHERE owner_key = @owner;";
+            check.Parameters.AddWithValue("@owner", ownerKey);
+            if (check.ExecuteScalar() is not null) return null;
+        }
         if ((previous?.Revision ?? "0") != expectedRevision) return null;
         // 稳定归属永不被上传载荷覆盖，更新保留原创建时间和当前版本来源。
         if (previous is not null && (previous.TenantId != account.TenantId || previous.ApplicationId != account.ApplicationId || previous.SubjectId != account.SubjectId))

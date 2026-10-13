@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Asgard.Hermod.Identity;
 
-/// <summary>端到端加密绑定账号和服务器；同步密码只在本次操作内存中使用。</summary>
+/// <summary>加密包绑定账户和服务器，兼容旧快照及新版密码校验包。</summary>
 public static class WorkspaceEncryption
 {
     /// <summary>格式一固定派生成本，拒绝服务端提供任意工作因子造成资源耗尽。</summary>
@@ -56,7 +56,7 @@ public static class WorkspaceEncryption
         { throw Text.Exception("SyncDecryptionFailed"); }
     }
 
-    /// <summary>同步密码不保存，限制输入长度以保持跨设备一致。</summary>
+    /// <summary>输入长度保持跨设备一致；自动同步密码由本机独立保护存储。</summary>
     public static void ValidatePassword(string password)
     {
         if (password is null || password.Length is < 12 or > 128) throw Text.Exception("SyncPasswordInvalid");

@@ -77,7 +77,7 @@ public sealed class NewInstanceDialogTests
                 await PressEnterAsync(dialog);
                 Assert.Equal(4, model.CurrentStep);
                 Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(dialog),
-                    text => text.Text == Asgard.Hermod.Abstractions.Localization.Text.Get("SaveLocallyThenUploadFromAccountAndSync"));
+                    text => text.Text == model.SaveLocationDescription);
                 Assert.True(model.IsLocalSave);
                 await PressEnterAsync(dialog);
                 Assert.Equal(5, model.CurrentStep);

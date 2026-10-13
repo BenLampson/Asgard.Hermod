@@ -21,8 +21,10 @@ as images or text. Settings → Open with manages local extension rules. See the
 Settings → Storage shows temporary file usage and safely cleans unused files.
 See the [storage settings guide](docs/storage-settings.md).
 
-Heimdall browser sign-in and manual encrypted workspace upload/download are
-available from the account menu. The separate Docker API checks user access with
+Heimdall browser sign-in enables automatic configuration synchronization after
+one-time password setup. Configuration details are stored individually; credentials
+remain encrypted. Independent changes merge automatically and conflicts can be
+resolved from the account menu. The separate Docker API checks user access with
 its own Heimdall service client. See the [identity and synchronization guide](docs/identity-and-sync.md).
 
 ## Requirements

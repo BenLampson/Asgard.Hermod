@@ -15,7 +15,7 @@ public static class HermodUiServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(resources);
         services.TryAddSingleton<IInstanceEditor>(provider => new InstanceEditorService(owner,
             provider.GetRequiredService<IInstanceProviderRegistry>(),
-            provider.GetRequiredService<IInstanceConfigurationService>()));
+            provider.GetRequiredService<IInstanceConfigurationService>(), provider.GetService<IAccountService>(), provider.GetService<IConfigurationSyncService>()));
         services.TryAddSingleton<ISettingsEditor>(provider => new SettingsEditorService(owner,
             provider.GetRequiredService<ITagManagementService>(),
             provider.GetRequiredService<ILanguagePreferenceStore>(),
@@ -26,7 +26,7 @@ public static class HermodUiServiceCollectionExtensions
         services.TryAddSingleton<IInstanceWorkspaceFactory, InstanceWorkspaceFactory>();
         if (services.Any(service => service.ServiceType == typeof(IAccountService)))
             services.TryAddSingleton<IAccountEditor>(provider => new AccountEditorService(owner,
-                provider.GetRequiredService<IAccountService>(), provider.GetRequiredService<IWorkspaceSyncService>()));
+                provider.GetRequiredService<IAccountService>(), provider.GetRequiredService<IWorkspaceSyncService>(), provider.GetService<IConfigurationSyncService>()));
         services.TryAddSingleton<IThemeService>(_ => new ThemeService(resources));
         return services;
     }

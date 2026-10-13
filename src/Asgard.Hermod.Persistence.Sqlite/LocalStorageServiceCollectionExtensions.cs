@@ -23,6 +23,7 @@ public static class LocalStorageServiceCollectionExtensions
         services.TryAddSingleton<IRecentInstanceStore, SqliteRecentInstanceStore>();
         services.TryAddSingleton<IFileOpenRuleStore, SqliteFileOpenRuleStore>();
         services.TryAddSingleton<IAccountSessionStore, SqliteAccountSessionStore>();
+        services.TryAddSingleton<IConfigurationSyncStateStore, SqliteConfigurationSyncStateStore>();
         services.TryAddSingleton<ILocalWorkspaceStore, SqliteWorkspaceStore>();
         return services;
     }
