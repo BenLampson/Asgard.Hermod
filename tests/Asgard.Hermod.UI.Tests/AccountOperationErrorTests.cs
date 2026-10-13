@@ -33,7 +33,8 @@ public sealed class AccountOperationErrorTests(WpfTestFixture fixture)
                 SyncAction = (password, token) => Task.Run(() => WorkspaceEncryption.Decrypt(encrypted, password, "owner"), token),
             };
             await service.SignInAsync();
-            await using var model = new AccountViewModel(service, service) { Password = "wrong-sync-password", ConfirmRestore = true };
+            string password = "wrong-sync-password";
+            await using var model = new AccountViewModel(service, service, _ => password);
             window = new AccountWindow(model) { Width = 520, Height = 520 };
             WindowPreviewCapture.Show(window);
             await WindowTestVisuals.UpdateLayoutAsync(window);
@@ -65,7 +66,7 @@ public sealed class AccountOperationErrorTests(WpfTestFixture fixture)
 
             var retry = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
             service.SyncAction = (_, _) => retry.Task;
-            model.Password = "correct-sync-password";
+            password = "correct-sync-password";
             Task operation = model.DownloadCommand.ExecuteAsync();
             await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.True(model.IsBusy); Assert.False(model.IsError);
@@ -98,7 +99,7 @@ public sealed class AccountOperationErrorTests(WpfTestFixture fixture)
                     : Task.FromException(new IOException("credential=private-value")),
             };
             await service.SignInAsync();
-            await using var model = new AccountViewModel(service, service) { Password = "password-for-sync", ConfirmRestore = true };
+            await using var model = new AccountViewModel(service, service, _ => "password-for-sync");
             AsyncRelayCommand command = upload ? model.UploadCommand : model.DownloadCommand;
             await command.ExecuteAsync();
             Assert.True(model.IsError);

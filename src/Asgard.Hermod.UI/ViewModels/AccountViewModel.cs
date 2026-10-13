@@ -6,25 +6,37 @@ public sealed class AccountViewModel : ObservableObject, IAsyncDisposable
     private readonly IAccountService _accounts;
     private readonly CancellationTokenSource _lifetime = new();
     private Task _operation = Task.CompletedTask;
-    private string _password = "";
     private string _message = "";
     private bool _isBusy;
-    private bool _confirmRestore;
-    private string? _identity;
 
     /// <summary>注入公共服务，不读取令牌或数据库。</summary>
-    public AccountViewModel(IAccountService accounts, IWorkspaceSyncService sync)
+    public AccountViewModel(IAccountService accounts, IWorkspaceSyncService sync, Func<bool, string?> requestPassword)
     {
         ArgumentNullException.ThrowIfNull(accounts);
         ArgumentNullException.ThrowIfNull(sync);
+        ArgumentNullException.ThrowIfNull(requestPassword);
         _accounts = accounts;
-        _identity = accounts.Account?.SubjectId;
         SignInCommand = new AsyncRelayCommand(_ => RunAsync(() => accounts.SignInAsync(_lifetime.Token), "LoginSucceeded"), _ => !IsBusy && !_lifetime.IsCancellationRequested);
         SignOutCommand = new AsyncRelayCommand(_ => RunAsync(() => accounts.SignOutAsync(_lifetime.Token), "SignedOut"), _ => !IsBusy && IsSignedIn && !_lifetime.IsCancellationRequested);
-        UploadCommand = new AsyncRelayCommand(_ => RunAsync(() => sync.UploadAsync(Password, _lifetime.Token), "SyncUploadSucceeded"), _ => CanSync);
-        DownloadCommand = new AsyncRelayCommand(_ => RunAsync(() => sync.DownloadAsync(Password, _lifetime.Token), "SyncDownloadSucceeded"), _ => CanSync && ConfirmRestore);
+        UploadCommand = new AsyncRelayCommand(_ => RunAsync(() => SynchronizeAsync(false), "SyncUploadSucceeded"), _ => CanSync);
+        DownloadCommand = new AsyncRelayCommand(_ => RunAsync(() => SynchronizeAsync(true), "SyncDownloadSucceeded"), _ => CanSync);
         CancelCommand = new RelayCommand(_ => _lifetime.Cancel(), _ => IsBusy);
         accounts.AccountChanged += OnAccountChanged;
+
+        // 密码只属于这次同步操作；模态窗口取消后不访问云端。
+        async Task SynchronizeAsync(bool download)
+        {
+            var account = accounts.Account;
+            string? password = requestPassword(download);
+            try
+            {
+                _lifetime.Token.ThrowIfCancellationRequested();
+                if (password is null || account != accounts.Account) throw new OperationCanceledException();
+                if (download) await sync.DownloadAsync(password, _lifetime.Token);
+                else await sync.UploadAsync(password, _lifetime.Token);
+            }
+            finally { password = null; }
+        }
     }
     /// <summary>只显示 JWT 用户名，未登录时显示资源文案。</summary>
     public string Username => _accounts.Account?.Username ?? Text.Get("NotSignedIn");
@@ -36,10 +48,6 @@ public sealed class AccountViewModel : ObservableObject, IAsyncDisposable
     public string AccountStatus => Text.Get(IsSignedIn ? "SignedIn" : "NotSignedIn");
     /// <summary>互斥操作执行状态。</summary>
     public bool IsBusy { get => _isBusy; private set { SetProperty(ref _isBusy, value); RefreshCommands(); } }
-    /// <summary>本次窗口内存中的密码，关闭后清除且不保存。</summary>
-    public string Password { get => _password; set { SetProperty(ref _password, value); RefreshCommands(); } }
-    /// <summary>用户明确确认下载将替换本地实例与标签。</summary>
-    public bool ConfirmRestore { get => _confirmRestore; set { SetProperty(ref _confirmRestore, value); RefreshCommands(); } }
     /// <summary>安全的进度与结果，禁止展示原始异常。</summary>
     public string Message
     {
@@ -60,9 +68,9 @@ public sealed class AccountViewModel : ObservableObject, IAsyncDisposable
     public AsyncRelayCommand DownloadCommand { get; }
     /// <summary>取消当前操作；取消后关闭窗口再重新打开可以重试。</summary>
     public RelayCommand CancelCommand { get; }
-    /// <summary>有效登录和密码长度共同控制同步入口。</summary>
-    private bool CanSync => IsSignedIn && !IsBusy && !_lifetime.IsCancellationRequested && Password.Length is >= 12 and <= 128;
-    /// <summary>窗口范围内共享一份可等待操作，切换账号时清除密码和恢复确认。</summary>
+    /// <summary>登录后即可打开密码弹窗，正在执行时禁止其他账号操作。</summary>
+    private bool CanSync => IsSignedIn && !IsBusy && !_lifetime.IsCancellationRequested;
+    /// <summary>窗口范围内共享一份可等待操作。</summary>
     private Task RunAsync(Func<Task> action, string success)
     {
         _operation = ExecuteAsync(action, success);
@@ -82,12 +90,6 @@ public sealed class AccountViewModel : ObservableObject, IAsyncDisposable
     {
         OnPropertyChanged(nameof(Username)); OnPropertyChanged(nameof(IsSignedIn));
         OnPropertyChanged(nameof(SignInButtonText)); OnPropertyChanged(nameof(AccountStatus));
-        // 同一身份刷新不清除当前操作密码，真正切换或退出时不向下一账号遗留秘密。
-        if (_identity != _accounts.Account?.SubjectId)
-        {
-            _identity = _accounts.Account?.SubjectId;
-            Password = ""; ConfirmRestore = false;
-        }
         RefreshCommands();
     }
     /// <summary>互斥状态统一更新所有按钮。</summary>
@@ -102,7 +104,6 @@ public sealed class AccountViewModel : ObservableObject, IAsyncDisposable
         _lifetime.Cancel();
         await _operation;
         _accounts.AccountChanged -= OnAccountChanged;
-        Password = "";
         _lifetime.Dispose();
     }
 }

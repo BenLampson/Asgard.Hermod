@@ -22,13 +22,6 @@
                     <Button Content="{loc:Loc SignOut}" Command="{Binding SignOutCommand}" MinWidth="100" />
                 </WrapPanel>
                 <TextBlock Text="{loc:Loc SyncExplanation}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,20" />
-                <TextBlock Text="{loc:Loc SyncPassword}" FontWeight="SemiBold" Margin="0,0,0,8" />
-                <controls:SecretInput Value="{Binding Password, UpdateSourceTrigger=PropertyChanged}" MaxLength="128" Height="36"
-                    AutomationProperties.Name="{loc:Loc SyncPassword}" />
-                <TextBlock Text="{loc:Loc SyncPasswordHelp}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,18" />
-                <CheckBox IsChecked="{Binding ConfirmRestore}" Margin="0,0,0,18" AutomationProperties.Name="{loc:Loc ConfirmWorkspaceRestore}">
-                    <TextBlock Text="{loc:Loc ConfirmWorkspaceRestore}" TextWrapping="Wrap" MaxWidth="510" />
-                </CheckBox>
                 <WrapPanel>
                     <Button Content="{loc:Loc UploadWorkspace}" Command="{Binding UploadCommand}" MinWidth="150" Margin="0,0,12,8" />
                     <Button Content="{loc:Loc DownloadWorkspace}" Command="{Binding DownloadCommand}" MinWidth="150" Margin="0,0,12,8" />

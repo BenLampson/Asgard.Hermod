@@ -1578,6 +1578,12 @@
   <data xml:space="preserve" name="SyncPassword">
     <value>同步密码</value>
   </data>
+  <data xml:space="preserve" name="SyncUploadPasswordExplanation">
+    <value>请输入同步密码，在本机加密实例、标签和连接凭据。Hermod 不会保存此密码，也不会将其发送给服务器。上传成功会替换云端快照；使用不同的密码上传后，下载时也需要使用新密码。</value>
+  </data>
+  <data xml:space="preserve" name="SyncDownloadPasswordExplanation">
+    <value>请输入最近一次成功上传时使用的同步密码，在本机解密云端快照。这与登录密码独立。Hermod 不会保存此密码，也不会将其发送给服务器。密码错误时，本地数据不会被替换。</value>
+  </data>
   <data xml:space="preserve" name="SyncPasswordHelp">
     <value>请使用 12–128 个字符，并在各设备使用相同密码。Hermod 不保存此密码，遗失后无法解密云端快照。</value>
   </data>

@@ -19,7 +19,12 @@ public sealed class AccountWindowTests(WpfTestFixture fixture)
         try
         {
             CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(language);
-            var service = new AccountUiTestService(); await using var model = new AccountViewModel(service, service);
+            var service = new AccountUiTestService();
+            var prompts = new List<bool>();
+            await using var model = new AccountViewModel(service, service, download =>
+            {
+                prompts.Add(download); return "password-for-sync";
+            });
             window = new AccountWindow(model); WindowPreviewCapture.Show(window);
             Assert.Equal(Text.Get("AccountAndSync"), window.Title); Assert.False(model.UploadCommand.CanExecute(null));
             var signInButton = Assert.IsType<Button>(window.FindName("SignInButton"));
@@ -29,15 +34,16 @@ public sealed class AccountWindowTests(WpfTestFixture fixture)
             Assert.Equal(Text.Get("SwitchAccount"), signInButton.Content);
             Assert.Equal(Text.Get("SignedIn"), model.AccountStatus);
             Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(window), text => text.Text == "JWT-用户名");
-            Assert.Equal("JWT-用户名", model.Username); model.Password = "password-for-sync";
-            Assert.True(model.UploadCommand.CanExecute(null)); Assert.False(model.DownloadCommand.CanExecute(null));
+            Assert.Equal("JWT-用户名", model.Username);
+            Assert.True(model.UploadCommand.CanExecute(null)); Assert.True(model.DownloadCommand.CanExecute(null));
             await model.UploadCommand.ExecuteAsync(); Assert.Equal(1, service.Uploads);
-            model.ConfirmRestore = true; await model.DownloadCommand.ExecuteAsync(); Assert.Equal(1, service.Downloads);
+            await model.DownloadCommand.ExecuteAsync(); Assert.Equal(1, service.Downloads);
+            Assert.Equal(new[] { false, true }, prompts);
             await WindowPreviewCapture.VerifyAsync(window, "account-sync-" + language);
             window.Width = 520; window.Height = 540;
             await WindowPreviewCapture.VerifyAsync(window, "account-sync-compact-" + language);
-            var secret = Assert.Single(WindowTestVisuals.Descendants<SecretInput>(window));
-            Assert.Equal(model.Password, secret.Value);
+            Assert.Empty(WindowTestVisuals.Descendants<SecretInput>(window));
+            Assert.Empty(WindowTestVisuals.Descendants<CheckBox>(window));
             await model.SignOutCommand.ExecuteAsync(); Assert.False(model.UploadCommand.CanExecute(null));
             Assert.Equal(Text.Get("NotSignedIn"), model.Username);
             await WpfTestFixture.DrainDispatcherAsync();
@@ -60,7 +66,7 @@ public sealed class AccountWindowTests(WpfTestFixture fixture)
             var service = new AccountUiTestService();
             await using var shell = new ShellViewModel(new TestWorkspaceDataSource(), new FakeInstanceEditor(),
                 new FakeTerminalSessionFactory(), new ThemeService(Application.Current.Resources), accounts: service);
-            await using var model = new AccountViewModel(service, service);
+            await using var model = new AccountViewModel(service, service, _ => null);
             var menu = new AccountMenu { DataContext = shell };
             window = new Window { Content = menu, Width = 440, Height = 120 };
             window.Show();

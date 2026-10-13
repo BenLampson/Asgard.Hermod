@@ -15,6 +15,10 @@ workspace ownership use stable identifiers, independently of the displayed name.
 Open **Account and synchronization** from the title bar account menu. Sign-in
 keeps the local workspace. Instances are still created and edited locally;
 uploading and downloading are explicit actions in the account window.
+Clicking either action opens a password dialog explaining local encryption or
+decryption. Each dialog starts with an empty, masked password field; cancelling
+or closing it does not start synchronization. The download dialog also requires
+explicit confirmation that all local instances and tags will be replaced.
 
 After sign-in, the account window shows the verified JWT username and **Signed
 in** status; the sign-in action becomes **Switch account**. The browser callback

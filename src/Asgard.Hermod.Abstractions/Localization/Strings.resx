@@ -1578,6 +1578,12 @@
   <data xml:space="preserve" name="SyncPassword">
     <value>Synchronization password</value>
   </data>
+  <data xml:space="preserve" name="SyncUploadPasswordExplanation">
+    <value>Enter a synchronization password to encrypt your instances, tags and connection credentials on this device. Hermod does not save or send this password to the server. A successful upload replaces the cloud snapshot; using a different password changes the password needed to download it.</value>
+  </data>
+  <data xml:space="preserve" name="SyncDownloadPasswordExplanation">
+    <value>Enter the synchronization password used for the latest successful upload to decrypt the cloud snapshot on this device. This is separate from your sign-in password. Hermod does not save or send it to the server. An incorrect password leaves your local data unchanged.</value>
+  </data>
   <data xml:space="preserve" name="SyncPasswordHelp">
     <value>Use 12–128 characters and the same password on every device. Hermod does not save this password. If it is lost, the cloud snapshot cannot be decrypted.</value>
   </data>
