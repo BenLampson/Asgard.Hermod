@@ -18,7 +18,7 @@ internal sealed class SshConnection(SshClient client, RemoteProcess shell, SshPr
     /// <inheritdoc />
     public ValueTask WriteAsync(ReadOnlyMemory<byte> input, CancellationToken cancellationToken) => shell.WriteAsync(input, cancellationToken);
     /// <inheritdoc />
-    public void Resize(int columns, int rows) => shell.SetTerminalSize(columns, rows);
+    public void Resize(int columns, int rows) => shell.SetTerminalSize(new(columns, rows));
     /// <inheritdoc />
     public ValueTask<int> GetExitCodeAsync(CancellationToken cancellationToken) => shell.GetExitCodeAsync(cancellationToken);
     /// <inheritdoc />

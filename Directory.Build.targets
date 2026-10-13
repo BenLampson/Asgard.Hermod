@@ -1,0 +1,9 @@
+<Project>
+  <!-- Tmds.Ssh 0.26 的包错误地传递 API 发布分析器；Hermod 没有采用其 PublicAPI.txt 发布契约。
+       精确排除该上游开发工具，保留 SDK、xUnit 及其他已配置的分析器。 -->
+  <Target Name="RemoveSshTransitivePublishingAnalyzer" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <Analyzer Remove="@(Analyzer)" Condition="'%(Analyzer.Filename)' == 'Microsoft.CodeAnalysis.PublicApiAnalyzers' Or '%(Analyzer.Filename)' == 'Microsoft.CodeAnalysis.PublicApiAnalyzers.CodeFixes'" />
+    </ItemGroup>
+  </Target>
+</Project>

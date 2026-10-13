@@ -34,8 +34,7 @@ public sealed class SshConnectionFactory(IHostKeyTrustStore trust, ISshHostKeyPr
                 {
                     AllocateTerminal = true,
                     TerminalType = "xterm-256color",
-                    TerminalWidth = columns,
-                    TerminalHeight = rows,
+                    TerminalSize = new(columns, rows),
                 }, cancellationToken).ConfigureAwait(false);
                 return new SshConnection(client, shell, bridge, verified.ToArray());
             }
