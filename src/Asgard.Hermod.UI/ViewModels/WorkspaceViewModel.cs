@@ -12,14 +12,18 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
 
     /// <summary>建立 Pencil 中的初始页签，但不自动连接任何服务。</summary>
     public WorkspaceViewModel(IWorkspaceDataSource source, ITerminalSessionFactory terminalFactory,
-        IInstanceWorkspaceFactory? pageFactory = null)
+        IInstanceWorkspaceFactory? pageFactory = null, IInstanceProviderRegistry? registry = null,
+        IRecentInstanceStore? recentInstances = null)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(terminalFactory);
         _source = source;
         _terminalFactory = terminalFactory;
         _pageFactory = pageFactory;
-        _selectedTab = new EmptyWorkspaceViewModel { IsSelected = true };
+        Home = new HomeWorkspaceViewModel(OpenInstance, registry, recentInstances);
+        Home.Refresh(source.GetInstances().Select(instance => new InstanceItemViewModel(instance)).ToArray());
+        _selectedTab = Home;
+        _selectedTab.IsSelected = true;
         Tabs.Add(_selectedTab);
         foreach (var instance in source.GetInstances().Where(instance => !instance.IsLocal).Take(3))
             Tabs.Add(CreateServicePage(new InstanceItemViewModel(instance)));
@@ -37,6 +41,8 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
     public event EventHandler? SelectedTabChanged;
     /// <summary>按显示顺序排列的页签。</summary>
     public ObservableCollection<WorkspacePageViewModel> Tabs { get; } = [];
+    /// <summary>常驻首页负责统计与本机最近访问。</summary>
+    public HomeWorkspaceViewModel Home { get; }
     /// <summary>当前工作页。</summary>
     public WorkspacePageViewModel SelectedTab
     {
@@ -70,6 +76,7 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
             Tabs.Add(page);
         }
         SelectedTab = page;
+        Home.RecordOpened(instance);
     }
 
     /// <summary>用户主动请求时创建一个新的本地终端页。</summary>
@@ -81,6 +88,7 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
         var page = CreateTerminalPage(local);
         Tabs.Add(page);
         SelectedTab = page;
+        Home.RecordOpened(local);
     }
 
     /// <summary>关闭活动页时选择邻近页，常驻首页和分组保持存在。</summary>

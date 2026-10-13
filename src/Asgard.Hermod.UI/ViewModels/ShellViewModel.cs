@@ -17,13 +17,17 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     public ShellViewModel(IWorkspaceDataSource source, IInstanceEditor editor,
         ITerminalSessionFactory terminalFactory, IThemeService themes,
         ISettingsEditor? settings = null, ITagManagementService? tags = null,
-        IInstanceWorkspaceFactory? pageFactory = null, IAccountService? accounts = null, IAccountEditor? accountEditor = null)
+        IInstanceWorkspaceFactory? pageFactory = null, IAccountService? accounts = null, IAccountEditor? accountEditor = null,
+        IInstanceProviderRegistry? registry = null, IRecentInstanceStore? recentInstances = null)
     {
         ArgumentNullException.ThrowIfNull(themes);
         _themes = themes;
         _accounts = accounts;
-        Workspace = new WorkspaceViewModel(source, terminalFactory, pageFactory);
+        Workspace = new WorkspaceViewModel(source, terminalFactory, pageFactory, registry, recentInstances);
         Sidebar = new InstanceSidebarViewModel(source, editor, Workspace.OpenInstance, Workspace.OpenLocalTerminal, tags);
+        Workspace.Home.AddInstanceCommand = Sidebar.AddInstanceCommand;
+        Workspace.Home.OpenLocalTerminalCommand = Sidebar.OpenLocalTerminalCommand;
+        Workspace.Home.Refresh(Sidebar.AllInstances);
         OpenSettingsCommand = new AsyncRelayCommand(_ => settings?.OpenAsync() ?? Task.CompletedTask,
             _ => settings is not null);
         OpenAccountCommand = new AsyncRelayCommand(_ => (IsSignedIn ? accountEditor?.OpenAsync() : accountEditor?.OpenForSignInAsync()) ?? Task.CompletedTask,
@@ -155,7 +159,11 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     }
 
     /// <summary>增加实例后重算搜索结果。</summary>
-    private void OnInstancesChanged(object? sender, EventArgs args) => RefreshGlobalSearch();
+    private void OnInstancesChanged(object? sender, EventArgs args)
+    {
+        RefreshGlobalSearch();
+        Workspace.Home.Refresh(Sidebar.AllInstances);
+    }
 
     /// <summary>将页签选中态同步到展开和收起导航。</summary>
     private void OnSelectedTabChanged(object? sender, EventArgs args)

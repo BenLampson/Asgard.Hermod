@@ -63,6 +63,14 @@ version-1 baseline to represent a later schema.
 
 ## Service lifetime and verification
 
+The Home page stores up to five recently opened instance IDs and UTC timestamps
+in `app_setting` under `workspace.recent`, through `IRecentInstanceStore`. Names,
+endpoints and credentials are not copied into this history. The page resolves
+names from current instance snapshots and hides records for deleted instances.
+The built-in local terminal remains available without a saved instance profile.
+History is specific to this device and is not included in workspace sync.
+Opening a page is recorded as an access, not as a successful remote connection.
+
 `Asgard.Hermod.Persistence.Sqlite` owns database configuration, migrations,
 repositories and local instance/tag services. `AddLocalStorage` registers these
 services and Asgard's singleton `IFreeSql`. The host separately calls

@@ -1925,4 +1925,73 @@
   <data xml:space="preserve" name="Continue">
     <value>Continue</value>
   </data>
+  <data name="HomeAuthor" xml:space="preserve">
+    <value>Author · BenLampson</value>
+  </data>
+  <data name="HomeDescription" xml:space="preserve">
+    <value>An open-source Windows management terminal for the Asgard ecosystem. Organize instance connections, work with object storage, and open local terminals in one place.</value>
+  </data>
+  <data name="HomeEyebrow" xml:space="preserve">
+    <value>YOUR ASGARD WORKSPACE</value>
+  </data>
+  <data name="HomeHistoryLoadFailed" xml:space="preserve">
+    <value>Recent history could not be loaded. You can still open instances from the sidebar.</value>
+  </data>
+  <data name="HomeHistorySaveFailed" xml:space="preserve">
+    <value>Recent history could not be saved. Your workspace remains available.</value>
+  </data>
+  <data name="HomeInstanceCount" xml:space="preserve">
+    <value>{0} configured instances</value>
+  </data>
+  <data name="HomeLicense" xml:space="preserve">
+    <value>License · Apache 2.0</value>
+  </data>
+  <data name="HomeOpenGitHub" xml:space="preserve">
+    <value>Open Hermod on GitHub</value>
+  </data>
+  <data name="HomeOpenRepositoryFailed" xml:space="preserve">
+    <value>The browser could not be opened. Open the displayed GitHub address manually.</value>
+  </data>
+  <data name="HomeOpenSource" xml:space="preserve">
+    <value>Built in the open</value>
+  </data>
+  <data name="HomeOpenSourceDescription" xml:space="preserve">
+    <value>Explore the source, report an issue, or help shape Hermod on GitHub.</value>
+  </data>
+  <data name="HomeOtherInstances" xml:space="preserve">
+    <value>Other instances</value>
+  </data>
+  <data name="HomeOverview" xml:space="preserve">
+    <value>Instance overview</value>
+  </data>
+  <data name="HomeProductName" xml:space="preserve">
+    <value>Asgard Hermod</value>
+  </data>
+  <data name="HomeRecent" xml:space="preserve">
+    <value>Recently opened</value>
+  </data>
+  <data name="HomeRecentAccessible" xml:space="preserve">
+    <value>Open {0}, last opened {1}</value>
+  </data>
+  <data name="HomeRecentDescription" xml:space="preserve">
+    <value>Return to your last five instances on this device.</value>
+  </data>
+  <data name="HomeRecentEmpty" xml:space="preserve">
+    <value>Your next session starts here</value>
+  </data>
+  <data name="HomeRecentEmptyHint" xml:space="preserve">
+    <value>Open an instance from the sidebar or start a local terminal. It will appear here next time.</value>
+  </data>
+  <data name="HomeTagline" xml:space="preserve">
+    <value>Your services. One workspace.</value>
+  </data>
+  <data name="HomeTypeCount" xml:space="preserve">
+    <value>{0}: {1} instances</value>
+  </data>
+  <data name="HomeOpenedToday" xml:space="preserve">
+    <value>Today {0}</value>
+  </data>
+  <data name="HomeOpenedYesterday" xml:space="preserve">
+    <value>Yesterday {0}</value>
+  </data>
 </root>

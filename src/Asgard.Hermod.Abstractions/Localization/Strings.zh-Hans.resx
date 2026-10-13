@@ -1925,4 +1925,73 @@
   <data xml:space="preserve" name="Continue">
     <value>继续</value>
   </data>
+  <data name="HomeAuthor" xml:space="preserve">
+    <value>作者 · BenLampson</value>
+  </data>
+  <data name="HomeDescription" xml:space="preserve">
+    <value>面向 Asgard 生态的开源 Windows 管理终端。在同一个工作区管理实例连接、浏览对象存储，并使用本地终端。</value>
+  </data>
+  <data name="HomeEyebrow" xml:space="preserve">
+    <value>你的 ASGARD 工作区</value>
+  </data>
+  <data name="HomeHistoryLoadFailed" xml:space="preserve">
+    <value>无法读取最近访问记录，仍可从侧栏打开实例。</value>
+  </data>
+  <data name="HomeHistorySaveFailed" xml:space="preserve">
+    <value>无法保存最近访问记录，工作区仍可正常使用。</value>
+  </data>
+  <data name="HomeInstanceCount" xml:space="preserve">
+    <value>已配置 {0} 个实例</value>
+  </data>
+  <data name="HomeLicense" xml:space="preserve">
+    <value>开源协议 · Apache 2.0</value>
+  </data>
+  <data name="HomeOpenGitHub" xml:space="preserve">
+    <value>在 GitHub 打开 Hermod 项目</value>
+  </data>
+  <data name="HomeOpenRepositoryFailed" xml:space="preserve">
+    <value>无法打开浏览器，请手动访问显示的 GitHub 地址。</value>
+  </data>
+  <data name="HomeOpenSource" xml:space="preserve">
+    <value>开放源码，共同打磨</value>
+  </data>
+  <data name="HomeOpenSourceDescription" xml:space="preserve">
+    <value>在 GitHub 查看源码、反馈问题，或参与 Hermod 的开发。</value>
+  </data>
+  <data name="HomeOtherInstances" xml:space="preserve">
+    <value>其他实例</value>
+  </data>
+  <data name="HomeOverview" xml:space="preserve">
+    <value>实例概览</value>
+  </data>
+  <data name="HomeProductName" xml:space="preserve">
+    <value>Asgard Hermod</value>
+  </data>
+  <data name="HomeRecent" xml:space="preserve">
+    <value>最近打开</value>
+  </data>
+  <data name="HomeRecentAccessible" xml:space="preserve">
+    <value>打开 {0}，上次打开时间为 {1}</value>
+  </data>
+  <data name="HomeRecentDescription" xml:space="preserve">
+    <value>回到此设备上最近打开的五个实例。</value>
+  </data>
+  <data name="HomeRecentEmpty" xml:space="preserve">
+    <value>从这里开始下一次工作</value>
+  </data>
+  <data name="HomeRecentEmptyHint" xml:space="preserve">
+    <value>从侧栏打开实例，或启动本地终端，下次就能在这里快速返回。</value>
+  </data>
+  <data name="HomeTagline" xml:space="preserve">
+    <value>服务与资源，尽在一个工作区。</value>
+  </data>
+  <data name="HomeTypeCount" xml:space="preserve">
+    <value>{0}：{1} 个实例</value>
+  </data>
+  <data name="HomeOpenedToday" xml:space="preserve">
+    <value>今天 {0}</value>
+  </data>
+  <data name="HomeOpenedYesterday" xml:space="preserve">
+    <value>昨天 {0}</value>
+  </data>
 </root>

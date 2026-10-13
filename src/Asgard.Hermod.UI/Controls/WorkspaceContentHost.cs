@@ -57,6 +57,7 @@ public sealed class WorkspaceContentHost : ContentControl, IDisposable
     /// <summary>根据页面类型选择对应的原生 WPF 内容组件。</summary>
     private FrameworkElement CreateView(WorkspacePageViewModel page) => page switch
     {
+        HomeWorkspaceViewModel => new HomeWorkspaceView(),
         EmptyWorkspaceViewModel => new EmptyWorkspaceView(),
         ServiceDetailViewModel => new ServiceDetailView(),
         TerminalWorkspaceViewModel => new TerminalWorkspaceView(),
