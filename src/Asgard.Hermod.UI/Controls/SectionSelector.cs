@@ -5,4 +5,6 @@ public class SectionSelector : ListBox
 {
     /// <summary>与表单分段控件分别加载正确的公共视觉模板。</summary>
     static SectionSelector() => DefaultStyleKeyProperty.OverrideMetadata(typeof(SectionSelector), new FrameworkPropertyMetadata(typeof(SectionSelector)));
+    /// <summary>类型切换回收格式选项时，不加载依赖已移除祖先的系统 ListBoxItem 样式。</summary>
+    protected override DependencyObject GetContainerForItemOverride() => new SectionSelectorItem();
 }

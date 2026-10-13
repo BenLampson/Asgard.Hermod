@@ -15,7 +15,7 @@ internal static class WindowPreviewCapture
     }
 
     /// <summary>确认标题与动作栏在指定尺寸内，截图无需显示或激活桌面窗体。</summary>
-    internal static async Task VerifyAsync(HermodWindow window, string name)
+    internal static async Task VerifyAsync(HermodWindow window, string name, double actionBarHeight = 56)
     {
         await WindowTestVisuals.UpdateLayoutAsync(window);
         var frame = WindowTestVisuals.Frame(window);
@@ -26,7 +26,7 @@ internal static class WindowPreviewCapture
         if (window.FooterContent is DialogActionBar)
         {
             var footer = WindowTestVisuals.Footer(window);
-            Assert.Equal(56, footer.ActualHeight);
+            Assert.Equal(actionBarHeight, footer.ActualHeight);
             foreach (var button in WindowTestVisuals.Descendants<Button>(footer)
                          .Where(button => button.Visibility == Visibility.Visible))
             {
