@@ -3,6 +3,19 @@ namespace Asgard.Hermod.UI.Tests;
 /// <summary>验证真实 SQLite 的设备级信任持久化、主机归一化与并发覆盖保护。</summary>
 public sealed class SshHostKeyTrustTests
 {
+    /// <summary>记录中的主机与数据库身份边界不符时失败，不能挪用另一主机的信任。</summary>
+    [Fact]
+    public async Task MismatchedStoredIdentityFailsSafely()
+    {
+        using var environment = new LocalStorageTestEnvironment(); using var services = environment.CreateServices();
+        services.GetRequiredService<LocalDatabaseInitializer>().Initialize();
+        var store = services.GetRequiredService<IHostKeyTrustStore>(); var original = Key("example.com", 22, 'A');
+        Assert.True(await store.TrustAsync(original, null, TestContext.Current.CancellationToken));
+        services.GetRequiredService<IFreeSql>().Ado.ExecuteNonQuery("UPDATE app_setting SET value = @json WHERE id LIKE 'ssh.host.%';",
+            new { json = System.Text.Json.JsonSerializer.Serialize(original with { Host = "other.example" }) });
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(() => store.LoadAsync("example.com", 22, TestContext.Current.CancellationToken));
+        Assert.Equal("SshTrustUnavailable", error.Data["Hermod.ResourceKey"]);
+    }
     /// <summary>设备设置在重建容器后仍存在，同一域名的不同端口独立。</summary>
     [Fact]
     public async Task HostTrustPersistsLocallyAndNormalizesIdentity()

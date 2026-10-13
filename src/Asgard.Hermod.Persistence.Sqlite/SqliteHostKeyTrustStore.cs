@@ -16,7 +16,7 @@ public sealed class SqliteHostKeyTrustStore(IFreeSql database) : IHostKeyTrustSt
         command.CommandText = "SELECT value FROM app_setting WHERE id = @id;";
         Add(command, "@id", Key(host, port));
         cancellationToken.ThrowIfCancellationRequested();
-        return Read(command.ExecuteScalar());
+        return Read(command.ExecuteScalar(), host, port);
     }, cancellationToken);
 
     /// <inheritdoc />
@@ -29,7 +29,7 @@ public sealed class SqliteHostKeyTrustStore(IFreeSql database) : IHostKeyTrustSt
         command.Transaction = transaction;
         command.CommandText = "SELECT value FROM app_setting WHERE id = @id;";
         Add(command, "@id", Key(key.Host, key.Port));
-        var current = Read(command.ExecuteScalar());
+        var current = Read(command.ExecuteScalar(), key.Host, key.Port);
         if (current?.Fingerprint != expectedFingerprint) return false;
         cancellationToken.ThrowIfCancellationRequested();
         command.CommandText = """
@@ -56,13 +56,14 @@ public sealed class SqliteHostKeyTrustStore(IFreeSql database) : IHostKeyTrustSt
     }
 
     /// <summary>损坏的信任记录明确失败，不能被当成首次连接覆盖。</summary>
-    private static TrustedHostKey? Read(object? value)
+    private static TrustedHostKey? Read(object? value, string host, int port)
     {
         if (value is not string json) return null;
         try
         {
             var key = JsonSerializer.Deserialize<TrustedHostKey>(json) ?? throw Text.Exception("SshTrustUnavailable");
             Validate(key);
+            if (Key(key.Host, key.Port) != Key(host, port)) throw Text.Exception("SshTrustUnavailable");
             return key;
         }
         catch (JsonException) { throw Text.Exception("SshTrustUnavailable"); }

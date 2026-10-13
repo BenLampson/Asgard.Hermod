@@ -75,7 +75,7 @@ public sealed class LocalInstanceConfigurationService : IInstanceConfigurationSe
                 continue;
             }
             string error = InstanceFieldValidation.GetError(field, parameters.GetValueOrDefault(field.Key));
-            if (error.Length != 0) throw new InvalidOperationException(error);
+            if (error.Length != 0) throw Text.Exception("InvalidConnectionParametersCheckTheFieldsRequiredByTheProvider");
         }
         string[] requestedTagIds = draft.TagIds.Distinct(StringComparer.Ordinal).ToArray();
         return Task.Run(() =>

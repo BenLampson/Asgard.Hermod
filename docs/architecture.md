@@ -19,6 +19,8 @@ storage and owns application startup and shutdown.
 | `Asgard.Hermod.Server` | Independent sync API plugin, online identity checks and encrypted server persistence | Shared contracts, identity module, Asgard PluginSdk, Microsoft.Data.Sqlite |
 | `Asgard.Hermod.Server.Starter` | Yggdrasil API composition and process lifetime | Sync API plugin |
 | `Asgard.Hermod.WinTerminal` | VT engine, rendering, WPF terminal control, ConPTY connections and local session adapter | Windows desktop framework |
+| `Asgard.Hermod.Ssh` | SSH authentication, verified host identity, jump routing and SOCKS5/HTTP CONNECT transport | Shared contracts, Tmds.Ssh, DI abstractions |
+| `Asgard.Hermod.Ssh.UI` | SSH configuration content, host verification and independent terminal workspace pages | Shared UI, SSH protocol module |
 | `Asgard.Hermod.ObjectStorage.Abstractions` | Object storage models, service and client contracts | Shared contracts |
 | `Asgard.Hermod.ObjectStorage` | Resource client factory, connection probe, transfers, previews and deletion policies | Object storage contracts, DI abstractions |
 | `Asgard.Hermod.ObjectStorage.UI` | Object browser, feature dialogs, view models and page template | Shared UI, object storage contracts, DI abstractions |
@@ -85,9 +87,11 @@ services.AddVolcengineTos();
 services.AddAwsS3();
 services.AddMinio();
 services.AddS3Connector<S3CompatibleStorageProvider>();
+services.AddSsh();
 services.AddSingleton<ITerminalSessionFactory, LocalTerminalSessionFactory>();
 services.AddHermodUi(() => MainWindow, Resources);
 services.AddObjectStorageUi(() => MainWindow);
+services.AddSshUi(() => MainWindow);
 ```
 
 `AddLocalStorage` registers SQLite and local configuration/tag services. The host
