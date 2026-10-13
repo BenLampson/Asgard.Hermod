@@ -29,7 +29,7 @@
     <Grid Margin="24,22,22,0">
         <Grid.RowDefinitions><RowDefinition Height="32" /><RowDefinition Height="18" /><RowDefinition Height="32" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="46" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
         <Grid>
-            <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="8" /><ColumnDefinition Width="*" /><ColumnDefinition Width="32" /></Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="8" /><ColumnDefinition Width="*" /><ColumnDefinition Width="32" /><ColumnDefinition Width="8" /><ColumnDefinition Width="32" /></Grid.ColumnDefinitions>
             <controls:SearchableSelect x:Name="BucketSelector" ItemsSource="{Binding Buckets}" SelectedItem="{Binding SelectedBucket, Mode=OneWay}"
                                       DisplayMemberPath="Name" Icon="database" Height="32" SelectionCommitted="OnBucketSelected" AutomationProperties.Name="{loc:Loc SwitchBucket}" />
             <ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled" Margin="0,0,12,0">
@@ -45,6 +45,10 @@
             </ScrollViewer>
             <Button Grid.Column="3" Command="{Binding RefreshCommand}" Width="32" Height="32" Padding="7" ToolTip="{loc:Loc RefreshObjectList}" AutomationProperties.Name="{loc:Loc RefreshObjectList}">
                 <controls:IconView Kind="refresh-cw" Width="16" Height="16" Foreground="{DynamicResource TextMutedBrush}" />
+            </Button>
+            <Button Grid.Column="5" Command="{Binding ToggleDetailsCommand}" Width="32" Height="32" Padding="7" ToolTip="{Binding DetailsToggleLabel}" AutomationProperties.Name="{Binding DetailsToggleLabel}">
+                <Button.Style><Style TargetType="Button" BasedOn="{StaticResource IconButton}"><Style.Triggers><DataTrigger Binding="{Binding IsDetailsOpen}" Value="True"><Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" /></DataTrigger></Style.Triggers></Style></Button.Style>
+                <controls:IconView Kind="panel-left" Width="16" Height="16" RenderTransformOrigin="0.5,0.5"><controls:IconView.RenderTransform><ScaleTransform ScaleX="-1" /></controls:IconView.RenderTransform></controls:IconView>
             </Button>
         </Grid>
         <Grid Grid.Row="2">

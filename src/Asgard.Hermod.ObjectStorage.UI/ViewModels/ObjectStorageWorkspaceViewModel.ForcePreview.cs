@@ -2,7 +2,7 @@ using Asgard.Hermod.ObjectStorage.UI.Models;
 
 namespace Asgard.Hermod.ObjectStorage.UI.ViewModels;
 
-/// <summary>显式确认费用后加载右侧图片预览；选择变化时取消并隔离旧对象的返回。</summary>
+/// <summary>已识别图片直接预览，未知类型明确确认后预览；选择变化时隔离旧对象的返回。</summary>
 public sealed partial class ObjectStorageWorkspaceViewModel
 {
     private CancellationTokenSource? _imagePreviewOperation;
@@ -12,7 +12,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     private long _imagePreviewBytes;
     private long _imagePreviewSize;
 
-    /// <summary>点击入口仅确认类型和费用，确认之后才读取内容。</summary>
+    /// <summary>已识别图片直接重试，未知类型先确认类型与费用再读取内容。</summary>
     public AsyncRelayCommand ForcePreviewCommand { get; private set; } = null!;
     /// <summary>取消本次图片读取，不影响其他传输任务。</summary>
     public RelayCommand CancelImagePreviewCommand { get; private set; } = null!;
@@ -32,10 +32,11 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     }
     /// <summary>未加载图片时，所有普通文件均可手动尝试图片类型。</summary>
     public bool ShowForcePreviewActions => HasFileSelection && !HasImagePreview && !IsImagePreviewLoading;
-    /// <summary>有文本预览时不重复展示无法预览说明。</summary>
-    public bool ShowForcePreviewIntroduction => ShowForcePreviewActions && !HasTextPreview && _imagePreviewMessage.Length == 0;
-    /// <summary>失败或取消后使用同一个入口重新确认类型及费用。</summary>
-    public string ForcePreviewLabel => Text.Get(_imagePreviewMessage.Length == 0 ? "ForcePreview" : "ForcePreviewChooseTypeAgain");
+    /// <summary>只在未知类型且没有文本预览时说明手动类型选择。</summary>
+    public bool ShowForcePreviewIntroduction => ShowForcePreviewActions && !IsRecognizedPreviewImage && !HasTextPreview && _imagePreviewMessage.Length == 0;
+    /// <summary>已识别图片只需重新加载，未知类型才需再次选择。</summary>
+    public string ForcePreviewLabel => Text.Get(IsRecognizedPreviewImage ? "ForcePreviewRetryImage"
+        : _imagePreviewMessage.Length == 0 ? "ForcePreview" : "ForcePreviewChooseTypeAgain");
     /// <summary>显示实际读取进度，未知总大小时不编造百分比。</summary>
     public string ImagePreviewProgress => _imagePreviewSize > 0
         ? Text.Format("ForcePreviewProgress", ObjectStoragePresentation.Size(_imagePreviewBytes), ObjectStoragePresentation.Size(_imagePreviewSize))
@@ -45,7 +46,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     private void InitializeForcePreviewCommands()
     {
         ForcePreviewCommand = new AsyncRelayCommand(_ => ConfirmForcePreviewAsync(), _ =>
-            CanOperate && _temporaryFiles is not null && HasFileSelection && !IsDetailLoading && !IsImagePreviewLoading);
+            CanOperate && IsDetailsOpen && _temporaryFiles is not null && HasFileSelection && !IsDetailLoading && !IsImagePreviewLoading && !HasImagePreview);
         CancelImagePreviewCommand = new RelayCommand(_ => { _imagePreviewOperation?.Cancel(); CancelImagePreviewCommand.NotifyCanExecuteChanged(); },
             _ => !IsClosed && IsImagePreviewLoading && _imagePreviewOperation?.IsCancellationRequested == false);
     }
@@ -59,24 +60,51 @@ public sealed partial class ObjectStorageWorkspaceViewModel
             or "image/tiff" or "image/x-icon" or "image/vnd.microsoft.icon" ? ObjectStoragePreviewType.Image : null;
     }
 
+    /// <summary>识别只依据文件名与已经读取的元数据，不为识别类型嗅探远程内容。</summary>
+    private bool IsRecognizedPreviewImage => SelectedEntry is { IsDirectory: false } entry
+        && InferPreviewType(entry.Name, Details?.ContentType) == ObjectStoragePreviewType.Image;
+
+    /// <summary>选中已识别图片后直接加载；未知文件保留原有文本预览或手动选择入口。</summary>
+    private Task PreviewRecognizedImageAsync(ObjectStorageEntryViewModel entry, ObjectStorageBucket bucket,
+        ObjectStorageObjectDetails details, CancellationToken cancellationToken)
+    {
+        if (_temporaryFiles is null || InferPreviewType(entry.Name, details.ContentType) != ObjectStoragePreviewType.Image)
+            return Task.CompletedTask;
+        return StartImagePreviewAsync(entry, bucket, details.Size, cancellationToken);
+    }
+
+    /// <summary>每次读取使用独立版本，并跟踪仍在结束的旧下载，页签关闭等待全部缓存释放。</summary>
+    private Task StartImagePreviewAsync(ObjectStorageEntryViewModel entry, ObjectStorageBucket bucket, long size,
+        CancellationToken cancellationToken = default)
+    {
+        Task read = ReadImagePreviewAsync(entry, bucket, size, ++_imagePreviewVersion, cancellationToken);
+        _imagePreviewTask = _imagePreviewTask.IsCompleted ? read : Task.WhenAll(_imagePreviewTask, read);
+        return read;
+    }
+
     /// <summary>确认时捕获对象及版本；确认返回后对象已改变就忽略结果，不下载原对象。</summary>
     private async Task ConfirmForcePreviewAsync()
     {
         if (SelectedEntry is not { IsDirectory: false } entry || SelectedBucket is not { } bucket || _temporaryFiles is null) return;
         int version = _imagePreviewVersion;
         long size = Details?.Size ?? entry.Entry.Size;
+        if (IsRecognizedPreviewImage)
+        {
+            await StartImagePreviewAsync(entry, bucket, size);
+            return;
+        }
         ObjectStoragePreviewType? selected = null;
         await InteractAsync(async () => selected = await _dialogs.RequestForcePreviewAsync(entry.Name, size,
-            InferPreviewType(entry.Name, Details?.ContentType)));
+            null));
         if (selected != ObjectStoragePreviewType.Image || !IsCurrentImagePreview(entry, bucket, version)) return;
-        _imagePreviewTask = ReadImagePreviewAsync(entry, bucket, size, ++_imagePreviewVersion);
-        await _imagePreviewTask;
+        await StartImagePreviewAsync(entry, bucket, size);
     }
 
     /// <summary>下载到受管临时文件，按实际字节限流并在后台解码，任何退出路径均释放缓存。</summary>
-    private async Task ReadImagePreviewAsync(ObjectStorageEntryViewModel entry, ObjectStorageBucket bucket, long size, int version)
+    private async Task ReadImagePreviewAsync(ObjectStorageEntryViewModel entry, ObjectStorageBucket bucket, long size, int version,
+        CancellationToken cancellationToken)
     {
-        using var operation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
+        using var operation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token, cancellationToken);
         _imagePreviewOperation = operation;
         _imagePreviewMessage = "";
         _imagePreviewBytes = 0; _imagePreviewSize = size;

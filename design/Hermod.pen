@@ -238,6 +238,18 @@
           "fontFamily": "Inter",
           "fontSize": 22,
           "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "ooUhU",
+          "x": 2786,
+          "y": 410,
+          "name": "Frame 1",
+          "clip": true,
+          "width": 356,
+          "height": 677,
+          "fill": "#FFFFFF",
+          "layout": "none"
         }
       ]
     },
@@ -401,16 +413,6 @@
               "height": 1
             },
             {
-              "type": "icon",
-              "id": "g39cUv",
-              "name": "ic settings-2",
-              "width": 17,
-              "height": 17,
-              "icon": "settings",
-              "library": "lucide",
-              "fill": "$muted"
-            },
-            {
               "type": "frame",
               "id": "ol17i",
               "name": "Account",
@@ -465,6 +467,16 @@
                   "fill": "$muted"
                 }
               ]
+            },
+            {
+              "type": "icon",
+              "id": "g39cUv",
+              "name": "ic settings-2",
+              "width": 17,
+              "height": 17,
+              "icon": "settings",
+              "library": "lucide",
+              "fill": "$muted"
             },
             {
               "type": "icon",
@@ -9999,6 +10011,12 @@
               "height": 1
             },
             {
+              "id": "s342C",
+              "type": "ref",
+              "ref": "qBRkh",
+              "name": "已登录用户区"
+            },
+            {
               "type": "icon",
               "id": "fLN5k",
               "name": "ic settings-2",
@@ -10007,12 +10025,6 @@
               "icon": "settings",
               "library": "lucide",
               "fill": "$muted"
-            },
-            {
-              "id": "s342C",
-              "type": "ref",
-              "ref": "qBRkh",
-              "name": "已登录用户区"
             },
             {
               "type": "icon",
@@ -10150,16 +10162,6 @@
               "height": 1
             },
             {
-              "type": "icon",
-              "id": "UllUV",
-              "name": "ic settings-2",
-              "width": 17,
-              "height": 17,
-              "icon": "settings",
-              "library": "lucide",
-              "fill": "$muted"
-            },
-            {
               "id": "EqEKR",
               "type": "ref",
               "ref": "GPGCx",
@@ -10169,6 +10171,16 @@
                   "content": "本地"
                 }
               }
+            },
+            {
+              "type": "icon",
+              "id": "UllUV",
+              "name": "ic settings-2",
+              "width": 17,
+              "height": 17,
+              "icon": "settings",
+              "library": "lucide",
+              "fill": "$muted"
             },
             {
               "type": "icon",
@@ -10389,6 +10401,12 @@
               "height": 1
             },
             {
+              "id": "G7h85",
+              "type": "ref",
+              "ref": "qBRkh",
+              "name": "已登录用户区"
+            },
+            {
               "type": "icon",
               "id": "js0yn",
               "name": "ic settings-2",
@@ -10397,12 +10415,6 @@
               "icon": "settings",
               "library": "lucide",
               "fill": "$muted"
-            },
-            {
-              "id": "G7h85",
-              "type": "ref",
-              "ref": "qBRkh",
-              "name": "已登录用户区"
             },
             {
               "type": "icon",
@@ -10540,6 +10552,12 @@
               "height": 1
             },
             {
+              "id": "g4J3X",
+              "type": "ref",
+              "ref": "GPGCx",
+              "name": "未登录 · 默认使用内置 SQLite用户区"
+            },
+            {
               "type": "icon",
               "id": "a9rPM",
               "name": "ic settings-2",
@@ -10548,12 +10566,6 @@
               "icon": "settings",
               "library": "lucide",
               "fill": "$muted"
-            },
-            {
-              "id": "g4J3X",
-              "type": "ref",
-              "ref": "GPGCx",
-              "name": "未登录 · 默认使用内置 SQLite用户区"
             },
             {
               "type": "icon",
@@ -10942,6 +10954,14 @@
                   "height": 1
                 },
                 {
+                  "id": "p0zGSa",
+                  "type": "ref",
+                  "ref": "GPGCx",
+                  "name": "本地用户区触发器",
+                  "fill": "$line-soft",
+                  "cornerRadius": 5
+                },
+                {
                   "type": "icon",
                   "id": "Bbv5r",
                   "name": "ic settings-2",
@@ -10950,14 +10970,6 @@
                   "icon": "settings",
                   "library": "lucide",
                   "fill": "$muted"
-                },
-                {
-                  "id": "p0zGSa",
-                  "type": "ref",
-                  "ref": "GPGCx",
-                  "name": "本地用户区触发器",
-                  "fill": "$line-soft",
-                  "cornerRadius": 5
                 },
                 {
                   "type": "icon",
@@ -11105,6 +11117,14 @@
                   "height": 1
                 },
                 {
+                  "id": "EPY8N",
+                  "type": "ref",
+                  "ref": "qBRkh",
+                  "name": "已登录头像触发器",
+                  "fill": "$line-soft",
+                  "cornerRadius": 5
+                },
+                {
                   "type": "icon",
                   "id": "A8sjm",
                   "name": "ic settings-2",
@@ -11113,14 +11133,6 @@
                   "icon": "settings",
                   "library": "lucide",
                   "fill": "$muted"
-                },
-                {
-                  "id": "EPY8N",
-                  "type": "ref",
-                  "ref": "qBRkh",
-                  "name": "已登录头像触发器",
-                  "fill": "$line-soft",
-                  "cornerRadius": 5
                 },
                 {
                   "type": "icon",
@@ -11161,7 +11173,7 @@
               "width": "fill_container",
               "padding": [
                 0,
-                84,
+                111,
                 8,
                 0
               ],
@@ -18737,6 +18749,21 @@
                           "icon": "refresh-cw"
                         }
                       }
+                    },
+                    {
+                      "id": "nWf1K",
+                      "type": "ref",
+                      "ref": "WH5j4",
+                      "name": "展开 / 收起对象详情",
+                      "width": 32,
+                      "height": 32,
+                      "fill": "$accent-weak",
+                      "context": "临时展开或收起当前页签的对象详情；收起保留所选对象。",
+                      "descendants": {
+                        "yIeTC": {
+                          "icon": "panel-right"
+                        }
+                      }
                     }
                   ]
                 },
@@ -20050,6 +20077,30 @@
                       "fill": "$muted"
                     }
                   ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "pALQy",
+              "name": "对象详情分隔条 · 横向拖动",
+              "context": "向左或向右拖动；可聚焦后使用左右方向键。详情默认 278 px，最小 220 px，最大 560 px；窄视口动态限制。",
+              "width": 6,
+              "height": "fill_container",
+              "fill": "$line-soft",
+              "layout": "vertical",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "Vo5OA",
+                  "name": "分隔条拖动抓手",
+                  "width": 6,
+                  "height": 24,
+                  "icon": "grip-vertical",
+                  "library": "lucide",
+                  "fill": "$muted"
                 }
               ]
             },
@@ -45385,9 +45436,9 @@
       "id": "bSmII",
       "x": 0,
       "y": 14852,
-      "name": "05B · 对象存储 / 强行预览流程",
+      "name": "05B · 对象存储 / 自动图片预览与可收起详情",
       "width": 3610,
-      "height": 2880,
+      "height": 3790,
       "fill": "#EEF1F5",
       "cornerRadius": 24,
       "stroke": "#CBD3DF",
@@ -45401,7 +45452,7 @@
           "y": 40,
           "name": "强行预览流程标题",
           "fill": "#17243A",
-          "content": "05B  强行预览 · 图片",
+          "content": "05B  图片预览 · 可收起、可拖动的详情",
           "fontFamily": "Inter",
           "fontSize": 42,
           "fontWeight": "bold"
@@ -45413,7 +45464,7 @@
           "y": 110,
           "name": "流程索引",
           "fill": "#53657D",
-          "content": "01 详情入口  →  02 推断确认 / 03 手动选择  →  04 图片预览  ·  05 加载与失败  ·  06 深色主题  ·  07 英文  ·  08 本地化",
+          "content": "01 未知类型入口  ·  02 图片直接预览 / 详情加宽  ·  03 手动选择  ·  04 图片结果  ·  05 边界  ·  06–08 本地化  ·  09 收起详情",
           "fontFamily": "Inter",
           "fontSize": 20,
           "fontWeight": "normal"
@@ -45939,7 +45990,7 @@
       "id": "fbgv6",
       "x": 1244,
       "y": 15042,
-      "name": "05 / 强行预览 · 02 类型推断与费用确认 · Light",
+      "name": "05 / 图片预览 · 02 已识别直接预览与详情加宽 · Light",
       "theme": {
         "mode": "light"
       },
@@ -45967,7 +46018,7 @@
               "id": "V3Bp7",
               "name": "步骤名称",
               "fill": "$ink",
-              "content": "02 / 推断为图片 · 确认后读取",
+              "content": "02 / 已识别图片 · 直接预览 · 拖动加宽详情",
               "fontFamily": "Inter",
               "fontSize": 17,
               "fontWeight": "600"
@@ -45975,24 +46026,24 @@
           ]
         },
         {
-          "id": "ig2A7",
+          "id": "labmz",
           "type": "ref",
           "ref": "vGYHU",
-          "name": "对象存储工作区",
+          "name": "已识别图片 · 自动预览",
           "width": "fill_container",
           "height": "fill_container",
           "descendants": {
             "sHAIY": {
-              "content": "sample-image.dat"
+              "content": "sample-image.png"
             },
             "T12Ay": {
               "content": "839 KB"
             },
             "zGOD9": {
               "type": "frame",
-              "id": "N6zWpw",
+              "id": "mKwGr",
               "name": "对象详情 · 强行预览",
-              "width": 278,
+              "width": 374,
               "height": "fill_container",
               "fill": "$surface",
               "stroke": "$line-soft",
@@ -46008,7 +46059,7 @@
               "children": [
                 {
                   "type": "frame",
-                  "id": "G6uty",
+                  "id": "m241a",
                   "name": "对象详情标题栏",
                   "width": "fill_container",
                   "gap": 8,
@@ -46016,7 +46067,7 @@
                   "children": [
                     {
                       "type": "text",
-                      "id": "TyWRS",
+                      "id": "jO1lR",
                       "name": "对象详情标题",
                       "fill": "$muted",
                       "textGrowth": "fixed-width",
@@ -46028,7 +46079,7 @@
                     },
                     {
                       "type": "icon",
-                      "id": "pHNbO",
+                      "id": "B6cfVw",
                       "name": "关闭对象详情",
                       "width": 15,
                       "height": 15,
@@ -46040,14 +46091,14 @@
                 },
                 {
                   "type": "frame",
-                  "id": "lUimP",
+                  "id": "gXJwB",
                   "name": "当前对象标识",
                   "gap": 10,
                   "alignItems": "center",
                   "children": [
                     {
                       "type": "icon",
-                      "id": "BzJ6D",
+                      "id": "C2qc4a",
                       "name": "当前JSON对象图标",
                       "width": 22,
                       "height": 22,
@@ -46057,10 +46108,10 @@
                     },
                     {
                       "type": "text",
-                      "id": "SrtBS",
+                      "id": "Fz3kG",
                       "name": "当前对象名称",
                       "fill": "$ink",
-                      "content": "sample-image.dat",
+                      "content": "sample-image.png",
                       "fontFamily": "Inter",
                       "fontSize": 15,
                       "fontWeight": "600"
@@ -46069,81 +46120,104 @@
                 },
                 {
                   "type": "frame",
-                  "id": "IQYFw",
-                  "name": "无法自动预览 / ForcePreviewUnavailable",
+                  "id": "Y1P5XL",
+                  "name": "图片预览成功",
                   "width": "fill_container",
                   "fill": "$app-bg",
                   "cornerRadius": 6,
                   "layout": "vertical",
                   "gap": 10,
-                  "padding": 14,
+                  "padding": 12,
                   "children": [
                     {
-                      "type": "icon",
-                      "id": "jEaH7",
-                      "name": "预览占位图标",
-                      "width": 28,
-                      "height": 28,
-                      "icon": "image",
-                      "library": "lucide",
-                      "fill": "$muted"
-                    },
-                    {
-                      "type": "text",
-                      "id": "U9QSe",
-                      "name": "预览状态",
-                      "fill": "$ink",
-                      "textGrowth": "fixed-width",
+                      "type": "frame",
+                      "id": "w1gkE4",
+                      "name": "预览状态及放大工具",
                       "width": "fill_container",
-                      "content": "该文件无法自动预览。",
-                      "lineHeight": 1.6,
-                      "fontFamily": "Inter",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "PwynA",
+                          "name": "成功状态",
+                          "width": 14,
+                          "height": 14,
+                          "icon": "check",
+                          "library": "lucide",
+                          "fill": "$green"
+                        },
+                        {
+                          "type": "text",
+                          "id": "VnvPO",
+                          "name": "成功类型",
+                          "fill": "$green",
+                          "content": "图片预览",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Kf4A7",
+                          "name": "工具间隔",
+                          "width": "fill_container",
+                          "height": 1
+                        },
+                        {
+                          "type": "icon",
+                          "id": "Ur2V8",
+                          "name": "放大预览",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "maximize-2",
+                          "library": "lucide",
+                          "fill": "$muted"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 4,
+                      "id": "zvlrU",
+                      "name": "示例图片",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "phodskins",
+                        "link": "https://unsplash.com/@phodskins",
+                        "author": "Patrick Hodskins"
+                      },
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "https://images.unsplash.com/photo-1567655327467-ffaad1fe3619?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3OTE4Nzg5MzR8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "mode": "cover"
+                      },
+                      "width": "fill_container",
+                      "height": 148
                     },
                     {
                       "type": "text",
-                      "id": "pu3ql",
-                      "name": "预览说明",
+                      "id": "E9aTQj",
+                      "name": "像素与格式",
                       "fill": "$muted",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "如果它是图片，可以选择类型后尝试强行预览。",
+                      "content": "PNG · 1920 × 1080",
                       "lineHeight": 1.6,
                       "fontFamily": "Inter",
-                      "fontSize": 12,
+                      "fontSize": 11,
                       "fontWeight": "normal"
                     },
                     {
-                      "id": "yPhAL",
-                      "type": "ref",
-                      "ref": "Q2r8z",
-                      "name": "强行预览入口 / ForcePreview",
-                      "fill": "$surface",
-                      "stroke": "$line",
-                      "strokeWidth": 1,
-                      "width": "fill_container",
-                      "descendants": {
-                        "u5fFux": {
-                          "enabled": true,
-                          "icon": "eye",
-                          "fill": "$accent"
-                        },
-                        "NpJY2": {
-                          "content": "强行预览",
-                          "fill": "$accent-ink"
-                        }
-                      }
-                    },
-                    {
                       "type": "text",
-                      "id": "O7NhV",
-                      "name": "入口费用提示 / ForcePreviewTrafficHint",
+                      "id": "g7bCZ",
+                      "name": "图片流量提示",
                       "fill": "$muted",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
                       "content": "读取对象内容会产生流量费用。",
-                      "lineHeight": 1.6,
+                      "lineHeight": 1.5,
                       "fontFamily": "Inter",
                       "fontSize": 11,
                       "fontWeight": "normal"
@@ -46152,7 +46226,7 @@
                 },
                 {
                   "type": "frame",
-                  "id": "eMWQq",
+                  "id": "ZZifF",
                   "name": "对象属性信息",
                   "width": "fill_container",
                   "layout": "vertical",
@@ -46160,14 +46234,14 @@
                   "children": [
                     {
                       "type": "frame",
-                      "id": "UqikT",
+                      "id": "h2ieCm",
                       "name": "对象属性 大小",
                       "width": "fill_container",
                       "gap": 8,
                       "children": [
                         {
                           "type": "text",
-                          "id": "JWrHD",
+                          "id": "JuW5G",
                           "name": "大小属性名",
                           "fill": "$muted",
                           "textGrowth": "fixed-width",
@@ -46179,7 +46253,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "y7MQG8",
+                          "id": "rALYp",
                           "name": "大小属性值",
                           "fill": "$body",
                           "textGrowth": "fixed-width",
@@ -46194,14 +46268,14 @@
                     },
                     {
                       "type": "frame",
-                      "id": "SJgVO",
+                      "id": "jmqdr",
                       "name": "对象属性 更新于",
                       "width": "fill_container",
                       "gap": 8,
                       "children": [
                         {
                           "type": "text",
-                          "id": "uInv8",
+                          "id": "I9yDSA",
                           "name": "更新于属性名",
                           "fill": "$muted",
                           "textGrowth": "fixed-width",
@@ -46213,7 +46287,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "v4VuIp",
+                          "id": "pibOm",
                           "name": "更新于属性值",
                           "fill": "$body",
                           "textGrowth": "fixed-width",
@@ -46228,14 +46302,14 @@
                     },
                     {
                       "type": "frame",
-                      "id": "RjvyK",
+                      "id": "oPVB3",
                       "name": "对象属性 存储类型",
                       "width": "fill_container",
                       "gap": 8,
                       "children": [
                         {
                           "type": "text",
-                          "id": "m4PTE",
+                          "id": "s4RV0q",
                           "name": "存储类型属性名",
                           "fill": "$muted",
                           "textGrowth": "fixed-width",
@@ -46247,7 +46321,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "TTNh7",
+                          "id": "oIibe",
                           "name": "存储类型属性值",
                           "fill": "$body",
                           "textGrowth": "fixed-width",
@@ -46262,14 +46336,14 @@
                     },
                     {
                       "type": "frame",
-                      "id": "qKtXs",
+                      "id": "UY2bp",
                       "name": "对象属性 访问权限",
                       "width": "fill_container",
                       "gap": 8,
                       "children": [
                         {
                           "type": "text",
-                          "id": "j8NU7L",
+                          "id": "gWqDg",
                           "name": "访问权限属性名",
                           "fill": "$muted",
                           "textGrowth": "fixed-width",
@@ -46281,7 +46355,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "iRlGO",
+                          "id": "DFJl1",
                           "name": "访问权限属性值",
                           "fill": "$body",
                           "textGrowth": "fixed-width",
@@ -46296,14 +46370,14 @@
                     },
                     {
                       "type": "frame",
-                      "id": "N5mz9",
+                      "id": "A0xqI",
                       "name": "对象属性 Content-Type",
                       "width": "fill_container",
                       "gap": 8,
                       "children": [
                         {
                           "type": "text",
-                          "id": "rDQBw",
+                          "id": "r128j",
                           "name": "Content-Type属性名",
                           "fill": "$muted",
                           "textGrowth": "fixed-width",
@@ -46315,12 +46389,12 @@
                         },
                         {
                           "type": "text",
-                          "id": "DhBed",
+                          "id": "a41JnS",
                           "name": "Content-Type属性值",
                           "fill": "$body",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
-                          "content": "application/octet-stream",
+                          "content": "image/png",
                           "lineHeight": 1.5,
                           "fontFamily": "Inter",
                           "fontSize": 11,
@@ -46332,7 +46406,7 @@
                 },
                 {
                   "type": "frame",
-                  "id": "ytLYv",
+                  "id": "rw0cF",
                   "name": "对象Key信息",
                   "width": "fill_container",
                   "stroke": "$line-soft",
@@ -46350,14 +46424,14 @@
                   "children": [
                     {
                       "type": "frame",
-                      "id": "gpyKI",
+                      "id": "n1wTF",
                       "name": "对象Key标签及复制",
                       "width": "fill_container",
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
-                          "id": "UUs0o",
+                          "id": "jPeDn",
                           "name": "对象Key标题",
                           "fill": "$muted",
                           "textGrowth": "fixed-width",
@@ -46369,7 +46443,7 @@
                         },
                         {
                           "type": "icon",
-                          "id": "YsELT",
+                          "id": "itZLv",
                           "name": "复制对象Key",
                           "width": 13,
                           "height": 13,
@@ -46381,12 +46455,12 @@
                     },
                     {
                       "type": "text",
-                      "id": "FYQkX",
+                      "id": "KwGK8",
                       "name": "对象完整Key",
                       "fill": "$body",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "releases/v0.9.0/sample-image.dat",
+                      "content": "releases/v0.9.0/sample-image.png",
                       "lineHeight": 1.5,
                       "fontFamily": "JetBrains Mono",
                       "fontSize": 10.5,
@@ -46396,20 +46470,20 @@
                 },
                 {
                   "type": "frame",
-                  "id": "lytRV",
+                  "id": "Z6v5p6",
                   "name": "对象详情底部间隔",
                   "width": "fill_container",
                   "height": "fill_container"
                 },
                 {
                   "type": "frame",
-                  "id": "r4Bu4s",
+                  "id": "PQOvw",
                   "name": "对象详情操作",
                   "width": "fill_container",
                   "gap": 8,
                   "children": [
                     {
-                      "id": "mbYLA",
+                      "id": "oN3RA",
                       "type": "ref",
                       "ref": "Q2r8z",
                       "name": "下载当前对象",
@@ -46430,7 +46504,7 @@
                       }
                     },
                     {
-                      "id": "p6Iy0",
+                      "id": "p8Xsor",
                       "type": "ref",
                       "ref": "WH5j4",
                       "name": "当前对象更多操作",
@@ -46453,6 +46527,7 @@
           "x": 0,
           "y": 58,
           "name": "模态遮罩",
+          "enabled": false,
           "fill": "#0B12206B",
           "width": 1120,
           "height": 782
@@ -46464,6 +46539,7 @@
           "x": 286,
           "y": 172,
           "name": "强行预览确认弹窗",
+          "enabled": false,
           "clip": true,
           "width": 548,
           "fill": "$surface",
@@ -47735,7 +47811,7 @@
           ]
         },
         {
-          "id": "R9WtCy",
+          "id": "qEkZt",
           "type": "ref",
           "ref": "vGYHU",
           "name": "对象存储工作区",
@@ -47750,7 +47826,7 @@
             },
             "zGOD9": {
               "type": "frame",
-              "id": "LSL13",
+              "id": "P57O9F",
               "name": "对象详情 · 强行预览",
               "width": 278,
               "height": "fill_container",
@@ -47768,7 +47844,7 @@
               "children": [
                 {
                   "type": "frame",
-                  "id": "Tu2Cp",
+                  "id": "NAxAf",
                   "name": "对象详情标题栏",
                   "width": "fill_container",
                   "gap": 8,
@@ -47776,7 +47852,7 @@
                   "children": [
                     {
                       "type": "text",
-                      "id": "M0BWKb",
+                      "id": "mg2bI",
                       "name": "对象详情标题",
                       "fill": "$muted",
                       "textGrowth": "fixed-width",
@@ -47788,7 +47864,7 @@
                     },
                     {
                       "type": "icon",
-                      "id": "A6dQa",
+                      "id": "GPGxm",
                       "name": "关闭对象详情",
                       "width": 15,
                       "height": 15,
@@ -47800,14 +47876,14 @@
                 },
                 {
                   "type": "frame",
-                  "id": "AmQbT",
+                  "id": "FFofI",
                   "name": "当前对象标识",
                   "gap": 10,
                   "alignItems": "center",
                   "children": [
                     {
                       "type": "icon",
-                      "id": "McPCP",
+                      "id": "LbZmM",
                       "name": "当前JSON对象图标",
                       "width": 22,
                       "height": 22,
@@ -47817,7 +47893,7 @@
                     },
                     {
                       "type": "text",
-                      "id": "rZ2mt",
+                      "id": "wzDEm",
                       "name": "当前对象名称",
                       "fill": "$ink",
                       "content": "sample-image.dat",
@@ -47829,7 +47905,7 @@
                 },
                 {
                   "type": "frame",
-                  "id": "Mfzg5",
+                  "id": "ldXYw",
                   "name": "图片预览成功",
                   "width": "fill_container",
                   "fill": "$app-bg",
@@ -47840,7 +47916,7 @@
                   "children": [
                     {
                       "type": "frame",
-                      "id": "L3HOQa",
+                      "id": "FRCbn",
                       "name": "预览状态及放大工具",
                       "width": "fill_container",
                       "gap": 8,
@@ -47848,7 +47924,7 @@
                       "children": [
                         {
                           "type": "icon",
-                          "id": "U98kd",
+                          "id": "FYb6X",
                           "name": "成功状态",
                           "width": 14,
                           "height": 14,
@@ -47858,7 +47934,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "NJIyq",
+                          "id": "GU2Jg",
                           "name": "成功类型",
                           "fill": "$green",
                           "content": "图片预览",
@@ -47868,14 +47944,14 @@
                         },
                         {
                           "type": "frame",
-                          "id": "pN4ZJ",
+                          "id": "ozMrg",
                           "name": "工具间隔",
                           "width": "fill_container",
                           "height": 1
                         },
                         {
                           "type": "icon",
-                          "id": "V3tmPF",
+                          "id": "XG60L",
                           "name": "放大预览",
                           "width": 16,
                           "height": 16,
@@ -47888,7 +47964,7 @@
                     {
                       "type": "rectangle",
                       "cornerRadius": 4,
-                      "id": "wvMdJ",
+                      "id": "E0q9O",
                       "name": "示例图片",
                       "metadata": {
                         "type": "unsplash",
@@ -47907,7 +47983,7 @@
                     },
                     {
                       "type": "text",
-                      "id": "aguDS",
+                      "id": "C6QZak",
                       "name": "像素与格式",
                       "fill": "$muted",
                       "textGrowth": "fixed-width",
@@ -47917,12 +47993,25 @@
                       "fontFamily": "Inter",
                       "fontSize": 11,
                       "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "uw4NA",
+                      "name": "图片流量提示",
+                      "fill": "$muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "读取对象内容会产生流量费用。",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
                 {
                   "type": "frame",
-                  "id": "lGM81",
+                  "id": "PGw6L",
                   "name": "对象属性信息",
                   "width": "fill_container",
                   "layout": "vertical",
@@ -47930,14 +48019,14 @@
                   "children": [
                     {
                       "type": "frame",
-                      "id": "U1Ea4",
+                      "id": "iA9N3",
                       "name": "对象属性 大小",
                       "width": "fill_container",
                       "gap": 8,
                       "children": [
                         {
                           "type": "text",
-                          "id": "T1HhO",
+                          "id": "IqdVg",
                           "name": "大小属性名",
                           "fill": "$muted",
                           "textGrowth": "fixed-width",
@@ -47949,7 +48038,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "rHKZS",
+                          "id": "N53AZ",
                           "name": "大小属性值",
                           "fill": "$body",
                           "textGrowth": "fixed-width",
@@ -47964,14 +48053,14 @@
                     },
                     {
                       "type": "frame",
-                      "id": "z6DAN",
+                      "id": "iI9Tb",
                       "name": "对象属性 更新于",
                       "width": "fill_container",
                       "gap": 8,
                       "children": [
                         {
                           "type": "text",
-                          "id": "XQirP",
+                          "id": "ZQN6v",
                           "name": "更新于属性名",
                           "fill": "$muted",
                           "textGrowth": "fixed-width",
@@ -47983,7 +48072,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "ZKp17",
+                          "id": "VansT",
                           "name": "更新于属性值",
                           "fill": "$body",
                           "textGrowth": "fixed-width",
@@ -47998,14 +48087,14 @@
                     },
                     {
                       "type": "frame",
-                      "id": "vzUni",
+                      "id": "SPlks",
                       "name": "对象属性 存储类型",
                       "width": "fill_container",
                       "gap": 8,
                       "children": [
                         {
                           "type": "text",
-                          "id": "YoY8a",
+                          "id": "YicA4",
                           "name": "存储类型属性名",
                           "fill": "$muted",
                           "textGrowth": "fixed-width",
@@ -48017,7 +48106,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "xbWx0",
+                          "id": "kpoby",
                           "name": "存储类型属性值",
                           "fill": "$body",
                           "textGrowth": "fixed-width",
@@ -48032,14 +48121,14 @@
                     },
                     {
                       "type": "frame",
-                      "id": "p3PFX",
+                      "id": "IRCqP",
                       "name": "对象属性 访问权限",
                       "width": "fill_container",
                       "gap": 8,
                       "children": [
                         {
                           "type": "text",
-                          "id": "mJIQQ",
+                          "id": "xyg6b",
                           "name": "访问权限属性名",
                           "fill": "$muted",
                           "textGrowth": "fixed-width",
@@ -48051,7 +48140,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "J6Lll",
+                          "id": "wnOvH",
                           "name": "访问权限属性值",
                           "fill": "$body",
                           "textGrowth": "fixed-width",
@@ -48066,14 +48155,14 @@
                     },
                     {
                       "type": "frame",
-                      "id": "BGIgF",
+                      "id": "ATrFh",
                       "name": "对象属性 Content-Type",
                       "width": "fill_container",
                       "gap": 8,
                       "children": [
                         {
                           "type": "text",
-                          "id": "Rl82X",
+                          "id": "b2tMb",
                           "name": "Content-Type属性名",
                           "fill": "$muted",
                           "textGrowth": "fixed-width",
@@ -48085,7 +48174,7 @@
                         },
                         {
                           "type": "text",
-                          "id": "q2lEB",
+                          "id": "iN2MO",
                           "name": "Content-Type属性值",
                           "fill": "$body",
                           "textGrowth": "fixed-width",
@@ -48102,7 +48191,7 @@
                 },
                 {
                   "type": "frame",
-                  "id": "JO7TZ",
+                  "id": "Z3Mukc",
                   "name": "对象Key信息",
                   "width": "fill_container",
                   "stroke": "$line-soft",
@@ -48120,14 +48209,14 @@
                   "children": [
                     {
                       "type": "frame",
-                      "id": "bOSHJ",
+                      "id": "UOwsP",
                       "name": "对象Key标签及复制",
                       "width": "fill_container",
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
-                          "id": "EoHyM",
+                          "id": "S2DEv",
                           "name": "对象Key标题",
                           "fill": "$muted",
                           "textGrowth": "fixed-width",
@@ -48139,7 +48228,7 @@
                         },
                         {
                           "type": "icon",
-                          "id": "v7Y3YT",
+                          "id": "HOsnD",
                           "name": "复制对象Key",
                           "width": 13,
                           "height": 13,
@@ -48151,7 +48240,7 @@
                     },
                     {
                       "type": "text",
-                      "id": "VdZ8W",
+                      "id": "J4NWd5",
                       "name": "对象完整Key",
                       "fill": "$body",
                       "textGrowth": "fixed-width",
@@ -48166,20 +48255,20 @@
                 },
                 {
                   "type": "frame",
-                  "id": "L5NUzt",
+                  "id": "ViD83",
                   "name": "对象详情底部间隔",
                   "width": "fill_container",
                   "height": "fill_container"
                 },
                 {
                   "type": "frame",
-                  "id": "J80RKP",
+                  "id": "hDDox",
                   "name": "对象详情操作",
                   "width": "fill_container",
                   "gap": 8,
                   "children": [
                     {
-                      "id": "M3swYp",
+                      "id": "z1VOmR",
                       "type": "ref",
                       "ref": "Q2r8z",
                       "name": "下载当前对象",
@@ -48200,7 +48289,7 @@
                       }
                     },
                     {
-                      "id": "sc78w",
+                      "id": "x7blCV",
                       "type": "ref",
                       "ref": "WH5j4",
                       "name": "当前对象更多操作",
@@ -48515,7 +48604,7 @@
               "fill": "$body",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "优先读取对象已有的内容类型与扩展名。推断只给出默认选择；当前预览类型仅包含图片。",
+              "content": "扩展名或已有 Content-Type 识别为图片时，选中就直接预览。仅无法识别类型的对象才打开类型选择弹窗。",
               "lineHeight": 1.6,
               "fontFamily": "Inter",
               "fontSize": 12,
@@ -48549,7 +48638,7 @@
               "fill": "$body",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "点击入口打开弹窗；点击“确认并预览”后才下载内容。重试需要再次确认，取消或关闭弹窗不读取对象内容。",
+              "content": "自动图片预览在预览区域保留流量费提示；未知类型手动预览时在弹窗确认费用。已识别图片重试不选类型，未知类型重试再次确认。",
               "lineHeight": 1.6,
               "fontFamily": "Inter",
               "fontSize": 12,
@@ -48617,7 +48706,7 @@
               "fill": "$body",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "切换对象或关闭详情会取消当前读取；旧对象的返回结果不能显示在新对象上。",
+              "content": "切换对象或收起详情会取消当前读取；收起保留所选行，此后选择不读取详情或内容。重新展开读取当前对象。旧结果不覆盖新对象。",
               "lineHeight": 1.6,
               "fontFamily": "Inter",
               "fontSize": 12,
@@ -48666,7 +48755,7 @@
       "id": "aK9PU",
       "x": 2428,
       "y": 15946,
-      "name": "05 / 强行预览 · 06 费用确认 · Dark",
+      "name": "05 / 强行预览 · 06 未知类型手动选择 · Dark",
       "theme": {
         "mode": "dark"
       },
@@ -48694,7 +48783,7 @@
               "id": "TVKWQ",
               "name": "步骤名称",
               "fill": "$ink",
-              "content": "06 / 深色主题 · 流量费用确认",
+              "content": "06 / 未知类型 · 手动选择 · Dark",
               "fontFamily": "Inter",
               "fontSize": 17,
               "fontWeight": "600"
@@ -49301,7 +49390,7 @@
                   "fill": "$body",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "已根据对象信息推断为图片，可直接确认预览。",
+                  "content": "无法根据对象信息推断类型，请手动选择。",
                   "lineHeight": 1.6,
                   "fontFamily": "Inter",
                   "fontSize": 12,
@@ -49356,8 +49445,8 @@
                           "type": "text",
                           "id": "eLUwM",
                           "name": "类型值",
-                          "fill": "$ink",
-                          "content": "图片",
+                          "fill": "$muted",
+                          "content": "请选择预览类型",
                           "fontFamily": "Inter",
                           "fontSize": 12,
                           "fontWeight": "normal"
@@ -49508,6 +49597,7 @@
                   "fill": "$action-fill",
                   "stroke": "#00000000",
                   "strokeWidth": 1,
+                  "opacity": 0.45,
                   "descendants": {
                     "NpJY2": {
                       "content": "确认并预览",
@@ -49664,7 +49754,7 @@
                   "fill": "$body",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "An image type was inferred from the object metadata.",
+                  "content": "The preview type could not be inferred. Please select one.",
                   "lineHeight": 1.6,
                   "fontFamily": "Inter",
                   "fontSize": 12,
@@ -49719,8 +49809,8 @@
                           "type": "text",
                           "id": "XWc25",
                           "name": "类型值",
-                          "fill": "$ink",
-                          "content": "Image",
+                          "fill": "$muted",
+                          "content": "Select a preview type",
                           "fontFamily": "Inter",
                           "fontSize": 12,
                           "fontWeight": "normal"
@@ -49871,6 +49961,7 @@
                   "fill": "$action-fill",
                   "stroke": "#00000000",
                   "strokeWidth": 1,
+                  "opacity": 0.45,
                   "descendants": {
                     "NpJY2": {
                       "content": "Confirm and preview",
@@ -50323,6 +50414,340 @@
           "fontFamily": "Inter",
           "fontSize": 13,
           "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "deso9",
+      "x": 60,
+      "y": 17632,
+      "name": "05 / 对象详情 · 09 临时收起 · Light",
+      "theme": {
+        "mode": "light"
+      },
+      "clip": true,
+      "width": 1120,
+      "height": 840,
+      "fill": "$surface",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "qGXTg",
+          "name": "流程步骤标题",
+          "width": "fill_container",
+          "height": 58,
+          "fill": "$app-bg",
+          "padding": [
+            0,
+            20
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "qn85U",
+              "name": "步骤名称",
+              "fill": "$ink",
+              "content": "09 / 暂时收起详情 · 列表全宽 · 保留所选对象",
+              "fontFamily": "Inter",
+              "fontSize": 17,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "id": "gi1Zb",
+          "type": "ref",
+          "ref": "vGYHU",
+          "name": "列表全宽 · 详情已收起",
+          "width": "fill_container",
+          "height": "fill_container",
+          "descendants": {
+            "nWf1K": {
+              "fill": "$surface"
+            },
+            "sHAIY": {
+              "content": "sample-image.png"
+            },
+            "T12Ay": {
+              "content": "839 KB"
+            },
+            "pALQy": {
+              "enabled": false
+            },
+            "zGOD9": {
+              "enabled": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "XmRpR",
+      "x": 1244,
+      "y": 17632,
+      "name": "05 / 对象详情 · 10 拖动与收起交互说明",
+      "theme": {
+        "mode": "light"
+      },
+      "clip": true,
+      "width": 2304,
+      "height": 840,
+      "fill": "$surface",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": 36,
+      "children": [
+        {
+          "type": "text",
+          "id": "FiArw",
+          "name": "详情交互标题",
+          "fill": "$ink",
+          "content": "10 / 对象详情 · Split 交互约定",
+          "fontFamily": "Inter",
+          "fontSize": 24,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "Jp0XO",
+          "name": "选中图片约定",
+          "width": "fill_container",
+          "gap": 28,
+          "children": [
+            {
+              "type": "text",
+              "id": "tvaF7",
+              "name": "选中图片标签",
+              "fill": "$ink",
+              "textGrowth": "fixed-width",
+              "width": 150,
+              "content": "选中图片",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "yqk2f",
+              "name": "选中图片说明",
+              "fill": "$body",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "识别为 PNG、JPEG、BMP、GIF、TIFF 或 ICO 后，右侧直接加载图片。无需点击“强行预览”，无需类型选择弹窗。",
+              "lineHeight": 1.6,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "j4IaeO",
+          "name": "未知类型约定",
+          "width": "fill_container",
+          "gap": 28,
+          "children": [
+            {
+              "type": "text",
+              "id": "ClKjf",
+              "name": "未知类型标签",
+              "fill": "$ink",
+              "textGrowth": "fixed-width",
+              "width": 150,
+              "content": "未知类型",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "UBl3K",
+              "name": "未知类型说明",
+              "fill": "$body",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "“强行预览”仅用于无法识别的对象。先选择“图片”并确认流量费用，然后下载解码；取消弹窗不下载。",
+              "lineHeight": 1.6,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "G3aJ7",
+          "name": "横向拖动约定",
+          "width": "fill_container",
+          "gap": 28,
+          "children": [
+            {
+              "type": "text",
+              "id": "The4o",
+              "name": "横向拖动标签",
+              "fill": "$ink",
+              "textGrowth": "fixed-width",
+              "width": 150,
+              "content": "横向拖动",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "uSeUK",
+              "name": "横向拖动说明",
+              "fill": "$body",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "拖动列表和详情之间的竖向分隔条，调整详情宽度。默认 278 px；最小 220 px，最大 560 px，窄窗口动态限制以保留列表空间。",
+              "lineHeight": 1.6,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "v2DhPl",
+          "name": "临时收起约定",
+          "width": "fill_container",
+          "gap": 28,
+          "children": [
+            {
+              "type": "text",
+              "id": "bhCGt",
+              "name": "临时收起标签",
+              "fill": "$ink",
+              "textGrowth": "fixed-width",
+              "width": 150,
+              "content": "临时收起",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "OpAEr",
+              "name": "临时收起说明",
+              "fill": "$body",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "详情标题栏的 × 和列表工具栏的面板按钮均可收起详情。收起释放全部面板宽度，保留选中的对象与列表位置。",
+              "lineHeight": 1.6,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "VY5vW",
+          "name": "重新展开约定",
+          "width": "fill_container",
+          "gap": 28,
+          "children": [
+            {
+              "type": "text",
+              "id": "AhxHd",
+              "name": "重新展开标签",
+              "fill": "$ink",
+              "textGrowth": "fixed-width",
+              "width": 150,
+              "content": "重新展开",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "zc8Oj",
+              "name": "重新展开说明",
+              "fill": "$body",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "列表工具栏的面板按钮重新打开详情，并恢复上次拖动宽度。收起期间选择对象不读详情或正文；展开后读取当前对象。",
+              "lineHeight": 1.6,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "L3o6kK",
+          "name": "键盘与本地化约定",
+          "width": "fill_container",
+          "gap": 28,
+          "children": [
+            {
+              "type": "text",
+              "id": "bXs4w",
+              "name": "键盘与本地化标签",
+              "fill": "$ink",
+              "textGrowth": "fixed-width",
+              "width": 150,
+              "content": "键盘与本地化",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "YFSJ7",
+              "name": "键盘与本地化说明",
+              "fill": "$body",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "分隔条可聚焦，左右方向键调整宽度。按钮具有“展开对象详情 / 收起对象详情”提示；英文为 Show object details / Hide object details。",
+              "lineHeight": 1.6,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "o7RwZ",
+          "name": "状态范围约定",
+          "width": "fill_container",
+          "gap": 28,
+          "children": [
+            {
+              "type": "text",
+              "id": "DX5zA",
+              "name": "状态范围标签",
+              "fill": "$ink",
+              "textGrowth": "fixed-width",
+              "width": 150,
+              "content": "状态范围",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "TW98F",
+              "name": "状态范围说明",
+              "fill": "$body",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "宽度和显示状态只保留在当前页签，不写入设置。新页签默认展开。切换、收起、刷新和关闭取消预览并丢弃旧结果。",
+              "lineHeight": 1.6,
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "normal"
+            }
+          ]
         }
       ]
     }

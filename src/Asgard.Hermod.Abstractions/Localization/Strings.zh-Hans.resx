@@ -2153,4 +2153,8 @@
   <data name="ForcePreviewFailureWithTraffic" xml:space="preserve"><value>{0} 已读取的流量仍可能计费。</value></data>
   <data name="ForcePreviewImageReady" xml:space="preserve"><value>图片预览</value></data>
   <data name="ForcePreviewEnlarge" xml:space="preserve"><value>放大图片预览</value></data>
+  <data name="ForcePreviewRetryImage" xml:space="preserve"><value>重新加载图片</value></data>
+  <data name="HideObjectDetails" xml:space="preserve"><value>收起对象详情</value></data>
+  <data name="ShowObjectDetails" xml:space="preserve"><value>展开对象详情</value></data>
+  <data name="ResizeObjectDetails" xml:space="preserve"><value>向左或向右拖动以调整对象详情宽度；聚焦后可使用左右方向键。</value></data>
 </root>

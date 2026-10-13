@@ -5,6 +5,20 @@ namespace Asgard.Hermod.ObjectStorage.UI.ViewModels;
 /// <summary>读取并展示受限文本预览，当前选择变化后忽略旧对象的返回。</summary>
 public sealed partial class ObjectStorageWorkspaceViewModel
 {
+    /// <summary>详情显示状态只存在于当前页签，不写入设置或影响所选对象。</summary>
+    public bool IsDetailsOpen { get; private set; } = true;
+    /// <summary>工具栏按钮明确说明下一次展开或收起行为。</summary>
+    public string DetailsToggleLabel => Text.Get(IsDetailsOpen ? "HideObjectDetails" : "ShowObjectDetails");
+
+    /// <summary>收起保留所选行并取消预览；重新展开时读取当前对象详情。</summary>
+    public Task SetDetailsOpenAsync(bool open, CancellationToken cancellationToken = default)
+    {
+        if (IsClosed || IsDetailsOpen == open) return Task.CompletedTask;
+        IsDetailsOpen = open;
+        OnPropertyChanged(nameof(IsDetailsOpen)); OnPropertyChanged(nameof(DetailsToggleLabel));
+        return LoadDetailsAsync(SelectedEntry, cancellationToken);
+    }
+
     /// <summary>当前详情对象的名称。</summary>
     public string DetailName => SelectedEntry?.Name ?? "";
     /// <summary>详情类型图标。</summary>
@@ -59,7 +73,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
         _detailOperation?.Cancel();
         int version = ++_detailVersion;
         Details = null; DetailError = ""; IsDetailLoading = false;
-        if (IsClosed || entry is null || entry.IsDirectory || SelectedBucket is not { } bucket) return;
+        if (IsClosed || !IsDetailsOpen || entry is null || entry.IsDirectory || SelectedBucket is not { } bucket) return;
         using var operation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token, cancellationToken);
         _detailOperation = operation;
         IsDetailLoading = true;
@@ -70,6 +84,8 @@ public sealed partial class ObjectStorageWorkspaceViewModel
             {
                 entry.ApplyContentType(details.ContentType);
                 Details = details;
+                IsDetailLoading = false;
+                await PreviewRecognizedImageAsync(entry, bucket, details, operation.Token);
             }
         }
         catch (OperationCanceledException) when (operation.IsCancellationRequested) { }
@@ -90,7 +106,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
         foreach (string property in new[] { nameof(DetailName), nameof(DetailIcon), nameof(DetailIconBrushKey), nameof(HasDetailSelection), nameof(HasFileSelection),
             nameof(DetailSize), nameof(DetailModified), nameof(DetailStorageClass), nameof(DetailAccess), nameof(DetailContentType),
             nameof(PreviewText), nameof(HasTextPreview), nameof(PreviewMessage), nameof(PreviewFormat),
-            nameof(ShowForcePreviewActions), nameof(ShowForcePreviewIntroduction) }) OnPropertyChanged(property);
+            nameof(ShowForcePreviewActions), nameof(ShowForcePreviewIntroduction), nameof(ForcePreviewLabel) }) OnPropertyChanged(property);
         RefreshCommands();
     }
 }

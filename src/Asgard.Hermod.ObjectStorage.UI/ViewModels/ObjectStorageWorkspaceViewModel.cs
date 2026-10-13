@@ -61,7 +61,8 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         CopyKeyCommand = new RelayCommand(parameter => CopyText(Target(parameter)?.Key), parameter => !IsClosed && Target(parameter) is not null);
         CopyPreviewCommand = new RelayCommand(_ => CopyText(PreviewText), _ => !IsClosed && HasTextPreview);
         ClearSelectionCommand = new RelayCommand(_ => { foreach (var entry in Entries) entry.IsChecked = false; });
-        CloseDetailsCommand = new RelayCommand(_ => SelectedEntry = null);
+        CloseDetailsCommand = new RelayCommand(_ => _ = SetDetailsOpenAsync(false), _ => !IsClosed && IsDetailsOpen);
+        ToggleDetailsCommand = new AsyncRelayCommand(_ => SetDetailsOpenAsync(!IsDetailsOpen), _ => !IsClosed);
         ClearErrorCommand = new RelayCommand(_ => ActionError = "");
         ClearSearchCommand = new AsyncRelayCommand(_ => SearchAsync(""), _ => !IsClosed && SearchText.Length > 0);
         EditConnectionCommand = new AsyncRelayCommand(_ => EditConnectionAsync(), _ => !IsClosed && !_dialogOpen && !IsImagePreviewLoading && _editor is not null && !Transfers.Any(task => task.IsRunning));
@@ -362,6 +363,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     {
         foreach (var command in new[] { RefreshCommand, LoadMoreCommand, UploadCommand, NewFolderCommand, DownloadCommand, OpenFileCommand, PreviewFileCommand, BatchDownloadCommand, DeleteCommand, TemporaryLinkCommand, EditConnectionCommand, ClearSearchCommand }) command.NotifyCanExecuteChanged();
         CopyKeyCommand.NotifyCanExecuteChanged(); CopyPreviewCommand.NotifyCanExecuteChanged();
+        CloseDetailsCommand.NotifyCanExecuteChanged(); ToggleDetailsCommand.NotifyCanExecuteChanged();
         RefreshScanCommands();
         ForcePreviewCommand?.NotifyCanExecuteChanged();
         CancelImagePreviewCommand?.NotifyCanExecuteChanged();

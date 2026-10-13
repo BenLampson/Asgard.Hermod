@@ -2153,4 +2153,8 @@
   <data name="ForcePreviewFailureWithTraffic" xml:space="preserve"><value>{0} Traffic already used may still be charged.</value></data>
   <data name="ForcePreviewImageReady" xml:space="preserve"><value>Image preview</value></data>
   <data name="ForcePreviewEnlarge" xml:space="preserve"><value>Enlarge image preview</value></data>
+  <data name="ForcePreviewRetryImage" xml:space="preserve"><value>Retry image preview</value></data>
+  <data name="HideObjectDetails" xml:space="preserve"><value>Hide object details</value></data>
+  <data name="ShowObjectDetails" xml:space="preserve"><value>Show object details</value></data>
+  <data name="ResizeObjectDetails" xml:space="preserve"><value>Drag left or right to resize object details; use the Left and Right arrow keys when focused.</value></data>
 </root>

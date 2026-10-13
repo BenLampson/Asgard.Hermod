@@ -5,7 +5,7 @@ namespace Asgard.Hermod.ObjectStorage.UI.Views.Pages;
 /// <summary>只读对象预览与元数据，更多操作统一使用页面命令。</summary>
 public partial class ObjectStorageDetailsView : UserControl
 {
-    /// <summary>创建固定宽度的对象详情面板。</summary>
+    /// <summary>创建可在分隔布局中调整宽度的对象详情面板。</summary>
     public ObjectStorageDetailsView() => InitializeComponent();
 
     /// <summary>放大复用已经解码的内存图片，不再次下载或产生预览流量。</summary>

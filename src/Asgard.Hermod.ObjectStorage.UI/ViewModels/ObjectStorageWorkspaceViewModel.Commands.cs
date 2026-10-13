@@ -24,8 +24,10 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     public RelayCommand CopyPreviewCommand { get; }
     /// <summary>清空当前页的勾选。</summary>
     public RelayCommand ClearSelectionCommand { get; }
-    /// <summary>关闭当前对象详情。</summary>
+    /// <summary>暂时收起对象详情，保留所选对象。</summary>
     public RelayCommand CloseDetailsCommand { get; }
+    /// <summary>从列表工具栏展开或收起详情。</summary>
+    public AsyncRelayCommand ToggleDetailsCommand { get; }
     /// <summary>关闭操作失败提示。</summary>
     public RelayCommand ClearErrorCommand { get; }
     /// <summary>清空当前目录搜索。</summary>
