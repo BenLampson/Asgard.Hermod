@@ -40,7 +40,9 @@ verify its screen after changing references; stale override paths can be discard
 
 Region 08C covers SSH configuration editing, terminal numeric input and the
 extensible session tools entry. Editing reuses the shared wizard, preserves the
-current session and applies saved changes to the next connection. The tools
+current session and applies saved changes to the next connection.
+Configuration editing stays in the Content toolbar; the shared instance list
+does not gain an SSH-specific context menu. The tools
 popover has a shared list slot, filtering, light/dark examples and a compact
 toolbar state. Terminal focus and keyboard rules are design acceptance criteria;
 the numeric-input runtime bug still needs a separate implementation fix.
