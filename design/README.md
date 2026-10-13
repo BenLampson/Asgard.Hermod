@@ -2,7 +2,11 @@
 
 `Hermod.pen` is the single editable Pencil source. Keep related screens in the
 numbered regions and save edits to this file instead of creating alternate `.pen`
-copies. Exported brand assets and the export script are separate project assets.
+copies. Screenshots, previews, and rendered exports are local review artifacts;
+Git ignores image files under `design/`, including `previews/` and `exports/`.
+Attach screenshots to pull requests instead of committing them. Runtime brand
+and provider assets remain under `src/Asgard.Hermod.UI/Assets/`; the brand export
+script is versioned separately.
 
 The canvas directory points to seven regions:
 
