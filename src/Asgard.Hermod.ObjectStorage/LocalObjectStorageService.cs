@@ -3,7 +3,7 @@ using System.Text;
 namespace Asgard.Hermod.ObjectStorage;
 
 /// <summary>按已保存实例建立资源连接，共用文件传输、预览、目录与明确删除范围策略。</summary>
-public sealed class LocalObjectStorageService : IObjectStorageService
+public sealed partial class LocalObjectStorageService : IObjectStorageService
 {
     /// <summary>只有业务服务按实例标识恢复凭据，窗口不持有明文参数。</summary>
     private readonly IInstanceConfigurationService _configuration;

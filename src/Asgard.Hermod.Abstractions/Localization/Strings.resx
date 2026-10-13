@@ -1886,4 +1886,37 @@
   <data xml:space="preserve" name="StorageSessionProtectionHint">
     <value>Downloads, previews and files opened externally during this Hermod session are protected. External caches can be cleaned after restarting Hermod, once other programs release them.</value>
   </data>
+  <data xml:space="preserve" name="GetModificationTimesAndSort">
+    <value>Get modification times and sort</value>
+  </data>
+  <data xml:space="preserve" name="DirectoryScanScope">
+    <value>Current directory and all subdirectories · Scan to obtain folder modification times</value>
+  </data>
+  <data xml:space="preserve" name="DirectoryScanProgress">
+    <value>Scanned {0:N0} files</value>
+  </data>
+  <data xml:space="preserve" name="DirectoryScanLarge">
+    <value>Scanned {0:N0} files · There are many files; continuing may take a while.</value>
+  </data>
+  <data xml:space="preserve" name="DirectoryScanCompleted">
+    <value>Scan complete. Sorted by the latest file modification time in each directory.</value>
+  </data>
+  <data xml:space="preserve" name="DirectoryScanCanceled">
+    <value>Scan canceled. The previous list order has been kept.</value>
+  </data>
+  <data xml:space="preserve" name="DirectoryScanFailed">
+    <value>Could not scan modification times. The previous list order has been kept. Check your connection and permissions, then try again.</value>
+  </data>
+  <data xml:space="preserve" name="LoadedFoldersFiles">
+    <value>Loaded: {0:N0} folders · {1:N0} files</value>
+  </data>
+  <data xml:space="preserve" name="DirectoryLatestModified">
+    <value>Latest in directory</value>
+  </data>
+  <data xml:space="preserve" name="DirectoryModifiedMeaning">
+    <value>Folder dates show the latest modification time among files in the folder and all its subdirectories. Empty folders have no file date.</value>
+  </data>
+  <data xml:space="preserve" name="Continue">
+    <value>Continue</value>
+  </data>
 </root>

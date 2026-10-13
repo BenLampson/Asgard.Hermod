@@ -27,7 +27,7 @@
         </Style>
     </UserControl.Resources>
     <Grid Margin="24,22,22,0">
-        <Grid.RowDefinitions><RowDefinition Height="32" /><RowDefinition Height="18" /><RowDefinition Height="32" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="46" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+        <Grid.RowDefinitions><RowDefinition Height="32" /><RowDefinition Height="18" /><RowDefinition Height="32" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="46" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
         <Grid>
             <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="8" /><ColumnDefinition Width="*" /><ColumnDefinition Width="32" /></Grid.ColumnDefinitions>
             <controls:SearchableSelect x:Name="BucketSelector" ItemsSource="{Binding Buckets}" SelectedItem="{Binding SelectedBucket, Mode=OneWay}"
@@ -68,18 +68,55 @@
                 </Button>
             </Grid>
         </Grid>
-        <Border Grid.Row="3" Style="{StaticResource OssError}" Margin="0,12,0,0">
+        <StackPanel Grid.Row="3" Margin="0,12,0,0">
+            <Grid MinHeight="32">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                <Button x:Name="ScanDirectoryButton" Command="{Binding ScanDirectoryCommand}" Height="32" Padding="14,0" ToolTip="{loc:Loc DirectoryScanScope}" AutomationProperties.Name="{loc:Loc GetModificationTimesAndSort}">
+                    <StackPanel Orientation="Horizontal"><controls:IconView Kind="arrow-down-wide-narrow" Width="16" Height="16" Margin="0,0,8,0" Foreground="{DynamicResource AccentBrush}" /><TextBlock Text="{loc:Loc GetModificationTimesAndSort}" FontSize="11" FontWeight="SemiBold" /></StackPanel>
+                </Button>
+                <TextBlock Grid.Column="1" Text="{loc:Loc DirectoryScanScope}" ToolTip="{loc:Loc DirectoryScanScope}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="12,0,0,0" TextTrimming="CharacterEllipsis" />
+            </Grid>
+            <Grid x:Name="DirectoryScanStatusBar" MinHeight="32" Margin="0,8,0,0" Visibility="{Binding HasScanStatus, Converter={StaticResource OssVisible}}">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="23" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                <Grid.Resources>
+                    <Style x:Key="ScanText" TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsScanSuccessful}" Value="True"><Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" /></DataTrigger>
+                            <DataTrigger Binding="{Binding IsScanning}" Value="True"><Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" /></DataTrigger>
+                            <DataTrigger Binding="{Binding IsScanPaused}" Value="True"><Setter Property="Foreground" Value="{DynamicResource WarningBrush}" /></DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Resources>
+                <controls:IconView Width="15" Height="15" VerticalAlignment="Center">
+                    <controls:IconView.Style><Style TargetType="controls:IconView">
+                        <Setter Property="Kind" Value="info" /><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsScanSuccessful}" Value="True"><Setter Property="Kind" Value="circle-check" /><Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" /></DataTrigger>
+                            <DataTrigger Binding="{Binding IsScanning}" Value="True"><Setter Property="Kind" Value="loader-circle" /><Setter Property="Foreground" Value="{DynamicResource AccentBrush}" /></DataTrigger>
+                            <DataTrigger Binding="{Binding IsScanPaused}" Value="True"><Setter Property="Kind" Value="triangle-alert" /><Setter Property="Foreground" Value="{DynamicResource WarningBrush}" /></DataTrigger>
+                        </Style.Triggers>
+                    </Style></controls:IconView.Style>
+                </controls:IconView>
+                <TextBlock Grid.Column="1" Text="{Binding ScanStatus}" Style="{StaticResource ScanText}" FontSize="11" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,4,8,4" AutomationProperties.LiveSetting="Polite" />
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Content="{loc:Loc Cancel}" Command="{Binding CancelDirectoryScanCommand}" Height="28" MinHeight="28" Padding="14,0" Visibility="{Binding IsScanning, Converter={StaticResource OssVisible}}" />
+                    <Button Content="{loc:Loc Continue}" Command="{Binding ContinueDirectoryScanCommand}" Style="{StaticResource PrimaryButton}" Height="28" MinHeight="28" Padding="14,0" Margin="8,0,0,0" Visibility="{Binding IsScanPaused, Converter={StaticResource OssVisible}}" />
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+        <Border Grid.Row="4" Style="{StaticResource OssError}" Margin="0,12,0,0">
             <DockPanel><Button DockPanel.Dock="Right" Command="{Binding ClearErrorCommand}" Style="{StaticResource IconButton}" ToolTip="{loc:Loc DismissNotification}"><controls:IconView Kind="x" Width="12" Height="12" /></Button>
                 <TextBlock Text="{Binding ActionError}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" /></DockPanel>
         </Border>
-        <Border Grid.Row="4" Background="{DynamicResource AccentWeakBrush}" Padding="10,8" CornerRadius="5" Margin="0,12,0,0" Visibility="{Binding HasCheckedEntries, Converter={StaticResource OssVisible}}">
+        <Border Grid.Row="5" Background="{DynamicResource AccentWeakBrush}" Padding="10,8" CornerRadius="5" Margin="0,12,0,0" Visibility="{Binding HasCheckedEntries, Converter={StaticResource OssVisible}}">
             <DockPanel><StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                 <Button Content="{loc:Loc Download}" Command="{Binding BatchDownloadCommand}" Height="32" Margin="0,0,8,0" />
                 <Button Content="{loc:Loc Delete}" Command="{Binding DeleteCommand}" Height="32" Foreground="{DynamicResource DangerBrush}" Margin="0,0,6,0" />
                 <Button Command="{Binding ClearSelectionCommand}" Style="{StaticResource IconButton}" ToolTip="{loc:Loc ClearObjectSelection}"><controls:IconView Kind="x" Width="14" Height="14" /></Button>
             </StackPanel><TextBlock Text="{Binding CheckedCount, StringFormat={loc:Loc ObjectsSelected}}" VerticalAlignment="Center" /></DockPanel>
         </Border>
-        <Grid Grid.Row="5" Margin="0,18,0,0">
+        <Grid Grid.Row="6" Margin="0,18,0,0">
             <Grid.RowDefinitions><RowDefinition Height="36" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
             <Border Background="{DynamicResource AppBackgroundBrush}" CornerRadius="5" Padding="10,0" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,0,0,1">
                 <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="28" /><ColumnDefinition Width="*" /><ColumnDefinition Width="84" /><ColumnDefinition Width="{Binding StorageColumnWidth, RelativeSource={RelativeSource AncestorType=pages:ObjectStorageListView}}" /><ColumnDefinition Width="{Binding ModifiedColumnWidth, RelativeSource={RelativeSource AncestorType=pages:ObjectStorageListView}}" /><ColumnDefinition Width="16" /></Grid.ColumnDefinitions>
@@ -87,7 +124,7 @@
                     <TextBlock Grid.Column="1" Text="{loc:Loc Name}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
                     <TextBlock Grid.Column="2" Text="{loc:Loc Size}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
                     <TextBlock Grid.Column="3" Text="{loc:Loc StorageClass}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Visibility="{Binding StorageColumnVisibility, RelativeSource={RelativeSource AncestorType=pages:ObjectStorageListView}}" />
-                    <TextBlock Grid.Column="4" Text="{loc:Loc Modified}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Visibility="{Binding ModifiedColumnVisibility, RelativeSource={RelativeSource AncestorType=pages:ObjectStorageListView}}" />
+                    <TextBlock Grid.Column="4" Text="{Binding ModifiedHeading}" ToolTip="{loc:Loc DirectoryModifiedMeaning}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Visibility="{Binding ModifiedColumnVisibility, RelativeSource={RelativeSource AncestorType=pages:ObjectStorageListView}}" />
                 </Grid>
             </Border>
             <ListBox Grid.Row="1" x:Name="ObjectRows" ItemsSource="{Binding Entries}" SelectedItem="{Binding SelectedEntry, Mode=TwoWay}"
@@ -133,12 +170,12 @@
                 <TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding ShowState}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger><DataTrigger Binding="{Binding ReadError}" Value=""><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></TextBlock.Style>
             </TextBlock>
         </Grid>
-        <Border Grid.Row="6" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,1,0,0">
+        <Border Grid.Row="7" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,1,0,0">
             <DockPanel><StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBlock Text="{loc:Loc 100ItemsPerBatch}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="0,0,14,0" />
                 <Button Content="{loc:Loc NextBatch}" Command="{Binding LoadMoreCommand}" Height="32" Padding="14,0" />
             </StackPanel><TextBlock Text="{Binding ListSummary}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" /></DockPanel>
         </Border>
-        <pages:ObjectStorageTransfersView Grid.Row="7" />
+        <pages:ObjectStorageTransfersView Grid.Row="8" />
     </Grid>
 </UserControl>

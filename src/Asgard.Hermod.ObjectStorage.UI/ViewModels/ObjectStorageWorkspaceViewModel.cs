@@ -47,7 +47,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         _files = files;
         _temporaryFiles = temporaryFiles;
         RefreshCommand = new AsyncRelayCommand(_ => RefreshAsync(), _ => !IsClosed);
-        LoadMoreCommand = new AsyncRelayCommand(_ => LoadPageAsync(true), _ => !IsClosed && !IsLoading && _nextToken is not null);
+        LoadMoreCommand = new AsyncRelayCommand(_ => LoadPageAsync(true), _ => !IsClosed && !IsLoading && !IsScanning && _nextToken is not null);
         UploadCommand = new AsyncRelayCommand(_ => SelectUploadAsync(), _ => CanOperate);
         NewFolderCommand = new AsyncRelayCommand(_ => CreateFolderAsync(), _ => CanOperate);
         DownloadCommand = new AsyncRelayCommand(DownloadAsync, parameter => CanOperate && Target(parameter) is not null);
@@ -65,6 +65,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         ClearErrorCommand = new RelayCommand(_ => ActionError = "");
         ClearSearchCommand = new AsyncRelayCommand(_ => SearchAsync(""), _ => !IsClosed && SearchText.Length > 0);
         EditConnectionCommand = new AsyncRelayCommand(_ => EditConnectionAsync(), _ => !IsClosed && !_dialogOpen && _editor is not null && !Transfers.Any(task => task.IsRunning));
+        InitializeDirectoryScanCommands();
     }
 
     /// <summary>当前目录完成导航或读取，通知页面订阅者。</summary>
@@ -139,7 +140,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         set { foreach (var entry in Entries) entry.IsChecked = value == true; NotifyChecked(); }
     }
     /// <summary>本页已经读取的文件夹与对象数量。</summary>
-    public string ListSummary => Text.Format("FoldersObjects", Entries.Count(entry => entry.IsDirectory), Entries.Count(entry => !entry.IsDirectory));
+    public string ListSummary => Text.Format("LoadedFoldersFiles", Entries.Count(entry => entry.IsDirectory), Entries.Count(entry => !entry.IsDirectory));
     /// <summary>当前查询仍有下一批，宿主不能把当前行当成目录的完整清单。</summary>
     public bool HasMore => _nextToken is not null;
     /// <summary>失败时仍保留恢复入口；有对象时错误作为行上方提示。</summary>
@@ -163,7 +164,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     /// <summary>编辑连接不能静默改变在途任务的凭据和目标。</summary>
     public string EditConnectionHint => Transfers.Any(task => task.IsRunning) ? Text.Get("CompleteOrCancelTransfersBeforeEditingTheConnection") : Text.Get("EditConnection");
     /// <summary>当前操作允许进入选择或确认窗体，浏览导航无需等待这些操作。</summary>
-    private bool CanOperate => !IsClosed && !_dialogOpen && SelectedBucket is not null;
+    private bool CanOperate => !IsClosed && !_dialogOpen && !IsScanning && SelectedBucket is not null;
 
     /// <summary>首次激活懒加载，重复调用复用同一读取任务。</summary>
     public override Task InitializeAsync(CancellationToken cancellationToken = default)
@@ -177,6 +178,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     public async Task RefreshBucketsAsync(CancellationToken cancellationToken = default)
     {
         if (IsClosed) return;
+        ResetDirectoryScan();
         _bucketOperation?.Cancel(); _listOperation?.Cancel(); _detailOperation?.Cancel(); _searchOperation?.Cancel();
         ++_bucketVersion; ++_navigationVersion;
         IsInitialized = false; _hasConnected = false;
@@ -222,6 +224,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     {
         ArgumentNullException.ThrowIfNull(bucket);
         if (IsClosed) return;
+        ResetDirectoryScan();
         _searchOperation?.Cancel();
         _listOperation?.Cancel();
         _detailOperation?.Cancel();
@@ -242,6 +245,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     public async Task SearchAsync(string search, CancellationToken cancellationToken = default)
     {
         if (IsClosed || SelectedBucket is null) return;
+        ResetDirectoryScan();
         _searchOperation?.Cancel();
         _searchText = search; OnPropertyChanged(nameof(SearchText));
         ClearSearchCommand.NotifyCanExecuteChanged();
@@ -254,6 +258,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     private async Task SearchAfterDelayAsync()
     {
         if (IsClosed || SelectedBucket is null) return;
+        ResetDirectoryScan();
         _searchOperation?.Cancel(); _listOperation?.Cancel(); ++_navigationVersion;
         _nextToken = null; NotifyListState();
         using var operation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
@@ -312,6 +317,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     public async Task RefreshAsync(CancellationToken cancellationToken = default)
     {
         if (IsClosed) return;
+        ResetDirectoryScan();
         if (!IsInitialized || Buckets.Count == 0) { _initializeTask = null; await ReadBucketsAsync(cancellationToken); }
         else
         {
@@ -355,10 +361,12 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     {
         foreach (var command in new[] { RefreshCommand, LoadMoreCommand, UploadCommand, NewFolderCommand, DownloadCommand, OpenFileCommand, PreviewFileCommand, BatchDownloadCommand, DeleteCommand, TemporaryLinkCommand, EditConnectionCommand, ClearSearchCommand }) command.NotifyCanExecuteChanged();
         CopyKeyCommand.NotifyCanExecuteChanged(); CopyPreviewCommand.NotifyCanExecuteChanged();
+        RefreshScanCommands();
     }
     /// <summary>关闭取消所有读取和传输，过期响应不会更新已释放页面。</summary>
     protected override async ValueTask ReleaseAsync()
     {
+        ResetDirectoryScan();
         _lifetime.Cancel(); _bucketOperation?.Cancel(); _listOperation?.Cancel(); _detailOperation?.Cancel(); _searchOperation?.Cancel();
         foreach (var transfer in Transfers) { transfer.Finished -= OnTransferFinished; transfer.Dispose(); }
         RefreshCommands();
@@ -367,34 +375,4 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         _lifetime.Dispose();
     }
 
-    /// <summary>刷新本目录或重试容器读取。</summary>
-    public AsyncRelayCommand RefreshCommand { get; }
-    /// <summary>继续请求同一查询的下一批对象。</summary>
-    public AsyncRelayCommand LoadMoreCommand { get; }
-    /// <summary>选择文件和处理同名策略。</summary>
-    public AsyncRelayCommand UploadCommand { get; }
-    /// <summary>创建当前目录下的占位文件夹。</summary>
-    public AsyncRelayCommand NewFolderCommand { get; }
-    /// <summary>下载当前或指定对象。</summary>
-    public AsyncRelayCommand DownloadCommand { get; }
-    /// <summary>下载所有勾选对象及目录。</summary>
-    public AsyncRelayCommand BatchDownloadCommand { get; }
-    /// <summary>先枚举再确认删除的完整范围。</summary>
-    public AsyncRelayCommand DeleteCommand { get; }
-    /// <summary>生成有限期只读签名 URL。</summary>
-    public AsyncRelayCommand TemporaryLinkCommand { get; }
-    /// <summary>复制对象键。</summary>
-    public RelayCommand CopyKeyCommand { get; }
-    /// <summary>复制只读文本预览。</summary>
-    public RelayCommand CopyPreviewCommand { get; }
-    /// <summary>清空当前页的勾选。</summary>
-    public RelayCommand ClearSelectionCommand { get; }
-    /// <summary>关闭当前对象详情。</summary>
-    public RelayCommand CloseDetailsCommand { get; }
-    /// <summary>关闭操作失败提示。</summary>
-    public RelayCommand ClearErrorCommand { get; }
-    /// <summary>清空当前目录搜索。</summary>
-    public AsyncRelayCommand ClearSearchCommand { get; }
-    /// <summary>编辑已有连接，成功后重新读取真实容器。</summary>
-    public AsyncRelayCommand EditConnectionCommand { get; }
 }

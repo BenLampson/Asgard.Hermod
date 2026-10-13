@@ -36,6 +36,17 @@ internal sealed class ObjectStorageTestService : IObjectStorageService
     /// <summary>容器读取次数。</summary>
     internal int BucketReads { get; private set; }
 
+    /// <summary>扫描替身可返回完整结果或模拟取消、迟到响应。</summary>
+    internal Func<string, Func<ObjectStorageDirectoryScanProgress, CancellationToken, Task<bool>>,
+        IProgress<ObjectStorageDirectoryScanProgress>?, CancellationToken, Task<ObjectStorageDirectoryScanResult?>>? ScanHandler
+    { get; set; }
+
+    /// <inheritdoc />
+    public Task<ObjectStorageDirectoryScanResult?> ScanDirectoryAsync(string instanceId, ObjectStorageBucket bucket,
+        string prefix, Func<ObjectStorageDirectoryScanProgress, CancellationToken, Task<bool>> confirmContinuation,
+        IProgress<ObjectStorageDirectoryScanProgress>? progress = null, CancellationToken cancellationToken = default) =>
+        ScanHandler?.Invoke(prefix, confirmContinuation, progress, cancellationToken) ?? Task.FromResult<ObjectStorageDirectoryScanResult?>(new([], 0));
+
     /// <inheritdoc />
     public Task<IReadOnlyList<ObjectStorageBucket>> ListBucketsAsync(string instanceId, CancellationToken cancellationToken = default)
     {

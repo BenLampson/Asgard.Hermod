@@ -1886,4 +1886,37 @@
   <data xml:space="preserve" name="StorageSessionProtectionHint">
     <value>下载、预览和本次会话中外部打开的文件会受到保护。重启 Hermod 后，其他程序不再占用的外部缓存即可清理。</value>
   </data>
+  <data xml:space="preserve" name="GetModificationTimesAndSort">
+    <value>获取更新时间并排序</value>
+  </data>
+  <data xml:space="preserve" name="DirectoryScanScope">
+    <value>当前目录及所有子目录 · 文件夹更新时间需扫描后获取</value>
+  </data>
+  <data xml:space="preserve" name="DirectoryScanProgress">
+    <value>已扫描 {0:N0} 个文件</value>
+  </data>
+  <data xml:space="preserve" name="DirectoryScanLarge">
+    <value>已扫描 {0:N0} 个文件 · 文件较多，继续扫描可能耗时较长</value>
+  </data>
+  <data xml:space="preserve" name="DirectoryScanCompleted">
+    <value>扫描完成，已按目录内最近更新时间排序</value>
+  </data>
+  <data xml:space="preserve" name="DirectoryScanCanceled">
+    <value>扫描已取消，保留原列表顺序。</value>
+  </data>
+  <data xml:space="preserve" name="DirectoryScanFailed">
+    <value>无法获取更新时间，已保留原列表顺序。请检查连接和权限后重试。</value>
+  </data>
+  <data xml:space="preserve" name="LoadedFoldersFiles">
+    <value>已加载：{0:N0} 个文件夹 · {1:N0} 个文件</value>
+  </data>
+  <data xml:space="preserve" name="DirectoryLatestModified">
+    <value>目录内最近更新</value>
+  </data>
+  <data xml:space="preserve" name="DirectoryModifiedMeaning">
+    <value>文件夹日期取目录及所有子目录内文件的最近更新时间；空目录没有文件日期。</value>
+  </data>
+  <data xml:space="preserve" name="Continue">
+    <value>继续</value>
+  </data>
 </root>

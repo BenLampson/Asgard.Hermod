@@ -96,6 +96,24 @@ notifications without knowing the feature's concrete types.
 
 ## Persistence and terminal
 
+The object browser can manually scan the current prefix and all descendants to
+sort direct children by modification time. A folder's date is the latest file
+date anywhere below it; directory placeholder dates are ignored. The generic
+object storage service lists metadata in batches of 1,000 without a delimiter,
+retaining only direct child entries and folder aggregates. It does not download
+file contents, persist results, or maintain a cache or index. Beyond 10,000
+files, scanning pauses for an inline Continue or Cancel decision, including when
+the threshold is crossed on the final page. Progress reports scanned files,
+without estimating an unknown total or percentage.
+
+Only a completed scan replaces and sorts the current list, including children
+outside its originally loaded pages. Cancellation and failures retain the prior
+list and pagination cursor. Refresh, search, navigation, and page closure cancel
+the operation and invalidate its results. The Loaded footer counts immediate
+rows separately from the recursive file count. Empty folders have no file date;
+listing multiple pages reflects the data returned during the scan, rather than
+a point-in-time storage snapshot.
+
 The SQLite module retains the existing per-user database path, schema migrations
 and encrypted connection parameters. Windows DPAPI is selected through the
 separate credential protection module. See the [local storage guide](local-storage.md).

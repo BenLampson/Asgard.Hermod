@@ -12,6 +12,11 @@ public interface IObjectStorageService
         string prefix, string search = "", string? continuationToken = null,
         CancellationToken cancellationToken = default);
 
+    /// <summary>临时扫描整个目录，仅汇总直接子项；超过阈值先确认，拒绝时返回空结果，不发布部分排序。</summary>
+    Task<ObjectStorageDirectoryScanResult?> ScanDirectoryAsync(string instanceId, ObjectStorageBucket bucket,
+        string prefix, Func<ObjectStorageDirectoryScanProgress, CancellationToken, Task<bool>> confirmContinuation,
+        IProgress<ObjectStorageDirectoryScanProgress>? progress = null, CancellationToken cancellationToken = default);
+
     /// <summary>读取元数据，并仅为适合的文本提供最多 256KB 的预览。</summary>
     Task<ObjectStorageObjectDetails> GetObjectDetailsAsync(string instanceId,
         ObjectStorageBucket bucket, string key, CancellationToken cancellationToken = default);
