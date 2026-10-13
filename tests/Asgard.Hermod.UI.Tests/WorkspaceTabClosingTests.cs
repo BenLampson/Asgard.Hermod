@@ -1,4 +1,4 @@
-using Asgard.Hermod.UI.Views.Shell;
+using WorkspaceTabStrip = Asgard.Hermod.UI.Views.Shell.WorkspaceTabStrip;
 
 namespace Asgard.Hermod.UI.Tests;
 
