@@ -71,6 +71,7 @@ public sealed partial class TerminalControl : Control, IDisposable
         _resizeTimer.Tick += OnResizeTick;
         Loaded += OnLoaded;
         Unloaded += OnUnloaded;
+        TextCompositionManager.AddPreviewTextInputStartHandler(this, OnCompositionStarted);
     }
 
     /// <summary>切换会话时解除旧订阅并清空与旧缓冲区关联的选区。</summary>
@@ -143,6 +144,7 @@ public sealed partial class TerminalControl : Control, IDisposable
         _resizeTimer.Tick -= OnResizeTick;
         Loaded -= OnLoaded;
         Unloaded -= OnUnloaded;
+        TextCompositionManager.RemovePreviewTextInputStartHandler(this, OnCompositionStarted);
         Session = null;
         _renderer.Dispose();
         ScreenUpdated = null;

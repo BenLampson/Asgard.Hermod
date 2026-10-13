@@ -4,7 +4,7 @@ namespace Asgard.Hermod.WinTerminal;
 internal static class WindowsKeyboard
 {
     /// <summary>保留 Shift/CapsLock，清除 Alt 状态后取得字符；不改变系统死键状态。</summary>
-    internal static string? GetTextWithoutAlt(Key key)
+    internal static string? GetTextWithoutAlt(Key key, ModifierKeys? modifiers = null)
     {
         int virtualKey = KeyInterop.VirtualKeyFromKey(key);
         if (virtualKey == 0)
@@ -13,6 +13,13 @@ internal static class WindowsKeyboard
         if (!GetKeyboardState(state))
             return null;
         state[0x12] = state[0xA4] = state[0xA5] = 0;
+        if (modifiers is { } actual)
+        {
+            state[0x10] = state[0xA0] = state[0xA1] = actual.HasFlag(ModifierKeys.Shift) ? (byte)0x80 : (byte)0;
+            state[0x11] = state[0xA2] = state[0xA3] = actual.HasFlag(ModifierKeys.Control) ? (byte)0x80 : (byte)0;
+            // WPF 在 NumLock 关闭时给出导航键；收到 NumPad 键意味着这里应翻译为数字。
+            if (key is >= Key.NumPad0 and <= Key.NumPad9) state[0x90] = 1;
+        }
         var result = new StringBuilder(8);
         int count = ToUnicode((uint)virtualKey, MapVirtualKey((uint)virtualKey, 0), state, result, result.Capacity, 4);
         return count > 0 ? result.ToString() : null;

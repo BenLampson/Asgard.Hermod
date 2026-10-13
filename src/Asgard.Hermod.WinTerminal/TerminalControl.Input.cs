@@ -3,16 +3,32 @@ namespace Asgard.Hermod.WinTerminal;
 /// <summary>负责键盘、输入法提交与剪贴板交互。</summary>
 public sealed partial class TerminalControl
 {
+    private bool _isComposing;
+
+    /// <summary>输入法组合期间，数字键必须继续用于选候选，不能提前发给远端。</summary>
+    private void OnCompositionStarted(object sender, TextCompositionEventArgs args) => _isComposing = true;
+
     /// <summary>将方向键、控制键和 Alt 组合编码为终端输入。</summary>
     protected override void OnPreviewKeyDown(KeyEventArgs args)
     {
         base.OnPreviewKeyDown(args);
         if (_disposed || _session is not { IsDisposed: false } session)
             return;
-        Key key = args.Key == Key.System ? args.SystemKey : args.Key;
+        Key key = args.Key == Key.System ? args.SystemKey
+            : args.Key == Key.ImeProcessed ? args.ImeProcessedKey : args.Key;
         var modifiers = Keyboard.Modifiers;
         bool control = modifiers.HasFlag(ModifierKeys.Control);
         bool shift = modifiers.HasFlag(ModifierKeys.Shift);
+        // 数字键在部分输入法下不产生普通 TextInput；按当前布局翻译，并拦截后续文本以免双发。
+        if (!_isComposing && !control && !modifiers.HasFlag(ModifierKeys.Alt)
+            && (key is >= Key.D0 and <= Key.D9 or >= Key.NumPad0 and <= Key.NumPad9)
+            && WindowsKeyboard.GetTextWithoutAlt(key, modifiers) is { Length: > 0 } numericText)
+        {
+            SendText(numericText);
+            args.Handled = true;
+            return;
+        }
+        if (key == Key.Escape) _isComposing = false;
         if (control && key == Key.C && (shift || _selection is not null))
         {
             CopySelection();
@@ -71,6 +87,7 @@ public sealed partial class TerminalControl
     protected override void OnPreviewTextInput(TextCompositionEventArgs args)
     {
         base.OnPreviewTextInput(args);
+        _isComposing = false;
         if (_session is not { IsDisposed: false } || string.IsNullOrEmpty(args.Text))
             return;
         SendText(args.Text);
