@@ -15,4 +15,6 @@ public sealed record InstanceConfigurationField(string Key, string Label, Instan
     public string? VisibleWhenKey { get; init; }
     /// <summary>依赖字段匹配这一稳定值时才参与显示、校验和保存。</summary>
     public string? VisibleWhenValue { get; init; }
+    /// <summary>全部附加条件成立时才显示、校验及保存，例如连接路径与认证方式。</summary>
+    public IReadOnlyList<InstanceFieldCondition> Conditions { get; init; } = [];
 }

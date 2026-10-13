@@ -5,10 +5,10 @@ using System.Text;
 namespace Asgard.Hermod.Ssh;
 
 /// <summary>只协商 TCP 代理；SSH 加密、认证和身份校验仍由协议库负责。</summary>
-internal static class SshProxyProtocol
+public static class SshProxyProtocol
 {
     /// <summary>在 SSH 握手开始前建立目标隧道，不消费目标 SSH 的首字节。</summary>
-    internal static Task ConnectAsync(Stream stream, SshConnectionOptions options, CancellationToken token) =>
+    public static Task ConnectAsync(Stream stream, SshConnectionOptions options, CancellationToken token) =>
         options.ProxyType == "http" ? HttpAsync(stream, options, token) : SocksAsync(stream, options, token);
 
     /// <summary>SOCKS5 支持无认证、用户名密码、IPv4、IPv6 和远程 DNS。</summary>

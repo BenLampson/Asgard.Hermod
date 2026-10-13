@@ -13,6 +13,7 @@ public static class SshServiceCollectionExtensions
         if (services.Any(item => item.ServiceType == typeof(SshModuleRegistration))) return services;
         services.AddSingleton(new SshModuleRegistration());
         services.TryAddSingleton<ISshConnectionFactory, SshConnectionFactory>();
+        services.TryAddSingleton<ISshTcpStreamFactory, SshTcpStreamFactory>();
         foreach (string route in new[] { SshIds.Direct, SshIds.Jump, SshIds.Proxy })
             services.AddSingleton<IInstanceProvider>(provider => new SshInstanceProvider(route, provider.GetRequiredService<ISshConnectionFactory>()));
         return services;

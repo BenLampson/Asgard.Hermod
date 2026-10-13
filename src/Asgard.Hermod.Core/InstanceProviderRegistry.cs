@@ -75,7 +75,8 @@ public sealed class InstanceProviderRegistry : IInstanceProviderRegistry
                 throw Text.Exception("InvalidOrDuplicateConnectorConfigurationFieldsCheckFieldDeclarations");
         }
         if (fields.Any(item => item.VisibleWhenKey is not null && (!keys.Contains(item.VisibleWhenKey)
-            || item.VisibleWhenKey == item.Key || item.VisibleWhenValue is null)))
+            || item.VisibleWhenKey == item.Key || item.VisibleWhenValue is null)
+            || item.Conditions.Any(condition => !keys.Contains(condition.Key) || condition.Key == item.Key || condition.Value is null)))
             throw Text.Exception("InvalidOrDuplicateConnectorConfigurationFieldsCheckFieldDeclarations");
     }
 

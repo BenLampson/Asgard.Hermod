@@ -34,5 +34,6 @@ public static class InstanceFieldValidation
 
     /// <summary>统一计算条件字段适用性，UI 和持久化使用同一协议条件。</summary>
     public static bool IsApplicable(InstanceConfigurationField field, IReadOnlyDictionary<string, string> parameters) =>
-        field.VisibleWhenKey is null || parameters.GetValueOrDefault(field.VisibleWhenKey) == field.VisibleWhenValue;
+        (field.VisibleWhenKey is null || parameters.GetValueOrDefault(field.VisibleWhenKey) == field.VisibleWhenValue)
+        && field.Conditions.All(condition => parameters.GetValueOrDefault(condition.Key) == condition.Value);
 }
