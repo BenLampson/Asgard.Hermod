@@ -74,6 +74,10 @@ dotnet publish src/Asgard.Hermod -c Release -r win-x64 --self-contained false -o
 
 The published application requires the .NET 10 Desktop Runtime. Terminal tests include real local cmd.exe and PowerShell processes. See the [terminal component guide](src/Asgard.Hermod.WinTerminal/README.md) for its API, ownership rules, source attribution, and current scope.
 
+For a self-contained Microsoft Store MSIX package, see the
+[Store packaging guide](docs/microsoft-store.md). The checked-in manifest contains
+Hermod's public Store identity; build outputs and signing secrets are not committed.
+
 Read the [architecture](docs/architecture.md), [roadmap](docs/roadmap.md), and [contribution guide](CONTRIBUTING.md) before making changes.
 
 ## Community and security

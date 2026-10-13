@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
+         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+         IgnorableNamespaces="uap uap10 rescap">
+  <!-- 商店分配的公开标识必须保持一致；版本第四段由商店保留，始终为零。 -->
+  <Identity Name="32960BenLampson.AsgardHermod"
+            Publisher="CN=7BDCFD81-1900-42BB-9976-ED316E4C3A15"
+            Version="0.1.0.0"
+            ProcessorArchitecture="x64" />
+  <Properties>
+    <DisplayName>Asgard Hermod</DisplayName>
+    <PublisherDisplayName>BenLampson</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+  <Resources>
+    <Resource Language="en" />
+    <Resource Language="zh-Hans" />
+  </Resources>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19045.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+  <Applications>
+    <Application Id="Hermod" Executable="Asgard.Hermod.exe"
+                 uap10:RuntimeBehavior="packagedClassicApp" uap10:TrustLevel="mediumIL">
+      <uap:VisualElements DisplayName="Asgard Hermod" Description="Asgard Hermod"
+                          Square150x150Logo="Assets\Square150x150Logo.png"
+                          Square44x44Logo="Assets\Square44x44Logo.png"
+                          BackgroundColor="transparent" />
+    </Application>
+  </Applications>
+  <Capabilities>
+    <!-- WPF、ConPTY 终端及本地文件访问需要完整信任桌面进程。 -->
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>
