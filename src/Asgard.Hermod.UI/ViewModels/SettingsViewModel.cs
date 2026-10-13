@@ -7,16 +7,29 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
     private readonly ILanguagePreferenceStore? _languageStore;
     private Asgard.Hermod.Abstractions.Localization.LanguageOption _selectedLanguage;
     private string _languageMessage = "";
+    private readonly IAccountService? _accounts;
+    private readonly System.Windows.Threading.Dispatcher _dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
+    // 设置语言在重启后应用；后台通知不应改变已打开窗口的资源语言。
+    private readonly string _signedInStatus = Text.Get("SignedIn");
+    private readonly string _signedOutStatus = Text.Get("NotSignedIn");
+    private readonly string _signedInWorkspace = Text.Get("SyncCloudWorkspace");
+    private readonly string _signedOutWorkspace = Text.Get("LocalWorkspace");
+    private bool _disposed;
 
     /// <summary>由宿主提供统一标签来源和子窗口服务。</summary>
     public SettingsViewModel(ITagManagementService tags, ITagDialogService dialogs,
         ILanguagePreferenceStore? languageStore = null, IFileOpenRuleStore? fileRules = null,
-        ITemporaryFileStorage? temporaryFiles = null, IStorageSettingsDialogs? storageDialogs = null)
+        ITemporaryFileStorage? temporaryFiles = null, IStorageSettingsDialogs? storageDialogs = null,
+        IAccountService? accounts = null, Func<Task>? openAccount = null)
     {
         ArgumentNullException.ThrowIfNull(tags);
         ArgumentNullException.ThrowIfNull(dialogs);
         Tags = new TagManagementViewModel(tags, dialogs);
         _languageStore = languageStore;
+        _accounts = accounts;
+        OpenAccountCommand = new AsyncRelayCommand(_ => openAccount?.Invoke() ?? Task.CompletedTask,
+            _ => !_disposed && accounts is not null && openAccount is not null);
+        if (accounts is not null) accounts.AccountChanged += OnAccountChanged;
         FileOpening = fileRules is null ? null : new FileOpeningSettingsViewModel(fileRules);
         Storage = temporaryFiles is not null && storageDialogs is not null ? new StorageSettingsViewModel(temporaryFiles, storageDialogs) : null;
         Categories =
@@ -26,7 +39,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
             new("tags", Text.Get("TagManagement"), "tags", true),
             new("storage", Text.Get("Storage"), "hard-drive", Storage is not null),
             new("file-opening", Text.Get("FileOpening"), "folder-open", fileRules is not null),
-            new("account", Text.Get("Account"), "user-round", false),
+            new("account", Text.Get("Account"), "user-round", accounts is not null && openAccount is not null),
             new("shortcuts", Text.Get("KeyboardShortcuts"), "keyboard", false),
             new("about", Text.Get("About"), "info", false),
         ];
@@ -88,6 +101,18 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
     public bool IsFileOpeningSelected => SelectedCategory.Id == "file-opening";
     /// <summary>存储设置仅在管理服务已装配时开放。</summary>
     public bool IsStorageSelected => SelectedCategory.Id == "storage";
+    /// <summary>账号入口复用宿主的登录与同步管理，不维护另一份登录状态。</summary>
+    public bool IsAccountSelected => SelectedCategory.Id == "account";
+    /// <summary>只显示已验证的 JWT 用户名。</summary>
+    public string AccountName => _accounts?.Account?.Username ?? _signedOutStatus;
+    /// <summary>登录状态与云端同步是否成功分开展示。</summary>
+    public string AccountStatus => _accounts?.Account is not null ? _signedInStatus : _signedOutStatus;
+    /// <summary>设置与主窗口使用同一账号确定工作区归属。</summary>
+    public string WorkspaceName => _accounts?.Account is not null ? _signedInWorkspace : _signedOutWorkspace;
+    /// <summary>侧栏图标跟随真实工作区归属。</summary>
+    public string WorkspaceIcon => _accounts?.Account is not null ? "cloud" : "laptop";
+    /// <summary>打开已有账号与同步管理，设置页不自动发起浏览器登录。</summary>
+    public AsyncRelayCommand OpenAccountCommand { get; }
     /// <summary>本机临时文件的统计和清理状态。</summary>
     public StorageSettingsViewModel? Storage { get; }
     /// <summary>可选的本机文件规则管理状态。</summary>
@@ -103,6 +128,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
             OnPropertyChanged(nameof(IsTagsSelected));
             OnPropertyChanged(nameof(IsFileOpeningSelected));
             OnPropertyChanged(nameof(IsStorageSelected));
+            OnPropertyChanged(nameof(IsAccountSelected));
         }
     }
     /// <summary>可复用的标签管理状态。</summary>
@@ -117,5 +143,21 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         Tags.InitializeAsync(cancellationToken), Storage?.InitializeAsync(cancellationToken) ?? Task.CompletedTask);
 
     /// <summary>窗口关闭时释放后台标签通知。</summary>
-    public void Dispose() { Tags.Dispose(); Storage?.Dispose(); }
+    public void Dispose()
+    {
+        if (_disposed) return;
+        _disposed = true;
+        if (_accounts is not null) _accounts.AccountChanged -= OnAccountChanged;
+        OpenAccountCommand.NotifyCanExecuteChanged();
+        Tags.Dispose(); Storage?.Dispose();
+    }
+
+    /// <summary>后台账号通知切回设置窗口线程，关闭后的排队通知不再更新绑定。</summary>
+    private void OnAccountChanged(object? sender, EventArgs args)
+    {
+        if (!_dispatcher.CheckAccess()) { _dispatcher.BeginInvoke(() => OnAccountChanged(sender, args)); return; }
+        if (_disposed) return;
+        OnPropertyChanged(nameof(AccountName)); OnPropertyChanged(nameof(AccountStatus));
+        OnPropertyChanged(nameof(WorkspaceName)); OnPropertyChanged(nameof(WorkspaceIcon));
+    }
 }

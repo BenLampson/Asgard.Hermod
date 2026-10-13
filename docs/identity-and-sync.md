@@ -12,9 +12,13 @@ workspace ownership use stable identifiers, independently of the displayed name.
 
 ## Desktop behavior
 
-Open **Account and synchronization** from the title bar account menu. On first
-sign-in, Hermod asks for a synchronization password. After the password is
-validated, it is protected with current-user Windows DPAPI in SQLite `app_setting`,
+Open **Account and synchronization** from the title bar account menu. The same management window
+is available from **Settings → Account**. Settings show the current verified
+username, sign-in status and workspace ownership, updating when the account
+changes. Signed-in accounts show **Cloud workspace** even when synchronization
+still needs a password or is offline; this label does not report sync success.
+On first sign-in, Hermod asks for a synchronization password. After validation,
+it is protected with current-user Windows DPAPI in SQLite `app_setting`,
 separately for each issuer/application/tenant/user. Reopening Hermod restores the
 saved password and resumes synchronization without another password prompt.
 Existing signed-in installations show **Set synchronization password** until

@@ -16,17 +16,24 @@
             <ColumnDefinition Width="224" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <!-- 导航保留未来分类的位置，通用设置与标签管理可以进入。 -->
+        <!-- 分类由宿主能力决定可用性，账号状态与主窗口共享。 -->
         <Border Background="{DynamicResource AppBackgroundBrush}" BorderBrush="{DynamicResource LineBrush}"
                 BorderThickness="0,0,1,0" Padding="14,24,14,20">
             <DockPanel LastChildFill="True">
                 <TextBlock DockPanel.Dock="Top" Text="{loc:Loc Settings}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,28" />
                 <Border DockPanel.Dock="Bottom" BorderBrush="{DynamicResource LineSoftBrush}"
                         BorderThickness="0,1,0,0" Padding="12,12,0,0">
-                    <StackPanel Orientation="Horizontal">
-                        <controls:IconView Kind="laptop" Width="15" Height="15" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,8,0" />
-                        <TextBlock Text="{loc:Loc Local}" Foreground="{DynamicResource TextMutedBrush}" />
-                    </StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <controls:IconView Kind="{Binding WorkspaceIcon}" Width="15" Height="15" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,8,0" />
+                        <StackPanel Grid.Column="1">
+                            <TextBlock x:Name="SettingsAccountName" Text="{Binding AccountName}" TextTrimming="CharacterEllipsis" ToolTip="{Binding AccountName}" />
+                            <TextBlock x:Name="SettingsWorkspaceName" Text="{Binding WorkspaceName}" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,4,0,0" />
+                        </StackPanel>
+                    </Grid>
                 </Border>
                 <ItemsControl ItemsSource="{Binding Categories}">
                     <ItemsControl.ItemTemplate>
@@ -38,6 +45,14 @@
                                     <Style TargetType="Button" BasedOn="{StaticResource SidebarItemButton}">
                                         <Setter Property="Padding" Value="12,0" />
                                         <Style.Triggers>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding Id}" Value="account" />
+                                                    <Condition Binding="{Binding DataContext.IsAccountSelected, RelativeSource={RelativeSource AncestorType=Window}}" Value="True" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" />
+                                                <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
+                                            </MultiDataTrigger>
                                             <MultiDataTrigger>
                                                 <MultiDataTrigger.Conditions>
                                                     <Condition Binding="{Binding Id}" Value="storage" />
@@ -98,6 +113,15 @@
                            TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" />
                 <TextBlock Text="{Binding LanguageMessage}" Margin="0,16,0,0" TextWrapping="Wrap"
                            AutomationProperties.LiveSetting="Polite" />
+            </StackPanel>
+        </ScrollViewer>
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto"
+                      Visibility="{Binding IsAccountSelected, Converter={StaticResource SettingsBooleanVisibility}}">
+            <StackPanel Margin="32" MaxWidth="680" HorizontalAlignment="Left">
+                <TextBlock Text="{loc:Loc Account}" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,28" />
+                <TextBlock Text="{Binding AccountName}" FontSize="18" TextWrapping="Wrap" Margin="0,0,0,8" />
+                <TextBlock x:Name="SettingsAccountStatus" Text="{Binding AccountStatus}" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,20" AutomationProperties.LiveSetting="Polite" />
+                <Button x:Name="ManageAccountButton" Content="{loc:Loc AccountAndSync}" Command="{Binding OpenAccountCommand}" HorizontalAlignment="Left" Padding="16,0" />
             </StackPanel>
         </ScrollViewer>
         <Grid Grid.Column="1" Visibility="{Binding IsTagsSelected, Converter={StaticResource SettingsBooleanVisibility}}">

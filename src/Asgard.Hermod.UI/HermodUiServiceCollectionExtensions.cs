@@ -20,7 +20,8 @@ public static class HermodUiServiceCollectionExtensions
             provider.GetRequiredService<ITagManagementService>(),
             provider.GetRequiredService<ILanguagePreferenceStore>(),
             provider.GetRequiredService<IFileOpenRuleStore>(),
-            provider.GetRequiredService<ITemporaryFileStorage>()));
+            provider.GetRequiredService<ITemporaryFileStorage>(),
+            provider.GetService<IAccountService>(), provider.GetService<IAccountEditor>()));
         services.TryAddSingleton<IFileOpenService>(provider => new WindowsFileOpenService(owner,
             provider.GetRequiredService<IFileOpenRuleStore>()));
         services.TryAddSingleton<IInstanceWorkspaceFactory, InstanceWorkspaceFactory>();

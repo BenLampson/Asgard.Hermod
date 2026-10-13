@@ -7,17 +7,19 @@ public sealed class AccountEditorService(Func<Window?> owner, IAccountService ac
     IConfigurationSyncService? automatic = null) : IAccountEditor
 {
     /// <inheritdoc />
-    public Task OpenAsync() => ShowAsync(false);
+    public Task OpenAsync() => ShowAsync(false, owner());
     /// <inheritdoc />
-    public Task OpenForSignInAsync() => ShowAsync(true);
+    public Task OpenAsync(Window? ownerWindow) => ShowAsync(false, ownerWindow);
+    /// <inheritdoc />
+    public Task OpenForSignInAsync() => ShowAsync(true, owner());
 
     /// <summary>本地模式入口在窗口可取消之后启动浏览器，已登录入口只展示账号与同步。</summary>
-    private async Task ShowAsync(bool signIn)
+    private async Task ShowAsync(bool signIn, Window? ownerWindow)
     {
         AccountWindow? window = null;
         await using var model = new AccountViewModel(accounts, sync, download => RequestPassword(window!, download, automatic is not null), automatic,
             conflicts => RequestMerge(window!, conflicts));
-        window = new AccountWindow(model) { Owner = owner() };
+        window = new AccountWindow(model) { Owner = ownerWindow };
         if (signIn) window.Loaded += (_, _) => model.SignInCommand.Execute(null);
         window.ShowDialog();
     }

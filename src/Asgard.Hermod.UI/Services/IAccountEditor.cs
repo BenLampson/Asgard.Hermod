@@ -5,6 +5,8 @@ public interface IAccountEditor
 {
     /// <summary>打开当前用户的登录与同步界面。</summary>
     Task OpenAsync();
+    /// <summary>从设置等子窗口进入时，账号弹窗归属直接打开者。</summary>
+    Task OpenAsync(Window? owner) => OpenAsync();
     /// <summary>未登录入口直接发起登录，同时保留可取消的账号窗口。</summary>
     Task OpenForSignInAsync() => OpenAsync();
 }

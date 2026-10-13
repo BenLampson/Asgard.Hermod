@@ -10,10 +10,13 @@ public sealed class SettingsEditorService : ISettingsEditor
     private readonly ILanguagePreferenceStore _languages;
     private readonly IFileOpenRuleStore? _fileRules;
     private readonly ITemporaryFileStorage? _temporaryFiles;
+    private readonly IAccountService? _accounts;
+    private readonly IAccountEditor? _accountEditor;
 
     /// <summary>延迟获取应用主窗口，让设置窗口及其子窗体形成正确的模态层级。</summary>
     public SettingsEditorService(Func<Window?> getOwner, ITagManagementService tags, ILanguagePreferenceStore languages,
-        IFileOpenRuleStore? fileRules = null, ITemporaryFileStorage? temporaryFiles = null)
+        IFileOpenRuleStore? fileRules = null, ITemporaryFileStorage? temporaryFiles = null,
+        IAccountService? accounts = null, IAccountEditor? accountEditor = null)
     {
         ArgumentNullException.ThrowIfNull(getOwner);
         ArgumentNullException.ThrowIfNull(tags);
@@ -23,6 +26,8 @@ public sealed class SettingsEditorService : ISettingsEditor
         _languages = languages;
         _fileRules = fileRules;
         _temporaryFiles = temporaryFiles;
+        _accounts = accounts;
+        _accountEditor = accountEditor;
     }
 
     /// <inheritdoc />
@@ -31,7 +36,8 @@ public sealed class SettingsEditorService : ISettingsEditor
         SettingsWindow? window = null;
         var dialogs = new WindowsTagDialogService(() => window ?? _getOwner(), _tags);
         var storageDialogs = new WindowsStorageSettingsDialogs(() => window ?? _getOwner());
-        using var model = new SettingsViewModel(_tags, dialogs, _languages, _fileRules, _temporaryFiles, storageDialogs);
+        using var model = new SettingsViewModel(_tags, dialogs, _languages, _fileRules, _temporaryFiles, storageDialogs,
+            _accounts, _accountEditor is null ? null : () => _accountEditor.OpenAsync(window));
         await model.InitializeAsync();
         window = new SettingsWindow(model) { Owner = _getOwner() };
         window.ShowDialog();
