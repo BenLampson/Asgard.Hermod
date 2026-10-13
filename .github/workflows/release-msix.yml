@@ -1,0 +1,108 @@
+name: Release MSIX
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      package_version:
+        description: 'MSIX version (for example 0.1.1.0); empty uses the manifest'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: msix-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  package:
+    runs-on: windows-2025
+    timeout-minutes: 30
+    permissions:
+      # 版本标签构建完成后，使用内置令牌创建 Release，无需个人访问令牌。
+      contents: write
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Install .NET 10 SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Resolve package version
+        id: version
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          INPUT_VERSION: ${{ inputs.package_version }}
+        run: |
+          if ($env:EVENT_NAME -eq 'push') {
+            if ($env:REF_NAME -notmatch '^v(\d+)\.(\d+)\.(\d+)$') {
+              throw 'Release tags must use vMajor.Minor.Patch, for example v0.1.1.'
+            }
+            $packageVersion = $env:REF_NAME.Substring(1) + '.0'
+          } elseif ($env:INPUT_VERSION) {
+            $packageVersion = $env:INPUT_VERSION
+          } else {
+            [xml] $manifest = Get-Content packaging/Asgard.Hermod/Package.appxmanifest -Raw
+            $packageVersion = $manifest.Package.Identity.Version
+          }
+          if ($packageVersion -notmatch '^\d+\.\d+\.\d+\.0$') {
+            throw 'MSIX versions must have four numeric components and end in .0.'
+          }
+          "package_version=$packageVersion" >> $env:GITHUB_OUTPUT
+
+      - name: Build solution
+        run: dotnet build Asgard.Hermod.slnx -c Release
+
+      - name: Verify formatting
+        run: dotnet format Asgard.Hermod.slnx --verify-no-changes --no-restore
+
+      - name: Run tests
+        run: dotnet test --solution Asgard.Hermod.slnx --configuration Release --no-build
+
+      - name: Build x64 MSIX
+        env:
+          PACKAGE_VERSION: ${{ steps.version.outputs.package_version }}
+        run: |
+          & ./packaging/Asgard.Hermod/Build-Msix.ps1 -PackageVersion $env:PACKAGE_VERSION
+
+      - name: Upload MSIX artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: Asgard.Hermod_${{ steps.version.outputs.package_version }}_x64
+          path: artifacts/msix/*.msix
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+
+      - name: Publish GitHub Release
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          PACKAGE_VERSION: ${{ steps.version.outputs.package_version }}
+        run: |
+          $notesPath = Join-Path $env:RUNNER_TEMP 'release-notes.md'
+          @'
+          Self-contained x64 Microsoft Store package (includes the .NET runtime).
+
+          This MSIX is unsigned and intended for Partner Center submission. Direct
+          installation requires signing with a trusted certificate. Microsoft Store
+          signs the package during publishing. Store submission is a separate step.
+          '@ | Set-Content -LiteralPath $notesPath -Encoding utf8
+          $packagePath = "artifacts/msix/Asgard.Hermod_$($env:PACKAGE_VERSION)_x64.msix"
+          gh release create $env:RELEASE_TAG $packagePath --verify-tag --generate-notes `
+            --title "Asgard Hermod $($env:RELEASE_TAG)" --notes-file $notesPath
+          if ($LASTEXITCODE -ne 0) { throw 'GitHub Release publication failed.' }

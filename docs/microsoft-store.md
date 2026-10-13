@@ -23,6 +23,20 @@ by the Store. The initial minimum Windows build is `10.0.19045.0`.
 
 ## Build
 
+For repeatable builds, `.github/workflows/release-msix.yml` runs on a Windows
+GitHub-hosted runner. Push a tag such as `v0.1.1` after merging the changes; the
+workflow converts it to package version `0.1.1.0`, builds the x64 package, stores
+it as a workflow artifact, and attaches it to a GitHub Release. You can also run
+the workflow manually from **Actions → Release MSIX → Run workflow** and provide
+an explicit four-part package version. Manual runs create an artifact but do not
+create a GitHub Release.
+
+This automation publishes the GitHub Release only. It does not log in to Partner
+Center or submit a Store update. Upload the generated `.msix` to the existing
+Partner Center submission after reviewing the package and Store listing. A future
+Store submission can be automated separately with a Partner Center service account
+and repository secret; do not put those credentials in the repository.
+
 Install the .NET 10 SDK and a Windows SDK containing `MakeAppx.exe`. From the
 repository root, run:
 
