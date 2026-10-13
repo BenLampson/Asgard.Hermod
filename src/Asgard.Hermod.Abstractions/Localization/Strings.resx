@@ -2930,4 +2930,37 @@
   <data name="SshTerminalFocused" xml:space="preserve"><value>Terminal focused</value></data>
   <data name="SshTerminalUnfocused" xml:space="preserve"><value>Click the terminal to type</value></data>
   <data name="SshSearchShortcut" xml:space="preserve"><value>Ctrl+Shift+F</value></data>
+  <data name="RedisPreviewInfo" xml:space="preserve">
+    <value>{0} B · {1}</value>
+  </data>
+  <data name="RedisConnectionSummary" xml:space="preserve">
+    <value>{0} · {1} · {2}</value>
+  </data>
+  <data name="RedisCopyKey" xml:space="preserve">
+    <value>Copy full key name</value>
+  </data>
+  <data name="RedisCopyValue" xml:space="preserve">
+    <value>Copy displayed content</value>
+  </data>
+  <data name="RedisKeyActions" xml:space="preserve">
+    <value>Key actions</value>
+  </data>
+  <data name="RedisCollapseGroups" xml:space="preserve">
+    <value>Collapse all groups</value>
+  </data>
+  <data name="RedisLoadRootGroups" xml:space="preserve">
+    <value>Load more root groups</value>
+  </data>
+  <data name="RedisLazyHint" xml:space="preserve">
+    <value>Children load when expanded</value>
+  </data>
+  <data name="RedisShownKeys" xml:space="preserve">
+    <value>Showing {0} keys</value>
+  </data>
+  <data name="RedisKeySearchHelp" xml:space="preserve">
+    <value>Key search help</value>
+  </data>
+  <data name="RedisWritePrimary" xml:space="preserve">
+    <value>Writes target the primary node</value>
+  </data>
 </root>

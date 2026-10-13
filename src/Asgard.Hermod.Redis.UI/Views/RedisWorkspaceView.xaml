@@ -1,0 +1,111 @@
+<UserControl x:Class="Asgard.Hermod.Redis.UI.Views.RedisWorkspaceView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI" xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI"
+ xmlns:vm="clr-namespace:Asgard.Hermod.Redis.UI.ViewModels" Background="{DynamicResource SurfaceBrush}" PreviewKeyDown="OnKeyDown">
+ <UserControl.Resources>
+  <BooleanToVisibilityConverter x:Key="Visible" />
+  <Style x:Key="KeyTreeItem" TargetType="TreeViewItem">
+   <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+   <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+   <Setter Property="ToolTip" Value="{Binding ToolTip}" />
+   <Setter Property="AutomationProperties.Name" Value="{Binding ToolTip}" />
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TreeViewItem">
+    <StackPanel>
+     <Border x:Name="Row" Background="Transparent" CornerRadius="5" BorderBrush="Transparent" BorderThickness="1" Padding="7,0" MinHeight="32" Margin="0,1">
+      <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="22" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+       <ToggleButton x:Name="Expander" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Focusable="False" Width="20" Height="22" Background="Transparent" BorderThickness="0">
+        <ToggleButton.Template><ControlTemplate TargetType="ToggleButton"><Border Background="Transparent"><controls:IconView x:Name="Chevron" Kind="chevron-right" Width="12" Height="12" Foreground="{DynamicResource TextMutedBrush}" /></Border>
+         <ControlTemplate.Triggers><Trigger Property="IsChecked" Value="True"><Setter TargetName="Chevron" Property="Kind" Value="chevron-down" /></Trigger></ControlTemplate.Triggers>
+        </ControlTemplate></ToggleButton.Template>
+       </ToggleButton><ContentPresenter Grid.Column="1" ContentSource="Header" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+      </Grid>
+     </Border>
+     <ItemsPresenter x:Name="Children" Margin="18,0,0,0" Visibility="Collapsed" />
+    </StackPanel>
+    <ControlTemplate.Triggers>
+     <Trigger Property="IsExpanded" Value="True"><Setter TargetName="Children" Property="Visibility" Value="Visible" /></Trigger>
+     <Trigger Property="HasItems" Value="False"><Setter TargetName="Expander" Property="Visibility" Value="Hidden" /></Trigger>
+     <DataTrigger Binding="{Binding IsActive}" Value="True"><Setter TargetName="Row" Property="Background" Value="{DynamicResource AccentWeakBrush}" /></DataTrigger>
+     <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource AccentBrush}" /></Trigger>
+    </ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+   <Style.Triggers><DataTrigger Binding="{Binding Label}" Value=""><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers>
+  </Style>
+  <HierarchicalDataTemplate DataType="{x:Type vm:RedisTreeNode}" ItemsSource="{Binding Children}" ItemContainerStyle="{StaticResource KeyTreeItem}">
+   <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="22" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+    <controls:IconView Kind="{Binding Icon}" Width="16" Height="16" Foreground="{DynamicResource TextMutedBrush}" />
+    <StackPanel Grid.Column="1" Margin="7,6,4,6"><TextBlock Text="{Binding Label}" FontFamily="{DynamicResource MonoFont}" FontSize="12" TextTrimming="CharacterEllipsis"><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}"><Style.Triggers><DataTrigger Binding="{Binding IsActive}" Value="True"><Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+     <StackPanel Orientation="Horizontal" Margin="0,4,0,0" Visibility="{Binding HasMetadata, Converter={StaticResource Visible}}"><TextBlock Text="{Binding Type}" FontFamily="{DynamicResource MonoFont}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" /><TextBlock Text="{Binding Ttl}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" Margin="9,0,0,0" /></StackPanel>
+    </StackPanel>
+    <StackPanel Grid.Column="2" Orientation="Horizontal"><TextBlock Text="{Binding Status}" FontSize="10" MaxWidth="72" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}" />
+     <Button Content="{loc:Loc RedisContinueScan}" Command="{Binding LoadMoreCommand}" Height="24" FontSize="10" Padding="5,0" Margin="4,0,0,0">
+      <Button.Style><Style TargetType="Button" BasedOn="{StaticResource GhostButton}"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><MultiDataTrigger><MultiDataTrigger.Conditions><Condition Binding="{Binding IsExpanded}" Value="True" /><Condition Binding="{Binding HasMore}" Value="True" /></MultiDataTrigger.Conditions><Setter Property="Visibility" Value="Visible" /></MultiDataTrigger></Style.Triggers></Style></Button.Style>
+     </Button>
+    </StackPanel>
+   </Grid>
+  </HierarchicalDataTemplate>
+ </UserControl.Resources>
+ <controls:WorkspacePageLayout>
+  <controls:WorkspacePageLayout.Toolbar>
+   <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="24" /><ColumnDefinition x:Name="IdentityColumn" Width="225" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+    <controls:IconView Kind="database" Width="24" Height="24" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
+    <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center"><TextBlock Text="{Binding Name}" FontSize="15" TextTrimming="CharacterEllipsis" /><TextBlock Text="{Binding Endpoint}" FontSize="11" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource TextMutedBrush}" Margin="0,2,0,0" /></StackPanel>
+    <controls:StatusBadge Grid.Column="2" x:Name="ConnectionBadge" Text="{Binding Status}" Tone="Success" ShowIndicator="False" VerticalAlignment="Center" Margin="12,0" />
+    <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+     <ComboBox ItemsSource="{Binding Databases}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding DatabaseText, Mode=TwoWay}" Width="90" MinHeight="32" Height="32" SelectionChanged="OnDatabaseChanged" ToolTip="{loc:Loc RedisDatabase}" AutomationProperties.Name="{loc:Loc RedisDatabase}" />
+     <Button Content="{loc:Loc RedisNewKey}" Command="{Binding NewKeyCommand}" Margin="12,0" />
+     <Button Click="OnConnectionMenu" Style="{StaticResource IconButton}" ToolTip="{loc:Loc RedisConnectionInformation}" AutomationProperties.Name="{loc:Loc RedisConnectionInformation}"><controls:IconView Kind="settings-2" Width="16" Height="16" /></Button>
+    </StackPanel>
+   </Grid>
+  </controls:WorkspacePageLayout.Toolbar>
+  <controls:WorkspacePageLayout.Notification><StackPanel>
+   <TextBlock Text="{Binding Error}" Visibility="{Binding HasError, Converter={StaticResource Visible}}" TextWrapping="Wrap" Foreground="{DynamicResource DangerBrush}" Margin="18,4" AutomationProperties.LiveSetting="Polite" />
+   <TextBlock Text="{Binding Tree.Error}" Visibility="{Binding Tree.HasError, Converter={StaticResource Visible}}" TextWrapping="Wrap" Foreground="{DynamicResource WarningBrush}" Margin="18,0,18,4" AutomationProperties.LiveSetting="Polite" />
+  </StackPanel></controls:WorkspacePageLayout.Notification>
+  <controls:WorkspacePageLayout.StatusContent><DockPanel><TextBlock Text="{Binding ConnectionSummary}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" /><TextBlock Text="{loc:Loc RedisWritePrimary}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" HorizontalAlignment="Right" /></DockPanel></controls:WorkspacePageLayout.StatusContent>
+  <Grid x:Name="Body" SizeChanged="OnBodySizeChanged">
+   <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+   <controls:SegmentedSelector x:Name="CompactSelector" Grid.Row="0" Visibility="Collapsed" DisplayMemberPath="Name" SelectedValuePath="Id" SelectionChanged="OnCompactChanged" Margin="12,4,12,8" AutomationProperties.Name="{loc:Loc RedisKeys}" />
+   <Grid Grid.Row="1" x:Name="Columns">
+    <Grid.ColumnDefinitions><ColumnDefinition x:Name="TreeColumn" Width="350" MinWidth="280" /><ColumnDefinition x:Name="SplitterColumn" Width="6" /><ColumnDefinition x:Name="KeyColumn" Width="*" MinWidth="420" /></Grid.ColumnDefinitions>
+    <Border x:Name="TreePanel" BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,0,1,0" Padding="14,16">
+     <Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+      <DockPanel Margin="0,0,0,12"><Button DockPanel.Dock="Right" Click="OnTreeMenu" Style="{StaticResource IconButton}" ToolTip="{loc:Loc RedisKeySearchHelp}" AutomationProperties.Name="{loc:Loc RedisKeySearchHelp}"><controls:IconView Kind="circle-help" Width="16" Height="16" /></Button><Button DockPanel.Dock="Right" Command="{Binding RefreshTreeCommand}" Style="{StaticResource IconButton}" ToolTip="{loc:Loc RedisKeys}" AutomationProperties.Name="{loc:Loc RedisRefreshValue}"><controls:IconView Kind="refresh-cw" Width="14" Height="14" /></Button><TextBlock Text="{loc:Loc RedisKeys}" VerticalAlignment="Center" FontSize="14" /></DockPanel>
+      <Border Grid.Row="1" CornerRadius="6" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1" Height="32" Margin="0,0,0,12">
+       <DockPanel Margin="10,0"><controls:IconView DockPanel.Dock="Left" Kind="search" Width="16" Height="16" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,8,0" />
+        <Grid><TextBox Text="{Binding Pattern, UpdateSourceTrigger=PropertyChanged}" TextChanged="OnSearchChanged" Style="{StaticResource SearchTextBox}" MaxLength="256" AutomationProperties.Name="{loc:Loc RedisMatch}"><TextBox.InputBindings><KeyBinding Key="Enter" Command="{Binding QueryCommand}" /></TextBox.InputBindings></TextBox>
+         <TextBlock Text="{loc:Loc RedisMatch}" Foreground="{DynamicResource TextMutedBrush}" IsHitTestVisible="False" VerticalAlignment="Center"><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding Pattern}" Value=""><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+        </Grid>
+       </DockPanel>
+      </Border>
+      <DockPanel Grid.Row="2" Margin="0,0,0,12"><Button DockPanel.Dock="Right" Click="OnCollapseGroups" Style="{StaticResource IconButton}" Margin="8,0,0,0" ToolTip="{loc:Loc RedisCollapseGroups}" AutomationProperties.Name="{loc:Loc RedisCollapseGroups}"><controls:IconView Kind="fold-vertical" Width="16" Height="16" /></Button>
+       <ComboBox ItemsSource="{Binding Types}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding SelectedType, Mode=TwoWay}" SelectionChanged="OnTypeFilterChanged" Height="32" MinHeight="32" AutomationProperties.Name="{loc:Loc RedisKeyType}" />
+      </DockPanel>
+      <DockPanel Grid.Row="3" Margin="0,0,0,12"><controls:StatusBadge DockPanel.Dock="Right" Text="{loc:Loc RedisMoreGroups}" Tone="Accent" ShowIndicator="False" Visibility="{Binding Tree.Root.HasMore, Converter={StaticResource Visible}}" /><TextBlock Text="{Binding Tree.CountLabel}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" VerticalAlignment="Center" /></DockPanel>
+      <controls:WorkspaceTreeView Grid.Row="4" x:Name="KeyTree" ItemsSource="{Binding Tree.Root.Children}" ItemContainerStyle="{StaticResource KeyTreeItem}" SelectedItemChanged="OnTreeSelection" PreviewKeyDown="OnTreeKeyDown" MouseLeftButtonUp="OnTreeClick"
+       BorderThickness="0" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{loc:Loc RedisKeys}" />
+      <DockPanel Grid.Row="5" Margin="0,12,0,0"><Button DockPanel.Dock="Left" Content="{loc:Loc RedisLoadRootGroups}" Command="{Binding Tree.Root.LoadMoreCommand}" Visibility="{Binding Tree.Root.HasMore, Converter={StaticResource Visible}}" Margin="0,0,8,0" />
+       <TextBlock Text="{loc:Loc RedisLazyHint}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" TextWrapping="Wrap" />
+      </DockPanel>
+     </Grid>
+    </Border>
+    <GridSplitter Grid.Column="1" x:Name="Splitter" HorizontalAlignment="Stretch" Background="{DynamicResource LineSoftBrush}" ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" ShowsPreview="True" />
+    <Grid Grid.Column="2" x:Name="KeyPanel" Margin="22,18,22,16"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+     <DockPanel Background="{DynamicResource AppBackgroundBrush}">
+      <Button DockPanel.Dock="Right" Click="OnOpenTabsMenu" Style="{StaticResource IconButton}" ToolTip="{loc:Loc RedisAllOpenKeys}" AutomationProperties.Name="{loc:Loc RedisAllOpenKeys}" Margin="4,0"><controls:IconView Kind="chevron-down" Width="14" Height="14" /></Button>
+      <controls:WorkspaceTabStrip x:Name="KeyTabs" ItemsSource="{Binding Tabs}" SelectedItem="{Binding ActiveTab, Mode=TwoWay}" ToolTipMemberPath="MenuLabel" SelectionChanged="OnTabSelected" AutomationProperties.Name="{loc:Loc RedisAllOpenKeys}">
+       <controls:WorkspaceTabStrip.ItemTemplate><DataTemplate><StackPanel Orientation="Horizontal" ToolTip="{Binding MenuLabel}" AutomationProperties.Name="{Binding MenuLabel}">
+        <controls:IconView Kind="{Binding Icon}" Width="14" Height="14" Margin="0,0,7,0" Foreground="{DynamicResource TextMutedBrush}" />
+        <TextBlock Text="{Binding Header}" FontFamily="{DynamicResource MonoFont}" FontSize="12" VerticalAlignment="Center"><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}"><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" /><Style.Triggers><DataTrigger Binding="{Binding IsActive}" Value="True"><Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+        <TextBlock Text="●" FontSize="8" Foreground="{DynamicResource AccentBrush}" Margin="6,0,0,0" VerticalAlignment="Center" Visibility="{Binding IsDirty, Converter={StaticResource Visible}}" />
+        <Button Command="{Binding DataContext.CloseTabCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource IconButton}" Width="24" Height="24" Margin="6,0,0,0" ToolTip="{loc:Loc RedisCloseTab}" AutomationProperties.Name="{loc:Loc RedisCloseTab}"><controls:IconView Kind="x" Width="12" Height="12" /></Button>
+       </StackPanel></DataTemplate></controls:WorkspaceTabStrip.ItemTemplate>
+      </controls:WorkspaceTabStrip>
+     </DockPanel>
+     <ContentControl Grid.Row="1" x:Name="ContentHost" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Visibility="{Binding HasActiveTab, Converter={StaticResource Visible}}" />
+     <StackPanel Grid.Row="1" Visibility="{Binding IsEmpty, Converter={StaticResource Visible}}" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="320" Margin="24"><controls:IconView Kind="database" Width="38" Height="38" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,18" /><TextBlock Text="{loc:Loc RedisEmptySelection}" TextWrapping="Wrap" TextAlignment="Center" Foreground="{DynamicResource TextMutedBrush}" /></StackPanel>
+    </Grid>
+   </Grid>
+  </Grid>
+ </controls:WorkspacePageLayout>
+</UserControl>

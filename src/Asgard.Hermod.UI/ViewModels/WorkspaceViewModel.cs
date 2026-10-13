@@ -127,6 +127,14 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
         Tabs.Add(page); SelectedTab = page; Home.RecordOpened(instance);
     }
 
+    /// <summary>用户退出应用前逐页确认，取消任一页面时保持所有会话和草稿。</summary>
+    public async Task<bool> RequestCloseAllAsync()
+    {
+        foreach (var page in Tabs.ToArray())
+            if (!page.IsClosed && !await page.RequestCloseAsync()) return false;
+        return true;
+    }
+
     /// <summary>应用退出时关闭所有页，不保存或恢复已打开的页签。</summary>
     public ValueTask DisposeAsync()
     {

@@ -13,6 +13,8 @@ global using Asgard.Hermod.Providers.Minio;
 global using Asgard.Hermod.Providers.S3;
 global using Asgard.Hermod.Providers.TencentCos;
 global using Asgard.Hermod.Providers.VolcengineTos;
+global using Asgard.Hermod.Redis;
+global using Asgard.Hermod.Redis.UI;
 global using Asgard.Hermod.Security.Windows;
 global using Asgard.Hermod.Ssh;
 global using Asgard.Hermod.Ssh.UI;

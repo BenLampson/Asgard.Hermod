@@ -1,0 +1,17 @@
+<controls:HermodDialog x:Class="Asgard.Hermod.Redis.UI.Views.RedisCreateDialog"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI" xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI"
+ Title="{loc:Loc RedisNewKey}" Width="620" Height="640">
+ <controls:HermodDialog.FooterContent><controls:DialogActionBar><StackPanel Orientation="Horizontal">
+  <Button Content="{loc:Loc Cancel}" IsCancel="True" Margin="0,0,10,0" />
+  <Button Content="{loc:Loc RedisNewKey}" Style="{StaticResource PrimaryButton}" Click="OnCreate" />
+ </StackPanel></controls:DialogActionBar></controls:HermodDialog.FooterContent>
+ <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="24">
+  <TextBlock Text="{loc:Loc RedisCreateHint}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,18" />
+  <controls:FormField x:Name="KeyField" Label="{loc:Loc RedisKeyName}" IsRequired="True" Margin="0,0,0,14"><TextBox x:Name="KeyInput" MaxLength="4096" AutomationProperties.Name="{loc:Loc RedisKeyName}" /></controls:FormField>
+  <controls:FormField Label="{loc:Loc RedisKeyType}" IsRequired="True" Margin="0,0,0,14"><ComboBox x:Name="TypeInput" SelectionChanged="OnTypeChanged" AutomationProperties.Name="{loc:Loc RedisKeyType}" /></controls:FormField>
+  <controls:FormField x:Name="FieldControl" Label="{loc:Loc RedisField}" Margin="0,0,0,14"><TextBox x:Name="FieldInput" MaxLength="65536" AutomationProperties.Name="{loc:Loc RedisField}" /></controls:FormField>
+  <controls:FormField Label="{loc:Loc RedisEntryValue}" Margin="0,0,0,14"><TextBox x:Name="ValueInput" AcceptsReturn="True" MinHeight="90" MaxHeight="180" MaxLength="1048576" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="{loc:Loc RedisEntryValue}" /></controls:FormField>
+  <controls:FormField x:Name="ScoreControl" Label="{loc:Loc RedisScore}" Margin="0,0,0,14"><TextBox x:Name="ScoreInput" Text="0" MaxLength="64" AutomationProperties.Name="{loc:Loc RedisScore}" /></controls:FormField>
+ </StackPanel></ScrollViewer>
+</controls:HermodDialog>

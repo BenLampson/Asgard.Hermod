@@ -10,6 +10,7 @@
                 <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.UI;component/Resources/Styles.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.ObjectStorage.UI;component/Resources/WorkspacePages.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.Ssh.UI;component/Resources/WorkspacePages.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.Redis.UI;component/Resources/WorkspacePages.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

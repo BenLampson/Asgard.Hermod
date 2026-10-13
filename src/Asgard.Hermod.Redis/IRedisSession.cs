@@ -7,6 +7,8 @@ public interface IRedisSession : IAsyncDisposable
     RedisSessionOptions Options { get; }
     /// <summary>各主节点稳定标识，SCAN 游标必须按节点隔离。</summary>
     IReadOnlyList<string> ScanNodes { get; }
+    /// <summary>服务器实际数据库数量，Cluster 固定为一。</summary>
+    int DatabaseCount => 1;
     /// <summary>每次仅请求一个 SCAN 批次，空批次不代表完成。</summary>
     Task<RedisScanPage> ScanAsync(string node, int database, string cursor, string pattern, string type, CancellationToken cancellationToken);
     /// <summary>有界读取一页及元数据；不获取创建时间。</summary>

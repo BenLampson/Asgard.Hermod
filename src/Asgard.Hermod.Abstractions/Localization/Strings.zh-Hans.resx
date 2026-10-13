@@ -2930,4 +2930,37 @@
   <data name="SshTerminalFocused" xml:space="preserve"><value>输入焦点 · 终端</value></data>
   <data name="SshTerminalUnfocused" xml:space="preserve"><value>点击终端开始输入</value></data>
   <data name="SshSearchShortcut" xml:space="preserve"><value>Ctrl+Shift+F</value></data>
+  <data name="RedisPreviewInfo" xml:space="preserve">
+    <value>{0} B · {1}</value>
+  </data>
+  <data name="RedisConnectionSummary" xml:space="preserve">
+    <value>{0} · {1} · {2}</value>
+  </data>
+  <data name="RedisCopyKey" xml:space="preserve">
+    <value>复制完整键名</value>
+  </data>
+  <data name="RedisCopyValue" xml:space="preserve">
+    <value>复制显示内容</value>
+  </data>
+  <data name="RedisKeyActions" xml:space="preserve">
+    <value>当前键操作</value>
+  </data>
+  <data name="RedisCollapseGroups" xml:space="preserve">
+    <value>折叠所有分组</value>
+  </data>
+  <data name="RedisLoadRootGroups" xml:space="preserve">
+    <value>加载更多根分组</value>
+  </data>
+  <data name="RedisLazyHint" xml:space="preserve">
+    <value>未展开不加载子项</value>
+  </data>
+  <data name="RedisShownKeys" xml:space="preserve">
+    <value>已显示 {0} 个键</value>
+  </data>
+  <data name="RedisKeySearchHelp" xml:space="preserve">
+    <value>键搜索帮助</value>
+  </data>
+  <data name="RedisWritePrimary" xml:space="preserve">
+    <value>写入目标为主节点</value>
+  </data>
 </root>

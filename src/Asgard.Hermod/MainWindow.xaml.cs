@@ -49,6 +49,11 @@ public partial class MainWindow : HermodWindow
         if (_closing)
             return;
         _closing = true;
+        try
+        {
+            if (!await _model.Workspace.RequestCloseAllAsync()) { _closing = false; return; }
+        }
+        catch (Exception exception) { _closing = false; OnCommandFailed(this, exception); return; }
         ShellView.IsEnabled = false;
         try
         {

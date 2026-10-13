@@ -6,6 +6,7 @@ internal sealed class RedisSession(ConnectionMultiplexer connection, RedisSessio
 {
     public RedisSessionOptions Options { get; } = options;
     public IReadOnlyList<string> ScanNodes { get; } = servers.Select(server => server.EndPoint.ToString()!).ToArray();
+    public int DatabaseCount => Options.Topology == RedisIds.Cluster ? 1 : servers[0].DatabaseCount;
 
     public async Task<RedisScanPage> ScanAsync(string node, int database, string cursor, string pattern, string type, CancellationToken cancellationToken)
     {
