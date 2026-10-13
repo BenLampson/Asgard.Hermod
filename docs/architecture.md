@@ -21,6 +21,8 @@ storage and owns application startup and shutdown.
 | `Asgard.Hermod.WinTerminal` | VT engine, rendering, WPF terminal control, ConPTY connections and local session adapter | Windows desktop framework |
 | `Asgard.Hermod.Ssh` | SSH authentication, verified host identity, jump routing and SOCKS5/HTTP CONNECT transport | Shared contracts, Tmds.Ssh, DI abstractions |
 | `Asgard.Hermod.Ssh.UI` | SSH configuration content, host verification and independent terminal workspace pages | Shared UI, SSH protocol module |
+| `Asgard.Hermod.Redis` | Redis 7+ topology discovery, verified TLS and routed TCP transport, bounded reads and guarded writes | Shared contracts, SSH forwarding contract, StackExchange.Redis |
+| `Asgard.Hermod.Redis.UI` | Redis connection forms, lazy key trees, per-key tabs and value editors | Shared UI, Redis protocol module |
 | `Asgard.Hermod.ObjectStorage.Abstractions` | Object storage models, service and client contracts | Shared contracts |
 | `Asgard.Hermod.ObjectStorage` | Resource client factory, connection probe, transfers, previews and deletion policies | Object storage contracts, DI abstractions |
 | `Asgard.Hermod.ObjectStorage.UI` | Object browser, feature dialogs, view models and page template | Shared UI, object storage contracts, DI abstractions |
@@ -109,6 +111,32 @@ registers output search, font size, local display clearing and connection detail
 Compact toolbars preserve Edit and Tools and move secondary actions into these
 shared entry points. The tools never inject shell commands.
 
+Redis reuses the five-step connection flow, shared field editors and protected
+configuration storage. Standalone, Sentinel and Cluster are independent provider
+IDs. Sentinel discovery has separate authentication and TLS settings from data
+nodes. Direct and SOCKS5/HTTP CONNECT routes support every topology; SSH forwarding
+is standalone-only and uses the SSH module's existing host trust and credentials.
+Custom CA trust checks certificate chains, validity, usage and hostnames; it does
+not require a private CA to publish online revocation information. Windows client
+certificates use temporary user key containers released with the connection.
+
+Redis key browsing uses bounded SCAN batches and independent node/prefix cursors.
+Only expanded prefixes load children; values are read after opening a key. Empty
+SCAN pages retain their cursor. The public `WorkspaceTreeView`, `WorkspaceTabStrip`,
+`SectionSelector` and `CodeEditor` controls provide native keyboard navigation,
+shared theme resources and the Pencil workspace layout. Key tabs are identified
+by database and raw key bytes, truncate headers to twelve graphemes including the
+ellipsis, and retain independent drafts and view state. Redis does not supply a
+key creation timestamp, so the metadata view does not invent one.
+
+Editable values require a complete bounded server baseline. Lua compare-and-save
+preserves absolute expiry and detects conflicts; hash writes compare only changed
+fields, list writes guard index drift, and streams append without trimming old
+records. A dispatched write with an unknown outcome is never replayed automatically.
+Closing a key, instance or application confirms unsaved drafts. Read-only ACL
+fallback permits known-key inspection without exposing credentials or raw SDK
+errors. Larger or incomplete results remain previews.
+
 ## Composition
 
 The application calls the independently owned registration entry points:
@@ -126,10 +154,12 @@ services.AddAwsS3();
 services.AddMinio();
 services.AddS3Connector<S3CompatibleStorageProvider>();
 services.AddSsh();
+services.AddRedis();
 services.AddSingleton<ITerminalSessionFactory, LocalTerminalSessionFactory>();
 services.AddHermodUi(() => MainWindow, Resources);
 services.AddObjectStorageUi(() => MainWindow);
 services.AddSshUi(() => MainWindow);
+services.AddRedisUi(() => MainWindow);
 ```
 
 `AddLocalStorage` registers SQLite and local configuration/tag services. The host

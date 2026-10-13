@@ -157,7 +157,8 @@ public sealed partial class RedisKeyTabViewModel : ObservableObject, IDisposable
                 catch { _format = "text"; }
             }
             Formats = utf8 ? IsString ? [new("text", Text.Get("RedisText")), new("json", Text.Get("RedisJson")), new("hex", Text.Get("RedisHex")), new("base64", Text.Get("RedisBase64"))]
-                : [new("text", Text.Get("RedisText")), new("base64", Text.Get("RedisBase64"))] : [new("base64", Text.Get("RedisBase64"))];
+                : [new("text", Text.Get("RedisText")), new("base64", Text.Get("RedisBase64"))]
+                : IsString ? [new("hex", Text.Get("RedisHex")), new("base64", Text.Get("RedisBase64"))] : [new("base64", Text.Get("RedisBase64"))];
             if (!Formats.Any(format => format.Id == _format)) _format = utf8 ? "text" : "base64";
             if (IsString)
             {

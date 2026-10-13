@@ -7,6 +7,17 @@ namespace Asgard.Hermod.Redis.Tests;
 public sealed class RedisStateTests
 {
     [Fact]
+    public async Task BinaryString_HexAndBase64PreserveBytesWithoutLossyText()
+    {
+        var session = new RedisTestSession { Snapshot = new("string", 3, -1, [new([], [255, 0, 1])], true) };
+        using var tab = new RedisKeyTabViewModel(session, 0, RedisKeyId.FromText("binary"), new RedisTestDialogs());
+        await tab.ReadAsync(); Assert.Equal(new[] { "hex", "base64" }, tab.Formats.Select(format => format.Id));
+        await tab.EditCommand.ExecuteAsync(); tab.Format = "hex";
+        Assert.Equal(new byte[] { 255, 0, 1 }, RedisValueCodec.Decode(tab.EditorText, "hex"));
+        tab.EditorText = "DEADBEEF"; await tab.SaveCommand.ExecuteAsync();
+        Assert.Equal(new byte[] { 222, 173, 190, 239 }, Assert.Single(session.Snapshot.Entries).Value);
+    }
+    [Fact]
     public async Task Tree_LoadsOnlyOpenedPrefixesAndKeepsAnEmptyBatchCursor()
     {
         var session = new RedisTestSession

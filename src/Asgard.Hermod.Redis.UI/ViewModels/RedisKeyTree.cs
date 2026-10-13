@@ -7,7 +7,6 @@ public sealed class RedisKeyTree : ObservableObject, IDisposable
 {
     private readonly IRedisSession _session;
     private readonly CancellationTokenSource _lifetime = new();
-    private readonly HashSet<string> _discovered = new(StringComparer.Ordinal);
     private int _generation;
     private readonly Dictionary<string, (string Type, string Ttl)> _metadata = new(StringComparer.Ordinal);
     private RedisKeyId? _activeKey;
@@ -26,7 +25,7 @@ public sealed class RedisKeyTree : ObservableObject, IDisposable
     public string Type { get; }
     /// <summary>虚拟根不渲染，界面绑定其子节点。</summary>
     public RedisTreeNode Root { get; }
-    /// <summary>实际去重发现数，不宣称总量。</summary>
+    /// <summary>当前可见的去重键数，不宣称数据库总量。</summary>
     public string CountLabel => Text.Format("RedisShownKeys", VisibleKeys(Root));
     /// <summary>部分主节点失败或安全读取反馈。</summary>
     public string Error { get; private set; } = "";
@@ -71,7 +70,7 @@ public sealed class RedisKeyTree : ObservableObject, IDisposable
                     {
                         if (node.Prefix.Length > 0 && (!key.IsText || !key.DisplayName.StartsWith(node.Prefix, StringComparison.Ordinal))) continue;
                         if (node.Prefix.Length > 0 && !RedisGlob.IsMatch(key.ToBytes(), Encoding.UTF8.GetBytes(Pattern))) continue;
-                        _discovered.Add(key.Identity); AddKey(node, key);
+                        AddKey(node, key);
                     }
                 }
                 catch (OperationCanceledException) when (pending.IsCancellationRequested) { return; }

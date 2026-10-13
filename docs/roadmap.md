@@ -6,6 +6,7 @@ This roadmap describes intended direction, not committed release dates.
 - [x] Add open-source community files.
 - [x] Establish the Windows WPF terminal component from selected VirtualTerminal source, with local ConPTY and automated checks.
 - [x] Add verified SSH connections, jump/proxy routes and a bilingual terminal workspace.
+- [x] Add Redis topology connections, lazy key browsing and independent guarded value editors.
 - [ ] Define supported Asgard services and management operations.
 - [ ] Add endpoint profiles and connection diagnostics.
 - [x] Integrate Heimdall sign-in and user-bound encrypted workspace synchronization.

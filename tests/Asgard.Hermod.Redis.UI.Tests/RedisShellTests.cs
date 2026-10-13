@@ -12,7 +12,11 @@ public sealed class RedisShellTests(WpfTestFixture fixture)
         using var trace = new WpfBindingTrace();
         var resource = new ResourceDictionary { Source = new Uri("pack://application:,,,/Asgard.Hermod.Redis.UI;component/Resources/WorkspacePages.xaml") };
         Application.Current.Resources.MergedDictionaries.Add(resource);
-        var configs = new RedisTestConfigurations(); var session = new RedisTestSession(); var dialogs = new RedisTestDialogs();
+        var configs = new RedisTestConfigurations(); var session = new RedisTestSession
+        {
+            Snapshot = new("string", 169, 240000, [new([], "{\"version\":12,\"title\":\"Autumn collection\",\"enabled\":true,\"items\":[{\"id\":\"sku-1042\",\"stock\":28},{\"id\":\"sku-1089\",\"stock\":64}]}"u8.ToArray())], true),
+            Scan = (_, _, _) => Task.FromResult(new RedisScanPage("0", [RedisKeyId.FromText("cache:homepage"), RedisKeyId.FromText("user:1042:profile"), RedisKeyId.FromText("events:orders"), RedisKeyId.FromText("leaderboard:weekly")]))
+        }; var dialogs = new RedisTestDialogs();
         var pages = new InstanceWorkspaceFactory([new RedisPageProvider(configs, session, configs, dialogs)]);
         await using var shell = new ShellViewModel(configs, configs, new RedisTestTerminalFactory(), new ThemeService(Application.Current.Resources), pageFactory: pages);
         var window = new MainWindow(shell) { WindowStartupLocation = WindowStartupLocation.Manual };
@@ -22,6 +26,10 @@ public sealed class RedisShellTests(WpfTestFixture fixture)
             shell.Workspace.OpenInstance(Assert.Single(shell.Sidebar.AllInstances));
             var page = Assert.IsType<RedisWorkspaceViewModel>(shell.Workspace.SelectedTab);
             await page.InitializeAsync(TestContext.Current.CancellationToken); await page.OpenAsync(RedisKeyId.FromText("cache:homepage"));
+            var homepage = page.ActiveTab!;
+            await page.OpenAsync(RedisKeyId.FromText("user:1042:profile")); page.ActiveTab = homepage;
+            var cache = page.Tree!.Root.Children.Single(node => node.Prefix == "cache:");
+            await page.Tree.LoadAsync(cache); cache.IsExpanded = true;
             await WindowPreviewCapture.VerifyAsync(window, "redis-real-shell");
             Assert.Single(WindowTestVisuals.Descendants<RedisWorkspaceView>(window));
             await page.ActiveTab!.EditCommand.ExecuteAsync(); page.ActiveTab.EditorText = "draft";
