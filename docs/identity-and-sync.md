@@ -208,20 +208,27 @@ The Linux publish payload was built from this feature's source and the image was
 built on MD-Core; no registry publication is claimed. Its payload archive SHA-256
 is `3824aa6dd09cb68baff4b3c5bfb468b1bab1d433fd8a0349f6f8821fe09bd669`.
 
-Before replacement, the old container was stopped and SQLite's backup API copied
-the database into `/root/deploy/hermod/backups/20261013-autosync-r1/hermod-sync.db`.
-The protected backup directory also contains the previous Compose environment
-and deployment metadata. The old image is retained in a stopped container named
-`asgard-hermod-rollback-20261013-autosync-r1`. The new container runs with the
-existing UID 1654, volume, network, reverse proxy and credentials. Startup migrated
-the database from schema 1 to schema 2; integrity checks passed and the original
-legacy record matched the backup exactly before client migration.
+Before replacement, the old container was stopped and a temporary schema-1
+SQLite backup was made. Startup migrated the database to schema 2; integrity
+checks passed and the original legacy record matched that temporary backup
+exactly before client migration. The new container uses the existing UID 1654,
+volume, network, reverse proxy and credentials.
 
-Rollback across this schema migration requires stopping the new container,
-preserving any post-deployment data, restoring the schema-1 database backup and
-its ownership, restoring the previous image setting, and starting the old image.
-Starting the schema-1 image directly against a schema-2 database is unsupported.
-Record image content hashes and create a fresh backup for every deployment.
+After production verification, the owner requested removal of retained backups
+and rollback images. The server's temporary database/environment backup, stopped
+rollback container, all four superseded Hermod image tags, transferred archives
+and build directories were removed. Only the current running Hermod image is
+retained. Cleanup compared the business table contents before and after removal:
+they were identical, database integrity was `ok`, and the current container was
+not restarted. Non-secret release and verification metadata remain in
+`/root/deploy/hermod/release.json`.
+
+The final database contains one account configuration, one original instance and
+three tags, with no legacy snapshot or probe instance. No server backup or
+rollback container is retained for this deployment. Automated approval review
+blocked removal of the two local verification databases and protected snapshot
+under `artifacts/production-sync-probe/data`; those ignored local files still
+require manual cleanup. They are not used by the running service.
 
 ## Verification
 
