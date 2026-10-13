@@ -10,6 +10,8 @@ internal sealed class AutomaticSyncUiTestService : IConfigurationSyncService
     public IReadOnlyList<ConfigurationConflict> Conflicts { get; set; } = [];
     public event EventHandler? Changed;
     public int Checks { get; private set; }
+    /// <summary>模拟后台同步状态变化，验证已展开菜单的实时绑定。</summary>
+    internal void SetStatus(ConfigurationSyncStatus status) { Status = status; Changed?.Invoke(this, EventArgs.Empty); }
     public Task StartAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
     public Task StopAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
     public Task PrepareWorkspaceAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;

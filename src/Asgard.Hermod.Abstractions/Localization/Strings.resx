@@ -2108,4 +2108,11 @@
   <data name="FileTypeDiskImage" xml:space="preserve"><value>Disk image</value></data>
   <data name="FileTypeUnknown" xml:space="preserve"><value>Unknown file</value></data>
   <data name="FileTypeFolder" xml:space="preserve"><value>Folder</value></data>
+  <data name="SyncBadgeLocal" xml:space="preserve"><value>Local only</value></data>
+  <data name="SyncBadgePasswordRequired" xml:space="preserve"><value>Password required</value></data>
+  <data name="SyncBadgePending" xml:space="preserve"><value>Sync pending</value></data>
+  <data name="SyncBadgeSynchronizing" xml:space="preserve"><value>Syncing…</value></data>
+  <data name="SyncBadgeSynced" xml:space="preserve"><value>Synced</value></data>
+  <data name="SyncBadgeConflict" xml:space="preserve"><value>Sync conflict</value></data>
+  <data name="SyncBadgeFailed" xml:space="preserve"><value>Sync failed</value></data>
 </root>

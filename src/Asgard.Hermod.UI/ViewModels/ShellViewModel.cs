@@ -71,9 +71,14 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     public WorkspaceViewModel Workspace { get; }
     /// <summary>当前使用设备上的用户级工作区。</summary>
     public string WorkspaceName => Text.Get(IsSignedIn ? "SyncCloudWorkspace" : "LocalWorkspace");
-    /// <summary>标题栏持续呈现同步状态，错误与冲突不能隐藏在账号弹窗中。</summary>
+    /// <summary>账户菜单同步徽标的完整提示，沿用同步服务的安全本地化信息。</summary>
     public string SyncStatusText => IsSignedIn ? _sync?.Message ?? "" : "";
+    /// <summary>账户菜单仅在已登录且装配同步服务时显示同步状态。</summary>
     public bool HasSyncStatus => IsSignedIn && _sync is not null;
+    /// <summary>徽标颜色使用稳定枚举，不比较翻译后的状态文字。</summary>
+    public ConfigurationSyncStatus SyncStatus => _sync?.Status ?? ConfigurationSyncStatus.Local;
+    /// <summary>与登录状态并列的简短同步状态，详细说明通过提示和账户信息查看。</summary>
+    public string SyncStatusLabel => HasSyncStatus ? Text.Get("SyncBadge" + SyncStatus) : "";
     /// <summary>登录后显示已验证 JWT 用户名，否则显示本地模式。</summary>
     public string AccountName => _accounts?.Account?.Username ?? Text.Get("Local");
     /// <summary>头像取 JWT 用户名的前两个完整字素，不拆分中文、组合字符或 Emoji。</summary>
@@ -159,6 +164,7 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
         OnPropertyChanged(nameof(AccountName)); OnPropertyChanged(nameof(AccountInitials));
         OnPropertyChanged(nameof(IsSignedIn)); OnPropertyChanged(nameof(AccountStatus));
         OnPropertyChanged(nameof(WorkspaceName)); OnPropertyChanged(nameof(SyncStatusText)); OnPropertyChanged(nameof(HasSyncStatus));
+        OnPropertyChanged(nameof(SyncStatus)); OnPropertyChanged(nameof(SyncStatusLabel));
         SignOutAccountCommand.NotifyCanExecuteChanged();
         AccountMessage = "";
         OnPropertyChanged(nameof(AccountMessage));
@@ -170,6 +176,7 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
         if (!_dispatcher.CheckAccess()) { _dispatcher.BeginInvoke(() => OnSyncChanged(sender, args)); return; }
         if (_disposed) return;
         OnPropertyChanged(nameof(SyncStatusText)); OnPropertyChanged(nameof(HasSyncStatus));
+        OnPropertyChanged(nameof(SyncStatus)); OnPropertyChanged(nameof(SyncStatusLabel));
         if (_sync?.Status is ConfigurationSyncStatus.Synced or ConfigurationSyncStatus.Local or ConfigurationSyncStatus.PasswordRequired)
             _ = RefreshSyncSidebarAsync();
     }

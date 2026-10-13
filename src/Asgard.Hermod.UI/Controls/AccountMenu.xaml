@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization"
              xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
+             xmlns:models="clr-namespace:Asgard.Hermod.Abstractions.Models;assembly=Asgard.Hermod.Abstractions"
              FontFamily="{DynamicResource UiFont}">
     <UserControl.Resources>
         <!-- Pencil 账户菜单：独立身份头部、34px 信息行和 42px 退出行。 -->
@@ -95,10 +96,48 @@
                         <StackPanel>
                             <TextBlock Text="{Binding AccountName}" FontSize="14" FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextPrimaryBrush}" TextTrimming="CharacterEllipsis" MaxWidth="254" />
-                            <Border HorizontalAlignment="Left" Height="24" CornerRadius="5" Padding="8,0" Margin="0,8,0,0"
-                                    Background="{DynamicResource SuccessWeakBrush}">
-                                <TextBlock Text="{Binding AccountStatus}" FontSize="11" VerticalAlignment="Center" Foreground="{DynamicResource SuccessBrush}" />
-                            </Border>
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                <Border Height="24" CornerRadius="5" Padding="8,0" Background="{DynamicResource SuccessWeakBrush}">
+                                    <TextBlock Text="{Binding AccountStatus}" FontSize="11" VerticalAlignment="Center" Foreground="{DynamicResource SuccessBrush}" />
+                                </Border>
+                                <Border x:Name="AccountSyncBadge" Height="24" CornerRadius="5" Padding="8,0" Margin="8,0,0,0"
+                                        ToolTip="{Binding SyncStatusText}" AutomationProperties.Name="{Binding SyncStatusText}">
+                                    <Border.Style><Style TargetType="Border">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Setter Property="Background" Value="{DynamicResource LineSoftBrush}" />
+                                        <Setter Property="TextElement.Foreground" Value="{DynamicResource TextMutedBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasSyncStatus}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger>
+                                            <DataTrigger Binding="{Binding SyncStatus}" Value="{x:Static models:ConfigurationSyncStatus.Synced}">
+                                                <Setter Property="Background" Value="{DynamicResource SuccessWeakBrush}" />
+                                                <Setter Property="TextElement.Foreground" Value="{DynamicResource SuccessBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding SyncStatus}" Value="{x:Static models:ConfigurationSyncStatus.Pending}">
+                                                <Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" />
+                                                <Setter Property="TextElement.Foreground" Value="{DynamicResource AccentBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding SyncStatus}" Value="{x:Static models:ConfigurationSyncStatus.Synchronizing}">
+                                                <Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" />
+                                                <Setter Property="TextElement.Foreground" Value="{DynamicResource AccentBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding SyncStatus}" Value="{x:Static models:ConfigurationSyncStatus.PasswordRequired}">
+                                                <Setter Property="Background" Value="{DynamicResource WarningWeakBrush}" />
+                                                <Setter Property="TextElement.Foreground" Value="{DynamicResource WarningBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding SyncStatus}" Value="{x:Static models:ConfigurationSyncStatus.Conflict}">
+                                                <Setter Property="Background" Value="{DynamicResource WarningWeakBrush}" />
+                                                <Setter Property="TextElement.Foreground" Value="{DynamicResource WarningBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding SyncStatus}" Value="{x:Static models:ConfigurationSyncStatus.Failed}">
+                                                <Setter Property="Background" Value="{DynamicResource DangerWeakBrush}" />
+                                                <Setter Property="TextElement.Foreground" Value="{DynamicResource DangerBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style></Border.Style>
+                                    <TextBlock Text="{Binding SyncStatusLabel}" FontSize="11" VerticalAlignment="Center"
+                                               Foreground="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource AncestorType=Border}}" />
+                                </Border>
+                            </StackPanel>
                             <TextBlock Text="{Binding AccountMessage}" TextWrapping="Wrap" MaxWidth="254"
                                        Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,0">
                                 <TextBlock.Style><Style TargetType="TextBlock">

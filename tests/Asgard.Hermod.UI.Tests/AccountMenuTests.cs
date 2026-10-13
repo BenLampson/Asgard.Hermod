@@ -8,12 +8,14 @@ namespace Asgard.Hermod.UI.Tests;
 [Collection(WpfTestCollection.Name)]
 public sealed class AccountMenuTests(WpfTestFixture fixture)
 {
-    /// <summary>未登录点击直达登录，已登录才展开可读身份、账户信息与退出菜单。</summary>
+    /// <summary>菜单随同步状态实时更新，未登录直达登录，已登录保留账户与退出操作。</summary>
     [Theory]
     [InlineData("en", UiTheme.Light)]
     [InlineData("zh-Hans", UiTheme.Light)]
     [InlineData("en", UiTheme.Dark)]
     [InlineData("zh-Hans", UiTheme.Dark)]
+    [InlineData("fr-FR", UiTheme.Light)]
+    [InlineData("fr-FR", UiTheme.Dark)]
     public Task AccountMenu_MatchesDesignAndExecutesAccountActions(string language, UiTheme theme) => fixture.RunAsync(async () =>
     {
         var previous = CultureInfo.CurrentUICulture;
@@ -25,9 +27,10 @@ public sealed class AccountMenuTests(WpfTestFixture fixture)
             using var previews = new ContextMenuPreviewScope();
             var accounts = new AccountUiTestService { Username = "hermod-admin" };
             var editor = new AccountTestEditor();
+            var sync = new AutomaticSyncUiTestService();
             var themes = new ThemeService(Application.Current.Resources); themes.SetTheme(theme);
             await using var shell = new ShellViewModel(new TestWorkspaceDataSource(), new FakeInstanceEditor(),
-                new FakeTerminalSessionFactory(), themes, accounts: accounts, accountEditor: editor);
+                new FakeTerminalSessionFactory(), themes, accounts: accounts, accountEditor: editor, sync: sync);
             var title = new TitleBarView { DataContext = shell };
             window = new HermodWindow { CaptionContent = title, DataContext = shell, Width = 1100, Height = 180 };
             WindowPreviewCapture.Show(window);
@@ -38,6 +41,8 @@ public sealed class AccountMenuTests(WpfTestFixture fixture)
             button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             await WpfTestFixture.DrainDispatcherAsync();
             Assert.Equal(1, editor.SignIns); Assert.False(popup.IsOpen);
+            Assert.False(shell.HasSyncStatus);
+            Assert.Empty(shell.SyncStatusLabel);
             Assert.Equal(Visibility.Collapsed, Assert.IsType<IconView>(control.FindName("AccountChevron")).Visibility);
             await WindowPreviewCapture.VerifyAsync(window, $"account-local-{theme}-{language}");
 
@@ -68,6 +73,33 @@ public sealed class AccountMenuTests(WpfTestFixture fixture)
             Assert.InRange(Math.Abs(targetBounds.Right - menuBounds.Right), 0, 1);
             Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(popup), text => text.Text == "hermod-admin");
             Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(popup), text => text.Text == Text.Get("SignedIn"));
+            Assert.DoesNotContain(WindowTestVisuals.Descendants<TextBlock>(title), text => text.Text == sync.Message);
+            var badge = Assert.Single(WindowTestVisuals.Descendants<Border>(popup), border => border.Name == "AccountSyncBadge");
+            var statusLabel = Assert.Single(WindowTestVisuals.Descendants<TextBlock>(badge));
+            foreach (var status in Enum.GetValues<ConfigurationSyncStatus>())
+            {
+                sync.SetStatus(status);
+                await WpfTestFixture.DrainDispatcherAsync();
+                popup.UpdateLayout();
+                Assert.Equal(Visibility.Visible, badge.Visibility);
+                Assert.Equal(Text.Get("SyncBadge" + status), statusLabel.Text);
+                Assert.Equal(sync.Message, badge.ToolTip);
+                Assert.Equal(sync.Message, System.Windows.Automation.AutomationProperties.GetName(badge));
+                string brushKey = status switch
+                {
+                    ConfigurationSyncStatus.Synced => "SuccessBrush",
+                    ConfigurationSyncStatus.Pending or ConfigurationSyncStatus.Synchronizing => "AccentBrush",
+                    ConfigurationSyncStatus.PasswordRequired or ConfigurationSyncStatus.Conflict => "WarningBrush",
+                    ConfigurationSyncStatus.Failed => "DangerBrush",
+                    _ => "TextMutedBrush",
+                };
+                Assert.Equal(Assert.IsType<SolidColorBrush>(Application.Current.FindResource(brushKey)).Color,
+                    Assert.IsType<SolidColorBrush>(statusLabel.Foreground).Color);
+                Assert.True(statusLabel.ActualWidth > 0);
+                var badgeBounds = WindowTestVisuals.ScreenBounds(badge);
+                Assert.True(badgeBounds.Right <= menuBounds.Right - 12);
+                ContextMenuPreviewScope.Save(popup, $"account-menu-{theme}-{language}-{status}");
+            }
             var actions = popup.Items.OfType<MenuItem>().Where(item => item.Command is not null).ToArray();
             Assert.Equal(2, actions.Length);
             Assert.Equal(Text.Get("AccountInformation"), actions[0].Header);
@@ -79,6 +111,8 @@ public sealed class AccountMenuTests(WpfTestFixture fixture)
             await WpfTestFixture.DrainDispatcherAsync();
             await ContextMenuPreviewScope.InvokeAsync(actions[1]);
             Assert.Null(accounts.Account); Assert.False(popup.IsOpen);
+            Assert.Equal(Visibility.Collapsed, badge.Visibility);
+            Assert.Empty(statusLabel.Text);
             Assert.Equal(Visibility.Visible, Assert.IsType<IconView>(control.FindName("LocalDeviceIcon")).Visibility);
         }
         finally

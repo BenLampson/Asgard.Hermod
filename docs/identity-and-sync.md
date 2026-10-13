@@ -37,8 +37,10 @@ the replacement account.
 - Instance and tag changes queue synchronization with a two-second delay. The
   background service also checks for other devices every 30 seconds. Offline or
   failed requests retain local changes and retry. **Sync now** checks immediately.
-- The title bar shows pending, synchronizing, synchronized, conflict, or failed
-  status. The account window shows the last fully successful synchronization time.
+- The title bar account menu shows a compact synchronization badge beside the
+  sign-in badge: password required, pending, synchronizing, synchronized, conflict,
+  or failed. Its tooltip shows the full status message. The account window shows
+  the last fully successful synchronization time.
 - Each device keeps a DPAPI-protected last synchronized baseline. The client
   compares baseline, current local content and latest cloud content by stable IDs
   and fields. Independent changes merge automatically; identical final values
