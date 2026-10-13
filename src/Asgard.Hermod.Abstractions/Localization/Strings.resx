@@ -2515,4 +2515,7 @@
   <data name="InstanceTagHierarchyInvalid" xml:space="preserve"><value>The tag hierarchy is invalid. Refresh the tags and try again.</value></data>
   <data name="InstanceConfirmAddition" xml:space="preserve"><value>Confirm addition</value></data>
   <data name="InstanceConfirmTagsDescription" xml:space="preserve"><value>Review the connection information and optionally select tags before confirming.</value></data>
+  <data name="SshEditConfiguration" xml:space="preserve"><value>Edit configuration</value></data>
+  <data name="ConfigurationAppliesToNextConnection" xml:space="preserve"><value>Changes apply to the next connection. The current session continues with its original configuration.</value></data>
+  <data name="SshConfigurationSaved" xml:space="preserve"><value>Configuration saved. Applies to the next connection.</value></data>
 </root>

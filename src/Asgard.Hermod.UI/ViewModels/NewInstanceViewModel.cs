@@ -87,13 +87,19 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
         get;
         set
         {
-            if (IsEditing && value != SelectedProvider)
+            if (IsEditing && value != SelectedProvider && (!IsProviderSelectionEditable || value is null))
                 return;
             if (value is not null && !Providers.Contains(value))
                 return;
             if (SetProperty(ref field, value))
             {
+                var retained = IsEditing ? Fields.ToDictionary(item => item.Key, item => (item.Value, item.Definition.Kind)) : null;
                 ReplaceFields(value);
+                if (retained is not null)
+                    foreach (var item in Fields)
+                        if (retained.TryGetValue(item.Key, out var previous) && previous.Kind == item.Definition.Kind)
+                            item.Value = previous.Value;
+                UpdateFieldVisibility();
                 InvalidateConnection();
             }
         }

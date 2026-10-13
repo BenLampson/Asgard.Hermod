@@ -19,6 +19,9 @@
      <Button x:Name="SearchAction" Click="OnSearchClick" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshSearchOutput}" AutomationProperties.Name="{loc:Loc SshSearchOutput}"><controls:IconView Kind="search" Width="15" Height="15" /></Button>
      <Button x:Name="CopyAction" Click="OnCopyClick" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshCopySelection}" AutomationProperties.Name="{loc:Loc SshCopySelection}"><controls:IconView Kind="copy" Width="15" Height="15" /></Button>
      <Button x:Name="PasteAction" Click="OnPasteClick" IsEnabled="{Binding IsConnected}" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshPaste}" AutomationProperties.Name="{loc:Loc SshPaste}"><controls:IconView Kind="clipboard" Width="15" Height="15" /></Button>
+     <Button x:Name="EditAction" Command="{Binding EditConnectionCommand}" Style="{StaticResource GhostButton}" ToolTip="{loc:Loc SshEditConfiguration}" AutomationProperties.Name="{loc:Loc SshEditConfiguration}" Margin="6,0,0,0" Padding="8,0">
+      <StackPanel Orientation="Horizontal"><controls:IconView Kind="settings-2" Width="15" Height="15" /><TextBlock Text="{loc:Loc SshEditConfiguration}" Margin="7,0,0,0" /></StackPanel>
+     </Button>
      <Button Command="{Binding ToggleDetailsCommand}" Style="{StaticResource GhostButton}" ToolTip="{loc:Loc SshConnectionDetails}" AutomationProperties.Name="{loc:Loc SshConnectionDetails}" Margin="6,0,0,0" Padding="8,0">
       <StackPanel Orientation="Horizontal"><controls:IconView Kind="panel-right" Width="15" Height="15" /><TextBlock x:Name="DetailsActionLabel" Text="{loc:Loc SshConnectionDetails}" Margin="7,0,0,0" /></StackPanel>
      </Button>
@@ -27,6 +30,10 @@
    </Grid>
   </controls:WorkspacePageLayout.Toolbar>
   <controls:WorkspacePageLayout.Notification>
+   <StackPanel>
+   <Border Visibility="{Binding HasSaveFeedback, Converter={StaticResource Visible}}" Background="{DynamicResource SuccessWeakBrush}" Padding="18,8">
+    <TextBlock Text="{loc:Loc SshConfigurationSaved}" Foreground="{DynamicResource SuccessBrush}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+   </Border>
    <Border Visibility="{Binding IsEnded, Converter={StaticResource Visible}}" Background="{DynamicResource WarningWeakBrush}" Padding="18,8">
     <DockPanel><Button DockPanel.Dock="Right" Content="{loc:Loc SshReconnect}" Command="{Binding ReconnectCommand}" Style="{StaticResource PrimaryButton}" Margin="12,0,0,0" />
      <StackPanel><TextBlock Text="{Binding EndedMessage}" TextWrapping="Wrap" Foreground="{DynamicResource WarningBrush}" AutomationProperties.LiveSetting="Polite" />
@@ -34,6 +41,7 @@
      </StackPanel>
     </DockPanel>
    </Border>
+   </StackPanel>
   </controls:WorkspacePageLayout.Notification>
   <controls:WorkspacePageLayout.Details>
     <Border x:Name="DetailsPanel" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="1,0,0,0" Background="{DynamicResource SurfaceBrush}">
@@ -53,8 +61,6 @@
         <Button Content="{loc:Loc SshCopyFingerprint}" Click="OnCopyFingerprint" Tag="{Binding Fingerprint}" Style="{StaticResource GhostButton}" HorizontalAlignment="Left" Margin="0,6,0,0" />
        </StackPanel>
       </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
-      <Button Content="{loc:Loc SshEditConnection}" Command="{Binding EditConnectionCommand}" Margin="0,12,0,8" />
-      <TextBlock Text="{loc:Loc SshEditHint}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" TextWrapping="Wrap" />
      </StackPanel></ScrollViewer>
     </Border>
   </controls:WorkspacePageLayout.Details>

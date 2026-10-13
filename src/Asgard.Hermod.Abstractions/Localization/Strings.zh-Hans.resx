@@ -2515,4 +2515,7 @@
   <data name="InstanceTagHierarchyInvalid" xml:space="preserve"><value>标签层级无效，请刷新标签后重试。</value></data>
   <data name="InstanceConfirmAddition" xml:space="preserve"><value>确认添加</value></data>
   <data name="InstanceConfirmTagsDescription" xml:space="preserve"><value>检查连接信息，可选择标签后确认。</value></data>
+  <data name="SshEditConfiguration" xml:space="preserve"><value>编辑配置</value></data>
+  <data name="ConfigurationAppliesToNextConnection" xml:space="preserve"><value>下次连接生效。当前会话继续使用原配置。</value></data>
+  <data name="SshConfigurationSaved" xml:space="preserve"><value>配置已保存，下次连接生效。</value></data>
 </root>

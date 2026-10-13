@@ -13,6 +13,8 @@ public static class SshProfile
             ProviderSelectionTitleResourceKey = "SshConnectionMethod",
             ProviderSelectionDescriptionResourceKey = "SshChooseMethodDescription",
             ProviderLabelResourceKey = "SshConnectionMethod",
+            AllowProviderChangeOnEdit = true,
+            OmitSaveLocationOnEdit = true,
         }, Fields(route))
     { ConnectionTestDescription = Text.Get("SshTestDescription") };
 

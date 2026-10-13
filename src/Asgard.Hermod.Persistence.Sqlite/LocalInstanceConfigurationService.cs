@@ -97,7 +97,8 @@ public sealed class LocalInstanceConfigurationService : IInstanceConfigurationSe
                 StoredInstanceConfiguration? existing = instanceId is null ? null :
                     snapshot.Instances.FirstOrDefault(value => value.Id == instanceId)
                     ?? throw Text.Exception("TheInstanceNoLongerExistsRefreshAndConfigureItAgain");
-                if (existing is not null && (existing.TypeId != provider.Descriptor.Type.Id || existing.ProviderId != provider.Descriptor.Id))
+                if (existing is not null && (existing.TypeId != provider.Descriptor.Type.Id
+                    || existing.ProviderId != provider.Descriptor.Id && !provider.Descriptor.Type.AllowProviderChangeOnEdit))
                     throw Text.Exception("EditingCannotChangeTheInstanceTypeOrProviderCreateAnInstanceOfTheRequiredTypeInstead");
                 var instance = new StoredInstanceConfiguration(existing?.Id ?? Guid.NewGuid().ToString("N"), name,
                     provider.Descriptor.Type.Id, provider.Descriptor.Id, protectedParameters,

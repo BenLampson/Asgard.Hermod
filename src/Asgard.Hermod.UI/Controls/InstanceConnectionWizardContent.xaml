@@ -51,7 +51,7 @@
         <StackPanel Visibility="{Binding IsProviderStep, Converter={StaticResource WizardVisibility}}">
             <TextBlock Text="{Binding ProviderLabel}" Margin="0,16,0,8" />
             <ListBox x:Name="ProviderList" Style="{StaticResource WizardCardList}" ItemsSource="{Binding Providers}" SelectedItem="{Binding SelectedProvider}"
-                     IsEnabled="{Binding IsTypeSelectionEditable}"
+                     IsEnabled="{Binding IsProviderSelectionEditable}"
                      BorderThickness="0" Padding="0"
                      Background="Transparent" ItemContainerStyle="{StaticResource ProviderListItem}"
                      HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"

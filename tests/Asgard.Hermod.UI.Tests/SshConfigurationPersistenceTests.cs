@@ -12,6 +12,7 @@ public sealed class SshConfigurationPersistenceTests
     {
         using var environment = new LocalStorageTestEnvironment();
         using var services = new ServiceCollection().AddSingleton<ISshConnectionFactory>(new SshTestFactory())
+            .AddSingleton<ISshHostKeyPrompt>(new Asgard.Hermod.Ssh.UI.Services.WindowsSshHostKeyPrompt(() => null))
             .AddHermodCore().AddWindowsSecretProtection().AddSsh().AddLocalStorage(environment.CreateConfiguration())
             .BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
         services.GetRequiredService<LocalDatabaseInitializer>().Initialize();

@@ -15,6 +15,7 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
     private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
     private readonly CancellationTokenSource _lifetime = new();
     private readonly DispatcherTimer _clock;
+    private readonly DispatcherTimer _saveFeedbackTimer;
     private CancellationTokenSource? _connecting;
     private CancellationTokenSource? _ioCancellation;
     private ISshConnection? _connection;
@@ -44,6 +45,9 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
         _clock = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Background,
             (_, _) => OnPropertyChanged(nameof(Elapsed)), _dispatcher);
         _clock.Stop();
+        _saveFeedbackTimer = new DispatcherTimer(TimeSpan.FromSeconds(5), DispatcherPriority.Background,
+            (_, _) => ClearSaveFeedback(), _dispatcher);
+        _saveFeedbackTimer.Stop();
     }
 
     /// <summary>当前实例显示名。</summary>
@@ -96,6 +100,8 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
     public string GridSize => _terminal.Buffer.Columns.ToString(CultureInfo.InvariantCulture) + " × " + _terminal.Buffer.Rows.ToString(CultureInfo.InvariantCulture);
     /// <summary>按需展开的连接详情。</summary>
     public bool IsDetailsOpen { get; set => SetProperty(ref field, value); }
+    /// <summary>保存成功的短暂提示不触碰当前连接与终端焦点。</summary>
+    public bool HasSaveFeedback { get; private set => SetProperty(ref field, value); }
     /// <summary>显式建立一个新的会话，不重放旧输入。</summary>
     public AsyncRelayCommand ReconnectCommand { get; }
     /// <summary>断开后保留页签与输出。</summary>
@@ -123,13 +129,20 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
     /// <summary>重新读取保存后的配置，旧会话结束后再创建新会话。</summary>
     private Task StartReconnectAsync() => _connectTask = ConnectAsync();
 
+    /// <summary>提示自动收起，不切换页面或重建会话。</summary>
+    private void ClearSaveFeedback() { HasSaveFeedback = false; _saveFeedbackTimer.Stop(); }
+
     /// <summary>编辑结果不修改现有传输，只更新实例名称。</summary>
     private async Task EditAsync()
     {
         try
         {
-            if (await _editor.EditAsync(InstanceId!) is { } updated)
-            { _instance.UpdateSnapshot(updated); Name = updated.Name; Header = updated.Name; OnPropertyChanged(nameof(Name)); }
+            HasSaveFeedback = false; _saveFeedbackTimer.Stop();
+            if (await _editor.EditAsync(InstanceId!) is { } updated && !IsClosed)
+            {
+                _instance.UpdateSnapshot(updated); Name = updated.Name; Header = updated.Name; OnPropertyChanged(nameof(Name));
+                HasSaveFeedback = true; _saveFeedbackTimer.Start();
+            }
         }
         catch (Exception error) { Error = Text.Error(error, "SshConfigurationInvalid"); Refresh(); }
     }

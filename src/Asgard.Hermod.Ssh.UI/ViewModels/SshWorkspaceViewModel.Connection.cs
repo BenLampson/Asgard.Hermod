@@ -127,7 +127,7 @@ public sealed partial class SshWorkspaceViewModel
     /// <inheritdoc />
     protected override async ValueTask ReleaseAsync()
     {
-        OnPropertyChanged(nameof(Session)); _clock.Stop(); _lifetime.Cancel();
+        OnPropertyChanged(nameof(Session)); _clock.Stop(); _saveFeedbackTimer.Stop(); _lifetime.Cancel();
         _connecting?.Cancel(); _ioCancellation?.Cancel();
         if (_connection is { } connection) await connection.DisposeAsync();
         if (_connectTask is not null) await _connectTask;
