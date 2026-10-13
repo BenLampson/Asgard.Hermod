@@ -5,7 +5,7 @@ namespace Asgard.Hermod.UI.Tests;
 /// <summary>验证实例身份路由、完整目录确认和操作范围策略，不依赖云网络。</summary>
 public sealed class LocalObjectStoragePolicyTests
 {
-    /// <summary>服务按实例标识恢复参数，并把目录搜索交给服务商的一页查询。</summary>
+    /// <summary>服务按实例标识恢复参数，按当前目录分页并匹配名称。</summary>
     [Fact]
     public async Task ListObjectsAsync_UsesSavedIdentityRegionPrefixAndPageSize()
     {
@@ -14,7 +14,7 @@ public sealed class LocalObjectStoragePolicyTests
             ListObjects = (bucket, prefix, token, delimiter, size, _) =>
             {
                 Assert.Equal("test-bucket", bucket);
-                Assert.Equal("docs/read", prefix);
+                Assert.Equal("docs/", prefix);
                 Assert.Equal("next-page", token);
                 Assert.Equal("/", delimiter);
                 Assert.Equal(100, size);

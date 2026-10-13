@@ -1014,17 +1014,23 @@
   <data xml:space="preserve" name="Saving">
     <value>Saving…</value>
   </data>
-  <data xml:space="preserve" name="SearchFileNamePrefixes">
-    <value>Search file name prefixes…</value>
+  <data xml:space="preserve" name="SearchNames">
+    <value>Search names / *.png…</value>
   </data>
-  <data xml:space="preserve" name="SearchFileNamePrefixesInTheCurrentDirectory">
-    <value>Search file name prefixes in the current directory</value>
+  <data xml:space="preserve" name="ObjectSearchHelp">
+    <value>Search help</value>
+  </data>
+  <data xml:space="preserve" name="ObjectSearchSyntax">
+    <value>Search file and folder names in the current directory, ignoring case.&#10;Keywords: match anywhere in the name, e.g. report.&#10;*: match zero or more characters, e.g. *.png or photo*.&#10;?: match exactly one character, e.g. image?.png.&#10;Patterns containing * or ? match the whole name. Subfolders are not searched.</value>
+  </data>
+  <data xml:space="preserve" name="SearchNamesInTheCurrentDirectory">
+    <value>Search file and folder names in the current directory, ignoring case; supports * and ? wildcards, e.g. *.png</value>
   </data>
   <data xml:space="preserve" name="SearchInstances">
     <value>Search instances…</value>
   </data>
-  <data xml:space="preserve" name="SearchOnlyFileNamePrefixesInTheCurrentDirectory">
-    <value>Search only file name prefixes in the current directory.</value>
+  <data xml:space="preserve" name="SearchNamesContainingTextInTheCurrentDirectory">
+    <value>Match text anywhere in names in the current directory, ignoring case; use * or ? to match whole names with wildcards, e.g. *.png.</value>
   </data>
   <data xml:space="preserve" name="SearchOptions">
     <value>Search options…</value>

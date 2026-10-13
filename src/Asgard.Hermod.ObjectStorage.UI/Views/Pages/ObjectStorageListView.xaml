@@ -48,7 +48,7 @@
             </Button>
         </Grid>
         <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="8" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" MinWidth="80" MaxWidth="220" /></Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="8" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" MinWidth="80" MaxWidth="220" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
             <Button Command="{Binding UploadCommand}" Style="{StaticResource PrimaryButton}" Height="32" Padding="14,0" AutomationProperties.Name="{loc:Loc UploadObjects}">
                 <StackPanel Orientation="Horizontal"><controls:IconView Kind="upload" Width="16" Height="16" Margin="0,0,8,0" /><TextBlock Text="{loc:Loc Upload}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" FontWeight="SemiBold" /></StackPanel>
             </Button>
@@ -57,9 +57,9 @@
             </Button>
             <Grid Grid.Column="4">
                 <TextBox x:Name="SearchInput" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Height="32" MinHeight="32" Padding="30,0,25,0" FontSize="11"
-                         Background="{DynamicResource AppBackgroundBrush}" ToolTip="{loc:Loc SearchFileNamePrefixesInTheCurrentDirectory}" AutomationProperties.Name="{loc:Loc SearchFileNamePrefixesInTheCurrentDirectory}" />
+                         Background="{DynamicResource AppBackgroundBrush}" ToolTip="{loc:Loc SearchNamesInTheCurrentDirectory}" AutomationProperties.Name="{loc:Loc SearchNamesInTheCurrentDirectory}" />
                 <controls:IconView Kind="search" Width="14" Height="14" Margin="10,0,0,0" HorizontalAlignment="Left" Foreground="{DynamicResource TextMutedBrush}" IsHitTestVisible="False" />
-                <TextBlock Text="{loc:Loc SearchFileNamePrefixes}" Margin="30,0,0,0" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" IsHitTestVisible="False" TextTrimming="CharacterEllipsis">
+                <TextBlock Text="{loc:Loc SearchNames}" Margin="30,0,0,0" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" IsHitTestVisible="False" TextTrimming="CharacterEllipsis">
                     <TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><MultiDataTrigger><MultiDataTrigger.Conditions><Condition Binding="{Binding SearchText}" Value="" /><Condition Binding="{Binding ShowSearchDecorations, RelativeSource={RelativeSource AncestorType=pages:ObjectStorageListView}}" Value="True" /></MultiDataTrigger.Conditions><Setter Property="Visibility" Value="Visible" /></MultiDataTrigger></Style.Triggers></Style></TextBlock.Style>
                 </TextBlock>
                 <Button Command="{Binding ClearSearchCommand}" Width="24" Height="24" HorizontalAlignment="Right" Padding="5" ToolTip="{loc:Loc ClearSearch}">
@@ -67,6 +67,12 @@
                     <controls:IconView Kind="x" Width="12" Height="12" />
                 </Button>
             </Grid>
+            <Button x:Name="SearchHelpButton" Grid.Column="5" Style="{StaticResource IconButton}" Width="24" Height="24" Padding="5" Margin="6,0,0,0"
+                    AutomationProperties.Name="{loc:Loc ObjectSearchHelp}" AutomationProperties.HelpText="{loc:Loc ObjectSearchSyntax}"
+                    Click="OnSearchHelp" GotKeyboardFocus="OnSearchHelp" LostKeyboardFocus="OnSearchHelpLostFocus">
+                <Button.ToolTip><ToolTip><TextBlock Text="{loc:Loc ObjectSearchSyntax}" MaxWidth="340" TextWrapping="Wrap" /></ToolTip></Button.ToolTip>
+                <controls:IconView Kind="info" Width="14" Height="14" Foreground="{DynamicResource TextMutedBrush}" />
+            </Button>
         </Grid>
         <StackPanel Grid.Row="3" Margin="0,12,0,0">
             <Grid MinHeight="32">

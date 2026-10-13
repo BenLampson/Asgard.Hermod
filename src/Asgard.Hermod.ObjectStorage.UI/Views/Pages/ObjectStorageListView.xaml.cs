@@ -35,6 +35,22 @@ public partial class ObjectStorageListView : UserControl
         SearchInput.SizeChanged += OnSearchSizeChanged;
     }
 
+    /// <summary>点击或键盘聚焦提示图标时展示搜索语法，与鼠标悬停使用同一提示。</summary>
+    private void OnSearchHelp(object sender, RoutedEventArgs args)
+    {
+        if (sender is Button { ToolTip: ToolTip tooltip } button)
+        {
+            tooltip.PlacementTarget = button;
+            tooltip.IsOpen = true;
+        }
+    }
+
+    /// <summary>键盘焦点离开提示图标后关闭说明，不遮挡后续操作。</summary>
+    private void OnSearchHelpLostFocus(object sender, RoutedEventArgs args)
+    {
+        if (sender is Button { ToolTip: ToolTip tooltip }) tooltip.IsOpen = false;
+    }
+
     /// <summary>保持设计尺寸的列宽，窄窗优先留出文件名与行操作空间。</summary>
     private void OnListSizeChanged(object sender, SizeChangedEventArgs args)
     {

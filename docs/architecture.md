@@ -96,6 +96,16 @@ notifications without knowing the feature's concrete types.
 
 ## Persistence and terminal
 
+Object browser search matches literal text anywhere in immediate file and folder
+names, ignoring case. Queries containing `*` or `?` instead match the whole name:
+`*` matches zero or more characters and `?` matches exactly one. For example,
+`*.png` matches PNG names but excludes `image.png.bak`. Other characters are literal.
+It lists the current directory with the provider delimiter
+and filters metadata locally, continuing through pages without matches. Matching
+pages retain the provider cursor for Load more. Search does not recurse, download
+contents, or create an index; sparse matches can require many listing requests.
+Changing the query or navigating cancels the previous search.
+
 The object browser can manually scan the current prefix and all descendants to
 sort direct children by modification time. A folder's date is the latest file
 date anywhere below it; directory placeholder dates are ignored. The generic

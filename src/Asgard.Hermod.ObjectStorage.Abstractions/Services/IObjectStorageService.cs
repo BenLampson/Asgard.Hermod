@@ -7,7 +7,7 @@ public interface IObjectStorageService
     Task<IReadOnlyList<ObjectStorageBucket>> ListBucketsAsync(string instanceId,
         CancellationToken cancellationToken = default);
 
-    /// <summary>只读取当前目录的一批对象，搜索基于目录前缀，不统计整个容器。</summary>
+    /// <summary>读取当前目录的一批对象，按文件和文件夹名称包含匹配，支持星号与问号的完整名称通配匹配，忽略大小写；搜索跳过无匹配页，不递归子目录。</summary>
     Task<ObjectStoragePage> ListObjectsAsync(string instanceId, ObjectStorageBucket bucket,
         string prefix, string search = "", string? continuationToken = null,
         CancellationToken cancellationToken = default);

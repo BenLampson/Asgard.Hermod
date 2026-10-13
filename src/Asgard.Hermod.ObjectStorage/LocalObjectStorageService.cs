@@ -1,3 +1,4 @@
+using System.IO.Enumeration;
 using System.Text;
 
 namespace Asgard.Hermod.ObjectStorage;
@@ -30,16 +31,37 @@ public sealed partial class LocalObjectStorageService : IObjectStorageService
         ExecuteAsync(instanceId, bucket, async client =>
         {
             ValidatePrefix(prefix);
-            string queryPrefix = prefix + (search ?? "").Trim();
-            ValidateKey(queryPrefix, allowEmpty: true);
+            string query = (search ?? "").Trim();
+            ValidateKey(query, allowEmpty: true);
+            bool wildcard = query.IndexOfAny(['*', '?']) >= 0;
             if (continuationToken?.Length > 16384 || continuationToken?.Any(char.IsControl) == true)
                 throw ObjectStorageException.FromResource("InvalidObjectListCursorRefreshTheList", "InvalidContinuationToken");
-            ObjectStoragePage page = await client.ListObjectsAsync(bucket.Name, queryPrefix, continuationToken, "/", 100,
-                cancellationToken).ConfigureAwait(false);
-            if (page.Entries.Any(entry => !entry.Key.StartsWith(queryPrefix, StringComparison.Ordinal)))
-                throw ObjectStorageException.FromResource("TheObjectListReturnedAnInvalidRangeRefreshAndTryAgain", "InvalidResponse");
-            return page with { Entries = page.Entries.Where(entry => entry.Key != prefix).ToArray() };
+            // OSS 仅支持前缀查询；逐页匹配直接子项名称，跳过无匹配页，避免把未加载对象误判为无结果。
+            var seenTokens = new HashSet<string>(StringComparer.Ordinal);
+            if (continuationToken is not null) seenTokens.Add(continuationToken);
+            while (true)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                ObjectStoragePage page = await client.ListObjectsAsync(bucket.Name, prefix, continuationToken, "/", 100,
+                    cancellationToken).ConfigureAwait(false);
+                cancellationToken.ThrowIfCancellationRequested();
+                if (page.Entries.Any(entry => !entry.Key.StartsWith(prefix, StringComparison.Ordinal)))
+                    throw ObjectStorageException.FromResource("TheObjectListReturnedAnInvalidRangeRefreshAndTryAgain", "InvalidResponse");
+                if (page.NextToken is { } next && (next.Length == 0 || next.Length > 16384
+                    || next.Any(char.IsControl) || !seenTokens.Add(next)))
+                    throw ObjectStorageException.FromResource("InvalidObjectListCursorRefreshTheList", "InvalidResponse");
+                var entries = page.Entries.Where(entry => entry.Key != prefix
+                    && MatchesSearch(entry.Key[prefix.Length..].TrimEnd('/'), query, wildcard)).ToArray();
+                if (query.Length == 0 || entries.Length > 0 || page.NextToken is null)
+                    return page with { Entries = entries };
+                continuationToken = page.NextToken;
+            }
         }, cancellationToken);
+
+    /// <summary>普通词按包含匹配；含星号或问号时按完整名称通配匹配，其他符号保持字面意义。</summary>
+    private static bool MatchesSearch(string name, string query, bool wildcard) => wildcard
+        ? FileSystemName.MatchesSimpleExpression(query, name, ignoreCase: true)
+        : name.Contains(query, StringComparison.OrdinalIgnoreCase);
 
     /// <inheritdoc />
     public Task<ObjectStorageObjectDetails> GetObjectDetailsAsync(string instanceId, ObjectStorageBucket bucket,

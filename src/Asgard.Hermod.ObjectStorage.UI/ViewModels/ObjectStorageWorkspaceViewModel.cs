@@ -155,7 +155,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     /// <summary>失败、搜索和空目录分别给出明确下一步。</summary>
     public string StateDescription => IsLoading ? Text.Get("LoadObjectsInBatchesFromTheCurrentDirectory") : ReadError.Length > 0 ? ReadError
         : IsInitialized && Buckets.Count == 0 ? Text.Get("CheckTheNetworkAndRAMPermissionsOrEditTheConnection")
-        : SearchText.Length > 0 ? Text.Get("SearchOnlyFileNamePrefixesInTheCurrentDirectory") : Text.Get("UploadFilesOrCreateAFolder");
+        : SearchText.Length > 0 ? Text.Get("SearchNamesContainingTextInTheCurrentDirectory") : Text.Get("UploadFilesOrCreateAFolder");
     /// <summary>展开状态由用户控制，新增任务自动展开。</summary>
     public bool IsTransferExpanded { get => _isTransferExpanded; set => SetProperty(ref _isTransferExpanded, value); }
     /// <summary>传输折叠栏显示活动及失败任务数。</summary>

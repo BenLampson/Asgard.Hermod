@@ -18423,7 +18423,7 @@
                       "id": "ixMGv",
                       "type": "ref",
                       "ref": "jeqpu",
-                      "name": "当前前缀内搜索对象",
+                      "name": "当前目录名称模糊搜索",
                       "width": 220,
                       "height": 32,
                       "fill": "$app-bg",
@@ -18435,8 +18435,25 @@
                           "height": 14
                         },
                         "JVZ1P": {
-                          "content": "搜索文件名前缀…",
+                          "content": "搜索名称 / *.png…",
                           "fontSize": 11
+                        }
+                      }
+                    },
+                    {
+                      "id": "Q4JBg",
+                      "type": "ref",
+                      "ref": "WH5j4",
+                      "name": "搜索帮助 · 悬停或聚焦查看语法",
+                      "width": 24,
+                      "height": 24,
+                      "fill": "#00000000",
+                      "stroke": "#00000000",
+                      "descendants": {
+                        "yIeTC": {
+                          "icon": "info",
+                          "width": 14,
+                          "height": 14
                         }
                       }
                     }
@@ -23296,7 +23313,7 @@
           "fill": "$muted",
           "textGrowth": "fixed-width",
           "width": "fill_container",
-          "content": "交互约定：单击对象查看详情，双击文件夹进入前缀；勾选后显示批量操作。按当前目录前缀搜索，下一批继续列出对象；切换目录清除选择。",
+          "content": "交互约定：单击对象查看详情，双击文件夹进入目录；勾选后显示批量操作。当前目录名称包含匹配，忽略大小写；支持 * / ? 完整名称通配查找（如 *.png），下一批继续检索；切换目录清除选择。",
           "lineHeight": 1.5,
           "fontFamily": "Inter",
           "fontSize": 12,
@@ -41609,6 +41626,107 @@
           "fontFamily": "Inter",
           "fontSize": 12,
           "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "z3e6X",
+      "x": 9512,
+      "y": 7327,
+      "name": "OSS 搜索帮助 · Tooltip",
+      "clip": true,
+      "width": 420,
+      "height": 300,
+      "fill": "$app-bg",
+      "layout": "vertical",
+      "gap": 14,
+      "padding": 24,
+      "children": [
+        {
+          "type": "text",
+          "id": "bnRlF",
+          "name": "搜索帮助状态标题",
+          "fill": "$ink",
+          "content": "搜索帮助 · 悬停 / 键盘聚焦",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "zwbS8",
+          "name": "搜索框和提示图标",
+          "width": "fill_container",
+          "height": 32,
+          "gap": 6,
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "gDkum",
+              "type": "ref",
+              "ref": "jeqpu",
+              "name": "当前目录名称模糊搜索",
+              "width": 220,
+              "height": 32,
+              "fill": "$app-bg",
+              "stroke": "$line-soft",
+              "descendants": {
+                "IudUH": {
+                  "enabled": true,
+                  "width": 14,
+                  "height": 14
+                },
+                "JVZ1P": {
+                  "content": "搜索名称 / *.png…",
+                  "fontSize": 11
+                }
+              }
+            },
+            {
+              "id": "FaSBf",
+              "type": "ref",
+              "ref": "WH5j4",
+              "name": "搜索帮助图标",
+              "width": 24,
+              "height": 24,
+              "fill": "$surface",
+              "descendants": {
+                "yIeTC": {
+                  "icon": "info",
+                  "width": 14,
+                  "height": 14
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "TMJAA",
+          "name": "搜索语法 Tooltip",
+          "width": "fill_container",
+          "fill": "$surface",
+          "cornerRadius": 6,
+          "stroke": "$line",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "padding": 12,
+          "children": [
+            {
+              "type": "text",
+              "id": "R5flTL",
+              "name": "支持的搜索语法",
+              "fill": "$body",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "搜索当前目录的文件和文件夹名称，忽略大小写。\n关键词：匹配名称中包含的内容，例如 report。\n*：匹配零个或多个字符，例如 *.png、photo*。\n?：匹配一个字符，例如 image?.png。\n含 * 或 ? 时按完整名称匹配，不搜索子目录。",
+              "lineHeight": 1.5,
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
         }
       ]
     }

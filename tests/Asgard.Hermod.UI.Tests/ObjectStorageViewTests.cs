@@ -1,4 +1,5 @@
 using System.Windows.Automation;
+using Asgard.Hermod.Abstractions.Localization;
 
 namespace Asgard.Hermod.UI.Tests;
 
@@ -41,9 +42,17 @@ public sealed class ObjectStorageViewTests
             var download = Assert.Single(WindowTestVisuals.Descendants<Button>(details), button => ReferenceEquals(button.Command, model.DownloadCommand));
             Assert.True(download.IsVisible);
             AssertContained(WindowTestVisuals.ScreenBounds(view), WindowTestVisuals.ScreenBounds(download));
-            var search = Assert.Single(WindowTestVisuals.Descendants<TextBox>(view), box => AutomationProperties.GetName(box) == "搜索当前目录文件名前缀");
+            var search = Assert.Single(WindowTestVisuals.Descendants<TextBox>(view), box => AutomationProperties.GetName(box) == "搜索当前目录文件和文件夹名称，忽略大小写；支持 * 和 ? 通配符，例如 *.png");
             Assert.Equal(32, search.ActualHeight);
             AssertContained(WindowTestVisuals.ScreenBounds(view), WindowTestVisuals.ScreenBounds(search));
+            var help = Assert.Single(WindowTestVisuals.Descendants<Button>(view), button => AutomationProperties.GetName(button) == Text.Get("ObjectSearchHelp"));
+            AssertContained(WindowTestVisuals.ScreenBounds(view), WindowTestVisuals.ScreenBounds(help));
+            var tooltip = Assert.IsType<ToolTip>(help.ToolTip);
+            Assert.Equal(Text.Get("ObjectSearchSyntax"), Assert.IsType<TextBlock>(tooltip.Content).Text);
+            help.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Assert.True(tooltip.IsOpen);
+            Assert.Same(help, tooltip.PlacementTarget);
+            tooltip.IsOpen = false;
             var checkbox = Assert.Single(WindowTestVisuals.Descendants<CheckBox>(rows), box => AutomationProperties.GetName(box) == "勾选 config.json");
             checkbox.IsChecked = true;
             await WpfTestFixture.DrainDispatcherAsync();
