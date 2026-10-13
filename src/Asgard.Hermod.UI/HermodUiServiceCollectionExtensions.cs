@@ -15,7 +15,8 @@ public static class HermodUiServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(resources);
         services.TryAddSingleton<IInstanceEditor>(provider => new InstanceEditorService(owner,
             provider.GetRequiredService<IInstanceProviderRegistry>(),
-            provider.GetRequiredService<IInstanceConfigurationService>(), provider.GetService<IAccountService>(), provider.GetService<IConfigurationSyncService>()));
+            provider.GetRequiredService<IInstanceConfigurationService>(), provider.GetService<IAccountService>(), provider.GetService<IConfigurationSyncService>(),
+            provider.GetServices<IInstanceConfigurationContentProvider>()));
         services.TryAddSingleton<ISettingsEditor>(provider => new SettingsEditorService(owner,
             provider.GetRequiredService<ITagManagementService>(),
             provider.GetRequiredService<ILanguagePreferenceStore>(),

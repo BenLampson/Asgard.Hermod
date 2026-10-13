@@ -32,9 +32,11 @@ public partial class App : Application
             services.AddAwsS3();
             services.AddMinio();
             services.AddS3Connector<S3CompatibleStorageProvider>();
+            services.AddSsh();
             services.AddSingleton<ITerminalSessionFactory, LocalTerminalSessionFactory>();
             services.AddHermodUi(() => MainWindow, Resources);
             services.AddObjectStorageUi(() => MainWindow);
+            services.AddSshUi(() => MainWindow);
             var provider = services.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,

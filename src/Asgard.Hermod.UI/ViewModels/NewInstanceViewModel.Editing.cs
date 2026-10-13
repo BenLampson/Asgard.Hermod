@@ -21,7 +21,7 @@ public sealed partial class NewInstanceViewModel
             ?? throw new ArgumentException(Text.Get("TheCurrentInstanceProviderIsUnavailable"), nameof(initialConnection));
         Name = existing.Name;
         foreach (var field in Fields)
-            field.Value = initialConnection.Parameters.TryGetValue(field.Key, out string? value) ? value : "";
+            field.Value = initialConnection.Parameters.TryGetValue(field.Key, out string? value) ? value : field.Definition.DefaultValue;
         _editingInstance = existing;
         RebuildSteps();
         RefreshState();

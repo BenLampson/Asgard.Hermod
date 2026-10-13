@@ -129,7 +129,8 @@ public sealed partial class NewInstanceViewModel
     {
         TypeId = SelectedType!.Id,
         ProviderId = SelectedProvider!.Id,
-        Parameters = Fields.ToDictionary(field => field.Key, field => field.Value.Trim(), StringComparer.Ordinal),
+        Parameters = Fields.Where(field => field.IsVisible).ToDictionary(field => field.Key,
+            field => field.Definition.PreserveWhitespace ? field.Value : field.Value.Trim(), StringComparer.Ordinal),
     };
 
     /// <summary>连接器说明即使意外包含填写的凭据，也不会在界面上暴露。</summary>

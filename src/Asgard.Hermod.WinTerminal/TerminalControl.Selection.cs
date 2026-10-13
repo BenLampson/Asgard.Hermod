@@ -149,7 +149,7 @@ public sealed partial class TerminalControl
     /// <summary>判断应用是否接管鼠标；Shift 强制使用本地交互。</summary>
     private bool ShouldReportMouse()
     {
-        if (_session is not { IsDisposed: false } session || Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+        if (IsReadOnly || _session is not { IsDisposed: false } session || Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
             return false;
         lock (session.Buffer.SyncRoot)
             return session.Decoder.State.Modes.MouseTracking != MouseTrackingMode.Off;

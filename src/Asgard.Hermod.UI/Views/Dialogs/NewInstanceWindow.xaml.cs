@@ -6,14 +6,17 @@ namespace Asgard.Hermod.UI.Views.Dialogs;
 public partial class NewInstanceWindow : HermodDialog
 {
     private readonly NewInstanceViewModel _model;
+    private readonly IReadOnlyDictionary<string, IInstanceConfigurationContentProvider> _contents;
 
     /// <summary>绑定由宿主提供的真实连接器和持久化状态。</summary>
-    public NewInstanceWindow(NewInstanceViewModel model)
+    public NewInstanceWindow(NewInstanceViewModel model, IEnumerable<IInstanceConfigurationContentProvider>? contents = null)
     {
         ArgumentNullException.ThrowIfNull(model);
         _model = model;
+        _contents = (contents ?? []).ToDictionary(item => item.TypeId, StringComparer.Ordinal);
         InitializeComponent();
         DataContext = model;
+        RefreshInformationContent();
         model.CloseRequested += OnCloseRequested;
         model.PropertyChanged += OnModelPropertyChanged;
         Loaded += OnLoaded;
@@ -60,12 +63,23 @@ public partial class NewInstanceWindow : HermodDialog
     /// <summary>先等待正文绑定切换可见性，再将键盘焦点交给新步骤。</summary>
     private void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs args)
     {
+        if (args.PropertyName == nameof(NewInstanceViewModel.SelectedType)) RefreshInformationContent();
         if (args.PropertyName == nameof(NewInstanceViewModel.CurrentStep))
             Dispatcher.InvokeAsync(() =>
             {
                 (WizardLayout.Template.FindName("PART_BodyScroll", WizardLayout) as ScrollViewer)?.ScrollToTop();
                 FocusCurrentStep();
             }, DispatcherPriority.Loaded);
+    }
+
+    /// <summary>在类型入口之后装配对应模块的正文，公共窗口不引用协议程序集。</summary>
+    private void RefreshInformationContent()
+    {
+        var provider = _model.SelectedType is { } type ? _contents.GetValueOrDefault(type.Id) : null;
+        ConnectionContent.InformationContent = provider?.CreateContent(_model);
+        Size desired = provider?.PreferredWizardSize ?? new Size(820, 600);
+        Width = Math.Min(desired.Width, SystemParameters.WorkArea.Width - 40);
+        Height = Math.Min(desired.Height, SystemParameters.WorkArea.Height - 40);
     }
 
     /// <summary>保持键盘导航与当前展示步骤一致。</summary>

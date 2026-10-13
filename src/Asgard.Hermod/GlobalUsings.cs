@@ -14,6 +14,8 @@ global using Asgard.Hermod.Providers.S3;
 global using Asgard.Hermod.Providers.TencentCos;
 global using Asgard.Hermod.Providers.VolcengineTos;
 global using Asgard.Hermod.Security.Windows;
+global using Asgard.Hermod.Ssh;
+global using Asgard.Hermod.Ssh.UI;
 global using Asgard.Hermod.UI;
 global using Asgard.Hermod.UI.Controls;
 global using Asgard.Hermod.UI.Services;

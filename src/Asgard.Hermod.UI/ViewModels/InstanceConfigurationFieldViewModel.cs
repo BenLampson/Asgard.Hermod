@@ -10,6 +10,7 @@ public sealed class InstanceConfigurationFieldViewModel : ObservableObject
     {
         ArgumentNullException.ThrowIfNull(definition);
         Definition = definition;
+        Value = definition.DefaultValue;
     }
 
     /// <summary>原始声明用于共享表单和保存校验。</summary>
@@ -26,6 +27,14 @@ public sealed class InstanceConfigurationFieldViewModel : ObservableObject
     public int MaxLength => Math.Max(0, Definition.MaxLength);
     /// <summary>普通文字或地址字段。</summary>
     public bool IsText => Definition.Kind == InstanceFieldKind.Text;
+    /// <summary>选项控件保存稳定标识。</summary>
+    public bool IsChoice => Definition.Kind == InstanceFieldKind.Choice;
+    /// <summary>文件控件只保存本机引用。</summary>
+    public bool IsFile => Definition.Kind == InstanceFieldKind.File;
+    /// <summary>翻译后的选项名称不参与业务判断。</summary>
+    public IReadOnlyList<InstanceFieldChoice> Choices => Definition.Choices;
+    /// <summary>条件字段只在所选认证方式下参与校验。</summary>
+    public bool IsVisible { get; private set; } = true;
     /// <summary>密钥必须通过遮蔽编辑器填写。</summary>
     public bool IsSecret => Definition.Kind == InstanceFieldKind.Secret;
     /// <summary>密钥即使未重复标记敏感，也不能出现在确认明文或错误消息中。</summary>
@@ -44,19 +53,21 @@ public sealed class InstanceConfigurationFieldViewModel : ObservableObject
         }
     } = "";
     /// <summary>与持久化服务共用相同字段规则。</summary>
-    public bool IsValid => string.IsNullOrEmpty(InstanceFieldValidation.GetError(Definition, Value));
+    public bool IsValid => !IsVisible || string.IsNullOrEmpty(InstanceFieldValidation.GetError(Definition, Value));
     /// <summary>用户尝试继续后才显示就地错误，不拼接填写内容。</summary>
-    public string Error => _showValidation ? InstanceFieldValidation.GetError(Definition, Value) : "";
+    public string Error => _showValidation && IsVisible ? InstanceFieldValidation.GetError(Definition, Value) : "";
     /// <summary>确认页显示普通字段原文、敏感文字的首尾或密钥填写状态。</summary>
     public string ConfirmationValue
     {
         get
         {
-            string value = Value.Trim();
+            string value = Definition.PreserveWhitespace ? Value : Value.Trim();
             if (value.Length == 0)
                 return Text.Get("NotEntered");
             if (IsSecret)
                 return Text.Get("EnteredHidden");
+            if (IsChoice && !IsSensitive)
+                return Choices.FirstOrDefault(choice => choice.Id == value)?.Name ?? Text.Get("NotEntered");
             if (!IsSensitive)
                 return value;
             return value.Length > 8 ? $"{value[..4]}••••••••{value[^4..]}" : "••••••••";
@@ -67,6 +78,15 @@ public sealed class InstanceConfigurationFieldViewModel : ObservableObject
     public void ShowValidation()
     {
         _showValidation = true;
+        OnPropertyChanged(nameof(Error));
+    }
+
+    /// <summary>依赖变化不删除输入；隐藏字段不会进入连接快照。</summary>
+    internal void UpdateVisibility(IReadOnlyDictionary<string, string> parameters)
+    {
+        IsVisible = InstanceFieldValidation.IsApplicable(Definition, parameters);
+        OnPropertyChanged(nameof(IsVisible));
+        OnPropertyChanged(nameof(IsValid));
         OnPropertyChanged(nameof(Error));
     }
 

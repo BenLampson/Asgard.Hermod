@@ -63,6 +63,10 @@ public sealed class WpfTestFixture : IAsyncLifetime
             {
                 Source = new Uri("pack://application:,,,/Asgard.Hermod.ObjectStorage.UI;component/Resources/WorkspacePages.xaml")
             });
+            _application.Resources.MergedDictionaries.Add(new ResourceDictionary
+            {
+                Source = new Uri("pack://application:,,,/Asgard.Hermod.Ssh.UI;component/Resources/WorkspacePages.xaml")
+            });
             _application.DispatcherUnhandledException += OnUnhandledException;
             _ready.TrySetResult(dispatcher);
             Dispatcher.Run();

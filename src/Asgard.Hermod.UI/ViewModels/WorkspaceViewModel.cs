@@ -9,6 +9,7 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
     private WorkspacePageViewModel? _selectedTab;
     private Task? _disposeTask;
     private int _terminalNumber;
+    private readonly Dictionary<WorkspacePageViewModel, InstanceItemViewModel> _instances = [];
 
     /// <summary>启动时仅打开首页，实例页签由用户主动打开。</summary>
     public WorkspaceViewModel(IWorkspaceDataSource source, ITerminalSessionFactory terminalFactory,
@@ -70,6 +71,7 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
         {
             page = instance.IsLocal ? CreateTerminalPage(instance) : CreateServicePage(instance);
             Tabs.Add(page);
+            RegisterSessionPage(page, instance);
         }
         SelectedTab = page;
         Home.RecordOpened(instance);
@@ -92,10 +94,13 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
     {
         if (!page.CanClose || !Tabs.Contains(page))
             return;
+        if (!await page.RequestCloseAsync() || !Tabs.Contains(page)) return;
         int index = Tabs.IndexOf(page);
         if (ReferenceEquals(SelectedTab, page))
             SelectedTab = Tabs.Count == 1 ? null : Tabs[index > 0 ? index - 1 : 1];
         Tabs.Remove(page);
+        page.NewSessionRequested -= OnNewSessionRequested;
+        _instances.Remove(page);
         await page.CloseAsync();
     }
 
@@ -106,6 +111,20 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
     /// <summary>每个新终端拥有独立页签和应用层会话句柄。</summary>
     private TerminalWorkspaceViewModel CreateTerminalPage(InstanceItemViewModel instance) =>
         new("terminal:" + ++_terminalNumber, instance, _terminalFactory);
+
+    /// <summary>外层页签绑定自己的实例，不把功能会话混进主框架协议逻辑。</summary>
+    private void RegisterSessionPage(WorkspacePageViewModel page, InstanceItemViewModel instance)
+    {
+        _instances[page] = instance;
+        page.NewSessionRequested += OnNewSessionRequested;
+    }
+    /// <summary>新会话复用实例配置，但创建独立页面和连接。</summary>
+    private void OnNewSessionRequested(object? sender, EventArgs args)
+    {
+        if (_disposeTask is not null || sender is not WorkspacePageViewModel original || !_instances.TryGetValue(original, out var instance)) return;
+        var page = CreateServicePage(instance); RegisterSessionPage(page, instance);
+        Tabs.Add(page); SelectedTab = page; Home.RecordOpened(instance);
+    }
 
     /// <summary>应用退出时关闭所有页，不保存或恢复已打开的页签。</summary>
     public ValueTask DisposeAsync()
@@ -118,6 +137,8 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
     private async Task CloseAllAsync()
     {
         SelectedTab = null;
+        foreach (var page in _instances.Keys) page.NewSessionRequested -= OnNewSessionRequested;
+        _instances.Clear();
         Task[] closing = Tabs.Select(page => page.CloseAsync()).ToArray();
         Tabs.Clear();
         await Task.WhenAll(closing);

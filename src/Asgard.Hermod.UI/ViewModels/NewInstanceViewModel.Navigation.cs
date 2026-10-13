@@ -79,7 +79,7 @@ public sealed partial class NewInstanceViewModel
     /// <summary>步骤标题沿用 Pencil 中文原文。</summary>
     public string StepTitle => CurrentStep switch
     {
-        1 => Text.Get("ChooseProvider"),
+        1 => Text.Get(SelectedType?.ProviderSelectionTitleResourceKey ?? "ChooseProvider"),
         2 => Text.Get("ConnectionInformation"),
         3 => Text.Get("ConnectionTest"),
         4 => Text.Get("SaveLocation"),
@@ -88,7 +88,8 @@ public sealed partial class NewInstanceViewModel
     /// <summary>步骤说明匹配当前操作，具体测试范围由服务商描述。</summary>
     public string StepDescription => CurrentStep switch
     {
-        1 => IsEditing ? Text.Get("TheTypeAndProviderOfThisInstanceAreFixed") : Text.Get("ChooseProviderForInstanceType"),
+        1 => IsEditing ? Text.Get("TheTypeAndProviderOfThisInstanceAreFixed")
+            : Text.Get(SelectedType?.ProviderSelectionDescriptionResourceKey ?? "ChooseProviderForInstanceType"),
         2 => Text.Format("EnterTheInstanceNameAndConnectionInformationFor", ProviderName),
         3 => Text.Get("VerifyConnectionInformationAndAccessPermissions"),
         4 => Text.Get("SyncSaveAutomaticHint"),
@@ -99,7 +100,7 @@ public sealed partial class NewInstanceViewModel
     private void RebuildSteps()
     {
         Steps = SelectedType is null ? [] :
-            [new(1, Text.Get("ChooseProvider")), new(2, Text.Get("EnterInformation")), new(3, Text.Get("TestConnection")),
+            [new(1, Text.Get(SelectedType.ProviderSelectionTitleResourceKey)), new(2, Text.Get("EnterInformation")), new(3, Text.Get("TestConnection")),
              new(4, Text.Get("SaveLocation")), new(5, Text.Get(IsEditing ? "ConfirmChanges" : "ConfirmCreation"))];
         OnPropertyChanged(nameof(Steps));
     }
@@ -168,7 +169,7 @@ public sealed partial class NewInstanceViewModel
             nameof(CanGoNext), nameof(CanGoPrevious), nameof(CanTest), nameof(CanCreate), nameof(IsInformationEditable),
             nameof(IsTypeSelectionEditable), nameof(WindowTitle), nameof(WizardHeading), nameof(ConfirmationHint),
             nameof(StepCountText), nameof(ContinueCommand), nameof(ContinueLabel), nameof(HasPreviousStep),
-            nameof(IsProviderStep), nameof(IsInformationStep), nameof(IsTestStep), nameof(IsSaveLocationStep),
+            nameof(IsProviderStep), nameof(ProviderLabel), nameof(IsInformationStep), nameof(IsTestStep), nameof(IsSaveLocationStep),
             nameof(IsConfirmationStep), nameof(ProviderName), nameof(ProviderSummary),
             nameof(TestSummary), nameof(TestHeading), nameof(TestDescription), nameof(TestActionLabel),
             nameof(HasTestFailure), nameof(HasTestErrorCode), nameof(StepTitle), nameof(StepDescription),
@@ -184,4 +185,7 @@ public sealed partial class NewInstanceViewModel
         CancelTestCommand.NotifyCanExecuteChanged();
         SubmitCommand.NotifyCanExecuteChanged();
     }
+
+    /// <summary>类型可以将服务商列表表达为连接方式列表。</summary>
+    public string ProviderLabel => Text.Get(SelectedType?.ProviderLabelResourceKey ?? "Provider");
 }

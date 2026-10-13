@@ -177,6 +177,7 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
         Fields = provider?.Fields.Select(definition => new InstanceConfigurationFieldViewModel(definition)).ToArray() ?? [];
         foreach (var field in Fields)
             field.PropertyChanged += OnFieldPropertyChanged;
+        UpdateFieldVisibility();
         _showValidation = false;
         OnPropertyChanged(nameof(Fields));
     }
@@ -185,6 +186,20 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
     private void OnFieldPropertyChanged(object? sender, PropertyChangedEventArgs args)
     {
         if (args.PropertyName == nameof(InstanceConfigurationFieldViewModel.Value))
+        {
+            UpdateFieldVisibility();
             InvalidateConnection();
+        }
     }
+
+    /// <summary>声明式条件由字段元数据提供，公共向导不判断 SSH 或其他协议。</summary>
+    private void UpdateFieldVisibility()
+    {
+        var parameters = Fields.ToDictionary(item => item.Key, item => item.Value, StringComparer.Ordinal);
+        foreach (var item in Fields) item.UpdateVisibility(parameters);
+        OnPropertyChanged(nameof(VisibleFields));
+    }
+
+    /// <summary>确认页只展示本次实际使用的字段。</summary>
+    public IEnumerable<InstanceConfigurationFieldViewModel> VisibleFields => Fields.Where(item => item.IsVisible);
 }

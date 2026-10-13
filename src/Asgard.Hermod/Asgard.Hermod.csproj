@@ -33,5 +33,7 @@
     <ProjectReference Include="..\Asgard.Hermod.Providers.VolcengineTos\Asgard.Hermod.Providers.VolcengineTos.csproj" />
     <ProjectReference Include="..\Asgard.Hermod.Providers.Minio\Asgard.Hermod.Providers.Minio.csproj" />
     <ProjectReference Include="..\Asgard.Hermod.WinTerminal\Asgard.Hermod.WinTerminal.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Ssh\Asgard.Hermod.Ssh.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Ssh.UI\Asgard.Hermod.Ssh.UI.csproj" />
   </ItemGroup>
 </Project>

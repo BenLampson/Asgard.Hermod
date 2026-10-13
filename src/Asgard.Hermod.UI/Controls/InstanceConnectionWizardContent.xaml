@@ -49,7 +49,7 @@
         <TextBlock Text="{Binding StepDescription}" FontSize="13" TextWrapping="Wrap"
                    Foreground="{DynamicResource TextMutedBrush}" Margin="0,16,0,24" />
         <StackPanel Visibility="{Binding IsProviderStep, Converter={StaticResource WizardVisibility}}">
-            <TextBlock Text="{loc:Loc Provider}" Margin="0,16,0,8" />
+            <TextBlock Text="{Binding ProviderLabel}" Margin="0,16,0,8" />
             <ListBox x:Name="ProviderList" Style="{StaticResource WizardCardList}" ItemsSource="{Binding Providers}" SelectedItem="{Binding SelectedProvider}"
                      IsEnabled="{Binding IsTypeSelectionEditable}"
                      BorderThickness="0" Padding="0"
@@ -68,7 +68,21 @@
             <TextBlock Text="{loc:Loc ChooseAProviderThenEnterConnectionInformationInTheNextStep}"
                        Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,28,0,0" />
         </StackPanel>
-        <StackPanel Visibility="{Binding IsInformationStep, Converter={StaticResource WizardVisibility}}">
+        <StackPanel>
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsInformationStep}" Value="True" />
+                                <Condition Binding="{Binding InformationContent, RelativeSource={RelativeSource AncestorType=controls:InstanceConnectionWizardContent}}" Value="{x:Null}" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
             <controls:FormField Label="{loc:Loc InstanceName}" IsRequired="True" Error="{Binding NameError}" Margin="0,0,0,20">
                 <TextBox x:Name="NameInput" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Height="36" MaxLength="128"
                          AutomationProperties.Name="{loc:Loc InstanceName}" />
@@ -81,6 +95,8 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </StackPanel>
+        <ContentControl Content="{Binding InformationContent, RelativeSource={RelativeSource AncestorType=controls:InstanceConnectionWizardContent}}"
+                        Visibility="{Binding IsInformationStep, Converter={StaticResource WizardVisibility}}" />
         <StackPanel Visibility="{Binding IsTestStep, Converter={StaticResource WizardVisibility}}">
             <Grid Margin="0,0,0,20">
                 <Grid.ColumnDefinitions><ColumnDefinition Width="52" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
@@ -168,7 +184,7 @@
                 <TextBlock Text="{loc:Loc TypeProvider}" Style="{StaticResource ConfirmationLabel}" />
                 <TextBlock Grid.Column="1" Text="{Binding ProviderSummary}" Style="{StaticResource ConfirmationValue}" />
             </Grid></Border>
-            <ItemsControl ItemsSource="{Binding Fields}">
+            <ItemsControl ItemsSource="{Binding VisibleFields}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border Style="{StaticResource ConfirmationRow}"><Grid>

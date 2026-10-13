@@ -508,7 +508,7 @@
     <value>Enter a valid AccessKey ID and AccessKey Secret.</value>
   </data>
   <data xml:space="preserve" name="EnterInformation">
-    <value>Enter information</value>
+    <value>Information</value>
   </data>
   <data xml:space="preserve" name="EnterTheInstanceNameAndConnectionInformationFor">
     <value>Enter the instance name and connection information for {0}.</value>

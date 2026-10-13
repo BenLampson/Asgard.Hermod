@@ -9,6 +9,13 @@ public sealed partial class TerminalControl : Control, IDisposable
     public static readonly DependencyProperty SessionProperty = DependencyProperty.Register(
         nameof(Session), typeof(TerminalSession), typeof(TerminalControl),
         new FrameworkPropertyMetadata(null, OnSessionChanged));
+    /// <summary>会话断开后保留选择、搜索和复制，禁止将输入写入已结束的连接。</summary>
+    public static readonly DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(
+        nameof(IsReadOnly), typeof(bool), typeof(TerminalControl), new PropertyMetadata(false));
+    /// <summary>宿主按连接状态控制输入。</summary>
+    public bool IsReadOnly { get => (bool)GetValue(IsReadOnlyProperty); set => SetValue(IsReadOnlyProperty, value); }
+    /// <summary>发送粘贴之前通知宿主，可用于多行确认。</summary>
+    public event EventHandler<TerminalPasteEventArgs>? PreviewPaste;
 
     private readonly TerminalRenderer _renderer = new();
     private readonly DispatcherTimer _renderTimer;
@@ -77,6 +84,8 @@ public sealed partial class TerminalControl : Control, IDisposable
             newSession.BufferUpdated += control.OnBufferUpdated;
         control._selection = null;
         control._scrollOffset = 0;
+        control._searchQuery = "";
+        control._searchIndex = -1;
         control._renderedRevision = -1;
         control._fontConfigured = false;
         control.ConfigureRenderer();
@@ -137,6 +146,7 @@ public sealed partial class TerminalControl : Control, IDisposable
         Session = null;
         _renderer.Dispose();
         ScreenUpdated = null;
+        PreviewPaste = null;
         GC.SuppressFinalize(this);
     }
 }

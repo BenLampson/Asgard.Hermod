@@ -80,7 +80,7 @@ public sealed partial class TerminalControl
     /// <summary>编码 UTF-8 输入并恢复到实时输出视口。</summary>
     private void SendText(string text)
     {
-        if (_session is not { IsDisposed: false } session)
+        if (IsReadOnly || _session is not { IsDisposed: false } session)
             return;
         session.SendInput(Encoding.UTF8.GetBytes(text));
         _scrollOffset = 0;
@@ -122,19 +122,29 @@ public sealed partial class TerminalControl
         {
             if (!Clipboard.ContainsText())
                 return;
-            string text = Clipboard.GetText();
-            lock (session.Buffer.SyncRoot)
-                text = KeyboardEncoder.WrapBracketedPaste(text, session.Decoder.State.Modes.BracketedPaste);
-            SendText(text);
+            PasteText(Clipboard.GetText());
         }
         catch (ExternalException) { }
+    }
+
+    /// <summary>保留原始文本，通过宿主确认后按远端括号粘贴模式发送。</summary>
+    public void PasteText(string text)
+    {
+        VerifyAccess();
+        if (IsReadOnly || _session is not { IsDisposed: false } session) return;
+        var preview = new TerminalPasteEventArgs(text);
+        PreviewPaste?.Invoke(this, preview);
+        if (preview.Cancel || IsReadOnly || session.IsDisposed || !ReferenceEquals(_session, session)) return;
+        lock (session.Buffer.SyncRoot)
+            text = KeyboardEncoder.WrapBracketedPaste(text, session.Decoder.State.Modes.BracketedPaste);
+        SendText(text);
     }
 
     /// <summary>焦点变化后更新光标形状，并按远端模式发送焦点报告。</summary>
     protected override void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs args)
     {
         base.OnIsKeyboardFocusWithinChanged(args);
-        if (_session is { IsDisposed: false } session)
+        if (!IsReadOnly && _session is { IsDisposed: false } session)
         {
             lock (session.Buffer.SyncRoot)
                 if (session.Decoder.State.Modes.FocusReporting)

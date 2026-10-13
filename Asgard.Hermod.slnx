@@ -17,6 +17,7 @@
     <Project Path="src/Asgard.Hermod.Providers.VolcengineTos/Asgard.Hermod.Providers.VolcengineTos.csproj" />
     <Project Path="src/Asgard.Hermod.Security.Windows/Asgard.Hermod.Security.Windows.csproj" />
     <Project Path="src/Asgard.Hermod/Asgard.Hermod.csproj" />
+    <Project Path="src/Asgard.Hermod.Ssh.UI/Asgard.Hermod.Ssh.UI.csproj" />
     <Project Path="src/Asgard.Hermod.Ssh/Asgard.Hermod.Ssh.csproj" />
     <Project Path="src/Asgard.Hermod.UI/Asgard.Hermod.UI.csproj" />
     <Project Path="src/Asgard.Hermod.WinTerminal/Asgard.Hermod.WinTerminal.csproj" />
