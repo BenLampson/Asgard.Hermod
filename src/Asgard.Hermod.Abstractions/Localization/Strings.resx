@@ -2729,7 +2729,7 @@
     <value>No keys found in this batch. Continue while a cursor remains.</value>
   </data>
   <data name="RedisNewKey" xml:space="preserve">
-    <value>New key</value>
+    <value>New key/value</value>
   </data>
   <data name="RedisKeyName" xml:space="preserve">
     <value>Key name</value>
@@ -2963,4 +2963,50 @@
   <data name="RedisWritePrimary" xml:space="preserve">
     <value>Writes target the primary node</value>
   </data>
+  <data name="RedisKeyAlreadyExists" xml:space="preserve">
+    <value>The key already exists. Choose another name or inspect the existing key.</value>
+  </data>
+  <data name="RedisCreateTarget" xml:space="preserve">
+    <value>Create in database DB {0}.</value>
+  </data>
+  <data name="RedisCreateKey" xml:space="preserve">
+    <value>Create key</value>
+  </data>
+  <data name="RedisCreatingKey" xml:space="preserve">
+    <value>Creating…</value>
+  </data>
+  <data name="RedisCreateExpiryAfter" xml:space="preserve">
+    <value>Expire after a duration</value>
+  </data>
+  <data name="RedisCreateExpiryMode" xml:space="preserve">
+    <value>Expiration</value>
+  </data>
+  <data name="RedisCreateKeyRequired" xml:space="preserve">
+    <value>Enter the complete key name.</value>
+  </data>
+  <data name="RedisCreateExpiryInvalid" xml:space="preserve">
+    <value>Enter a valid positive whole number of seconds.</value>
+  </data>
+  <data name="RedisCreateInspect" xml:space="preserve">
+    <value>Inspect key</value>
+  </data>
+  <data name="RedisCreateValueFormat" xml:space="preserve">
+    <value>Initial value format</value>
+  </data>
+  <data name="RedisCreateInitialRows" xml:space="preserve">
+    <value>Initial members or fields</value>
+  </data>
+  <data name="RedisMember" xml:space="preserve">
+    <value>Member</value>
+  </data>
+  <data name="RedisDatabaseWithCount" xml:space="preserve">
+    <value>DB {0} ({1})</value>
+  </data>
+  <data name="RedisDatabaseCountUnknown" xml:space="preserve">
+    <value>Unavailable</value>
+  </data>
+  <data name="RedisDatabaseCountHint" xml:space="preserve">
+    <value>Key counts are read from Redis primaries. Unavailable means they could not be read.</value>
+  </data>
+  <data name="RedisCreateExpirySeconds" xml:space="preserve"><value>Expiration (seconds)</value></data>
 </root>

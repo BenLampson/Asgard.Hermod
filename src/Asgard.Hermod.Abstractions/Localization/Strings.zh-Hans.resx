@@ -2729,7 +2729,7 @@
     <value>此批次未发现键，游标未结束时可继续查找。</value>
   </data>
   <data name="RedisNewKey" xml:space="preserve">
-    <value>新建键</value>
+    <value>新增键值</value>
   </data>
   <data name="RedisKeyName" xml:space="preserve">
     <value>键名</value>
@@ -2963,4 +2963,50 @@
   <data name="RedisWritePrimary" xml:space="preserve">
     <value>写入目标为主节点</value>
   </data>
+  <data name="RedisKeyAlreadyExists" xml:space="preserve">
+    <value>该键已存在，请更换键名或查看已有键。</value>
+  </data>
+  <data name="RedisCreateTarget" xml:space="preserve">
+    <value>创建到数据库 DB {0}。</value>
+  </data>
+  <data name="RedisCreateKey" xml:space="preserve">
+    <value>创建键</value>
+  </data>
+  <data name="RedisCreatingKey" xml:space="preserve">
+    <value>正在创建…</value>
+  </data>
+  <data name="RedisCreateExpiryAfter" xml:space="preserve">
+    <value>指定时长后过期</value>
+  </data>
+  <data name="RedisCreateExpiryMode" xml:space="preserve">
+    <value>过期方式</value>
+  </data>
+  <data name="RedisCreateKeyRequired" xml:space="preserve">
+    <value>请输入完整键名。</value>
+  </data>
+  <data name="RedisCreateExpiryInvalid" xml:space="preserve">
+    <value>请输入有效的正整数秒数。</value>
+  </data>
+  <data name="RedisCreateInspect" xml:space="preserve">
+    <value>查看键</value>
+  </data>
+  <data name="RedisCreateValueFormat" xml:space="preserve">
+    <value>初始值格式</value>
+  </data>
+  <data name="RedisCreateInitialRows" xml:space="preserve">
+    <value>初始成员或字段</value>
+  </data>
+  <data name="RedisMember" xml:space="preserve">
+    <value>成员</value>
+  </data>
+  <data name="RedisDatabaseWithCount" xml:space="preserve">
+    <value>DB {0} ({1})</value>
+  </data>
+  <data name="RedisDatabaseCountUnknown" xml:space="preserve">
+    <value>不可用</value>
+  </data>
+  <data name="RedisDatabaseCountHint" xml:space="preserve">
+    <value>键数量从 Redis 主节点读取；不可用表示当前无法读取数量。</value>
+  </data>
+  <data name="RedisCreateExpirySeconds" xml:space="preserve"><value>过期秒数</value></data>
 </root>

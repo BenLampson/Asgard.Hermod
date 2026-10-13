@@ -10,6 +10,20 @@ internal sealed class RedisSession(ConnectionMultiplexer connection, RedisSessio
         .Select(server => server.EndPoint.ToString()!).ToArray();
     public int DatabaseCount => Options.Topology == RedisIds.Cluster ? 1 : servers[0].DatabaseCount;
 
+    public async Task<long?> ReadDatabaseKeyCountAsync(int database, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            CheckDatabase(database); cancellationToken.ThrowIfCancellationRequested();
+            var primaries = connection.GetServers().Where(server => !server.IsReplica && server.ServerType != ServerType.Sentinel).ToArray();
+            if (primaries.Length == 0) return null;
+            long[] counts = await Task.WhenAll(primaries.Select(server => server.DatabaseSizeAsync(database, CommandFlags.DemandMaster))).WaitAsync(cancellationToken).ConfigureAwait(false);
+            return counts.Sum();
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+        catch { return null; }
+    }
+
     public async Task<RedisScanPage> ScanAsync(string node, int database, string cursor, string pattern, string type, CancellationToken cancellationToken)
     {
         try
@@ -62,6 +76,20 @@ internal sealed class RedisSession(ConnectionMultiplexer connection, RedisSessio
     public Task DeleteAsync(int database, RedisKeyId key, RedisSnapshot baseline, CancellationToken cancellationToken = default) =>
         CompareAsync(database, key, baseline, baseline, "delete", cancellationToken);
 
+    public Task CreateAsync(int database, RedisKeyId key, RedisSnapshot initial, TimeSpan? expiry, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(initial);
+        if (!initial.IsComplete || initial.Entries.Count > RedisSnapshot.MaximumEntries
+            || initial.Entries.Sum(entry => (long)entry.Name.Length + entry.Value.Length) > RedisSnapshot.MaximumBytes)
+            throw new RedisException("RedisValueTooLarge", "REDIS_LIMIT");
+        RedisDraftValidation.Validate(initial.Type == "stream" ? initial with { Type = "hash" } : initial);
+        if (expiry is not null && expiry.Value.TotalMilliseconds < 1) throw new RedisException("RedisExpiryInvalid", "REDIS_EXPIRY");
+        var args = new List<object> { RedisScripts.Create, 1, key.ToBytes(), initial.Type,
+            expiry is null ? -1 : checked((long)expiry.Value.TotalMilliseconds), initial.Entries.Count };
+        foreach (var entry in initial.Entries) args.AddRange([entry.Name, entry.Value, entry.Score]);
+        return WriteAsync(database, args, cancellationToken, creating: true);
+    }
+
     private Task CompareAsync(int database, RedisKeyId key, RedisSnapshot baseline, RedisSnapshot draft, string operation, CancellationToken token)
     {
         if (!baseline.IsComplete || !draft.IsComplete || draft.Entries.Count > RedisSnapshot.MaximumEntries
@@ -97,14 +125,14 @@ internal sealed class RedisSession(ConnectionMultiplexer connection, RedisSessio
         return WriteAsync(database, args, cancellationToken);
     }
 
-    private async Task WriteAsync(int database, ICollection<object> args, CancellationToken token)
+    private async Task WriteAsync(int database, ICollection<object> args, CancellationToken token, bool creating = false)
     {
         token.ThrowIfCancellationRequested(); bool dispatched = false;
         try
         {
             CheckDatabase(database); dispatched = true;
             long result = (long)await ExecuteAsync(database, "EVAL", args, token).ConfigureAwait(false);
-            if (result == 0) throw new RedisException("RedisConflict", "REDIS_CONFLICT");
+            if (result == 0) throw creating ? new RedisException("RedisKeyAlreadyExists", "REDIS_KEY_EXISTS") : new RedisException("RedisConflict", "REDIS_CONFLICT");
             if (result == -1) throw new RedisException("RedisPermissionDenied", "REDIS_PERMISSION");
             if (result == -2) throw new RedisException("RedisDraftInvalid", "REDIS_DRAFT");
         }
