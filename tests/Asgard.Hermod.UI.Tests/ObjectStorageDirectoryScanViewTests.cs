@@ -75,8 +75,7 @@ public sealed class ObjectStorageDirectoryScanViewTests(WpfTestFixture fixture)
             var resume = Assert.Single(WindowTestVisuals.Descendants<Button>(view), button => ReferenceEquals(button.Command, model.ContinueDirectoryScanCommand));
             var action = continueScan ? resume : Assert.Single(WindowTestVisuals.Descendants<Button>(view), button => ReferenceEquals(button.Command, model.CancelDirectoryScanCommand));
             Assert.True(action.Focusable);
-            action.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(action), 0, Key.Space) { RoutedEvent = Keyboard.KeyDownEvent });
-            action.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(action), 0, Key.Space) { RoutedEvent = Keyboard.KeyUpEvent });
+            SecretInputTests.ToggleWithKeyboard(action);
             await scan.WaitAsync(TimeSpan.FromSeconds(3), TestContext.Current.CancellationToken);
             await WindowPreviewCapture.VerifyAsync(window, $"directory-scan-{(continueScan ? "complete" : "canceled")}-{language}-{theme}-{width}");
             Assert.Equal(continueScan, model.IsScanComplete);

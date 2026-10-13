@@ -32,7 +32,8 @@ public sealed class WpfTestFixture : IAsyncLifetime
         {
             int initialExceptions = _unhandled.Count;
             await action();
-            Assert.Equal(initialExceptions, _unhandled.Count);
+            Assert.True(initialExceptions == _unhandled.Count, string.Join(Environment.NewLine,
+                _unhandled.Skip(initialExceptions).Select(error => error.ToString())));
         });
         await operation.Task.Unwrap().WaitAsync(TimeSpan.FromSeconds(15), TestContext.Current.CancellationToken);
     }

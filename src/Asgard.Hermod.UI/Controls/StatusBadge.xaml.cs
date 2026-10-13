@@ -3,6 +3,10 @@ namespace Asgard.Hermod.UI.Controls;
 /// <summary>使用主题语义色显示服务或会话状态的紧凑徽标。</summary>
 public partial class StatusBadge : UserControl
 {
+    /// <summary>类型标签与连接状态共用徽标，调用者可隐藏装饰性圆点。</summary>
+    public static readonly DependencyProperty ShowIndicatorProperty = DependencyProperty.Register(nameof(ShowIndicator), typeof(bool), typeof(StatusBadge), new PropertyMetadata(true));
+    /// <summary>是否显示装饰性状态圆点。</summary>
+    public bool ShowIndicator { get => (bool)GetValue(ShowIndicatorProperty); set => SetValue(ShowIndicatorProperty, value); }
     /// <summary>声明状态说明的依赖属性。</summary>
     public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
         nameof(Text), typeof(string), typeof(StatusBadge), new PropertyMetadata(string.Empty));

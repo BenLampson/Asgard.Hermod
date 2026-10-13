@@ -8,8 +8,10 @@ WPF geometry conversion: Controls/IconCatalog.cs
 Feature geometry conversion: Controls/IconCatalog.FeatureIcons.cs
 Object storage geometry conversion: Controls/IconCatalog.ObjectStorageIcons.cs
 File type geometry conversion: Controls/IconCatalog.FileTypeIcons.cs
+Redis workspace geometry conversion: Controls/IconCatalog.RedisIcons.cs
 The design alias file-json uses the official file-braces.svg icon at the same revision.
 The design alias trash-2 uses the official trash.svg icon at the same revision.
+The design alias circle-help uses the official circle-question-mark.svg icon at the same revision.
 License: Assets/Licenses/Lucide.LICENSE.txt (ISC, including upstream Feather MIT notices)
 SVG paths are preserved. Circle, ellipse, line, and rectangle elements are converted
 to equivalent WPF geometry. The control preserves the 24x24 canvas, 2-unit strokes,

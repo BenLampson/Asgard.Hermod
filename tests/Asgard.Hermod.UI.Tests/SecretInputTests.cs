@@ -72,13 +72,11 @@ public sealed class SecretInputTests(WpfTestFixture fixture)
         finally { window.Close(); }
     });
 
-    /// <summary>空格键执行实际按钮切换，用户仍可通过 Tab 进入当前编辑器。</summary>
+    /// <summary>Enter 执行实际按钮切换，避免 Space 的鼠标捕获依赖桌面按键状态；用户仍可通过 Tab 进入编辑器。</summary>
     internal static void ToggleWithKeyboard(Button toggle)
     {
         Assert.True(toggle.Focus());
-        toggle.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(toggle), 0, Key.Space)
+        toggle.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(toggle), 0, Key.Enter)
         { RoutedEvent = Keyboard.KeyDownEvent });
-        toggle.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(toggle), 0, Key.Space)
-        { RoutedEvent = Keyboard.KeyUpEvent });
     }
 }
