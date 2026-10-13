@@ -1,4 +1,5 @@
 using System.IO;
+using Asgard.Hermod.ObjectStorage.UI.Models;
 using Asgard.Hermod.UI.Views.Dialogs;
 using Microsoft.Win32;
 
@@ -127,6 +128,13 @@ public sealed class WindowsObjectStorageDialogService : IObjectStorageDialogServ
         using var model = new ObjectStorageTemporaryLinkDialogViewModel(key, generate, TryCopyText);
         Show(new ObjectStorageTemporaryLinkWindow(model));
         return Task.CompletedTask;
+    }
+
+    /// <summary>只返回已经确认费用的类型，不在模态交互中下载或嗅探对象内容。</summary>
+    public Task<ObjectStoragePreviewType?> RequestForcePreviewAsync(string name, long size, ObjectStoragePreviewType? inferredType)
+    {
+        using var model = new ObjectStorageForcePreviewDialogViewModel(name, size, inferredType);
+        return Task.FromResult(Show(new ObjectStorageForcePreviewWindow(model)) == true ? model.Result : null);
     }
 
     /// <summary>调用方只能在显式复制操作后调用；失败使用共享业务窗体安全提示。</summary>

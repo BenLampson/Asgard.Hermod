@@ -1,3 +1,5 @@
+using Asgard.Hermod.ObjectStorage.UI.Models;
+
 namespace Asgard.Hermod.UI.Tests;
 
 /// <summary>记录用户选择与确认，默认取消写操作，不使用系统对话框或剪贴板。</summary>
@@ -23,6 +25,8 @@ internal sealed class ObjectStorageTestDialogs : IObjectStorageDialogService
     internal int OverwriteConfirmations { get; private set; }
     /// <summary>明确复制的文本。</summary>
     internal List<string> CopiedTexts { get; } = [];
+    /// <summary>类型与费用确认替身，默认取消，不自动授权下载。</summary>
+    internal Func<string, long, ObjectStoragePreviewType?, Task<ObjectStoragePreviewType?>>? ForcePreviewHandler { get; set; }
 
     /// <inheritdoc />
     public Task<ObjectStorageUploadSelection?> SelectUploadAsync(ObjectStorageBucket bucket, string prefix) => Task.FromResult(UploadSelection);
@@ -51,4 +55,7 @@ internal sealed class ObjectStorageTestDialogs : IObjectStorageDialogService
     }
     /// <inheritdoc />
     public void CopyText(string text) => CopiedTexts.Add(text);
+    /// <inheritdoc />
+    public Task<ObjectStoragePreviewType?> RequestForcePreviewAsync(string name, long size, ObjectStoragePreviewType? inferredType) =>
+        ForcePreviewHandler?.Invoke(name, size, inferredType) ?? Task.FromResult<ObjectStoragePreviewType?>(null);
 }

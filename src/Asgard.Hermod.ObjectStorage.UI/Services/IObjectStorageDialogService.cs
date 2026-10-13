@@ -1,3 +1,5 @@
+using Asgard.Hermod.ObjectStorage.UI.Models;
+
 namespace Asgard.Hermod.ObjectStorage.UI.Services;
 
 /// <summary>封装对象操作的窗体、文件选择与系统剪贴板，便于替换与验证。</summary>
@@ -23,6 +25,9 @@ public interface IObjectStorageDialogService
 
     /// <summary>让用户选择有效期、生成并复制链接；生成回调只在用户操作后调用。</summary>
     Task ShowTemporaryLinkAsync(string key, Func<TimeSpan, Task<string>> generate);
+
+    /// <summary>确认预览类型与流量费用；取消时返回空值，窗体不下载对象。</summary>
+    Task<ObjectStoragePreviewType?> RequestForcePreviewAsync(string name, long size, ObjectStoragePreviewType? inferredType);
 
     /// <summary>仅在用户点击复制时写入系统剪贴板。</summary>
     void CopyText(string text);

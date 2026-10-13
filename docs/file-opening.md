@@ -33,6 +33,21 @@ Text preview is limited to 2 MiB; image preview is limited to 20 MiB and support
 dimensions. Downloads enforce the limit against actual bytes, including streams
 without a trustworthy length. Large images are decoded at a maximum dimension
 of 4096 pixels. The existing details panel retains its 256 KiB text preview.
+The details panel also offers **Force preview** for files whose type cannot be
+previewed automatically. It infers supported raster images from the name or
+already loaded Content-Type; otherwise the user must select Image manually.
+This inference makes no content request. The confirmation dialog displays the
+object size and explains provider traffic charges before downloading content.
+
+Confirmed images appear in the details panel and can be enlarged without another
+download. Force preview ignores the extension but retains the 20 MiB actual-byte
+limit and existing decoded-image dimension limits. Cancellation, switching
+objects, refreshing, navigation, closing details, and closing the page cancel the
+read and discard obsolete results. Temporary files are removed on success,
+failure, and cancellation. Retrying requires another type and traffic-charge
+confirmation; traffic already used may still be charged. Objects and Content-Type
+are never modified.
+
 Other files, including documents and archives, use an installed program through
 the opening rules or Windows associations.
 

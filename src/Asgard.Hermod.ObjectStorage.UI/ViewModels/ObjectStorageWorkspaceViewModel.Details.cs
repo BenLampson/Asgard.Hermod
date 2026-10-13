@@ -28,9 +28,11 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     /// <summary>预览不执行脚本、HTML 或 Markdown，只呈现只读文本。</summary>
     public string PreviewText => HasTextPreview ? Details!.PreviewText! : "";
     /// <summary>即使替换服务返回过大的字符串，也不将超出上限的文本放入控件。</summary>
-    public bool HasTextPreview => Details?.PreviewText is { } text && Encoding.UTF8.GetByteCount(text) <= 256 * 1024;
+    public bool HasTextPreview => !HasImagePreview && !IsImagePreviewLoading && _imagePreviewMessage.Length == 0
+        && Details?.PreviewText is { } text && Encoding.UTF8.GetByteCount(text) <= 256 * 1024;
     /// <summary>没有文本预览时显示原因，不影响列表或下载。</summary>
-    public string PreviewMessage => IsDetailLoading ? Text.Get("ReadingObjectDetails") : DetailError.Length > 0 ? DetailError
+    public string PreviewMessage => IsImagePreviewLoading ? Text.Get("ForcePreviewLoading") : _imagePreviewMessage.Length > 0 ? _imagePreviewMessage
+        : IsDetailLoading ? Text.Get("ReadingObjectDetails") : DetailError.Length > 0 ? DetailError
         : SelectedEntry is null ? Text.Get("ClickAnObjectToViewItsDetails") : SelectedEntry.IsDirectory ? Text.Get("DoubleClickAFolderToOpenItsPrefix")
         : Details?.PreviewText is { } text && Encoding.UTF8.GetByteCount(text) > 256 * 1024 ? Text.Get("TheTextExceedsThe256KBPreviewLimitDownloadAndViewItLocally")
         : Details?.PreviewMessage ?? Text.Get("ThisFileCannotBePreviewedYetDownloadAndViewItLocallyListOperationsRemainAvailable");
@@ -53,6 +55,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     /// <summary>每一次对象选择都有自己的取消令牌和版本号。</summary>
     private async Task LoadDetailsAsync(ObjectStorageEntryViewModel? entry, CancellationToken cancellationToken = default)
     {
+        ResetImagePreview();
         _detailOperation?.Cancel();
         int version = ++_detailVersion;
         Details = null; DetailError = ""; IsDetailLoading = false;
@@ -86,7 +89,8 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     {
         foreach (string property in new[] { nameof(DetailName), nameof(DetailIcon), nameof(DetailIconBrushKey), nameof(HasDetailSelection), nameof(HasFileSelection),
             nameof(DetailSize), nameof(DetailModified), nameof(DetailStorageClass), nameof(DetailAccess), nameof(DetailContentType),
-            nameof(PreviewText), nameof(HasTextPreview), nameof(PreviewMessage), nameof(PreviewFormat) }) OnPropertyChanged(property);
+            nameof(PreviewText), nameof(HasTextPreview), nameof(PreviewMessage), nameof(PreviewFormat),
+            nameof(ShowForcePreviewActions), nameof(ShowForcePreviewIntroduction) }) OnPropertyChanged(property);
         RefreshCommands();
     }
 }

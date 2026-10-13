@@ -2127,4 +2127,30 @@
   <data name="InstanceSyncPasswordRequired" xml:space="preserve"><value>此配置尚未同步，请设置或解锁同步密码。</value></data>
   <data name="InstanceSyncConflict" xml:space="preserve"><value>此配置尚未同步，请处理同步冲突。</value></data>
   <data name="InstanceSyncFailed" xml:space="preserve"><value>此配置尚未同步，本机更改已保留，等待重试。</value></data>
+  <data name="ForcePreview" xml:space="preserve"><value>强行预览</value></data>
+  <data name="ForcePreviewImage" xml:space="preserve"><value>图片</value></data>
+  <data name="ForcePreviewQuestion" xml:space="preserve"><value>将此对象作为图片预览？</value></data>
+  <data name="ForcePreviewTypeInferred" xml:space="preserve"><value>已根据对象信息推断为图片，可直接确认预览。</value></data>
+  <data name="ForcePreviewTypeUnknown" xml:space="preserve"><value>无法根据对象信息推断类型，请手动选择。</value></data>
+  <data name="ForcePreviewType" xml:space="preserve"><value>预览类型</value></data>
+  <data name="ForcePreviewSelectType" xml:space="preserve"><value>请选择预览类型</value></data>
+  <data name="ForcePreviewImageOnly" xml:space="preserve"><value>目前仅支持图片。</value></data>
+  <data name="ForcePreviewObjectSize" xml:space="preserve"><value>对象大小：{0}</value></data>
+  <data name="ForcePreviewTrafficCharges" xml:space="preserve"><value>会产生流量费用</value></data>
+  <data name="ForcePreviewTrafficWarning" xml:space="preserve"><value>预览将下载此对象（{0}），存储服务商会按其计费规则收取流量费用。</value></data>
+  <data name="ForcePreviewConfirm" xml:space="preserve"><value>确认并预览</value></data>
+  <data name="ForcePreviewReadOnly" xml:space="preserve"><value>预览不会修改对象或其内容类型。</value></data>
+  <data name="ForcePreviewIntroduction" xml:space="preserve"><value>如果它是图片，可以选择类型后尝试强行预览。</value></data>
+  <data name="ForcePreviewTrafficHint" xml:space="preserve"><value>读取对象内容会产生流量费用。</value></data>
+  <data name="ForcePreviewLoading" xml:space="preserve"><value>正在读取对象内容以加载图片预览…</value></data>
+  <data name="ForcePreviewProgress" xml:space="preserve"><value>已读取 {0} / {1}。</value></data>
+  <data name="ForcePreviewProgressUnknown" xml:space="preserve"><value>已读取 {0}。</value></data>
+  <data name="ForcePreviewCancelLoading" xml:space="preserve"><value>取消加载</value></data>
+  <data name="ForcePreviewCancelled" xml:space="preserve"><value>已取消预览。已读取的流量仍可能计费。</value></data>
+  <data name="ForcePreviewChooseTypeAgain" xml:space="preserve"><value>重新选择类型</value></data>
+  <data name="ForcePreviewDecodeFailed" xml:space="preserve"><value>此对象无法解码为图片。请检查所选类型或下载文件查看。</value></data>
+  <data name="ForcePreviewFailed" xml:space="preserve"><value>无法加载图片预览。请检查网络和访问权限后重试。</value></data>
+  <data name="ForcePreviewFailureWithTraffic" xml:space="preserve"><value>{0} 已读取的流量仍可能计费。</value></data>
+  <data name="ForcePreviewImageReady" xml:space="preserve"><value>图片预览</value></data>
+  <data name="ForcePreviewEnlarge" xml:space="preserve"><value>放大图片预览</value></data>
 </root>

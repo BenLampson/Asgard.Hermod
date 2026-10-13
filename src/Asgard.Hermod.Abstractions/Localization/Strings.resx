@@ -2127,4 +2127,30 @@
   <data name="InstanceSyncPasswordRequired" xml:space="preserve"><value>This configuration has not synchronized. Set or unlock the synchronization password.</value></data>
   <data name="InstanceSyncConflict" xml:space="preserve"><value>This configuration has not synchronized. Resolve the synchronization conflicts.</value></data>
   <data name="InstanceSyncFailed" xml:space="preserve"><value>This configuration has not synchronized. Local changes are preserved for retry.</value></data>
+  <data name="ForcePreview" xml:space="preserve"><value>Force preview</value></data>
+  <data name="ForcePreviewImage" xml:space="preserve"><value>Image</value></data>
+  <data name="ForcePreviewQuestion" xml:space="preserve"><value>Preview this object as an image?</value></data>
+  <data name="ForcePreviewTypeInferred" xml:space="preserve"><value>An image type was inferred from the object information. You can confirm to preview it.</value></data>
+  <data name="ForcePreviewTypeUnknown" xml:space="preserve"><value>The preview type could not be inferred. Please select one.</value></data>
+  <data name="ForcePreviewType" xml:space="preserve"><value>Preview type</value></data>
+  <data name="ForcePreviewSelectType" xml:space="preserve"><value>Select a preview type</value></data>
+  <data name="ForcePreviewImageOnly" xml:space="preserve"><value>Only images are currently supported.</value></data>
+  <data name="ForcePreviewObjectSize" xml:space="preserve"><value>Object size: {0}</value></data>
+  <data name="ForcePreviewTrafficCharges" xml:space="preserve"><value>Traffic charges apply</value></data>
+  <data name="ForcePreviewTrafficWarning" xml:space="preserve"><value>Previewing downloads the object ({0}). Your storage provider will charge for traffic according to its billing rules.</value></data>
+  <data name="ForcePreviewConfirm" xml:space="preserve"><value>Confirm and preview</value></data>
+  <data name="ForcePreviewReadOnly" xml:space="preserve"><value>Previewing does not change the object or its Content-Type.</value></data>
+  <data name="ForcePreviewIntroduction" xml:space="preserve"><value>If this object is an image, select its type to try a force preview.</value></data>
+  <data name="ForcePreviewTrafficHint" xml:space="preserve"><value>Reading object content incurs traffic charges.</value></data>
+  <data name="ForcePreviewLoading" xml:space="preserve"><value>Reading the object to load an image preview…</value></data>
+  <data name="ForcePreviewProgress" xml:space="preserve"><value>Read {0} of {1}.</value></data>
+  <data name="ForcePreviewProgressUnknown" xml:space="preserve"><value>Read {0}.</value></data>
+  <data name="ForcePreviewCancelLoading" xml:space="preserve"><value>Cancel loading</value></data>
+  <data name="ForcePreviewCancelled" xml:space="preserve"><value>Preview cancelled. Traffic already used may still be charged.</value></data>
+  <data name="ForcePreviewChooseTypeAgain" xml:space="preserve"><value>Choose preview type again</value></data>
+  <data name="ForcePreviewDecodeFailed" xml:space="preserve"><value>This object could not be decoded as an image. Check the selected type or download the file to view it.</value></data>
+  <data name="ForcePreviewFailed" xml:space="preserve"><value>The image preview could not be loaded. Check the network and access permissions, then try again.</value></data>
+  <data name="ForcePreviewFailureWithTraffic" xml:space="preserve"><value>{0} Traffic already used may still be charged.</value></data>
+  <data name="ForcePreviewImageReady" xml:space="preserve"><value>Image preview</value></data>
+  <data name="ForcePreviewEnlarge" xml:space="preserve"><value>Enlarge image preview</value></data>
 </root>

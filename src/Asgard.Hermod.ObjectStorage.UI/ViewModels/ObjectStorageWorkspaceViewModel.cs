@@ -64,8 +64,9 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         CloseDetailsCommand = new RelayCommand(_ => SelectedEntry = null);
         ClearErrorCommand = new RelayCommand(_ => ActionError = "");
         ClearSearchCommand = new AsyncRelayCommand(_ => SearchAsync(""), _ => !IsClosed && SearchText.Length > 0);
-        EditConnectionCommand = new AsyncRelayCommand(_ => EditConnectionAsync(), _ => !IsClosed && !_dialogOpen && _editor is not null && !Transfers.Any(task => task.IsRunning));
+        EditConnectionCommand = new AsyncRelayCommand(_ => EditConnectionAsync(), _ => !IsClosed && !_dialogOpen && !IsImagePreviewLoading && _editor is not null && !Transfers.Any(task => task.IsRunning));
         InitializeDirectoryScanCommands();
+        InitializeForcePreviewCommands();
     }
 
     /// <summary>当前目录完成导航或读取，通知页面订阅者。</summary>
@@ -362,15 +363,19 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         foreach (var command in new[] { RefreshCommand, LoadMoreCommand, UploadCommand, NewFolderCommand, DownloadCommand, OpenFileCommand, PreviewFileCommand, BatchDownloadCommand, DeleteCommand, TemporaryLinkCommand, EditConnectionCommand, ClearSearchCommand }) command.NotifyCanExecuteChanged();
         CopyKeyCommand.NotifyCanExecuteChanged(); CopyPreviewCommand.NotifyCanExecuteChanged();
         RefreshScanCommands();
+        ForcePreviewCommand?.NotifyCanExecuteChanged();
+        CancelImagePreviewCommand?.NotifyCanExecuteChanged();
     }
     /// <summary>关闭取消所有读取和传输，过期响应不会更新已释放页面。</summary>
     protected override async ValueTask ReleaseAsync()
     {
         ResetDirectoryScan();
+        ResetImagePreview();
         _lifetime.Cancel(); _bucketOperation?.Cancel(); _listOperation?.Cancel(); _detailOperation?.Cancel(); _searchOperation?.Cancel();
         foreach (var transfer in Transfers) { transfer.Finished -= OnTransferFinished; transfer.Dispose(); }
         RefreshCommands();
         await Task.WhenAll(Transfers.Select(transfer => transfer.Completion));
+        await _imagePreviewTask;
         _transferGate.Dispose();
         _lifetime.Dispose();
     }

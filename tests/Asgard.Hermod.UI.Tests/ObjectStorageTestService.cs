@@ -33,6 +33,8 @@ internal sealed class ObjectStorageTestService : IObjectStorageService
     internal List<ObjectStorageDeletePlan> DeletedPlans { get; } = [];
     /// <summary>记录详情查询的真实键，避免排序后测试误用行索引。</summary>
     internal List<string> DetailsCalls { get; } = [];
+    /// <summary>下载调用的实际字节限制，包括强行预览。</summary>
+    internal List<long?> DownloadLimits { get; } = [];
     /// <summary>容器读取次数。</summary>
     internal int BucketReads { get; private set; }
 
@@ -81,8 +83,11 @@ internal sealed class ObjectStorageTestService : IObjectStorageService
     /// <inheritdoc />
     public Task DownloadAsync(string instanceId, ObjectStorageBucket bucket, string key, string localPath,
         IProgress<ObjectStorageTransferProgress>? progress = null, CancellationToken cancellationToken = default,
-        long? maxBytes = null) =>
-        DownloadHandler?.Invoke(key, localPath, progress, cancellationToken) ?? Task.CompletedTask;
+        long? maxBytes = null)
+    {
+        DownloadLimits.Add(maxBytes);
+        return DownloadHandler?.Invoke(key, localPath, progress, cancellationToken) ?? Task.CompletedTask;
+    }
     /// <inheritdoc />
     public Task CreateFolderAsync(string instanceId, ObjectStorageBucket bucket, string prefix, string name, CancellationToken cancellationToken = default) =>
         CreateFolderHandler?.Invoke(prefix, name, cancellationToken) ?? Task.CompletedTask;
