@@ -24,18 +24,34 @@ by the Store. The initial minimum Windows build is `10.0.19045.0`.
 ## Build
 
 For repeatable builds, `.github/workflows/release-msix.yml` runs on a Windows
-GitHub-hosted runner. Push a tag such as `v0.1.1` after merging the changes; the
-workflow converts it to package version `0.1.1.0`, builds the x64 package, stores
-it as a workflow artifact, and attaches it to a GitHub Release. You can also run
-the workflow manually from **Actions → Release MSIX → Run workflow** and provide
-an explicit four-part package version. Manual runs create an artifact but do not
-create a GitHub Release.
+GitHub-hosted runner only when the repository owner publishes a GitHub Release.
+Create a Release with a tag such as `v0.1.1` and select **Publish release**. The
+workflow checks out that tag, converts it to package version `0.1.1.0`, runs the
+build/format/test gates, builds the x64 package, and attaches it to that existing
+Release. Tag pushes, draft Releases, edits and manual dispatch do not trigger
+packaging. Published prereleases do trigger packaging. Only the owner may rerun
+packaging. A failed build leaves the published Release without a new package;
+inspect Actions before downloading assets.
 
-This automation publishes the GitHub Release only. It does not log in to Partner
-Center or submit a Store update. Upload the generated `.msix` to the existing
-Partner Center submission after reviewing the package and Store listing. A future
-Store submission can be automated separately with a Partner Center service account
-and repository secret; do not put those credentials in the repository.
+This automation uploads assets only. It does not log in to Partner Center or
+submit a Store update. Upload the generated `.msix` after reviewing the package.
+The package is unsigned and intended for Store submission, not direct installation.
+
+## Repository access and review
+
+The personal repository currently has only `BenLampson` as a write-capable user.
+GitHub allows users with write access to manage Releases; the workflow's owner
+check restricts packaging, not the GitHub Release UI. Keep write access limited to
+the owner to retain owner-only Release publishing. Adding write collaborators or
+write-capable integrations would require reviewing this policy.
+
+`.github/CODEOWNERS` assigns every file to `@BenLampson`. Branch protection for
+`main` and `dev` requires one approval from the code owner and dismisses stale
+approvals after new changes. Owner/admin bypass remains enabled because GitHub
+cannot accept a person's approval of their own PR. Contributors must submit PRs
+for owner review; the owner can explicitly bypass protection for their own changes.
+
+## Local build
 
 Install the .NET 10 SDK and a Windows SDK containing `MakeAppx.exe`. From the
 repository root, run:

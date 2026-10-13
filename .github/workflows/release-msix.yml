@@ -1,15 +1,8 @@
 name: Release MSIX
 
 on:
-  push:
-    tags:
-      - 'v*'
-  workflow_dispatch:
-    inputs:
-      package_version:
-        description: 'MSIX version (for example 0.1.1.0); empty uses the manifest'
-        required: false
-        type: string
+  release:
+    types: [published]
 
 permissions:
   contents: read
@@ -20,10 +13,15 @@ concurrency:
 
 jobs:
   package:
+    # 只有仓库所有者发布的 Release 才能触发打包；重新运行也必须由所有者执行。
+    if: >-
+      github.event.release.author.login == github.repository_owner &&
+      github.actor == github.repository_owner &&
+      github.triggering_actor == github.repository_owner
     runs-on: windows-2025
     timeout-minutes: 30
     permissions:
-      # 版本标签构建完成后，使用内置令牌创建 Release，无需个人访问令牌。
+      # 使用内置令牌向已发布的 Release 上传安装包，无需个人访问令牌。
       contents: write
     defaults:
       run:
@@ -32,6 +30,7 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v6
         with:
+          ref: ${{ github.event.release.tag_name }}
           persist-credentials: false
 
       - name: Install .NET 10 SDK
@@ -42,24 +41,12 @@ jobs:
       - name: Resolve package version
         id: version
         env:
-          EVENT_NAME: ${{ github.event_name }}
-          REF_NAME: ${{ github.ref_name }}
-          INPUT_VERSION: ${{ inputs.package_version }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          if ($env:EVENT_NAME -eq 'push') {
-            if ($env:REF_NAME -notmatch '^v(\d+)\.(\d+)\.(\d+)$') {
-              throw 'Release tags must use vMajor.Minor.Patch, for example v0.1.1.'
-            }
-            $packageVersion = $env:REF_NAME.Substring(1) + '.0'
-          } elseif ($env:INPUT_VERSION) {
-            $packageVersion = $env:INPUT_VERSION
-          } else {
-            [xml] $manifest = Get-Content packaging/Asgard.Hermod/Package.appxmanifest -Raw
-            $packageVersion = $manifest.Package.Identity.Version
+          if ($env:RELEASE_TAG -notmatch '^v(\d+)\.(\d+)\.(\d+)$') {
+            throw 'Release tags must use vMajor.Minor.Patch, for example v0.1.1.'
           }
-          if ($packageVersion -notmatch '^\d+\.\d+\.\d+\.0$') {
-            throw 'MSIX versions must have four numeric components and end in .0.'
-          }
+          $packageVersion = $env:RELEASE_TAG.Substring(1) + '.0'
           "package_version=$packageVersion" >> $env:GITHUB_OUTPUT
 
       - name: Build solution
@@ -86,23 +73,13 @@ jobs:
           compression-level: 0
           retention-days: 30
 
-      - name: Publish GitHub Release
-        if: github.event_name == 'push'
+      - name: Attach MSIX to published Release
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
           PACKAGE_VERSION: ${{ steps.version.outputs.package_version }}
         run: |
-          $notesPath = Join-Path $env:RUNNER_TEMP 'release-notes.md'
-          @'
-          Self-contained x64 Microsoft Store package (includes the .NET runtime).
-
-          This MSIX is unsigned and intended for Partner Center submission. Direct
-          installation requires signing with a trusted certificate. Microsoft Store
-          signs the package during publishing. Store submission is a separate step.
-          '@ | Set-Content -LiteralPath $notesPath -Encoding utf8
           $packagePath = "artifacts/msix/Asgard.Hermod_$($env:PACKAGE_VERSION)_x64.msix"
-          gh release create $env:RELEASE_TAG $packagePath --verify-tag --generate-notes `
-            --title "Asgard Hermod $($env:RELEASE_TAG)" --notes-file $notesPath
-          if ($LASTEXITCODE -ne 0) { throw 'GitHub Release publication failed.' }
+          gh release upload $env:RELEASE_TAG $packagePath --clobber
+          if ($LASTEXITCODE -ne 0) { throw 'Release asset upload failed.' }
