@@ -18,12 +18,15 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
 
     /// <summary>由宿主提供顶层类型连接器与配置服务。</summary>
     public NewInstanceViewModel(IInstanceProviderRegistry registry,
-        IInstanceConfigurationService configurations, IAccountService? accounts = null, IConfigurationSyncService? sync = null)
+        IInstanceConfigurationService configurations, IAccountService? accounts = null, IConfigurationSyncService? sync = null,
+        IReadOnlyList<ManagedTag>? tags = null)
     {
         ArgumentNullException.ThrowIfNull(registry);
         ArgumentNullException.ThrowIfNull(configurations);
         _registry = registry;
         _configurations = configurations;
+        TagSelection = new(tags);
+        TagSelection.PropertyChanged += OnTagSelectionChanged;
         _accounts = accounts; _sync = sync;
         _initialAccount = accounts?.Account;
         if (accounts is not null) accounts.AccountChanged += OnSaveAccountChanged;
@@ -71,6 +74,7 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
             if (Providers.Count == 1)
                 SelectedProvider = Providers[0];
             Name = "";
+            TagSelection.Reset();
             CurrentStep = 1;
             RebuildSteps();
             OnPropertyChanged(nameof(CurrentStep));
@@ -150,6 +154,15 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
     public RelayCommand CancelTestCommand { get; }
     /// <summary>调用配置服务提交已经验证的连接。</summary>
     public AsyncRelayCommand SubmitCommand { get; }
+    /// <summary>所有实例类型共享的末步标签草稿，独立于连接测试参数。</summary>
+    public InstanceTagSelectionViewModel TagSelection { get; }
+
+    /// <summary>弹出草稿尚未关闭时防止回车穿透到实例保存。</summary>
+    private void OnTagSelectionChanged(object? sender, PropertyChangedEventArgs args)
+    {
+        if (args.PropertyName == nameof(InstanceTagSelectionViewModel.HasOpenPicker))
+            SubmitCommand.NotifyCanExecuteChanged();
+    }
 
     /// <summary>关闭窗口后取消异步工作，所有命令都失效。</summary>
     public void Dispose()
@@ -157,6 +170,8 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
         if (_disposed)
             return;
         _disposed = true;
+        TagSelection.SetEditable(false);
+        TagSelection.PropertyChanged -= OnTagSelectionChanged;
         if (_accounts is not null) _accounts.AccountChanged -= OnSaveAccountChanged;
         if (_sync is not null) _sync.Changed -= OnSaveAccountChanged;
         _lifetimeCancellation.Cancel();

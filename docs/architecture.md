@@ -66,6 +66,16 @@ connection workflow and persistence. Future type-specific views can reuse the
 same picker and container with their own step collections and content without
 putting their protocol behavior into these shared controls.
 
+Instance tagging is shared by every connection flow and appears only on its
+final confirmation step. The optional selector opens an independent searchable
+checkbox draft; selecting a parent does not select its descendants. Confirming
+the popup updates the wizard, while cancelling, Escape, leaving the step or
+clicking outside discards unconfirmed changes. Confirmed tags survive backward
+navigation and save failures without invalidating the connection test. Editing
+loads stable tag IDs directly from the configuration service. Configuration and
+tag associations commit in one SQLite transaction; explicit replacement can
+clear all tags, while older connection-only updates preserve their associations.
+
 The editable Pencil source separates public connection components and rules
 in region 04 from storage connection screens and states in region 05A. Storage
 and other type-specific regions reference the common container; browsing,

@@ -82,13 +82,15 @@ public sealed partial class NewInstanceViewModel
             SaveLocation = SaveLocation,
             ExpectedAccount = _initialAccount,
             CheckExpectedAccount = _accounts is not null,
+            TagIds = TagSelection.SelectedIds,
+            ReplaceTags = TagSelection.HasCatalog,
         };
         IsSaving = true;
         SaveError = "";
         RefreshState();
         try
         {
-            // 更新保留原标识及标签关系，标签标识由配置服务持有而非导航快照反推。
+            // 配置与已确认的稳定标签标识一起提交，不从显示路径反推关联。
             var instance = _editingInstance is null
                 ? await _configurations.CreateAsync(draft, _lifetimeCancellation.Token)
                 : await _configurations.UpdateAsync(_editingInstance.Id, draft, _lifetimeCancellation.Token);

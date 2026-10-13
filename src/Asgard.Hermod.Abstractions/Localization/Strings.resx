@@ -2503,4 +2503,16 @@
   <data name="SshTerminalType" xml:space="preserve"><value>xterm-256color</value></data>
   <data name="SshEncoding" xml:space="preserve"><value>UTF-8</value></data>
   <data name="ForcePreviewClickToLoadImage" xml:space="preserve"><value>This object is recognized as an image. Click Force preview to load it.</value></data>
+  <data name="InstanceTagsOptional" xml:space="preserve"><value>Tags (optional)</value></data>
+  <data name="InstanceTagsSelect" xml:space="preserve"><value>Select tags</value></data>
+  <data name="InstanceTagsSelectPlaceholder" xml:space="preserve"><value>Select tags…</value></data>
+  <data name="InstanceTagsOptionalHint" xml:space="preserve"><value>Tags are optional. Select multiple tags or leave this blank.</value></data>
+  <data name="InstanceTagsSelected" xml:space="preserve"><value>{0} tags selected</value></data>
+  <data name="InstanceTagsOverflow" xml:space="preserve"><value>+{0}</value></data>
+  <data name="InstanceTagsConfirmSelection" xml:space="preserve"><value>Confirm selection</value></data>
+  <data name="InstanceTagsEmpty" xml:space="preserve"><value>No tags are available.</value></data>
+  <data name="InstanceTagUnavailable" xml:space="preserve"><value>Unavailable tag</value></data>
+  <data name="InstanceTagHierarchyInvalid" xml:space="preserve"><value>The tag hierarchy is invalid. Refresh the tags and try again.</value></data>
+  <data name="InstanceConfirmAddition" xml:space="preserve"><value>Confirm addition</value></data>
+  <data name="InstanceConfirmTagsDescription" xml:space="preserve"><value>Review the connection information and optionally select tags before confirming.</value></data>
 </root>

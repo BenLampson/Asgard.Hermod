@@ -2503,4 +2503,16 @@
   <data name="SshTerminalType" xml:space="preserve"><value>xterm-256color</value></data>
   <data name="SshEncoding" xml:space="preserve"><value>UTF-8</value></data>
   <data name="ForcePreviewClickToLoadImage" xml:space="preserve"><value>已识别为图片，点击“强行预览”后加载。</value></data>
+  <data name="InstanceTagsOptional" xml:space="preserve"><value>标签（可选）</value></data>
+  <data name="InstanceTagsSelect" xml:space="preserve"><value>选择标签</value></data>
+  <data name="InstanceTagsSelectPlaceholder" xml:space="preserve"><value>选择标签…</value></data>
+  <data name="InstanceTagsOptionalHint" xml:space="preserve"><value>标签可选，可选择多个标签或留空。</value></data>
+  <data name="InstanceTagsSelected" xml:space="preserve"><value>已选 {0} 项</value></data>
+  <data name="InstanceTagsOverflow" xml:space="preserve"><value>+{0}</value></data>
+  <data name="InstanceTagsConfirmSelection" xml:space="preserve"><value>确认选择</value></data>
+  <data name="InstanceTagsEmpty" xml:space="preserve"><value>暂无可选标签。</value></data>
+  <data name="InstanceTagUnavailable" xml:space="preserve"><value>不可用的标签</value></data>
+  <data name="InstanceTagHierarchyInvalid" xml:space="preserve"><value>标签层级无效，请刷新标签后重试。</value></data>
+  <data name="InstanceConfirmAddition" xml:space="preserve"><value>确认添加</value></data>
+  <data name="InstanceConfirmTagsDescription" xml:space="preserve"><value>检查连接信息，可选择标签后确认。</value></data>
 </root>

@@ -51,6 +51,7 @@ public partial class NewInstanceWindow : HermodDialog
         if (args.Key == Key.Escape && _model.CancelCommand.CanExecute(null))
         {
             args.Handled = true;
+            if (_model.TagSelection.CancelPicker()) return;
             _model.CancelCommand.Execute(null);
             return;
         }

@@ -19,4 +19,11 @@ public static class TagDisplayText
         var parts = path.Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         return string.Join(" / ", parts.Select((part, index) => Name(string.Join('/', parts.Take(index + 1)), part)).TakeLast(2));
     }
+
+    /// <summary>选择器显示完整层级；调用方只对内置标签调用，用户路径不翻译。</summary>
+    public static string FullPath(string path)
+    {
+        var parts = path.Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        return string.Join(" / ", parts.Select((part, index) => Name(string.Join('/', parts.Take(index + 1)), part)));
+    }
 }

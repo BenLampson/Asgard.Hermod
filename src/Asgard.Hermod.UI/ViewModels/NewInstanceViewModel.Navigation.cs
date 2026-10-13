@@ -29,7 +29,7 @@ public sealed partial class NewInstanceViewModel
     public bool CanTest => !_disposed && !IsTesting && !IsSaving && CurrentStep == 3 && IsInformationComplete;
     /// <summary>提交必须处于确认页，并且当前配置已经验证成功。</summary>
     public bool CanCreate => !_disposed && !IsTesting && !IsSaving && CurrentStep == 5
-        && HasSuccessfulConnectionTest;
+        && HasSuccessfulConnectionTest && !TagSelection.HasOpenPicker;
     /// <summary>创建期间冻结表单信息。</summary>
     public bool IsInformationEditable => !_disposed && !IsSaving;
     /// <summary>页脚的当前步骤提示。</summary>
@@ -38,7 +38,7 @@ public sealed partial class NewInstanceViewModel
     public ICommand ContinueCommand => CurrentStep == 5 ? SubmitCommand : NextCommand;
     /// <summary>创建期间展示设计稿指定的提交状态。</summary>
     public string ContinueLabel => CurrentStep != 5 ? Text.Get("Next")
-        : IsEditing ? IsSaving ? Text.Get("Saving") : Text.Get("SaveChanges") : IsSaving ? Text.Get("Creating") : Text.Get("CreateInstance");
+        : IsEditing ? IsSaving ? Text.Get("Saving") : Text.Get("SaveChanges") : IsSaving ? Text.Get("Creating") : Text.Get("InstanceConfirmAddition");
     /// <summary>添加流程的首步可以返回类型入口，编辑模式不允许更换类型。</summary>
     public bool HasPreviousStep => HasTypeSelection && (!IsEditing || CurrentStep > 1);
     /// <summary>未选择类型时只展示公共入口，不显示任何流程进度。</summary>
@@ -83,7 +83,7 @@ public sealed partial class NewInstanceViewModel
         2 => Text.Get("ConnectionInformation"),
         3 => Text.Get("ConnectionTest"),
         4 => Text.Get("SaveLocation"),
-        _ => IsEditing ? Text.Get("ConfirmChanges") : Text.Get("ConfirmCreation"),
+        _ => IsEditing ? Text.Get("ConfirmChanges") : Text.Get("InstanceConfirmAddition"),
     };
     /// <summary>步骤说明匹配当前操作，具体测试范围由服务商描述。</summary>
     public string StepDescription => CurrentStep switch
@@ -93,7 +93,7 @@ public sealed partial class NewInstanceViewModel
         2 => Text.Format("EnterTheInstanceNameAndConnectionInformationFor", ProviderName),
         3 => Text.Get("VerifyConnectionInformationAndAccessPermissions"),
         4 => Text.Get("SyncSaveAutomaticHint"),
-        _ => IsEditing ? Text.Get("ReviewTheInformationAndConfirmToSaveChanges") : Text.Get("ReviewTheInformationAndConfirmToCreateTheInstance"),
+        _ => Text.Get("InstanceConfirmTagsDescription"),
     };
 
     /// <summary>连接流程自行声明步骤；类型入口与公共布局都不预设连接步骤。</summary>
@@ -101,7 +101,7 @@ public sealed partial class NewInstanceViewModel
     {
         Steps = SelectedType is null ? [] :
             [new(1, Text.Get(SelectedType.ProviderSelectionTitleResourceKey)), new(2, Text.Get("EnterInformation")), new(3, Text.Get("TestConnection")),
-             new(4, Text.Get("SaveLocation")), new(5, Text.Get(IsEditing ? "ConfirmChanges" : "ConfirmCreation"))];
+             new(4, Text.Get("SaveLocation")), new(5, Text.Get(IsEditing ? "ConfirmChanges" : "InstanceConfirmAddition"))];
         OnPropertyChanged(nameof(Steps));
     }
 
@@ -162,6 +162,7 @@ public sealed partial class NewInstanceViewModel
     /// <summary>统一刷新所有计算属性及命令启用条件，避免步骤状态与按钮不同步。</summary>
     private void RefreshState()
     {
+        TagSelection.SetEditable(IsConfirmationStep && IsInformationEditable);
         foreach (var step in Steps)
             step.Update(CurrentStep);
         foreach (string property in new[] { nameof(NameError), nameof(HasTypeSelection), nameof(IsChoosingType),

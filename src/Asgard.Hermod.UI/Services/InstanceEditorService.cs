@@ -11,11 +11,12 @@ public sealed class InstanceEditorService : IInstanceEditor
     private readonly IAccountService? _accounts;
     private readonly IConfigurationSyncService? _sync;
     private readonly IEnumerable<IInstanceConfigurationContentProvider> _contents;
+    private readonly ITagManagementService? _tags;
 
     /// <summary>延迟获取已启动的主窗口。</summary>
     public InstanceEditorService(Func<Window?> getOwner, IInstanceProviderRegistry providers,
         IInstanceConfigurationService configurations, IAccountService? accounts = null, IConfigurationSyncService? sync = null,
-        IEnumerable<IInstanceConfigurationContentProvider>? contents = null)
+        IEnumerable<IInstanceConfigurationContentProvider>? contents = null, ITagManagementService? tags = null)
     {
         ArgumentNullException.ThrowIfNull(getOwner);
         ArgumentNullException.ThrowIfNull(providers);
@@ -25,13 +26,15 @@ public sealed class InstanceEditorService : IInstanceEditor
         _configurations = configurations;
         _accounts = accounts; _sync = sync;
         _contents = contents ?? [];
+        _tags = tags;
     }
 
     /// <inheritdoc />
     public async Task<InstanceSummary?> CreateAsync()
     {
         if (_sync is not null) await _sync.PrepareWorkspaceAsync();
-        using var model = new NewInstanceViewModel(_providers, _configurations, _accounts, _sync);
+        var tags = _tags is null ? null : await _tags.GetTagsAsync();
+        using var model = new NewInstanceViewModel(_providers, _configurations, _accounts, _sync, tags);
         var dialog = new NewInstanceWindow(model, _contents) { Owner = _getOwner() };
         InstanceSummary? created = dialog.ShowDialog() == true ? model.CreatedInstance : null;
         return created;
@@ -45,7 +48,9 @@ public sealed class InstanceEditorService : IInstanceEditor
             ?? throw Text.Exception("ThisInstanceNoLongerExistsRefreshTheInstanceList");
         var connection = await _configurations.GetConnectionAsync(instanceId)
             ?? throw Text.Exception("CannotReadThisInstanceConfigurationReopenAndTryAgain");
-        using var model = new NewInstanceViewModel(_providers, _configurations, existing, connection, _accounts, _sync);
+        var tags = _tags is null ? null : await _tags.GetTagsAsync();
+        var tagIds = _tags is null ? null : await _configurations.GetTagIdsAsync(instanceId);
+        using var model = new NewInstanceViewModel(_providers, _configurations, existing, connection, _accounts, _sync, tags, tagIds);
         var dialog = new NewInstanceWindow(model, _contents) { Owner = _getOwner() };
         return dialog.ShowDialog() == true ? model.CreatedInstance : null;
     }

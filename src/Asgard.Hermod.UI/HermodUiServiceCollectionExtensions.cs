@@ -16,7 +16,7 @@ public static class HermodUiServiceCollectionExtensions
         services.TryAddSingleton<IInstanceEditor>(provider => new InstanceEditorService(owner,
             provider.GetRequiredService<IInstanceProviderRegistry>(),
             provider.GetRequiredService<IInstanceConfigurationService>(), provider.GetService<IAccountService>(), provider.GetService<IConfigurationSyncService>(),
-            provider.GetServices<IInstanceConfigurationContentProvider>()));
+            provider.GetServices<IInstanceConfigurationContentProvider>(), provider.GetRequiredService<ITagManagementService>()));
         services.TryAddSingleton<ISettingsEditor>(provider => new SettingsEditorService(owner,
             provider.GetRequiredService<ITagManagementService>(),
             provider.GetRequiredService<ILanguagePreferenceStore>(),

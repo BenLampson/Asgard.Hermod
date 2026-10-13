@@ -205,6 +205,7 @@
                 <TextBlock Text="{loc:Loc SaveLocation}" Style="{StaticResource ConfirmationLabel}" />
                 <TextBlock Grid.Column="1" Text="{Binding SaveLocationLabel}" Style="{StaticResource ConfirmationValue}" />
             </Grid></Border>
+            <controls:InstanceTagSelector x:Name="ConfirmationTagSelector" Model="{Binding TagSelection}" Margin="0,20,0,0" />
             <TextBlock Text="{Binding ConfirmationHint}" Foreground="{DynamicResource TextMutedBrush}"
                        TextWrapping="Wrap" Margin="0,24,0,0" />
             <TextBlock Text="{Binding SaveError}" Foreground="{DynamicResource DangerBrush}" Margin="0,16,0,0"

@@ -6,7 +6,8 @@ public sealed partial class NewInstanceViewModel
     /// <summary>预填当前配置；保存前仍必须测试，更新时不会创建另一个实例。</summary>
     public NewInstanceViewModel(IInstanceProviderRegistry registry, IInstanceConfigurationService configurations,
         InstanceSummary existing, InstanceConnectionOptions initialConnection, IAccountService? accounts = null,
-        IConfigurationSyncService? sync = null) : this(registry, configurations, accounts, sync)
+        IConfigurationSyncService? sync = null, IReadOnlyList<ManagedTag>? tags = null,
+        IReadOnlyList<string>? selectedTagIds = null) : this(registry, configurations, accounts, sync, tags)
     {
         ArgumentNullException.ThrowIfNull(existing);
         ArgumentNullException.ThrowIfNull(initialConnection);
@@ -23,6 +24,7 @@ public sealed partial class NewInstanceViewModel
         foreach (var field in Fields)
             field.Value = initialConnection.Parameters.TryGetValue(field.Key, out string? value) ? value : field.Definition.DefaultValue;
         _editingInstance = existing;
+        TagSelection.Restore(selectedTagIds ?? []);
         RebuildSteps();
         RefreshState();
     }
