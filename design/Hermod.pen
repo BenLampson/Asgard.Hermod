@@ -11508,7 +11508,7 @@
       "type": "frame",
       "id": "VUaZH",
       "x": 7428,
-      "y": -1522,
+      "y": 3300,
       "name": "添加 OSS Instance · 1 / 5",
       "theme": {
         "mode": "light"
@@ -11685,7 +11685,7 @@
       "type": "frame",
       "id": "Yrn15",
       "x": 8312,
-      "y": -1522,
+      "y": 3300,
       "name": "添加 OSS Instance · 2 / 5",
       "theme": {
         "mode": "light"
@@ -12049,7 +12049,7 @@
       "type": "frame",
       "id": "SYXNh",
       "x": 9196,
-      "y": -1522,
+      "y": 3300,
       "name": "添加 OSS Instance · 3 / 5",
       "theme": {
         "mode": "light"
@@ -12522,7 +12522,7 @@
       "type": "frame",
       "id": "lYijL",
       "x": 10080,
-      "y": -1522,
+      "y": 3300,
       "name": "添加 OSS Instance · 4 / 5",
       "theme": {
         "mode": "light"
@@ -12914,7 +12914,7 @@
       "type": "frame",
       "id": "LwTa4",
       "x": 10964,
-      "y": -1522,
+      "y": 3300,
       "name": "添加 OSS Instance · 5 / 5",
       "theme": {
         "mode": "light"
@@ -13379,7 +13379,7 @@
       "type": "frame",
       "id": "vdIwv",
       "x": 7428,
-      "y": -532,
+      "y": 4090,
       "name": "OSS 向导 · 测试与保存状态",
       "clip": true,
       "width": 1760,
@@ -18065,7 +18065,7 @@
       "type": "frame",
       "id": "vGYHU",
       "x": 7428,
-      "y": 2548,
+      "y": 4730,
       "name": "component/OSS 对象浏览器",
       "reusable": true,
       "clip": true,
@@ -18207,7 +18207,7 @@
               "width": "fill_container",
               "height": "fill_container",
               "layout": "vertical",
-              "gap": 18,
+              "gap": 12,
               "padding": [
                 22,
                 22,
@@ -18444,6 +18444,117 @@
                 },
                 {
                   "type": "frame",
+                  "id": "X4IuR",
+                  "name": "目录更新时间扫描入口",
+                  "width": "fill_container",
+                  "height": 32,
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "KV6Md",
+                      "type": "ref",
+                      "ref": "Q2r8z",
+                      "name": "获取更新时间并排序",
+                      "fill": "$surface",
+                      "stroke": "$line",
+                      "strokeWidth": 1,
+                      "descendants": {
+                        "u5fFux": {
+                          "enabled": true,
+                          "icon": "arrow-down-wide-narrow",
+                          "fill": "$accent"
+                        },
+                        "NpJY2": {
+                          "content": "获取更新时间并排序",
+                          "fill": "$body"
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "STSG1",
+                      "name": "扫描范围说明",
+                      "fill": "$muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "当前目录及所有子目录 · 文件夹更新时间需扫描后获取",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "L1V2R9",
+                      "x": 24,
+                      "y": 154,
+                      "name": "目录扫描状态栏",
+                      "enabled": false,
+                      "width": 623,
+                      "height": 32,
+                      "fill": "#00000000",
+                      "cornerRadius": 5,
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "e8m92M",
+                          "name": "目录扫描状态图标",
+                          "width": 15,
+                          "height": 15,
+                          "icon": "info",
+                          "library": "lucide",
+                          "fill": "$muted"
+                        },
+                        {
+                          "type": "text",
+                          "id": "chg3Y",
+                          "name": "目录扫描状态文字",
+                          "fill": "$muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "文件夹更新时间需扫描后获取",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "id": "X3810",
+                          "type": "ref",
+                          "ref": "Q2r8z",
+                          "name": "取消目录扫描",
+                          "height": 28,
+                          "fill": "$surface",
+                          "stroke": "$line",
+                          "strokeWidth": 1,
+                          "enabled": false,
+                          "descendants": {
+                            "NpJY2": {
+                              "content": "取消",
+                              "fill": "$body"
+                            }
+                          }
+                        },
+                        {
+                          "id": "Hk5om",
+                          "type": "ref",
+                          "ref": "Q2r8z",
+                          "name": "继续目录扫描",
+                          "enabled": false,
+                          "height": 28,
+                          "descendants": {
+                            "NpJY2": {
+                              "content": "继续"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
                   "id": "rs9wm",
                   "name": "OSS 对象表格",
                   "width": "fill_container",
@@ -18536,7 +18647,7 @@
                           "fill": "$muted",
                           "textGrowth": "fixed-width",
                           "width": 122,
-                          "content": "更新时间 ↓",
+                          "content": "更新时间",
                           "fontFamily": "Inter",
                           "fontSize": 11,
                           "fontWeight": "normal"
@@ -18655,7 +18766,7 @@
                           "fill": "$muted",
                           "textGrowth": "fixed-width",
                           "width": 122,
-                          "content": "2026-06-02 15:08",
+                          "content": "待获取",
                           "fontFamily": "Inter",
                           "fontSize": 10.5,
                           "fontWeight": "normal"
@@ -18777,7 +18888,7 @@
                           "fill": "$muted",
                           "textGrowth": "fixed-width",
                           "width": 122,
-                          "content": "2026-06-02 14:56",
+                          "content": "待获取",
                           "fontFamily": "Inter",
                           "fontSize": 10.5,
                           "fontWeight": "normal"
@@ -19432,7 +19543,7 @@
                       "id": "w6Ibt",
                       "name": "当前目录列表统计",
                       "fill": "$muted",
-                      "content": "2 个文件夹 · 5 个对象",
+                      "content": "已加载：12 个文件夹 · 36 个文件",
                       "fontFamily": "Inter",
                       "fontSize": 11,
                       "fontWeight": "normal"
@@ -19991,7 +20102,7 @@
       "type": "frame",
       "id": "fZStW",
       "x": 7428,
-      "y": 3410,
+      "y": 5592,
       "name": "OSS 数据页 · Light",
       "theme": {
         "mode": "light"
@@ -20712,7 +20823,7 @@
       "type": "frame",
       "id": "zDj2W",
       "x": 8852,
-      "y": 3410,
+      "y": 5592,
       "name": "OSS 数据页 · Dark",
       "theme": {
         "mode": "dark"
@@ -21439,7 +21550,7 @@
       "type": "frame",
       "id": "X6KYY",
       "x": 7428,
-      "y": 4350,
+      "y": 6532,
       "name": "OSS · 上传对象窗口",
       "clip": true,
       "width": 600,
@@ -21922,7 +22033,7 @@
       "type": "frame",
       "id": "Dj26h",
       "x": 8092,
-      "y": 4350,
+      "y": 6532,
       "name": "OSS · 传输任务与对象操作",
       "clip": true,
       "width": 1360,
@@ -22739,7 +22850,7 @@
       "type": "frame",
       "id": "ENC0G",
       "x": 8092,
-      "y": 5129,
+      "y": 7327,
       "name": "OSS · 空态与访问边界",
       "clip": true,
       "width": 1360,
@@ -35608,6 +35719,4636 @@
               ]
             }
           ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "w2WIu",
+      "x": 7428,
+      "y": 8047,
+      "name": "OSS · 获取更新时间 · 扫描中",
+      "theme": {
+        "mode": "light"
+      },
+      "clip": true,
+      "width": 1360,
+      "height": 860,
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "IgOAC",
+          "type": "ref",
+          "ref": "XOpCH",
+          "name": "OSS 数据工作区",
+          "width": "fill_container",
+          "height": "fill_container",
+          "descendants": {
+            "tycK8": {
+              "content": "Development workspace"
+            },
+            "SMzZn/JVZ1P": {
+              "content": "搜索实例、Tag…"
+            },
+            "ol17i": {
+              "id": "Yvpq7",
+              "type": "ref",
+              "ref": "GPGCx",
+              "name": "OSS 页面本地用户区"
+            },
+            "C7kYeB": {
+              "layout": "vertical"
+            },
+            "oHqi5": {
+              "content": "实例"
+            },
+            "H4oGk/JVZ1P": {
+              "content": "搜索实例…"
+            },
+            "YOCUE": {
+              "type": "frame",
+              "id": "mBHqW",
+              "name": "Instance 列表 · 仅实例",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "padding": [
+                0,
+                8
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "FTnl6",
+                  "name": "Tag 筛选",
+                  "width": "fill_container",
+                  "gap": 7,
+                  "padding": [
+                    8,
+                    12,
+                    14,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "DqvEu",
+                      "name": "实例Tag过滤图标",
+                      "width": 13,
+                      "height": 13,
+                      "icon": "tags",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "j3Gz7",
+                      "name": "实例Tag过滤入口",
+                      "fill": "$muted",
+                      "content": "筛选 Tag",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "RHCqc",
+                  "name": "当前 OSS 实例",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "$accent-weak",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "p7HSL",
+                      "x": 12,
+                      "y": 11.5,
+                      "name": "当前 OSS 实例展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "lv83I",
+                      "name": "当前 OSS 实例类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "cloud",
+                      "library": "lucide",
+                      "fill": "$amber"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Ep678",
+                      "name": "当前 OSS 实例名称",
+                      "fill": "$accent-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Aliyun OSS · Dev",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "wEUoU",
+                  "x": 8,
+                  "y": 71,
+                  "name": "Bucket 标题栏",
+                  "enabled": false,
+                  "width": 224,
+                  "gap": 6,
+                  "padding": [
+                    16,
+                    12,
+                    8,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "e2D5tk",
+                      "name": "Bucket 分类标题",
+                      "fill": "$muted",
+                      "content": "BUCKETS",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "600",
+                      "letterSpacing": 0.8
+                    },
+                    {
+                      "type": "text",
+                      "id": "gAjMC",
+                      "name": "Bucket 总数",
+                      "fill": "$muted",
+                      "content": "3",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "c7l1Hn",
+                      "name": "Bucket 标题间隔",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "icon",
+                      "id": "mBi6U",
+                      "name": "刷新 Bucket 列表",
+                      "width": 12,
+                      "height": 12,
+                      "icon": "refresh-cw",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "GBbc0",
+                  "x": 8,
+                  "y": 109,
+                  "name": "assets-dev Bucket",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    22
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "vWAPh",
+                      "x": 22,
+                      "y": 10.5,
+                      "name": "assets-dev Bucket展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "d7Pak",
+                      "name": "assets-dev Bucket类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "database",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "V9xqf",
+                      "name": "assets-dev Bucket名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "assets-dev",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "RXTm4",
+                  "x": 8,
+                  "y": 143,
+                  "name": "releases 前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    38
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "E7Wbmo",
+                      "x": 38,
+                      "y": 10.5,
+                      "name": "releases 前缀展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "LWOxC",
+                      "name": "releases 前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "o98V6n",
+                      "name": "releases 前缀名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "releases",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "L8lC6f",
+                  "x": 8,
+                  "y": 177,
+                  "name": "当前 v0.9.0 前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "$accent-weak",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    62
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "ulgZN",
+                      "name": "当前 v0.9.0 前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder-open",
+                      "library": "lucide",
+                      "fill": "$accent"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Aueun",
+                      "name": "当前 v0.9.0 前缀名称",
+                      "fill": "$accent-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "v0.9.0",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Y4Bz1",
+                  "x": 8,
+                  "y": 211,
+                  "name": "v0.8.0 前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    62
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "ZrgTB",
+                      "name": "v0.8.0 前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "iYmjp",
+                      "name": "v0.8.0 前缀名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "v0.8.0",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "yGrUZ",
+                  "x": 8,
+                  "y": 245,
+                  "name": "images 根前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    54
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "ksc95",
+                      "name": "images 根前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "B3C5Te",
+                      "name": "images 根前缀名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "images",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "KuATB",
+                  "x": 8,
+                  "y": 279,
+                  "name": "logs-dev Bucket",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    22
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "rABCM",
+                      "x": 22,
+                      "y": 10.5,
+                      "name": "logs-dev Bucket展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "Sxedh",
+                      "name": "logs-dev Bucket类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "database",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "AK9Y3",
+                      "name": "logs-dev Bucket名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "logs-dev",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "j6l7Hn",
+                  "x": 8,
+                  "y": 313,
+                  "name": "archives Bucket",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    22
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "TjBt0",
+                      "x": 22,
+                      "y": 10.5,
+                      "name": "archives Bucket展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "Mxgzq",
+                      "name": "archives Bucket类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "database",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "utnZ8",
+                      "name": "archives Bucket名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "archives",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "j3dZe",
+                  "x": 8,
+                  "y": 347,
+                  "name": "其他实例前分隔",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 1,
+                  "fill": "$line-soft"
+                },
+                {
+                  "type": "frame",
+                  "id": "KfKpK",
+                  "name": "生产 OSS 实例",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "HNwHe",
+                      "x": 12,
+                      "y": 11.5,
+                      "name": "生产 OSS 实例展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "s7slxz",
+                      "name": "生产 OSS 实例类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "cloud",
+                      "library": "lucide",
+                      "fill": "$amber"
+                    },
+                    {
+                      "type": "text",
+                      "id": "q4UfPC",
+                      "name": "生产 OSS 实例名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Aliyun OSS · Prod",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "EzUtA",
+                  "name": "测试 OSS 实例",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "GJfei",
+                      "x": 12,
+                      "y": 11.5,
+                      "name": "测试 OSS 实例展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "LUfuf",
+                      "name": "测试 OSS 实例类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "cloud",
+                      "library": "lucide",
+                      "fill": "$amber"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Ue8Do",
+                      "name": "测试 OSS 实例名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Aliyun OSS · Staging",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            "pRqvL": {
+              "fill": "$surface",
+              "layout": "vertical"
+            },
+            "A3f4zs": {
+              "fill": "$app-bg"
+            },
+            "wSoDr": {
+              "fill": "#00000000",
+              "strokeWidth": 0
+            },
+            "V1uGY": {
+              "fill": "$surface"
+            },
+            "pkxzR": {
+              "icon": "cloud",
+              "fill": "$amber"
+            },
+            "Zdco2": {
+              "content": "Aliyun OSS · Dev",
+              "fill": "$ink"
+            },
+            "i3eqX": {
+              "enabled": false
+            },
+            "PVANL": {
+              "enabled": false
+            },
+            "u4xI9r": {
+              "enabled": false
+            },
+            "PH0GO": {
+              "id": "zJJ0S",
+              "type": "ref",
+              "ref": "vGYHU",
+              "name": "OSS 对象浏览器内容",
+              "width": "fill_container",
+              "height": "fill_container",
+              "descendants": {
+                "KV6Md": {
+                  "opacity": 0.4
+                },
+                "STSG1": {
+                  "content": "当前目录及所有子目录",
+                  "enabled": false,
+                  "width": 1
+                },
+                "L1V2R9": {
+                  "enabled": true,
+                  "width": "fill_container",
+                  "height": 32,
+                  "fill": "#00000000",
+                  "padding": 0,
+                  "gap": 8,
+                  "layout": "horizontal"
+                },
+                "e8m92M": {
+                  "icon": "loader-circle",
+                  "fill": "$accent"
+                },
+                "chg3Y": {
+                  "fontSize": 11,
+                  "content": "已扫描 5,000 个文件",
+                  "fill": "$accent-ink"
+                },
+                "X3810": {
+                  "enabled": true
+                },
+                "Hk5om": {
+                  "enabled": false
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "zanF6",
+      "x": 8852,
+      "y": 8047,
+      "name": "OSS · 获取更新时间 · 文件较多",
+      "theme": {
+        "mode": "light"
+      },
+      "clip": true,
+      "width": 1360,
+      "height": 860,
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "rf0qS",
+          "type": "ref",
+          "ref": "XOpCH",
+          "name": "OSS 数据工作区",
+          "width": "fill_container",
+          "height": "fill_container",
+          "descendants": {
+            "tycK8": {
+              "content": "Development workspace"
+            },
+            "SMzZn/JVZ1P": {
+              "content": "搜索实例、Tag…"
+            },
+            "ol17i": {
+              "id": "KmmT8",
+              "type": "ref",
+              "ref": "GPGCx",
+              "name": "OSS 页面本地用户区"
+            },
+            "C7kYeB": {
+              "layout": "vertical"
+            },
+            "oHqi5": {
+              "content": "实例"
+            },
+            "H4oGk/JVZ1P": {
+              "content": "搜索实例…"
+            },
+            "YOCUE": {
+              "type": "frame",
+              "id": "o25c3",
+              "name": "Instance 列表 · 仅实例",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "padding": [
+                0,
+                8
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "GiXh8",
+                  "name": "Tag 筛选",
+                  "width": "fill_container",
+                  "gap": 7,
+                  "padding": [
+                    8,
+                    12,
+                    14,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "sbJtm",
+                      "name": "实例Tag过滤图标",
+                      "width": 13,
+                      "height": 13,
+                      "icon": "tags",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "bVErl",
+                      "name": "实例Tag过滤入口",
+                      "fill": "$muted",
+                      "content": "筛选 Tag",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "fi5Gm",
+                  "name": "当前 OSS 实例",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "$accent-weak",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "goYrx",
+                      "x": 12,
+                      "y": 11.5,
+                      "name": "当前 OSS 实例展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "d7A6R",
+                      "name": "当前 OSS 实例类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "cloud",
+                      "library": "lucide",
+                      "fill": "$amber"
+                    },
+                    {
+                      "type": "text",
+                      "id": "y8zuJz",
+                      "name": "当前 OSS 实例名称",
+                      "fill": "$accent-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Aliyun OSS · Dev",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "lLzhS",
+                  "x": 8,
+                  "y": 71,
+                  "name": "Bucket 标题栏",
+                  "enabled": false,
+                  "width": 224,
+                  "gap": 6,
+                  "padding": [
+                    16,
+                    12,
+                    8,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Vnwl3",
+                      "name": "Bucket 分类标题",
+                      "fill": "$muted",
+                      "content": "BUCKETS",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "600",
+                      "letterSpacing": 0.8
+                    },
+                    {
+                      "type": "text",
+                      "id": "s8gqP",
+                      "name": "Bucket 总数",
+                      "fill": "$muted",
+                      "content": "3",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "nUtn7",
+                      "name": "Bucket 标题间隔",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "icon",
+                      "id": "dZG1E",
+                      "name": "刷新 Bucket 列表",
+                      "width": 12,
+                      "height": 12,
+                      "icon": "refresh-cw",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "BZ96L",
+                  "x": 8,
+                  "y": 109,
+                  "name": "assets-dev Bucket",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    22
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "BsMVk",
+                      "x": 22,
+                      "y": 10.5,
+                      "name": "assets-dev Bucket展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "NllFE",
+                      "name": "assets-dev Bucket类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "database",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "nSVop",
+                      "name": "assets-dev Bucket名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "assets-dev",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "CcDTf",
+                  "x": 8,
+                  "y": 143,
+                  "name": "releases 前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    38
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "NLeY9",
+                      "x": 38,
+                      "y": 10.5,
+                      "name": "releases 前缀展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "b53iJ",
+                      "name": "releases 前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "P71Ra",
+                      "name": "releases 前缀名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "releases",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "INZOy",
+                  "x": 8,
+                  "y": 177,
+                  "name": "当前 v0.9.0 前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "$accent-weak",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    62
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "XKyat",
+                      "name": "当前 v0.9.0 前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder-open",
+                      "library": "lucide",
+                      "fill": "$accent"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Do4Qf",
+                      "name": "当前 v0.9.0 前缀名称",
+                      "fill": "$accent-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "v0.9.0",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dnLXN",
+                  "x": 8,
+                  "y": 211,
+                  "name": "v0.8.0 前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    62
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "a5HKr",
+                      "name": "v0.8.0 前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "i5CXc",
+                      "name": "v0.8.0 前缀名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "v0.8.0",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "cLVZR",
+                  "x": 8,
+                  "y": 245,
+                  "name": "images 根前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    54
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "tUlu8",
+                      "name": "images 根前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "cbBLn",
+                      "name": "images 根前缀名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "images",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "x9NJc",
+                  "x": 8,
+                  "y": 279,
+                  "name": "logs-dev Bucket",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    22
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "StbWw",
+                      "x": 22,
+                      "y": 10.5,
+                      "name": "logs-dev Bucket展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "U8wbLz",
+                      "name": "logs-dev Bucket类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "database",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "YkLlr",
+                      "name": "logs-dev Bucket名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "logs-dev",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "NGcpU",
+                  "x": 8,
+                  "y": 313,
+                  "name": "archives Bucket",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    22
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "t93gbc",
+                      "x": 22,
+                      "y": 10.5,
+                      "name": "archives Bucket展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "nNcGp",
+                      "name": "archives Bucket类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "database",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "FH16L",
+                      "name": "archives Bucket名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "archives",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "s6pZst",
+                  "x": 8,
+                  "y": 347,
+                  "name": "其他实例前分隔",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 1,
+                  "fill": "$line-soft"
+                },
+                {
+                  "type": "frame",
+                  "id": "B9wdq",
+                  "name": "生产 OSS 实例",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "BmqY7",
+                      "x": 12,
+                      "y": 11.5,
+                      "name": "生产 OSS 实例展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "PMBFo",
+                      "name": "生产 OSS 实例类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "cloud",
+                      "library": "lucide",
+                      "fill": "$amber"
+                    },
+                    {
+                      "type": "text",
+                      "id": "RjdQP",
+                      "name": "生产 OSS 实例名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Aliyun OSS · Prod",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "y5jKT",
+                  "name": "测试 OSS 实例",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "sbn1k",
+                      "x": 12,
+                      "y": 11.5,
+                      "name": "测试 OSS 实例展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "zkoPC",
+                      "name": "测试 OSS 实例类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "cloud",
+                      "library": "lucide",
+                      "fill": "$amber"
+                    },
+                    {
+                      "type": "text",
+                      "id": "JP7sV",
+                      "name": "测试 OSS 实例名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Aliyun OSS · Staging",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            "pRqvL": {
+              "fill": "$surface",
+              "layout": "vertical"
+            },
+            "A3f4zs": {
+              "fill": "$app-bg"
+            },
+            "wSoDr": {
+              "fill": "#00000000",
+              "strokeWidth": 0
+            },
+            "V1uGY": {
+              "fill": "$surface"
+            },
+            "pkxzR": {
+              "icon": "cloud",
+              "fill": "$amber"
+            },
+            "Zdco2": {
+              "content": "Aliyun OSS · Dev",
+              "fill": "$ink"
+            },
+            "i3eqX": {
+              "enabled": false
+            },
+            "PVANL": {
+              "enabled": false
+            },
+            "u4xI9r": {
+              "enabled": false
+            },
+            "PH0GO": {
+              "id": "zZBn2",
+              "type": "ref",
+              "ref": "vGYHU",
+              "name": "OSS 对象浏览器内容",
+              "width": "fill_container",
+              "height": "fill_container",
+              "descendants": {
+                "KV6Md": {
+                  "opacity": 0.4
+                },
+                "STSG1": {
+                  "content": "当前目录及所有子目录",
+                  "enabled": false,
+                  "width": 1
+                },
+                "L1V2R9": {
+                  "enabled": true,
+                  "width": "fill_container",
+                  "height": 32,
+                  "fill": "#00000000",
+                  "padding": 0,
+                  "gap": 8,
+                  "layout": "horizontal"
+                },
+                "e8m92M": {
+                  "icon": "triangle-alert",
+                  "fill": "$amber"
+                },
+                "chg3Y": {
+                  "fontSize": 11,
+                  "content": "已扫描 10,001 个文件 · 文件较多，继续扫描可能耗时较长",
+                  "fill": "$amber"
+                },
+                "X3810": {
+                  "enabled": true
+                },
+                "Hk5om": {
+                  "enabled": true
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "WW7rV",
+      "x": 10276,
+      "y": 8047,
+      "name": "OSS · 获取更新时间 · 完成排序",
+      "theme": {
+        "mode": "light"
+      },
+      "clip": true,
+      "width": 1360,
+      "height": 860,
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "TEzyo",
+          "type": "ref",
+          "ref": "XOpCH",
+          "name": "OSS 数据工作区",
+          "width": "fill_container",
+          "height": "fill_container",
+          "descendants": {
+            "tycK8": {
+              "content": "Development workspace"
+            },
+            "SMzZn/JVZ1P": {
+              "content": "搜索实例、Tag…"
+            },
+            "ol17i": {
+              "id": "cPjQS",
+              "type": "ref",
+              "ref": "GPGCx",
+              "name": "OSS 页面本地用户区"
+            },
+            "C7kYeB": {
+              "layout": "vertical"
+            },
+            "oHqi5": {
+              "content": "实例"
+            },
+            "H4oGk/JVZ1P": {
+              "content": "搜索实例…"
+            },
+            "YOCUE": {
+              "type": "frame",
+              "id": "zYa4F",
+              "name": "Instance 列表 · 仅实例",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "padding": [
+                0,
+                8
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "pD5w5",
+                  "name": "Tag 筛选",
+                  "width": "fill_container",
+                  "gap": 7,
+                  "padding": [
+                    8,
+                    12,
+                    14,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "IQNYz",
+                      "name": "实例Tag过滤图标",
+                      "width": 13,
+                      "height": 13,
+                      "icon": "tags",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "TakO7",
+                      "name": "实例Tag过滤入口",
+                      "fill": "$muted",
+                      "content": "筛选 Tag",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "tmYlr",
+                  "name": "当前 OSS 实例",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "$accent-weak",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "ZiHtt",
+                      "x": 12,
+                      "y": 11.5,
+                      "name": "当前 OSS 实例展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "fGHWH",
+                      "name": "当前 OSS 实例类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "cloud",
+                      "library": "lucide",
+                      "fill": "$amber"
+                    },
+                    {
+                      "type": "text",
+                      "id": "dhriv",
+                      "name": "当前 OSS 实例名称",
+                      "fill": "$accent-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Aliyun OSS · Dev",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "BD8oC",
+                  "x": 8,
+                  "y": 71,
+                  "name": "Bucket 标题栏",
+                  "enabled": false,
+                  "width": 224,
+                  "gap": 6,
+                  "padding": [
+                    16,
+                    12,
+                    8,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Nkv4A",
+                      "name": "Bucket 分类标题",
+                      "fill": "$muted",
+                      "content": "BUCKETS",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "600",
+                      "letterSpacing": 0.8
+                    },
+                    {
+                      "type": "text",
+                      "id": "pPzCN",
+                      "name": "Bucket 总数",
+                      "fill": "$muted",
+                      "content": "3",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "HUtoo",
+                      "name": "Bucket 标题间隔",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "icon",
+                      "id": "rFpoV",
+                      "name": "刷新 Bucket 列表",
+                      "width": 12,
+                      "height": 12,
+                      "icon": "refresh-cw",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "anNG8",
+                  "x": 8,
+                  "y": 109,
+                  "name": "assets-dev Bucket",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    22
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "iIy7O",
+                      "x": 22,
+                      "y": 10.5,
+                      "name": "assets-dev Bucket展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "uUn82",
+                      "name": "assets-dev Bucket类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "database",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "tkueb",
+                      "name": "assets-dev Bucket名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "assets-dev",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "MxFqz",
+                  "x": 8,
+                  "y": 143,
+                  "name": "releases 前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    38
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "tU8KR",
+                      "x": 38,
+                      "y": 10.5,
+                      "name": "releases 前缀展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "Tht14",
+                      "name": "releases 前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "iVHLy",
+                      "name": "releases 前缀名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "releases",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "RBnSi",
+                  "x": 8,
+                  "y": 177,
+                  "name": "当前 v0.9.0 前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "$accent-weak",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    62
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "K5H3YY",
+                      "name": "当前 v0.9.0 前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder-open",
+                      "library": "lucide",
+                      "fill": "$accent"
+                    },
+                    {
+                      "type": "text",
+                      "id": "O7nwt",
+                      "name": "当前 v0.9.0 前缀名称",
+                      "fill": "$accent-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "v0.9.0",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "K0toL",
+                  "x": 8,
+                  "y": 211,
+                  "name": "v0.8.0 前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    62
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "PBuxh",
+                      "name": "v0.8.0 前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "l6gfJT",
+                      "name": "v0.8.0 前缀名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "v0.8.0",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qWDFp",
+                  "x": 8,
+                  "y": 245,
+                  "name": "images 根前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    54
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "RfX5E",
+                      "name": "images 根前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "y3N3a",
+                      "name": "images 根前缀名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "images",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "x7MIQy",
+                  "x": 8,
+                  "y": 279,
+                  "name": "logs-dev Bucket",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    22
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "jNA2z",
+                      "x": 22,
+                      "y": 10.5,
+                      "name": "logs-dev Bucket展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "ea7NX",
+                      "name": "logs-dev Bucket类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "database",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "f9qU4N",
+                      "name": "logs-dev Bucket名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "logs-dev",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "rK8FO",
+                  "x": 8,
+                  "y": 313,
+                  "name": "archives Bucket",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    22
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "tAJrG",
+                      "x": 22,
+                      "y": 10.5,
+                      "name": "archives Bucket展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "rRQC9",
+                      "name": "archives Bucket类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "database",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "FhavR",
+                      "name": "archives Bucket名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "archives",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "kp2Ww",
+                  "x": 8,
+                  "y": 347,
+                  "name": "其他实例前分隔",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 1,
+                  "fill": "$line-soft"
+                },
+                {
+                  "type": "frame",
+                  "id": "e7RPE",
+                  "name": "生产 OSS 实例",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "kLjqx",
+                      "x": 12,
+                      "y": 11.5,
+                      "name": "生产 OSS 实例展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "Ka6Qw",
+                      "name": "生产 OSS 实例类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "cloud",
+                      "library": "lucide",
+                      "fill": "$amber"
+                    },
+                    {
+                      "type": "text",
+                      "id": "d0qha",
+                      "name": "生产 OSS 实例名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Aliyun OSS · Prod",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hZ1uc",
+                  "name": "测试 OSS 实例",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "GkjoL",
+                      "x": 12,
+                      "y": 11.5,
+                      "name": "测试 OSS 实例展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "wi1cy",
+                      "name": "测试 OSS 实例类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "cloud",
+                      "library": "lucide",
+                      "fill": "$amber"
+                    },
+                    {
+                      "type": "text",
+                      "id": "tFmQR",
+                      "name": "测试 OSS 实例名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Aliyun OSS · Staging",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            "pRqvL": {
+              "fill": "$surface",
+              "layout": "vertical"
+            },
+            "A3f4zs": {
+              "fill": "$app-bg"
+            },
+            "wSoDr": {
+              "fill": "#00000000",
+              "strokeWidth": 0
+            },
+            "V1uGY": {
+              "fill": "$surface"
+            },
+            "pkxzR": {
+              "icon": "cloud",
+              "fill": "$amber"
+            },
+            "Zdco2": {
+              "content": "Aliyun OSS · Dev",
+              "fill": "$ink"
+            },
+            "i3eqX": {
+              "enabled": false
+            },
+            "PVANL": {
+              "enabled": false
+            },
+            "u4xI9r": {
+              "enabled": false
+            },
+            "PH0GO": {
+              "id": "WzDbC",
+              "type": "ref",
+              "ref": "vGYHU",
+              "name": "OSS 对象浏览器内容",
+              "width": "fill_container",
+              "height": "fill_container",
+              "descendants": {
+                "KV6Md": {
+                  "opacity": 1
+                },
+                "STSG1": {
+                  "content": "当前目录及所有子目录",
+                  "enabled": false,
+                  "width": 1
+                },
+                "L1V2R9": {
+                  "enabled": true,
+                  "width": "fill_container",
+                  "height": 32,
+                  "fill": "#00000000",
+                  "padding": 0,
+                  "gap": 8,
+                  "layout": "horizontal"
+                },
+                "e8m92M": {
+                  "icon": "circle-check",
+                  "fill": "$green"
+                },
+                "chg3Y": {
+                  "fontSize": 11,
+                  "content": "扫描完成，已按目录内最近更新时间排序",
+                  "fill": "$green"
+                },
+                "X3810": {
+                  "enabled": false
+                },
+                "Hk5om": {
+                  "enabled": false
+                },
+                "o4Hs9X": {
+                  "content": "更新时间 ↓"
+                },
+                "jKIKI": {
+                  "content": "2026-06-02 15:08",
+                  "fill": "$body"
+                },
+                "xA2kj": {
+                  "content": "2026-06-02 14:56",
+                  "fill": "$body"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "iaJf2",
+      "x": 7428,
+      "y": 8987,
+      "name": "OSS · 获取更新时间 · 扫描中 · Dark",
+      "theme": {
+        "mode": "dark"
+      },
+      "clip": true,
+      "width": 1360,
+      "height": 860,
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "ovyi7",
+          "type": "ref",
+          "ref": "XOpCH",
+          "name": "OSS 数据工作区",
+          "width": "fill_container",
+          "height": "fill_container",
+          "descendants": {
+            "tycK8": {
+              "content": "Development workspace"
+            },
+            "SMzZn/JVZ1P": {
+              "content": "搜索实例、Tag…"
+            },
+            "ol17i": {
+              "id": "BVX7o",
+              "type": "ref",
+              "ref": "GPGCx",
+              "name": "OSS 页面本地用户区"
+            },
+            "C7kYeB": {
+              "layout": "vertical"
+            },
+            "oHqi5": {
+              "content": "实例"
+            },
+            "H4oGk/JVZ1P": {
+              "content": "搜索实例…"
+            },
+            "YOCUE": {
+              "type": "frame",
+              "id": "R4C4RB",
+              "name": "Instance 列表 · 仅实例",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "padding": [
+                0,
+                8
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "E3bfOU",
+                  "name": "Tag 筛选",
+                  "width": "fill_container",
+                  "gap": 7,
+                  "padding": [
+                    8,
+                    12,
+                    14,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "JLjEL",
+                      "name": "实例Tag过滤图标",
+                      "width": 13,
+                      "height": 13,
+                      "icon": "tags",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "OTJDS",
+                      "name": "实例Tag过滤入口",
+                      "fill": "$muted",
+                      "content": "筛选 Tag",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "xnX3a",
+                  "name": "当前 OSS 实例",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "$accent-weak",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "Z3sF7y",
+                      "x": 12,
+                      "y": 11.5,
+                      "name": "当前 OSS 实例展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "n5LXEr",
+                      "name": "当前 OSS 实例类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "cloud",
+                      "library": "lucide",
+                      "fill": "$amber"
+                    },
+                    {
+                      "type": "text",
+                      "id": "EN5S6",
+                      "name": "当前 OSS 实例名称",
+                      "fill": "$accent-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Aliyun OSS · Dev",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "UJq4f",
+                  "x": 8,
+                  "y": 71,
+                  "name": "Bucket 标题栏",
+                  "enabled": false,
+                  "width": 224,
+                  "gap": 6,
+                  "padding": [
+                    16,
+                    12,
+                    8,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "CguYY",
+                      "name": "Bucket 分类标题",
+                      "fill": "$muted",
+                      "content": "BUCKETS",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "600",
+                      "letterSpacing": 0.8
+                    },
+                    {
+                      "type": "text",
+                      "id": "KxSGk",
+                      "name": "Bucket 总数",
+                      "fill": "$muted",
+                      "content": "3",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "hABo5",
+                      "name": "Bucket 标题间隔",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "icon",
+                      "id": "lQZjC",
+                      "name": "刷新 Bucket 列表",
+                      "width": 12,
+                      "height": 12,
+                      "icon": "refresh-cw",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "KKEKj",
+                  "x": 8,
+                  "y": 109,
+                  "name": "assets-dev Bucket",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    22
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "B0DBfI",
+                      "x": 22,
+                      "y": 10.5,
+                      "name": "assets-dev Bucket展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "vk53E",
+                      "name": "assets-dev Bucket类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "database",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Jf3tY",
+                      "name": "assets-dev Bucket名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "assets-dev",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "zlEX6",
+                  "x": 8,
+                  "y": 143,
+                  "name": "releases 前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    38
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "csY47",
+                      "x": 38,
+                      "y": 10.5,
+                      "name": "releases 前缀展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "dEjnd",
+                      "name": "releases 前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "yGqT6",
+                      "name": "releases 前缀名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "releases",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "FmqRN",
+                  "x": 8,
+                  "y": 177,
+                  "name": "当前 v0.9.0 前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "$accent-weak",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    62
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "SNleA",
+                      "name": "当前 v0.9.0 前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder-open",
+                      "library": "lucide",
+                      "fill": "$accent"
+                    },
+                    {
+                      "type": "text",
+                      "id": "FusGc",
+                      "name": "当前 v0.9.0 前缀名称",
+                      "fill": "$accent-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "v0.9.0",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "zWkF7",
+                  "x": 8,
+                  "y": 211,
+                  "name": "v0.8.0 前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    62
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "l7sSP",
+                      "name": "v0.8.0 前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "nkwnZ",
+                      "name": "v0.8.0 前缀名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "v0.8.0",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "SrxlC",
+                  "x": 8,
+                  "y": 245,
+                  "name": "images 根前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    54
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "D93iU8",
+                      "name": "images 根前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Zl1vu",
+                      "name": "images 根前缀名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "images",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "mc695",
+                  "x": 8,
+                  "y": 279,
+                  "name": "logs-dev Bucket",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    22
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "l8KYc9",
+                      "x": 22,
+                      "y": 10.5,
+                      "name": "logs-dev Bucket展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "B6DoW",
+                      "name": "logs-dev Bucket类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "database",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "JR55G",
+                      "name": "logs-dev Bucket名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "logs-dev",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "IjaQX",
+                  "x": 8,
+                  "y": 313,
+                  "name": "archives Bucket",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    22
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "SCR50",
+                      "x": 22,
+                      "y": 10.5,
+                      "name": "archives Bucket展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "hHDsy",
+                      "name": "archives Bucket类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "database",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "m4YpJo",
+                      "name": "archives Bucket名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "archives",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Vt54q",
+                  "x": 8,
+                  "y": 347,
+                  "name": "其他实例前分隔",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 1,
+                  "fill": "$line-soft"
+                },
+                {
+                  "type": "frame",
+                  "id": "N49Vu8",
+                  "name": "生产 OSS 实例",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "z3qVV",
+                      "x": 12,
+                      "y": 11.5,
+                      "name": "生产 OSS 实例展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "F00io",
+                      "name": "生产 OSS 实例类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "cloud",
+                      "library": "lucide",
+                      "fill": "$amber"
+                    },
+                    {
+                      "type": "text",
+                      "id": "nNj9M",
+                      "name": "生产 OSS 实例名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Aliyun OSS · Prod",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "lWJSB",
+                  "name": "测试 OSS 实例",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "PKTPE",
+                      "x": 12,
+                      "y": 11.5,
+                      "name": "测试 OSS 实例展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "VOw1Y",
+                      "name": "测试 OSS 实例类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "cloud",
+                      "library": "lucide",
+                      "fill": "$amber"
+                    },
+                    {
+                      "type": "text",
+                      "id": "DKzDU",
+                      "name": "测试 OSS 实例名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Aliyun OSS · Staging",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            "pRqvL": {
+              "fill": "$surface",
+              "layout": "vertical"
+            },
+            "A3f4zs": {
+              "fill": "$app-bg"
+            },
+            "wSoDr": {
+              "fill": "#00000000",
+              "strokeWidth": 0
+            },
+            "V1uGY": {
+              "fill": "$surface"
+            },
+            "pkxzR": {
+              "icon": "cloud",
+              "fill": "$amber"
+            },
+            "Zdco2": {
+              "content": "Aliyun OSS · Dev",
+              "fill": "$ink"
+            },
+            "i3eqX": {
+              "enabled": false
+            },
+            "PVANL": {
+              "enabled": false
+            },
+            "u4xI9r": {
+              "enabled": false
+            },
+            "PH0GO": {
+              "id": "vB2ET",
+              "type": "ref",
+              "ref": "vGYHU",
+              "name": "OSS 对象浏览器内容",
+              "width": "fill_container",
+              "height": "fill_container",
+              "descendants": {
+                "KV6Md": {
+                  "opacity": 0.4
+                },
+                "STSG1": {
+                  "content": "当前目录及所有子目录",
+                  "enabled": false,
+                  "width": 1
+                },
+                "L1V2R9": {
+                  "enabled": true,
+                  "width": "fill_container",
+                  "height": 32,
+                  "fill": "#00000000",
+                  "padding": 0,
+                  "gap": 8,
+                  "layout": "horizontal"
+                },
+                "e8m92M": {
+                  "icon": "loader-circle",
+                  "fill": "$accent"
+                },
+                "chg3Y": {
+                  "fontSize": 11,
+                  "content": "已扫描 5,000 个文件",
+                  "fill": "$accent-ink"
+                },
+                "X3810": {
+                  "enabled": true
+                },
+                "Hk5om": {
+                  "enabled": false
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "be8j0",
+      "x": 8852,
+      "y": 8987,
+      "name": "OSS · 获取更新时间 · 文件较多 · Dark",
+      "theme": {
+        "mode": "dark"
+      },
+      "clip": true,
+      "width": 1360,
+      "height": 860,
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "A7GoG",
+          "type": "ref",
+          "ref": "XOpCH",
+          "name": "OSS 数据工作区",
+          "width": "fill_container",
+          "height": "fill_container",
+          "descendants": {
+            "tycK8": {
+              "content": "Development workspace"
+            },
+            "SMzZn/JVZ1P": {
+              "content": "搜索实例、Tag…"
+            },
+            "ol17i": {
+              "id": "jzw7q",
+              "type": "ref",
+              "ref": "GPGCx",
+              "name": "OSS 页面本地用户区"
+            },
+            "C7kYeB": {
+              "layout": "vertical"
+            },
+            "oHqi5": {
+              "content": "实例"
+            },
+            "H4oGk/JVZ1P": {
+              "content": "搜索实例…"
+            },
+            "YOCUE": {
+              "type": "frame",
+              "id": "F4T69u",
+              "name": "Instance 列表 · 仅实例",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "padding": [
+                0,
+                8
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "hGDA0",
+                  "name": "Tag 筛选",
+                  "width": "fill_container",
+                  "gap": 7,
+                  "padding": [
+                    8,
+                    12,
+                    14,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "fSpGz",
+                      "name": "实例Tag过滤图标",
+                      "width": 13,
+                      "height": 13,
+                      "icon": "tags",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Io0CL",
+                      "name": "实例Tag过滤入口",
+                      "fill": "$muted",
+                      "content": "筛选 Tag",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "rthgY",
+                  "name": "当前 OSS 实例",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "$accent-weak",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "sNeVA",
+                      "x": 12,
+                      "y": 11.5,
+                      "name": "当前 OSS 实例展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "PTjXZ",
+                      "name": "当前 OSS 实例类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "cloud",
+                      "library": "lucide",
+                      "fill": "$amber"
+                    },
+                    {
+                      "type": "text",
+                      "id": "S7s3u",
+                      "name": "当前 OSS 实例名称",
+                      "fill": "$accent-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Aliyun OSS · Dev",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "SxGTO",
+                  "x": 8,
+                  "y": 71,
+                  "name": "Bucket 标题栏",
+                  "enabled": false,
+                  "width": 224,
+                  "gap": 6,
+                  "padding": [
+                    16,
+                    12,
+                    8,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "vxOrP",
+                      "name": "Bucket 分类标题",
+                      "fill": "$muted",
+                      "content": "BUCKETS",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "600",
+                      "letterSpacing": 0.8
+                    },
+                    {
+                      "type": "text",
+                      "id": "YmYnl",
+                      "name": "Bucket 总数",
+                      "fill": "$muted",
+                      "content": "3",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "H5NfK",
+                      "name": "Bucket 标题间隔",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "icon",
+                      "id": "dzpYU",
+                      "name": "刷新 Bucket 列表",
+                      "width": 12,
+                      "height": 12,
+                      "icon": "refresh-cw",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "pVqDl",
+                  "x": 8,
+                  "y": 109,
+                  "name": "assets-dev Bucket",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    22
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "n5ROs5",
+                      "x": 22,
+                      "y": 10.5,
+                      "name": "assets-dev Bucket展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "SmL3G",
+                      "name": "assets-dev Bucket类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "database",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "e8kLUA",
+                      "name": "assets-dev Bucket名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "assets-dev",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dVTlX",
+                  "x": 8,
+                  "y": 143,
+                  "name": "releases 前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    38
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "XRc4A",
+                      "x": 38,
+                      "y": 10.5,
+                      "name": "releases 前缀展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "BogZO",
+                      "name": "releases 前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "yB6cG",
+                      "name": "releases 前缀名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "releases",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "f2Ue9",
+                  "x": 8,
+                  "y": 177,
+                  "name": "当前 v0.9.0 前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "$accent-weak",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    62
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "r0h2EX",
+                      "name": "当前 v0.9.0 前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder-open",
+                      "library": "lucide",
+                      "fill": "$accent"
+                    },
+                    {
+                      "type": "text",
+                      "id": "us5Im",
+                      "name": "当前 v0.9.0 前缀名称",
+                      "fill": "$accent-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "v0.9.0",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "RUwAM",
+                  "x": 8,
+                  "y": 211,
+                  "name": "v0.8.0 前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    62
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "tEu62",
+                      "name": "v0.8.0 前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "PonkR",
+                      "name": "v0.8.0 前缀名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "v0.8.0",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "MWrZP",
+                  "x": 8,
+                  "y": 245,
+                  "name": "images 根前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    54
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "YJ4Q8",
+                      "name": "images 根前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "GtvGV",
+                      "name": "images 根前缀名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "images",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "t49bs",
+                  "x": 8,
+                  "y": 279,
+                  "name": "logs-dev Bucket",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    22
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "dnjay",
+                      "x": 22,
+                      "y": 10.5,
+                      "name": "logs-dev Bucket展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "eMQ9H",
+                      "name": "logs-dev Bucket类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "database",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "okGCn",
+                      "name": "logs-dev Bucket名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "logs-dev",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "EU2zz",
+                  "x": 8,
+                  "y": 313,
+                  "name": "archives Bucket",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    22
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "UNUOd",
+                      "x": 22,
+                      "y": 10.5,
+                      "name": "archives Bucket展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "JSYfS",
+                      "name": "archives Bucket类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "database",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "KWDfh",
+                      "name": "archives Bucket名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "archives",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "B0Xis",
+                  "x": 8,
+                  "y": 347,
+                  "name": "其他实例前分隔",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 1,
+                  "fill": "$line-soft"
+                },
+                {
+                  "type": "frame",
+                  "id": "kXMy0",
+                  "name": "生产 OSS 实例",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "wF5fI",
+                      "x": 12,
+                      "y": 11.5,
+                      "name": "生产 OSS 实例展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "yRkl4",
+                      "name": "生产 OSS 实例类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "cloud",
+                      "library": "lucide",
+                      "fill": "$amber"
+                    },
+                    {
+                      "type": "text",
+                      "id": "zmkD1",
+                      "name": "生产 OSS 实例名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Aliyun OSS · Prod",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "tDX2W",
+                  "name": "测试 OSS 实例",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "htsst",
+                      "x": 12,
+                      "y": 11.5,
+                      "name": "测试 OSS 实例展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "bDJ2g",
+                      "name": "测试 OSS 实例类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "cloud",
+                      "library": "lucide",
+                      "fill": "$amber"
+                    },
+                    {
+                      "type": "text",
+                      "id": "T2VEK",
+                      "name": "测试 OSS 实例名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Aliyun OSS · Staging",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            "pRqvL": {
+              "fill": "$surface",
+              "layout": "vertical"
+            },
+            "A3f4zs": {
+              "fill": "$app-bg"
+            },
+            "wSoDr": {
+              "fill": "#00000000",
+              "strokeWidth": 0
+            },
+            "V1uGY": {
+              "fill": "$surface"
+            },
+            "pkxzR": {
+              "icon": "cloud",
+              "fill": "$amber"
+            },
+            "Zdco2": {
+              "content": "Aliyun OSS · Dev",
+              "fill": "$ink"
+            },
+            "i3eqX": {
+              "enabled": false
+            },
+            "PVANL": {
+              "enabled": false
+            },
+            "u4xI9r": {
+              "enabled": false
+            },
+            "PH0GO": {
+              "id": "DpJpa",
+              "type": "ref",
+              "ref": "vGYHU",
+              "name": "OSS 对象浏览器内容",
+              "width": "fill_container",
+              "height": "fill_container",
+              "descendants": {
+                "KV6Md": {
+                  "opacity": 0.4
+                },
+                "STSG1": {
+                  "content": "当前目录及所有子目录",
+                  "enabled": false,
+                  "width": 1
+                },
+                "L1V2R9": {
+                  "enabled": true,
+                  "width": "fill_container",
+                  "height": 32,
+                  "fill": "#00000000",
+                  "padding": 0,
+                  "gap": 8,
+                  "layout": "horizontal"
+                },
+                "e8m92M": {
+                  "icon": "triangle-alert",
+                  "fill": "$amber"
+                },
+                "chg3Y": {
+                  "fontSize": 11,
+                  "content": "已扫描 10,001 个文件 · 文件较多，继续扫描可能耗时较长",
+                  "fill": "$amber"
+                },
+                "X3810": {
+                  "enabled": true
+                },
+                "Hk5om": {
+                  "enabled": true
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "nGRqc",
+      "x": 10276,
+      "y": 8987,
+      "name": "OSS · 获取更新时间 · 完成排序 · Dark",
+      "theme": {
+        "mode": "dark"
+      },
+      "clip": true,
+      "width": 1360,
+      "height": 860,
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "JbHnX",
+          "type": "ref",
+          "ref": "XOpCH",
+          "name": "OSS 数据工作区",
+          "width": "fill_container",
+          "height": "fill_container",
+          "descendants": {
+            "tycK8": {
+              "content": "Development workspace"
+            },
+            "SMzZn/JVZ1P": {
+              "content": "搜索实例、Tag…"
+            },
+            "ol17i": {
+              "id": "T7nKu",
+              "type": "ref",
+              "ref": "GPGCx",
+              "name": "OSS 页面本地用户区"
+            },
+            "C7kYeB": {
+              "layout": "vertical"
+            },
+            "oHqi5": {
+              "content": "实例"
+            },
+            "H4oGk/JVZ1P": {
+              "content": "搜索实例…"
+            },
+            "YOCUE": {
+              "type": "frame",
+              "id": "iS9QN",
+              "name": "Instance 列表 · 仅实例",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "padding": [
+                0,
+                8
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ygSo8",
+                  "name": "Tag 筛选",
+                  "width": "fill_container",
+                  "gap": 7,
+                  "padding": [
+                    8,
+                    12,
+                    14,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "OFXEu",
+                      "name": "实例Tag过滤图标",
+                      "width": 13,
+                      "height": 13,
+                      "icon": "tags",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ax1qP",
+                      "name": "实例Tag过滤入口",
+                      "fill": "$muted",
+                      "content": "筛选 Tag",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Q3lg2Y",
+                  "name": "当前 OSS 实例",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "$accent-weak",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "Xpqlt",
+                      "x": 12,
+                      "y": 11.5,
+                      "name": "当前 OSS 实例展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "Btvcw",
+                      "name": "当前 OSS 实例类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "cloud",
+                      "library": "lucide",
+                      "fill": "$amber"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Djc3J",
+                      "name": "当前 OSS 实例名称",
+                      "fill": "$accent-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Aliyun OSS · Dev",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "w22q0o",
+                  "x": 8,
+                  "y": 71,
+                  "name": "Bucket 标题栏",
+                  "enabled": false,
+                  "width": 224,
+                  "gap": 6,
+                  "padding": [
+                    16,
+                    12,
+                    8,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Bbxku",
+                      "name": "Bucket 分类标题",
+                      "fill": "$muted",
+                      "content": "BUCKETS",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "600",
+                      "letterSpacing": 0.8
+                    },
+                    {
+                      "type": "text",
+                      "id": "I3Mpn",
+                      "name": "Bucket 总数",
+                      "fill": "$muted",
+                      "content": "3",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "fbULz",
+                      "name": "Bucket 标题间隔",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "icon",
+                      "id": "J0wD6",
+                      "name": "刷新 Bucket 列表",
+                      "width": 12,
+                      "height": 12,
+                      "icon": "refresh-cw",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ndu03",
+                  "x": 8,
+                  "y": 109,
+                  "name": "assets-dev Bucket",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    22
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "r9Br6a",
+                      "x": 22,
+                      "y": 10.5,
+                      "name": "assets-dev Bucket展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "Snwe3",
+                      "name": "assets-dev Bucket类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "database",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "l9NzVZ",
+                      "name": "assets-dev Bucket名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "assets-dev",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "oqSyj",
+                  "x": 8,
+                  "y": 143,
+                  "name": "releases 前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    38
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "qOmwL",
+                      "x": 38,
+                      "y": 10.5,
+                      "name": "releases 前缀展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "Hkkbl",
+                      "name": "releases 前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Q4E1i5",
+                      "name": "releases 前缀名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "releases",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "EfIV0",
+                  "x": 8,
+                  "y": 177,
+                  "name": "当前 v0.9.0 前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "$accent-weak",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    62
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "n7T7MG",
+                      "name": "当前 v0.9.0 前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder-open",
+                      "library": "lucide",
+                      "fill": "$accent"
+                    },
+                    {
+                      "type": "text",
+                      "id": "cl8vP",
+                      "name": "当前 v0.9.0 前缀名称",
+                      "fill": "$accent-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "v0.9.0",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "tOhUX",
+                  "x": 8,
+                  "y": 211,
+                  "name": "v0.8.0 前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    62
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "U64ZD",
+                      "name": "v0.8.0 前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "UMg44",
+                      "name": "v0.8.0 前缀名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "v0.8.0",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "SRDxI",
+                  "x": 8,
+                  "y": 245,
+                  "name": "images 根前缀",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    54
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "cWK6g",
+                      "name": "images 根前缀类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "folder",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "A3mBaj",
+                      "name": "images 根前缀名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "images",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "BO6zq",
+                  "x": 8,
+                  "y": 279,
+                  "name": "logs-dev Bucket",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    22
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "PILeO",
+                      "x": 22,
+                      "y": 10.5,
+                      "name": "logs-dev Bucket展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "qsWZA",
+                      "name": "logs-dev Bucket类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "database",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "MUMgC",
+                      "name": "logs-dev Bucket名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "logs-dev",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Z9dsHK",
+                  "x": 8,
+                  "y": 313,
+                  "name": "archives Bucket",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 32,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    10,
+                    0,
+                    22
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "JmF5u",
+                      "x": 22,
+                      "y": 10.5,
+                      "name": "archives Bucket展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "qjl4I",
+                      "name": "archives Bucket类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "database",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "tVVXs",
+                      "name": "archives Bucket名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "archives",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "A9ORs",
+                  "x": 8,
+                  "y": 347,
+                  "name": "其他实例前分隔",
+                  "enabled": false,
+                  "width": 224,
+                  "height": 1,
+                  "fill": "$line-soft"
+                },
+                {
+                  "type": "frame",
+                  "id": "YqZ37",
+                  "name": "生产 OSS 实例",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "N7vRq",
+                      "x": 12,
+                      "y": 11.5,
+                      "name": "生产 OSS 实例展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "DN4N6",
+                      "name": "生产 OSS 实例类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "cloud",
+                      "library": "lucide",
+                      "fill": "$amber"
+                    },
+                    {
+                      "type": "text",
+                      "id": "eEIow",
+                      "name": "生产 OSS 实例名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Aliyun OSS · Prod",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "L0aLV",
+                  "name": "测试 OSS 实例",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "#00000000",
+                  "cornerRadius": 5,
+                  "gap": 7,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "aLnv0",
+                      "x": 12,
+                      "y": 11.5,
+                      "name": "测试 OSS 实例展开图标",
+                      "enabled": false,
+                      "width": 11,
+                      "height": 11,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "uVrwO",
+                      "name": "测试 OSS 实例类型图标",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "cloud",
+                      "library": "lucide",
+                      "fill": "$amber"
+                    },
+                    {
+                      "type": "text",
+                      "id": "x8R3MO",
+                      "name": "测试 OSS 实例名称",
+                      "fill": "$body",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Aliyun OSS · Staging",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            "pRqvL": {
+              "fill": "$surface",
+              "layout": "vertical"
+            },
+            "A3f4zs": {
+              "fill": "$app-bg"
+            },
+            "wSoDr": {
+              "fill": "#00000000",
+              "strokeWidth": 0
+            },
+            "V1uGY": {
+              "fill": "$surface"
+            },
+            "pkxzR": {
+              "icon": "cloud",
+              "fill": "$amber"
+            },
+            "Zdco2": {
+              "content": "Aliyun OSS · Dev",
+              "fill": "$ink"
+            },
+            "i3eqX": {
+              "enabled": false
+            },
+            "PVANL": {
+              "enabled": false
+            },
+            "u4xI9r": {
+              "enabled": false
+            },
+            "PH0GO": {
+              "id": "dWqYY",
+              "type": "ref",
+              "ref": "vGYHU",
+              "name": "OSS 对象浏览器内容",
+              "width": "fill_container",
+              "height": "fill_container",
+              "descendants": {
+                "KV6Md": {
+                  "opacity": 1
+                },
+                "STSG1": {
+                  "content": "当前目录及所有子目录",
+                  "enabled": false,
+                  "width": 1
+                },
+                "L1V2R9": {
+                  "enabled": true,
+                  "width": "fill_container",
+                  "height": 32,
+                  "fill": "#00000000",
+                  "padding": 0,
+                  "gap": 8,
+                  "layout": "horizontal"
+                },
+                "e8m92M": {
+                  "icon": "circle-check",
+                  "fill": "$green"
+                },
+                "chg3Y": {
+                  "fontSize": 11,
+                  "content": "扫描完成，已按目录内最近更新时间排序",
+                  "fill": "$green"
+                },
+                "X3810": {
+                  "enabled": false
+                },
+                "Hk5om": {
+                  "enabled": false
+                },
+                "o4Hs9X": {
+                  "content": "更新时间 ↓"
+                },
+                "jKIKI": {
+                  "content": "2026-06-02 15:08",
+                  "fill": "$body"
+                },
+                "xA2kj": {
+                  "content": "2026-06-02 14:56",
+                  "fill": "$body"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "wrUFH",
+      "x": 7428,
+      "y": 9927,
+      "name": "OSS · 目录更新时间扫描交互说明",
+      "theme": {
+        "mode": "light"
+      },
+      "clip": true,
+      "width": 4208,
+      "fill": "$surface",
+      "layout": "vertical",
+      "gap": 12,
+      "padding": 24,
+      "children": [
+        {
+          "type": "text",
+          "id": "JJ1f1",
+          "name": "扫描说明 0",
+          "fill": "$ink",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "目录更新时间扫描",
+          "fontFamily": "Inter",
+          "fontSize": 20,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "m3NJT3",
+          "name": "扫描说明 1",
+          "fill": "$body",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "点击「获取更新时间并排序」，扫描当前目录及所有子目录；文件夹时间取目录内（含子目录）文件的最近更新时间。",
+          "fontFamily": "Inter",
+          "fontSize": 13,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "Mhzrv",
+          "name": "扫描说明 2",
+          "fill": "$body",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "扫描中显示累计文件数并提供「取消」；总量未知，不显示百分比。取消后保留原列表顺序，不用未完成结果排序。",
+          "fontFamily": "Inter",
+          "fontSize": 13,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "hrdDj",
+          "name": "扫描说明 3",
+          "fill": "$body",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "扫描超过 10,000 个文件时暂停，显示「文件较多，继续扫描可能耗时较长」；「继续」恢复本次扫描，「取消」结束扫描。",
+          "fontFamily": "Inter",
+          "fontSize": 13,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "D7TxN",
+          "name": "扫描说明 4",
+          "fill": "$body",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "完成后显示「扫描完成，已按目录内最近更新时间排序」；底部「已加载」仅表示当前列表数量，与递归扫描数量分开。",
+          "fontFamily": "Inter",
+          "fontSize": 13,
+          "fontWeight": "normal"
         }
       ]
     }
