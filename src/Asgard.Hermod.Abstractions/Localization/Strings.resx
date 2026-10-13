@@ -2518,6 +2518,405 @@
   <data name="SshEditConfiguration" xml:space="preserve"><value>Edit configuration</value></data>
   <data name="ConfigurationAppliesToNextConnection" xml:space="preserve"><value>Changes apply to the next connection. The current session continues with its original configuration.</value></data>
   <data name="SshConfigurationSaved" xml:space="preserve"><value>Configuration saved. Applies to the next connection.</value></data>
+  <data name="RedisEndpointInvalid" xml:space="preserve">
+    <value>Enter valid Redis host names and ports.</value>
+  </data>
+  <data name="RedisConfigurationInvalid" xml:space="preserve">
+    <value>Check the Redis connection settings.</value>
+  </data>
+  <data name="RedisClusterDatabaseZero" xml:space="preserve">
+    <value>Cluster supports database 0 only.</value>
+  </data>
+  <data name="RedisServiceRequired" xml:space="preserve">
+    <value>Enter the Sentinel service name.</value>
+  </data>
+  <data name="RedisStandalone" xml:space="preserve">
+    <value>Standalone</value>
+  </data>
+  <data name="RedisSentinel" xml:space="preserve">
+    <value>Sentinel</value>
+  </data>
+  <data name="RedisCluster" xml:space="preserve">
+    <value>Cluster</value>
+  </data>
+  <data name="RedisStandaloneHint" xml:space="preserve">
+    <value>Connect to one Redis server.</value>
+  </data>
+  <data name="RedisSentinelHint" xml:space="preserve">
+    <value>Discover the primary through Sentinel.</value>
+  </data>
+  <data name="RedisClusterHint" xml:space="preserve">
+    <value>Discover and connect to all required primary nodes.</value>
+  </data>
+  <data name="RedisTypeHint" xml:space="preserve">
+    <value>Browse and edit Redis keys and values.</value>
+  </data>
+  <data name="RedisTopology" xml:space="preserve">
+    <value>Deployment topology</value>
+  </data>
+  <data name="RedisTopologyHint" xml:space="preserve">
+    <value>Choose the topology used by this Redis deployment.</value>
+  </data>
+  <data name="RedisTestHint" xml:space="preserve">
+    <value>Verify the network, TLS, authentication, topology and database using read-only commands. SCAN permission is checked separately. No business data is written. Redis 7 or later is required.</value>
+  </data>
+  <data name="RedisHost" xml:space="preserve">
+    <value>Redis host</value>
+  </data>
+  <data name="RedisNodes" xml:space="preserve">
+    <value>Node endpoints</value>
+  </data>
+  <data name="RedisNodesHint" xml:space="preserve">
+    <value>Separate host:port endpoints with commas. Use [IPv6]:port for IPv6.</value>
+  </data>
+  <data name="RedisService" xml:space="preserve">
+    <value>Sentinel service name</value>
+  </data>
+  <data name="RedisDatabase" xml:space="preserve">
+    <value>Database</value>
+  </data>
+  <data name="RedisDatabaseHint" xml:space="preserve">
+    <value>Use a non-negative database index.</value>
+  </data>
+  <data name="RedisClusterDatabaseHint" xml:space="preserve">
+    <value>Cluster always uses database 0.</value>
+  </data>
+  <data name="RedisAuthentication" xml:space="preserve">
+    <value>Data node authentication</value>
+  </data>
+  <data name="RedisSentinelAuthentication" xml:space="preserve">
+    <value>Sentinel authentication</value>
+  </data>
+  <data name="RedisNoAuthentication" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="RedisTls" xml:space="preserve">
+    <value>Data node TLS</value>
+  </data>
+  <data name="RedisSentinelTls" xml:space="preserve">
+    <value>Sentinel TLS</value>
+  </data>
+  <data name="RedisEnabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="RedisDisabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="RedisTrust" xml:space="preserve">
+    <value>Certificate trust</value>
+  </data>
+  <data name="RedisSystemTrust" xml:space="preserve">
+    <value>System trust</value>
+  </data>
+  <data name="RedisCustomTrust" xml:space="preserve">
+    <value>Custom CA</value>
+  </data>
+  <data name="RedisCa" xml:space="preserve">
+    <value>CA file (PEM)</value>
+  </data>
+  <data name="RedisDeviceFileHint" xml:space="preserve">
+    <value>This file belongs to this device and is not synchronized.</value>
+  </data>
+  <data name="RedisTlsHost" xml:space="preserve">
+    <value>TLS server name (optional)</value>
+  </data>
+  <data name="RedisClientAuthentication" xml:space="preserve">
+    <value>Client certificate</value>
+  </data>
+  <data name="RedisCertificate" xml:space="preserve">
+    <value>Client certificate file (PEM)</value>
+  </data>
+  <data name="RedisPrivateKey" xml:space="preserve">
+    <value>Client private key file (PEM)</value>
+  </data>
+  <data name="RedisCertificatePassword" xml:space="preserve">
+    <value>Private key password (optional)</value>
+  </data>
+  <data name="RedisRoute" xml:space="preserve">
+    <value>Connection route</value>
+  </data>
+  <data name="RedisSshTunnel" xml:space="preserve">
+    <value>SSH tunnel</value>
+  </data>
+  <data name="RedisCertificateInvalid" xml:space="preserve">
+    <value>The selected certificate files cannot be used.</value>
+  </data>
+  <data name="RedisPermissionDenied" xml:space="preserve">
+    <value>The identity does not have permission for this operation. The draft is retained.</value>
+  </data>
+  <data name="RedisConflict" xml:space="preserve">
+    <value>The key was changed, deleted or replaced by another client. Reload to compare; your draft is retained.</value>
+  </data>
+  <data name="RedisCommandFailed" xml:space="preserve">
+    <value>Redis rejected the operation. Check the server capabilities and permissions.</value>
+  </data>
+  <data name="RedisWriteUnknown" xml:space="preserve">
+    <value>The write result is unknown. Do not retry automatically. Read the key and compare with the retained draft.</value>
+  </data>
+  <data name="RedisConnectionFailed" xml:space="preserve">
+    <value>Unable to connect to Redis. Check the endpoint, route, TLS and credentials.</value>
+  </data>
+  <data name="RedisTopologyFailed" xml:space="preserve">
+    <value>The required primary nodes could not be discovered or connected.</value>
+  </data>
+  <data name="RedisVersionRequired" xml:space="preserve">
+    <value>Redis 7 or later is required for safe editing.</value>
+  </data>
+  <data name="RedisConnectionVerified" xml:space="preserve">
+    <value>Network, TLS, authentication and database verified</value>
+  </data>
+  <data name="RedisTopologyVerified" xml:space="preserve">
+    <value>Required primary nodes verified</value>
+  </data>
+  <data name="RedisScanVerified" xml:space="preserve">
+    <value>Key browsing (SCAN)</value>
+  </data>
+  <data name="RedisTestPassed" xml:space="preserve">
+    <value>The Redis connection test passed.</value>
+  </data>
+  <data name="RedisTestBrowseLimited" xml:space="preserve">
+    <value>The connection is valid, but key browsing is restricted. You can save this connection and open a known key directly.</value>
+  </data>
+  <data name="RedisValueTooLarge" xml:space="preserve">
+    <value>The value exceeds the editing limit (1 MiB or 1,000 entries). This preview is read-only.</value>
+  </data>
+  <data name="RedisExpiryInvalid" xml:space="preserve">
+    <value>Enter a positive expiry duration in seconds, or choose permanent.</value>
+  </data>
+  <data name="RedisDraftInvalid" xml:space="preserve">
+    <value>Check the draft: require at least one entry, unique fields or members, and finite numeric scores.</value>
+  </data>
+  <data name="RedisKeys" xml:space="preserve">
+    <value>Key browser</value>
+  </data>
+  <data name="RedisMatch" xml:space="preserve">
+    <value>Match key names, for example user:*</value>
+  </data>
+  <data name="RedisAllTypes" xml:space="preserve">
+    <value>All types</value>
+  </data>
+  <data name="RedisLoaded" xml:space="preserve">
+    <value>Discovered {0} keys in loaded groups</value>
+  </data>
+  <data name="RedisMoreGroups" xml:space="preserve">
+    <value>More groups may exist</value>
+  </data>
+  <data name="RedisNotLoaded" xml:space="preserve">
+    <value>Not loaded</value>
+  </data>
+  <data name="RedisLoading" xml:space="preserve">
+    <value>Loading…</value>
+  </data>
+  <data name="RedisContinueScan" xml:space="preserve">
+    <value>Continue searching</value>
+  </data>
+  <data name="RedisTreeHint" xml:space="preserve">
+    <value>Groups use “:” prefixes. Expand to load children; COUNT is only a hint. Only loaded nodes are sorted.</value>
+  </data>
+  <data name="RedisPartialScan" xml:space="preserve">
+    <value>Some primary nodes failed. Results are incomplete; continue to retry failed nodes.</value>
+  </data>
+  <data name="RedisOpenKey" xml:space="preserve">
+    <value>Open key</value>
+  </data>
+  <data name="RedisKnownKey" xml:space="preserve">
+    <value>Full key name</value>
+  </data>
+  <data name="RedisEmptySelection" xml:space="preserve">
+    <value>Open a key from the tree or enter its full name.</value>
+  </data>
+  <data name="RedisNoKeys" xml:space="preserve">
+    <value>No keys found in this batch. Continue while a cursor remains.</value>
+  </data>
+  <data name="RedisNewKey" xml:space="preserve">
+    <value>New key</value>
+  </data>
+  <data name="RedisKeyName" xml:space="preserve">
+    <value>Key name</value>
+  </data>
+  <data name="RedisKeyType" xml:space="preserve">
+    <value>Key type</value>
+  </data>
+  <data name="RedisConnected" xml:space="preserve">
+    <value>Connected</value>
+  </data>
+  <data name="RedisConnecting" xml:space="preserve">
+    <value>Connecting…</value>
+  </data>
+  <data name="RedisReconnect" xml:space="preserve">
+    <value>Reconnect</value>
+  </data>
+  <data name="RedisEditConnection" xml:space="preserve">
+    <value>Edit connection</value>
+  </data>
+  <data name="RedisConnectionInformation" xml:space="preserve">
+    <value>Connection settings</value>
+  </data>
+  <data name="RedisSecurityInformation" xml:space="preserve">
+    <value>Authentication and TLS</value>
+  </data>
+  <data name="RedisRouteInformation" xml:space="preserve">
+    <value>Route and timeout</value>
+  </data>
+  <data name="RedisValue" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="RedisMetadata" xml:space="preserve">
+    <value>Metadata</value>
+  </data>
+  <data name="RedisText" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="RedisJson" xml:space="preserve">
+    <value>JSON</value>
+  </data>
+  <data name="RedisHex" xml:space="preserve">
+    <value>Hex</value>
+  </data>
+  <data name="RedisBase64" xml:space="preserve">
+    <value>Base64</value>
+  </data>
+  <data name="RedisEditValue" xml:space="preserve">
+    <value>Edit value</value>
+  </data>
+  <data name="RedisSaveValue" xml:space="preserve">
+    <value>Save changes</value>
+  </data>
+  <data name="RedisDiscard" xml:space="preserve">
+    <value>Discard changes</value>
+  </data>
+  <data name="RedisRefreshValue" xml:space="preserve">
+    <value>Read latest value</value>
+  </data>
+  <data name="RedisPreviewLatest" xml:space="preserve">
+    <value>Latest server value (draft retained)</value>
+  </data>
+  <data name="RedisNextPage" xml:space="preserve">
+    <value>Next page</value>
+  </data>
+  <data name="RedisAddEntry" xml:space="preserve">
+    <value>Add entry</value>
+  </data>
+  <data name="RedisRemoveEntry" xml:space="preserve">
+    <value>Remove entry</value>
+  </data>
+  <data name="RedisAppendStream" xml:space="preserve">
+    <value>Append record</value>
+  </data>
+  <data name="RedisAppendHead" xml:space="preserve">
+    <value>Add to head</value>
+  </data>
+  <data name="RedisAppendTail" xml:space="preserve">
+    <value>Add to tail</value>
+  </data>
+  <data name="RedisField" xml:space="preserve">
+    <value>Field / member</value>
+  </data>
+  <data name="RedisEntryValue" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="RedisScore" xml:space="preserve">
+    <value>Score</value>
+  </data>
+  <data name="RedisRecordId" xml:space="preserve">
+    <value>Record ID</value>
+  </data>
+  <data name="RedisLength" xml:space="preserve">
+    <value>Length / count</value>
+  </data>
+  <data name="RedisTtl" xml:space="preserve">
+    <value>Time to live</value>
+  </data>
+  <data name="RedisPermanent" xml:space="preserve">
+    <value>Permanent</value>
+  </data>
+  <data name="RedisMissing" xml:space="preserve">
+    <value>The key no longer exists.</value>
+  </data>
+  <data name="RedisRemaining" xml:space="preserve">
+    <value>{0} seconds remaining</value>
+  </data>
+  <data name="RedisChangeExpiry" xml:space="preserve">
+    <value>Change expiry</value>
+  </data>
+  <data name="RedisExpirySeconds" xml:space="preserve">
+    <value>Expiry in seconds (empty = permanent)</value>
+  </data>
+  <data name="RedisDeleteKey" xml:space="preserve">
+    <value>Delete key</value>
+  </data>
+  <data name="RedisDeleteConfirm" xml:space="preserve">
+    <value>Delete key {0} from database {1}? Only this key will be affected.</value>
+  </data>
+  <data name="RedisCloseDirty" xml:space="preserve">
+    <value>Close key with unsaved changes</value>
+  </data>
+  <data name="RedisCloseDirtyMessage" xml:space="preserve">
+    <value>Key {0} in database {1} has unsaved changes.</value>
+  </data>
+  <data name="RedisSaveClose" xml:space="preserve">
+    <value>Save and close</value>
+  </data>
+  <data name="RedisDiscardClose" xml:space="preserve">
+    <value>Discard and close</value>
+  </data>
+  <data name="RedisContinueEditing" xml:space="preserve">
+    <value>Continue editing</value>
+  </data>
+  <data name="RedisDraft" xml:space="preserve">
+    <value>Unsaved draft</value>
+  </data>
+  <data name="RedisSaving" xml:space="preserve">
+    <value>Saving…</value>
+  </data>
+  <data name="RedisReadOnly" xml:space="preserve">
+    <value>Read-only preview</value>
+  </data>
+  <data name="RedisEditingHint" xml:space="preserve">
+    <value>Save compares the complete baseline and preserves the server’s current expiry. Switching tabs keeps your draft.</value>
+  </data>
+  <data name="RedisBinaryHint" xml:space="preserve">
+    <value>Invalid UTF-8: use Base64 to edit without changing bytes.</value>
+  </data>
+  <data name="RedisInvalidFormat" xml:space="preserve">
+    <value>The value cannot be parsed in the selected format.</value>
+  </data>
+  <data name="RedisAllOpenKeys" xml:space="preserve">
+    <value>All open keys</value>
+  </data>
+  <data name="RedisCloseTab" xml:space="preserve">
+    <value>Close key tab</value>
+  </data>
+  <data name="RedisDatabaseLabel" xml:space="preserve">
+    <value>DB {0}</value>
+  </data>
+  <data name="RedisStatus" xml:space="preserve">
+    <value>{0} · {1}</value>
+  </data>
+  <data name="RedisScanRestricted" xml:space="preserve">
+    <value>Key browsing is restricted. Open a known key directly.</value>
+  </data>
+  <data name="RedisCreateHint" xml:space="preserve">
+    <value>The key will be created only if it does not exist. Collections require an initial entry.</value>
+  </data>
+  <data name="RedisStreamHint" xml:space="preserve">
+    <value>Existing records are read-only. Append adds a new record without trimming or acknowledging consumers.</value>
+  </data>
+  <data name="RedisDatabaseInvalid" xml:space="preserve">
+    <value>Enter a valid non-negative database index.</value>
+  </data>
+  <data name="RedisNoCreationTime" xml:space="preserve">
+    <value>Redis does not provide a key creation time.</value>
+  </data>
+  <data name="RedisRetryBlocked" xml:space="preserve">
+    <value>Read the latest value to reconcile the previous unknown result before saving again.</value>
+  </data>
+  <data name="RedisLatestMatchesDraft" xml:space="preserve">
+    <value>The latest server value matches the draft. You may discard the draft or continue editing.</value>
+  </data>
+  <data name="RedisCollectionBase64Hint" xml:space="preserve">
+    <value>Fields, members and values use Base64 for exact byte preservation; scores use invariant numbers.</value>
+  </data>
   <data name="WorkspaceTools" xml:space="preserve"><value>Tools</value></data>
   <data name="WorkspaceSessionTools" xml:space="preserve"><value>Session tools</value></data>
   <data name="WorkspaceFindTool" xml:space="preserve"><value>Find a tool…</value></data>

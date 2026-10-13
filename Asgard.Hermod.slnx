@@ -19,11 +19,13 @@
     <Project Path="src/Asgard.Hermod/Asgard.Hermod.csproj" />
     <Project Path="src/Asgard.Hermod.Ssh.UI/Asgard.Hermod.Ssh.UI.csproj" />
     <Project Path="src/Asgard.Hermod.Ssh/Asgard.Hermod.Ssh.csproj" />
+    <Project Path="src/Asgard.Hermod.Redis/Asgard.Hermod.Redis.csproj" />
     <Project Path="src/Asgard.Hermod.UI/Asgard.Hermod.UI.csproj" />
     <Project Path="src/Asgard.Hermod.WinTerminal/Asgard.Hermod.WinTerminal.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Asgard.Hermod.Ssh.Tests/Asgard.Hermod.Ssh.Tests.csproj" />
+    <Project Path="tests/Asgard.Hermod.Redis.Tests/Asgard.Hermod.Redis.Tests.csproj" />
     <Project Path="tests/Asgard.Hermod.Sync.Tests/Asgard.Hermod.Sync.Tests.csproj" />
     <Project Path="tests/Asgard.Hermod.UI.Tests/Asgard.Hermod.UI.Tests.csproj" />
     <Project Path="tests/Asgard.Hermod.WinTerminal.Tests/Asgard.Hermod.WinTerminal.Tests.csproj" />

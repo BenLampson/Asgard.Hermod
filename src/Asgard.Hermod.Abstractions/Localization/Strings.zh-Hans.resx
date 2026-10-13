@@ -2518,6 +2518,405 @@
   <data name="SshEditConfiguration" xml:space="preserve"><value>编辑配置</value></data>
   <data name="ConfigurationAppliesToNextConnection" xml:space="preserve"><value>下次连接生效。当前会话继续使用原配置。</value></data>
   <data name="SshConfigurationSaved" xml:space="preserve"><value>配置已保存，下次连接生效。</value></data>
+  <data name="RedisEndpointInvalid" xml:space="preserve">
+    <value>请输入有效的 Redis 主机名和端口。</value>
+  </data>
+  <data name="RedisConfigurationInvalid" xml:space="preserve">
+    <value>请检查 Redis 连接配置。</value>
+  </data>
+  <data name="RedisClusterDatabaseZero" xml:space="preserve">
+    <value>Cluster 仅支持数据库 0。</value>
+  </data>
+  <data name="RedisServiceRequired" xml:space="preserve">
+    <value>请输入 Sentinel 服务名。</value>
+  </data>
+  <data name="RedisStandalone" xml:space="preserve">
+    <value>单节点</value>
+  </data>
+  <data name="RedisSentinel" xml:space="preserve">
+    <value>Sentinel</value>
+  </data>
+  <data name="RedisCluster" xml:space="preserve">
+    <value>Cluster</value>
+  </data>
+  <data name="RedisStandaloneHint" xml:space="preserve">
+    <value>连接一个 Redis 服务节点。</value>
+  </data>
+  <data name="RedisSentinelHint" xml:space="preserve">
+    <value>通过 Sentinel 发现主节点。</value>
+  </data>
+  <data name="RedisClusterHint" xml:space="preserve">
+    <value>发现并连接所需的全部主节点。</value>
+  </data>
+  <data name="RedisTypeHint" xml:space="preserve">
+    <value>浏览与编辑 Redis 键值数据。</value>
+  </data>
+  <data name="RedisTopology" xml:space="preserve">
+    <value>部署拓扑</value>
+  </data>
+  <data name="RedisTopologyHint" xml:space="preserve">
+    <value>选择 Redis 实际使用的部署拓扑。</value>
+  </data>
+  <data name="RedisTestHint" xml:space="preserve">
+    <value>使用只读命令验证网络、TLS、认证、拓扑和数据库，单独检查 SCAN 权限。不写入业务数据。需要 Redis 7 或更高版本。</value>
+  </data>
+  <data name="RedisHost" xml:space="preserve">
+    <value>Redis 主机</value>
+  </data>
+  <data name="RedisNodes" xml:space="preserve">
+    <value>节点端点</value>
+  </data>
+  <data name="RedisNodesHint" xml:space="preserve">
+    <value>多个主机:端口使用逗号分隔，IPv6 使用 [IPv6]:端口。</value>
+  </data>
+  <data name="RedisService" xml:space="preserve">
+    <value>Sentinel 服务名</value>
+  </data>
+  <data name="RedisDatabase" xml:space="preserve">
+    <value>数据库</value>
+  </data>
+  <data name="RedisDatabaseHint" xml:space="preserve">
+    <value>填写非负数据库编号。</value>
+  </data>
+  <data name="RedisClusterDatabaseHint" xml:space="preserve">
+    <value>Cluster 固定使用数据库 0。</value>
+  </data>
+  <data name="RedisAuthentication" xml:space="preserve">
+    <value>数据节点认证</value>
+  </data>
+  <data name="RedisSentinelAuthentication" xml:space="preserve">
+    <value>Sentinel 认证</value>
+  </data>
+  <data name="RedisNoAuthentication" xml:space="preserve">
+    <value>无认证</value>
+  </data>
+  <data name="RedisTls" xml:space="preserve">
+    <value>数据节点 TLS</value>
+  </data>
+  <data name="RedisSentinelTls" xml:space="preserve">
+    <value>Sentinel TLS</value>
+  </data>
+  <data name="RedisEnabled" xml:space="preserve">
+    <value>启用</value>
+  </data>
+  <data name="RedisDisabled" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="RedisTrust" xml:space="preserve">
+    <value>证书信任</value>
+  </data>
+  <data name="RedisSystemTrust" xml:space="preserve">
+    <value>系统信任</value>
+  </data>
+  <data name="RedisCustomTrust" xml:space="preserve">
+    <value>自定义 CA</value>
+  </data>
+  <data name="RedisCa" xml:space="preserve">
+    <value>CA 文件（PEM）</value>
+  </data>
+  <data name="RedisDeviceFileHint" xml:space="preserve">
+    <value>文件仅属于本机，不会同步。</value>
+  </data>
+  <data name="RedisTlsHost" xml:space="preserve">
+    <value>TLS 服务器名称（可选）</value>
+  </data>
+  <data name="RedisClientAuthentication" xml:space="preserve">
+    <value>客户端证书</value>
+  </data>
+  <data name="RedisCertificate" xml:space="preserve">
+    <value>客户端证书文件（PEM）</value>
+  </data>
+  <data name="RedisPrivateKey" xml:space="preserve">
+    <value>客户端私钥文件（PEM）</value>
+  </data>
+  <data name="RedisCertificatePassword" xml:space="preserve">
+    <value>私钥密码（可选）</value>
+  </data>
+  <data name="RedisRoute" xml:space="preserve">
+    <value>连接路径</value>
+  </data>
+  <data name="RedisSshTunnel" xml:space="preserve">
+    <value>SSH 隧道</value>
+  </data>
+  <data name="RedisCertificateInvalid" xml:space="preserve">
+    <value>无法使用所选证书文件。</value>
+  </data>
+  <data name="RedisPermissionDenied" xml:space="preserve">
+    <value>当前身份没有此操作的权限，草稿已保留。</value>
+  </data>
+  <data name="RedisConflict" xml:space="preserve">
+    <value>此键已被其他客户端修改、删除或替换。请重新读取后对比，草稿已保留。</value>
+  </data>
+  <data name="RedisCommandFailed" xml:space="preserve">
+    <value>Redis 拒绝了此操作，请检查服务器能力和权限。</value>
+  </data>
+  <data name="RedisWriteUnknown" xml:space="preserve">
+    <value>写入结果未知。请勿自动重试，请读取此键并与保留的草稿核对。</value>
+  </data>
+  <data name="RedisConnectionFailed" xml:space="preserve">
+    <value>无法连接 Redis，请检查端点、路径、TLS 和凭据。</value>
+  </data>
+  <data name="RedisTopologyFailed" xml:space="preserve">
+    <value>未能发现或连接所需的主节点。</value>
+  </data>
+  <data name="RedisVersionRequired" xml:space="preserve">
+    <value>安全编辑需要 Redis 7 或更高版本。</value>
+  </data>
+  <data name="RedisConnectionVerified" xml:space="preserve">
+    <value>网络、TLS、认证和数据库已验证</value>
+  </data>
+  <data name="RedisTopologyVerified" xml:space="preserve">
+    <value>所需主节点已验证</value>
+  </data>
+  <data name="RedisScanVerified" xml:space="preserve">
+    <value>键浏览（SCAN）</value>
+  </data>
+  <data name="RedisTestPassed" xml:space="preserve">
+    <value>Redis 连接测试通过。</value>
+  </data>
+  <data name="RedisTestBrowseLimited" xml:space="preserve">
+    <value>连接有效，但键浏览受限。可以保存连接并直接打开已知键。</value>
+  </data>
+  <data name="RedisValueTooLarge" xml:space="preserve">
+    <value>数据超过编辑上限（1 MiB 或 1,000 项），此预览只读。</value>
+  </data>
+  <data name="RedisExpiryInvalid" xml:space="preserve">
+    <value>请输入正数的过期秒数，或选择永久。</value>
+  </data>
+  <data name="RedisDraftInvalid" xml:space="preserve">
+    <value>请检查草稿：至少保留一项，字段或成员必须唯一，分数必须为有限数值。</value>
+  </data>
+  <data name="RedisKeys" xml:space="preserve">
+    <value>键浏览</value>
+  </data>
+  <data name="RedisMatch" xml:space="preserve">
+    <value>匹配键名，例如 user:*</value>
+  </data>
+  <data name="RedisAllTypes" xml:space="preserve">
+    <value>所有类型</value>
+  </data>
+  <data name="RedisLoaded" xml:space="preserve">
+    <value>已在加载分组中发现 {0} 个键</value>
+  </data>
+  <data name="RedisMoreGroups" xml:space="preserve">
+    <value>还有更多分组</value>
+  </data>
+  <data name="RedisNotLoaded" xml:space="preserve">
+    <value>未加载</value>
+  </data>
+  <data name="RedisLoading" xml:space="preserve">
+    <value>加载中…</value>
+  </data>
+  <data name="RedisContinueScan" xml:space="preserve">
+    <value>继续查找</value>
+  </data>
+  <data name="RedisTreeHint" xml:space="preserve">
+    <value>按“:”前缀分组，展开后加载子节点；COUNT 仅为提示，只对已加载节点排序。</value>
+  </data>
+  <data name="RedisPartialScan" xml:space="preserve">
+    <value>部分主节点读取失败，结果不完整；继续查找以重试失败节点。</value>
+  </data>
+  <data name="RedisOpenKey" xml:space="preserve">
+    <value>打开键</value>
+  </data>
+  <data name="RedisKnownKey" xml:space="preserve">
+    <value>完整键名</value>
+  </data>
+  <data name="RedisEmptySelection" xml:space="preserve">
+    <value>从键树打开一个键，或输入完整键名。</value>
+  </data>
+  <data name="RedisNoKeys" xml:space="preserve">
+    <value>此批次未发现键，游标未结束时可继续查找。</value>
+  </data>
+  <data name="RedisNewKey" xml:space="preserve">
+    <value>新建键</value>
+  </data>
+  <data name="RedisKeyName" xml:space="preserve">
+    <value>键名</value>
+  </data>
+  <data name="RedisKeyType" xml:space="preserve">
+    <value>键类型</value>
+  </data>
+  <data name="RedisConnected" xml:space="preserve">
+    <value>已连接</value>
+  </data>
+  <data name="RedisConnecting" xml:space="preserve">
+    <value>连接中…</value>
+  </data>
+  <data name="RedisReconnect" xml:space="preserve">
+    <value>重新连接</value>
+  </data>
+  <data name="RedisEditConnection" xml:space="preserve">
+    <value>编辑连接</value>
+  </data>
+  <data name="RedisConnectionInformation" xml:space="preserve">
+    <value>连接信息</value>
+  </data>
+  <data name="RedisSecurityInformation" xml:space="preserve">
+    <value>认证与 TLS</value>
+  </data>
+  <data name="RedisRouteInformation" xml:space="preserve">
+    <value>路径与超时</value>
+  </data>
+  <data name="RedisValue" xml:space="preserve">
+    <value>值</value>
+  </data>
+  <data name="RedisMetadata" xml:space="preserve">
+    <value>元数据</value>
+  </data>
+  <data name="RedisText" xml:space="preserve">
+    <value>文本</value>
+  </data>
+  <data name="RedisJson" xml:space="preserve">
+    <value>JSON</value>
+  </data>
+  <data name="RedisHex" xml:space="preserve">
+    <value>Hex</value>
+  </data>
+  <data name="RedisBase64" xml:space="preserve">
+    <value>Base64</value>
+  </data>
+  <data name="RedisEditValue" xml:space="preserve">
+    <value>编辑值</value>
+  </data>
+  <data name="RedisSaveValue" xml:space="preserve">
+    <value>保存修改</value>
+  </data>
+  <data name="RedisDiscard" xml:space="preserve">
+    <value>放弃修改</value>
+  </data>
+  <data name="RedisRefreshValue" xml:space="preserve">
+    <value>读取最新值</value>
+  </data>
+  <data name="RedisPreviewLatest" xml:space="preserve">
+    <value>服务器最新值（草稿已保留）</value>
+  </data>
+  <data name="RedisNextPage" xml:space="preserve">
+    <value>下一页</value>
+  </data>
+  <data name="RedisAddEntry" xml:space="preserve">
+    <value>添加一项</value>
+  </data>
+  <data name="RedisRemoveEntry" xml:space="preserve">
+    <value>移除此项</value>
+  </data>
+  <data name="RedisAppendStream" xml:space="preserve">
+    <value>追加记录</value>
+  </data>
+  <data name="RedisAppendHead" xml:space="preserve">
+    <value>添加到头部</value>
+  </data>
+  <data name="RedisAppendTail" xml:space="preserve">
+    <value>添加到尾部</value>
+  </data>
+  <data name="RedisField" xml:space="preserve">
+    <value>字段 / 成员</value>
+  </data>
+  <data name="RedisEntryValue" xml:space="preserve">
+    <value>值</value>
+  </data>
+  <data name="RedisScore" xml:space="preserve">
+    <value>分数</value>
+  </data>
+  <data name="RedisRecordId" xml:space="preserve">
+    <value>记录 ID</value>
+  </data>
+  <data name="RedisLength" xml:space="preserve">
+    <value>长度 / 数量</value>
+  </data>
+  <data name="RedisTtl" xml:space="preserve">
+    <value>剩余生存时间</value>
+  </data>
+  <data name="RedisPermanent" xml:space="preserve">
+    <value>永久</value>
+  </data>
+  <data name="RedisMissing" xml:space="preserve">
+    <value>此键已不存在。</value>
+  </data>
+  <data name="RedisRemaining" xml:space="preserve">
+    <value>剩余 {0} 秒</value>
+  </data>
+  <data name="RedisChangeExpiry" xml:space="preserve">
+    <value>修改过期时间</value>
+  </data>
+  <data name="RedisExpirySeconds" xml:space="preserve">
+    <value>过期秒数（空值表示永久）</value>
+  </data>
+  <data name="RedisDeleteKey" xml:space="preserve">
+    <value>删除键</value>
+  </data>
+  <data name="RedisDeleteConfirm" xml:space="preserve">
+    <value>确认删除数据库 {1} 中的键 {0}？仅影响此键。</value>
+  </data>
+  <data name="RedisCloseDirty" xml:space="preserve">
+    <value>关闭尚未保存的键</value>
+  </data>
+  <data name="RedisCloseDirtyMessage" xml:space="preserve">
+    <value>数据库 {1} 中的键 {0} 有尚未保存的修改。</value>
+  </data>
+  <data name="RedisSaveClose" xml:space="preserve">
+    <value>保存并关闭</value>
+  </data>
+  <data name="RedisDiscardClose" xml:space="preserve">
+    <value>放弃并关闭</value>
+  </data>
+  <data name="RedisContinueEditing" xml:space="preserve">
+    <value>继续编辑</value>
+  </data>
+  <data name="RedisDraft" xml:space="preserve">
+    <value>未保存草稿</value>
+  </data>
+  <data name="RedisSaving" xml:space="preserve">
+    <value>保存中…</value>
+  </data>
+  <data name="RedisReadOnly" xml:space="preserve">
+    <value>只读预览</value>
+  </data>
+  <data name="RedisEditingHint" xml:space="preserve">
+    <value>保存时核对完整基线，并保留服务器当前的到期时间。切换页签会保留草稿。</value>
+  </data>
+  <data name="RedisBinaryHint" xml:space="preserve">
+    <value>数据不是有效 UTF-8，请使用 Base64 编辑以保持原始字节。</value>
+  </data>
+  <data name="RedisInvalidFormat" xml:space="preserve">
+    <value>无法按所选格式解析此值。</value>
+  </data>
+  <data name="RedisAllOpenKeys" xml:space="preserve">
+    <value>所有已打开的键</value>
+  </data>
+  <data name="RedisCloseTab" xml:space="preserve">
+    <value>关闭键页签</value>
+  </data>
+  <data name="RedisDatabaseLabel" xml:space="preserve">
+    <value>DB {0}</value>
+  </data>
+  <data name="RedisStatus" xml:space="preserve">
+    <value>{0} · {1}</value>
+  </data>
+  <data name="RedisScanRestricted" xml:space="preserve">
+    <value>键浏览受限，请直接打开已知键。</value>
+  </data>
+  <data name="RedisCreateHint" xml:space="preserve">
+    <value>仅在此键不存在时创建，集合必须填写初始项。</value>
+  </data>
+  <data name="RedisStreamHint" xml:space="preserve">
+    <value>已有记录只读；追加操作不会裁剪记录或确认消费者消息。</value>
+  </data>
+  <data name="RedisDatabaseInvalid" xml:space="preserve">
+    <value>请输入有效的非负数据库编号。</value>
+  </data>
+  <data name="RedisNoCreationTime" xml:space="preserve">
+    <value>Redis 不提供键的创建时间。</value>
+  </data>
+  <data name="RedisRetryBlocked" xml:space="preserve">
+    <value>再次保存前，请读取最新值以核对上次未知的写入结果。</value>
+  </data>
+  <data name="RedisLatestMatchesDraft" xml:space="preserve">
+    <value>服务器最新值与草稿一致，可以放弃草稿或继续编辑。</value>
+  </data>
+  <data name="RedisCollectionBase64Hint" xml:space="preserve">
+    <value>字段、成员和值使用 Base64 保持原始字节；分数使用协议数值格式。</value>
+  </data>
   <data name="WorkspaceTools" xml:space="preserve"><value>工具</value></data>
   <data name="WorkspaceSessionTools" xml:space="preserve"><value>会话工具</value></data>
   <data name="WorkspaceFindTool" xml:space="preserve"><value>查找工具…</value></data>
