@@ -40,6 +40,23 @@ public sealed class WpfTestFixture : IAsyncLifetime
         await operation.Task.Unwrap().WaitAsync(TimeSpan.FromSeconds(15), TestContext.Current.CancellationToken);
     }
 
+    /// <summary>只处理资源与绑定队列，不创建窗口或发送原生消息；与普通用例共用唯一 Application。</summary>
+    public async Task RunOffscreenAsync(Func<Task> action)
+    {
+        ArgumentNullException.ThrowIfNull(action);
+        Assert.NotNull(_dispatcher);
+        var operation = _dispatcher.InvokeAsync(async () =>
+        {
+            Assert.Empty(_application!.Windows.Cast<Window>());
+            int initialExceptions = _unhandled.Count;
+            await action();
+            Assert.Empty(_application.Windows.Cast<Window>());
+            Assert.True(initialExceptions == _unhandled.Count, string.Join(Environment.NewLine,
+                _unhandled.Skip(initialExceptions).Select(error => error.ToString())));
+        });
+        await operation.Task.Unwrap().WaitAsync(TimeSpan.FromSeconds(30), TestContext.Current.CancellationToken);
+    }
+
     /// <summary>让已经排入 Dispatcher 的绑定、关闭和退出通知得到处理。</summary>
     public static async Task DrainDispatcherAsync()
     {

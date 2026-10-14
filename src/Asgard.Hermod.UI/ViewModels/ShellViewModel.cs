@@ -31,6 +31,7 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
         Sidebar = new InstanceSidebarViewModel(source, editor, Workspace.OpenInstance, Workspace.OpenLocalTerminal, tags,
             registry, id => IsSignedIn ? _sync?.GetInstanceStatus(id) ?? ConfigurationSyncStatus.PasswordRequired : ConfigurationSyncStatus.Local);
         Workspace.Home.AddInstanceCommand = Sidebar.AddInstanceCommand;
+        Workspace.RenameInstanceCommand = Sidebar.RenameInstanceCommand;
         Workspace.Home.OpenLocalTerminalCommand = Sidebar.OpenLocalTerminalCommand;
         Workspace.RefreshInstanceMetadata(Sidebar.AllInstances);
         Main = new MainWorkspaceViewModel(Sidebar, Workspace, editor, registry, settings);

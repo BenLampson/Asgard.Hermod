@@ -4,6 +4,7 @@
              xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
              xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization" x:Name="Root">
     <Button x:Name="RenameButton" CommandParameter="{Binding Instance, ElementName=Root}"
+            Command="{Binding (controls:InstanceMetadataScope.RenameCommand), RelativeSource={RelativeSource Self}}"
             ToolTip="{loc:Loc RenameInstance}" AutomationProperties.Name="{loc:Loc RenameInstance}"
             HorizontalContentAlignment="Stretch" Padding="3,2" Background="Transparent" BorderThickness="0">
         <Button.Template><ControlTemplate TargetType="Button">

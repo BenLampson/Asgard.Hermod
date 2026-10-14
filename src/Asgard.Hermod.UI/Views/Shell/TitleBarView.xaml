@@ -13,6 +13,19 @@
            HorizontalAlignment="Left" chrome:WindowChrome.IsHitTestVisibleInChrome="True" AutomationProperties.Name="{loc:Loc MainNavigation}" />
   <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="6,0,12,0">
    <controls:AccountMenu x:Name="Account" Margin="0,0,10,0" MaxWidth="190" chrome:WindowChrome.IsHitTestVisibleInChrome="True" />
+   <Button x:Name="ThemeButton" Width="26" Height="28" Padding="0" Margin="0,0,6,0" Command="{Binding ToggleThemeCommand}" chrome:WindowChrome.IsHitTestVisibleInChrome="True">
+    <Button.Style><Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+     <Setter Property="ToolTip" Value="{loc:Loc SwitchToDarkMode}" /><Setter Property="AutomationProperties.Name" Value="{loc:Loc SwitchToDarkMode}" />
+     <Style.Triggers><DataTrigger Binding="{Binding IsDarkTheme}" Value="True">
+      <Setter Property="ToolTip" Value="{loc:Loc SwitchToLightMode}" /><Setter Property="AutomationProperties.Name" Value="{loc:Loc SwitchToLightMode}" />
+     </DataTrigger></Style.Triggers>
+    </Style></Button.Style>
+    <controls:IconView Width="17" Height="17" Foreground="{DynamicResource TextMutedBrush}">
+     <controls:IconView.Style><Style TargetType="controls:IconView"><Setter Property="Kind" Value="moon" />
+      <Style.Triggers><DataTrigger Binding="{Binding IsDarkTheme}" Value="True"><Setter Property="Kind" Value="sun" /></DataTrigger></Style.Triggers>
+     </Style></controls:IconView.Style>
+    </controls:IconView>
+   </Button>
    <Button x:Name="SettingsButton" Style="{DynamicResource IconButton}" Width="26" Height="28" Padding="0" Margin="0,0,6,0"
            Command="{Binding OpenSettingsCommand}" ToolTip="{loc:Loc SystemSettings}" AutomationProperties.Name="{loc:Loc SystemSettings}" chrome:WindowChrome.IsHitTestVisibleInChrome="True">
     <controls:IconView Kind="settings" Width="17" Height="17" Foreground="{DynamicResource TextMutedBrush}" />

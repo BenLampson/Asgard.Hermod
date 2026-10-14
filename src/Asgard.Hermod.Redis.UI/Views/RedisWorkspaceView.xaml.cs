@@ -56,7 +56,13 @@ public partial class RedisWorkspaceView : UserControl
         for (DependencyObject? source = args.OriginalSource as DependencyObject; source is not null; source = System.Windows.Media.VisualTreeHelper.GetParent(source))
         {
             if (source is System.Windows.Controls.Primitives.ButtonBase) return;
-            if (source is TreeViewItem { DataContext: RedisTreeNode { IsGroup: true } group }) { group.IsExpanded = !group.IsExpanded; args.Handled = true; return; }
+            // 只解释最近的树行；叶键点击不能继续冒泡成父分组的折叠操作。
+            if (source is TreeViewItem { DataContext: RedisTreeNode node })
+            {
+                if (node.IsGroup) node.IsExpanded = !node.IsExpanded;
+                args.Handled = true;
+                return;
+            }
         }
     }
     private async void OnTypeFilterChanged(object sender, SelectionChangedEventArgs args)
@@ -145,7 +151,7 @@ public partial class RedisWorkspaceView : UserControl
         _compact = compact; UpdateLayoutMode();
         ConnectionBadge.Visibility = args.NewSize.Width < 760 ? Visibility.Collapsed : Visibility.Visible;
         ToolbarTypeIcon.Visibility = args.NewSize.Width < 760 ? Visibility.Collapsed : Visibility.Visible;
-        DatabaseField.Width = args.NewSize.Width < 600 ? 150 : 190;
+        DatabaseSelector.Width = args.NewSize.Width < 600 ? 110 : 142;
         NewKeyLabel.Visibility = args.NewSize.Width < 600 ? Visibility.Collapsed : Visibility.Visible;
         IdentityColumn.Width = new(args.NewSize.Width < 600 ? 0 : args.NewSize.Width < 760 ? 70 : 225);
     }

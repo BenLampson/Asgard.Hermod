@@ -66,6 +66,8 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
     public ObservableCollection<WorkspacePageViewModel> Tabs { get; } = [];
     /// <summary>首页负责统计与本机最近访问，关闭页签后仍维护访问记录。</summary>
     public HomeWorkspaceViewModel Home { get; }
+    /// <summary>外壳提供同一个目录元数据命令，供独立窗口继承。</summary>
+    public ICommand? RenameInstanceCommand { get; internal set; }
     /// <summary>已打开会话按稳定实例标识刷新标题，不重建页面或重新连接。</summary>
     public void RefreshInstanceMetadata(IReadOnlyList<InstanceItemViewModel> instances)
     {

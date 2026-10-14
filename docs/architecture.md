@@ -177,6 +177,12 @@ DBSIZE replies, aggregating primaries in Cluster. Unavailable counts are explici
 and never replaced with invented zeroes. Count refresh updates existing option
 objects, preserving database selection and tree cursors. Shared table styles and
 selector containers cover both themes without detached-container binding errors.
+Redis tree clicks stop at their nearest row so selecting a key does not toggle an
+ancestor. The focused row uses a solid theme border without default dotted adorners.
+Key tabs and subordinate selectors use local rounded selection styles on the shared
+surface. Instance rename commands inherit an explicit metadata scope in both the
+shell and independent workspace windows, retaining the same page, session and drafts.
+The main title bar theme toggle uses the shell's application-wide theme service.
 
 ## Composition
 

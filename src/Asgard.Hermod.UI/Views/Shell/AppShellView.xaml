@@ -1,6 +1,7 @@
 <UserControl x:Class="Asgard.Hermod.UI.Views.Shell.AppShellView"
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
  xmlns:shell="clr-namespace:Asgard.Hermod.UI.Views.Shell" FontFamily="{DynamicResource UiFont}"
+ xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls" controls:InstanceMetadataScope.RenameCommand="{Binding Sidebar.RenameInstanceCommand}"
  Foreground="{DynamicResource TextPrimaryBrush}" UseLayoutRounding="True" SnapsToDevicePixels="True">
  <shell:MainWorkspaceView x:Name="MainContent" DataContext="{Binding Main}" />
 </UserControl>

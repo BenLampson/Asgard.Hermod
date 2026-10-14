@@ -16,6 +16,7 @@ public sealed class WorkspaceWindow : HermodWindow
         _workspace = workspace;
         Page = page;
         DataContext = page;
+        InstanceMetadataScope.SetRenameCommand(this, workspace.RenameInstanceCommand);
         SetBinding(TitleProperty, new Binding(nameof(WorkspacePageViewModel.Header)));
         Width = 1200; Height = 800; MinWidth = 800; MinHeight = 520;
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
