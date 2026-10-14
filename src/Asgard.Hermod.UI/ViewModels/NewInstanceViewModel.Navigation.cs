@@ -161,6 +161,7 @@ public sealed partial class NewInstanceViewModel
     /// <summary>任何连接信息变化都会取消旧测试并作废成功结果。</summary>
     private void InvalidateConnection()
     {
+        _verifiedConnection = null;
         _configurationRevision++;
         _verifiedConfigurationRevision = -1;
         _testCancellation?.Cancel();

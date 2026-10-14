@@ -3,6 +3,26 @@ namespace Asgard.Hermod.UI.Tests;
 /// <summary>验证五步向导的业务门禁、真实服务边界、取消和失败恢复。</summary>
 public sealed class NewInstanceWizardTests
 {
+    /// <summary>保存使用实际测试的导入快照，原始路径或文件之后变化不改变已验证内容。</summary>
+    [Fact]
+    public async Task Submit_PreservesPreparedConnectionFromSuccessfulTest()
+    {
+        var provider = new NewInstanceWizardTestProvider
+        {
+            PreparationHandler = options => new()
+            {
+                TypeId = options.TypeId,
+                ProviderId = options.ProviderId,
+                Parameters = new Dictionary<string, string>(options.Parameters) { ["accessKeySecret"] = "imported-material" }
+            }
+        };
+        var configurations = new NewInstanceWizardTestConfigurationService(); using var model = CreateModel(provider, configurations);
+        await ReachConfirmationAsync(model);
+        provider.PreparationHandler = _ => throw new InvalidOperationException("The original file is no longer available.");
+        await model.SubmitCommand.ExecuteAsync();
+        Assert.Equal("imported-material", Assert.Single(configurations.Drafts).Connection.Parameters["accessKeySecret"]);
+        Assert.Same(provider.LastConnection, configurations.Drafts[0].Connection);
+    }
     /// <summary>未填写信息时保持第二步，并分别提示三个必填字段。</summary>
     [Fact]
     public void NextCommand_ValidatesRequiredFieldsInPlace()

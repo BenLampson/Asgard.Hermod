@@ -183,6 +183,7 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
         if (_disposed)
             return;
         _disposed = true;
+        _verifiedConnection = null;
         ConfigurationEditor.Dispose();
         TagSelection.SetEditable(false);
         TagSelection.PropertyChanged -= OnTagSelectionChanged;

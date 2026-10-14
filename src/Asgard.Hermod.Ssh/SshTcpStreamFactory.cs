@@ -16,7 +16,7 @@ public sealed class SshTcpStreamFactory(IHostKeyTrustStore trust, ISshHostKeyPro
             var target = profile.Target;
             Credential credential = target.Authentication switch
             {
-                SshIds.PrivateKey => new PrivateKeyCredential(target.KeyPath, target.Passphrase),
+                SshIds.PrivateKey => SshPrivateKey.Credential(target),
                 SshIds.Agent => new SshAgentCredentials(),
                 _ => new PasswordCredential(target.Password),
             };

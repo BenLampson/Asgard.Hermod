@@ -2231,7 +2231,7 @@
     <value>私钥口令（可选）</value>
   </data>
   <data name="SshKeyDeviceHint" xml:space="preserve">
-    <value>私钥保留在本机，其他设备需要重新选择文件。</value>
+    <value>测试时导入私钥内容，并在保存时加密。登录账号后随配置同步，可在其他电脑上使用。</value>
   </data>
   <data name="SshProxyType" xml:space="preserve">
     <value>代理类型</value>
@@ -3293,4 +3293,8 @@
   <data name="EditInstanceTags" xml:space="preserve"><value>编辑标签</value></data>
   <data name="MetadataEditHint" xml:space="preserve"><value>修改立即生效，当前会话继续运行。</value></data>
   <data name="InstanceQuickActionsHint" xml:space="preserve"><value>右键或按 Shift+F10 可重命名实例或编辑其标签。</value></data>
+  <data name="SshKeyImported" xml:space="preserve"><value>私钥已导入 · 保存时加密</value></data>
+  <data name="MySqlNoOpenTabs" xml:space="preserve"><value>尚未打开表或查询</value></data>
+  <data name="SshKeyImportFailed" xml:space="preserve"><value>无法导入私钥。请选择可读取且不超过 32 KiB 的 UTF-8 私钥文件后重试。</value></data>
+  <data name="MySqlNoOpenTabsHint" xml:space="preserve"><value>从左侧对象树选择一张表，或新建查询继续操作。</value></data>
 </root>

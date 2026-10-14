@@ -60,11 +60,9 @@ public sealed class SshConnectionFactory(IHostKeyTrustStore trust, ISshHostKeyPr
 
             SshClientSettings Settings(SshHostOptions host, bool isJump)
             {
-                if (host.Authentication == SshIds.PrivateKey && !File.Exists(host.KeyPath))
-                    throw new SshException("SshKeyUnavailable", "SSH_KEY_UNAVAILABLE");
                 Credential credential = host.Authentication switch
                 {
-                    SshIds.PrivateKey => new PrivateKeyCredential(host.KeyPath, host.Passphrase),
+                    SshIds.PrivateKey => SshPrivateKey.Credential(host),
                     SshIds.Agent => new SshAgentCredentials(),
                     _ => new PasswordCredential(host.Password),
                 };

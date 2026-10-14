@@ -63,7 +63,7 @@ public static class SshProfile
         });
         fields.Add(new(prefix + "password", Text.Get("SshPassword"), InstanceFieldKind.Secret, MaxLength: 4096)
         { VisibleWhenKey = prefix + "auth", VisibleWhenValue = SshIds.Password, PreserveWhitespace = true });
-        fields.Add(new(prefix + "key", Text.Get("SshKeyFile"), InstanceFieldKind.File, MaxLength: 4096, Hint: Text.Get("SshKeyDeviceHint"), IsSensitive: true)
+        fields.Add(new(prefix + "key", Text.Get("SshKeyFile"), InstanceFieldKind.File, MaxLength: 65536, Hint: Text.Get("SshKeyDeviceHint"), IsSensitive: true)
         { VisibleWhenKey = prefix + "auth", VisibleWhenValue = SshIds.PrivateKey });
         fields.Add(new(prefix + "passphrase", Text.Get("SshPassphrase"), InstanceFieldKind.Secret, false, 4096)
         { VisibleWhenKey = prefix + "auth", VisibleWhenValue = SshIds.PrivateKey, PreserveWhitespace = true });

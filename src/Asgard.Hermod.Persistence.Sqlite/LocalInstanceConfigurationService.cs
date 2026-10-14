@@ -55,7 +55,7 @@ public sealed partial class LocalInstanceConfigurationService : IInstanceConfigu
     }
 
     /// <summary>新增和编辑共用字段校验与密文保护，并在提交前完成全部导航读取。</summary>
-    private Task<InstanceSummary> SaveAsync(string? instanceId, InstanceConfigurationDraft draft,
+    private async Task<InstanceSummary> SaveAsync(string? instanceId, InstanceConfigurationDraft draft,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(draft);
@@ -74,7 +74,12 @@ public sealed partial class LocalInstanceConfigurationService : IInstanceConfigu
                 pair.Key.Any(char.IsControl) || pair.Value is null || pair.Value.Length > 65536))
             throw Text.Exception("InvalidConnectionParametersCheckTheFieldsRequiredByTheProvider");
         ArgumentNullException.ThrowIfNull(draft.TagIds);
-        var parameters = new Dictionary<string, string>(draft.Connection.Parameters, StringComparer.Ordinal);
+        var prepared = await provider.PrepareConnectionAsync(draft.Connection, cancellationToken).ConfigureAwait(false);
+        if (prepared.TypeId != draft.Connection.TypeId || prepared.ProviderId != draft.Connection.ProviderId
+            || prepared.Parameters.Count > 100 || prepared.Parameters.Any(pair => string.IsNullOrWhiteSpace(pair.Key)
+                || pair.Key.Length > 128 || pair.Key.Any(char.IsControl) || pair.Value is null || pair.Value.Length > 65536))
+            throw Text.Exception("InvalidConnectionParametersCheckTheFieldsRequiredByTheProvider");
+        var parameters = new Dictionary<string, string>(prepared.Parameters, StringComparer.Ordinal);
         foreach (InstanceConfigurationField field in provider.Descriptor.Fields)
         {
             if (!InstanceFieldValidation.IsApplicable(field, parameters))
@@ -86,7 +91,7 @@ public sealed partial class LocalInstanceConfigurationService : IInstanceConfigu
             if (error.Length != 0) throw Text.Exception("InvalidConnectionParametersCheckTheFieldsRequiredByTheProvider");
         }
         string[] requestedTagIds = draft.TagIds.Distinct(StringComparer.Ordinal).ToArray();
-        return Task.Run(() =>
+        return await Task.Run(() =>
         {
             cancellationToken.ThrowIfCancellationRequested();
             byte[] plaintext = JsonSerializer.SerializeToUtf8Bytes(parameters);
@@ -112,7 +117,7 @@ public sealed partial class LocalInstanceConfigurationService : IInstanceConfigu
                 return summary;
             }
             finally { CryptographicOperations.ZeroMemory(plaintext); }
-        }, cancellationToken);
+        }, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />

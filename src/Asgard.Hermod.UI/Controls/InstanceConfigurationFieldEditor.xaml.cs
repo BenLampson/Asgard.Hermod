@@ -6,7 +6,7 @@ public partial class InstanceConfigurationFieldEditor : UserControl
     /// <summary>字段状态从所属表单项继承，所有编辑控件复用共享表单组件。</summary>
     public InstanceConfigurationFieldEditor() => InitializeComponent();
 
-    /// <summary>共用文件选择器只保存路径，不读取或上传文件内容。</summary>
+    /// <summary>共用选择器传递文件路径，由连接器在测试前导入需要可移植保存的内容。</summary>
     private void OnBrowseFile(object sender, RoutedEventArgs args)
     {
         if (sender is not FrameworkElement { DataContext: InstanceConfigurationFieldViewModel field }) return;

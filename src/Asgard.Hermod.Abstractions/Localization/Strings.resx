@@ -2231,7 +2231,7 @@
     <value>Passphrase (optional)</value>
   </data>
   <data name="SshKeyDeviceHint" xml:space="preserve">
-    <value>The key stays on this device. Other devices must select their own file.</value>
+    <value>The private key is imported when tested and saved with encryption. Account synchronization makes it available on your other devices.</value>
   </data>
   <data name="SshProxyType" xml:space="preserve">
     <value>Proxy type</value>
@@ -3293,4 +3293,8 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="EditInstanceTags" xml:space="preserve"><value>Edit tags</value></data>
   <data name="MetadataEditHint" xml:space="preserve"><value>Changes apply immediately. Existing sessions continue.</value></data>
   <data name="InstanceQuickActionsHint" xml:space="preserve"><value>Right-click or press Shift+F10 to rename this instance or edit its tags.</value></data>
+  <data name="SshKeyImported" xml:space="preserve"><value>Private key imported · encrypted when saved</value></data>
+  <data name="MySqlNoOpenTabs" xml:space="preserve"><value>No tabs open</value></data>
+  <data name="SshKeyImportFailed" xml:space="preserve"><value>Could not import the private key. Choose a readable UTF-8 key file up to 32 KiB and try again.</value></data>
+  <data name="MySqlNoOpenTabsHint" xml:space="preserve"><value>Select a table from the object tree or create a query to continue.</value></data>
 </root>

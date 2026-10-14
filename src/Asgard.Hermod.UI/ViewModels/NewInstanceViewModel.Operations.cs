@@ -3,6 +3,7 @@ namespace Asgard.Hermod.UI.ViewModels;
 /// <summary>管理可取消的真实连接测试和实例保存，异常信息不包含第三方请求或凭据。</summary>
 public sealed partial class NewInstanceViewModel
 {
+    private InstanceConnectionOptions? _verifiedConnection;
     /// <summary>验证当前信息快照，取消后仅保留必须告知用户的资源清理失败。</summary>
     private async Task TestConnectionAsync()
     {
@@ -22,6 +23,7 @@ public sealed partial class NewInstanceViewModel
         try
         {
             var provider = _registry.GetProvider(connection.TypeId, connection.ProviderId);
+            connection = await provider.PrepareConnectionAsync(connection, cancellation.Token);
             var result = await provider.TestConnectionAsync(connection, cancellation.Token);
             if (_disposed || revision != _configurationRevision || cancellation.IsCancellationRequested
                 && (result.IsSuccessful || !result.RequiresAttentionAfterCancellation))
@@ -31,6 +33,7 @@ public sealed partial class NewInstanceViewModel
             TestErrorCode = SafeErrorCode(result.ErrorCode);
             TestChecks = result.Checks?.Select(check => new InstanceConnectionCheck(Redact(check.Name), check.IsSuccessful)).ToArray() ?? [];
             _verifiedConfigurationRevision = result.IsSuccessful ? revision : -1;
+            _verifiedConnection = result.IsSuccessful ? connection : null;
         }
         catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
         {
@@ -78,7 +81,7 @@ public sealed partial class NewInstanceViewModel
         var draft = new InstanceConfigurationDraft
         {
             Name = Name.Trim(),
-            Connection = BuildConnection(),
+            Connection = _verifiedConnection ?? BuildConnection(),
             SaveLocation = SaveLocation,
             ExpectedAccount = _initialAccount,
             CheckExpectedAccount = _accounts is not null,

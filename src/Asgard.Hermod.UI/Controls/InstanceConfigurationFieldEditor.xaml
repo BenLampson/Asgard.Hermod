@@ -14,7 +14,7 @@
             <DockPanel>
                 <Button DockPanel.Dock="Right" Content="{loc:Loc Browse}" Click="OnBrowseFile" Margin="8,0,0,0"
                         Height="36" ToolTip="{loc:Loc ChooseFile}" AutomationProperties.Name="{loc:Loc ChooseFile}" />
-                <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="36"
+                <TextBox Text="{Binding FileValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding IsImportedFile}" Height="36"
                          MaxLength="{Binding MaxLength}" FontFamily="{DynamicResource MonoFont}" AutomationProperties.Name="{Binding Label}" />
             </DockPanel>
         </DataTemplate>

@@ -15,14 +15,16 @@ public sealed class SshLiveConnectionTests
     [Theory(Skip = "Configure the isolated OpenSSH fixture to enable network tests.", SkipUnless = nameof(IsConfigured))]
     [InlineData(SshIds.Password)]
     [InlineData(SshIds.PrivateKey)]
+    [InlineData("imported-key")]
     public async Task DirectAuthenticationAndPtyWork(string authentication)
     {
         var trust = new LiveHostTrust(); var factory = new SshConnectionFactory(trust, trust);
-        var options = Options(); var values = new Dictionary<string, string>(options.Parameters) { ["auth"] = authentication };
-        if (authentication == SshIds.PrivateKey)
+        var options = Options(); var values = new Dictionary<string, string>(options.Parameters) { ["auth"] = authentication == "imported-key" ? SshIds.PrivateKey : authentication };
+        if (authentication is SshIds.PrivateKey or "imported-key")
         { values["key"] = Required("HERMOD_TEST_SSH_KEY"); values["passphrase"] = "test-key-passphrase"; }
         options = new() { TypeId = options.TypeId, ProviderId = options.ProviderId, Parameters = values };
         using var timeout = Timeout();
+        if (authentication == "imported-key") options = await new SshInstanceProvider(SshIds.Direct, factory).PrepareConnectionAsync(options, timeout.Token);
         await using (var connection = await factory.OpenAsync(options, 90, 30, timeout.Token))
         {
             Assert.Single(connection.HostKeys); Assert.Single(trust.Challenges);

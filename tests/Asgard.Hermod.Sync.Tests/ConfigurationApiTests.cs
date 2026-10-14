@@ -7,6 +7,26 @@ public sealed class ConfigurationApiTests
     private static WorkspaceSnapshot Snapshot(string name = "Instance") => new(1,
         [new("one", name, "storage", "provider", new Dictionary<string, string>
         { ["endpoint"] = "https://endpoint.test", ["accessKeyId"] = "private-key-id", ["secret"] = "private-secret", ["unknown"] = "unknown-secret" }, DateTime.UnixEpoch, [])], []);
+    /// <summary>可移植私钥必须位于加密参数中，另一设备解密后恢复原始内容。</summary>
+    [Fact]
+    public void ImportedPrivateKey_RoundTripsOnlyInsideEncryptedSecrets()
+    {
+        using var key = System.Security.Cryptography.RSA.Create(2048);
+        string pem = key.ExportPkcs8PrivateKeyPem(); string imported = InstanceFileContent.Encode(System.Text.Encoding.UTF8.GetBytes(pem));
+        var original = Snapshot(); var instance = original.Instances[0] with
+        {
+            TypeId = "ssh",
+            ProviderId = "ssh-direct",
+            Parameters = new Dictionary<string, string> { ["host"] = "server.example", ["user"] = "tester", ["auth"] = "private-key", ["key"] = imported, ["passphrase"] = "key-password" }
+        };
+        var snapshot = original with { Instances = [instance] }; var codec = new ConfigurationCodec(new ConfigurationTestRegistry());
+        var cloud = codec.Encode(snapshot, new(1, [], []), new("0", null, [], [], null), Password, "owner");
+        Assert.Empty(cloud.Instances[0].Parameters);
+        string wire = JsonSerializer.Serialize(cloud); Assert.DoesNotContain(imported, wire); Assert.DoesNotContain(pem, wire); Assert.DoesNotContain("key-password", wire);
+        var otherDevice = new ConfigurationCodec(new ConfigurationTestRegistry()).Decode(cloud, Password, "owner");
+        Assert.Equal(imported, otherDevice.Instances[0].Parameters["key"]);
+        Assert.Equal(pem, new string(InstanceFileContent.Decode(otherDevice.Instances[0].Parameters["key"])));
+    }
     /// <summary>普通字段可读，所有秘密及未知字段加密，条目版本由服务器生成。</summary>
     [Fact]
     public async Task Details_AreReadableWhileCredentialsStayEncrypted()

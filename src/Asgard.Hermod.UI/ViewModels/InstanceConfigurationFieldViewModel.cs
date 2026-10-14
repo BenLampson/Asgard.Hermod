@@ -29,8 +29,12 @@ public sealed class InstanceConfigurationFieldViewModel : ObservableObject
     public bool IsText => Definition.Kind == InstanceFieldKind.Text;
     /// <summary>选项控件保存稳定标识。</summary>
     public bool IsChoice => Definition.Kind == InstanceFieldKind.Choice;
-    /// <summary>文件控件只保存本机引用。</summary>
+    /// <summary>文件控件支持旧路径和连接器导入后的加密保存内容。</summary>
     public bool IsFile => Definition.Kind == InstanceFieldKind.File;
+    /// <summary>已导入的敏感文件只显示状态，不显示编码或私钥文本。</summary>
+    public bool IsImportedFile => IsFile && IsSensitive && InstanceFileContent.IsImported(Value);
+    /// <summary>兼容旧文件路径；重新选择文件后替换已导入内容。</summary>
+    public string FileValue { get => IsImportedFile ? Text.Get("SshKeyImported") : Value; set { if (!IsImportedFile) Value = value; } }
     /// <summary>翻译后的选项名称不参与业务判断。</summary>
     public IReadOnlyList<InstanceFieldChoice> Choices => Definition.Choices;
     /// <summary>条件字段只在所选认证方式下参与校验。</summary>
@@ -50,6 +54,8 @@ public sealed class InstanceConfigurationFieldViewModel : ObservableObject
             OnPropertyChanged(nameof(Error));
             OnPropertyChanged(nameof(IsValid));
             OnPropertyChanged(nameof(ConfirmationValue));
+            OnPropertyChanged(nameof(IsImportedFile));
+            OnPropertyChanged(nameof(FileValue));
         }
     } = "";
     /// <summary>与持久化服务共用相同字段规则。</summary>
@@ -64,7 +70,7 @@ public sealed class InstanceConfigurationFieldViewModel : ObservableObject
             string value = Definition.PreserveWhitespace ? Value : Value.Trim();
             if (value.Length == 0)
                 return Text.Get("NotEntered");
-            if (IsSecret)
+            if (IsSecret || IsImportedFile)
                 return Text.Get("EnteredHidden");
             if (IsChoice && !IsSensitive)
                 return Choices.FirstOrDefault(choice => choice.Id == value)?.Name ?? Text.Get("NotEntered");

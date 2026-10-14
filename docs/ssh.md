@@ -18,9 +18,14 @@ wizard and terminal workspace.
 Each SSH identity supports password, a local private-key file with optional
 passphrase, or Windows OpenSSH Agent. Only the selected authentication method is
 used. Password and passphrase whitespace is preserved. Inactive credentials are
-omitted from saved configuration. Private-key file contents and Agent keys are
-never copied into instance settings. A saved key path must exist on the device
-that opens the session.
+omitted from saved configuration. Private keys are imported before testing (UTF-8,
+up to 32 KiB); saving retains that exact tested content. Local settings protect it
+with Windows DPAPI, and account synchronization encrypts it with the synchronization
+password. Other devices can connect without the original file. Terminal sessions,
+jump hosts and SSH tunnels load the saved key in memory without temporary files.
+Existing path-based configurations remain compatible; edit, test and save on a
+device with the file to import them. Imported content is masked in the wizard.
+Windows Agent keys remain device-local and are never copied.
 
 The default port is 22 and the connection timeout is 15 seconds. The test opens
 and closes an actual interactive PTY through the same protocol factory as the

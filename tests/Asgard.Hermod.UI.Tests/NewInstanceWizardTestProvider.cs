@@ -5,7 +5,7 @@ internal sealed class NewInstanceWizardTestProvider(string id = "aliyun-oss", st
     InstanceTypeDescriptor? type = null) : IInstanceProvider
 {
     /// <summary>存储处于顶层，OSS 是其下的具体服务。</summary>
-    public static InstanceTypeDescriptor StorageType { get; } = new("storage", "存储", "对象存储服务", "database");
+    public static InstanceTypeDescriptor StorageType { get; } = new("storage", "存储", "对象存储服务", "box");
     /// <summary>向导从真实注册表契约读取此展示信息。</summary>
     public InstanceProviderDescriptor Descriptor { get; } = new(id, name, "Object Storage Service", "cloud", type ?? StorageType,
         [new("accessKeyId", "AccessKey ID（AK）", MaxLength: 128, IsSensitive: true,
@@ -21,6 +21,11 @@ internal sealed class NewInstanceWizardTestProvider(string id = "aliyun-oss", st
     public CancellationToken LastCancellationToken { get; private set; }
     /// <summary>记录传给连接器的配置，测试不将凭据写入输出。</summary>
     public InstanceConnectionOptions? LastConnection { get; private set; }
+    /// <summary>模拟连接器冻结输入文件等设备资源。</summary>
+    public Func<InstanceConnectionOptions, InstanceConnectionOptions>? PreparationHandler { get; set; }
+    /// <inheritdoc />
+    public Task<InstanceConnectionOptions> PrepareConnectionAsync(InstanceConnectionOptions options, CancellationToken cancellationToken = default) =>
+        Task.FromResult(PreparationHandler?.Invoke(options) ?? options);
     /// <summary>测试可替换完成时机及结果。</summary>
     public Func<InstanceConnectionOptions, CancellationToken, Task<InstanceConnectionTestResult>> TestHandler { get; set; } =
         (_, _) => Task.FromResult(new InstanceConnectionTestResult(true, "阿里云 OSS 已响应", Checks:

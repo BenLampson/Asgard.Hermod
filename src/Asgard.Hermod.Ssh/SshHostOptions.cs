@@ -13,7 +13,7 @@ public sealed class SshHostOptions
     public required string Authentication { get; init; }
     /// <summary>密码仅在建立连接时交给协议库。</summary>
     public string Password { get; init; } = "";
-    /// <summary>本机文件引用，不包含私钥内容。</summary>
+    /// <summary>可移植私钥编码，兼容尚未重新保存的本机文件引用。</summary>
     public string KeyPath { get; init; } = "";
     /// <summary>私钥解密口令。</summary>
     public string Passphrase { get; init; } = "";
