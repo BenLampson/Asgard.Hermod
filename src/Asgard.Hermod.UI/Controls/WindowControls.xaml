@@ -89,6 +89,10 @@
                             <Setter Property="ToolTip" Value="{loc:Loc HideMainWindowToTray}" />
                             <Setter Property="AutomationProperties.Name" Value="{loc:Loc HideMainWindowToTray}" />
                         </DataTrigger>
+                        <DataTrigger Binding="{Binding (windowing:WindowCloseBehavior.IsMainWindow), RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                            <Setter Property="ToolTip" Value="{Binding (windowing:WindowCloseBehavior.CloseActionLabel), RelativeSource={RelativeSource AncestorType=Window}}" />
+                            <Setter Property="AutomationProperties.Name" Value="{Binding (windowing:WindowCloseBehavior.CloseActionLabel), RelativeSource={RelativeSource AncestorType=Window}}" />
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding IsCompact, RelativeSource={RelativeSource AncestorType=controls:WindowControls}}" Value="True">
                             <Setter Property="Width" Value="14" />
                             <Setter Property="Height" Value="26" />

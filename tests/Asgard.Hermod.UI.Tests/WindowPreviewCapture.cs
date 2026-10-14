@@ -20,7 +20,8 @@ internal static class WindowPreviewCapture
         await WindowTestVisuals.UpdateLayoutAsync(window);
         var frame = WindowTestVisuals.Frame(window);
         Assert.InRange(frame.ActualWidth, window.Width - 2, window.Width + 2);
-        Assert.InRange(frame.ActualHeight, window.Height - 2, window.Height + 2);
+        double height = window.SizeToContent is SizeToContent.Height or SizeToContent.WidthAndHeight ? window.ActualHeight : window.Height;
+        Assert.InRange(frame.ActualHeight, height - 2, height + 2);
         var caption = WindowTestVisuals.Caption(window);
         Assert.Equal(window.CaptionHeight, caption.ActualHeight);
         if (window.FooterContent is DialogActionBar)

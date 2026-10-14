@@ -71,7 +71,7 @@ public sealed class WindowsTrayIconTests(WpfTestFixture fixture)
                 var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
                 using var file = File.Create(Path.Combine(output, "tray-menu-" + language + ".png")); encoder.Save(file);
             }
-            WindowInteractionNativeMethods.PostKey(menu, 0x1B);
+            await WindowInteractionNativeMethods.PressKeyAsync(menu, 0x1B);
             await WpfTestFixture.DrainDispatcherAsync(); Assert.False(menu.IsVisible);
         }
         finally { if (menu.IsVisible) menu.Close(); themes.SetTheme(UiTheme.Light); Text.SetApplicationCulture(null); }
@@ -85,12 +85,12 @@ public sealed class WindowsTrayIconTests(WpfTestFixture fixture)
     public void Placement_StaysWithinWorkArea(double scale)
     {
         var work = new Rect(-1920, 0, 1920, 1040);
-        var result = TrayMenuPlacement.Calculate(new Rect(-30, 1040, 24, 24), work, new Size(268, 152), scale);
+        var result = TrayMenuPlacement.Calculate(new Rect(-30, 1040, 24, 24), work, new Size(268, 122), scale);
         Assert.False(result.ArrowOnTop);
         Assert.InRange(result.Position.X, work.Left, work.Right - 268 * scale);
-        Assert.InRange(result.Position.Y, work.Top, work.Bottom - 152 * scale);
+        Assert.InRange(result.Position.Y, work.Top, work.Bottom - 122 * scale);
         Assert.InRange(result.ArrowOffset, 28, 240);
-        Assert.True(TrayMenuPlacement.Calculate(new Rect(-1000, -24, 24, 24), work, new Size(268, 152), scale).ArrowOnTop);
+        Assert.True(TrayMenuPlacement.Calculate(new Rect(-1000, -24, 24, 24), work, new Size(268, 122), scale).ArrowOnTop);
     }
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]

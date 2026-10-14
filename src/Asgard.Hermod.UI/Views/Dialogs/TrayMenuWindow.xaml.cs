@@ -8,9 +8,14 @@ namespace Asgard.Hermod.UI.Views.Dialogs;
 /// <summary>唯一托盘菜单；两项稳定操作，支持动态主题、键盘和朝向图标的箭头。</summary>
 public partial class TrayMenuWindow : Window
 {
+    /// <summary>只有用户开始键盘导航才呈现焦点提示，初始菜单没有选中动作。</summary>
+    public static readonly DependencyProperty KeyboardNavigationActiveProperty = DependencyProperty.Register(nameof(KeyboardNavigationActive), typeof(bool), typeof(TrayMenuWindow), new PropertyMetadata(false));
+    /// <summary>鼠标悬停与键盘焦点分别呈现。</summary>
+    public bool KeyboardNavigationActive { get => (bool)GetValue(KeyboardNavigationActiveProperty); private set => SetValue(KeyboardNavigationActiveProperty, value); }
     private readonly Action _toggle;
     private readonly Action _exit;
     private bool _closing;
+    private NativePoint _navigationPointer;
 
     /// <summary>调用者按主窗体真实状态选择显示或隐藏，不比较译文控制逻辑。</summary>
     public TrayMenuWindow(bool showMain, Action toggle, Action exit)
@@ -37,27 +42,41 @@ public partial class TrayMenuWindow : Window
         double arrow = placement.ArrowOffset;
         string geometry = placement.ArrowOnTop
             ? FormattableString.Invariant($"M {arrow - 8},10 L {arrow},1 L {arrow + 8},10")
-            : FormattableString.Invariant($"M {arrow - 8},132 L {arrow},141 L {arrow + 8},132");
+            : FormattableString.Invariant($"M {arrow - 8},102 L {arrow},111 L {arrow + 8},102");
         Arrow.Data = Geometry.Parse(geometry);
         // Geometry.Parse 的数字必须使用不变区域格式。
-        Canvas.SetLeft(ArrowJoin, arrow - 7.5); Canvas.SetTop(ArrowJoin, placement.ArrowOnTop ? 10 : 131);
+        Canvas.SetLeft(ArrowJoin, arrow - 7.5); Canvas.SetTop(ArrowJoin, placement.ArrowOnTop ? 10 : 101);
         TrayNativeMethods.SetWindowPos(handle, new nint(-1), (int)placement.Position.X, (int)placement.Position.Y,
             (int)Math.Ceiling(Width * scale), (int)Math.Ceiling(Height * scale), 0x10);
-        Show(); Activate(); TrayNativeMethods.SetForegroundWindow(handle); ToggleButton.Focus();
+        Show(); Activate(); TrayNativeMethods.SetForegroundWindow(handle); MenuRoot.Focus();
     }
 
     private void OnToggle(object sender, RoutedEventArgs args) { Close(); _toggle(); }
     private void OnExit(object sender, RoutedEventArgs args) { Close(); _exit(); }
     private void OnDeactivated(object? sender, EventArgs args) { if (!_closing) Close(); }
+    /// <summary>键盘切换也会让 WPF 合成 MouseMove；只有物理指针移动才切回鼠标模式。</summary>
+    private void OnMouseMove(object sender, MouseEventArgs args)
+    {
+        if (KeyboardNavigationActive && GetCursorPos(out var pointer)
+            && (pointer.X != _navigationPointer.X || pointer.Y != _navigationPointer.Y)) KeyboardNavigationActive = false;
+    }
     /// <summary>Close 会同步触发 Deactivated，必须在此之前阻止重复关闭。</summary>
     protected override void OnClosing(CancelEventArgs args) { _closing = true; base.OnClosing(args); }
     private void OnKeyDown(object sender, KeyEventArgs args)
     {
         if (args.Key == Key.Escape) { Close(); args.Handled = true; }
-        else if (args.Key is Key.Up or Key.Down)
+        else if (args.Key is Key.Up or Key.Down or Key.Tab)
         {
-            if (ToggleButton.IsKeyboardFocusWithin) ExitButton.Focus(); else ToggleButton.Focus();
+            KeyboardNavigationActive = true;
+            GetCursorPos(out _navigationPointer);
+            if (ToggleButton.IsKeyboardFocusWithin) ExitButton.Focus();
+            else if (ExitButton.IsKeyboardFocusWithin) ToggleButton.Focus();
+            else if (args.Key == Key.Up || args.Key == Key.Tab && Keyboard.Modifiers.HasFlag(ModifierKeys.Shift)) ExitButton.Focus();
+            else ToggleButton.Focus();
             args.Handled = true;
         }
     }
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GetCursorPos(out NativePoint point);
 }

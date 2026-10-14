@@ -3471,4 +3471,31 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="MainRecentEmpty" xml:space="preserve">
     <value>No recent visits. Open an instance to show it here.</value>
   </data>
+  <data name="CloseMainWindow" xml:space="preserve">
+    <value>Close main window</value>
+  </data>
+  <data name="MainCloseQuestion" xml:space="preserve">
+    <value>What should Hermod do when you close the main window?</value>
+  </data>
+  <data name="MainCloseDescription" xml:space="preserve">
+    <value>Hide the main window to keep working sessions open, or exit Hermod after checking all work windows.</value>
+  </data>
+  <data name="MainCloseDoNotAsk" xml:space="preserve">
+    <value>Do not ask again</value>
+  </data>
+  <data name="MainCloseTrayUnavailable" xml:space="preserve">
+    <value>The notification area is unavailable. Hiding is disabled so the main window remains accessible.</value>
+  </data>
+  <data name="MainCloseSettingsHeading" xml:space="preserve">
+    <value>Main window closing</value>
+  </data>
+  <data name="MainCloseAskSetting" xml:space="preserve">
+    <value>Ask when closing the main window</value>
+  </data>
+  <data name="MainCloseDefaultAction" xml:space="preserve">
+    <value>Default close action</value>
+  </data>
+  <data name="MainCloseSettingsHint" xml:space="preserve">
+    <value>Changes apply to the next close immediately and are saved on this device. Exiting still checks unsaved work.</value>
+  </data>
 </root>

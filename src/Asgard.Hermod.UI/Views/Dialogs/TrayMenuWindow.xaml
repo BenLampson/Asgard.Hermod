@@ -4,27 +4,33 @@
         xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization"
         xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
         Title="{loc:Loc TrayMenu}" AutomationProperties.Name="{loc:Loc TrayMenu}"
-        Width="268" Height="152" WindowStyle="None" AllowsTransparency="True"
+        Width="268" Height="122" WindowStyle="None" AllowsTransparency="True"
         Background="Transparent" ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True"
-        PreviewKeyDown="OnKeyDown" Deactivated="OnDeactivated">
+        PreviewKeyDown="OnKeyDown" PreviewMouseMove="OnMouseMove" Deactivated="OnDeactivated">
     <Window.Resources>
-        <Style TargetType="Button" BasedOn="{StaticResource StandardButton}">
+        <Style TargetType="Button">
             <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource TextBodyBrush}" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Padding" Value="10,0" />
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="ActionChrome" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4" Padding="{TemplateBinding Padding}"><ContentPresenter VerticalAlignment="Center" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" /></Border></ControlTemplate></Setter.Value></Setter>
             <Style.Triggers>
-                <Trigger Property="IsKeyboardFocused" Value="True">
+                <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" />
                 </Trigger>
+                <MultiDataTrigger><MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding IsKeyboardFocused, RelativeSource={RelativeSource Self}}" Value="True" />
+                    <Condition Binding="{Binding KeyboardNavigationActive, RelativeSource={RelativeSource AncestorType=Window}}" Value="True" />
+                </MultiDataTrigger.Conditions><Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" /><Setter Property="BorderThickness" Value="1" /></MultiDataTrigger>
             </Style.Triggers>
         </Style>
     </Window.Resources>
-    <Canvas>
-        <Border Canvas.Left="10" Canvas.Top="10" Width="248" Height="123" CornerRadius="7"
+    <Canvas x:Name="MenuRoot" Focusable="True" FocusVisualStyle="{x:Null}">
+        <Border Canvas.Left="10" Canvas.Top="10" Width="248" Height="93" CornerRadius="7"
                 Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1">
             <Border.Effect><DropShadowEffect BlurRadius="12" ShadowDepth="3" Opacity="0.18" /></Border.Effect>
             <StackPanel Margin="6">
-                <TextBlock Text="{loc:Loc AsgardHermod}" Height="30" Padding="10,6" FontSize="12" FontWeight="SemiBold" />
                 <Button x:Name="ToggleButton" Height="36" HorizontalContentAlignment="Left" Click="OnToggle">
                     <StackPanel Orientation="Horizontal">
                         <controls:IconView Kind="app-window" Width="16" Height="16" Margin="0,0,10,0" Foreground="{DynamicResource AccentBrush}" />

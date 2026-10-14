@@ -12,11 +12,12 @@ public sealed class SettingsEditorService : ISettingsEditor
     private readonly ITemporaryFileStorage? _temporaryFiles;
     private readonly IAccountService? _accounts;
     private readonly IAccountEditor? _accountEditor;
+    private readonly IMainWindowClosePreferenceStore? _closePreferences;
 
     /// <summary>延迟获取应用主窗口，让设置窗口及其子窗体形成正确的模态层级。</summary>
     public SettingsEditorService(Func<Window?> getOwner, ITagManagementService tags, ILanguagePreferenceStore languages,
         IFileOpenRuleStore? fileRules = null, ITemporaryFileStorage? temporaryFiles = null,
-        IAccountService? accounts = null, IAccountEditor? accountEditor = null)
+        IAccountService? accounts = null, IAccountEditor? accountEditor = null, IMainWindowClosePreferenceStore? closePreferences = null)
     {
         ArgumentNullException.ThrowIfNull(getOwner);
         ArgumentNullException.ThrowIfNull(tags);
@@ -28,6 +29,7 @@ public sealed class SettingsEditorService : ISettingsEditor
         _temporaryFiles = temporaryFiles;
         _accounts = accounts;
         _accountEditor = accountEditor;
+        _closePreferences = closePreferences;
     }
 
     /// <inheritdoc />
@@ -40,7 +42,7 @@ public sealed class SettingsEditorService : ISettingsEditor
         var dialogs = new WindowsTagDialogService(() => window ?? _getOwner(), _tags);
         var storageDialogs = new WindowsStorageSettingsDialogs(() => window ?? _getOwner());
         using var model = new SettingsViewModel(_tags, dialogs, _languages, _fileRules, _temporaryFiles, storageDialogs,
-            _accounts, _accountEditor is null ? null : () => _accountEditor.OpenAsync(window));
+            _accounts, _accountEditor is null ? null : () => _accountEditor.OpenAsync(window), _closePreferences);
         await model.InitializeAsync();
         model.SelectCategoryCommand.Execute(model.Categories.First(item => item.Id == category));
         window = new SettingsWindow(model) { Owner = _getOwner() };

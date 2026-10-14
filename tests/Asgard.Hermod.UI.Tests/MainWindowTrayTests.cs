@@ -6,19 +6,20 @@ namespace Asgard.Hermod.UI.Tests;
 [Collection(WpfTestCollection.Name)]
 public sealed class MainWindowTrayTests(WpfTestFixture fixture)
 {
-    /// <summary>关闭主窗体只隐藏；正常最小化、重复激活和工作会话互不破坏。</summary>
+    /// <summary>记录默认隐藏动作后关闭只隐藏；正常最小化、重复激活和工作会话互不破坏。</summary>
     [Fact]
     public Task CloseMain_HidesAndRecallsWithoutClosingWork() => fixture.RunAsync(async () =>
     {
         await using var environment = new ShellTestEnvironment();
         using var host = new WorkspaceWindowHost(environment.Shell.Workspace);
         var tray = new Tray(); var preferences = new Preferences();
-        var main = new Asgard.Hermod.MainWindow(environment.Shell, host, tray, preferences, confirmExit: _ => Task.FromResult(true));
+        var main = new Asgard.Hermod.MainWindow(environment.Shell, host, tray, preferences, confirmExit: _ => Task.FromResult(true), closePreferences: new ClosePreferences(false));
         main.Show();
         Assert.True(WindowCloseBehavior.GetHideToTray(main));
         environment.Shell.Workspace.OpenInstance(environment.Local);
         var work = Assert.Single(host.Windows);
         main.Close();
+        await WpfTestFixture.DrainDispatcherAsync();
         Assert.False(main.IsVisible); Assert.False(main.ShowInTaskbar);
         Assert.True(work.IsVisible); Assert.True(work.ShowInTaskbar); Assert.Null(work.Owner);
         Assert.False(work.Page.IsClosed); Assert.Equal(0, environment.Factory.Sessions[0].DisposeCalls);
@@ -29,7 +30,7 @@ public sealed class MainWindowTrayTests(WpfTestFixture fixture)
         Assert.True(main.ShowInTaskbar);
         tray.Activate();
         Assert.NotEqual(WindowState.Minimized, main.WindowState);
-        main.Close(); Assert.Equal(1, tray.Hints);
+        main.Close(); await WpfTestFixture.DrainDispatcherAsync(); Assert.Equal(1, tray.Hints);
         Assert.True(await main.RequestExitAsync());
         Assert.True(tray.Disposed); Assert.All(environment.Factory.Sessions, session => Assert.Equal(1, session.DisposeCalls));
     });
@@ -75,13 +76,13 @@ public sealed class MainWindowTrayTests(WpfTestFixture fixture)
         await main.RequestExitAsync();
     });
 
-    /// <summary>通知区域失效立即恢复主窗口及任务栏，关闭退回正常退出。</summary>
+    /// <summary>通知区域失效立即恢复主窗口及任务栏，记录退出动作仍进入正常退出。</summary>
     [Fact]
     public Task TrayFailure_RestoresMainAndNormalClose() => fixture.RunAsync(async () =>
     {
         await using var environment = new ShellTestEnvironment();
-        var tray = new Tray(); var main = new Asgard.Hermod.MainWindow(environment.Shell, tray: tray);
-        main.Show(); main.Close(); Assert.False(main.IsVisible);
+        var tray = new Tray(); var main = new Asgard.Hermod.MainWindow(environment.Shell, tray: tray, closePreferences: new ClosePreferences(false, MainWindowCloseAction.ExitApplication));
+        main.Show(); main.HideToTray(); Assert.False(main.IsVisible);
         _ = main.Dispatcher.BeginInvoke(() =>
         {
             var dialog = Application.Current.Windows.OfType<Asgard.Hermod.UI.Views.Dialogs.MessageDialog>().Single();
@@ -105,7 +106,7 @@ public sealed class MainWindowTrayTests(WpfTestFixture fixture)
         await using var environment = new ShellTestEnvironment();
         using var host = new WorkspaceWindowHost(environment.Shell.Workspace); var tray = new Tray();
         var main = new Asgard.Hermod.MainWindow(environment.Shell, host, tray,
-            confirmExit: _ => throw new InvalidOperationException("System exit must not ask for confirmation."));
+            confirmExit: _ => throw new InvalidOperationException("System exit must not ask for confirmation."), closePreferences: new ClosePreferences(true));
         main.Show(); environment.Shell.Workspace.OpenLocalTerminal();
         Assert.True(await main.RequestExitAsync(sessionEnding: true));
         Assert.False(main.IsVisible); Assert.True(tray.Disposed); Assert.Equal(0, tray.Hints);
@@ -119,7 +120,7 @@ public sealed class MainWindowTrayTests(WpfTestFixture fixture)
         await using var environment = new ShellTestEnvironment();
         using var host = new WorkspaceWindowHost(environment.Shell.Workspace); var tray = new Tray(); int confirms = 0;
         var main = new Asgard.Hermod.MainWindow(environment.Shell, host, tray,
-            confirmExit: _ => { confirms++; return Task.FromResult(true); });
+            confirmExit: _ => { confirms++; return Task.FromResult(true); }, closePreferences: new ClosePreferences(true));
         main.Show(); environment.Shell.Workspace.OpenLocalTerminal();
         var work = Assert.Single(host.Windows); var input = new TextBox { Text = "keep work draft" };
         var dialog = new HermodDialog { Owner = work, Content = input };
@@ -128,6 +129,8 @@ public sealed class MainWindowTrayTests(WpfTestFixture fixture)
             Assert.False(WindowInteractionNativeMethods.IsEnabled(main));
             Assert.Same(dialog, WindowActivation.FindModal());
             tray.Activate();
+            main.Close();
+            Assert.Empty(Application.Current.Windows.OfType<Asgard.Hermod.UI.Views.Dialogs.MainWindowCloseDialog>());
             Assert.False(await main.RequestExitAsync());
             Assert.Equal(0, confirms); Assert.True(dialog.IsVisible); Assert.Equal("keep work draft", input.Text);
             Assert.False(work.Page.IsClosed); Assert.Equal(0, environment.Factory.Sessions[0].DisposeCalls);
@@ -135,6 +138,13 @@ public sealed class MainWindowTrayTests(WpfTestFixture fixture)
         Assert.True(await main.RequestExitAsync()); Assert.Equal(1, confirms);
     });
 
+    private sealed class ClosePreferences(bool ask, MainWindowCloseAction action = MainWindowCloseAction.HideToTray) : IMainWindowClosePreferenceStore
+    {
+        private MainWindowClosePreference _value = new(ask, action);
+        public event EventHandler? Changed;
+        public MainWindowClosePreference Load() => _value;
+        public void Save(MainWindowClosePreference value) { _value = value; Changed?.Invoke(this, EventArgs.Empty); }
+    }
     private sealed class Preferences : ITrayPreferenceStore
     {
         internal int Saves;

@@ -117,6 +117,15 @@
                            TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" />
                 <TextBlock Text="{Binding LanguageMessage}" Margin="0,16,0,0" TextWrapping="Wrap"
                            AutomationProperties.LiveSetting="Polite" />
+                <StackPanel DataContext="{Binding CloseSettings}" Margin="0,28,0,0">
+                    <StackPanel.Style><Style TargetType="StackPanel"><Style.Triggers><DataTrigger Binding="{Binding}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></StackPanel.Style>
+                    <TextBlock Text="{loc:Loc MainCloseSettingsHeading}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,14" />
+                    <CheckBox Content="{loc:Loc MainCloseAskSetting}" IsChecked="{Binding AskBeforeClosing, Mode=TwoWay}" AutomationProperties.Name="{loc:Loc MainCloseAskSetting}" />
+                    <TextBlock Text="{loc:Loc MainCloseDefaultAction}" Margin="0,16,0,8" />
+                    <ComboBox ItemsSource="{Binding Actions}" DisplayMemberPath="Label" SelectedItem="{Binding SelectedAction, Mode=TwoWay}" Width="280" HorizontalAlignment="Left" AutomationProperties.Name="{loc:Loc MainCloseDefaultAction}" />
+                    <TextBlock Text="{loc:Loc MainCloseSettingsHint}" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,12,0,0" />
+                    <TextBlock Text="{Binding Error}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
         <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto"

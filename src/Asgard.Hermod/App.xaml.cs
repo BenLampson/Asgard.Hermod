@@ -71,7 +71,8 @@ public partial class App : Application
             try { tray = new Asgard.Hermod.UI.Windowing.WindowsTrayIcon(); }
             catch (Exception) { /* 通知区域不可用时仍保留可访问主窗体。 */ }
             _tray = tray;
-            var window = new MainWindow(shell, workspaceWindows, tray, provider.GetRequiredService<ITrayPreferenceStore>(), FinishExitAsync);
+            var window = new MainWindow(shell, workspaceWindows, tray, provider.GetRequiredService<ITrayPreferenceStore>(), FinishExitAsync,
+                closePreferences: provider.GetRequiredService<IMainWindowClosePreferenceStore>());
             window.ExitCommitted += _instance.BeginExit;
             MainWindow = window;
             window.Show();

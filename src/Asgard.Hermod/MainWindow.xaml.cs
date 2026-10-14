@@ -21,14 +21,16 @@ public partial class MainWindow : HermodWindow
     /// <summary>全部预检通过后通知宿主停止接受重复激活。</summary>
     public event Action? ExitCommitted;
 
-    /// <summary>依赖由主进程创建；无托盘时主窗体关闭沿用正常退出流程。</summary>
+    /// <summary>主进程装配关闭偏好；未装配该能力的轻量宿主保留原有关闭行为。</summary>
     public MainWindow(ShellViewModel model, WorkspaceWindowHost? workWindows = null, ITrayIcon? tray = null,
-        ITrayPreferenceStore? preferences = null, Func<Task>? finishExit = null, Func<int, Task<bool>>? confirmExit = null)
+        ITrayPreferenceStore? preferences = null, Func<Task>? finishExit = null, Func<int, Task<bool>>? confirmExit = null,
+        IMainWindowClosePreferenceStore? closePreferences = null)
     {
         ArgumentNullException.ThrowIfNull(model);
         _model = model; _workWindows = workWindows; _tray = tray; _preferences = preferences;
         _finishExit = finishExit; _confirmExit = confirmExit;
         InitializeComponent(); DataContext = model;
+        InitializeClosePreferences(closePreferences);
         WindowCloseBehavior.SetHideToTray(this, tray?.IsAvailable == true);
         model.Sidebar.AddInstanceCommand.ExecutionFailed += OnCommandFailed;
         model.Workspace.CloseTabCommand.ExecutionFailed += OnCommandFailed;
@@ -86,6 +88,8 @@ public partial class MainWindow : HermodWindow
     private void OnTrayAvailabilityChanged()
     {
         WindowCloseBehavior.SetHideToTray(this, _tray?.IsAvailable == true);
+        UpdateClosePresentation();
+        if (_closePrompt is not null) { _closePrompt.SetTrayAvailable(_tray?.IsAvailable == true); if (_tray?.IsAvailable != true) ActivateMain(); return; }
         if (_tray?.IsAvailable == true) { _trayFailureReported = false; return; }
         if (IsExitCommitted) return;
         ActivateMain(); _menu?.Close();
@@ -109,11 +113,12 @@ public partial class MainWindow : HermodWindow
     private void OnCommandFailed(object? sender, Exception exception) =>
         new MessageDialog(Text.Get("Hermod"), Text.Error(exception)) { Owner = DialogOwner.Current ?? this }.ShowDialog();
 
-    /// <summary>关闭按钮及 Alt+F4 默认隐藏；最小化不经过关闭事件。</summary>
+    /// <summary>关闭按钮及 Alt+F4 共用偏好驱动的关闭流程；最小化不经过关闭事件。</summary>
     private void OnWindowClosing(object? sender, System.ComponentModel.CancelEventArgs args)
     {
         if (_closeApproved || _sessionEnding) return;
         args.Cancel = true;
+        if (_closePreferences is not null) { ScheduleMainClose(); return; }
         if (_tray?.IsAvailable == true) HideToTray();
         else _ = RequestExitAsync();
     }
@@ -121,6 +126,7 @@ public partial class MainWindow : HermodWindow
     /// <summary>全应用退出先预检所有窗口，再提交关闭决定并等待所有异步清理。</summary>
     public async Task<bool> RequestExitAsync(bool sessionEnding = false)
     {
+        if (sessionEnding) _closePrompt?.Close();
         if (sessionEnding) { _sessionEnding = true; WindowCloseBehavior.SetHideToTray(this, false); }
         if (!sessionEnding && WindowActivation.FindModal() is { } modal)
         {
@@ -212,6 +218,7 @@ public partial class MainWindow : HermodWindow
     /// <summary>资源释放完成后移除托盘，关闭 UI，最后由宿主释放 IPC、所有权和进程。</summary>
     private async Task FinishExitAsync()
     {
+        if (_closePreferences is not null) _closePreferences.Changed -= OnClosePreferencesChanged;
         _model.Sidebar.AddInstanceCommand.ExecutionFailed -= OnCommandFailed;
         _model.Workspace.CloseTabCommand.ExecutionFailed -= OnCommandFailed;
         ShellView.Dispose(); _workWindows?.Dispose();

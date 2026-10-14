@@ -3471,4 +3471,31 @@
   <data name="MainRecentEmpty" xml:space="preserve">
     <value>暂无最近访问，打开实例后将在这里显示。</value>
   </data>
+  <data name="CloseMainWindow" xml:space="preserve">
+    <value>关闭主窗体</value>
+  </data>
+  <data name="MainCloseQuestion" xml:space="preserve">
+    <value>关闭主窗体时，您希望 Hermod 如何处理？</value>
+  </data>
+  <data name="MainCloseDescription" xml:space="preserve">
+    <value>隐藏主窗体可保留工作会话；退出应用将先检查所有工作窗口。</value>
+  </data>
+  <data name="MainCloseDoNotAsk" xml:space="preserve">
+    <value>不再询问</value>
+  </data>
+  <data name="MainCloseTrayUnavailable" xml:space="preserve">
+    <value>通知区域当前不可用。隐藏操作已禁用，以便您继续访问主窗体。</value>
+  </data>
+  <data name="MainCloseSettingsHeading" xml:space="preserve">
+    <value>主窗体关闭行为</value>
+  </data>
+  <data name="MainCloseAskSetting" xml:space="preserve">
+    <value>关闭主窗体时询问</value>
+  </data>
+  <data name="MainCloseDefaultAction" xml:space="preserve">
+    <value>默认关闭动作</value>
+  </data>
+  <data name="MainCloseSettingsHint" xml:space="preserve">
+    <value>更改会立即用于下一次关闭，并保存在此设备上。退出应用仍会检查未保存的工作。</value>
+  </data>
 </root>

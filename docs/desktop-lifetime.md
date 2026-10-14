@@ -18,21 +18,37 @@ dialog services resolve the active work window; exit preflight supplies an expli
 owner. Main-window activation finds the effective thread modal chain, including
 dialogs owned by independent work windows.
 
-With an available tray, the main window's close button and Alt+F4 hide it and remove
-its taskbar entry. Normal minimization retains the taskbar entry. Closing or hiding
-does not dispose the shell, stop synchronization, disconnect sessions or close work
-windows. The first hide immediately persists `ui.tray.hideHintShown` in SQLite
-`app_setting` and requests one system balloon. Suppressed Windows notifications do
-not cause repeat prompts. The close tooltip and accessibility name describe hiding.
+The main window's close button and Alt+F4 ask whether to hide to the notification
+area or exit Hermod. Asking is enabled by default. Cancel, Escape and closing the
+question leave all windows and preferences unchanged. Unless “Do not ask again”
+is checked when an action is selected, every close asks again. A remembered choice
+atomically persists both the action and disabled asking in SQLite `app_setting`
+under `ui.mainWindow.close`, using stable `hide`/`exit` IDs. Missing, malformed or
+unknown settings default to asking with hide as the default action.
+
+General settings can change “Ask when closing the main window” and the default
+action independently. Changes affect the next close immediately and survive restart.
+The close tooltip and accessibility name follow asking, action and tray availability.
+An unavailable tray disables hiding and explains why in the question; a saved hide
+action also asks in that situation rather than leaving an inaccessible application.
+Repeated closes and existing modal/preflight operations cannot stack questions.
+
+Hiding removes only the main window's taskbar entry and keeps synchronization,
+connections and work windows alive. Normal minimization retains the taskbar entry.
+The first hide immediately persists `ui.tray.hideHintShown` and requests one system
+balloon. Suppressed Windows notifications do not cause repeat balloons.
 
 The native tray uses one stable GUID, version-four callbacks and Windows notification
 area theme icons. Left click, double click and keyboard activation show/restore the
 main window. The menu has only show/hide and exit actions, with visible localized
-labels. Its arrow follows the actual `Shell_NotifyIconGetRect` rectangle, native
-window DPI and monitor work area. Escape and keyboard navigation are supported.
+labels and a separator, with no heading or initially selected item. Actual mouse
+hover adds a background; Tab/arrow navigation adds a keyboard focus outline and
+Enter executes the focused action. Escape and clicking outside close the menu.
+Its arrow follows the actual `Shell_NotifyIconGetRect` rectangle, native window DPI
+and monitor work area. Explicit tray hide/exit actions bypass the close question.
 `TaskbarCreated` and periodic health checks restore the same GUID after Explorer
 rebuilds its notification area. Registration failure restores the main window and
-taskbar entry, gives a safe localized message, and restores normal close-to-exit.
+taskbar entry and gives a safe localized message; it cannot silently execute hiding.
 
 Exit first confirms the impact of open/closing work sessions. Existing modal dialogs
 or single-window close preflight are recalled instead of starting duplicate checks.
@@ -46,7 +62,7 @@ removed by a single-window close), removes the tray and releases host services, 
 and instance ownership. Repeated exit requests cannot reenter this flow.
 
 System logoff/shutdown does not veto Windows by setting `SessionEnding.Cancel`.
-It skips interactive confirmation and gives cleanup a four-second Dispatcher budget,
+It skips the close question and interactive confirmation and gives cleanup a four-second Dispatcher budget,
 then allows the original OS request to continue. Windows may terminate a process
 whose external resource cleanup exceeds that budget. Tests exercise this boundary
 without logging off or restarting the workstation.
@@ -54,6 +70,9 @@ without logging off or restarting the workstation.
 ## Verification
 
 Use Release builds and run these sequentially on Windows with Explorer available.
+These tests create real windows and can activate them even when screenshots use
+transparent windows. Run desktop suites only after the user explicitly confirms
+the desktop is available; stop them immediately when the user resumes computer use.
 The native and full-host tests skip if a user Hermod process is already running, to
 avoid sharing its production tray GUID. Do not run these suites concurrently with
 manual Hermod acceptance or another copy of the native suite.
@@ -73,9 +92,19 @@ Focused xUnit v3 cases:
   executable only uses isolated instance names and never starts application services.
 - `ApplicationProcessTests`: launches the real desktop executable with isolated
   SQLite and `HERMOD_TEMPORARY_DIRECTORY`, opens a real PowerShell work window via
-  UI Automation, closes/hides and recalls the main window, proves the secondary's
-  database is never created, cancels and accepts tray exit, and restarts successfully.
+  UI Automation, cancels the first close question, hides without remembering and is
+  asked again, remembers hiding, proves the secondary's database is never created,
+  cancels and accepts tray exit, and restarts with the saved close behavior.
   All native/UIA operations target only the test PID; no remote server is used.
+- `MainWindowCloseChoiceTests` and `MainWindowClosePreferenceTests`: real dialogs,
+  immediate General settings, all cancellation paths, work-window preservation,
+  tray failure, system ending and malformed SQLite values. Exit choices retain the
+  existing global preflight and module draft protection.
+- `TrayMenuInteractionTests`: targeted HWND mouse messages without moving the desktop pointer,
+  ordinary/hover/keyboard screenshots in both languages and themes, native Tab,
+  arrows and Enter, and no initial selection. Native/UIA suites run serially.
+  The additional physical-pointer cases require explicit user authorization and
+  `HERMOD_RUN_DESKTOP_POINTER_TESTS=1`; default runs do not move the desktop pointer.
 - `WindowsTrayIconTests`: real GUID registration and rectangle retrieval, deletion
   and `TaskbarCreated` restoration of the test icon, removal on disposal, localized
   light/dark menus, Escape, and placement at 100/150/200% scale with negative coordinates.

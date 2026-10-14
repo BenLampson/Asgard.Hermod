@@ -90,6 +90,11 @@ internal static class WindowInteractionNativeMethods
             || !PostMessage(handle, 0x0101, new IntPtr(virtualKey), new IntPtr(unchecked((int)up))))
             throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
     }
+    /// <summary>发送 Alt+F4 最终派发的 SC_CLOSE，经过真实原生窗口关闭流程。</summary>
+    internal static void PostSystemClose(Window window)
+    {
+        if (!PostMessage(Handle(window), 0x0112, 0xF060, 0)) throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+    }
 
     /// <summary>等待同一 HWND 队列中按键之后的标记消息，不能以 Dispatcher 空闲代替原生消息已处理。</summary>
     internal static async Task PressKeyAsync(Window window, uint virtualKey)
@@ -123,6 +128,14 @@ internal static class WindowInteractionNativeMethods
         nint position = new((y << 16) | (x & 0xffff)); nint handle = Handle(window);
         PostMessage(handle, 0x0201, 1, position); PostMessage(handle, 0x0202, 0, position);
         PostMessage(handle, 0x0203, 1, position); PostMessage(handle, 0x0202, 0, position);
+    }
+    /// <summary>鼠标消息仅送给测试 HWND，不移动用户的桌面指针。</summary>
+    internal static void PostPointerMove(Window window, Point position)
+    {
+        var dpi = VisualTreeHelper.GetDpi(window);
+        int x = (int)(position.X * dpi.DpiScaleX), y = (int)(position.Y * dpi.DpiScaleY);
+        if (!PostMessage(Handle(window), 0x0200, 0, new nint((y << 16) | (x & 0xffff))))
+            throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
     }
     /// <summary>将 Escape 送到实际 Popup 的 HWND，让 WPF 原生菜单逻辑关闭。</summary>
     internal static void PostPopupEscape(Visual popup)

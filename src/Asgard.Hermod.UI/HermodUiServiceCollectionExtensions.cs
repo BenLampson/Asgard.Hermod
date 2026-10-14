@@ -22,7 +22,7 @@ public static class HermodUiServiceCollectionExtensions
             provider.GetRequiredService<ILanguagePreferenceStore>(),
             provider.GetRequiredService<IFileOpenRuleStore>(),
             provider.GetRequiredService<ITemporaryFileStorage>(),
-            provider.GetService<IAccountService>(), provider.GetService<IAccountEditor>()));
+            provider.GetService<IAccountService>(), provider.GetService<IAccountEditor>(), provider.GetService<IMainWindowClosePreferenceStore>()));
         services.TryAddSingleton<IFileOpenService>(provider => new WindowsFileOpenService(owner,
             provider.GetRequiredService<IFileOpenRuleStore>()));
         services.TryAddSingleton<IInstanceWorkspaceFactory, InstanceWorkspaceFactory>();

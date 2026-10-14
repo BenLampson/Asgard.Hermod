@@ -26,7 +26,7 @@ public sealed class MainWorkspaceBehaviorTests(WpfTestFixture fixture)
             Assert.Empty(host.Windows);
             var selected = Assert.IsType<MainInstanceRow>(rows.SelectedItem);
             var rowControl = Assert.IsType<ListBoxItem>(rows.ItemContainerGenerator.ContainerFromIndex(0));
-            WindowInteractionNativeMethods.PostDoubleClick(window, rowControl); await WpfTestFixture.DrainDispatcherAsync();
+            WindowInteractionNativeMethods.PostDoubleClick(window, rowControl); await WindowInteractionNativeMethods.DrainNativeMessagesAsync();
             var work = Assert.Single(host.Windows);
             await WindowTestVisuals.UpdateLayoutAsync(window);
             var more = WindowTestVisuals.Descendants<Button>(window).First(button => button.Name == "MoreButton");

@@ -47,6 +47,10 @@ public sealed class ApplicationProcessTests
             await UntilAsync(() => (work = Windows(primary.Id).FirstOrDefault(window => window.Current.Name == "PowerShell")) is not null);
             nint workHandle = new(work!.Current.NativeWindowHandle);
             PostMessage(main, 0x0010, 0, 0);
+            await ChooseMainCloseAsync(primary.Id, "Cancel");
+            Assert.True(IsWindowVisible(main)); Assert.True(IsWindowVisible(workHandle)); Assert.True(IsWindowVisible(savedHandle));
+            PostMessage(main, 0x0010, 0, 0);
+            await ChooseMainCloseAsync(primary.Id, "Hide main window to notification area");
             await UntilAsync(() => !IsWindowVisible(main)); Assert.True(IsWindowVisible(workHandle));
             Assert.True(IsWindowVisible(savedHandle));
             string duplicateDatabase = Path.Combine(storage.DirectoryPath, "must-not-create", "secondary.db");
@@ -56,6 +60,9 @@ public sealed class ApplicationProcessTests
                 Assert.Equal(0, duplicate.ExitCode); Assert.False(File.Exists(duplicateDatabase));
             }
             await UntilAsync(() => IsWindowVisible(main)); Assert.True(IsWindowVisible(workHandle));
+            PostMessage(main, 0x0010, 0, 0);
+            await ChooseMainCloseAsync(primary.Id, "Hide main window to notification area", remember: true);
+            await UntilAsync(() => !IsWindowVisible(main));
             await ExitViaTrayAsync(primary.Id, accept: false);
             Assert.False(primary.HasExited); Assert.True(IsWindowVisible(workHandle));
             await ExitViaTrayAsync(primary.Id, accept: true);
@@ -65,6 +72,10 @@ public sealed class ApplicationProcessTests
             try
             {
                 await UntilAsync(() => Windows(restarted.Id).Any(window => window.Current.Name == "Asgard Hermod"));
+                nint restartedMain = new(Windows(restarted.Id).Single(window => window.Current.Name == "Asgard Hermod").Current.NativeWindowHandle);
+                PostMessage(restartedMain, 0x0010, 0, 0);
+                await UntilAsync(() => !IsWindowVisible(restartedMain));
+                Assert.DoesNotContain(Windows(restarted.Id), window => window.Current.Name == "Close main window");
                 await ExitViaTrayAsync(restarted.Id, accept: true, hasWork: false);
                 await restarted.WaitForExitAsync(TestContext.Current.CancellationToken).WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
                 Assert.Equal(0, restarted.ExitCode);
@@ -111,6 +122,21 @@ public sealed class ApplicationProcessTests
         info.ArgumentList.Add("--database:connectionString=Data Source=" + database + ";Version=3;Pooling=False;");
         info.Environment["HERMOD_TEMPORARY_DIRECTORY"] = Path.Combine(directory, "file-cache");
         return Process.Start(info)!;
+    }
+
+    private static async Task ChooseMainCloseAsync(int processId, string action, bool remember = false)
+    {
+        AutomationElement? FindDialog() => Windows(processId).FirstOrDefault(window => window.Current.Name == "Close main window");
+        if (remember)
+        {
+            var checkbox = await WaitReadyAsync(processId, () => FindDialog()?.FindFirst(TreeScope.Descendants,
+                new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.CheckBox)), TogglePattern.Pattern);
+            var toggle = (TogglePattern)checkbox.GetCurrentPattern(TogglePattern.Pattern);
+            Assert.Equal(ToggleState.Off, toggle.Current.ToggleState); toggle.Toggle();
+            await UntilAsync(() => toggle.Current.ToggleState == ToggleState.On, "关闭选择的记忆勾选生效");
+        }
+        await InvokeReadyAsync(processId, () => FindDialog()?.FindFirst(TreeScope.Descendants, new AndCondition(
+            new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button), new PropertyCondition(AutomationElement.NameProperty, action))));
     }
 
     private static async Task ExitViaTrayAsync(int processId, bool accept, bool hasWork = true)
