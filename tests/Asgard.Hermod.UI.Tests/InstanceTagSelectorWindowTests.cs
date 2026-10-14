@@ -29,7 +29,9 @@ public sealed class InstanceTagSelectorWindowTests(WpfTestFixture fixture)
             window = new NewInstanceWindow(model);
             WindowPreviewCapture.Show(window);
             await WindowTestVisuals.UpdateLayoutAsync(window);
-            var selector = Assert.IsType<InstanceTagSelector>(WindowTestVisuals.Named(window, "ConfirmationTagSelector"));
+            // 初始类型入口会折叠连接正文，隐藏控件可能尚未进入可视树；从其 XAML 名称作用域获取。
+            var connectionContent = Assert.IsType<InstanceConnectionWizardContent>(window.FindName("ConnectionContent"));
+            var selector = Assert.IsType<InstanceTagSelector>(connectionContent.FindName("ConfirmationTagSelector"));
             var trigger = Assert.IsType<Button>(selector.FindName("TagTrigger"));
             Assert.False(selector.IsVisible);
             Assert.False(trigger.IsEnabled);

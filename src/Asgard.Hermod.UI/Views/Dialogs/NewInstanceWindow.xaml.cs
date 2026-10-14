@@ -1,4 +1,5 @@
 using Asgard.Hermod.UI.Controls;
+using Asgard.Hermod.UI.Windowing;
 
 namespace Asgard.Hermod.UI.Views.Dialogs;
 
@@ -7,6 +8,8 @@ public partial class NewInstanceWindow : HermodDialog
 {
     private readonly NewInstanceViewModel _model;
     private readonly IReadOnlyDictionary<string, IInstanceConfigurationContentProvider> _contents;
+    private Size _preferredSize = new(820, 600);
+    private bool _closingAfterFailure;
 
     /// <summary>绑定由宿主提供的真实连接器和持久化状态。</summary>
     public NewInstanceWindow(NewInstanceViewModel model, IEnumerable<IInstanceConfigurationContentProvider>? contents = null)
@@ -25,7 +28,7 @@ public partial class NewInstanceWindow : HermodDialog
     /// <summary>保存事务正在提交时暂缓关闭，避免保存成功却返回取消结果。</summary>
     protected override void OnClosing(CancelEventArgs args)
     {
-        if (_model.IsSaving)
+        if (_model.IsSaving && !_closingAfterFailure)
         {
             args.Cancel = true;
             return;
@@ -33,6 +36,21 @@ public partial class NewInstanceWindow : HermodDialog
         base.OnClosing(args);
         if (!args.Cancel)
             _model.Dispose();
+    }
+
+    /// <summary>模态流程已退出时取消异步工作并回收窗口；异常路径不留下禁用的保存表单。</summary>
+    public void CloseAfterFailure()
+    {
+        _closingAfterFailure = true;
+        try { _model.Dispose(); }
+        finally { Close(); }
+    }
+
+    /// <summary>真实 HWND 的 DPI 可用后限制首次尺寸，避免按主显示器的逻辑工作区估算。</summary>
+    protected override void OnSourceInitialized(EventArgs args)
+    {
+        base.OnSourceInitialized(args);
+        WindowStartupPlacement.Apply(this, _preferredSize, centerOwner: true);
     }
 
     /// <summary>窗口结束后取消连接测试并释放全部业务事件订阅。</summary>
@@ -59,7 +77,12 @@ public partial class NewInstanceWindow : HermodDialog
     }
 
     /// <summary>窗口加载后聚焦当前步骤的首个操作。</summary>
-    private void OnLoaded(object sender, RoutedEventArgs args) => FocusCurrentStep();
+    private void OnLoaded(object sender, RoutedEventArgs args)
+    {
+        // WPF 的 CenterOwner 可能在 SourceInitialized 后重新计算位置，显示后再校正一次边界。
+        WindowStartupPlacement.Apply(this, _preferredSize, centerOwner: true);
+        FocusCurrentStep();
+    }
 
     /// <summary>先等待正文绑定切换可见性，再将键盘焦点交给新步骤。</summary>
     private void OnModelPropertyChanged(object? sender, PropertyChangedEventArgs args)
@@ -78,9 +101,14 @@ public partial class NewInstanceWindow : HermodDialog
     {
         var provider = _model.SelectedType is { } type ? _contents.GetValueOrDefault(type.Id) : null;
         ConnectionContent.InformationContent = provider?.CreateContent(_model);
-        Size desired = provider?.PreferredWizardSize ?? new Size(820, 600);
-        Width = Math.Min(desired.Width, SystemParameters.WorkArea.Width - 40);
-        Height = Math.Min(desired.Height, SystemParameters.WorkArea.Height - 40);
+        _preferredSize = provider?.PreferredWizardSize ?? new Size(820, 600);
+        if (IsLoaded)
+            WindowStartupPlacement.Apply(this, _preferredSize, centerOwner: true);
+        else
+        {
+            Width = _preferredSize.Width;
+            Height = _preferredSize.Height;
+        }
     }
 
     /// <summary>保持键盘导航与当前展示步骤一致。</summary>

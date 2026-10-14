@@ -5,6 +5,23 @@ namespace Asgard.Hermod.UI.Tests;
 /// <summary>用显式工作区和 DPI 验证启动边界，覆盖开发机之外的分辨率与显示器排列。</summary>
 public sealed class WindowStartupPlacementTests
 {
+    /// <summary>所属窗口靠近边缘、位于负坐标副屏或高缩放时，放大后的向导仍留在工作区。</summary>
+    [Theory]
+    [InlineData(0, 0, 1920, 1020, 1.25, 1600, 800, 300, 200)]
+    [InlineData(-1920, -1080, 1920, 1020, 1.5, -1900, -1060, 600, 400)]
+    [InlineData(1920, 0, 1366, 728, 2, 2000, 500, 400, 200)]
+    public void CalculateBounds_ClampsOwnerCenteredWizardToWorkArea(double x, double y, double width, double height,
+        double scale, double ownerX, double ownerY, double ownerWidth, double ownerHeight)
+    {
+        var work = new Rect(x, y, width, height);
+        var owner = new Rect(ownerX, ownerY, ownerWidth, ownerHeight);
+        var result = WindowStartupPlacement.CalculateBounds(work, new DpiScale(scale, scale), new Size(912, 740), owner);
+        Assert.True(result.Left * scale >= work.Left && result.Top * scale >= work.Top);
+        Assert.True(result.Right * scale <= work.Right && result.Bottom * scale <= work.Bottom);
+        Assert.InRange(result.Width, 0, 912);
+        Assert.InRange(result.Height, 0, 740);
+    }
+
     /// <summary>缩放前的期望尺寸保持不变，高缩放或小工作区按可用空间限制尺寸。</summary>
     [Theory]
     [InlineData(0, 0, 1920, 1020, 1, 1, 1360, 860)]

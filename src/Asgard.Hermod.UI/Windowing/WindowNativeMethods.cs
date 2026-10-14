@@ -13,6 +13,11 @@ internal static class WindowNativeMethods
     [DllImport("user32.dll")]
     internal static extern nint MonitorFromWindow(nint window, uint flags);
 
+    /// <summary>读取所属窗口的设备像素边界，避免混用不同显示器的逻辑坐标。</summary>
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool GetWindowRect(nint window, out NativeRectangle rectangle);
+
     /// <summary>读取指定显示器当前的屏幕范围与工作区。</summary>
     [DllImport("user32.dll", EntryPoint = "GetMonitorInfoW")]
     [return: MarshalAs(UnmanagedType.Bool)]

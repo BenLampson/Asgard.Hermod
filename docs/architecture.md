@@ -70,6 +70,23 @@ connection workflow and persistence. Future type-specific views can reuse the
 same picker and container with their own step collections and content without
 putting their protocol behavior into these shared controls.
 
+Every connection form uses `InstanceConfigurationEditorViewModel` in shared UI:
+the generic storage form and the MySQL, Redis and SSH adapters share its field
+projection, visibility tracking and attach/detach lifecycle. Modules declare pane
+membership and update their own summaries through hooks. The editor exposes fixed
+read-only observable collections and applies member changes incrementally without
+Reset notifications. Typing, validation and status updates never replace an
+ItemsSource or rebuild the field editors. New connection forms must reuse this
+editor rather than implement field-list refresh or subscriptions themselves.
+
+The connection wizard uses its current monitor's work area and DPI when it opens
+or changes provider-specific size. It centers on its owner while keeping the
+caption and action footer inside the work area. A modal failure cancels pending
+work and closes the wizard before the shell displays the safe error, including
+failures during a save. Connection editors retain their field collection during
+ordinary value and validation updates, so native selection and typing do not
+rebuild the control currently handling input.
+
 Instance tagging is shared by every connection flow and appears only on its
 final confirmation step. The optional selector opens an independent searchable
 checkbox draft; selecting a parent does not select its descendants. Confirming

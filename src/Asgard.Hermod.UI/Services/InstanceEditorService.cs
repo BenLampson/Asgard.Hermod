@@ -36,8 +36,7 @@ public sealed class InstanceEditorService : IInstanceEditor
         var tags = _tags is null ? null : await _tags.GetTagsAsync();
         using var model = new NewInstanceViewModel(_providers, _configurations, _accounts, _sync, tags);
         var dialog = new NewInstanceWindow(model, _contents) { Owner = _getOwner() };
-        InstanceSummary? created = dialog.ShowDialog() == true ? model.CreatedInstance : null;
-        return created;
+        return ShowAndClose(dialog, model);
     }
 
     /// <inheritdoc />
@@ -52,6 +51,13 @@ public sealed class InstanceEditorService : IInstanceEditor
         var tagIds = _tags is null ? null : await _configurations.GetTagIdsAsync(instanceId);
         using var model = new NewInstanceViewModel(_providers, _configurations, existing, connection, _accounts, _sync, tags, tagIds);
         var dialog = new NewInstanceWindow(model, _contents) { Owner = _getOwner() };
-        return dialog.ShowDialog() == true ? model.CreatedInstance : null;
+        return ShowAndClose(dialog, model);
+    }
+
+    /// <summary>ShowDialog 抛错时不会自动销毁窗口；先清理向导，再让宿主显示原始安全错误。</summary>
+    private static InstanceSummary? ShowAndClose(NewInstanceWindow dialog, NewInstanceViewModel model)
+    {
+        try { return dialog.ShowDialog() == true ? model.CreatedInstance : null; }
+        finally { dialog.CloseAfterFailure(); }
     }
 }
