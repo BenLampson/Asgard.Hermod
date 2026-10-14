@@ -147,6 +147,7 @@
                                             <controls:IconView Kind="ellipsis" Width="16" Height="16" />
                                             <Button.ContextMenu>
                                                 <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                                    <MenuItem Header="{loc:Loc Rename}" Command="{Binding RenameCommand}" CommandParameter="{Binding}" />
                                                     <MenuItem Header="{loc:Loc Edit}" Command="{Binding EditCommand}" CommandParameter="{Binding}" />
                                                     <MenuItem Header="{loc:Loc AddChild}" Command="{Binding AddChildCommand}" CommandParameter="{Binding}" />
                                                     <Separator />
@@ -192,6 +193,7 @@
                             <TextBlock Text="{loc:Loc LinkedInstances}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,22,0,12" />
                             <TextBlock Text="{Binding SelectedInstanceLabel}" FontSize="13" />
                             <StackPanel Orientation="Horizontal" Margin="0,24,0,0">
+                                <Button Content="{loc:Loc Rename}" Command="{Binding RenameCommand}" Height="32" Padding="12,0" Margin="0,0,8,0" />
                                 <Button Command="{Binding EditCommand}" Height="32" Padding="12,0" Margin="0,0,8,0">
                                     <StackPanel Orientation="Horizontal"><controls:IconView Kind="pencil" Width="14" Height="14" Margin="0,0,8,0" /><TextBlock Text="{loc:Loc Edit}" /></StackPanel>
                                 </Button>

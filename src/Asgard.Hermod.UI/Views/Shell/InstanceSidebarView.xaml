@@ -6,6 +6,10 @@
              xmlns:models="clr-namespace:Asgard.Hermod.Abstractions.Models;assembly=Asgard.Hermod.Abstractions"
              x:Name="SidebarRoot">
     <UserControl.Resources>
+        <ContextMenu x:Key="InstanceActions" x:Shared="False" DataContext="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource Self}}">
+            <MenuItem Header="{loc:Loc Rename}" Command="{Binding RenameInstanceCommand}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <MenuItem Header="{loc:Loc EditInstanceTags}" Command="{Binding EditInstanceTagsCommand}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+        </ContextMenu>
         <!-- 所有存储提供商共用琥珀色类型图标，实例列表不展示 Bucket 展开箭头。 -->
         <Style x:Key="InstanceIcon" TargetType="controls:IconView">
             <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
@@ -154,7 +158,7 @@
                                             ToolTip="{Binding AccessibleName}" AutomationProperties.Name="{Binding AccessibleName}"
                                             Margin="0,0,0,2" Padding="12,0" HorizontalContentAlignment="Stretch"
                                             Command="{Binding DataContext.OpenInstanceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                            CommandParameter="{Binding}">
+                                            CommandParameter="{Binding}" AutomationProperties.HelpText="{loc:Loc InstanceQuickActionsHint}" ContextMenu="{StaticResource InstanceActions}" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=ItemsControl}}">
                                         <Button.Style>
                                             <Style TargetType="Button" BasedOn="{StaticResource SidebarItemButton}">
                                                 <Style.Triggers>
@@ -244,7 +248,7 @@
                             <Button Width="36" Height="36" Margin="0,0,0,8"
                                     ToolTip="{Binding AccessibleName}" AutomationProperties.Name="{Binding AccessibleName}" Padding="4"
                                     Command="{Binding DataContext.OpenInstanceCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                    CommandParameter="{Binding}">
+                                    CommandParameter="{Binding}" AutomationProperties.HelpText="{loc:Loc InstanceQuickActionsHint}" ContextMenu="{StaticResource InstanceActions}" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=ItemsControl}}">
                                 <Button.Style>
                                     <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
                                         <Setter Property="Background" Value="Transparent" />

@@ -16,6 +16,18 @@ public sealed class WindowsTagDialogService : ITagDialogService
         _owner = owner;
         _tags = tags;
     }
+    /// <inheritdoc />
+    public Task<ManagedTag?> RenameAsync(ManagedTag tag, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (tag.IsBuiltIn) return Task.FromResult<ManagedTag?>(null);
+        ManagedTag? result = null;
+        using var model = new MetadataEditorViewModel(Text.Get("RenameTag"), Text.Get("TagName"), tag.Name, 80,
+            async (name, _, token) => result = await _tags.RenameAsync(tag.Id, name, token), isTagName: true);
+        var window = new MetadataEditorWindow(model) { Owner = _owner() };
+        try { return Task.FromResult(window.ShowDialog() == true ? result : null); }
+        finally { window.Close(); }
+    }
 
     /// <summary>先读取父级候选，再在当前设置窗口中央打开可重试的编辑表单。</summary>
     public async Task<ManagedTag?> EditAsync(ManagedTag? tag = null, string? parentId = null,

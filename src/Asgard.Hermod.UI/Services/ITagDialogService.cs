@@ -3,6 +3,8 @@ namespace Asgard.Hermod.UI.Services;
 /// <summary>隔离标签管理状态与编辑、删除窗口的创建及所属窗口关系。</summary>
 public interface ITagDialogService
 {
+    /// <summary>只修改名称，保留当前父级、颜色和稳定关联。</summary>
+    Task<ManagedTag?> RenameAsync(ManagedTag tag, CancellationToken cancellationToken = default) => Task.FromResult<ManagedTag?>(null);
     /// <summary>编辑现有标签或创建标签；取消时返回空，添加子级时预填父级。</summary>
     Task<ManagedTag?> EditAsync(ManagedTag? tag = null, string? parentId = null,
         CancellationToken cancellationToken = default);

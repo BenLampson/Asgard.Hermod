@@ -24,6 +24,11 @@ public abstract class WorkspacePageViewModel : ObservableObject, IAsyncDisposabl
     public string Id { get; }
     /// <summary>页签标题；首页只展示图标。</summary>
     public string Header { get => _header; protected set => SetProperty(ref _header, value); }
+    /// <summary>只刷新实例显示名称，保留页面身份、连接、内部页签和草稿。</summary>
+    public void UpdateInstanceMetadata(InstanceSummary instance)
+    {
+        if (InstanceId == instance.Id) Header = instance.Name;
+    }
     /// <summary>页签图标。</summary>
     public string Icon { get; }
     /// <summary>关联实例标识。</summary>

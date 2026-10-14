@@ -322,3 +322,11 @@ S3 protocol tests run the real SDK against controlled HTTP responses, covering
 signing, regional endpoints, pagination, conditional writes, multipart cancellation,
 partial deletion failures and version-aware probe cleanup. Live cloud accounts are
 not required by the test suite.
+
+Instance rows offer independent rename and tag editing actions. Tag management
+also offers a name-only action. These shared dialogs retain failed drafts and
+cancel without writes. Metadata transactions update only names or associations;
+they never decrypt, validate, test, or rewrite connection credentials. Stable
+instance and tag IDs, sessions and internal drafts remain. Open instance titles
+and recent navigation refresh immediately. Tag renaming validates within the
+write transaction and retains the current parent and color.

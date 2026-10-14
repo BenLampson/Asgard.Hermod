@@ -49,6 +49,8 @@ public sealed class InstanceSidebarViewModel : ObservableObject, IDisposable
         OpenLocalTerminalCommand = new RelayCommand(_ => openLocalTerminal());
         AddInstanceCommand = new AsyncRelayCommand(_ => AddInstanceAsync());
         AddInstanceCommand.ExecutionFailed += OnAddInstanceFailed;
+        RenameInstanceCommand = new AsyncRelayCommand(value => EditMetadataAsync(value, false), CanEditMetadata);
+        EditInstanceTagsCommand = new AsyncRelayCommand(value => EditMetadataAsync(value, true), CanEditMetadata);
         if (_tagService is not null)
             _tagService.TagsChanged += OnTagsChanged;
         RefreshTags();
@@ -99,6 +101,34 @@ public sealed class InstanceSidebarViewModel : ObservableObject, IDisposable
     public RelayCommand OpenLocalTerminalCommand { get; }
     /// <summary>收集并添加当前工作区中的实例配置。</summary>
     public AsyncRelayCommand AddInstanceCommand { get; }
+    /// <summary>独立修改实例名称，不测试连接。</summary>
+    public AsyncRelayCommand RenameInstanceCommand { get; }
+    /// <summary>独立调整实例标签。</summary>
+    public AsyncRelayCommand EditInstanceTagsCommand { get; }
+    private bool _metadataDialogOpen;
+    private bool CanEditMetadata(object? value) => !_disposed && !_metadataDialogOpen
+        && value is InstanceItemViewModel { IsLocal: false } instance && _items.Contains(instance);
+    private async Task EditMetadataAsync(object? value, bool editTags)
+    {
+        if (!CanEditMetadata(value) || value is not InstanceItemViewModel instance) return;
+        _metadataDialogOpen = true; RefreshMetadataCommands();
+        try
+        {
+            var result = editTags ? await _editor.EditTagsAsync(instance.Id) : await _editor.RenameAsync(instance.Id);
+            if (result is null || _disposed) return;
+            Interlocked.Increment(ref _refreshRevision);
+            var current = _items.FirstOrDefault(item => item.Id == instance.Id);
+            current?.UpdateSnapshot(result);
+            RefreshTags(); RefreshFilter(); RefreshSyncStates(); OperationError = "";
+            InstancesChanged?.Invoke(this, EventArgs.Empty);
+        }
+        catch (Exception error) { if (!_disposed) OperationError = Text.Error(error); }
+        finally { _metadataDialogOpen = false; RefreshMetadataCommands(); }
+    }
+    private void RefreshMetadataCommands()
+    {
+        RenameInstanceCommand.NotifyCanExecuteChanged(); EditInstanceTagsCommand.NotifyCanExecuteChanged();
+    }
     /// <summary>同步导航选中态，不受当前过滤条件影响。</summary>
     public void SelectInstance(string? instanceId)
     {

@@ -3287,4 +3287,10 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
 {2}</value></data>
   <data name="MySqlResultRow" xml:space="preserve"><value>Result row {0}</value></data>
   <data name="WizardRouteSelectionHint" xml:space="preserve"><value>Choose a connection method. Advanced routes keep separate authentication and identity verification.</value></data>
+  <data name="Rename" xml:space="preserve"><value>Rename</value></data>
+  <data name="RenameInstance" xml:space="preserve"><value>Rename instance</value></data>
+  <data name="RenameTag" xml:space="preserve"><value>Rename tag</value></data>
+  <data name="EditInstanceTags" xml:space="preserve"><value>Edit tags</value></data>
+  <data name="MetadataEditHint" xml:space="preserve"><value>Changes apply immediately. Existing sessions continue.</value></data>
+  <data name="InstanceQuickActionsHint" xml:space="preserve"><value>Right-click or press Shift+F10 to rename this instance or edit its tags.</value></data>
 </root>

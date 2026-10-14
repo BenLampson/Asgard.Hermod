@@ -16,6 +16,7 @@ public sealed class ManagedTagNodeViewModel : ObservableObject
         SelectCommand = new RelayCommand(_ => owner.SelectedNode = this);
         ToggleExpandedCommand = new RelayCommand(_ => IsExpanded = !IsExpanded, _ => HasChildren);
         EditCommand = owner.EditCommand;
+        RenameCommand = owner.RenameCommand;
         AddChildCommand = owner.AddChildCommand;
         DeleteCommand = owner.DeleteCommand;
     }
@@ -59,6 +60,8 @@ public sealed class ManagedTagNodeViewModel : ObservableObject
     public RelayCommand ToggleExpandedCommand { get; }
     /// <summary>上下文菜单复用管理编辑命令。</summary>
     public AsyncRelayCommand EditCommand { get; }
+    /// <summary>菜单通过稳定节点身份只重命名。</summary>
+    public AsyncRelayCommand RenameCommand { get; }
     /// <summary>上下文菜单复用添加子级命令。</summary>
     public AsyncRelayCommand AddChildCommand { get; }
     /// <summary>上下文菜单复用删除确认命令。</summary>

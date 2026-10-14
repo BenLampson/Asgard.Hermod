@@ -27,6 +27,7 @@ public sealed class TagManagementViewModel : ObservableObject, IDisposable
         _dialogs = dialogs;
         NewTagCommand = new AsyncRelayCommand(_ => EditTagAsync(null, null), _ => CanManage);
         EditCommand = new AsyncRelayCommand(parameter => EditTagAsync(Target(parameter), null), CanManageTarget);
+        RenameCommand = new AsyncRelayCommand(parameter => EditTagAsync(Target(parameter), null, true), CanManageTarget);
         AddChildCommand = new AsyncRelayCommand(parameter => EditTagAsync(null, Target(parameter)?.Id), CanManageTarget);
         DeleteCommand = new AsyncRelayCommand(DeleteTagAsync, CanManageTarget);
         RetryCommand = new AsyncRelayCommand(_ => ReloadAsync(), _ => !_isDisposed && !IsLoading);
@@ -89,6 +90,8 @@ public sealed class TagManagementViewModel : ObservableObject, IDisposable
     public AsyncRelayCommand NewTagCommand { get; }
     /// <summary>编辑所选标签或上下文菜单目标。</summary>
     public AsyncRelayCommand EditCommand { get; }
+    /// <summary>只重命名所选标签，不展示父级或颜色设置。</summary>
+    public AsyncRelayCommand RenameCommand { get; }
     /// <summary>添加子级并预填父级。</summary>
     public AsyncRelayCommand AddChildCommand { get; }
     /// <summary>打开完整删除预览。</summary>
@@ -196,13 +199,14 @@ public sealed class TagManagementViewModel : ObservableObject, IDisposable
     private bool CanManageTarget(object? parameter) => CanManage && Target(parameter) is { IsBuiltIn: false };
 
     /// <summary>编辑服务成功后读取真实结果并选中新标签，取消时保留原选择。</summary>
-    private async Task EditTagAsync(ManagedTag? tag, string? parentId)
+    private async Task EditTagAsync(ManagedTag? tag, string? parentId, bool renameOnly = false)
     {
         _isDialogOpen = true;
         RefreshCommands();
         try
         {
-            var result = await _dialogs.EditAsync(tag, parentId, _lifetime.Token);
+            var result = renameOnly && tag is not null ? await _dialogs.RenameAsync(tag, _lifetime.Token)
+                : await _dialogs.EditAsync(tag, parentId, _lifetime.Token);
             if (result is not null && !_isDisposed)
             {
                 SearchText = "";
@@ -254,6 +258,7 @@ public sealed class TagManagementViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(CanManage));
         NewTagCommand.NotifyCanExecuteChanged();
         EditCommand.NotifyCanExecuteChanged();
+        RenameCommand.NotifyCanExecuteChanged();
         AddChildCommand.NotifyCanExecuteChanged();
         DeleteCommand.NotifyCanExecuteChanged();
         RetryCommand.NotifyCanExecuteChanged();

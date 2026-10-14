@@ -42,6 +42,19 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
     public ObservableCollection<WorkspacePageViewModel> Tabs { get; } = [];
     /// <summary>首页负责统计与本机最近访问，关闭页签后仍维护访问记录。</summary>
     public HomeWorkspaceViewModel Home { get; }
+    /// <summary>已打开会话按稳定实例标识刷新标题，不重建页面或重新连接。</summary>
+    public void RefreshInstanceMetadata(IReadOnlyList<InstanceItemViewModel> instances)
+    {
+        foreach (var page in Tabs)
+        {
+            var current = instances.FirstOrDefault(instance => instance.Id == page.InstanceId);
+            if (current is null) continue;
+            if (_instances.TryGetValue(page, out var existing) && !ReferenceEquals(current, existing))
+                existing.UpdateSnapshot(current.Summary);
+            page.UpdateInstanceMetadata(current.Summary);
+        }
+        Home.Refresh(instances);
+    }
     /// <summary>当前工作页；全部页签关闭后为空。</summary>
     public WorkspacePageViewModel? SelectedTab
     {

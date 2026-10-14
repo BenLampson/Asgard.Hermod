@@ -3287,4 +3287,10 @@
 {2}</value></data>
   <data name="MySqlResultRow" xml:space="preserve"><value>结果第 {0} 行</value></data>
   <data name="WizardRouteSelectionHint" xml:space="preserve"><value>选择连接方式。高级路由保留独立认证和主机身份验证。</value></data>
+  <data name="Rename" xml:space="preserve"><value>重命名</value></data>
+  <data name="RenameInstance" xml:space="preserve"><value>重命名实例</value></data>
+  <data name="RenameTag" xml:space="preserve"><value>重命名标签</value></data>
+  <data name="EditInstanceTags" xml:space="preserve"><value>编辑标签</value></data>
+  <data name="MetadataEditHint" xml:space="preserve"><value>修改立即生效，当前会话继续运行。</value></data>
+  <data name="InstanceQuickActionsHint" xml:space="preserve"><value>右键或按 Shift+F10 可重命名实例或编辑其标签。</value></data>
 </root>

@@ -54,6 +54,28 @@ public sealed class InstanceEditorService : IInstanceEditor
         return ShowAndClose(dialog, model);
     }
 
+    /// <inheritdoc />
+    public Task<InstanceSummary?> RenameAsync(string instanceId) => EditMetadataAsync(instanceId, false);
+    /// <inheritdoc />
+    public Task<InstanceSummary?> EditTagsAsync(string instanceId) => EditMetadataAsync(instanceId, true);
+    private async Task<InstanceSummary?> EditMetadataAsync(string instanceId, bool editTags)
+    {
+        if (_sync is not null) await _sync.PrepareWorkspaceAsync();
+        var existing = _configurations.GetInstances().SingleOrDefault(instance => instance.Id == instanceId)
+            ?? throw Text.Exception("ThisInstanceNoLongerExistsRefreshTheInstanceList");
+        var tags = editTags && _tags is not null ? await _tags.GetTagsAsync() : null;
+        var selectedIds = editTags ? await _configurations.GetTagIdsAsync(instanceId) : null;
+        var expectedAccount = _accounts?.Account;
+        InstanceSummary? result = null;
+        using var model = new MetadataEditorViewModel(Text.Get(editTags ? "EditInstanceTags" : "RenameInstance"), Text.Get("InstanceName"), existing.Name, 128,
+            async (name, ids, token) => result = await _configurations.UpdateMetadataAsync(instanceId, new()
+            { Name = editTags ? null : name, TagIds = editTags ? ids : null, ExpectedAccount = expectedAccount, CheckExpectedAccount = true }, token),
+            isTagEditing: editTags, tags: tags, selectedIds: selectedIds);
+        var dialog = new MetadataEditorWindow(model) { Owner = _getOwner() };
+        try { return dialog.ShowDialog() == true ? result : null; }
+        finally { dialog.Close(); }
+    }
+
     /// <summary>ShowDialog 抛错时不会自动销毁窗口；先清理向导，再让宿主显示原始安全错误。</summary>
     private static InstanceSummary? ShowAndClose(NewInstanceWindow dialog, NewInstanceViewModel model)
     {

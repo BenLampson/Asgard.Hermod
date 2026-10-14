@@ -32,7 +32,7 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
             registry, id => IsSignedIn ? _sync?.GetInstanceStatus(id) ?? ConfigurationSyncStatus.PasswordRequired : ConfigurationSyncStatus.Local);
         Workspace.Home.AddInstanceCommand = Sidebar.AddInstanceCommand;
         Workspace.Home.OpenLocalTerminalCommand = Sidebar.OpenLocalTerminalCommand;
-        Workspace.Home.Refresh(Sidebar.AllInstances);
+        Workspace.RefreshInstanceMetadata(Sidebar.AllInstances);
         OpenSettingsCommand = new AsyncRelayCommand(_ => settings?.OpenAsync() ?? Task.CompletedTask,
             _ => settings is not null);
         OpenAccountCommand = new AsyncRelayCommand(_ => (IsSignedIn ? accountEditor?.OpenAsync() : accountEditor?.OpenForSignInAsync()) ?? Task.CompletedTask,
@@ -203,7 +203,7 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     private void OnInstancesChanged(object? sender, EventArgs args)
     {
         RefreshGlobalSearch();
-        Workspace.Home.Refresh(Sidebar.AllInstances);
+        Workspace.RefreshInstanceMetadata(Sidebar.AllInstances);
     }
 
     /// <summary>将页签选中态同步到展开和收起导航。</summary>
