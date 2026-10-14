@@ -67,6 +67,7 @@ public sealed class ConnectionInputFocusTests(WpfTestFixture fixture)
                 {
                     TypeCharacter(value[index]);
                     await WindowTestVisuals.UpdateLayoutAsync(window);
+                    Assert.True(input.IsKeyboardFocused, WindowInteractionNativeMethods.DescribeFocus(window, input));
                     Assert.Same(input, Keyboard.FocusedElement);
                     Assert.Same(window, Window.GetWindow(input));
                     Assert.Equal(value[..(index + 1)], input.Text);

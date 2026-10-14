@@ -34,17 +34,15 @@ public sealed class ApplicationProcessTests
             await UntilAsync(() => { primary.Refresh(); main = primary.MainWindowHandle; return main != 0 && IsWindowVisible(main); });
             var root = AutomationElement.FromHandle(main);
             Assert.Equal("Asgard Hermod", root.Current.Name);
-            await OpenSavedInstanceAsync(root, main);
+            await OpenSavedInstanceAsync(primary.Id, root, main);
             AutomationElement? saved = null;
             await UntilAsync(() => (saved = Windows(primary.Id).FirstOrDefault(window => window.Current.Name == "Acceptance database")) is not null);
             nint savedHandle = new(saved!.Current.NativeWindowHandle);
-            await OpenSavedInstanceAsync(root, main);
+            await OpenSavedInstanceAsync(primary.Id, root, main);
             Assert.Single(Windows(primary.Id), window => window.Current.Name == "Acceptance database");
-            AutomationElement? local = null;
-            await UntilAsync(() => (local = root.FindFirst(TreeScope.Descendants, new AndCondition(
+            await InvokeReadyAsync(primary.Id, () => root.FindFirst(TreeScope.Descendants, new AndCondition(
                 new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button),
-                new PropertyCondition(AutomationElement.NameProperty, "Local terminal")))) is not null);
-            Invoke(local!);
+                new PropertyCondition(AutomationElement.NameProperty, "Local terminal"))));
             AutomationElement? work = null;
             await UntilAsync(() => (work = Windows(primary.Id).FirstOrDefault(window => window.Current.Name == "PowerShell")) is not null);
             nint workHandle = new(work!.Current.NativeWindowHandle);
@@ -84,15 +82,23 @@ public sealed class ApplicationProcessTests
         }
     }
 
-    private static async Task OpenSavedInstanceAsync(AutomationElement root, nint main)
+    private static async Task OpenSavedInstanceAsync(int processId, AutomationElement root, nint main)
     {
-        var text = root.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, "Acceptance database"));
-        Assert.NotNull(text);
-        var row = text;
-        while (row.Current.ControlType != ControlType.ListItem) row = TreeWalker.ControlViewWalker.GetParent(row);
-        ((SelectionItemPattern)row.GetCurrentPattern(SelectionItemPattern.Pattern)).Select(); row.SetFocus();
-        PostMessage(main, 0x0100, 0x0D, 0x001C0001); PostMessage(main, 0x0101, 0x0D, unchecked((nint)0xC01C0001));
-        await Task.Delay(100, TestContext.Current.CancellationToken);
+        var row = await WaitReadyAsync(processId, () =>
+        {
+            var element = root.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, "Acceptance database"));
+            while (element is not null && element.Current.ControlType != ControlType.ListItem) element = TreeWalker.ControlViewWalker.GetParent(element);
+            return element;
+        }, SelectionItemPattern.Pattern);
+        var selection = (SelectionItemPattern)row.GetCurrentPattern(SelectionItemPattern.Pattern);
+        selection.Select(); row.SetFocus();
+        await UntilAsync(() => row.Current.HasKeyboardFocus && selection.Current.IsSelected && GetForegroundWindow() == main,
+            "保存实例行获得实际焦点");
+        Assert.True(PostMessage(main, 0x0100, 0x0D, 0x001C0001));
+        Assert.True(PostMessage(main, 0x0101, 0x0D, unchecked((nint)0xC01C0001)));
+        // 只发送一次打开动作；等待工作窗口真正激活，复用断言也不会抢在排队的 Enter 之前。
+        await UntilAsync(() => Windows(processId).Any(window => window.Current.Name == "Acceptance database"
+            && window.Current.NativeWindowHandle == GetForegroundWindow()), "保存实例工作窗口激活");
     }
 
     private static Process Start(string database, string directory)
@@ -122,13 +128,11 @@ public sealed class ApplicationProcessTests
         }, 0);
         Assert.NotEqual(0, tray);
         PostMessage(tray, 0x8001, 0, new nint((1 << 16) | 0x007B));
-        AutomationElement? menu = null;
-        await UntilAsync(() => (menu = Windows(processId).FirstOrDefault(window => window.Current.Name == "Hermod tray menu")) is not null);
-        Invoke(menu!.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, "Exit Hermod")));
+        await InvokeReadyAsync(processId, () => Windows(processId).FirstOrDefault(window => window.Current.Name == "Hermod tray menu")?
+            .FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, "Exit Hermod")));
         if (!hasWork) return;
-        AutomationElement? confirmation = null;
-        await UntilAsync(() => (confirmation = Windows(processId).FirstOrDefault(window => window.Current.Name == "Exit Hermod")) is not null);
-        Invoke(confirmation!.FindFirst(TreeScope.Descendants, new AndCondition(
+        await InvokeReadyAsync(processId, () => Windows(processId).FirstOrDefault(window => window.Current.Name == "Exit Hermod")?
+            .FindFirst(TreeScope.Descendants, new AndCondition(
             new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button),
             new PropertyCondition(AutomationElement.NameProperty, accept ? "Exit Hermod" : "Cancel"))));
         if (!accept) await UntilAsync(() => !Windows(processId).Any(window => window.Current.Name == "Exit Hermod"));
@@ -142,13 +146,33 @@ public sealed class ApplicationProcessTests
         return roots.Concat(roots.SelectMany(root => root.FindAll(TreeScope.Descendants,
             new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Window)).Cast<AutomationElement>())).ToArray();
     }
-    private static void Invoke(AutomationElement element) => ((InvokePattern)element.GetCurrentPattern(InvokePattern.Pattern)).Invoke();
-    private static async Task UntilAsync(Func<bool> predicate)
+    /// <summary>窗口出现不代表子控件已进入 UIA 树；每个动作均验证归属进程、可见、启用及所需模式。</summary>
+    private static async Task<AutomationElement> WaitReadyAsync(int processId, Func<AutomationElement?> find, AutomationPattern pattern)
+    {
+        AutomationElement? ready = null;
+        await UntilAsync(() =>
+        {
+            var element = find();
+            if (element is null) return false;
+            var state = element.Current;
+            if (state.ProcessId != processId || !state.IsEnabled || state.IsOffscreen || !element.TryGetCurrentPattern(pattern, out _)) return false;
+            ready = element; return true;
+        }, "可操作的目标 UIA 元素");
+        return ready!;
+    }
+    private static async Task InvokeReadyAsync(int processId, Func<AutomationElement?> find)
+    {
+        var element = await WaitReadyAsync(processId, find, InvokePattern.Pattern);
+        ((InvokePattern)element.GetCurrentPattern(InvokePattern.Pattern)).Invoke();
+    }
+    private static async Task UntilAsync(Func<bool> predicate, string state = "预期窗口状态")
     {
         var watch = Stopwatch.StartNew();
-        while (!predicate())
+        while (true)
         {
-            Assert.True(watch.Elapsed < TimeSpan.FromSeconds(12), "真实 Hermod 进程未在期限内达到预期窗口状态。");
+            try { if (predicate()) return; }
+            catch (ElementNotAvailableException) { /* UIA 提供程序重建时重新查询，绝不重放已发送的动作。 */ }
+            Assert.True(watch.Elapsed < TimeSpan.FromSeconds(12), "真实 Hermod 进程未在期限内达到：" + state);
             await Task.Delay(75, TestContext.Current.CancellationToken);
         }
     }
@@ -157,5 +181,6 @@ public sealed class ApplicationProcessTests
     [DllImport("user32.dll")] private static extern uint GetWindowThreadProcessId(nint window, out uint processId);
     [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern int GetWindowText(nint window, System.Text.StringBuilder text, int length);
     [DllImport("user32.dll")] private static extern bool IsWindowVisible(nint window);
+    [DllImport("user32.dll")] private static extern nint GetForegroundWindow();
     [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern bool PostMessage(nint window, uint message, nint wParam, nint lParam);
 }

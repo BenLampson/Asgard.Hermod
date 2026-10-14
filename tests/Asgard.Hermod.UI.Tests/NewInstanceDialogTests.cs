@@ -259,7 +259,7 @@ public sealed class NewInstanceDialogTests
     /// <summary>发送真实回车消息，并等待绑定、焦点和布局操作完成。</summary>
     private static async Task PressEnterAsync(NewInstanceWindow dialog)
     {
-        WindowInteractionNativeMethods.PostKey(dialog, 0x0D);
+        await WindowInteractionNativeMethods.PressKeyAsync(dialog, 0x0D);
         await WindowTestVisuals.UpdateLayoutAsync(dialog);
     }
 

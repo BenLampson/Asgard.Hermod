@@ -31,7 +31,9 @@ public sealed class WpfTestFixture : IAsyncLifetime
         var operation = _dispatcher.InvokeAsync(async () =>
         {
             int initialExceptions = _unhandled.Count;
-            await action();
+            await WindowInteractionNativeMethods.DrainNativeMessagesAsync();
+            try { await action(); }
+            finally { await WindowInteractionNativeMethods.DrainNativeMessagesAsync(); }
             Assert.True(initialExceptions == _unhandled.Count, string.Join(Environment.NewLine,
                 _unhandled.Skip(initialExceptions).Select(error => error.ToString())));
         });

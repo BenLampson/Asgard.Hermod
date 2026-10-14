@@ -6,6 +6,43 @@ namespace Asgard.Hermod.UI.Tests;
 /// <summary>测试专用的 HWND 交互，消息只发给测试窗口，不生成全桌面键盘输入。</summary>
 internal static class WindowInteractionNativeMethods
 {
+    [DllImport("user32.dll")] private static extern nint GetForegroundWindow();
+    [DllImport("user32.dll")] private static extern nint GetFocus();
+    [DllImport("user32.dll")] private static extern uint GetWindowThreadProcessId(nint window, out uint processId);
+    [DllImport("kernel32.dll")] private static extern uint GetCurrentThreadId();
+    [DllImport("user32.dll", EntryPoint = "PostThreadMessageW", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool PostThreadMessage(uint threadId, uint message, nint value, nint state);
+    /// <summary>用真实线程消息屏障结束上一窗口的原生输入处理，再排空其衍生的 Dispatcher 通知。</summary>
+    internal static async Task DrainNativeMessagesAsync()
+    {
+        const uint marker = 0x83EF;
+        var completed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        nint token = new(Environment.TickCount64);
+        void Filter(ref MSG message, ref bool handled)
+        {
+            if (message.message == marker && message.wParam == token) { handled = true; completed.TrySetResult(); }
+        }
+        ComponentDispatcher.ThreadFilterMessage += Filter;
+        try
+        {
+            if (!PostThreadMessage(GetCurrentThreadId(), marker, token, 0)) throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+            await completed.Task.WaitAsync(TimeSpan.FromSeconds(3), TestContext.Current.CancellationToken);
+            await WpfTestFixture.DrainDispatcherAsync();
+        }
+        finally { ComponentDispatcher.ThreadFilterMessage -= Filter; }
+    }
+    /// <summary>失败时区分控件被移除与桌面原生激活切换，不把输入丢失归因于猜测。</summary>
+    internal static string DescribeFocus(Window window, FrameworkElement expected)
+    {
+        nint foreground = GetForegroundWindow(); GetWindowThreadProcessId(foreground, out uint processId);
+        string processName;
+        try { processName = System.Diagnostics.Process.GetProcessById((int)processId).ProcessName; }
+        catch (ArgumentException) { processName = "closed"; }
+        return $"Active={window.IsActive}; Loaded={expected.IsLoaded}; Visible={expected.IsVisible}; "
+            + $"SameWindow={ReferenceEquals(window, Window.GetWindow(expected))}; NativeFocus={GetFocus()}; "
+            + $"ExpectedWindow={Handle(window)}; Foreground={foreground}; ForegroundProcess={processName}({processId})";
+    }
     /// <summary>WS_CAPTION 同时包含边框与对话框边框位。</summary>
     private const uint CaptionStyle = 0x00C00000;
     /// <summary>WS_THICKFRAME 代表原生可缩放边缘。</summary>
@@ -51,7 +88,31 @@ internal static class WindowInteractionNativeMethods
         uint up = down | 0xC0000000;
         if (!PostMessage(handle, 0x0100, new IntPtr(virtualKey), new IntPtr(down))
             || !PostMessage(handle, 0x0101, new IntPtr(virtualKey), new IntPtr(unchecked((int)up))))
-            throw new Win32Exception(Marshal.GetLastWin32Error());
+            throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+    }
+
+    /// <summary>等待同一 HWND 队列中按键之后的标记消息，不能以 Dispatcher 空闲代替原生消息已处理。</summary>
+    internal static async Task PressKeyAsync(Window window, uint virtualKey)
+    {
+        const int marker = 0x83EE;
+        var processed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var source = Assert.IsType<HwndSource>(HwndSource.FromHwnd(Handle(window)));
+        nint token = new(Environment.TickCount64);
+        nint Hook(nint handle, int message, nint value, nint state, ref bool handled)
+        {
+            if (message == marker && value == token) processed.TrySetResult();
+            return 0;
+        }
+        EventHandler closed = (_, _) => processed.TrySetResult();
+        window.Closed += closed;
+        source.AddHook(Hook);
+        try
+        {
+            PostKey(window, virtualKey);
+            if (!PostMessage(source.Handle, marker, token, 0)) throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+            await processed.Task.WaitAsync(TimeSpan.FromSeconds(3), TestContext.Current.CancellationToken);
+        }
+        finally { window.Closed -= closed; if (!source.IsDisposed) source.RemoveHook(Hook); }
     }
     /// <summary>双击消息仅发给被测 HWND，不移动系统鼠标或影响其他应用。</summary>
     internal static void PostDoubleClick(Window window, FrameworkElement target)

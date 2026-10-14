@@ -33,7 +33,7 @@ public sealed class WorkspaceToolsTests(WpfTestFixture fixture)
         var window = new HermodWindow { Content = host, Width = 600, Height = 500 };
         try
         {
-            WindowPreviewCapture.Show(window); await WindowTestVisuals.UpdateLayoutAsync(window);
+            await ChangeLoadedStateAsync(true, () => WindowPreviewCapture.Show(window)); await WindowTestVisuals.UpdateLayoutAsync(window);
             tools.IsOpen = true; await WindowTestVisuals.UpdateLayoutAsync(window);
             var filter = Assert.IsType<TextBox>(tools.FindName("ToolFilter"));
             Assert.Equal(Text.Get("WorkspaceFindTool"), System.Windows.Automation.AutomationProperties.GetName(filter));
@@ -52,10 +52,21 @@ public sealed class WorkspaceToolsTests(WpfTestFixture fixture)
             var source = PresentationSource.FromVisual(filter)!;
             filter.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, source, 0, Key.Escape) { RoutedEvent = Keyboard.PreviewKeyDownEvent });
             await WpfTestFixture.DrainDispatcherAsync(); Assert.False(tools.IsOpen); Assert.Equal(1, calls);
-            host.Children.Remove(tools); await WindowTestVisuals.UpdateLayoutAsync(window);
+            await ChangeLoadedStateAsync(false, () => host.Children.Remove(tools)); await WindowTestVisuals.UpdateLayoutAsync(window);
             items.Add(new("after-unload", "Fixture extension", "settings-2", new RelayCommand(_ => calls++)));
             Assert.Equal(2, tools.FilteredTools.Count);
-            host.Children.Add(tools); await WindowTestVisuals.UpdateLayoutAsync(window); Assert.Equal(3, tools.FilteredTools.Count);
+            await ChangeLoadedStateAsync(true, () => host.Children.Add(tools)); await WindowTestVisuals.UpdateLayoutAsync(window); Assert.Equal(3, tools.FilteredTools.Count);
+
+            async Task ChangeLoadedStateAsync(bool loaded, Action change)
+            {
+                var completed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+                RoutedEvent routed = loaded ? FrameworkElement.LoadedEvent : FrameworkElement.UnloadedEvent;
+                RoutedEventHandler handler = (_, _) => completed.TrySetResult();
+                tools.AddHandler(routed, handler);
+                try { change(); await completed.Task.WaitAsync(TimeSpan.FromSeconds(3), TestContext.Current.CancellationToken); }
+                finally { tools.RemoveHandler(routed, handler); }
+                Assert.Equal(loaded, tools.IsLoaded);
+            }
         }
         finally { tools.Close(false); window.Close(); themes.SetTheme(UiTheme.Light); CultureInfo.CurrentUICulture = previous; CultureInfo.DefaultThreadCurrentUICulture = previousDefault; }
     });
