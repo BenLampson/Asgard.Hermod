@@ -19,6 +19,8 @@ The canvas directory groups the designs into these regions:
 7. Brand assets and alternative concepts
 8. SSH connection flows, workspace states and refinements (08 / 08B / 08C)
 9. Redis connection flows and workspace states (09 / 09B)
+10. MySQL connection flows, TLS and SSH routing, test/save states and bilingual
+    handoff contracts (10), plus database/table browsing and SQL workspaces (10B)
 
 Region 05A contains storage connection flows. Region 04B contains shared layout
 components and their implementation contract. Storage, SSH and Redis reference
@@ -26,6 +28,22 @@ the same `Instance Wizard`, `Wizard Body`, `Wizard Navigation` and `Wizard Actio
 components. Step labels, counts, progress and enabled actions belong to the type;
 the protocol form belongs in the content slot. The five displayed steps are
 examples, not a fixed requirement of the common container.
+
+Region 10 reuses the same connection components for MySQL. It covers the type
+entry, direct TCP and SSH routes, optional default database, verified TLS and
+client certificates, connection tests, local/account save choices and final tags.
+Its light, dark and English examples include recoverable failures and guarded
+saving. SQL browsing and editing workspaces are outside this connection design.
+
+Region 10B contains the connected MySQL workspace. Its reusable object tree
+groups databases, object categories, tables and their columns, indexes, foreign
+keys and triggers. Object tabs preserve per-object view state, while SQL tabs
+retain their own execution database, draft and result sets. The workspace reuses
+App Shell, the shared instance list, field/action controls, session tools and
+child windows. Screens cover table data and metadata, SQL execution and result
+limits, lazy tree loading/search, recoverable errors, unsaved drafts, English dark
+mode and a compact object-tree drawer. Interaction and localization contracts
+accompany the editable designs.
 
 SSH and Redis workspaces inherit `App Shell` title bars, instance navigation,
 document tabs, theme controls and collapsed rails. Their instance lists reference
