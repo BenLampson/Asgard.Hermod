@@ -96,9 +96,13 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
     /// <summary>每个语句和结果集独立保留的网格。</summary>
     public ObservableCollection<MySqlGridViewModel> Results { get; } = [];
     /// <summary>活动结果集，切换保留列宽和滚动。</summary>
-    public MySqlGridViewModel? SelectedResult { get; set { if (SetProperty(ref field, value)) { OnPropertyChanged(nameof(EditHint)); OnPropertyChanged(nameof(HasResult)); } } }
+    public MySqlGridViewModel? SelectedResult { get; set { if (SetProperty(ref field, value)) { OnPropertyChanged(nameof(EditHint)); OnPropertyChanged(nameof(HasResult)); OnPropertyChanged(nameof(HasDataRows)); OnPropertyChanged(nameof(CanEditRows)); } } }
     /// <summary>当前是否有结果可展示。</summary>
     public bool HasResult => SelectedResult is not null;
+    /// <summary>当前结果实际包含数据行，区别于尚未查询和已查询的空结果。</summary>
+    public bool HasDataRows => SelectedResult?.HasRows == true;
+    /// <summary>仅已有且允许编辑的数据行提供草稿操作入口。</summary>
+    public bool CanEditRows => HasDataRows && SelectedResult?.IsEditable == true;
     /// <summary>当前对象已读取的结构元数据。</summary>
     public IReadOnlyList<MySqlObject> Structure { get; private set; } = [];
     /// <summary>数据和结构区使用公共选择器。</summary>
@@ -152,7 +156,7 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
             if (!IsMetadataOnly)
             {
                 var result = await session.ReadTableAsync(Database, Name, Offset, token); SetResults([result]);
-                Status = Text.Format("MySqlPageStatus", result.Rows.Count == 0 ? 0 : Offset + 1, Offset + result.Rows.Count);
+                Status = result.Rows.Count == 0 ? Text.Get("MySqlNoRows") : Text.Format("MySqlPageStatus", Offset + 1, Offset + result.Rows.Count);
             }
             var structure = new List<MySqlObject>();
             foreach (var kind in IsMetadataOnly ? new[] { MySqlObjectKind.Parameters } : Kind == MySqlObjectKind.View ? [MySqlObjectKind.Columns] : new[] { MySqlObjectKind.Columns, MySqlObjectKind.Indexes, MySqlObjectKind.ForeignKeys, MySqlObjectKind.Triggers })

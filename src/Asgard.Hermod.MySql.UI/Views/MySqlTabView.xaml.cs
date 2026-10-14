@@ -20,7 +20,7 @@ public partial class MySqlTabView : UserControl
         ShowResult();
     }
     private void OnChanged(object? sender, PropertyChangedEventArgs args)
-    { if (args.PropertyName == nameof(MySqlTabViewModel.SelectedResult)) ShowResult(); if (args.PropertyName == nameof(MySqlTabViewModel.Section)) Layout(); }
+    { if (args.PropertyName == nameof(MySqlTabViewModel.SelectedResult)) ShowResult(); if (args.PropertyName is nameof(MySqlTabViewModel.Section) or nameof(MySqlTabViewModel.Offset)) Layout(); }
     private void ShowResult()
     {
         if (_model is null) return;
@@ -37,7 +37,8 @@ public partial class MySqlTabView : UserControl
         EditorSplitterRow.Height = new(_model?.IsQuery == true ? 6 : 0);
         StructurePanel.Visibility = structure ? Visibility.Visible : Visibility.Collapsed; DataPanel.Visibility = structure ? Visibility.Collapsed : Visibility.Visible;
         DataActions.Visibility = structure ? Visibility.Collapsed : Visibility.Visible;
-        PageButtons.Visibility = _model?.IsQuery == false && !structure ? Visibility.Visible : Visibility.Collapsed;
+        // 空的后续页保留返回上一页；首个空页不提供无效分页。
+        PageButtons.Visibility = _model?.IsQuery == false && !structure && (_model.HasDataRows || _model.Offset > 0) ? Visibility.Visible : Visibility.Collapsed;
     }
     private void OnDataSizeChanged(object sender, SizeChangedEventArgs args)
     {

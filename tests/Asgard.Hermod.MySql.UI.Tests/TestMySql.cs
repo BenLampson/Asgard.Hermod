@@ -14,8 +14,9 @@ internal sealed class TestMySql : IMySqlSessionFactory
     internal bool Unknown, CommitBeforeUnknown;
     internal TaskCompletionSource? BlockedQuery;
     internal Exception? ListFailure;
+    internal MySqlResult? ResultOverride;
     public Task<IMySqlSession> OpenAsync(InstanceConnectionOptions options, CancellationToken cancellationToken = default) { Opens++; return Task.FromResult<IMySqlSession>(new Session(this)); }
-    internal MySqlResult Result() => new(1, 1, Columns, [Columns.Select(column => MySqlValues.Clone(Values[column.Name])).ToArray()], EditableTable: Table);
+    internal MySqlResult Result() => ResultOverride ?? new(1, 1, Columns, [Columns.Select(column => MySqlValues.Clone(Values[column.Name])).ToArray()], EditableTable: Table);
     private sealed class Session(TestMySql server) : IMySqlSession
     {
         public MySqlSessionOptions Options => MySqlSessionOptions.Parse(Connection);

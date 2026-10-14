@@ -31,6 +31,11 @@ when object listing is unavailable. Object tabs are deduplicated by database,
 kind and original name. Tabs show the object name; the content header and tooltip
 show its database/schema context. Tree selection and keyboard focus style only
 the current row, while ancestors retain their expansion indicators.
+The object-tree header has refresh only. Opening an object by its known name is
+available from the tree menu and does not imply creating a database object.
+Empty loaded branches have no expansion button. Tab title tooltips use WPF hover
+timing and disappear after three seconds; keyboard focus retains the full
+accessible name without leaving a floating title over the workspace.
 Structure sections separately show columns, indexes, foreign keys, triggers and
 object definitions. Views and routines expose only their applicable sections.
 Definitions use the full content area and remain read-only. Section changes keep
@@ -81,6 +86,10 @@ row range or pending-change count; full editing guidance is available on the inf
 icon. Arrow buttons have localized previous/next tooltips and accessibility names.
 Narrow windows truncate status text while keeping paging, revert, save and any
 required verification action on the same row. Query results have no page buttons.
+Empty results keep their column headers and show a localized no-data message,
+without an insert row, edit actions or an editing hint. Read-only results hide
+edit actions. The first empty table page hides paging; an empty later page keeps
+the previous-page action so the user can return to existing rows.
 
 The save transaction locks each original row, compares its complete typed baseline
 and commits the batch only if all comparisons succeed. Conflicts show original,

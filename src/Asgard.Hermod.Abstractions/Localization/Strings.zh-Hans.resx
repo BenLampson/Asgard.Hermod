@@ -3221,6 +3221,7 @@
   <data name="MySqlFileTooLarge" xml:space="preserve"><value>SQL 文件超过 10 MiB 上限。</value></data>
   <data name="MySqlExportLoaded" xml:space="preserve"><value>导出已加载行</value></data>
   <data name="MySqlNoResults" xml:space="preserve"><value>执行 SQL 或打开表以查看结果。</value></data>
+  <data name="MySqlNoRows" xml:space="preserve"><value>暂无数据。</value></data>
   <data name="MySqlMessages" xml:space="preserve"><value>执行消息</value></data>
   <data name="MySqlStatementSucceeded" xml:space="preserve"><value>语句 {0} 执行完成，影响 {1} 行。</value></data>
   <data name="MySqlStatementStopped" xml:space="preserve"><value>语句 {0} 已停止。此前的语句可能已经生效。</value></data>

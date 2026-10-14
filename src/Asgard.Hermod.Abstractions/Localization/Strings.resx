@@ -3221,6 +3221,7 @@
   <data name="MySqlFileTooLarge" xml:space="preserve"><value>The SQL file exceeds the 10 MiB limit.</value></data>
   <data name="MySqlExportLoaded" xml:space="preserve"><value>Export loaded rows</value></data>
   <data name="MySqlNoResults" xml:space="preserve"><value>Run SQL or open a table to view results.</value></data>
+  <data name="MySqlNoRows" xml:space="preserve"><value>No rows to display.</value></data>
   <data name="MySqlMessages" xml:space="preserve"><value>Execution messages</value></data>
   <data name="MySqlStatementSucceeded" xml:space="preserve"><value>Statement {0} completed; {1} rows affected.</value></data>
   <data name="MySqlStatementStopped" xml:space="preserve"><value>Statement {0} stopped. Earlier statements may have taken effect.</value></data>

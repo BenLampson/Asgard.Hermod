@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Windows.Controls.Primitives;
 using Asgard.Hermod.Abstractions.Localization;
 using Asgard.Hermod.MySql;
 
@@ -37,6 +38,13 @@ public sealed class WorkspaceLayoutTests(WpfTestFixture fixture)
                 Assert.Equal(0, Assert.IsType<SolidColorBrush>(row.Background).Color.A);
             }
             Assert.Same(Application.Current.Resources["AccentBrush"], Assert.IsType<Border>(objectItem.Template.FindName("Row", objectItem)).BorderBrush);
+            Assert.DoesNotContain(WindowTestVisuals.Descendants<IconView>(Assert.IsType<Border>(view.FindName("TreePanel"))), icon => icon.Kind == "plus");
+            Assert.Equal(Text.Get("MySqlOpenKnownObject"), Assert.IsType<MenuItem>(Assert.Single(tree.ContextMenu.Items.Cast<object>())).Header);
+            var emptyBranch = database.Children[1]; await model.Tree.LoadAsync(emptyBranch); emptyBranch.IsExpanded = true;
+            await WindowTestVisuals.UpdateLayoutAsync(window);
+            var emptyItem = Assert.IsType<WorkspaceTreeViewItem>(databaseItem.ItemContainerGenerator.ContainerFromItem(emptyBranch));
+            Assert.Empty(emptyBranch.Children); Assert.False(emptyBranch.HasMore);
+            Assert.Equal(Visibility.Hidden, Assert.IsType<ToggleButton>(emptyItem.Template.FindName("Expander", emptyItem)).Visibility);
             await WindowPreviewCapture.VerifyAsync(window, $"mysql-table-{language}-{theme}");
             var tableView = Assert.IsType<MySqlTabView>(Assert.IsType<ContentControl>(view.FindName("TabHost")).Content);
             var context = Assert.IsType<Grid>(tableView.FindName("ObjectContext"));

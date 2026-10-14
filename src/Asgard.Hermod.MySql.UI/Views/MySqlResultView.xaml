@@ -20,5 +20,5 @@
  </UserControl.Resources>
  <Grid><DataGrid x:Name="ResultGrid" Style="{StaticResource WorkspaceResultGrid}" ItemsSource="{Binding Rows}" LoadingRow="OnLoadingRow" BeginningEdit="OnBeginningEdit" CellEditEnding="OnCellEditEnding" PreviewKeyDown="OnKeyDown" AutomationProperties.Name="{loc:Loc MySqlQueryResults}">
   <DataGrid.ContextMenu><ContextMenu><MenuItem Header="{loc:Loc MySqlOpenField}" Click="OnOpenCurrent" /><MenuItem Header="{loc:Loc MySqlRevertCell}" Click="OnRevertCell" /></ContextMenu></DataGrid.ContextMenu>
- </DataGrid></Grid>
+ </DataGrid><TextBlock x:Name="EmptyResult" Text="{loc:Loc MySqlNoRows}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="24" Foreground="{DynamicResource TextMutedBrush}" IsHitTestVisible="False"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding HasRows}" Value="False"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock></Grid>
 </UserControl>

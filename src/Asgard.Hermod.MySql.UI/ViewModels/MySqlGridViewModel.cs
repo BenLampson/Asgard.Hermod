@@ -14,6 +14,8 @@ public sealed class MySqlGridViewModel : ObservableObject
     public IReadOnlyList<MySqlColumn> Columns => Result.Columns;
     /// <summary>已加载的有界结果行。</summary>
     public IReadOnlyList<MySqlRowViewModel> Rows { get; }
+    /// <summary>空结果保留列头，但不显示虚构的新行入口。</summary>
+    public bool HasRows => Rows.Count > 0;
     /// <summary>是否满足当前完整结果和编辑权限条件。</summary>
     public bool IsEditable => Result.EditableTable is not null && !Result.IsTruncated;
     /// <summary>存在未应用或未提交的修改。</summary>

@@ -103,3 +103,6 @@ names, database/schema context, metadata typography and separate full-height DDL
 views match the real WPF previews in both themes and languages.
 The table footer combines row status, paging arrows and edit actions in one 32px
 row, with guidance on the info icon and a separator between paging and saving.
+The empty-result component bezAV retains column headers with a no-data message
+and no insert or edit actions. Tree headers expose refresh only; title hints use
+bounded hover timing rather than a persistent keyboard-focus popup.
