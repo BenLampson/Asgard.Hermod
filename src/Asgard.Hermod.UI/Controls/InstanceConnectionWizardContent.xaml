@@ -87,7 +87,7 @@
                 <TextBox x:Name="NameInput" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Height="36" MaxLength="128"
                          AutomationProperties.Name="{loc:Loc InstanceName}" />
             </controls:FormField>
-            <ItemsControl ItemsSource="{Binding Fields}">
+            <ItemsControl ItemsSource="{Binding ConfigurationEditor.Fields}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <controls:InstanceConfigurationFieldEditor Margin="0,0,0,20" />

@@ -25,6 +25,8 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
         ArgumentNullException.ThrowIfNull(configurations);
         _registry = registry;
         _configurations = configurations;
+        ConfigurationEditor = new(this);
+        ConfigurationEditor.Attach();
         TagSelection = new(tags);
         TagSelection.PropertyChanged += OnTagSelectionChanged;
         _accounts = accounts; _sync = sync;
@@ -51,6 +53,8 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
     public IReadOnlyList<InstanceProviderDescriptor> Providers { get; private set; } = [];
     /// <summary>当前服务商声明的配置字段，每次切换类型或服务重新创建。</summary>
     public IReadOnlyList<InstanceConfigurationFieldViewModel> Fields { get; private set; } = [];
+    /// <summary>通用表单与确认页使用统一字段集合管理，模块正文复用相同的公共实现。</summary>
+    public InstanceConfigurationEditorViewModel ConfigurationEditor { get; }
     /// <summary>所选连接流程的进度，类型入口没有步骤集合。</summary>
     public IReadOnlyList<InstanceWizardStep> Steps { get; private set; } = [];
     /// <summary>当前步骤只允许导航命令改变，无法跳过连接测试。</summary>
@@ -176,6 +180,7 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
         if (_disposed)
             return;
         _disposed = true;
+        ConfigurationEditor.Dispose();
         TagSelection.SetEditable(false);
         TagSelection.PropertyChanged -= OnTagSelectionChanged;
         if (_accounts is not null) _accounts.AccountChanged -= OnSaveAccountChanged;
@@ -218,9 +223,8 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
     {
         var parameters = Fields.ToDictionary(item => item.Key, item => item.Value, StringComparer.Ordinal);
         foreach (var item in Fields) item.UpdateVisibility(parameters);
-        OnPropertyChanged(nameof(VisibleFields));
     }
 
     /// <summary>确认页只展示本次实际使用的字段。</summary>
-    public IEnumerable<InstanceConfigurationFieldViewModel> VisibleFields => Fields.Where(item => item.IsVisible);
+    public IEnumerable<InstanceConfigurationFieldViewModel> VisibleFields => ConfigurationEditor.VisibleFields;
 }

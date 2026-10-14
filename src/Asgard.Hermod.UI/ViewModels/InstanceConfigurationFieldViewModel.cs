@@ -84,7 +84,9 @@ public sealed class InstanceConfigurationFieldViewModel : ObservableObject
     /// <summary>依赖变化不删除输入；隐藏字段不会进入连接快照。</summary>
     internal void UpdateVisibility(IReadOnlyDictionary<string, string> parameters)
     {
-        IsVisible = InstanceFieldValidation.IsApplicable(Definition, parameters);
+        bool visible = InstanceFieldValidation.IsApplicable(Definition, parameters);
+        if (IsVisible == visible) return;
+        IsVisible = visible;
         OnPropertyChanged(nameof(IsVisible));
         OnPropertyChanged(nameof(IsValid));
         OnPropertyChanged(nameof(Error));

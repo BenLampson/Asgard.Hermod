@@ -1,21 +1,16 @@
 namespace Asgard.Hermod.Ssh.UI.ViewModels;
 
 /// <summary>布局适配器引用公共字段状态，不另建保存、校验或测试实现。</summary>
-public sealed class SshConnectionEditorViewModel : ObservableObject, IDisposable
+public sealed class SshConnectionEditorViewModel : InstanceConfigurationEditorViewModel
 {
     private string _pane = "target";
     private string? _panesRoute = "";
-    private bool _attached;
-    private readonly InstanceConfigurationFieldViewModel _absent = new(new("absent", "", IsRequired: false));
 
     /// <summary>连接方式切换时重新读取公共字段，不保留旧路径的凭据引用。</summary>
-    public SshConnectionEditorViewModel(NewInstanceViewModel wizard)
+    public SshConnectionEditorViewModel(NewInstanceViewModel wizard) : base(wizard)
     {
-        Wizard = wizard;
         Attach();
     }
-    /// <summary>名称、回退命令与校验由公共向导提供。</summary>
-    public NewInstanceViewModel Wizard { get; }
     /// <summary>展示目标与连接路径的整句摘要。</summary>
     public string RouteSummary => IsJump ? Text.Format("SshJumpRouteSummary", Field("jump.host").Value, Field("host").Value)
         : IsProxy ? Text.Format("SshJumpRouteSummary", Field("proxy.host").Value, Field("host").Value)
@@ -71,7 +66,7 @@ public sealed class SshConnectionEditorViewModel : ObservableObject, IDisposable
     private string Prefix => IsJumpPane ? "jump." : "";
 
     /// <summary>通过稳定字段标识引用公共状态。</summary>
-    private InstanceConfigurationFieldViewModel Field(string key) => Wizard.Fields.FirstOrDefault(item => item.Key == key) ?? _absent;
+    private InstanceConfigurationFieldViewModel Field(string key) => GetField(key);
     /// <summary>切换仅改变可见分区，保留所有已填写值。</summary>
     private void SelectPane(string pane)
     {
@@ -79,11 +74,14 @@ public sealed class SshConnectionEditorViewModel : ObservableObject, IDisposable
         _pane = pane;
         Refresh();
     }
-    /// <summary>字段变化同时刷新路径摘要和所选认证的说明。</summary>
-    private void OnWizardChanged(object? sender, PropertyChangedEventArgs args)
+    /// <summary>字段源更换后更新具名布局，不在模块内维护字段订阅。</summary>
+    protected override void OnFieldsChanged() => Refresh();
+
+    /// <summary>普通输入仅更新相关摘要，不重新通知整组字段绑定。</summary>
+    protected override void OnFieldValueChanged(InstanceConfigurationFieldViewModel item)
     {
-        if (args.PropertyName == nameof(NewInstanceViewModel.Fields)) _pane = "target";
-        if (args.PropertyName is nameof(NewInstanceViewModel.Fields) or nameof(NewInstanceViewModel.VisibleFields)) Refresh();
+        if (item.Key is "host" or "jump.host" or "proxy.host") OnPropertyChanged(nameof(RouteSummary));
+        if (item.Key == Prefix + "auth") OnPropertyChanged(nameof(UsesAgent));
     }
     /// <summary>字段引用由协议标识决定，不在视图里比较翻译标签。</summary>
     private void Refresh()
@@ -92,6 +90,7 @@ public sealed class SshConnectionEditorViewModel : ObservableObject, IDisposable
         if (_panesRoute != Wizard.SelectedProvider?.Id)
         {
             _panesRoute = Wizard.SelectedProvider?.Id;
+            _pane = "target";
             Panes = IsJump ? [new("target", Text.Get("SshHost")), new("jump", Text.Get("SshJumpHost"))]
                 : IsProxy ? [new("target", Text.Get("SshHost")), new("proxy", Text.Get("SshProxySettings"))]
                 : [new("target", Text.Get("SshHost"))];
@@ -102,8 +101,4 @@ public sealed class SshConnectionEditorViewModel : ObservableObject, IDisposable
             nameof(Password), nameof(KeyFile), nameof(Passphrase), nameof(UsesAgent), nameof(ProxyType), nameof(ProxyHost), nameof(ProxyPort),
             nameof(ProxyUser), nameof(ProxyPassword), nameof(ProxyDns), nameof(Timeout) }) OnPropertyChanged(name);
     }
-    /// <inheritdoc />
-    public void Dispose() { Wizard.PropertyChanged -= OnWizardChanged; _attached = false; }
-    /// <summary>缓存视图重新进入可视树时恢复事件，不重复订阅。</summary>
-    public void Attach() { if (_attached) return; _attached = true; Wizard.PropertyChanged += OnWizardChanged; Refresh(); }
 }
