@@ -5,6 +5,13 @@ public interface ILocalConfigurationRepository
 {
     /// <summary>读取实例与完整标签快照，不进行任何凭据解密。</summary>
     LocalConfigurationSnapshot GetSnapshot(CancellationToken cancellationToken = default);
+    /// <summary>事务只更新指定元数据列和关联，提交前准备返回快照，不触碰密文。</summary>
+    LocalConfigurationSnapshot UpdateInstanceMetadata(string instanceId, InstanceMetadataChange change,
+        CancellationToken cancellationToken = default) =>
+        throw new NotSupportedException(Text.Get("TheCurrentConfigurationServiceDoesNotSupportEditingInstances"));
+    /// <summary>以当前事务中的父级和颜色验证名称，只写名称及规范化名称。</summary>
+    ManagedTag RenameTag(string tagId, string name, CancellationToken cancellationToken = default) =>
+        throw new NotSupportedException(Text.Get("TheOperationFailedTryAgain"));
     /// <summary>读取指定实例的密文记录，不存在时返回 null。</summary>
     StoredInstanceConfiguration? GetInstance(string instanceId, CancellationToken cancellationToken = default);
     /// <summary>在同一事务中保存实例与已验证存在的标签关联。</summary>

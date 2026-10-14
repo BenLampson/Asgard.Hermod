@@ -7,6 +7,19 @@ public sealed class SyncedInstanceConfigurationService(IInstanceConfigurationSer
     /// <inheritdoc />
     public IReadOnlyList<InstanceSummary> GetInstances() => local.GetInstances();
     /// <inheritdoc />
+    public async Task<InstanceSummary> UpdateMetadataAsync(string instanceId, InstanceMetadataChange change, CancellationToken cancellationToken = default)
+    {
+        InstanceSummary? saved = null;
+        await sync.RunLocalChangeAsync(async () =>
+        {
+            if (change.CheckExpectedAccount && (change.ExpectedAccount?.SubjectId != accounts.Account?.SubjectId
+                || change.ExpectedAccount?.TenantId != accounts.Account?.TenantId || change.ExpectedAccount?.ApplicationId != accounts.Account?.ApplicationId))
+                throw Text.Exception("SyncAccountChanged");
+            saved = await local.UpdateMetadataAsync(instanceId, change, cancellationToken);
+        }, cancellationToken);
+        return saved!;
+    }
+    /// <inheritdoc />
     public Task<IReadOnlyList<string>> GetTagIdsAsync(string instanceId, CancellationToken cancellationToken = default) =>
         local.GetTagIdsAsync(instanceId, cancellationToken);
     /// <inheritdoc />

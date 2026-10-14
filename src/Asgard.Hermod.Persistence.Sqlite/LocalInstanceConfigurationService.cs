@@ -6,7 +6,7 @@ using Asgard.Hermod.Abstractions.Security;
 namespace Asgard.Hermod.Persistence.Sqlite;
 
 /// <summary>实例配置应用服务，负责第三方边界、参数保护和安全导航快照。</summary>
-public sealed class LocalInstanceConfigurationService : IInstanceConfigurationService
+public sealed partial class LocalInstanceConfigurationService : IInstanceConfigurationService
 {
     /// <summary>仅处理密文和 SQLite 事务的仓储。</summary>
     private readonly ILocalConfigurationRepository _repository;
@@ -154,6 +154,12 @@ public sealed class LocalInstanceConfigurationService : IInstanceConfigurationSe
         InstanceProviderDescriptor? descriptor = _providers.Types.Any(type => type.Id == instance.TypeId)
             ? _providers.GetProviders(instance.TypeId).FirstOrDefault(value => value.Id == instance.ProviderId)
             : null;
+        return CreateSummary(instance, tags, descriptor);
+    }
+
+    /// <summary>提交后只使用已经准备好的描述，不调用插件或数据库。</summary>
+    private static InstanceSummary CreateSummary(StoredInstanceConfiguration instance, IReadOnlyList<ManagedTag> tags, InstanceProviderDescriptor? descriptor)
+    {
         HashSet<string> tagIds = instance.TagIds.ToHashSet(StringComparer.Ordinal);
         return new InstanceSummary(instance.Id, instance.Name, instance.Name,
             descriptor?.Icon ?? "database", tags.Where(tag => tagIds.Contains(tag.Id)).Select(tag => tag.Path).ToArray(),

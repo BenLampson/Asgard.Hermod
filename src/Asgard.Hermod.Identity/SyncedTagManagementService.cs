@@ -8,6 +8,13 @@ public sealed class SyncedTagManagementService(ITagManagementService local, ICon
     /// <inheritdoc />
     public Task<IReadOnlyList<ManagedTag>> GetTagsAsync(CancellationToken cancellationToken = default) => local.GetTagsAsync(cancellationToken);
     /// <inheritdoc />
+    public async Task<ManagedTag> RenameAsync(string tagId, string name, CancellationToken cancellationToken = default)
+    {
+        ManagedTag? renamed = null;
+        await sync.RunLocalChangeAsync(async () => renamed = await local.RenameAsync(tagId, name, cancellationToken), cancellationToken);
+        return renamed!;
+    }
+    /// <inheritdoc />
     public Task<TagDeletionPreview> PreviewDeleteAsync(string tagId, CancellationToken cancellationToken = default) => local.PreviewDeleteAsync(tagId, cancellationToken);
     /// <inheritdoc />
     public async Task<ManagedTag> SaveAsync(string? tagId, TagEditDraft draft, CancellationToken cancellationToken = default)

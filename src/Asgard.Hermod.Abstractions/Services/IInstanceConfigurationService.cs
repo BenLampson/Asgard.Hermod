@@ -5,6 +5,10 @@ public interface IInstanceConfigurationService
 {
     /// <summary>读取不包含凭据的导航快照。</summary>
     IReadOnlyList<InstanceSummary> GetInstances();
+    /// <summary>仅更新名称或标签，不读取、测试或改写连接参数和凭据。</summary>
+    Task<InstanceSummary> UpdateMetadataAsync(string instanceId, InstanceMetadataChange change,
+        CancellationToken cancellationToken = default) =>
+        throw new NotSupportedException(Text.Get("TheCurrentConfigurationServiceDoesNotSupportEditingInstances"));
     /// <summary>读取实例关联的稳定标签标识，编辑器不从显示路径反推身份。</summary>
     Task<IReadOnlyList<string>> GetTagIdsAsync(string instanceId,
         CancellationToken cancellationToken = default) =>

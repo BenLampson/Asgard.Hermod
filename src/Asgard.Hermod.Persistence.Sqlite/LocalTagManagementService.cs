@@ -15,6 +15,13 @@ public sealed class LocalTagManagementService : ITagManagementService
 
     /// <inheritdoc />
     public event EventHandler? TagsChanged;
+    /// <inheritdoc />
+    public async Task<ManagedTag> RenameAsync(string tagId, string name, CancellationToken cancellationToken = default)
+    {
+        var result = await Task.Run(() => _repository.RenameTag(tagId, name, cancellationToken), cancellationToken).ConfigureAwait(false);
+        NotifyTagsChanged();
+        return result;
+    }
 
     /// <inheritdoc />
     public Task<IReadOnlyList<ManagedTag>> GetTagsAsync(CancellationToken cancellationToken = default) =>

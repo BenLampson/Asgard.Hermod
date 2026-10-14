@@ -1,7 +1,7 @@
 namespace Asgard.Hermod.Persistence.Sqlite;
 
 /// <summary>复用应用 FreeSql 连接池，以参数化 SQLite 命令完成密文配置和标签事务。</summary>
-public sealed class SqliteConfigurationRepository : ILocalConfigurationRepository
+public sealed partial class SqliteConfigurationRepository : ILocalConfigurationRepository
 {
     /// <summary>由应用容器释放的唯一业务数据库连接池。</summary>
     private readonly IFreeSql _database;
