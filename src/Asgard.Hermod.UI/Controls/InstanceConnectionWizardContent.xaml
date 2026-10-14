@@ -8,6 +8,7 @@
         <BooleanToVisibilityConverter x:Key="WizardVisibility" />
         <!-- 卡片共用正文滚动区域，列表内部不创建会吞掉滚轮的 ScrollViewer。 -->
         <Style x:Key="WizardCardList" TargetType="ListBox">
+            <Setter Property="Focusable" Value="False" /><Setter Property="IsTabStop" Value="False" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListBox"><ItemsPresenter /></ControlTemplate>
@@ -19,6 +20,7 @@
         </Style>
         <!-- 列表负责服务商选中同步，卡片复用全局选项外观。 -->
         <Style x:Key="ProviderListItem" TargetType="ListBoxItem">
+            <Setter Property="Focusable" Value="False" /><Setter Property="IsTabStop" Value="False" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="Margin" Value="0,0,0,8" />
             <Setter Property="Template">

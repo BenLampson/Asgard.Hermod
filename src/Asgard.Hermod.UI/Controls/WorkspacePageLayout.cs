@@ -30,8 +30,13 @@ public class WorkspacePageLayout : ContentControl
     public static readonly DependencyProperty IsCompactProperty = IsCompactPropertyKey.DependencyProperty;
 
     /// <summary>从公共资源加载布局，不要求协议模块复制 Grid 或样式。</summary>
-    static WorkspacePageLayout() => DefaultStyleKeyProperty.OverrideMetadata(typeof(WorkspacePageLayout),
-        new FrameworkPropertyMetadata(typeof(WorkspacePageLayout)));
+    static WorkspacePageLayout()
+    {
+        DefaultStyleKeyProperty.OverrideMetadata(typeof(WorkspacePageLayout), new FrameworkPropertyMetadata(typeof(WorkspacePageLayout)));
+        // 展示容器不占焦点，内部输入和按钮继续按原生顺序参与导航。
+        FocusableProperty.OverrideMetadata(typeof(WorkspacePageLayout), new FrameworkPropertyMetadata(false));
+        IsTabStopProperty.OverrideMetadata(typeof(WorkspacePageLayout), new FrameworkPropertyMetadata(false));
+    }
 
     /// <summary>尺寸变化只更新展示状态，终端或编辑器自行响应实际正文尺寸。</summary>
     public WorkspacePageLayout() => SizeChanged += (_, _) => RefreshCompactState();

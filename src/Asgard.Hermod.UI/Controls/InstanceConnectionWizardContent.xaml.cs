@@ -21,9 +21,9 @@ public partial class InstanceConnectionWizardContent : UserControl
     /// <summary>宿主在正文显示后把焦点交给当前步骤；没有输入控件时交给公共操作栏。</summary>
     internal bool FocusCurrentStep(int step, bool isEditing)
     {
+        if (step == 1 && !isEditing) return ProviderList.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
         Control? target = step switch
         {
-            1 when !isEditing => ProviderList,
             2 when InformationContent is null => NameInput,
             2 => InformationContent as Control,
             3 => StartTestButton,

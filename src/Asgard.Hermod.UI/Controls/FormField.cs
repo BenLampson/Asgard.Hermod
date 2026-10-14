@@ -26,8 +26,13 @@ public class FormField : ContentControl
     public static readonly DependencyProperty HasErrorProperty = HasErrorPropertyKey.DependencyProperty;
 
     /// <summary>自动加载主题资源中的表单字段模板。</summary>
-    static FormField() => DefaultStyleKeyProperty.OverrideMetadata(typeof(FormField),
-        new FrameworkPropertyMetadata(typeof(FormField)));
+    static FormField()
+    {
+        DefaultStyleKeyProperty.OverrideMetadata(typeof(FormField), new FrameworkPropertyMetadata(typeof(FormField)));
+        // 展示容器不占焦点，内部输入和按钮继续按原生顺序参与导航。
+        FocusableProperty.OverrideMetadata(typeof(FormField), new FrameworkPropertyMetadata(false));
+        IsTabStopProperty.OverrideMetadata(typeof(FormField), new FrameworkPropertyMetadata(false));
+    }
 
     /// <summary>当前字段名称。</summary>
     public string Label { get => (string)GetValue(LabelProperty); set => SetValue(LabelProperty, value); }

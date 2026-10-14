@@ -28,7 +28,7 @@
             </Style.Triggers>
         </Style>
         <Style x:Key="WizardStepNumber" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontSize" Value="12" />
             <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
@@ -106,6 +106,7 @@
     </Style>
     <!-- UniformGrid 固定两列，最后一张也保留半行宽度；卡片列表不创建内层 ScrollViewer。 -->
     <Style TargetType="controls:InstanceTypePicker">
+        <Setter Property="Focusable" Value="False" /><Setter Property="IsTabStop" Value="False" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Margin" Value="-8,0" />
         <Setter Property="BorderThickness" Value="0" />
@@ -118,6 +119,7 @@
         </Setter.Value></Setter>
         <Setter Property="ItemContainerStyle"><Setter.Value>
             <Style TargetType="ListBoxItem">
+                <Setter Property="Focusable" Value="False" /><Setter Property="IsTabStop" Value="False" />
                 <Setter Property="FocusVisualStyle" Value="{x:Null}" />
                 <Setter Property="Margin" Value="8,0,8,16" />
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />

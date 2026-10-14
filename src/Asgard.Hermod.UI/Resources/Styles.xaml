@@ -9,6 +9,11 @@
         <ResourceDictionary Source="MenuStyles.xaml" />
         <ResourceDictionary Source="WorkspaceDataGrid.xaml" />
     </ResourceDictionary.MergedDictionaries>
+    <!-- 纯内容宿主不作为操作项；其子控件仍可通过 Tab 访问。 -->
+    <Style TargetType="ContentControl">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+    </Style>
     <!-- 字号、圆角和颜色对应 Pencil 的基础控件，动态颜色支持即时换肤。 -->
     <Style TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{DynamicResource UiFont}" />

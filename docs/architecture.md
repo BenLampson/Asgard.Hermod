@@ -330,3 +330,10 @@ they never decrypt, validate, test, or rewrite connection credentials. Stable
 instance and tag IDs, sessions and internal drafts remain. Open instance titles
 and recent navigation refresh immediately. Tag renaming validates within the
 write transaction and retains the current parent and color.
+
+Keyboard navigation skips presentation wrappers and list containers around
+operable cards. Segmented selectors and module tab strips use one Tab entry
+with native arrow-key selection; modal editors cycle within the window and
+restore focus to their entry point on close. Interactive controls retain their
+visible focus treatment. WPF test hosts use the desktop application's selection
+rendering switch and verify rendered text above opaque selection backgrounds.

@@ -19,8 +19,13 @@ public class InstanceWizard : ContentControl
         nameof(ShowProgress), typeof(bool), typeof(InstanceWizard), new PropertyMetadata(false));
 
     /// <summary>自动加载共享流程布局模板。</summary>
-    static InstanceWizard() => DefaultStyleKeyProperty.OverrideMetadata(typeof(InstanceWizard),
-        new FrameworkPropertyMetadata(typeof(InstanceWizard)));
+    static InstanceWizard()
+    {
+        DefaultStyleKeyProperty.OverrideMetadata(typeof(InstanceWizard), new FrameworkPropertyMetadata(typeof(InstanceWizard)));
+        // 展示容器不占焦点，内部输入和按钮继续按原生顺序参与导航。
+        FocusableProperty.OverrideMetadata(typeof(InstanceWizard), new FrameworkPropertyMetadata(false));
+        IsTabStopProperty.OverrideMetadata(typeof(InstanceWizard), new FrameworkPropertyMetadata(false));
+    }
 
     /// <summary>流程标题。</summary>
     public string Heading { get => (string)GetValue(HeadingProperty); set => SetValue(HeadingProperty, value); }
