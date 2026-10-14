@@ -11,8 +11,14 @@ public sealed record MainInstanceRow(InstanceItemViewModel Instance, DateTimeOff
     public string ProviderName => IsSelfHosted ? Text.Get("Local") : Instance.ProviderName;
     /// <summary>本地电脑标识不代表配置存于本地。</summary>
     public string ProviderIcon => IsSelfHosted ? "monitor" : Instance.Icon;
+    /// <summary>品牌图标提示复用完整本地化模板，仅包含安全显示名称。</summary>
+    public string ProviderHint => Text.Format("InstanceProviderHint", ProviderName);
     /// <summary>相对时间遵循界面语言，数字日期仍遵循用户区域。</summary>
     public string OpenedAtText => OpenedAt is { } time ? new RecentInstanceViewModel(Instance, time).OpenedAtText : Text.Get("MainNeverOpened");
+    /// <summary>悬浮显示本机区域格式的实际访问时间，不改变持久化时间戳。</summary>
+    public string OpenedAtHint => OpenedAt?.ToLocalTime().ToString("F", System.Globalization.CultureInfo.CurrentCulture) ?? Text.Get("MainNeverOpened");
+    /// <summary>容器被截断时仍可查看所有标签的完整路径。</summary>
+    public string TagsHint => string.Join(Environment.NewLine, Tags.Select(tag => tag.Hint));
     /// <summary>标签保留用户原文，仅翻译内置标识。</summary>
     public IReadOnlyList<MainTagBadge> Tags => Instance.Tags.Select(path => new MainTagBadge(
         Localization.TagDisplayText.Name(path, path.Split('/')[^1]), Localization.TagDisplayText.FullPath(path),
