@@ -36,6 +36,7 @@ public partial class MySqlTabView : UserControl
         else if (EditorRow.Height.Value == 0) EditorRow.Height = new(210);
         EditorSplitterRow.Height = new(_model?.IsQuery == true ? 6 : 0);
         StructurePanel.Visibility = structure ? Visibility.Visible : Visibility.Collapsed; DataPanel.Visibility = structure ? Visibility.Collapsed : Visibility.Visible;
+        DataActions.Visibility = structure ? Visibility.Collapsed : Visibility.Visible;
         PageButtons.Visibility = _model?.IsQuery == false && !structure ? Visibility.Visible : Visibility.Collapsed;
     }
     private void OnDataSizeChanged(object sender, SizeChangedEventArgs args)

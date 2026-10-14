@@ -22,7 +22,37 @@ public sealed class WorkspaceLayoutTests(WpfTestFixture fixture)
             WindowPreviewCapture.Show(window); await model.InitializeAsync(TestContext.Current.CancellationToken);
             var database = model.Tree!.Root.Children[0]; await model.Tree.LoadAsync(database); database.IsExpanded = true; await model.Tree.LoadAsync(database.Children[0]); database.Children[0].IsExpanded = true;
             await model.OpenObjectAsync(new(MySqlObjectKind.Table, "users", "app")); var table = model.ActiveTab!;
+            await WindowTestVisuals.UpdateLayoutAsync(window);
+            var tree = Assert.IsType<WorkspaceTreeView>(view.FindName("ObjectTree"));
+            var databaseItem = Assert.IsType<WorkspaceTreeViewItem>(tree.ItemContainerGenerator.ContainerFromItem(database));
+            var groupItem = Assert.IsType<WorkspaceTreeViewItem>(databaseItem.ItemContainerGenerator.ContainerFromItem(database.Children[0]));
+            var objectItem = Assert.IsType<WorkspaceTreeViewItem>(groupItem.ItemContainerGenerator.ContainerFromItem(database.Children[0].Children[0]));
+            objectItem.IsSelected = true; Assert.True(objectItem.Focus()); await WindowTestVisuals.UpdateLayoutAsync(window);
+            Assert.True(databaseItem.IsKeyboardFocusWithin); Assert.True(groupItem.IsKeyboardFocusWithin);
+            Assert.False(databaseItem.IsSelected); Assert.False(groupItem.IsSelected);
+            foreach (var parent in new[] { databaseItem, groupItem })
+            {
+                var row = Assert.IsType<Border>(parent.Template.FindName("Row", parent));
+                Assert.Equal(0, Assert.IsType<SolidColorBrush>(row.BorderBrush).Color.A);
+                Assert.Equal(0, Assert.IsType<SolidColorBrush>(row.Background).Color.A);
+            }
+            Assert.Same(Application.Current.Resources["AccentBrush"], Assert.IsType<Border>(objectItem.Template.FindName("Row", objectItem)).BorderBrush);
             await WindowPreviewCapture.VerifyAsync(window, $"mysql-table-{language}-{theme}");
+            var tableView = Assert.IsType<MySqlTabView>(Assert.IsType<ContentControl>(view.FindName("TabHost")).Content);
+            var context = Assert.IsType<Grid>(tableView.FindName("ObjectContext"));
+            Assert.True(context.IsVisible); Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(context), text => text.Text == "app");
+            Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(context), text => text.Text == "users");
+            table.Section = "structure"; await WindowTestVisuals.UpdateLayoutAsync(window);
+            var structure = Assert.IsType<DataGrid>(tableView.FindName("StructureGrid"));
+            Assert.Equal(4, structure.Items.Count); Assert.True(structure.ActualHeight > 250);
+            Assert.Equal(DataGridGridLinesVisibility.Horizontal, structure.GridLinesVisibility);
+            Assert.False(Assert.IsType<Grid>(tableView.FindName("DataActions")).IsVisible);
+            await WindowPreviewCapture.VerifyAsync(window, $"mysql-structure-{language}-{theme}");
+            table.StructureSection = "definition"; await WindowTestVisuals.UpdateLayoutAsync(window);
+            Assert.False(structure.IsVisible); var definition = Assert.IsType<CodeEditor>(tableView.FindName("DefinitionEditor"));
+            Assert.True(definition.IsVisible); Assert.True(definition.ActualHeight > 250);
+            await WindowPreviewCapture.VerifyAsync(window, $"mysql-definition-{language}-{theme}");
+            table.StructureSection = "columns"; table.Section = "data"; await WindowTestVisuals.UpdateLayoutAsync(window);
             var grid = Assert.Single(WindowTestVisuals.Descendants<DataGrid>(view), candidate => candidate.Name == "ResultGrid");
             Assert.Equal(44, grid.ColumnHeaderHeight); Assert.True(grid.EnableColumnVirtualization); Assert.Equal(44, grid.RowHeaderWidth); Assert.Equal(4, grid.Columns.Count);
             Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(grid), text => text.Text == "Alice");

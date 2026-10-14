@@ -28,7 +28,15 @@ parameters. Branches use distinct type icons, bounded pages and explicit empty,
 loading and retry states. Search filters loaded objects while retaining ancestors;
 it does not scan the whole server. A known table can be opened by database/name
 when object listing is unavailable. Object tabs are deduplicated by database,
-kind and original name. Definitions are read-only and are never executed implicitly.
+kind and original name. Tabs show the object name; the content header and tooltip
+show its database/schema context. Tree selection and keyboard focus style only
+the current row, while ancestors retain their expansion indicators.
+Structure sections separately show columns, indexes, foreign keys, triggers and
+object definitions. Views and routines expose only their applicable sections.
+Definitions use the full content area and remain read-only. Section changes keep
+the session, loaded results and unsaved data. UI names use Inter with the explicit
+Chinese fallback; protocol types and SQL use JetBrains Mono. Soft horizontal rules
+replace the default metadata grid lines.
 
 Each SQL tab has its own physical session and database context. Selecting an
 object in the tree does not change a query tab's context. Ctrl+Enter executes the

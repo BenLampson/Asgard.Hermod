@@ -96,3 +96,8 @@ storage cubes, Redis layers and terminal prompts, with 15/18/24px and monochrome
 examples. Workspace titles expose a pencil for the shared rename dialog. Region
 10B includes the final-tab empty state (g6TanB), preserving the connection and
 object tree while hiding the empty tab track.
+
+The MySQL follow-up uses the object-context component U6F7X and grouped structure
+navigation b85ZM. Only the selected tree row receives focus decoration. Object
+names, database/schema context, metadata typography and separate full-height DDL
+views match the real WPF previews in both themes and languages.
