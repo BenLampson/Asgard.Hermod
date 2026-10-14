@@ -240,7 +240,7 @@
                               "name": "存储类型图标",
                               "width": 24,
                               "height": 24,
-                              "icon": "database",
+                              "icon": "box",
                               "library": "lucide",
                               "fill": "$muted"
                             },
@@ -505,6 +505,9 @@
               "descendants": {
                 "IMH6l/C3lvQ": {
                   "content": "添加实例"
+                },
+                "U9amzn": {
+                  "icon": "box"
                 }
               }
             },
@@ -3998,7 +4001,7 @@
                           "name": "折叠存储类型",
                           "width": 18,
                           "height": 18,
-                          "icon": "database",
+                          "icon": "box",
                           "library": "lucide",
                           "fill": "$amber"
                         },
@@ -4792,7 +4795,12 @@
                         "mode": "light"
                       },
                       "width": 1360,
-                      "height": 860
+                      "height": 860,
+                      "descendants": {
+                        "p6CG1": {
+                          "icon": "box"
+                        }
+                      }
                     }
                   ]
                 }
@@ -4836,6 +4844,9 @@
                       "width": 1360,
                       "height": 860,
                       "descendants": {
+                        "p6CG1": {
+                          "icon": "box"
+                        },
                         "FkKG1": {
                           "fill": "#00000000"
                         },
@@ -4914,6 +4925,9 @@
                           "enabled": true,
                           "width": "fill_container",
                           "height": "fill_container"
+                        },
+                        "p6CG1": {
+                          "icon": "box"
                         },
                         "Aert1": {
                           "padding": [
@@ -5009,6 +5023,9 @@
                           "enabled": true,
                           "width": "fill_container",
                           "height": "fill_container"
+                        },
+                        "p6CG1": {
+                          "icon": "box"
                         },
                         "Aert1": {
                           "padding": [
@@ -7885,6 +7902,9 @@
             "p0UubM": {
               "fill": "$accent-ink",
               "content": "标签筛选"
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色"
@@ -18510,15 +18530,38 @@
               "gap": 7,
               "children": [
                 {
-                  "type": "text",
-                  "id": "aiobX",
-                  "name": "OSS 实例名称",
-                  "fill": "$ink",
-                  "content": "Aliyun OSS · Development",
-                  "fontFamily": "Inter",
-                  "fontSize": 20,
-                  "fontWeight": "600",
-                  "letterSpacing": -0.3
+                  "type": "frame",
+                  "id": "SvrLL",
+                  "name": "名称与重命名入口",
+                  "context": "常驻铅笔，点击名称或铅笔打开公共重命名窗口。",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "aiobX",
+                      "name": "OSS 实例名称",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Aliyun OSS · Development",
+                      "fontFamily": "Inter",
+                      "fontSize": 20,
+                      "fontWeight": "600",
+                      "letterSpacing": -0.3
+                    },
+                    {
+                      "type": "icon",
+                      "id": "X8ZMb",
+                      "name": "重命名实例",
+                      "width": 13,
+                      "height": 13,
+                      "icon": "pencil",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    }
+                  ]
                 },
                 {
                   "type": "text",
@@ -18632,7 +18675,7 @@
                       "enabled": false,
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -18659,7 +18702,7 @@
                           "name": "Bucket 切换图标",
                           "width": 14,
                           "height": 14,
-                          "icon": "database",
+                          "icon": "box",
                           "library": "lucide",
                           "fill": "$muted"
                         },
@@ -20667,7 +20710,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -20794,7 +20837,7 @@
                       "name": "assets-dev Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -21040,7 +21083,7 @@
                       "name": "logs-dev Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -21097,7 +21140,7 @@
                       "name": "archives Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -21148,7 +21191,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -21201,7 +21244,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -21233,6 +21276,9 @@
                   ]
                 }
               ]
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色"
@@ -21277,7 +21323,15 @@
               "ref": "vGYHU",
               "name": "OSS 对象浏览器内容",
               "width": "fill_container",
-              "height": "fill_container"
+              "height": "fill_container",
+              "descendants": {
+                "n1Nhw4": {
+                  "icon": "box"
+                },
+                "R0rj0": {
+                  "icon": "box"
+                }
+              }
             }
           }
         }
@@ -21397,7 +21451,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -21524,7 +21578,7 @@
                       "name": "assets-dev Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -21770,7 +21824,7 @@
                       "name": "logs-dev Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -21827,7 +21881,7 @@
                       "name": "archives Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -21878,7 +21932,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -21931,7 +21985,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -21963,6 +22017,9 @@
                   ]
                 }
               ]
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "FkKG1": {
               "fill": "#00000000"
@@ -22013,7 +22070,15 @@
               "ref": "vGYHU",
               "name": "OSS 对象浏览器内容",
               "width": "fill_container",
-              "height": "fill_container"
+              "height": "fill_container",
+              "descendants": {
+                "n1Nhw4": {
+                  "icon": "box"
+                },
+                "R0rj0": {
+                  "icon": "box"
+                }
+              }
             }
           }
         }
@@ -36309,7 +36374,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -36436,7 +36501,7 @@
                       "name": "assets-dev Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -36682,7 +36747,7 @@
                       "name": "logs-dev Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -36739,7 +36804,7 @@
                       "name": "archives Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -36790,7 +36855,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -36843,7 +36908,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -36875,6 +36940,9 @@
                   ]
                 }
               ]
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色"
@@ -36921,6 +36989,12 @@
               "width": "fill_container",
               "height": "fill_container",
               "descendants": {
+                "n1Nhw4": {
+                  "icon": "box"
+                },
+                "R0rj0": {
+                  "icon": "box"
+                },
                 "KV6Md": {
                   "opacity": 0.4
                 },
@@ -37073,7 +37147,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -37200,7 +37274,7 @@
                       "name": "assets-dev Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -37446,7 +37520,7 @@
                       "name": "logs-dev Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -37503,7 +37577,7 @@
                       "name": "archives Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -37554,7 +37628,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -37607,7 +37681,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -37639,6 +37713,9 @@
                   ]
                 }
               ]
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色"
@@ -37685,6 +37762,12 @@
               "width": "fill_container",
               "height": "fill_container",
               "descendants": {
+                "n1Nhw4": {
+                  "icon": "box"
+                },
+                "R0rj0": {
+                  "icon": "box"
+                },
                 "KV6Md": {
                   "opacity": 0.4
                 },
@@ -37837,7 +37920,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -37964,7 +38047,7 @@
                       "name": "assets-dev Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -38210,7 +38293,7 @@
                       "name": "logs-dev Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -38267,7 +38350,7 @@
                       "name": "archives Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -38318,7 +38401,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -38371,7 +38454,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -38403,6 +38486,9 @@
                   ]
                 }
               ]
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色"
@@ -38449,6 +38535,12 @@
               "width": "fill_container",
               "height": "fill_container",
               "descendants": {
+                "n1Nhw4": {
+                  "icon": "box"
+                },
+                "R0rj0": {
+                  "icon": "box"
+                },
                 "KV6Md": {
                   "opacity": 1
                 },
@@ -38612,7 +38704,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -38739,7 +38831,7 @@
                       "name": "assets-dev Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -38985,7 +39077,7 @@
                       "name": "logs-dev Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -39042,7 +39134,7 @@
                       "name": "archives Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -39093,7 +39185,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -39146,7 +39238,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -39178,6 +39270,9 @@
                   ]
                 }
               ]
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色"
@@ -39224,6 +39319,12 @@
               "width": "fill_container",
               "height": "fill_container",
               "descendants": {
+                "n1Nhw4": {
+                  "icon": "box"
+                },
+                "R0rj0": {
+                  "icon": "box"
+                },
                 "KV6Md": {
                   "opacity": 0.4
                 },
@@ -39376,7 +39477,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -39503,7 +39604,7 @@
                       "name": "assets-dev Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -39749,7 +39850,7 @@
                       "name": "logs-dev Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -39806,7 +39907,7 @@
                       "name": "archives Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -39857,7 +39958,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -39910,7 +40011,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -39942,6 +40043,9 @@
                   ]
                 }
               ]
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色"
@@ -39988,6 +40092,12 @@
               "width": "fill_container",
               "height": "fill_container",
               "descendants": {
+                "n1Nhw4": {
+                  "icon": "box"
+                },
+                "R0rj0": {
+                  "icon": "box"
+                },
                 "KV6Md": {
                   "opacity": 0.4
                 },
@@ -40140,7 +40250,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -40267,7 +40377,7 @@
                       "name": "assets-dev Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -40513,7 +40623,7 @@
                       "name": "logs-dev Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -40570,7 +40680,7 @@
                       "name": "archives Bucket类型图标",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$muted"
                     },
@@ -40621,7 +40731,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -40674,7 +40784,7 @@
                       "name": "存储类型",
                       "width": 15,
                       "height": 15,
-                      "icon": "database",
+                      "icon": "box",
                       "library": "lucide",
                       "fill": "$amber"
                     },
@@ -40706,6 +40816,9 @@
                   ]
                 }
               ]
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色"
@@ -40752,6 +40865,12 @@
               "width": "fill_container",
               "height": "fill_container",
               "descendants": {
+                "n1Nhw4": {
+                  "icon": "box"
+                },
+                "R0rj0": {
+                  "icon": "box"
+                },
                 "KV6Md": {
                   "opacity": 1
                 },
@@ -41711,6 +41830,9 @@
             "p0UubM": {
               "content": "标签筛选"
             },
+            "p6CG1": {
+              "icon": "box"
+            },
             "HatyB": {
               "content": "浅色"
             },
@@ -41772,6 +41894,9 @@
             },
             "p0UubM": {
               "content": "标签筛选"
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色"
@@ -41877,6 +42002,9 @@
                   "fontWeight": "normal"
                 }
               ]
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色"
@@ -43955,11 +44083,14 @@
           "width": "fill_container",
           "height": "fill_container",
           "descendants": {
-            "aiobX": {
-              "content": "OSS 对象浏览器"
-            },
             "Qy5OS": {
               "content": "常见文件类型 · 自动显示默认图标"
+            },
+            "n1Nhw4": {
+              "icon": "box"
+            },
+            "R0rj0": {
+              "icon": "box"
             },
             "u6uAwk": {
               "content": "yingyue-13249…"
@@ -45221,7 +45352,7 @@
           "type": "frame",
           "id": "HfFtU",
           "name": "component/实例导航行",
-          "context": "实例行右键或 Shift+F10 提供重命名、编辑标签。仅更新显示元数据；稳定 ID、连接和会话不变化。",
+          "context": "类型图标以形状区分：storage=box、redis=layers、mysql=database、ssh=terminal。名称修改入口位于工作区标题名称旁，点击铅笔打开重命名窗口；侧栏只负责导航。",
           "reusable": true,
           "width": "fill_container",
           "height": 34,
@@ -45240,7 +45371,7 @@
               "name": "实例类型",
               "width": 15,
               "height": 15,
-              "icon": "database",
+              "icon": "box",
               "library": "lucide",
               "fill": "$amber"
             },
@@ -45545,6 +45676,12 @@
           "width": "fill_container",
           "height": "fill_container",
           "descendants": {
+            "n1Nhw4": {
+              "icon": "box"
+            },
+            "R0rj0": {
+              "icon": "box"
+            },
             "sHAIY": {
               "content": "sample-image.png"
             },
@@ -46036,6 +46173,12 @@
           "width": "fill_container",
           "height": "fill_container",
           "descendants": {
+            "n1Nhw4": {
+              "icon": "box"
+            },
+            "R0rj0": {
+              "icon": "box"
+            },
             "sHAIY": {
               "content": "sample-image.png"
             },
@@ -46921,6 +47064,12 @@
           "width": "fill_container",
           "height": "fill_container",
           "descendants": {
+            "n1Nhw4": {
+              "icon": "box"
+            },
+            "R0rj0": {
+              "icon": "box"
+            },
             "sHAIY": {
               "content": "sample-image.dat"
             },
@@ -47821,6 +47970,12 @@
           "width": "fill_container",
           "height": "fill_container",
           "descendants": {
+            "n1Nhw4": {
+              "icon": "box"
+            },
+            "R0rj0": {
+              "icon": "box"
+            },
             "sHAIY": {
               "content": "sample-image.dat"
             },
@@ -48801,6 +48956,12 @@
           "width": "fill_container",
           "height": "fill_container",
           "descendants": {
+            "n1Nhw4": {
+              "icon": "box"
+            },
+            "R0rj0": {
+              "icon": "box"
+            },
             "sHAIY": {
               "content": "sample-image.dat"
             },
@@ -50660,6 +50821,12 @@
           "width": "fill_container",
           "height": "fill_container",
           "descendants": {
+            "n1Nhw4": {
+              "icon": "box"
+            },
+            "R0rj0": {
+              "icon": "box"
+            },
             "nWf1K": {
               "fill": "$surface"
             },
@@ -51031,6 +51198,9 @@
           "width": "fill_container",
           "height": 720,
           "descendants": {
+            "U9amzn": {
+              "icon": "box"
+            },
             "rOOpa": {
               "type": "frame",
               "id": "H1cLX",
@@ -60644,7 +60814,7 @@
                                   "name": "存储类型图标",
                                   "width": 24,
                                   "height": 24,
-                                  "icon": "database",
+                                  "icon": "box",
                                   "library": "lucide",
                                   "fill": "$accent"
                                 },
@@ -61052,7 +61222,7 @@
                                   "name": "存储类型图标",
                                   "width": 24,
                                   "height": 24,
-                                  "icon": "database",
+                                  "icon": "box",
                                   "library": "lucide",
                                   "fill": "$accent"
                                 },
@@ -64400,7 +64570,7 @@
                           "name": "Redis图标",
                           "width": 22,
                           "height": 22,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -66558,14 +66728,37 @@
               "gap": 2,
               "children": [
                 {
-                  "type": "text",
-                  "id": "XaAPF",
-                  "name": "实例标题",
-                  "fill": "$ink",
-                  "content": "Production · API",
-                  "fontFamily": "Inter",
-                  "fontSize": 16,
-                  "fontWeight": "600"
+                  "type": "frame",
+                  "id": "r91Zrr",
+                  "name": "名称与重命名入口",
+                  "context": "常驻铅笔，点击名称或铅笔打开公共重命名窗口。",
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "XaAPF",
+                      "name": "实例标题",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Production · API",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "n93jYp",
+                      "name": "重命名实例",
+                      "width": 13,
+                      "height": 13,
+                      "icon": "pencil",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    }
+                  ]
                 },
                 {
                   "type": "text",
@@ -70318,6 +70511,9 @@
                 }
               }
             },
+            "p6CG1": {
+              "icon": "box"
+            },
             "HatyB": {
               "content": "浅色"
             },
@@ -70648,6 +70844,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色"
@@ -72287,6 +72486,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色"
@@ -75526,6 +75728,9 @@
                 }
               }
             },
+            "p6CG1": {
+              "icon": "box"
+            },
             "HatyB": {
               "content": "浅色"
             },
@@ -76773,6 +76978,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色"
@@ -78047,6 +78255,9 @@
             },
             "J8zTy": {
               "icon": "terminal"
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "Z6211": {
               "icon": "database"
@@ -83401,6 +83612,9 @@
                 }
               }
             },
+            "p6CG1": {
+              "icon": "box"
+            },
             "HatyB": {
               "content": "浅色"
             },
@@ -83891,6 +84105,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色"
@@ -85260,6 +85477,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色"
@@ -90997,7 +91217,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -91016,7 +91236,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -91062,6 +91282,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -91147,7 +91370,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -92905,7 +93128,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -92924,7 +93147,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -92970,6 +93193,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -93055,7 +93281,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -94978,7 +95204,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -94997,7 +95223,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -95043,6 +95269,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -95128,7 +95357,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -96954,7 +97183,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -96973,7 +97202,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -97019,6 +97248,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -97104,7 +97336,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -99069,7 +99301,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -99088,7 +99320,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -99134,6 +99366,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -99219,7 +99454,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -101037,7 +101272,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -101056,7 +101291,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -101102,6 +101337,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -101187,7 +101425,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -102823,7 +103061,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -102842,7 +103080,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -102888,6 +103126,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -102973,7 +103214,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -104730,7 +104971,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -104749,7 +104990,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -104795,6 +105036,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -104880,7 +105124,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -106901,7 +107145,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -106920,7 +107164,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -106966,6 +107210,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -107051,7 +107298,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -108800,7 +109047,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -108819,7 +109066,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -108865,6 +109112,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -108950,7 +109200,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -110730,7 +110980,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -110749,7 +110999,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -110795,6 +111045,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -110880,7 +111133,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -112695,7 +112948,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -112714,7 +112967,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -112760,6 +113013,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -112845,7 +113101,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -114678,7 +114934,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -114697,7 +114953,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -114743,6 +114999,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -114828,7 +115087,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -116002,7 +116261,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -116021,7 +116280,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -116067,6 +116326,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -116152,7 +116414,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -118042,7 +118304,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -118061,7 +118323,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -118107,6 +118369,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -118192,7 +118457,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -120025,7 +120290,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -120044,7 +120309,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -120090,6 +120355,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -120175,7 +120443,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -120726,7 +120994,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -120745,7 +121013,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -120791,6 +121059,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -120876,7 +121147,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -122597,7 +122868,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -122616,7 +122887,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -122662,6 +122933,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "Light",
@@ -122747,7 +123021,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -124666,7 +124940,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -124685,7 +124959,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -124731,6 +125005,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -124816,7 +125093,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -126648,7 +126925,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -126667,7 +126944,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -126713,6 +126990,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -126798,7 +127078,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -128915,7 +129195,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -128934,7 +129214,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -128980,6 +129260,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -129065,7 +129348,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -130981,7 +131264,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -131000,7 +131283,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -131046,6 +131329,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -131131,7 +131417,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -133332,7 +133618,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -133351,7 +133637,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -133397,6 +133683,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -133482,7 +133771,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -135441,7 +135730,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -135460,7 +135749,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -135506,6 +135795,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -135591,7 +135883,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -137509,6 +137801,9 @@
             "J8zTy": {
               "icon": "database"
             },
+            "p6CG1": {
+              "icon": "box"
+            },
             "Z6211": {
               "icon": "terminal"
             },
@@ -137649,7 +137944,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -138902,7 +139197,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -138921,7 +139216,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -138967,6 +139262,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -139052,7 +139350,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -140081,7 +140379,7 @@
                   "fill": "$accent-weak"
                 },
                 "F8gxQ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$accent"
                 },
                 "F8gxQ/CzNb3": {
@@ -140100,7 +140398,7 @@
                   "fill": "#00000000"
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -140146,6 +140444,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -140231,7 +140532,7 @@
                           "name": "Redis 类型图标",
                           "width": 24,
                           "height": 24,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$accent"
                         },
@@ -144115,6 +144416,9 @@
                 }
               }
             },
+            "p6CG1": {
+              "icon": "box"
+            },
             "HatyB": {
               "content": "浅色"
             },
@@ -144465,6 +144769,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "Light"
@@ -144876,6 +145183,9 @@
                   "fill": "#00000000"
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色"
@@ -160379,7 +160689,7 @@
                           "name": "Redis 图标",
                           "width": 22,
                           "height": 22,
-                          "icon": "database",
+                          "icon": "layers",
                           "library": "lucide",
                           "fill": "$muted"
                         },
@@ -164962,20 +165272,44 @@
               "type": "frame",
               "id": "ObcXe",
               "name": "MySQL 实例身份",
+              "context": "名称旁常驻铅笔图标。点击名称或铅笔、Tab 后按 Enter 均打开重命名窗口；保存后侧栏、外层标签和标题同步更新，不重连。",
               "width": 210,
               "layout": "vertical",
               "gap": 2,
               "children": [
                 {
-                  "type": "text",
-                  "id": "YU0fK",
-                  "name": "实例名称",
-                  "fill": "$ink",
-                  "content": "Production · MySQL",
-                  "lineHeight": 1.45,
-                  "fontFamily": "Inter",
-                  "fontSize": 15,
-                  "fontWeight": "normal"
+                  "type": "frame",
+                  "id": "Dla55",
+                  "name": "component/Instance Name Action · 标题改名入口",
+                  "reusable": true,
+                  "width": "fill_container",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "YU0fK",
+                      "name": "实例名称",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Production · MySQL",
+                      "lineHeight": 1.45,
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "wGRi2",
+                      "name": "重命名实例 · 可见入口",
+                      "width": 13,
+                      "height": 13,
+                      "icon": "pencil",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    }
+                  ]
                 },
                 {
                   "type": "text",
@@ -167501,7 +167835,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -167531,6 +167865,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -167810,7 +168147,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -167840,6 +168177,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -169693,7 +170033,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -169723,6 +170063,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -172172,7 +172515,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -172202,6 +172545,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -173112,7 +173458,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -173142,6 +173488,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -173868,7 +174217,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -173898,6 +174247,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -174583,7 +174935,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -174613,6 +174965,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -176882,7 +177237,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -176912,6 +177267,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -178554,7 +178912,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -178584,6 +178942,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -179616,7 +179977,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -179646,6 +180007,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -182498,7 +182862,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -182528,6 +182892,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -185152,7 +185519,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -185182,6 +185549,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -185847,7 +186217,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -185877,6 +186247,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -186762,7 +187135,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -186792,6 +187165,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -188147,7 +188523,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -188177,6 +188553,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -188973,7 +189352,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -189003,6 +189382,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -189917,7 +190299,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -189947,6 +190329,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -190698,7 +191083,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -190728,6 +191113,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "Light",
@@ -192439,7 +192827,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -192478,6 +192866,9 @@
             },
             "j1Up0": {
               "enabled": false
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "QgDYm": {
               "enabled": false
@@ -193938,7 +194329,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -193968,6 +194359,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -194774,7 +195168,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -194804,6 +195198,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -200332,7 +200729,7 @@
                   "name": "Redis 类型图标",
                   "width": 24,
                   "height": 24,
-                  "icon": "database",
+                  "icon": "layers",
                   "library": "lucide",
                   "fill": "$accent"
                 },
@@ -200345,17 +200742,38 @@
                   "gap": 2,
                   "children": [
                     {
-                      "type": "text",
-                      "id": "F7NZIp",
-                      "name": "实例名称",
-                      "fill": "$ink",
-                      "textGrowth": "fixed-width",
+                      "type": "frame",
+                      "id": "VU5Aa",
+                      "name": "名称与重命名入口",
+                      "context": "常驻铅笔，点击名称或铅笔打开公共重命名窗口。",
                       "width": "fill_container",
-                      "content": "Production · Cache",
-                      "lineHeight": 1.45,
-                      "fontFamily": "Inter",
-                      "fontSize": 15,
-                      "fontWeight": "normal"
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "F7NZIp",
+                          "name": "实例名称",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Production · Cache",
+                          "lineHeight": 1.45,
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "Rd0bO",
+                          "name": "重命名实例",
+                          "width": 13,
+                          "height": 13,
+                          "icon": "pencil",
+                          "library": "lucide",
+                          "fill": "$muted"
+                        }
+                      ]
                     },
                     {
                       "type": "text",
@@ -205523,7 +205941,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -205553,6 +205971,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -209139,7 +209560,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -209169,6 +209590,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -212755,7 +213179,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -212785,6 +213209,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -215020,7 +215447,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -215050,6 +215477,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -217918,7 +218348,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -217948,6 +218378,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -220352,7 +220785,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -220382,6 +220815,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -222829,7 +223265,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -222859,6 +223295,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -225084,7 +225523,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -225114,6 +225553,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -227748,7 +228190,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -227778,6 +228220,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -230026,7 +230471,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -230056,6 +230501,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -231245,7 +231693,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -231275,6 +231723,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -232520,7 +232971,7 @@
                   "enabled": false
                 },
                 "OIHYJ/qgacU": {
-                  "icon": "database",
+                  "icon": "layers",
                   "fill": "$muted"
                 },
                 "OIHYJ/CzNb3": {
@@ -232550,6 +233001,9 @@
                   "enabled": false
                 }
               }
+            },
+            "p6CG1": {
+              "icon": "box"
             },
             "HatyB": {
               "content": "浅色",
@@ -239357,7 +239811,7 @@
                   "fill": "$muted",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "实例行 · 右键 / Shift+F10",
+                  "content": "工作区标题 · 点击名称或铅笔改名",
                   "fontFamily": "Inter",
                   "fontSize": 12,
                   "fontWeight": "normal"
@@ -240130,6 +240584,539 @@
           ]
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "CglJ1",
+      "x": 10440,
+      "y": 750,
+      "name": "01 / 实例类型图标 · 形状与使用规范",
+      "width": 1060,
+      "height": 690,
+      "fill": "$surface",
+      "layout": "vertical",
+      "gap": 22,
+      "padding": 28,
+      "children": [
+        {
+          "type": "text",
+          "id": "KCTMq",
+          "fill": "$ink",
+          "content": "实例类型 · 先辨形，再看颜色",
+          "fontFamily": "Inter",
+          "fontSize": 24,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "gZWOd",
+          "fill": "$muted",
+          "content": "统一使用 Lucide 线性图标。类型、服务商品牌、同步状态各有独立位置，颜色仅辅助识别。",
+          "fontFamily": "Inter",
+          "fontSize": 13,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "gute4",
+          "name": "类型规范 mysql",
+          "width": "fill_container",
+          "height": 72,
+          "stroke": "$line-soft",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "gap": 20,
+          "padding": [
+            0,
+            8
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "v1K6ZZ",
+              "name": "component/Instance Type Icon/mysql",
+              "reusable": true,
+              "width": 24,
+              "height": 24,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "i18ue",
+                  "name": "Type glyph",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "icon": "database",
+                  "library": "lucide",
+                  "fill": "$accent"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "LgSB3",
+              "fill": "$ink",
+              "textGrowth": "fixed-width",
+              "width": 200,
+              "content": "MySQL · 数据库",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "JRv22",
+              "fill": "$muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "圆柱形 · 结构化数据",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "id": "pErPR",
+              "type": "ref",
+              "ref": "v1K6ZZ",
+              "width": 15,
+              "height": 15,
+              "name": "15px 实际尺寸"
+            },
+            {
+              "id": "yeGwl",
+              "type": "ref",
+              "ref": "v1K6ZZ",
+              "width": 18,
+              "height": 18,
+              "name": "18px 实际尺寸"
+            },
+            {
+              "id": "GFZlK",
+              "type": "ref",
+              "ref": "v1K6ZZ",
+              "width": 24,
+              "height": 24,
+              "name": "24px 实际尺寸"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "TJLf8",
+          "name": "类型规范 storage",
+          "width": "fill_container",
+          "height": 72,
+          "stroke": "$line-soft",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "gap": 20,
+          "padding": [
+            0,
+            8
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "qMSXn",
+              "name": "component/Instance Type Icon/storage",
+              "reusable": true,
+              "width": 24,
+              "height": 24,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "M9U8h",
+                  "name": "Type glyph",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "icon": "box",
+                  "library": "lucide",
+                  "fill": "$amber"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "ljX9I",
+              "fill": "$ink",
+              "textGrowth": "fixed-width",
+              "width": 200,
+              "content": "对象存储",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "fNC6r",
+              "fill": "$muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "立方体 · 对象与 Bucket",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "id": "p2rvVj",
+              "type": "ref",
+              "ref": "qMSXn",
+              "width": 15,
+              "height": 15,
+              "name": "15px 实际尺寸"
+            },
+            {
+              "id": "FUyyo",
+              "type": "ref",
+              "ref": "qMSXn",
+              "width": 18,
+              "height": 18,
+              "name": "18px 实际尺寸"
+            },
+            {
+              "id": "y8VldK",
+              "type": "ref",
+              "ref": "qMSXn",
+              "width": 24,
+              "height": 24,
+              "name": "24px 实际尺寸"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "ECbMk",
+          "name": "类型规范 redis",
+          "width": "fill_container",
+          "height": 72,
+          "stroke": "$line-soft",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "gap": 20,
+          "padding": [
+            0,
+            8
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "l0iId6",
+              "name": "component/Instance Type Icon/redis",
+              "reusable": true,
+              "width": 24,
+              "height": 24,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "MCT2M",
+                  "name": "Type glyph",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "icon": "layers",
+                  "library": "lucide",
+                  "fill": "$accent"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "FP8uy",
+              "fill": "$ink",
+              "textGrowth": "fixed-width",
+              "width": 200,
+              "content": "Redis · 缓存",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "zuvrB",
+              "fill": "$muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "叠层形 · 键值数据",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "id": "muUq6",
+              "type": "ref",
+              "ref": "l0iId6",
+              "width": 15,
+              "height": 15,
+              "name": "15px 实际尺寸"
+            },
+            {
+              "id": "EDTjF",
+              "type": "ref",
+              "ref": "l0iId6",
+              "width": 18,
+              "height": 18,
+              "name": "18px 实际尺寸"
+            },
+            {
+              "id": "pYK8n",
+              "type": "ref",
+              "ref": "l0iId6",
+              "width": 24,
+              "height": 24,
+              "name": "24px 实际尺寸"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "VI1jJ",
+          "name": "类型规范 ssh",
+          "width": "fill_container",
+          "height": 72,
+          "stroke": "$line-soft",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "gap": 20,
+          "padding": [
+            0,
+            8
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Rx1p4",
+              "name": "component/Instance Type Icon/ssh",
+              "reusable": true,
+              "width": 24,
+              "height": 24,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "C9ccr",
+                  "name": "Type glyph",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "icon": "terminal",
+                  "library": "lucide",
+                  "fill": "$muted"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "vEeDl",
+              "fill": "$ink",
+              "textGrowth": "fixed-width",
+              "width": 200,
+              "content": "SSH · 终端",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "bJXcj",
+              "fill": "$muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "命令提示符 · 远程会话",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "id": "oKTpV",
+              "type": "ref",
+              "ref": "Rx1p4",
+              "width": 15,
+              "height": 15,
+              "name": "15px 实际尺寸"
+            },
+            {
+              "id": "ngNej",
+              "type": "ref",
+              "ref": "Rx1p4",
+              "width": 18,
+              "height": 18,
+              "name": "18px 实际尺寸"
+            },
+            {
+              "id": "OMtS8",
+              "type": "ref",
+              "ref": "Rx1p4",
+              "width": 24,
+              "height": 24,
+              "name": "24px 实际尺寸"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "xoPFR",
+          "name": "单色识别校验",
+          "width": "fill_container",
+          "fill": "$app-bg",
+          "gap": 30,
+          "padding": [
+            18,
+            20
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "ZgMCs",
+              "fill": "$body",
+              "content": "单色对照",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "icon",
+              "id": "bNFq1",
+              "width": 24,
+              "height": 24,
+              "icon": "database",
+              "library": "lucide",
+              "fill": "$body"
+            },
+            {
+              "type": "icon",
+              "id": "g3IU2",
+              "width": 24,
+              "height": 24,
+              "icon": "box",
+              "library": "lucide",
+              "fill": "$body"
+            },
+            {
+              "type": "icon",
+              "id": "NZFCN",
+              "width": 24,
+              "height": 24,
+              "icon": "layers",
+              "library": "lucide",
+              "fill": "$body"
+            },
+            {
+              "type": "icon",
+              "id": "wakoz",
+              "width": 24,
+              "height": 24,
+              "icon": "terminal",
+              "library": "lucide",
+              "fill": "$body"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "DZFnB",
+          "fill": "$body",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "侧栏 15 px · 折叠导航 18 px · 工作区标题 22–24 px\n原始画布 24 × 24，描边 2，圆角端点和连接；类型入口、侧栏、标签页与内容标题使用同一映射。\nMySQL 内部的数据库树保持 database；存储 Bucket 使用 box；同步继续使用 cloud-check / cloud-upload。",
+          "lineHeight": 1.6,
+          "fontFamily": "Inter",
+          "fontSize": 13,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "id": "g6TanB",
+      "type": "ref",
+      "ref": "iJAOL",
+      "name": "10B / MySQL · 全部对象标签关闭 / 引导空态",
+      "x": 22504,
+      "y": 29992,
+      "width": 1360,
+      "height": 860,
+      "descendants": {
+        "oi7lW": {
+          "enabled": false
+        },
+        "P0m8R": {
+          "type": "frame",
+          "id": "YOEkD",
+          "name": "全部标签关闭 · 连接和对象树保留",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 14,
+          "padding": 40,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon",
+              "id": "ibORM",
+              "name": "空态图标",
+              "width": 40,
+              "height": 40,
+              "icon": "table-2",
+              "library": "lucide",
+              "fill": "$muted"
+            },
+            {
+              "type": "text",
+              "id": "xY64o",
+              "name": "空态标题",
+              "fill": "$ink",
+              "content": "尚未打开表或查询",
+              "fontFamily": "Inter",
+              "fontSize": 20,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "BBRj5",
+              "name": "空态说明",
+              "fill": "$muted",
+              "textGrowth": "fixed-width",
+              "width": 420,
+              "content": "从左侧对象树选择一张表，或新建查询继续操作。",
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "id": "y1yYzS",
+              "type": "ref",
+              "ref": "Q2r8z",
+              "name": "新建查询",
+              "fill": "$action-fill",
+              "stroke": "#00000000",
+              "descendants": {
+                "u5fFux": {
+                  "icon": "plus",
+                  "fill": "$ink-inv"
+                },
+                "NpJY2": {
+                  "content": "新建查询",
+                  "fill": "$ink-inv"
+                }
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "themes": {

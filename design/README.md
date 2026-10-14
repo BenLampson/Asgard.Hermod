@@ -90,3 +90,9 @@ Region backgrounds and numbered screen names aid navigation. Screen contents,
 including the object-search help added on `dev`, are preserved when arranging
 the canvas. Because `.pen` is an encrypted document, resolve concurrent changes
 through Pencil at the screen/node level; do not apply textual Git conflict edits.
+
+Region 01 includes the canonical instance icon board (CglJ1): database cylinders,
+storage cubes, Redis layers and terminal prompts, with 15/18/24px and monochrome
+examples. Workspace titles expose a pencil for the shared rename dialog. Region
+10B includes the final-tab empty state (g6TanB), preserving the connection and
+object tree while hiding the empty tab track.
