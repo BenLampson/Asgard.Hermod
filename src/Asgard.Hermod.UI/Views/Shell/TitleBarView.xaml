@@ -21,7 +21,7 @@
                 <TextBlock Text="{loc:Loc Hermod}" FontSize="13" FontWeight="Bold"
                            Foreground="{DynamicResource TextPrimaryBrush}"
                            VerticalAlignment="Center" Margin="7,0,10,0" />
-                <TextBlock Text="{Binding WorkspaceName}" FontSize="11.5"
+                <TextBlock Text="{Binding WorkspaceName}" FontSize="12"
                            Foreground="{DynamicResource TextFaintBrush}"
                            VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
             </StackPanel>

@@ -58,7 +58,7 @@
     <value>添加实例</value>
   </data>
   <data xml:space="preserve" name="AddInstance2">
-    <value>添加 Instance</value>
+    <value>添加 实例</value>
   </data>
   <data xml:space="preserve" name="AlibabaCloudOSS">
     <value>阿里云 OSS</value>
@@ -109,10 +109,10 @@
     <value>上一步</value>
   </data>
   <data xml:space="preserve" name="BuiltInEnvironmentTag">
-    <value>系统固定环境 Tag</value>
+    <value>系统固定环境 标签</value>
   </data>
   <data xml:space="preserve" name="BuiltInEnvironmentTagsCannotBeDeleted">
-    <value>系统内置环境 Tag 不允许删除。</value>
+    <value>系统内置环境 标签 不允许删除。</value>
   </data>
   <data xml:space="preserve" name="BuiltInEnvironmentTagsCannotBeEditedOrDeleted">
     <value>内置环境标签不能修改或删除。</value>
@@ -241,7 +241,7 @@
     <value>选择服务商</value>
   </data>
   <data xml:space="preserve" name="ChooseTheRootOrAnotherCustomTag">
-    <value>可选根级或其他自定义 Tag。</value>
+    <value>可选根级或其他自定义 标签。</value>
   </data>
   <data xml:space="preserve" name="ChooseType">
     <value>选择类型</value>
@@ -298,7 +298,7 @@
     <value>颜色须使用 #RGB 或 #RRGGBB 十六进制格式。</value>
   </data>
   <data xml:space="preserve" name="CommonTagColors">
-    <value>常用 Tag 颜色</value>
+    <value>常用 标签 颜色</value>
   </data>
   <data xml:space="preserve" name="CompleteOrCancelTransfersBeforeEditingTheConnection">
     <value>请先完成或取消传输，再编辑连接。</value>
@@ -376,13 +376,13 @@
     <value>创建</value>
   </data>
   <data xml:space="preserve" name="CreateCustomTagsWithoutChangingBuiltInEnvironmentTagsSavedTagsAppearImmediatelyInTagM">
-    <value>仅创建自定义 Tag，不修改系统内置环境 Tag。保存后立即出现在 Tag 管理和实例 Tag 选择器中。</value>
+    <value>仅创建自定义 标签，不修改系统内置环境 标签。保存后立即出现在 标签 管理和实例 标签 选择器中。</value>
   </data>
   <data xml:space="preserve" name="CreateInstance">
     <value>创建实例</value>
   </data>
   <data xml:space="preserve" name="CreateTag">
-    <value>创建 Tag</value>
+    <value>创建 标签</value>
   </data>
   <data xml:space="preserve" name="Creating">
     <value>创建中…</value>
@@ -412,7 +412,7 @@
     <value>删除 {0}？</value>
   </data>
   <data xml:space="preserve" name="DeleteAndItsChildTags">
-    <value>删除 {0} 及其子 Tag？</value>
+    <value>删除 {0} 及其子 标签？</value>
   </data>
   <data xml:space="preserve" name="DeleteObjects">
     <value>删除 {0} 个对象</value>
@@ -424,10 +424,10 @@
     <value>删除对象…</value>
   </data>
   <data xml:space="preserve" name="DeleteTag">
-    <value>删除 Tag</value>
+    <value>删除 标签</value>
   </data>
   <data xml:space="preserve" name="DeleteTags">
-    <value>删除 {0} 个 Tag</value>
+    <value>删除 {0} 个 标签</value>
   </data>
   <data xml:space="preserve" name="DeleteTheseObjects">
     <value>删除这 {0} 个对象？</value>
@@ -484,7 +484,7 @@
     <value>编辑对象存储连接</value>
   </data>
   <data xml:space="preserve" name="EditTag">
-    <value>编辑 Tag</value>
+    <value>编辑 标签</value>
   </data>
   <data xml:space="preserve" name="EditingCannotChangeTheInstanceTypeOrProviderCreateAnInstanceOfTheRequiredTypeInstead">
     <value>编辑实例不能更改实例类型或服务商，请新增对应类型的实例。</value>
@@ -502,7 +502,7 @@
     <value>请输入文件夹名称。</value>
   </data>
   <data xml:space="preserve" name="EnterATagName">
-    <value>请输入 Tag 名称。</value>
+    <value>请输入 标签 名称。</value>
   </data>
   <data xml:space="preserve" name="EnterAValidAccessKeyIDAndAccessKeySecret">
     <value>请填写有效的 AccessKey ID 和 AccessKey Secret。</value>
@@ -532,7 +532,7 @@
     <value>展开或收起常用颜色</value>
   </data>
   <data xml:space="preserve" name="ExpandOrCollapseTag">
-    <value>展开或折叠 Tag</value>
+    <value>展开或折叠 标签</value>
   </data>
   <data xml:space="preserve" name="ExpandSidebar">
     <value>展开侧边栏</value>
@@ -556,13 +556,13 @@
     <value>按名称筛选实例</value>
   </data>
   <data xml:space="preserve" name="FilterInstancesByTags">
-    <value>按 Tag 筛选实例</value>
+    <value>按 标签 筛选实例</value>
   </data>
   <data xml:space="preserve" name="FilterOptions">
     <value>筛选选项</value>
   </data>
   <data xml:space="preserve" name="FilterTags">
-    <value>筛选 Tag</value>
+    <value>筛选 标签</value>
   </data>
   <data xml:space="preserve" name="FindInstances">
     <value>查找实例</value>
@@ -739,7 +739,7 @@
     <value>本地工作区</value>
   </data>
   <data xml:space="preserve" name="ManageTags">
-    <value>管理 Tag</value>
+    <value>管理 标签</value>
   </data>
   <data xml:space="preserve" name="MatchAllSelected">
     <value>匹配所有选中标签</value>
@@ -793,7 +793,7 @@
     <value>新建对象文件夹</value>
   </data>
   <data xml:space="preserve" name="NewTag">
-    <value>新建 Tag</value>
+    <value>新建 标签</value>
   </data>
   <data xml:space="preserve" name="Next">
     <value>下一步</value>
@@ -817,7 +817,7 @@
     <value>没有为页面类型 {0} 注册内容视图。</value>
   </data>
   <data xml:space="preserve" name="NoCustomTagsYet">
-    <value>尚无自定义 Tag</value>
+    <value>尚无自定义 标签</value>
   </data>
   <data xml:space="preserve" name="NoMatchingInstances">
     <value>没有匹配的实例</value>
@@ -832,7 +832,7 @@
     <value>没有匹配的标签</value>
   </data>
   <data xml:space="preserve" name="NoMatchingTags2">
-    <value>没有匹配的 Tag</value>
+    <value>没有匹配的 标签</value>
   </data>
   <data xml:space="preserve" name="NotConfigured">
     <value>未配置</value>
@@ -895,7 +895,7 @@
     <value>将从 OSS 删除对象，操作不可直接撤销。</value>
   </data>
   <data xml:space="preserve" name="OrganizeYourInstancesWithCustomTags">
-    <value>用自定义 Tag 分类你的实例</value>
+    <value>用自定义 标签 分类你的实例</value>
   </data>
   <data xml:space="preserve" name="OverwriteAndUpload">
     <value>覆盖并上传</value>
@@ -907,7 +907,7 @@
     <value>覆盖这个同名对象？</value>
   </data>
   <data xml:space="preserve" name="ParentTag">
-    <value>父级 Tag</value>
+    <value>父级 标签</value>
   </data>
   <data xml:space="preserve" name="Passed">
     <value>通过</value>
@@ -949,7 +949,7 @@
     <value>正在读取对象…</value>
   </data>
   <data xml:space="preserve" name="ReadingTags">
-    <value>正在读取 Tag…</value>
+    <value>正在读取 标签…</value>
   </data>
   <data xml:space="preserve" name="RecentEvents">
     <value>最近事件</value>
@@ -958,7 +958,7 @@
     <value>刷新对象列表</value>
   </data>
   <data xml:space="preserve" name="RelatedTagLinksWillAlsoBeRemovedFromInstancesInstancesAndConnectionInformationWillRem">
-    <value>同时移除 {0} 个实例上的相关 Tag 关联；不会删除实例或连接信息。此操作不可撤销。</value>
+    <value>同时移除 {0} 个实例上的相关 标签 关联；不会删除实例或连接信息。此操作不可撤销。</value>
   </data>
   <data xml:space="preserve" name="Remove">
     <value>移除</value>
@@ -1039,10 +1039,10 @@
     <value>搜索服务和任务</value>
   </data>
   <data xml:space="preserve" name="SearchTags">
-    <value>搜索 Tag</value>
+    <value>搜索 标签</value>
   </data>
   <data xml:space="preserve" name="SearchTags2">
-    <value>搜索 Tag…</value>
+    <value>搜索 标签…</value>
   </data>
   <data xml:space="preserve" name="SearchTagsOrPaths">
     <value>搜索标签或路径</value>
@@ -1054,10 +1054,10 @@
     <value>请先选择一个已配置的实例。</value>
   </data>
   <data xml:space="preserve" name="SelectATagToViewDetails">
-    <value>选择 Tag 查看详情</value>
+    <value>选择 标签 查看详情</value>
   </data>
   <data xml:space="preserve" name="SelectATagToViewDetailsOrManageItUsing">
-    <value>选择 Tag 查看详情，或通过 ··· 管理。</value>
+    <value>选择 标签 查看详情，或通过 ··· 管理。</value>
   </data>
   <data xml:space="preserve" name="SelectAValidLocalFileLocation">
     <value>请选择有效的本地文件位置。</value>
@@ -1078,7 +1078,7 @@
     <value>选择文件夹</value>
   </data>
   <data xml:space="preserve" name="SelectTheRootOrAnotherAvailableCustomTag">
-    <value>请选择根级或其他可用的自定义 Tag。</value>
+    <value>请选择根级或其他可用的自定义 标签。</value>
   </data>
   <data xml:space="preserve" name="SelectUploadFiles">
     <value>选择上传文件</value>
@@ -1174,19 +1174,19 @@
     <value>标签筛选</value>
   </data>
   <data xml:space="preserve" name="TagHEXColor">
-    <value>Tag HEX 颜色</value>
+    <value>标签 HEX 颜色</value>
   </data>
   <data xml:space="preserve" name="TagHierarchyDataIsCorruptedCheckTheLocalDatabase">
     <value>标签层级数据损坏，请检查本地数据库。</value>
   </data>
   <data xml:space="preserve" name="TagManagement">
-    <value>Tag 管理</value>
+    <value>标签 管理</value>
   </data>
   <data xml:space="preserve" name="TagMatchingMode">
     <value>标签匹配模式</value>
   </data>
   <data xml:space="preserve" name="TagName">
-    <value>Tag 名称</value>
+    <value>标签 名称</value>
   </data>
   <data xml:space="preserve" name="TagNamesMustContain180CharactersAndNoSlashesOrControlCharacters">
     <value>标签名称须为 1–80 个字符，且不能包含斜杠或控制字符。</value>
@@ -1294,7 +1294,7 @@
     <value>文件超过 OSS 分片上传的大小限制。</value>
   </data>
   <data xml:space="preserve" name="TheFollowingCustomTagsWillBeDeleted">
-    <value>将删除 {0} 个自定义 Tag：</value>
+    <value>将删除 {0} 个自定义 标签：</value>
   </data>
   <data xml:space="preserve" name="TheInstanceConfigurationNoLongerExistsConfigureTheInstanceAgain">
     <value>实例配置已不存在，请重新配置实例。</value>
@@ -1417,7 +1417,7 @@
     <value>当前服务商尚未提供支持精确版本清理的读写连接测试，无法确认完整连接能力。</value>
   </data>
   <data xml:space="preserve" name="ThisTagIsReferencedByInstancesSavingUpdatesItsNamePathAndColorWithoutChangingInstance">
-    <value>此 Tag 被 {0} 个实例引用。保存后同步更新名称、路径与颜色，不改变这些实例的关联关系。</value>
+    <value>此 标签 被 {0} 个实例引用。保存后同步更新名称、路径与颜色，不改变这些实例的关联关系。</value>
   </data>
   <data xml:space="preserve" name="TransferFailedTaskRetainedTryAgain">
     <value>传输失败 · 已保留任务，请重试。</value>
@@ -1947,7 +1947,7 @@
     <value>无法保存最近访问记录，工作区仍可正常使用。</value>
   </data>
   <data name="HomeInstanceCount" xml:space="preserve">
-    <value>已配置 {0} 个实例</value>
+    <value>已配置 {0} 个实例 · 不含内置本地终端</value>
   </data>
   <data name="HomeLicense" xml:space="preserve">
     <value>开源协议 · Apache 2.0</value>
@@ -2690,7 +2690,7 @@
     <value>键浏览</value>
   </data>
   <data name="RedisMatch" xml:space="preserve">
-    <value>匹配键名，例如 user:*</value>
+    <value>查找当前数据库的键…</value>
   </data>
   <data name="RedisAllTypes" xml:space="preserve">
     <value>所有类型</value>
@@ -3200,7 +3200,7 @@
   <data name="MySqlCloseTab" xml:space="preserve"><value>关闭页签</value></data>
   <data name="MySqlRefresh" xml:space="preserve"><value>刷新</value></data>
   <data name="MySqlRefreshBranch" xml:space="preserve"><value>刷新所选分支</value></data>
-  <data name="MySqlSearchLoaded" xml:space="preserve"><value>搜索已加载对象</value></data>
+  <data name="MySqlSearchLoaded" xml:space="preserve"><value>筛选已加载对象…</value></data>
   <data name="MySqlSearchLoadedHint" xml:space="preserve"><value>仅搜索已加载对象并保留祖先层级。展开分支以加载更多对象。</value></data>
   <data name="MySqlOpenKnownObject" xml:space="preserve"><value>按名称打开表</value></data>
   <data name="MySqlOpenObject" xml:space="preserve"><value>打开</value></data>
@@ -3271,4 +3271,11 @@
   <data name="MySqlKeepDraft" xml:space="preserve"><value>保留草稿</value></data>
   <data name="MySqlDedicatedWriterRequired" xml:space="preserve"><value>表格更改需要专用的新会话，与 SQL 执行及其事务独立。</value></data>
   <data name="MySqlFieldTooLarge" xml:space="preserve"><value>字段值超过 10 MiB 编辑上限，输入已保留。</value></data>
+  <data name="SearchInstancesAndTags" xml:space="preserve">
+    <value>搜索实例与标签…</value>
+  </data>
+  <data name="FilterInstanceList" xml:space="preserve">
+    <value>筛选实例列表…</value>
+  </data>
+
 </root>

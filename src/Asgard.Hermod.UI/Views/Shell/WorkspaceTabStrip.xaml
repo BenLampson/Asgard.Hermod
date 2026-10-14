@@ -58,7 +58,7 @@
                                             </Style>
                                         </controls:IconView.Style>
                                     </controls:IconView>
-                                    <TextBlock Text="{Binding Header}" FontSize="11.5" VerticalAlignment="Center"
+                                    <TextBlock Text="{Binding Header}" FontSize="12" VerticalAlignment="Center"
                                                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">

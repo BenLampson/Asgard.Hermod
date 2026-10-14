@@ -8,7 +8,7 @@ public partial class MySqlWorkspaceView : UserControl
     private readonly Dictionary<MySqlTabViewModel, MySqlTabView> _views = [];
     private MySqlWorkspaceViewModel? _model;
     private bool _compact, _drawer;
-    private double _treeWidth = 280;
+    private double _treeWidth = 240;
     /// <summary>创建模块状态和依赖；真实连接或写入由显式操作启动。</summary>
     public MySqlWorkspaceView()
     {
@@ -47,7 +47,7 @@ public partial class MySqlWorkspaceView : UserControl
     private void Layout()
     {
         DrawerButton.Visibility = _compact ? Visibility.Visible : Visibility.Collapsed;
-        TreeColumn.MinWidth = _compact ? 0 : 220; TreeColumn.Width = new(_compact ? 0 : Math.Max(220, _treeWidth)); SplitterColumn.Width = new(_compact ? 0 : 6);
+        TreeColumn.MinWidth = _compact ? 0 : 200; TreeColumn.Width = new(_compact ? 0 : Math.Max(200, _treeWidth)); SplitterColumn.Width = new(_compact ? 0 : 6);
         Splitter.Visibility = _compact ? Visibility.Collapsed : Visibility.Visible;
         TreePanel.Visibility = !_compact || _drawer ? Visibility.Visible : Visibility.Collapsed;
         Grid.SetColumnSpan(TreePanel, _compact ? 3 : 1); TreePanel.Width = _compact ? Math.Min(300, Math.Max(200, Body.ActualWidth - 40)) : double.NaN;

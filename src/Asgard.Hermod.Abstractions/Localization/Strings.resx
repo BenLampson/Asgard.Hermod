@@ -1171,7 +1171,7 @@
     <value>TAG DETAILS</value>
   </data>
   <data xml:space="preserve" name="TagFilter">
-    <value>Tag Filter</value>
+    <value>Filter by tags</value>
   </data>
   <data xml:space="preserve" name="TagHEXColor">
     <value>Tag HEX color</value>
@@ -1947,7 +1947,7 @@
     <value>Recent history could not be saved. Your workspace remains available.</value>
   </data>
   <data name="HomeInstanceCount" xml:space="preserve">
-    <value>{0} configured instances</value>
+    <value>{0} configured instances · built-in terminal excluded</value>
   </data>
   <data name="HomeLicense" xml:space="preserve">
     <value>License · Apache 2.0</value>
@@ -2690,7 +2690,7 @@
     <value>Key browser</value>
   </data>
   <data name="RedisMatch" xml:space="preserve">
-    <value>Match key names, for example user:*</value>
+    <value>Find keys in this DB…</value>
   </data>
   <data name="RedisAllTypes" xml:space="preserve">
     <value>All types</value>
@@ -3200,7 +3200,7 @@
   <data name="MySqlCloseTab" xml:space="preserve"><value>Close tab</value></data>
   <data name="MySqlRefresh" xml:space="preserve"><value>Refresh</value></data>
   <data name="MySqlRefreshBranch" xml:space="preserve"><value>Refresh selected branch</value></data>
-  <data name="MySqlSearchLoaded" xml:space="preserve"><value>Search loaded objects</value></data>
+  <data name="MySqlSearchLoaded" xml:space="preserve"><value>Filter loaded objects…</value></data>
   <data name="MySqlSearchLoadedHint" xml:space="preserve"><value>Search only includes loaded objects and preserves their ancestors. Expand a branch to load more.</value></data>
   <data name="MySqlOpenKnownObject" xml:space="preserve"><value>Open table by name</value></data>
   <data name="MySqlOpenObject" xml:space="preserve"><value>Open</value></data>
@@ -3271,4 +3271,11 @@
   <data name="MySqlKeepDraft" xml:space="preserve"><value>Keep draft</value></data>
   <data name="MySqlDedicatedWriterRequired" xml:space="preserve"><value>Grid changes require a new dedicated session, separate from SQL execution and its transactions.</value></data>
   <data name="MySqlFieldTooLarge" xml:space="preserve"><value>The field value exceeds the 10 MiB edit limit. Your input is retained.</value></data>
+  <data name="SearchInstancesAndTags" xml:space="preserve">
+    <value>Search instances and tags…</value>
+  </data>
+  <data name="FilterInstanceList" xml:space="preserve">
+    <value>Filter instance list…</value>
+  </data>
+
 </root>

@@ -108,7 +108,7 @@ it; modules supply stable IDs and localized labels instead of copying selection
 templates. It retains native ListBox keyboard navigation without an inner scroll
 viewer.
 
-`WorkspacePageLayout` provides the shared content layout: a 64-pixel toolbar,
+`WorkspacePageLayout` provides the shared content layout: a toolbar with a 56-pixel minimum height,
 optional notification, fill-sized body, 300-pixel details panel and 28-pixel status
 bar. Below 760 pixels the details overlay the body rather than reducing its width.
 SSH supplies only slot content and terminal actions. The main shell continues to
@@ -144,8 +144,8 @@ Only expanded prefixes load children; values are read after opening a key. Empty
 SCAN pages retain their cursor. The public `WorkspaceTreeView`, `WorkspaceTabStrip`,
 `SectionSelector` and `CodeEditor` controls provide native keyboard navigation,
 shared theme resources and the Pencil workspace layout. Key tabs are identified
-by database and raw key bytes, truncate headers to twelve graphemes including the
-ellipsis, and retain independent drafts and view state. Redis does not supply a
+by database and raw key bytes, measure key headers at the current font and DPI, abbreviate their middle when
+space is limited while retaining a distinguishing suffix, and retain independent drafts and view state. Redis does not supply a
 key creation timestamp, so the metadata view does not invent one.
 
 Editable values require a complete bounded server baseline. Lua compare-and-save

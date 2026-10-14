@@ -17,7 +17,7 @@ public sealed class HomeWorkspaceTests(WpfTestFixture fixture)
         Assert.Same(home, environment.Shell.Workspace.SelectedTab);
         Assert.Empty(home.RecentInstances);
         Assert.Equal(4, home.Types.Where(type => type.Id != "local").Sum(type => type.Count));
-        Assert.Equal(1, Assert.Single(home.Types, type => type.Id == "local").Count);
+        Assert.DoesNotContain(home.Types, type => type.Id == "local");
         var instance = environment.Shell.Sidebar.AllInstances.First(item => !item.IsLocal);
         environment.Shell.Workspace.OpenInstance(instance);
         environment.Shell.Workspace.OpenInstance(instance);
@@ -63,7 +63,7 @@ public sealed class HomeWorkspaceTests(WpfTestFixture fixture)
             Assert.Same(Application.Current.Resources["HermodLogo"], logo.Source);
             Assert.True(logo.IsVisible);
             var statistics = Assert.Single(WindowTestVisuals.Descendants<HomeStatisticsPanel>(view));
-            Assert.Equal(statistics.Children[0].RenderSize.Width, statistics.Children[1].RenderSize.Width);
+            Assert.All(statistics.Children.Cast<UIElement>(), child => Assert.Equal(statistics.Children[0].RenderSize.Width, child.RenderSize.Width));
             var terminalButton = Assert.Single(WindowTestVisuals.Descendants<Button>(view),
                 button => ReferenceEquals(button.Command, environment.Shell.Sidebar.OpenLocalTerminalCommand));
             Assert.True(terminalButton.Focusable);
@@ -103,7 +103,7 @@ public sealed class HomeWorkspaceTests(WpfTestFixture fixture)
         var home = new HomeWorkspaceViewModel(_ => { }, registry);
         home.Refresh([]);
         Assert.Equal(0, Assert.Single(home.Types, type => type.Id == "storage").Count);
-        Assert.Equal(1, Assert.Single(home.Types, type => type.Id == "local").Count);
+        Assert.DoesNotContain(home.Types, type => type.Id == "local");
         home.RecordOpened(new(new("local-shell", "sandbox-local", "Local terminal", "terminal", [], true)));
         Assert.Equal("local-shell", Assert.Single(home.RecentInstances).Instance.Id);
         home.Refresh([

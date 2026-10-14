@@ -33,10 +33,4 @@ public static class RedisValueCodec
         }
         catch (Exception error) when (error is FormatException or JsonException or EncoderFallbackException) { throw Text.Exception("RedisInvalidFormat"); }
     }
-    /// <summary>标题最多十二个可见文字元素，省略号计入上限，不拆分 emoji 或组合字符。</summary>
-    public static string TabHeader(string key)
-    {
-        int[] elements = StringInfo.ParseCombiningCharacters(key);
-        return elements.Length <= 12 ? key : key[..elements[11]] + "…";
-    }
 }

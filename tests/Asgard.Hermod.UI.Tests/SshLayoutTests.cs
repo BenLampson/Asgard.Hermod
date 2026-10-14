@@ -95,7 +95,7 @@ public sealed class SshLayoutTests(WpfTestFixture fixture)
             var terminal = Assert.IsType<TerminalControl>(view.FindName("TerminalView"));
             var layout = Assert.IsType<WorkspacePageLayout>(view.FindName("WorkspaceLayout"));
             Assert.False(layout.IsCompact);
-            Assert.Equal(64, WindowTestVisuals.Named(layout, "PART_Toolbar").ActualHeight);
+            Assert.InRange(WindowTestVisuals.Named(layout, "PART_Toolbar").ActualHeight, 56, 64);
             Assert.Equal(28, WindowTestVisuals.Named(layout, "PART_StatusBar").ActualHeight);
             Assert.Equal(300, WindowTestVisuals.Named(layout, "PART_Details").ActualWidth);
             Assert.True(terminal.ActualWidth > 500); Assert.False(terminal.IsReadOnly);

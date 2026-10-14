@@ -8,7 +8,7 @@ public partial class RedisWorkspaceView : UserControl
     private readonly Dictionary<RedisKeyTabViewModel, RedisKeyContentView> _views = [];
     private RedisWorkspaceViewModel? _model;
     private bool _compact;
-    private double _treeWidth = 350;
+    private double _treeWidth = 280;
     private readonly System.Windows.Threading.DispatcherTimer _searchDelay = new() { Interval = TimeSpan.FromMilliseconds(400) };
     /// <summary>内部页签不创建外层工作页，切换时保留编辑器滚动位置。</summary>
     public RedisWorkspaceView()
@@ -153,8 +153,8 @@ public partial class RedisWorkspaceView : UserControl
     {
         CompactSelector.Visibility = _compact ? Visibility.Visible : Visibility.Collapsed;
         bool tree = _model?.ShowTree ?? true;
-        TreeColumn.MinWidth = _compact ? 0 : 280; KeyColumn.MinWidth = _compact ? 0 : 420;
-        TreeColumn.Width = _compact ? tree ? new(1, GridUnitType.Star) : new(0) : new(Math.Max(280, _treeWidth));
+        TreeColumn.MinWidth = _compact ? 0 : 220; KeyColumn.MinWidth = _compact ? 0 : 420;
+        TreeColumn.Width = _compact ? tree ? new(1, GridUnitType.Star) : new(0) : new(Math.Max(220, _treeWidth));
         KeyColumn.Width = _compact && tree ? new(0) : new(1, GridUnitType.Star);
         SplitterColumn.Width = new(_compact ? 0 : 6); Splitter.Visibility = _compact ? Visibility.Collapsed : Visibility.Visible;
         TreePanel.Visibility = _compact && !tree ? Visibility.Collapsed : Visibility.Visible;

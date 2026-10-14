@@ -35,6 +35,7 @@ public sealed class RedisLayoutTests(WpfTestFixture fixture)
             var tabs = Assert.IsType<WorkspaceTabStrip>(view.FindName("KeyTabs")); Assert.Equal(2, tabs.Items.Count);
             var item = Assert.IsType<ListBoxItem>(tabs.ItemContainerGenerator.ContainerFromIndex(0));
             Assert.Contains("cache:homepage", Assert.IsType<string>(item.ToolTip));
+            Assert.All(WindowTestVisuals.Descendants<MiddleEllipsisTextBlock>(tabs), block => Assert.False(string.IsNullOrEmpty(block.Text)));
             Assert.Contains("cache:homepage", System.Windows.Automation.AutomationProperties.GetName(item));
             Assert.DoesNotContain(WindowTestVisuals.Descendants<CheckBox>(view), checkbox => checkbox.IsVisible);
             var treePanel = Assert.IsType<Border>(view.FindName("TreePanel")); Assert.InRange(treePanel.ActualWidth, 280, 352);

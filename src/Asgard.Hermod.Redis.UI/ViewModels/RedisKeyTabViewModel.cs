@@ -42,8 +42,8 @@ public sealed partial class RedisKeyTabViewModel : ObservableObject, IDisposable
     public int Database { get; }
     /// <summary>完整键名用于悬浮、键盘焦点提示和可访问名称。</summary>
     public string FullName => Key.DisplayName;
-    /// <summary>包含省略号的十二个文字元素上限。</summary>
-    public string Header => RedisValueCodec.TabHeader(FullName);
+    /// <summary>原始标题由公共控件按实际宽度省略，不影响键身份。</summary>
+    public string Header => FullName;
     /// <summary>页签图标由真实类型决定。</summary>
     public string Icon => Type is "hash" or "list" or "set" or "zset" ? "table-2" : "file";
     /// <summary>选中态只改变展示，不提交草稿。</summary>

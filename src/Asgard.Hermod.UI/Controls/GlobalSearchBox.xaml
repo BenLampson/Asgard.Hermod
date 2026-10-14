@@ -18,16 +18,16 @@
                                    Foreground="{DynamicResource TextFaintBrush}" />
                 <TextBox x:Name="SearchInput" Grid.Column="2"
                          Text="{Binding GlobalSearchQuery, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{DynamicResource SearchTextBox}" FontSize="11.5"
-                         AutomationProperties.Name="{loc:Loc SearchServicesAndTasks}"
+                         Style="{DynamicResource SearchTextBox}" FontSize="12"
+                         AutomationProperties.Name="{loc:Loc SearchInstancesAndTags}"
                          GotKeyboardFocus="OnSearchFocus" TextChanged="OnSearchTextChanged"
                          PreviewKeyDown="OnPreviewKeyDown">
                     <TextBox.InputBindings>
                         <KeyBinding Key="Enter" Command="{Binding OpenFirstSearchResultCommand}" />
                     </TextBox.InputBindings>
                 </TextBox>
-                <TextBlock Grid.Column="2" Text="{loc:Loc SearchServicesAndTasks}"
-                           FontSize="11.5" VerticalAlignment="Center"
+                <TextBlock Grid.Column="2" Text="{loc:Loc SearchInstancesAndTags}"
+                           FontSize="12" VerticalAlignment="Center"
                            Foreground="{DynamicResource TextFaintBrush}" IsHitTestVisible="False">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">

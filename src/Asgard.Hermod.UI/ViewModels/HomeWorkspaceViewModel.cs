@@ -45,6 +45,8 @@ public sealed class HomeWorkspaceViewModel : WorkspacePageViewModel
     public ObservableCollection<RecentInstanceViewModel> RecentInstances { get; } = [];
     /// <summary>空记录引导。</summary>
     public bool HasNoRecentInstances => RecentInstances.Count == 0;
+    /// <summary>存在有效访问记录时将最近实例放在介绍和统计之前。</summary>
+    public bool HasRecentInstances => !HasNoRecentInstances;
     /// <summary>安全且本地化的持久化或浏览器失败提示。</summary>
     public string Message { get => _message; private set => SetProperty(ref _message, value); }
     /// <summary>重用外壳工作页入口。</summary>
@@ -71,7 +73,6 @@ public sealed class HomeWorkspaceViewModel : WorkspacePageViewModel
         foreach (var group in instances.Where(item => !item.IsLocal && !registeredIds.Contains(item.Summary.TypeId))
             .GroupBy(item => item.Summary.TypeId))
             Types.Add(new(group.Key, Text.Get("HomeOtherInstances"), group.First().Icon, group.Count()));
-        Types.Add(new("local", Text.Get("LocalTerminal"), "terminal", _instances.Count(item => item.IsLocal)));
         OnPropertyChanged(nameof(InstanceCount));
         RefreshRecent();
     }
@@ -95,6 +96,7 @@ public sealed class HomeWorkspaceViewModel : WorkspacePageViewModel
             if (_instances.FirstOrDefault(item => item.Id == record.InstanceId) is { } instance)
                 RecentInstances.Add(new(instance, record.OpenedAt));
         OnPropertyChanged(nameof(HasNoRecentInstances));
+        OnPropertyChanged(nameof(HasRecentInstances));
         OpenRecentCommand.NotifyCanExecuteChanged();
     }
 }

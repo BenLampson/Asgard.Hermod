@@ -24,7 +24,7 @@
     <controls:CodeEditor x:Name="SqlEditor" Text="{Binding Sql, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="False" MinHeight="80" MaxLength="10485760" Visibility="{Binding IsQuery, Converter={StaticResource Visible}}" AutomationProperties.Name="{loc:Loc MySqlSqlEditor}" />
     <GridSplitter Grid.Row="1" Height="6" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" Background="{DynamicResource LineSoftBrush}" ShowsPreview="True" Visibility="{Binding IsQuery, Converter={StaticResource Visible}}" />
     <Grid Grid.Row="2"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
-     <DockPanel Margin="0,10,0,8"><TextBlock DockPanel.Dock="Right" Text="{Binding SelectedResult.Summary}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" /><controls:SectionSelector ItemsSource="{Binding Results}" DisplayMemberPath="Label" SelectedItem="{Binding SelectedResult, Mode=TwoWay}" /></DockPanel>
+     <DockPanel Margin="0,10,0,8"><TextBlock DockPanel.Dock="Right" Text="{Binding SelectedResult.Summary}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" /><controls:SectionSelector ItemsSource="{Binding Results}" DisplayMemberPath="Label" SelectedItem="{Binding SelectedResult, Mode=TwoWay}" /></DockPanel>
      <ContentControl x:Name="GridHost" Grid.Row="1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
      <TextBlock Grid.Row="1" Text="{loc:Loc MySqlNoResults}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding HasResult}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
     </Grid>
@@ -41,7 +41,7 @@
   <Grid Grid.Row="3" Margin="0,12,0,0"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
    <DockPanel><StackPanel DockPanel.Dock="Right" Orientation="Horizontal"><Button Content="{loc:Loc MySqlRevertChanges}" Command="{Binding RevertCommand}" Margin="0,0,8,0" /><Button Content="{loc:Loc MySqlSaveChanges}" Command="{Binding SaveChangesCommand}" Style="{StaticResource PrimaryButton}" />
     <Button Content="{loc:Loc MySqlVerifyRows}" Command="{Binding VerifyCommand}" Margin="8,0,0,0" Visibility="{Binding OutcomeUnknown, Converter={StaticResource Visible}}" /></StackPanel>
-    <TextBlock Text="{Binding EditHint}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="0,0,16,0" />
+    <TextBlock Text="{Binding EditHint}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="0,0,16,0" />
    </DockPanel>
    <DockPanel Grid.Row="1" Margin="0,8,0,0"><StackPanel DockPanel.Dock="Right" Orientation="Horizontal" x:Name="PageButtons"><Button Command="{Binding PreviousCommand}" Content="{loc:Loc MySqlPrevious}" Margin="0,0,8,0" /><Button Command="{Binding NextCommand}" Content="{loc:Loc MySqlNext}" /></StackPanel><TextBlock Text="{Binding DraftSummary}" Foreground="{DynamicResource WarningBrush}" Visibility="{Binding HasDataDraft, Converter={StaticResource Visible}}" /></DockPanel>
   </Grid>

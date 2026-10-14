@@ -210,7 +210,9 @@ public sealed class InstanceSidebarViewModel : ObservableObject, IDisposable
     {
         string search = query.Trim();
         return search.Length == 0 || instance.Name.Contains(search, StringComparison.OrdinalIgnoreCase)
-            || instance.DisplayName.Contains(search, StringComparison.OrdinalIgnoreCase);
+            || instance.DisplayName.Contains(search, StringComparison.OrdinalIgnoreCase)
+            || instance.Tags.Any(tag => tag.Contains(search, StringComparison.OrdinalIgnoreCase)
+                || Localization.TagDisplayText.FullPath(tag).Contains(search, StringComparison.OrdinalIgnoreCase));
     }
 
     /// <summary>重新应用过滤并刷新空状态。</summary>

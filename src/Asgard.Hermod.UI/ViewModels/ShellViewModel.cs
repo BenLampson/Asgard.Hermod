@@ -111,7 +111,7 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
         set { if (SetProperty(ref _isSidebarExpanded, value)) OnPropertyChanged(nameof(SidebarWidth)); }
     }
     /// <summary>设计中的展开与收起宽度。</summary>
-    public GridLength SidebarWidth => new(IsSidebarExpanded ? 240 : 64);
+    public GridLength SidebarWidth => new(IsSidebarExpanded ? 200 : 64);
     /// <summary>当前是否为暗色主题。</summary>
     public bool IsDarkTheme => _themes.Theme == UiTheme.Dark;
     /// <summary>当前是否为亮色主题。</summary>

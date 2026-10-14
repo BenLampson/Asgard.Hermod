@@ -9,7 +9,7 @@
   <Button x:Name="CreateButton" Content="{Binding SubmitLabel}" Style="{StaticResource PrimaryButton}" Command="{Binding SubmitCommand}" IsDefault="True" />
  </StackPanel></controls:DialogActionBar></controls:HermodDialog.FooterContent>
  <Grid Margin="24"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-  <StackPanel Margin="0,0,0,16"><TextBlock Text="{Binding TargetLabel}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8" />
+  <StackPanel Margin="0,0,0,16"><TextBlock Text="{Binding TargetLabel}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8" />
    <TextBlock Text="{Binding Error}" Visibility="{Binding HasError, Converter={StaticResource Visible}}" TextWrapping="Wrap" Foreground="{DynamicResource DangerBrush}" AutomationProperties.LiveSetting="Polite" />
   </StackPanel>
   <Grid Grid.Row="1" IsEnabled="{Binding IsEditable}" Margin="0,0,0,14"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="180" /></Grid.ColumnDefinitions>
@@ -43,6 +43,6 @@
    <controls:FormField Grid.Column="1" Label="{loc:Loc RedisCreateExpirySeconds}" Error="{Binding ExpiryError}" Visibility="{Binding HasExpiry, Converter={StaticResource Visible}}">
     <TextBox x:Name="ExpiryInput" Text="{Binding ExpirySeconds, UpdateSourceTrigger=PropertyChanged}" MaxLength="12" AutomationProperties.Name="{loc:Loc RedisCreateExpirySeconds}" />
    </controls:FormField>
-  </Grid><TextBlock Text="{loc:Loc RedisCreateHint}" FontSize="11" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,12,0,0" /></StackPanel>
+  </Grid><TextBlock Text="{loc:Loc RedisCreateHint}" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,12,0,0" /></StackPanel>
  </Grid>
 </controls:HermodDialog>

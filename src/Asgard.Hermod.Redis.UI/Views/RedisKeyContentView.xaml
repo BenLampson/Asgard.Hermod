@@ -15,7 +15,7 @@
    <Button Content="{loc:Loc RedisAppendStream}" Command="{Binding OpenAppendCommand}" Visibility="{Binding IsStream, Converter={StaticResource Visible}}" Margin="8,0,0,0" />
   </StackPanel><StackPanel Orientation="Horizontal" VerticalAlignment="Center">
    <controls:StatusBadge Text="{Binding Type}" Tone="Accent" ShowIndicator="False" />
-   <TextBlock Text="{Binding Ttl}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="10,0,0,0" />
+   <TextBlock Text="{Binding Ttl}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="10,0,0,0" />
   </StackPanel></DockPanel>
   <controls:SectionSelector Grid.Row="2" ItemsSource="{Binding Sections}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding Section, Mode=TwoWay}" Margin="0,0,0,14" AutomationProperties.Name="{loc:Loc RedisValue}" />
   <TextBlock Grid.Row="3" Text="{Binding Error}" Visibility="{Binding HasError, Converter={StaticResource Visible}}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" Margin="0,0,0,8" AutomationProperties.LiveSetting="Polite" />
@@ -44,7 +44,7 @@
      <Button Content="{loc:Loc RedisAppendHead}" Command="{Binding AddHeadCommand}" Margin="0,0,8,0" Visibility="{Binding CanAddHead, Converter={StaticResource Visible}}" />
      <Button Content="{loc:Loc RedisRemoveEntry}" Command="{Binding RemoveEntryCommand}" CommandParameter="{Binding SelectedItem, ElementName=CollectionGrid}" Visibility="{Binding CanAddRows, Converter={StaticResource Visible}}" />
     </WrapPanel>
-    <TextBlock Text="{loc:Loc RedisStreamHint}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,8,0,0" Visibility="{Binding IsStream, Converter={StaticResource Visible}}" />
+    <TextBlock Text="{loc:Loc RedisStreamHint}" Foreground="{DynamicResource TextMutedBrush}" FontSize="12" TextWrapping="Wrap" Margin="0,8,0,0" Visibility="{Binding IsStream, Converter={StaticResource Visible}}" />
    </StackPanel>
   </Grid>
   <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto" Visibility="{Binding ShowMetadata, Converter={StaticResource Visible}}"><StackPanel>
@@ -59,8 +59,8 @@
    <DockPanel><StackPanel x:Name="InlineSaveActions" DockPanel.Dock="Right" Orientation="Horizontal" Visibility="Collapsed">
     <Button Content="{loc:Loc RedisDiscard}" Command="{Binding DiscardCommand}" Margin="0,0,8,0" />
     <Button Content="{loc:Loc RedisSaveValue}" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButton}" />
-   </StackPanel><TextBlock Text="{Binding PreviewInfo}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" /></DockPanel>
-   <TextBlock x:Name="EditingHint" Text="{loc:Loc RedisEditingHint}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,8,0,0" Visibility="Collapsed" />
+   </StackPanel><TextBlock Text="{Binding PreviewInfo}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" /></DockPanel>
+   <TextBlock x:Name="EditingHint" Text="{loc:Loc RedisEditingHint}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,8,0,0" Visibility="Collapsed" />
   </StackPanel>
  </Grid>
 </UserControl>

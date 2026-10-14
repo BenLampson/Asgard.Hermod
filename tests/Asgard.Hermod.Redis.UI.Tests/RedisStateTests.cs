@@ -113,14 +113,6 @@ public sealed class RedisStateTests
         await workspace.CloseTabCommand.ExecuteAsync(workspace.ActiveTab); Assert.True(workspace.IsEmpty); Assert.NotNull(workspace.Tree);
     }
 
-    [Theory]
-    [InlineData("short:key", "short:key")]
-    [InlineData("user:1042:profile", "user:1042:p…")]
-    [InlineData("😀😀😀😀😀😀😀😀😀😀😀😀😀", "😀😀😀😀😀😀😀😀😀😀😀…")]
-    [InlineData("ééééééééééééé", "ééééééééééé…")]
-    public void Headers_CountTextElementsIncludingEllipsis(string full, string expected)
-    { Assert.Equal(expected, RedisValueCodec.TabHeader(full)); Assert.True(StringInfo.ParseCombiningCharacters(RedisValueCodec.TabHeader(full)).Length <= 12); }
-
     [Fact]
     public void Codecs_DoNotReplaceInvalidUtf8OrSaveJsonFormattingImplicitly()
     {

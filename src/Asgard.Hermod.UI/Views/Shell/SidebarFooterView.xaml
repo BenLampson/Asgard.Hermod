@@ -7,7 +7,7 @@
         <Style x:Key="ThemeSegmentButton" TargetType="Button">
             <Setter Property="Height" Value="28" />
             <Setter Property="Padding" Value="10,0" />
-            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontSize" Value="12" />
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Foreground" Value="{DynamicResource TextBodyBrush}" />
             <Setter Property="Template">
@@ -95,7 +95,7 @@
                                 </Button.Style>
                                 <StackPanel Orientation="Horizontal">
                                     <controls:IconView Kind="sun" Width="14" Height="14" />
-                                    <TextBlock Text="{loc:Loc Light}" FontSize="11" Margin="6,0,0,0" VerticalAlignment="Center"
+                                    <TextBlock Text="{loc:Loc Light}" FontSize="12" Margin="6,0,0,0" VerticalAlignment="Center"
                                                Foreground="{DynamicResource TextBodyBrush}" />
                                 </StackPanel>
                             </Button>
@@ -111,7 +111,7 @@
                                 </Button.Style>
                                 <StackPanel Orientation="Horizontal">
                                     <controls:IconView Kind="moon" Width="14" Height="14" />
-                                    <TextBlock Text="{loc:Loc Dark}" FontSize="11" Margin="6,0,0,0" VerticalAlignment="Center"
+                                    <TextBlock Text="{loc:Loc Dark}" FontSize="12" Margin="6,0,0,0" VerticalAlignment="Center"
                                                Foreground="{DynamicResource TextBodyBrush}" />
                                 </StackPanel>
                             </Button>
@@ -123,8 +123,8 @@
                     </Button>
                 </Grid>
                 <Grid Margin="0,10,0,0">
-                    <TextBlock Text="{loc:Loc Hermod}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
-                    <TextBlock Text="{Binding Version}" FontFamily="{DynamicResource MonoFont}" FontSize="10"
+                    <TextBlock Text="{loc:Loc Hermod}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" />
+                    <TextBlock Text="{Binding Version}" FontFamily="{DynamicResource MonoFont}" FontSize="12"
                                HorizontalAlignment="Right" Foreground="{DynamicResource TextMutedBrush}" />
                 </Grid>
             </StackPanel>
