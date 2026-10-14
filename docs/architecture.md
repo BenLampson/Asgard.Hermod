@@ -382,3 +382,11 @@ entry and no main-window Owner; closing it uses the existing module confirmation
 awaits page cleanup. Reopening an instance activates the same page and window. The
 main shell retains its overview, search, configuration and account navigation.
 Module dialogs resolve the active work window as their owner.
+
+`MainNavigationTabs` owns the main-window navigation layout and selection styling.
+Each localized label reserves the maximum space measured by WPF for its normal
+and semibold font weights. Only one label is visible; the measuring labels remain
+hidden. Selecting a tab changes its font weight and background without moving or
+resizing any tab, icon or label. Main-window pages do not calculate tab widths.
+Regression tests compare every tab's actual bounds across selections, languages,
+themes, layout DPI values and wide/narrow main-window layouts.

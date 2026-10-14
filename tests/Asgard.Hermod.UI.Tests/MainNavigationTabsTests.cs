@@ -31,7 +31,7 @@ public sealed class MainNavigationTabsTests(WpfTestFixture fixture)
         {
             WindowPreviewCapture.Show(window);
             var tabs = WindowTestVisuals.Descendants<MainNavigationTabs>(window).Single();
-            foreach (int index in new[] { 0, 1, 2 })
+            foreach (int index in Enumerable.Range(0, tabs.Items.Count))
             {
                 tabs.SelectedIndex = index; await WindowTestVisuals.UpdateLayoutAsync(window);
                 var frame = WindowTestVisuals.Frame(window);
