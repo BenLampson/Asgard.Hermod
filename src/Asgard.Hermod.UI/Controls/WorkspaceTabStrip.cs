@@ -3,6 +3,10 @@ namespace Asgard.Hermod.UI.Controls;
 /// <summary>协议无关的内部页签条；业务提供标题、提示及关闭动作。</summary>
 public class WorkspaceTabStrip : ListBox
 {
+    /// <summary>模块提供相同的受保护关闭命令；中键参数是指针所在项。</summary>
+    public static readonly DependencyProperty CloseCommandProperty = DependencyProperty.Register(nameof(CloseCommand), typeof(ICommand), typeof(WorkspaceTabStrip));
+    /// <summary>未配置时不提供中键关闭。</summary>
+    public ICommand? CloseCommand { get => (ICommand?)GetValue(CloseCommandProperty); set => SetValue(CloseCommandProperty, value); }
     /// <summary>业务提供完整名称路径，标题截断不影响提示与可访问名称。</summary>
     public static readonly DependencyProperty ToolTipMemberPathProperty = DependencyProperty.Register(nameof(ToolTipMemberPath), typeof(string), typeof(WorkspaceTabStrip), new PropertyMetadata(""));
     private static readonly DependencyPropertyKey HeaderWidthPropertyKey = DependencyProperty.RegisterReadOnly(nameof(HeaderWidth), typeof(double),
@@ -20,6 +24,20 @@ public class WorkspaceTabStrip : ListBox
     public WorkspaceTabStrip()
     {
         SizeChanged += (_, _) => UpdateHeaderWidth();
+    }
+    /// <summary>关闭命中页签而非活动项，仍经过业务的草稿、事务和运行中查询预检。</summary>
+    protected override void OnPreviewMouseDown(MouseButtonEventArgs args)
+    {
+        base.OnPreviewMouseDown(args);
+        if (args.Handled || args.ChangedButton != MouseButton.Middle || CloseCommand is not { } close) return;
+        for (DependencyObject? source = args.OriginalSource as DependencyObject; source is not null; source = source is FrameworkContentElement content ? content.Parent : VisualTreeHelper.GetParent(source))
+        {
+            if (source is not ListBoxItem item) continue;
+            if (!ReferenceEquals(ItemsControlFromItemContainer(item), this)) return;
+            object value = ItemContainerGenerator.ItemFromContainer(item);
+            if (close.CanExecute(value)) close.Execute(value);
+            args.Handled = true; return;
+        }
     }
     /// <summary>增删页签只调整展示宽度，不影响业务对象和草稿。</summary>
     protected override void OnItemsChanged(System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

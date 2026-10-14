@@ -9,7 +9,7 @@ public sealed partial class WorkspaceViewModel
 
     private void ActivatePage(WorkspacePageViewModel page)
     {
-        if (page.IsClosed || IsExitPending || _disposeTask is not null) return;
+        if (page.IsClosed || IsExitPending || _disposeStarted) return;
         OpenError = ""; OnPropertyChanged(nameof(OpenError));
         _ = InitializePageAsync(page);
         // 同步失败可能已经移除了页面，不能在之后重新创建幽灵窗口。
@@ -37,7 +37,7 @@ public sealed partial class WorkspaceViewModel
         try { await closing; }
         catch (Exception error) { if (failure.Length == 0) failure = Text.Error(error); }
         finally { _closingPages.Remove(closing); }
-        if (_disposeTask is null && !IsExitPending && failure.Length > 0)
+        if (!_disposeStarted && _disposeTask is null && !IsExitPending && failure.Length > 0)
         { OpenError = Text.Format("WorkspaceOpenFailed", page.Header, failure); OnPropertyChanged(nameof(OpenError)); }
     }
     private async void OnPageCloseRequested(object? sender, EventArgs args)

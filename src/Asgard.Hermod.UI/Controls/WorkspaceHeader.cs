@@ -22,6 +22,10 @@ public class WorkspaceHeader : Control
     public static readonly DependencyProperty IsCompactProperty = IsCompactPropertyKey.DependencyProperty;
     /// <summary>紧凑标题的模块呈现提示。</summary>
     public bool IsCompact => (bool)GetValue(IsCompactProperty);
+    /// <summary>实例创建后按已应用的启动语言读取，避免主题模板缓存首次解析的语种。</summary>
+    public string EditConnectionLabel => Text.Get("WorkspaceConnectionEdit");
+    /// <summary>重连文案属于标题实例，不固化到共享模板。</summary>
+    public string ReconnectLabel => Text.Get("WorkspaceConnectionRetry");
     /// <summary>身份内容。</summary>
     public object? IdentityContent { get => GetValue(IdentityContentProperty); set => SetValue(IdentityContentProperty, value); }
     /// <summary>状态内容。</summary>

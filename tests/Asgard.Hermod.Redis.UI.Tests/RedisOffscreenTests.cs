@@ -138,8 +138,6 @@ public sealed class RedisOffscreenTests(WpfTestFixture fixture)
             var header = Assert.IsType<WorkspaceHeader>(host.TakeHeader());
             Assert.Same(original, header); Assert.Null(layout.Toolbar); Assert.Same(page, header.DataContext);
             Assert.Same(page, view.DataContext); header.ShowWindowControls = true;
-            // 真实应用重启后才换语言；同进程的跨语言离屏用例重新加载按启动语言缓存的模板。
-            header.Style = (Style)new ResourceDictionary { Source = new Uri("pack://application:,,,/Asgard.Hermod.UI;component/Resources/WorkspaceHeader.xaml") }[typeof(WorkspaceHeader)];
             var caption = new Border { Child = header };
             await WpfTestFixture.DrainDispatcherAsync(); Layout(caption, width, 72);
             Assert.Equal(72, header.ActualHeight); Assert.Same(page.Instance, Descendants<InstanceNameButton>(header).Single().Instance);
@@ -155,6 +153,9 @@ public sealed class RedisOffscreenTests(WpfTestFixture fixture)
             Assert.Equal(page.Status, Descendants<StatusBadge>(header).Last().Text);
             var retry = Descendants<Button>(header).Single(button => ReferenceEquals(button.Command, page.ReconnectCommand));
             Assert.Equal(Text.Get("WorkspaceConnectionRetry"), retry.Content);
+            Assert.Equal(Text.Get("WorkspaceConnectionRetry"), AutomationProperties.GetName(retry));
+            var edit = Descendants<Button>(header).Single(button => ReferenceEquals(button.Command, page.EditConnectionCommand));
+            Assert.Equal(Text.Get("WorkspaceConnectionEdit"), edit.Content); Assert.Equal(edit.Content, AutomationProperties.GetName(edit));
             Assert.Equal(Visibility.Visible, ((FrameworkElement)VisualTreeHelper.GetParent(retry)).Visibility); Assert.True(retry.IsEnabled);
             Capture(header, $"workspace-header-disconnected-{language}-{theme}-{width}");
             await page.ReconnectCommand.ExecuteAsync(); Layout(caption, width, 72);

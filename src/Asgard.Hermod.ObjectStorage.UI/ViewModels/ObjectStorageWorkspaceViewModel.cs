@@ -359,6 +359,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         RefreshCommands();
         await Task.WhenAll(Transfers.Select(transfer => transfer.Completion));
         await _imagePreviewTask;
+        _imagePreviewGate.Dispose();
         _transferGate.Dispose();
         _lifetime.Dispose();
     }

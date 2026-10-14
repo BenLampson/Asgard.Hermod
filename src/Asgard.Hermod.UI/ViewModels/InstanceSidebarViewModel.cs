@@ -107,7 +107,7 @@ public sealed class InstanceSidebarViewModel : ObservableObject, IDisposable
     public AsyncRelayCommand EditInstanceTagsCommand { get; }
     private bool _metadataDialogOpen;
     private bool CanEditMetadata(object? value) => !_disposed && !_metadataDialogOpen
-        && value is InstanceItemViewModel { IsLocal: false } instance && _items.Contains(instance);
+        && value is InstanceItemViewModel { IsLocal: false } instance && _items.Any(item => item.Id == instance.Id);
     private async Task EditMetadataAsync(object? value, bool editTags)
     {
         if (!CanEditMetadata(value) || value is not InstanceItemViewModel instance) return;

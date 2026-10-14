@@ -43,6 +43,20 @@ public sealed class WorkspaceStartupHeadlessTests(WpfTestFixture fixture)
         Assert.Single(workspace.Tabs); Assert.NotEmpty(workspace.OpenError);
     });
 
+    [Fact]
+    public Task Dispose_WaitsForPendingInitializationAndClearsItsRegistry() => fixture.RunOffscreenAsync(async () =>
+    {
+        var pending = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var factory = new Pages { Pending = pending.Task };
+        var workspace = new WorkspaceViewModel(new Source(), new Terminals(), factory);
+        workspace.OpenInstance(new(Source.Instance)); var page = factory.Last!;
+        Task disposal = workspace.DisposeAsync().AsTask(); Assert.True(page.IsClosed); Assert.False(disposal.IsCompleted);
+        pending.SetResult(); await disposal; Assert.Empty(workspace.Tabs); Assert.Empty(workspace.OpenError);
+        Assert.Equal(1, page.Releases);
+        var registry = (System.Collections.IDictionary)typeof(WorkspaceViewModel).GetField("_initializations", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.GetValue(workspace)!;
+        Assert.Empty(registry.Keys.Cast<object>());
+    });
+
     private sealed class StartupPage(Task? pending) : WorkspacePageViewModel("startup", "Instance", "database", "instance")
     {
         public override WorkspaceConnectionViewModel ConnectionState { get; } = new();

@@ -31,7 +31,7 @@
                         <TextBlock Text="{loc:Loc WorkspaceSessionTools}" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" />
                     </DockPanel>
                     <Grid Grid.Row="1" Margin="0,0,0,10">
-                        <TextBox x:Name="ToolFilter" TextChanged="OnFilterChanged" Height="34" Padding="10,0,34,0"
+                        <TextBox x:Name="ToolFilter" TextChanged="OnFilterChanged" Height="36" MinHeight="36" FontFamily="{DynamicResource UiFont}" FontSize="13" VerticalContentAlignment="Center" Padding="10,0,34,0"
                                  ToolTip="{loc:Loc WorkspaceFindTool}" AutomationProperties.Name="{loc:Loc WorkspaceFindTool}" />
                         <TextBlock Text="{loc:Loc WorkspaceFindTool}" Margin="11,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False" Foreground="{DynamicResource TextMutedBrush}">
                             <TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers>
@@ -44,13 +44,16 @@
                         <ItemsControl x:Name="ToolList" ItemsSource="{Binding FilteredTools, ElementName=ToolsRoot}">
                             <ItemsControl.ItemTemplate><DataTemplate>
                                 <Button Command="{Binding Command}" Click="OnToolClick" Style="{StaticResource GhostButton}"
-                                        HorizontalContentAlignment="Stretch" Height="44" Padding="10,0" Margin="0,1"
+                                        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" FontFamily="{DynamicResource UiFont}" FontSize="13" Height="44" Padding="10,0" Margin="0,1"
                                         AutomationProperties.Name="{Binding Title}" ToolTip="{Binding Title}">
                                     <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="26" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                                        <controls:IconView Kind="{Binding Icon}" Width="16" Height="16" />
+                                        <controls:IconView Kind="{Binding Icon}" Width="16" Height="16" VerticalAlignment="Center" />
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
-                                            <TextBlock Text="{Binding Group}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" />
+                                            <TextBlock Text="{Binding Group}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"><TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers>
+                                                <DataTrigger Binding="{Binding Group}" Value=""><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+                                                <DataTrigger Binding="{Binding Group}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+                                            </Style.Triggers></Style></TextBlock.Style></TextBlock>
                                         </StackPanel>
                                         <TextBlock Grid.Column="2" Text="{Binding Hint}" FontSize="10" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}" />
                                     </Grid>

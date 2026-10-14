@@ -4,7 +4,7 @@
  xmlns:vm="clr-namespace:Asgard.Hermod.Redis.UI.ViewModels" Background="{DynamicResource SurfaceBrush}" PreviewKeyDown="OnKeyDown" controls:WorkspaceConnectionScope.State="{Binding Connection}">
  <UserControl.Resources>
   <ResourceDictionary>
-  <ResourceDictionary.MergedDictionaries><ResourceDictionary Source="../Resources/WorkspaceChrome.xaml" /></ResourceDictionary.MergedDictionaries>
+  <ResourceDictionary.MergedDictionaries><ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/WorkspaceSelectionStyles.xaml" /></ResourceDictionary.MergedDictionaries>
   <BooleanToVisibilityConverter x:Key="Visible" />
   <Style x:Key="KeyTreeItem" TargetType="TreeViewItem">
    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
@@ -94,7 +94,7 @@
        <ComboBox ItemsSource="{Binding Types}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding SelectedType, Mode=TwoWay}" SelectionChanged="OnTypeFilterChanged" Height="32" MinHeight="32" AutomationProperties.Name="{loc:Loc RedisKeyType}" />
       </DockPanel>
       <DockPanel Grid.Row="3" Margin="0,0,0,12"><controls:StatusBadge DockPanel.Dock="Right" Text="{loc:Loc RedisMoreGroups}" Tone="Accent" ShowIndicator="False" Visibility="{Binding Tree.Root.HasMore, Converter={StaticResource Visible}}" /><TextBlock Text="{Binding Tree.CountLabel}" Foreground="{DynamicResource TextMutedBrush}" FontSize="12" VerticalAlignment="Center" /></DockPanel>
-      <controls:WorkspaceTreeView Grid.Row="4" x:Name="KeyTree" FocusVisualStyle="{x:Null}" ItemsSource="{Binding Tree.Root.Children}" ItemContainerStyle="{StaticResource KeyTreeItem}" SelectedItemChanged="OnTreeSelection" PreviewKeyDown="OnTreeKeyDown" MouseLeftButtonUp="OnTreeClick"
+      <controls:WorkspaceTreeView Grid.Row="4" x:Name="KeyTree" IsEnabled="{Binding IsConnected}" FocusVisualStyle="{x:Null}" ItemsSource="{Binding Tree.Root.Children}" ItemContainerStyle="{StaticResource KeyTreeItem}" SelectedItemChanged="OnTreeSelection" PreviewKeyDown="OnTreeKeyDown" MouseLeftButtonUp="OnTreeClick"
        BorderThickness="0" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutomationProperties.Name="{loc:Loc RedisKeys}" />
       <DockPanel Grid.Row="5" Margin="0,12,0,0"><Button DockPanel.Dock="Left" Content="{loc:Loc RedisLoadRootGroups}" Command="{Binding Tree.Root.LoadMoreCommand}" Visibility="{Binding Tree.Root.HasMore, Converter={StaticResource Visible}}" Margin="0,0,8,0" />
        <TextBlock Text="{loc:Loc RedisLazyHint}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" TextWrapping="Wrap" />
@@ -105,7 +105,7 @@
     <Grid Grid.Column="2" x:Name="KeyPanel" Margin="22,18,22,16"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
      <DockPanel Background="{DynamicResource SurfaceBrush}">
       <Button DockPanel.Dock="Right" Click="OnOpenTabsMenu" Style="{StaticResource IconButton}" ToolTip="{loc:Loc RedisAllOpenKeys}" AutomationProperties.Name="{loc:Loc RedisAllOpenKeys}" Margin="4,0"><controls:IconView Kind="chevron-down" Width="14" Height="14" /></Button>
-      <controls:WorkspaceTabStrip x:Name="KeyTabs" Background="{DynamicResource SurfaceBrush}" ItemContainerStyle="{StaticResource RedisChoiceItem}" ItemsSource="{Binding Tabs}" SelectedItem="{Binding ActiveTab, Mode=TwoWay}" ToolTipMemberPath="MenuLabel" SelectionChanged="OnTabSelected" AutomationProperties.Name="{loc:Loc RedisAllOpenKeys}">
+      <controls:WorkspaceTabStrip x:Name="KeyTabs" CloseCommand="{Binding CloseTabCommand}" Background="{DynamicResource SurfaceBrush}" ItemContainerStyle="{StaticResource WorkspaceTabItem}" ItemsSource="{Binding Tabs}" SelectedItem="{Binding ActiveTab, Mode=TwoWay}" ToolTipMemberPath="MenuLabel" SelectionChanged="OnTabSelected" AutomationProperties.Name="{loc:Loc RedisAllOpenKeys}">
        <controls:WorkspaceTabStrip.ItemTemplate><DataTemplate><StackPanel Orientation="Horizontal" ToolTip="{Binding MenuLabel}" AutomationProperties.Name="{Binding MenuLabel}">
         <controls:IconView Kind="{Binding Icon}" Width="14" Height="14" Margin="0,0,7,0" Foreground="{DynamicResource TextMutedBrush}" />
         <controls:MiddleEllipsisTextBlock FullText="{Binding FullName}" MaxWidth="{Binding HeaderWidth, RelativeSource={RelativeSource AncestorType=controls:WorkspaceTabStrip}}" FontFamily="{DynamicResource MonoFont}" FontSize="12" VerticalAlignment="Center"><controls:MiddleEllipsisTextBlock.Style><Style TargetType="controls:MiddleEllipsisTextBlock" BasedOn="{StaticResource {x:Type TextBlock}}"><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" /><Style.Triggers><DataTrigger Binding="{Binding IsActive}" Value="True"><Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" /></DataTrigger></Style.Triggers></Style></controls:MiddleEllipsisTextBlock.Style></controls:MiddleEllipsisTextBlock>

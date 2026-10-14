@@ -8,6 +8,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IAsyncDisposa
     private readonly IInstanceWorkspaceFactory? _pageFactory;
     private WorkspacePageViewModel? _selectedTab;
     private Task? _disposeTask;
+    private bool _disposeStarted;
     private int _terminalNumber;
     private bool _useIndependentWindows;
     private readonly HashSet<Task> _closingPages = [];
@@ -36,7 +37,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IAsyncDisposa
         });
         CloseTabCommand = new AsyncRelayCommand(value =>
             value is WorkspacePageViewModel page ? CloseTabAsync(page) : Task.CompletedTask,
-            value => _disposeTask is null && value is WorkspacePageViewModel { CanClose: true, IsClosed: false } page && Tabs.Contains(page));
+            value => !_disposeStarted && value is WorkspacePageViewModel { CanClose: true, IsClosed: false } page && Tabs.Contains(page));
     }
 
     /// <summary>活动页变化后同步侧栏状态。</summary>
@@ -107,7 +108,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IAsyncDisposa
     {
         ArgumentNullException.ThrowIfNull(instance);
         if (IsExitPending) return;
-        ObjectDisposedException.ThrowIf(_disposeTask is not null, this);
+        ObjectDisposedException.ThrowIf(_disposeStarted, this);
         WorkspacePageViewModel? page = Tabs.FirstOrDefault(tab => tab.InstanceId == instance.Id && !tab.IsClosed);
         if (page is null)
         {
@@ -124,7 +125,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IAsyncDisposa
     public void OpenLocalTerminal()
     {
         if (IsExitPending) return;
-        ObjectDisposedException.ThrowIf(_disposeTask is not null, this);
+        ObjectDisposedException.ThrowIf(_disposeStarted, this);
         var local = new InstanceItemViewModel(_source.GetInstances().FirstOrDefault(instance => instance.IsLocal)
             ?? new InstanceSummary("local-shell", "sandbox-local", Text.Get("LocalTerminal"), "laptop", ["Local"], true));
         var page = CreateTerminalPage(local);
@@ -173,7 +174,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IAsyncDisposa
     /// <summary>新会话复用实例配置，但创建独立页面和连接。</summary>
     private void OnNewSessionRequested(object? sender, EventArgs args)
     {
-        if (IsExitPending || _disposeTask is not null || sender is not WorkspacePageViewModel original || !_instances.TryGetValue(original, out var instance)) return;
+        if (IsExitPending || _disposeStarted || sender is not WorkspacePageViewModel original || !_instances.TryGetValue(original, out var instance)) return;
         var page = CreateServicePage(instance); RegisterSessionPage(page, instance);
         Tabs.Add(page); SelectedTab = page; Home.RecordOpened(instance);
         ActivatePage(page);
@@ -190,6 +191,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IAsyncDisposa
     /// <summary>应用退出时关闭所有页，不保存或恢复已打开的页签。</summary>
     public ValueTask DisposeAsync()
     {
+        _disposeStarted = true;
         _disposeTask ??= CloseAllAsync();
         return new ValueTask(_disposeTask);
     }
@@ -200,8 +202,9 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IAsyncDisposa
         SelectedTab = null;
         foreach (var page in Tabs) { page.NewSessionRequested -= OnNewSessionRequested; page.CloseRequested -= OnPageCloseRequested; }
         _instances.Clear();
+        Task[] initializing = _initializations.Values.ToArray(); _initializations.Clear();
         Task[] closing = Tabs.Select(page => page.CloseAsync()).Concat(_closingPages).ToArray();
         Tabs.Clear();
-        await Task.WhenAll(closing);
+        await Task.WhenAll(closing.Concat(initializing));
     }
 }

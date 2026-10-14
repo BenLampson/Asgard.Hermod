@@ -9,7 +9,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     /// <inheritdoc />
     public override WorkspaceConnectionViewModel ConnectionState => Connection;
     /// <summary>弹窗开启时暂停页面操作，页面布局不变化。</summary>
-    public bool IsConnectionInteractionEnabled => !Connection.IsOpen;
+    public bool IsConnectionInteractionEnabled => !Connection.IsOpen && !Connection.HasError;
     /// <summary>连接失效已经在弹窗显示，不重复占用列表错误条。</summary>
     public string DisplayActionError => Connection.HasError ? "" : ActionError;
     /// <summary>连接故障仅由弹窗展示；普通目录或权限错误仍可在列表中恢复。</summary>

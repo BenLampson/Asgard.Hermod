@@ -1,6 +1,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
- <!-- 只收敛 Redis 内部导航；保持全局主题语义色与其他模块模板不变。 -->
- <Style x:Key="RedisChoiceItem" TargetType="ListBoxItem">
+ <!-- 内部页签与次级选择器共用一份语义样式，颜色随全局主题变化。 -->
+ <Style x:Key="WorkspaceTabItem" TargetType="ListBoxItem">
+  <Setter Property="ToolTipService.ShowsToolTipOnKeyboardFocus" Value="False" /><Setter Property="ToolTipService.InitialShowDelay" Value="600" /><Setter Property="ToolTipService.ShowDuration" Value="3000" />
   <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
   <Setter Property="HorizontalContentAlignment" Value="Center" /><Setter Property="VerticalContentAlignment" Value="Center" />
   <Setter Property="FocusVisualStyle" Value="{x:Null}" /><Setter Property="Padding" Value="12,0" />
@@ -16,7 +17,7 @@
    </ControlTemplate.Triggers>
   </ControlTemplate></Setter.Value></Setter>
  </Style>
- <Style x:Key="RedisSectionItem" TargetType="ListBoxItem" BasedOn="{StaticResource RedisChoiceItem}">
+ <Style x:Key="WorkspaceSectionItem" TargetType="ListBoxItem" BasedOn="{StaticResource WorkspaceTabItem}">
   <Setter Property="FontSize" Value="12" />
   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
    <Border x:Name="Choice" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="5">
