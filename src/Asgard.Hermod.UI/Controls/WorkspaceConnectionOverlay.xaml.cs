@@ -13,6 +13,10 @@ public partial class WorkspaceConnectionOverlay : UserControl
     public static readonly DependencyProperty RetryCommandProperty = DependencyProperty.Register(nameof(RetryCommand), typeof(ICommand), typeof(WorkspaceConnectionOverlay));
     /// <summary>模块控制编辑连接。</summary>
     public static readonly DependencyProperty EditCommandProperty = DependencyProperty.Register(nameof(EditCommand), typeof(ICommand), typeof(WorkspaceConnectionOverlay));
+    /// <summary>明确关闭整个工作窗口，仍经过模块关闭预检。</summary>
+    public static readonly DependencyProperty CloseWorkspaceCommandProperty = DependencyProperty.Register(nameof(CloseWorkspaceCommand), typeof(ICommand), typeof(WorkspaceConnectionOverlay));
+    /// <summary>整个工作窗口的关闭动作。</summary>
+    public ICommand? CloseWorkspaceCommand { get => (ICommand?)GetValue(CloseWorkspaceCommandProperty); set => SetValue(CloseWorkspaceCommandProperty, value); }
     /// <summary>连接状态。</summary>
     public WorkspaceConnectionViewModel? State { get => (WorkspaceConnectionViewModel?)GetValue(StateProperty); set => SetValue(StateProperty, value); }
     /// <summary>目标名称，不显示连接凭据。</summary>

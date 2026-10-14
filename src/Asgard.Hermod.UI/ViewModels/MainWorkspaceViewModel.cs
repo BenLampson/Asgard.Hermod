@@ -37,6 +37,7 @@ public sealed class MainWorkspaceViewModel : ObservableObject, IDisposable
         catalog.InstancesChanged += OnCatalogChanged;
         catalog.PropertyChanged += OnCatalogPropertyChanged;
         workspace.Home.PropertyChanged += OnHistoryChanged;
+        workspace.PropertyChanged += OnWorkspaceChanged;
         Refresh();
     }
 
@@ -101,7 +102,7 @@ public sealed class MainWorkspaceViewModel : ObservableObject, IDisposable
     /// <summary>概览没有筛选表单，空状态不能要求调整不存在的筛选条件。</summary>
     public string EmptyText => Text.Get(IsOverview ? "MainRecentEmpty" : "MainEmptyList");
     /// <summary>错误仅用共享安全消息呈现。</summary>
-    public string Error => _error.Length > 0 ? _error : _catalog.OperationError;
+    public string Error => _workspace.OpenError.Length > 0 ? _workspace.OpenError : _error.Length > 0 ? _error : _catalog.OperationError;
     /// <summary>无错误时不占正文高度。</summary>
     public Visibility ErrorVisibility => Error.Length == 0 ? Visibility.Collapsed : Visibility.Visible;
     /// <summary>概览与列表分别采用稿中的二十和十八像素间距。</summary>
@@ -203,10 +204,13 @@ public sealed class MainWorkspaceViewModel : ObservableObject, IDisposable
         if (args.PropertyName is nameof(InstanceSidebarViewModel.SelectedTagPaths) or nameof(InstanceSidebarViewModel.IsEmpty) or nameof(InstanceSidebarViewModel.OperationError)) { _page = 1; RefreshRows(); }
     }
     private void OnHistoryChanged(object? sender, PropertyChangedEventArgs args) { if (args.PropertyName == nameof(HomeWorkspaceViewModel.HasRecentInstances)) RefreshRows(); }
+    private void OnWorkspaceChanged(object? sender, PropertyChangedEventArgs args)
+    { if (args.PropertyName == nameof(WorkspaceViewModel.OpenError)) { OnPropertyChanged(nameof(Error)); OnPropertyChanged(nameof(ErrorVisibility)); } }
     /// <inheritdoc />
     public void Dispose()
     {
         _catalog.InstancesChanged -= OnCatalogChanged; _catalog.PropertyChanged -= OnCatalogPropertyChanged;
         _workspace.Home.PropertyChanged -= OnHistoryChanged;
+        _workspace.PropertyChanged -= OnWorkspaceChanged;
     }
 }

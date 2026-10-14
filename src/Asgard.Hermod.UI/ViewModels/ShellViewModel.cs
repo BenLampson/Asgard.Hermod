@@ -231,7 +231,6 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
             // 外壳只协调通用生命周期，功能模块自行处理远程资源。
             if (_instancePages.Add(page))
                 page.PropertyChanged += OnInstancePageChanged;
-            _ = page.InitializeAsync();
         }
     }
 

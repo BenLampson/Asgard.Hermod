@@ -4,6 +4,30 @@ namespace Asgard.Hermod.MySql.UI.ViewModels;
 
 public sealed partial class MySqlTabViewModel
 {
+    /// <summary>重连只确认中止与事务结束，保留 SQL 文稿和结果单元格草稿。</summary>
+    public async Task<WorkspaceClosePlan?> PrepareReconnectAsync()
+    {
+        if (CommitInputRequested?.Invoke() == false) return null;
+        bool stop = IsBusy;
+        if (stop && !await _dialogs.ConfirmStopAsync()) return null;
+        bool rollback = _session is not null && _executed && _session.State.InTransaction != false;
+        if (rollback && !await _dialogs.ConfirmEndSessionAsync()) return null;
+        return new WorkspaceClosePlan(async () =>
+        {
+            if (stop) { _pending?.Cancel(); if (_completion is not null) await _completion.Task; }
+            if (rollback && _session is { IsConnected: true }) await _session.RollbackAsync(_lifetime.Token);
+        });
+    }
+    /// <summary>解除旧物理会话，已有文稿、分页、草稿与未知写入状态原样保留。</summary>
+    public async Task DisconnectSessionAsync()
+    {
+        SetConnectionAvailability(false);
+        var previous = _session; _session = null;
+        if (previous is not null) await previous.DisposeAsync();
+        _executed = false;
+    }
+    /// <summary>新连接配置只供下一次显式读取或执行，不自动重放 SQL。</summary>
+    public void RebindConnection(InstanceConnectionOptions options) { _options = options; SetConnectionAvailability(true); }
     /// <summary>光标语句定位使用服务器模式，不改变用户完整文稿。</summary>
     public async Task ExecuteScopeAsync(string selection, int caret, bool all)
     {

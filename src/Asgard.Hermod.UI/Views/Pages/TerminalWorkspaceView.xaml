@@ -84,6 +84,7 @@
         <Border Grid.Row="2" Style="{DynamicResource PanelBorder}" Padding="12" Margin="0,18,0,0" CornerRadius="8"
                 Background="{DynamicResource TerminalSurfaceBrush}" TextElement.FontFamily="Consolas">
             <terminal:TerminalControl x:Name="TerminalView" Session="{Binding Session}"
+                                      IsReadOnly="{Binding IsReadOnly}"
                                       FontFamily="Consolas" FontSize="14"
                                       Background="{DynamicResource TerminalSurfaceBrush}"
                                       Foreground="{DynamicResource TerminalTextBrush}" />

@@ -14,7 +14,7 @@ public sealed partial class RedisWorkspaceViewModel : WorkspacePageViewModel
     private readonly CancellationTokenSource _lifetime = new();
     private IRedisSession? _session;
     private readonly Dictionary<string, RedisKeyTree> _trees = new(StringComparer.Ordinal);
-    private bool _initialized;
+    private Task? _initializeTask;
     private int _database;
     private bool _readingDatabaseCounts;
 
@@ -29,7 +29,7 @@ public sealed partial class RedisWorkspaceViewModel : WorkspacePageViewModel
         NewKeyCommand = new AsyncRelayCommand(_ => CreateAsync(), _ => _session is not null);
         CloseTabCommand = new AsyncRelayCommand(tab => CloseTabAsync(tab as RedisKeyTabViewModel));
         ActivateTabCommand = new RelayCommand(tab => { if (tab is RedisKeyTabViewModel key) ActiveTab = key; });
-        ReconnectCommand = new AsyncRelayCommand(_ => ConnectAsync(), _ => !IsConnecting && Tabs.All(tab => !tab.IsDirty && !tab.IsBusy));
+        ReconnectCommand = new AsyncRelayCommand(_ => ConnectAsync(), _ => !IsConnecting && Tabs.All(tab => !tab.IsBusy));
         EditConnectionCommand = new AsyncRelayCommand(_ => EditConnectionAsync(), _ => !IsConnecting);
     }
     /// <summary>实例标题。</summary>
@@ -42,6 +42,8 @@ public sealed partial class RedisWorkspaceViewModel : WorkspacePageViewModel
     public string Status => Text.Get(IsConnecting ? "RedisConnecting" : !IsConnected ? "WorkspaceConnectionDisconnected" : "RedisConnected");
     /// <summary>共享连接浮层与短状态徽标分别承载详情和摘要。</summary>
     public WorkspaceConnectionViewModel Connection { get; } = new();
+    /// <inheritdoc />
+    public override WorkspaceConnectionViewModel ConnectionState => Connection;
     /// <summary>失败不使用成功绿色，等待与未连接也有独立色调。</summary>
     public StatusTone ConnectionTone => IsConnecting ? StatusTone.Accent : IsConnected ? StatusTone.Success : Connection.HasError ? StatusTone.Danger : StatusTone.Muted;
     /// <summary>连接中可以等待或关闭，禁止重复连接。</summary>
@@ -124,41 +126,39 @@ public sealed partial class RedisWorkspaceViewModel : WorkspacePageViewModel
     public AsyncRelayCommand EditConnectionCommand { get; }
 
     /// <inheritdoc />
-    public override async Task InitializeAsync(CancellationToken cancellationToken = default)
-    {
-        if (_initialized) return; _initialized = true;
-        await ConnectAsync(cancellationToken);
-    }
+    public override Task InitializeAsync(CancellationToken cancellationToken = default) => _initializeTask ??= ConnectAsync(cancellationToken);
     private async Task ConnectAsync(CancellationToken token = default)
     {
-        if (IsConnecting || IsClosed || Tabs.Any(tab => tab.IsDirty || tab.IsBusy)) return;
+        if (IsConnecting || IsClosed || Tabs.Any(tab => tab.IsBusy)) return;
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token, token);
         IsConnecting = true; Error = ""; Connection.Begin(linked.Cancel); Refresh(); string connectionError = "";
         try
         {
-            await ClearConnectionAsync();
+            await ClearConnectionAsync(HasConnectedOnce);
             _connectionLost = false;
             var options = await _configurations.GetConnectionAsync(InstanceId!, linked.Token);
             if (options is null) throw Text.Exception("RedisConfigurationInvalid");
             var session = await _connections.OpenAsync(options, linked.Token);
             if (linked.IsCancellationRequested || IsClosed) { await session.DisposeAsync(); return; }
-            _session = session; session.ConnectionLost += OnConnectionLost; _database = session.Options.Database; DatabaseText = _database.ToString(CultureInfo.InvariantCulture);
+            _session = session; session.ConnectionLost += OnConnectionLost; _database = HasConnectedOnce ? _database : session.Options.Database; DatabaseText = _database.ToString(CultureInfo.InvariantCulture);
             Databases = Enumerable.Range(0, session.DatabaseCount).Select(database => new RedisDatabaseViewModel(database)).ToArray();
             OnPropertyChanged(nameof(Databases));
             await RefreshDatabaseCountsAsync(linked.Token); linked.Token.ThrowIfCancellationRequested();
             Endpoint = string.Join(", ", session.Options.Endpoints); await QueryAsync().WaitAsync(linked.Token);
             linked.Token.ThrowIfCancellationRequested();
             if (_connectionLost || !session.IsConnected) throw Text.Exception("RedisConnectionFailed");
+            foreach (var tab in Tabs) tab.RebindSession(session);
+            HasConnectedOnce = true;
         }
         catch (OperationCanceledException) when (linked.IsCancellationRequested)
-        { await ClearConnectionAsync(); }
-        catch (Exception error) { connectionError = Text.Error(error, "RedisConnectionFailed"); await ClearConnectionAsync(); }
+        { await ClearConnectionAsync(HasConnectedOnce); }
+        catch (Exception error) { connectionError = Text.Error(error, "RedisConnectionFailed"); await ClearConnectionAsync(HasConnectedOnce); }
         finally { IsConnecting = false; Connection.Finish(IsClosed || linked.IsCancellationRequested ? "" : connectionError); Refresh(); }
     }
 
-    private async Task ClearConnectionAsync()
+    private async Task ClearConnectionAsync(bool preserveTabs = false)
     {
-        foreach (var tree in _trees.Values) tree.Dispose(); _trees.Clear(); Tree = null; ReleaseTabs(); Databases = []; Endpoint = "";
+        foreach (var tree in _trees.Values) tree.Dispose(); _trees.Clear(); Tree = null; if (!preserveTabs) ReleaseTabs(); else foreach (var tab in Tabs) tab.SetConnectionAvailability(false); Databases = []; Endpoint = "";
         var session = _session; _session = null; if (session is not null) { session.ConnectionLost -= OnConnectionLost; await session.DisposeAsync(); }
         OnPropertyChanged(nameof(Tree)); OnPropertyChanged(nameof(Databases));
     }

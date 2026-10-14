@@ -5,7 +5,13 @@ namespace Asgard.Hermod.Redis.UI.ViewModels;
 /// <summary>每个数据库和原始键拥有独立格式、分页、草稿和加载生命周期。</summary>
 public sealed partial class RedisKeyTabViewModel : ObservableObject, IDisposable
 {
-    private readonly IRedisSession _session;
+    private IRedisSession _session;
+    /// <summary>失效时保留草稿，但禁止继续向旧会话发送命令。</summary>
+    public bool ConnectionAvailable { get; private set; } = true;
+    /// <summary>实例掉线只更新远程操作状态。</summary>
+    public void SetConnectionAvailability(bool available) { ConnectionAvailable = available; RefreshState(); }
+    /// <summary>显式重连后复用原键页签，不自动读取或重放写入。</summary>
+    public void RebindSession(IRedisSession session) { _session = session; _readGeneration++; SetConnectionAvailability(true); }
     private readonly IRedisWorkspaceDialogs _dialogs;
     private readonly CancellationTokenSource _lifetime = new();
     private RedisSnapshot _snapshot = RedisSnapshot.Missing;
@@ -27,15 +33,15 @@ public sealed partial class RedisKeyTabViewModel : ObservableObject, IDisposable
         OpenEditorCommand = new AsyncRelayCommand(_ => _dialogs.EditAsync(this), _ => CanEdit && !IsBusy);
         SaveCommand = new AsyncRelayCommand(_ => SaveAsync(), _ => CanSave);
         DiscardCommand = new RelayCommand(_ => Discard(), _ => IsEditing && !IsBusy);
-        RefreshCommand = new AsyncRelayCommand(_ => RefreshAsync(), _ => !IsBusy);
-        NextPageCommand = new AsyncRelayCommand(_ => ReadAsync(true), _ => _snapshot.HasMore && !IsEditing && !IsBusy);
+        RefreshCommand = new AsyncRelayCommand(_ => RefreshAsync(), _ => ConnectionAvailable && !IsBusy);
+        NextPageCommand = new AsyncRelayCommand(_ => ReadAsync(true), _ => ConnectionAvailable && _snapshot.HasMore && !IsEditing && !IsBusy);
         AddEntryCommand = new RelayCommand(_ => AddEntry(false), _ => IsEditing && !IsString && !IsBusy);
         AddHeadCommand = new RelayCommand(_ => AddEntry(true), _ => IsEditing && IsList && !IsBusy);
         RemoveEntryCommand = new RelayCommand(row => RemoveEntry(row as RedisEntryViewModel), _ => IsEditing && !IsBusy);
-        AppendCommand = new RelayCommand(_ => BeginAppend(), _ => IsStream && !IsEditing && !IsBusy && !_permissionDenied && !_unknownWrite);
+        AppendCommand = new RelayCommand(_ => BeginAppend(), _ => ConnectionAvailable && IsStream && !IsEditing && !IsBusy && !_permissionDenied && !_unknownWrite);
         OpenAppendCommand = new AsyncRelayCommand(_ => _dialogs.EditAsync(this, true), _ => AppendCommand.CanExecute(null));
-        ExpiryCommand = new AsyncRelayCommand(_ => ChangeExpiryAsync(), _ => !IsBusy && !_permissionDenied && !_unknownWrite && Type != "none");
-        DeleteCommand = new AsyncRelayCommand(_ => DeleteAsync(), _ => !IsBusy && !_permissionDenied && !_unknownWrite && !IsDirty && Type != "none");
+        ExpiryCommand = new AsyncRelayCommand(_ => ChangeExpiryAsync(), _ => ConnectionAvailable && !IsBusy && !_permissionDenied && !_unknownWrite && Type != "none");
+        DeleteCommand = new AsyncRelayCommand(_ => DeleteAsync(), _ => ConnectionAvailable && !IsBusy && !_permissionDenied && !_unknownWrite && !IsDirty && Type != "none");
     }
 
     /// <summary>原始键字节构成身份，标题截断不会改变身份。</summary>
@@ -110,9 +116,9 @@ public sealed partial class RedisKeyTabViewModel : ObservableObject, IDisposable
     /// <summary>预览默认只读。</summary>
     public bool IsReadOnly => !IsEditing || IsBusy;
     /// <summary>完整预览才允许获取安全编辑基线。</summary>
-    public bool CanEdit => Type is "string" or "hash" or "list" or "set" or "zset" && !IsEditing && !IsBusy && !_permissionDenied && !_unknownWrite;
+    public bool CanEdit => ConnectionAvailable && Type is "string" or "hash" or "list" or "set" or "zset" && !IsEditing && !IsBusy && !_permissionDenied && !_unknownWrite;
     /// <summary>结果未知时必须先核对，不自动重试。</summary>
-    public bool CanSave => IsEditing && IsDirty && !IsBusy && !_permissionDenied && !_unknownWrite;
+    public bool CanSave => ConnectionAvailable && IsEditing && IsDirty && !IsBusy && !_permissionDenied && !_unknownWrite;
     /// <summary>安全反馈不包含原始错误或值。</summary>
     public string Error { get; private set; } = "";
     /// <summary>错误为空不保留占位行。</summary>

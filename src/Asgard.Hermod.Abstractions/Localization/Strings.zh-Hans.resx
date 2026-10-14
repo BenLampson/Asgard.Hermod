@@ -3513,4 +3513,13 @@
   <data name="TerminalSelectAll" xml:space="preserve">
     <value>全选</value>
   </data>
+  <data name="WorkspaceOpenFailed" xml:space="preserve">
+    <value>无法打开 {0}。{1}</value>
+  </data>
+  <data name="WorkspaceCloseWindow" xml:space="preserve">
+    <value>关闭窗口</value>
+  </data>
+  <data name="WorkspaceViewLoaded" xml:space="preserve">
+    <value>查看已加载内容</value>
+  </data>
 </root>

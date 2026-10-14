@@ -9,6 +9,8 @@ public sealed class TerminalWorkspaceViewModel : WorkspacePageViewModel
     private string _status = Text.Get("Starting");
     private string? _error;
     private bool _isRunning;
+    /// <inheritdoc />
+    public override WorkspaceConnectionViewModel ConnectionState { get; } = new();
 
     /// <summary>用户打开页签时显式创建本地终端。</summary>
     public TerminalWorkspaceViewModel(string id, InstanceItemViewModel instance, ITerminalSessionFactory factory)
@@ -41,11 +43,14 @@ public sealed class TerminalWorkspaceViewModel : WorkspacePageViewModel
             if (!SetProperty(ref _isRunning, value))
                 return;
             OnPropertyChanged(nameof(CanRetry));
+            OnPropertyChanged(nameof(IsReadOnly));
             RetryCommand.NotifyCanExecuteChanged();
         }
     }
     /// <summary>退出或启动失败后允许重新打开。</summary>
     public bool CanRetry => !IsClosed && !IsRunning;
+    /// <summary>退出后保留输出与复制，输入不能进入已经结束的进程。</summary>
+    public bool IsReadOnly => !IsRunning;
     /// <summary>先释放旧句柄再重新创建会话。</summary>
     public AsyncRelayCommand RetryCommand { get; }
 
@@ -59,7 +64,7 @@ public sealed class TerminalWorkspaceViewModel : WorkspacePageViewModel
         {
             _session = _factory.OpenLocal();
             Status = Text.Get("Running");
-            IsRunning = true;
+            IsRunning = true; HasConnectedOnce = true; ConnectionState.Finish();
             OnPropertyChanged(nameof(Session));
             OnPropertyChanged(nameof(Subtitle));
             _ = ObserveCompletionAsync(_session);
@@ -70,8 +75,10 @@ public sealed class TerminalWorkspaceViewModel : WorkspacePageViewModel
             Status = Text.Get("FailedToStart");
             IsRunning = false;
             Error = Text.Error(exception, "CannotStartTheTerminalCheckTheShellAndAccessPermissionsThenTryAgain");
+            ConnectionState.Finish(Error);
             OnPropertyChanged(nameof(Session));
             OnPropertyChanged(nameof(CanRetry));
+            OnPropertyChanged(nameof(IsReadOnly));
             RetryCommand.NotifyCanExecuteChanged();
         }
     }
@@ -100,6 +107,7 @@ public sealed class TerminalWorkspaceViewModel : WorkspacePageViewModel
             Error = error;
             Status = status;
             IsRunning = false;
+            ConnectionState.Disconnected(error ?? status);
         });
     }
 

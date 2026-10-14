@@ -54,6 +54,6 @@
             <pages:ObjectStorageDetailsView Grid.Column="2" Visibility="{Binding IsDetailsOpen, Converter={StaticResource DetailsVisible}}" />
         </Grid>
     </Grid>
-    <controls:WorkspaceConnectionOverlay State="{Binding Connection}" TargetName="{Binding Name}" RetryCommand="{Binding ReconnectCommand}" EditCommand="{Binding EditConnectionCommand}" Visibility="{Binding Connection.IsOpen, Converter={StaticResource DetailsVisible}}" Panel.ZIndex="100" />
+    <controls:WorkspaceConnectionOverlay CloseWorkspaceCommand="{Binding CloseWindowCommand}" State="{Binding Connection}" TargetName="{Binding Name}" RetryCommand="{Binding ReconnectCommand}" EditCommand="{Binding EditConnectionCommand}" Visibility="{Binding Connection.IsOpen, Converter={StaticResource DetailsVisible}}" Panel.ZIndex="100" />
     </Grid>
 </UserControl>

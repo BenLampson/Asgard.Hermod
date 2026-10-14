@@ -51,7 +51,7 @@
    </ResourceDictionary>
  </UserControl.Resources>
  <controls:WorkspacePageLayout x:Name="WorkspaceLayout" IsOverlayOpen="{Binding Connection.IsOpen}">
-  <controls:WorkspacePageLayout.Overlay><controls:WorkspaceConnectionOverlay State="{Binding Connection}" TargetName="{Binding Name}" RetryCommand="{Binding ReconnectCommand}" EditCommand="{Binding EditConnectionCommand}" /></controls:WorkspacePageLayout.Overlay>
+  <controls:WorkspacePageLayout.Overlay><controls:WorkspaceConnectionOverlay CloseWorkspaceCommand="{Binding CloseWindowCommand}" State="{Binding Connection}" TargetName="{Binding Name}" RetryCommand="{Binding ReconnectCommand}" EditCommand="{Binding EditConnectionCommand}" /></controls:WorkspacePageLayout.Overlay>
   <controls:WorkspacePageLayout.Toolbar>
    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="24" /><ColumnDefinition x:Name="IdentityColumn" Width="225" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
     <controls:IconView x:Name="ToolbarTypeIcon" Kind="layers" Width="24" Height="24" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />

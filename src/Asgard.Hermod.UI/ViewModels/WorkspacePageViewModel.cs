@@ -18,6 +18,7 @@ public abstract class WorkspacePageViewModel : ObservableObject, IAsyncDisposabl
         InstanceId = instanceId;
         CanClose = canClose;
         HasAlert = hasAlert;
+        CloseWindowCommand = new RelayCommand(_ => CloseRequested?.Invoke(this, EventArgs.Empty), _ => !IsClosed);
     }
 
     /// <summary>页签唯一标识。</summary>
@@ -41,6 +42,16 @@ public abstract class WorkspacePageViewModel : ObservableObject, IAsyncDisposabl
     public bool IsSelected { get => _isSelected; internal set => SetProperty(ref _isSelected, value); }
     /// <summary>已进入关闭流程，视图可以释放缓存。</summary>
     public bool IsClosed => _isClosed;
+    /// <summary>至少建立过一次连接后，故障必须保留页面和未保存工作。</summary>
+    public bool HasConnectedOnce { get; protected set; }
+    /// <summary>连接模块提供同一个状态，普通内容页无需连接。</summary>
+    public virtual WorkspaceConnectionViewModel? ConnectionState => null;
+    /// <summary>初始化完成后，空串表示用户取消，null 表示页面可以保留。</summary>
+    public string? InitialConnectionFailure => !HasConnectedOnce && ConnectionState is { } state ? state.Error : null;
+    /// <summary>窗口关闭仍由工作区走模块预检，不绕过草稿和事务确认。</summary>
+    public RelayCommand CloseWindowCommand { get; }
+    /// <summary>模块的明确关闭操作交给外壳协调。</summary>
+    public event EventHandler? CloseRequested;
 
     /// <summary>页签激活时初始化模块资源，默认页面无需额外操作。</summary>
     public virtual Task InitializeAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;

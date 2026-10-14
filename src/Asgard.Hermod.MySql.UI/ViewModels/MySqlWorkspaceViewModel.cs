@@ -14,19 +14,19 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
     private readonly CancellationTokenSource _lifetime = new();
     private IMySqlSession? _metadata;
     private InstanceConnectionOptions? _options;
-    private bool _initialized;
+    private Task? _initializeTask;
     private int _queryNumber;
     /// <summary>创建模块状态和依赖；真实连接或写入由显式操作启动。</summary>
     public MySqlWorkspaceViewModel(InstanceItemViewModel instance, IInstanceConfigurationService configurations, IMySqlSessionFactory factory,
         IInstanceEditor editor, IMySqlWorkspaceDialogs dialogs) : base("mysql:" + Guid.NewGuid().ToString("N"), instance.Name, "database", instance.Id)
     {
         _instance = instance; _configurations = configurations; _factory = new ConnectionAwareMySqlSessionFactory(factory, OnConnectionLost); _editor = editor; _dialogs = dialogs;
-        NewQueryCommand = new RelayCommand(_ => NewQuery(), _ => _options is not null && !IsConnecting);
+        NewQueryCommand = new RelayCommand(_ => NewQuery(), _ => IsConnected && !IsConnecting);
         CloseTabCommand = new AsyncRelayCommand(tab => CloseTabAsync(tab as MySqlTabViewModel));
-        RefreshTreeCommand = new AsyncRelayCommand(_ => RefreshTreeAsync(), _ => Tree is not null && !IsConnecting);
+        RefreshTreeCommand = new AsyncRelayCommand(_ => RefreshTreeAsync(), _ => IsConnected && Tree is not null && !IsConnecting);
         ReconnectCommand = new AsyncRelayCommand(_ => ReconnectAsync(), _ => !IsConnecting);
         EditConnectionCommand = new AsyncRelayCommand(_ => EditConnectionAsync(), _ => !IsConnecting);
-        OpenQueryCommand = new AsyncRelayCommand(_ => OpenQueryAsync(), _ => _options is not null && !IsConnecting);
+        OpenQueryCommand = new AsyncRelayCommand(_ => OpenQueryAsync(), _ => IsConnected && !IsConnecting);
         ExportCommand = new AsyncRelayCommand(_ => ActiveTab?.ExportAsync() ?? Task.CompletedTask, _ => ActiveTab?.HasResult == true && !ActiveTab.IsBusy);
         Tools = [new("query.new", Text.Get("MySqlNewQuery"), "file-code", NewQueryCommand), new("query.open", Text.Get("MySqlOpenQuery"), "file", OpenQueryCommand),
             new("result.export", Text.Get("MySqlExportLoaded"), "download", ExportCommand), new("tree.refresh", Text.Get("MySqlRefreshBranch"), "refresh-cw", RefreshTreeCommand),
@@ -43,10 +43,12 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
     public bool IsConnecting { get; private set; }
     /// <summary>共享浮层只负责当前连接等待和安全失败反馈。</summary>
     public WorkspaceConnectionViewModel Connection { get; } = new();
+    /// <inheritdoc />
+    public override WorkspaceConnectionViewModel ConnectionState => Connection;
     /// <summary>徽标按真实连接状态选择语义色。</summary>
     public StatusTone ConnectionTone => IsConnecting ? StatusTone.Accent : IsConnected ? StatusTone.Success : Connection.HasError ? StatusTone.Danger : StatusTone.Muted;
     /// <summary>当前物理连接是否可用；失败后不自动重连。</summary>
-    public bool IsConnected => !_connectionLost && _metadata?.IsConnected == true;
+    public bool IsConnected => !IsClosed && !_connectionLost && _metadata?.IsConnected == true;
     /// <summary>读取状态或安全失败说明。</summary>
     public string Status => Text.Get(IsConnecting ? "MySqlConnecting" : IsConnected ? "MySqlConnected" : "MySqlDisconnected");
     /// <summary>可安全展示的本地化错误。</summary>
@@ -91,7 +93,7 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
     /// <summary>协调公共控件的操作命令，启用条件由当前状态决定。</summary>
     public AsyncRelayCommand ExportCommand { get; }
     /// <summary>首次激活页面时建立元数据连接。</summary>
-    public override async Task InitializeAsync(CancellationToken cancellationToken = default) { if (_initialized) return; _initialized = true; await ConnectAsync(cancellationToken); }
+    public override Task InitializeAsync(CancellationToken cancellationToken = default) => _initializeTask ??= ConnectAsync(cancellationToken);
     private async Task ConnectAsync(CancellationToken token = default)
     {
         if (IsConnecting || IsClosed) return;
@@ -108,7 +110,8 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
             Tree = new(session, _lifetime.Token); OnPropertyChanged(nameof(Tree)); await Tree.LoadAsync(Tree.Root).WaitAsync(linked.Token);
             linked.Token.ThrowIfCancellationRequested();
             if (!session.IsConnected) throw Text.Exception("MySqlConnectionFailed");
-            NewQuery();
+            HasConnectedOnce = true;
+            if (Tabs.Count == 0) NewQuery();
         }
         catch (OperationCanceledException) when (linked.IsCancellationRequested)
         { Tree?.Dispose(); Tree = null; if (_metadata is not null) await _metadata.DisposeAsync(); _metadata = null; }
@@ -123,7 +126,7 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
     /// <summary>创建独立 SQL 文稿和延迟会话。</summary>
     public MySqlTabViewModel? NewQuery(string? database = null)
     {
-        if (_options is null) return null;
+        if (_options is null || !IsConnected || IsClosed) return null;
         var tab = CreateTab(Text.Format("MySqlQueryTitle", ++_queryNumber), database ?? _metadata?.Options.Database ?? "", MySqlObjectKind.Root);
         Tabs.Add(tab); ActiveTab = tab; return tab;
     }
@@ -136,7 +139,7 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
     /// <summary>创建独立连接，不使用池化或自动重试。</summary>
     public async Task OpenAsync(MySqlTreeNode node)
     {
-        if (_options is null || node.IsPlaceholder) return;
+        if (_options is null || !IsConnected || IsClosed || node.IsPlaceholder) return;
         var item = node.Object;
         if (item.Kind is MySqlObjectKind.Database) { node.IsExpanded = true; return; }
         bool structure = false;
@@ -150,7 +153,7 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
     /// <summary>按对象身份去重或激活页签。</summary>
     public async Task OpenObjectAsync(MySqlObject item, bool structure = false)
     {
-        if (_options is null) return;
+        if (_options is null || !IsConnected || IsClosed) return;
         var tab = Tabs.FirstOrDefault(tab => tab.Kind == item.Kind && tab.Database == item.Database && tab.Name == item.Name);
         if (tab is null) { tab = CreateTab(item.Name, item.Database, item.Kind); Tabs.Add(tab); ActiveTab = tab; await tab.ReadAsync(); }
         ActiveTab = tab; if (structure) tab.Section = "structure";
@@ -177,9 +180,14 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
     }
     private async Task ReconnectAsync()
     {
-        if (!await RequestCloseAsync()) return;
-        foreach (var tab in Tabs.ToArray()) { tab.PropertyChanged -= OnTabChanged; await tab.DisposeAsync(); }
-        Tabs.Clear(); ActiveTab = null; await ConnectAsync();
+        var plans = new List<WorkspaceClosePlan>();
+        foreach (var tab in Tabs.ToArray())
+        { var plan = await tab.PrepareReconnectAsync(); if (plan is null) return; plans.Add(plan); }
+        foreach (var plan in plans) await plan.CommitAsync();
+        foreach (var tab in Tabs) await tab.DisconnectSessionAsync();
+        await ConnectAsync();
+        if (IsConnected && _options is not null)
+            foreach (var tab in Tabs) tab.RebindConnection(_options);
     }
     private async Task EditConnectionAsync()
     {

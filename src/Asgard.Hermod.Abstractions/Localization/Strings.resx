@@ -3513,4 +3513,13 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="TerminalSelectAll" xml:space="preserve">
     <value>Select all</value>
   </data>
+  <data name="WorkspaceOpenFailed" xml:space="preserve">
+    <value>Could not open {0}. {1}</value>
+  </data>
+  <data name="WorkspaceCloseWindow" xml:space="preserve">
+    <value>Close window</value>
+  </data>
+  <data name="WorkspaceViewLoaded" xml:space="preserve">
+    <value>View loaded content</value>
+  </data>
 </root>

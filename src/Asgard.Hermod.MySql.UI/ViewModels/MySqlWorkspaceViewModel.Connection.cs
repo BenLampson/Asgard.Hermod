@@ -15,6 +15,7 @@ public sealed partial class MySqlWorkspaceViewModel
         if (_connectionDispatcher?.CheckAccess() == false) { _connectionDispatcher.BeginInvoke(() => OnConnectionLost(generation)); return; }
         if (IsClosed || IsConnecting || generation != _factory.Generation) return;
         _connectionLost = true; Error = "";
+        foreach (var tab in Tabs) tab.SetConnectionAvailability(false);
         Connection.Disconnected(Text.Get("MySqlConnectionFailed")); Refresh();
     }
     private void StartConnectionWatch(IMySqlSession session)

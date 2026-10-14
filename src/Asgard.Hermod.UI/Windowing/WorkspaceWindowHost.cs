@@ -20,6 +20,7 @@ public sealed class WorkspaceWindowHost : IDisposable
     /// <summary>不设置主窗体 Owner，使工作窗口保持独立的可见性和任务栏入口。</summary>
     private void Open(WorkspacePageViewModel page)
     {
+        if (page.IsClosed || _workspace.IsExitPending || !_workspace.Tabs.Contains(page)) return;
         if (!_windows.TryGetValue(page, out var window))
         {
             window = new WorkspaceWindow(_workspace, page);

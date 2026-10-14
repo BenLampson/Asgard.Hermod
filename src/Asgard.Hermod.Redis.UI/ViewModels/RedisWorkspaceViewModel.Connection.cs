@@ -12,6 +12,7 @@ public sealed partial class RedisWorkspaceViewModel
         if (_connectionDispatcher?.CheckAccess() == false) { _connectionDispatcher.BeginInvoke(() => OnConnectionLost(sender, args)); return; }
         if (IsClosed || !ReferenceEquals(sender, _session)) return;
         _connectionLost = true;
+        foreach (var tab in Tabs) tab.SetConnectionAvailability(false);
         if (IsConnecting) return;
         Error = "";
         Connection.Disconnected(Text.Get("RedisConnectionFailed")); Refresh();

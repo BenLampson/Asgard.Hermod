@@ -121,3 +121,11 @@ Set `HERMOD_UI_PREVIEW_DIR` to an artifact directory to export menu screenshots.
 Previews and screenshots are verification artifacts and are not committed. The
 environment override `HERMOD_TEMPORARY_DIRECTORY` changes only the launched process's
 managed file-cache root; the default user directory remains unchanged.
+
+Workspace startup is coordinated once per page before activation. A connection page
+that has never connected is removed and released after failed or cancelled startup;
+its safe error is shown in the main workbench. Closed pages and application exit
+cannot be reactivated by late initialization. Established connection loss retains
+the page and local drafts. The connection overlay offers window close, edit, retry
+and viewing already loaded content. Explicit MySQL/Redis reconnect releases old
+sessions, retains document and value drafts, and never replays SQL or writes.

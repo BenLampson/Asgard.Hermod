@@ -6,7 +6,7 @@ public sealed partial class RedisKeyTabViewModel
     /// <summary>一页一次读取，关闭页签后不回填；草稿存在时读取最新值只用于对比。</summary>
     public async Task ReadAsync(bool next = false)
     {
-        if (IsBusy || IsDirty || _lifetime.IsCancellationRequested) return;
+        if (!ConnectionAvailable || IsBusy || IsDirty || _lifetime.IsCancellationRequested) return;
         int generation = ++_readGeneration;
         IsBusy = true; Error = ""; RefreshState();
         try
@@ -22,6 +22,7 @@ public sealed partial class RedisKeyTabViewModel
 
     private async Task EditAsync()
     {
+        if (!ConnectionAvailable) return;
         IsBusy = true; Error = ""; RefreshState();
         try
         {
@@ -58,6 +59,7 @@ public sealed partial class RedisKeyTabViewModel
 
     private async Task RefreshAsync()
     {
+        if (!ConnectionAvailable) return;
         if (!IsDirty)
         {
             IsEditing = false; _baseline = null; await ReadAsync();
@@ -106,6 +108,7 @@ public sealed partial class RedisKeyTabViewModel
 
     private async Task ChangeExpiryAsync()
     {
+        if (!ConnectionAvailable) return;
         string? value = await _dialogs.ExpiryAsync(FullName);
         if (value is null) return;
         IsBusy = true; Error = ""; RefreshState();
@@ -127,6 +130,7 @@ public sealed partial class RedisKeyTabViewModel
     }
     private async Task DeleteAsync()
     {
+        if (!ConnectionAvailable) return;
         if (!await _dialogs.DeleteAsync(FullName, Database, TargetLabel)) return;
         IsBusy = true; Error = ""; RefreshState();
         try

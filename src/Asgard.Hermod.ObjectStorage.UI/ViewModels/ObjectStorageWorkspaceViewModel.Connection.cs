@@ -6,6 +6,8 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     private readonly Dispatcher? _connectionDispatcher = SynchronizationContext.Current is DispatcherSynchronizationContext ? Dispatcher.CurrentDispatcher : null;
     /// <summary>初次访问、认证失败与后续失效共用连接弹窗。</summary>
     public WorkspaceConnectionViewModel Connection { get; } = new();
+    /// <inheritdoc />
+    public override WorkspaceConnectionViewModel ConnectionState => Connection;
     /// <summary>弹窗开启时暂停页面操作，页面布局不变化。</summary>
     public bool IsConnectionInteractionEnabled => !Connection.IsOpen;
     /// <summary>连接失效已经在弹窗显示，不重复占用列表错误条。</summary>
@@ -49,7 +51,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
             if (IsClosed || operation.IsCancellationRequested || version != _bucketVersion) return;
             Buckets.Clear();
             foreach (var bucket in buckets) Buckets.Add(bucket);
-            _hasConnected = true; IsInitialized = true;
+            HasConnectedOnce = true; _hasConnected = true; IsInitialized = true;
             BucketsChanged?.Invoke(this, EventArgs.Empty);
             if (Buckets.Count > 0) await NavigateAsync(Buckets[0], "", operation.Token);
         }

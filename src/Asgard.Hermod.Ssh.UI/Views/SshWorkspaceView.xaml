@@ -6,7 +6,7 @@
  Background="{DynamicResource SurfaceBrush}" SizeChanged="OnViewportSizeChanged">
  <UserControl.Resources><BooleanToVisibilityConverter x:Key="Visible" /></UserControl.Resources>
  <controls:WorkspacePageLayout x:Name="WorkspaceLayout" IsDetailsOpen="{Binding IsDetailsOpen}" IsOverlayOpen="{Binding Connection.IsOpen}">
-  <controls:WorkspacePageLayout.Overlay><controls:WorkspaceConnectionOverlay State="{Binding Connection}" TargetName="{Binding Name}" RetryCommand="{Binding ReconnectCommand}" EditCommand="{Binding EditConnectionCommand}" /></controls:WorkspacePageLayout.Overlay>
+  <controls:WorkspacePageLayout.Overlay><controls:WorkspaceConnectionOverlay CloseWorkspaceCommand="{Binding CloseWindowCommand}" State="{Binding Connection}" TargetName="{Binding Name}" RetryCommand="{Binding ReconnectCommand}" EditCommand="{Binding EditConnectionCommand}" /></controls:WorkspacePageLayout.Overlay>
   <controls:WorkspacePageLayout.Toolbar>
    <Grid>
     <Grid.ColumnDefinitions><ColumnDefinition Width="32" /><ColumnDefinition x:Name="IdentityColumn" Width="220" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>

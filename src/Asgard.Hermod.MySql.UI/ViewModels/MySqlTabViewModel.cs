@@ -6,7 +6,7 @@ namespace Asgard.Hermod.MySql.UI.ViewModels;
 public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposable
 {
     private readonly IMySqlSessionFactory _factory;
-    private readonly InstanceConnectionOptions _options;
+    private InstanceConnectionOptions _options;
     private readonly IMySqlWorkspaceDialogs _dialogs;
     private readonly CancellationTokenSource _lifetime;
     private CancellationTokenSource? _pending;
@@ -71,7 +71,11 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
     /// <summary>连接或命令正在执行，禁止重复操作。</summary>
     public bool IsBusy { get; private set; }
     /// <summary>当前允许启动新的 SQL 执行。</summary>
-    public bool CanRun => IsQuery && !IsBusy;
+    public bool CanRun => ConnectionAvailable && IsQuery && !IsBusy;
+    /// <summary>实例掉线后只允许本地文稿、复制和关闭，不新建或发送协议命令。</summary>
+    public bool ConnectionAvailable { get; private set; } = true;
+    /// <summary>保持文稿、结果和数据草稿，仅刷新远程操作启用条件。</summary>
+    public void SetConnectionAvailability(bool available) { ConnectionAvailable = available; Refresh(); }
     /// <summary>提交结果未确认，阻止盲目重试。</summary>
     public bool OutcomeUnknown { get; private set; }
     /// <summary>可安全展示的本地化错误。</summary>
@@ -132,7 +136,7 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
 
     private async Task RunAsync(Func<CancellationToken, Task> operation)
     {
-        if (IsBusy || _disposed) return;
+        if (IsBusy || _disposed || !ConnectionAvailable) return;
         using var pending = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
         _pending = pending; _completion = new(TaskCreationOptions.RunContinuationsAsynchronously); IsBusy = true; Error = ""; Refresh();
         try { await operation(pending.Token); }
@@ -142,6 +146,7 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
     }
     private async Task<IMySqlSession> SessionAsync(CancellationToken token)
     {
+        if (!ConnectionAvailable || _disposed) throw Text.Exception("MySqlConnectionFailed");
         if (_session is null) _session = await _factory.OpenAsync(_options, token);
         if (!_session.IsConnected) throw new MySqlFailure("MySqlConnectionFailed", "MYSQL_CONNECTION");
         return _session;

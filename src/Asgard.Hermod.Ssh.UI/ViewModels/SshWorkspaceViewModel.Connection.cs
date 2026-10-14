@@ -30,7 +30,7 @@ public sealed partial class SshWorkspaceViewModel
             _ioCancellation?.Dispose(); _ioCancellation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
             _inputOverflow = false; _connection = opened;
             _disconnectRequested = false;
-            HostKeys = opened.HostKeys; _phase = SshWorkspacePhase.Connected; _connectedAt = DateTime.UtcNow;
+            HasConnectedOnce = true; HostKeys = opened.HostKeys; _phase = SshWorkspacePhase.Connected; _connectedAt = DateTime.UtcNow;
             _terminal.InputReceived += OnInput; _terminal.SizeChanged += OnResize;
             _clock.Start(); Refresh();
             Connection.Finish();

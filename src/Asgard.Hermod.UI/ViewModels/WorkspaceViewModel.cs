@@ -1,7 +1,7 @@
 namespace Asgard.Hermod.UI.ViewModels;
 
 /// <summary>管理可切换工作页，保证页签关闭和应用退出时释放终端。</summary>
-public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
+public sealed partial class WorkspaceViewModel : ObservableObject, IAsyncDisposable
 {
     private readonly IWorkspaceDataSource _source;
     private readonly ITerminalSessionFactory _terminalFactory;
@@ -116,7 +116,7 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
             RegisterSessionPage(page, instance);
         }
         SelectedTab = page;
-        PageActivated?.Invoke(page);
+        ActivatePage(page);
         Home.RecordOpened(instance);
     }
 
@@ -129,8 +129,9 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
             ?? new InstanceSummary("local-shell", "sandbox-local", Text.Get("LocalTerminal"), "laptop", ["Local"], true));
         var page = CreateTerminalPage(local);
         Tabs.Add(page);
+        RegisterSessionPage(page, local);
         SelectedTab = page;
-        PageActivated?.Invoke(page);
+        ActivatePage(page);
         Home.RecordOpened(local);
     }
 
@@ -144,7 +145,9 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
         if (ReferenceEquals(SelectedTab, page))
             SelectedTab = Tabs.Count == 1 ? null : Tabs[index > 0 ? index - 1 : 1];
         Tabs.Remove(page);
+        _initializations.Remove(page);
         page.NewSessionRequested -= OnNewSessionRequested;
+        page.CloseRequested -= OnPageCloseRequested;
         _instances.Remove(page);
         Task closing = page.CloseAsync();
         _closingPages.Add(closing);
@@ -165,6 +168,7 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
     {
         _instances[page] = instance;
         page.NewSessionRequested += OnNewSessionRequested;
+        page.CloseRequested += OnPageCloseRequested;
     }
     /// <summary>新会话复用实例配置，但创建独立页面和连接。</summary>
     private void OnNewSessionRequested(object? sender, EventArgs args)
@@ -172,7 +176,7 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
         if (IsExitPending || _disposeTask is not null || sender is not WorkspacePageViewModel original || !_instances.TryGetValue(original, out var instance)) return;
         var page = CreateServicePage(instance); RegisterSessionPage(page, instance);
         Tabs.Add(page); SelectedTab = page; Home.RecordOpened(instance);
-        PageActivated?.Invoke(page);
+        ActivatePage(page);
     }
 
     /// <summary>用户退出应用前逐页确认，取消任一页面时保持所有会话和草稿。</summary>
@@ -194,7 +198,7 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
     private async Task CloseAllAsync()
     {
         SelectedTab = null;
-        foreach (var page in _instances.Keys) page.NewSessionRequested -= OnNewSessionRequested;
+        foreach (var page in Tabs) { page.NewSessionRequested -= OnNewSessionRequested; page.CloseRequested -= OnPageCloseRequested; }
         _instances.Clear();
         Task[] closing = Tabs.Select(page => page.CloseAsync()).Concat(_closingPages).ToArray();
         Tabs.Clear();

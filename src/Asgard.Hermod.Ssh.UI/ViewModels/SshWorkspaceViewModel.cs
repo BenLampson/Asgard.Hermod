@@ -65,6 +65,8 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
     public bool IsConnected => _phase == SshWorkspacePhase.Connected;
     /// <summary>建立连接、认证失败与运行中断统一使用公共弹窗。</summary>
     public WorkspaceConnectionViewModel Connection { get; } = new();
+    /// <inheritdoc />
+    public override WorkspaceConnectionViewModel ConnectionState => Connection;
     /// <summary>终止状态保留输出和重连入口。</summary>
     public bool IsEnded => _phase is SshWorkspacePhase.Disconnected or SshWorkspacePhase.Failed;
     /// <summary>保持终端选择与复制功能，但拒绝断线后的输入。</summary>
