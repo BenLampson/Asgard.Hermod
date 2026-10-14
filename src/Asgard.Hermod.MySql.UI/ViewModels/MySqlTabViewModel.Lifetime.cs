@@ -65,26 +65,40 @@ public sealed partial class MySqlTabViewModel
     /// <summary>确认正在执行的命令、数据草稿、文稿和事务后才关闭。</summary>
     public async Task<bool> RequestCloseAsync()
     {
-        if (CommitInputRequested?.Invoke() == false) return false;
-        if (IsBusy)
+        var plan = await PrepareCloseAsync();
+        if (plan is null) return false;
+        try { await plan.CommitAsync(); return true; }
+        catch (Exception error) { Error = Text.Error(error, "MySqlCommandFailed"); Refresh(); return false; }
+    }
+    /// <summary>只收集停止、丢弃及回滚决定；用户明确选择保存时仍执行保存。</summary>
+    public async Task<WorkspaceClosePlan?> PrepareCloseAsync()
+    {
+        if (CommitInputRequested?.Invoke() == false) return null;
+        bool stop = IsBusy;
+        if (stop && !await _dialogs.ConfirmStopAsync()) return null;
+        bool discard = false;
+        if (HasDataDraft)
         {
-            if (!await _dialogs.ConfirmStopAsync()) return false;
-            _pending?.Cancel(); if (_completion is not null) await _completion.Task;
+            var choice = await _dialogs.ResolveDraftAsync(Header);
+            if (choice == MySqlDraftChoice.Cancel) return null;
+            if (choice == MySqlDraftChoice.Save && (IsBusy || !await SaveChangesAsync())) return null;
+            discard = choice == MySqlDraftChoice.Discard;
         }
-        if (!await ResolveDataDraftAsync()) return false;
         if (IsDocumentDirty)
         {
             var choice = await _dialogs.ResolveDraftAsync(Header, true);
-            if (choice == MySqlDraftChoice.Cancel) return false;
-            if (choice == MySqlDraftChoice.Save) { await SaveDocumentAsync(); if (IsDocumentDirty) return false; }
+            if (choice == MySqlDraftChoice.Cancel) return null;
+            if (choice == MySqlDraftChoice.Save) { await SaveDocumentAsync(); if (IsDocumentDirty) return null; }
         }
-        if (_executed && _session is not null && _session.State.InTransaction != false)
+        bool rollback = stop || _executed && _session is not null && _session.State.InTransaction != false;
+        if (rollback && !await _dialogs.ConfirmEndSessionAsync()) return null;
+        return new WorkspaceClosePlan(async () =>
         {
-            if (!await _dialogs.ConfirmEndSessionAsync()) return false;
-            try { await _session.RollbackAsync(_lifetime.Token); }
-            catch (Exception error) { Error = Text.Error(error, "MySqlCommandFailed"); Refresh(); return false; }
-        }
-        return true;
+            if (stop) { _pending?.Cancel(); if (_completion is not null) await _completion.Task; }
+            if (discard) { foreach (var grid in Results) grid.Revert(); OutcomeUnknown = false; Refresh(); }
+            if (rollback && _session is not null && _session.State.InTransaction != false)
+                await _session.RollbackAsync(_lifetime.Token);
+        });
     }
     /// <summary>取消或等待未完成工作后释放会话资源。</summary>
     public async ValueTask DisposeAsync()

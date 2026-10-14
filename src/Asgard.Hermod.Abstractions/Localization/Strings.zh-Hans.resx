@@ -3303,4 +3303,31 @@
   <data name="MySqlNoDatabaseSelected" xml:space="preserve"><value>未选择数据库</value></data>
   <data name="MySqlDatabaseSchema" xml:space="preserve"><value>数据库 / Schema</value></data>
   <data name="MySqlNoStructureItems" xml:space="preserve"><value>当前分区没有对象。</value></data>
+  <data name="InstanceActivationFailed" xml:space="preserve">
+    <value>Hermod 仍在启动或退出。请稍候再打开。</value>
+  </data>
+  <data name="TrayMenu" xml:space="preserve">
+    <value>Hermod 托盘菜单</value>
+  </data>
+  <data name="ShowMainWindow" xml:space="preserve">
+    <value>显示主窗体</value>
+  </data>
+  <data name="HideMainWindow" xml:space="preserve">
+    <value>隐藏主窗体</value>
+  </data>
+  <data name="ExitHermod" xml:space="preserve">
+    <value>退出 Hermod</value>
+  </data>
+  <data name="TrayHiddenHint" xml:space="preserve">
+    <value>Hermod 仍在运行。可通过通知区域图标显示主窗体或退出。独立工作窗口将继续运行。</value>
+  </data>
+  <data name="TrayUnavailable" xml:space="preserve">
+    <value>通知区域不可用。Hermod 将保留主窗体及其任务栏入口。关闭主窗体将退出 Hermod。</value>
+  </data>
+  <data name="ExitHermodImpact" xml:space="preserve">
+    <value>Hermod 有 {0} 个打开或正在关闭的工作会话。退出将关闭所有工作窗口、断开会话并停止后台任务。是否继续？</value>
+  </data>
+  <data name="HideMainWindowToTray" xml:space="preserve">
+    <value>将主窗体隐藏到通知区域</value>
+  </data>
 </root>

@@ -3303,4 +3303,31 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="MySqlNoDatabaseSelected" xml:space="preserve"><value>No database selected</value></data>
   <data name="MySqlDatabaseSchema" xml:space="preserve"><value>Database / schema</value></data>
   <data name="MySqlNoStructureItems" xml:space="preserve"><value>No objects in this section.</value></data>
+  <data name="InstanceActivationFailed" xml:space="preserve">
+    <value>Hermod is still starting or exiting. Wait a moment and open it again.</value>
+  </data>
+  <data name="TrayMenu" xml:space="preserve">
+    <value>Hermod tray menu</value>
+  </data>
+  <data name="ShowMainWindow" xml:space="preserve">
+    <value>Show main window</value>
+  </data>
+  <data name="HideMainWindow" xml:space="preserve">
+    <value>Hide main window</value>
+  </data>
+  <data name="ExitHermod" xml:space="preserve">
+    <value>Exit Hermod</value>
+  </data>
+  <data name="TrayHiddenHint" xml:space="preserve">
+    <value>Hermod is still running. Use its notification area icon to show the main window or exit. Your work windows continue running.</value>
+  </data>
+  <data name="TrayUnavailable" xml:space="preserve">
+    <value>The notification area is unavailable. Hermod will keep the main window and its taskbar entry accessible. Closing the main window will exit Hermod.</value>
+  </data>
+  <data name="ExitHermodImpact" xml:space="preserve">
+    <value>Hermod has {0} open or closing work sessions. Exiting will close all work windows, disconnect sessions, and stop background tasks. Continue?</value>
+  </data>
+  <data name="HideMainWindowToTray" xml:space="preserve">
+    <value>Hide main window to notification area</value>
+  </data>
 </root>

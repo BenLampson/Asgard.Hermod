@@ -6,6 +6,9 @@ namespace Asgard.Hermod;
 public partial class App : Application
 {
     private ServiceProvider? _services;
+    private Lifetime.SingleInstanceCoordinator? _instance;
+    private bool _sessionEnding;
+    private ITrayIcon? _tray;
 
     /// <summary>装配宿主服务，完成本地数据库初始化后再打开主窗口。</summary>
     protected override async void OnStartup(StartupEventArgs args)
@@ -17,8 +20,13 @@ public partial class App : Application
         ShutdownMode = ShutdownMode.OnExplicitShutdown;
         try
         {
+            _instance = await Lifetime.SingleInstanceCoordinator.AcquireOrActivateAsync();
+            if (_instance is null) { Shutdown(); return; }
             var services = new ServiceCollection();
             services.AddHermodCore();
+            // 进程验收可隔离文件缓存；默认仍使用现有用户级目录。
+            if (Environment.GetEnvironmentVariable("HERMOD_TEMPORARY_DIRECTORY") is { Length: > 0 } temporaryDirectory)
+                services.AddSingleton<ITemporaryFileStorage>(_ => new LocalTemporaryFileStorage(temporaryDirectory));
             services.AddWindowsSecretProtection();
             services.AddLocalStorage(LocalDatabaseConfiguration.Load(args.Args));
             var configuration = new Asgard.Core.SystemConfig.AsgardConfigurationBuilder()
@@ -36,7 +44,7 @@ public partial class App : Application
             services.AddRedis();
             services.AddMySql();
             services.AddSingleton<ITerminalSessionFactory, LocalTerminalSessionFactory>();
-            services.AddHermodUi(() => MainWindow, Resources);
+            services.AddHermodUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow, Resources);
             services.AddObjectStorageUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow);
             services.AddSshUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow);
             services.AddRedisUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow);
@@ -59,10 +67,17 @@ public partial class App : Application
             var shell = ActivatorUtilities.CreateInstance<ShellViewModel>(provider);
             var workspaceWindows = new Asgard.Hermod.UI.Windowing.WorkspaceWindowHost(shell.Workspace);
             await shell.InitializeAsync();
-            MainWindow = new MainWindow(shell);
-            MainWindow.Closed += (_, _) => workspaceWindows.Dispose();
-            MainWindow.Show();
-            ShutdownMode = ShutdownMode.OnMainWindowClose;
+            ITrayIcon? tray = null;
+            try { tray = new Asgard.Hermod.UI.Windowing.WindowsTrayIcon(); }
+            catch (Exception) { /* 通知区域不可用时仍保留可访问主窗体。 */ }
+            _tray = tray;
+            var window = new MainWindow(shell, workspaceWindows, tray, provider.GetRequiredService<ITrayPreferenceStore>(), FinishExitAsync);
+            window.ExitCommitted += _instance.BeginExit;
+            MainWindow = window;
+            window.Show();
+            _instance.SetActivationHandler(() => Dispatcher.BeginInvoke(() => window.ActivateMain()));
+            if (tray is null)
+                new MessageDialog(Text.Get("Hermod"), Text.Get("TrayUnavailable")) { Owner = window }.ShowDialog();
         }
         catch (Exception exception)
         {
@@ -77,7 +92,36 @@ public partial class App : Application
     /// <summary>窗口已经等待会话关闭后，释放数据库连接池和其他宿主服务。</summary>
     protected override void OnExit(ExitEventArgs args)
     {
+        // 系统会话结束超出清理预算时，也必须移除通知入口。
+        _tray?.Dispose();
         _services?.Dispose();
+        if (_instance is not null) _instance.DisposeAsync().AsTask().GetAwaiter().GetResult();
         base.OnExit(args);
+    }
+
+    /// <summary>窗口和同步服务释放后关闭数据库，随后终止 IPC 并释放进程所有权。</summary>
+    private async Task FinishExitAsync()
+    {
+        if (_services is not null) { await _services.DisposeAsync(); _services = null; }
+        if (_instance is not null) { await _instance.DisposeAsync(); _instance = null; }
+        if (!_sessionEnding) Shutdown();
+    }
+
+    /// <summary>注销或关机不转为托盘隐藏，保持 Dispatcher 可用以等待会话安全释放。</summary>
+    protected override void OnSessionEnding(SessionEndingCancelEventArgs args)
+    {
+        _sessionEnding = true;
+        base.OnSessionEnding(args);
+        // Cancel=true 会否决系统注销/关机，不可把它当作异步清理的暂停开关。
+        args.Cancel = false;
+        try
+        {
+            Lifetime.SessionEndingCleanup.Handle(args, async () =>
+            {
+                if (MainWindow is MainWindow window) await window.RequestExitAsync(sessionEnding: true);
+                else await FinishExitAsync();
+            }, TimeSpan.FromSeconds(4));
+        }
+        catch (Exception) { /* 系统结束期间不弹出会阻塞注销的错误窗口。 */ }
     }
 }

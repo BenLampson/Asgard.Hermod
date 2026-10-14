@@ -20,6 +20,8 @@ public sealed class HermodWindowTests
             .Distinct()
             .SelectMany(assembly => assembly.GetTypes())
             .Where(type => !type.IsAbstract && typeof(Window).IsAssignableFrom(type))
+            // 通知区域浮出菜单没有标题栏，其透明箭头边界由独立原生菜单测试覆盖。
+            .Where(type => type != typeof(Asgard.Hermod.UI.Views.Dialogs.TrayMenuWindow))
             .ToArray();
 
         Assert.NotEmpty(windowTypes);

@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization"
              xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
+             xmlns:windowing="clr-namespace:Asgard.Hermod.UI.Windowing"
              xmlns:chrome="clr-namespace:System.Windows.Shell;assembly=PresentationFramework">
     <StackPanel Orientation="Horizontal">
         <Button x:Name="MinimizeButton"
@@ -76,13 +77,18 @@
         <Button x:Name="CloseButton"
                 Command="{x:Static SystemCommands.CloseWindowCommand}"
                 CommandTarget="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
-                ToolTip="{loc:Loc Close}" AutomationProperties.Name="{loc:Loc CloseWindow}"
                 chrome:WindowChrome.IsHitTestVisibleInChrome="True">
             <Button.Style>
                 <Style TargetType="Button" BasedOn="{StaticResource CaptionButton}">
+                    <Setter Property="ToolTip" Value="{loc:Loc Close}" />
+                    <Setter Property="AutomationProperties.Name" Value="{loc:Loc CloseWindow}" />
                     <Setter Property="Width" Value="28" />
                     <Setter Property="Height" Value="40" />
                     <Style.Triggers>
+                        <DataTrigger Binding="{Binding (windowing:WindowCloseBehavior.HideToTray), RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                            <Setter Property="ToolTip" Value="{loc:Loc HideMainWindowToTray}" />
+                            <Setter Property="AutomationProperties.Name" Value="{loc:Loc HideMainWindowToTray}" />
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding IsCompact, RelativeSource={RelativeSource AncestorType=controls:WindowControls}}" Value="True">
                             <Setter Property="Width" Value="14" />
                             <Setter Property="Height" Value="26" />

@@ -11,6 +11,8 @@ internal sealed class TestMySql : IMySqlSessionFactory
     internal MySqlTable Table { get; } = new("app", "users", Columns, "InnoDB");
     internal Dictionary<string, object?> Values { get; } = new() { ["id"] = 1, ["name"] = "Alice", ["profile"] = "{\"ok\":true}", ["payload"] = new byte[] { 0, 255 } };
     internal int Writes, Executions, Opens, Disposals;
+    internal int Rollbacks;
+    internal bool InTransaction;
     internal bool Unknown, CommitBeforeUnknown;
     internal TaskCompletionSource? BlockedQuery;
     internal Exception? ListFailure;
@@ -28,7 +30,7 @@ internal sealed class TestMySql : IMySqlSessionFactory
         public event EventHandler? ConnectionLost;
         internal void Disconnect() { IsConnected = false; ConnectionLost?.Invoke(this, EventArgs.Empty); }
         public string CurrentDatabase => "app";
-        public MySqlSessionState State => new(true, false);
+        public MySqlSessionState State => new(true, server.InTransaction);
         public Task<IReadOnlyList<MySqlStatement>> SplitAsync(string sql, CancellationToken token = default) => Task.FromResult(MySqlSql.Split(sql));
         public Task<string> ReadDefinitionAsync(MySqlObject item, CancellationToken token = default) => Task.FromResult("CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100));");
         public Task<MySqlObjectPage> ListAsync(MySqlObject parent, int offset, CancellationToken token = default)
@@ -65,7 +67,7 @@ internal sealed class TestMySql : IMySqlSessionFactory
             return Task.CompletedTask;
         }
         public Task<MySqlSessionState> ReadStateAsync(CancellationToken token = default) => Task.FromResult(State);
-        public Task RollbackAsync(CancellationToken token = default) => Task.CompletedTask;
+        public Task RollbackAsync(CancellationToken token = default) { server.Rollbacks++; server.InTransaction = false; return Task.CompletedTask; }
         public ValueTask DisposeAsync() { if (IsConnected) server.Disposals++; IsConnected = false; return ValueTask.CompletedTask; }
     }
 }

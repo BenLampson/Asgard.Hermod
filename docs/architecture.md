@@ -119,10 +119,10 @@ viewer.
 `WorkspacePageLayout` provides the shared content layout: a toolbar with a 56-pixel minimum height,
 optional notification, fill-sized body, 300-pixel details panel and 28-pixel status
 bar. Below 760 pixels the details overlay the body rather than reducing its width.
-SSH supplies only slot content and terminal actions. The main shell continues to
-own instance navigation, themes and outer tabs; its content host owns page reuse
-and cleanup. Module views must not recreate those shell elements or duplicate the
-shared details layout.
+SSH supplies only slot content and terminal actions. The main shell owns instance
+navigation and themes; the desktop workspace host opens actual instance pages in
+independent windows and retains the existing page registry and cleanup contracts.
+Module views must not recreate window chrome or duplicate the shared details layout.
 
 SSH exposes configuration editing only in its Content toolbar. The shared wizard
 uses type-declared edit capabilities: SSH permits route changes on the separate

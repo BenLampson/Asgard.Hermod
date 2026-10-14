@@ -7,6 +7,7 @@
     <Description>WPF presentation components for Asgard Hermod.</Description>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Asgard.Hermod.UI.Tests" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.12" />
     <ProjectReference Include="..\Asgard.Hermod.Abstractions\Asgard.Hermod.Abstractions.csproj" />
     <ProjectReference Include="..\Asgard.Hermod.WinTerminal\Asgard.Hermod.WinTerminal.csproj" />

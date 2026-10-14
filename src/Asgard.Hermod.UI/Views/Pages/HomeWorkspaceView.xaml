@@ -56,7 +56,7 @@
                                     <TextBlock Text="{loc:Loc AddInstance}" VerticalAlignment="Center" />
                                 </StackPanel>
                             </Button>
-                            <Button Command="{Binding OpenLocalTerminalCommand}">
+                            <Button Command="{Binding OpenLocalTerminalCommand}" AutomationProperties.Name="{loc:Loc LocalTerminal}">
                                 <StackPanel Orientation="Horizontal">
                                     <controls:IconView Kind="terminal" Width="14" Height="14" Margin="0,0,7,0" />
                                     <TextBlock Text="{loc:Loc LocalTerminal}" VerticalAlignment="Center" />

@@ -197,6 +197,18 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
     private void OnTabChanged(object? sender, PropertyChangedEventArgs args) { if (args.PropertyName is nameof(MySqlTabViewModel.HasResult) or nameof(MySqlTabViewModel.IsBusy)) ExportCommand.NotifyCanExecuteChanged(); }
     /// <summary>确认正在执行的命令、数据草稿、文稿和事务后才关闭。</summary>
     public override async Task<bool> RequestCloseAsync() { foreach (var tab in Tabs.ToArray()) if (!await tab.RequestCloseAsync()) return false; return true; }
+    /// <summary>跨窗口退出不提前停止其他查询、丢弃数据草稿或回滚事务。</summary>
+    public override async Task<WorkspaceClosePlan?> PrepareCloseAsync()
+    {
+        var plans = new List<WorkspaceClosePlan>();
+        foreach (var tab in Tabs.ToArray())
+        {
+            var plan = await tab.PrepareCloseAsync();
+            if (plan is null) return null;
+            plans.Add(plan);
+        }
+        return new WorkspaceClosePlan(async () => { foreach (var plan in plans) await plan.CommitAsync(); });
+    }
     protected override async ValueTask ReleaseAsync()
     {
         _lifetime.Cancel(); _factory.Reset(); Connection.Finish(); await StopConnectionWatchAsync(); Tree?.Dispose();

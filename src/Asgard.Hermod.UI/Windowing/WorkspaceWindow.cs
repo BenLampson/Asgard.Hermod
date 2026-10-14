@@ -30,6 +30,8 @@ public sealed class WorkspaceWindow : HermodWindow
     public WorkspacePageViewModel Page { get; }
     /// <summary>全应用退出预检期间阻止逐窗关闭，避免局部资源提前释放。</summary>
     public bool IsExitPending { get; set; }
+    /// <summary>尚未得到模块关闭许可时，全应用退出不能再启动第二轮预检。</summary>
+    public bool IsClosePending => _closing && !Page.IsClosed;
 
     /// <summary>按真实显示器 DPI 限制默认窗口尺寸。</summary>
     protected override void OnSourceInitialized(EventArgs args)
@@ -57,7 +59,12 @@ public sealed class WorkspaceWindow : HermodWindow
     private void OnPageChanged(object? sender, PropertyChangedEventArgs args)
     {
         if (args.PropertyName == nameof(WorkspacePageViewModel.IsClosed) && Page.IsClosed)
-            Dispatcher.BeginInvoke(() => Close());
+            Dispatcher.BeginInvoke(async () =>
+            {
+                IsEnabled = false;
+                try { await Page.CloseAsync(); }
+                finally { Close(); }
+            });
     }
 
     /// <summary>视图仅在所属窗口终止时释放，隐藏主窗体不经过这里。</summary>

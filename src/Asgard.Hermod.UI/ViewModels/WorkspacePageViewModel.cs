@@ -46,6 +46,9 @@ public abstract class WorkspacePageViewModel : ObservableObject, IAsyncDisposabl
     public virtual Task InitializeAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
     /// <summary>用户关闭页签前的业务确认；应用资源回收直接调用 CloseAsync。</summary>
     public virtual Task<bool> RequestCloseAsync() => Task.FromResult(true);
+    /// <summary>全应用退出先收集决定；有关闭副作用的模块必须覆写以延后提交。</summary>
+    public virtual async Task<WorkspaceClosePlan?> PrepareCloseAsync() => await RequestCloseAsync()
+        ? new WorkspaceClosePlan(() => Task.CompletedTask) : null;
     /// <summary>类型页面可请求新的独立会话，由外壳管理外层页签。</summary>
     public event EventHandler? NewSessionRequested;
     /// <summary>不创建嵌套页签，也不让功能页面访问外壳集合。</summary>
