@@ -1980,11 +1980,12 @@
     <value>Open {0}, last opened {1}</value>
   </data>
   <data name="HomeRecentDescription" xml:space="preserve">
-    <value>Return to your last five instances on this device.</value>
+    <value>Return to your last six instances on this device.</value>
   </data>
   <data name="HomeRecentEmpty" xml:space="preserve">
     <value>Your next session starts here</value>
   </data>
+  <data name="HomeRecentOpenedAt" xml:space="preserve"><value>Last opened: {0}</value></data>
   <data name="HomeRecentEmptyHint" xml:space="preserve">
     <value>Open an instance from the sidebar or start a local terminal. It will appear here next time.</value>
   </data>

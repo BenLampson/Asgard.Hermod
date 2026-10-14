@@ -20,4 +20,6 @@ public sealed record RecentInstanceViewModel(InstanceItemViewModel Instance, Dat
     }
     /// <summary>最近条目的完整辅助标签。</summary>
     public string AccessibleName => Text.Format("HomeRecentAccessible", Instance.DisplayName, OpenedAtText);
+    /// <summary>悬停显示完整本地日期，区域格式与界面语言独立。</summary>
+    public string OpenedAtHint => Text.Format("HomeRecentOpenedAt", OpenedAt.ToLocalTime().ToString("f"));
 }

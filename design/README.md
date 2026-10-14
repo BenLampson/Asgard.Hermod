@@ -96,6 +96,10 @@ storage cubes, Redis layers and terminal prompts, with 15/18/24px and monochrome
 examples. Workspace titles expose a pencil for the shared rename dialog. Region
 10B includes the final-tab empty state (g6TanB), preserving the connection and
 object tree while hiding the empty tab track.
+The recent-first home component jVHRf shows six 112px recent cards in three
+columns and two rows, with 12px gaps. Name/type sit above the bottom opening-time
+row. The welcome component h1r5l retains the empty-history guide. WPF switches to
+two or one column at narrow sizes and preserves full dates in tooltips.
 
 The MySQL follow-up uses the object-context component U6F7X and grouped structure
 navigation b85ZM. Only the selected tree row receives focus decoration. Object

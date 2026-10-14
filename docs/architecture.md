@@ -230,6 +230,11 @@ Each launch opens only Home and does not save or restore the previous tabs.
 Home stays open and has no close action. Other tabs, including tag pages, can
 be closed. Closing the last work tab returns to Home.
 The Home recent-instance history remains persisted separately from open tabs.
+It keeps six unique instance IDs and UTC opening times on this device. Existing
+five-entry history needs no migration. The home section uses three columns and
+two rows at wide sizes, dropping to two or one column as space narrows. Cards
+show the current instance name and type once, with opening time at the bottom
+and a full local-date tooltip. Deleted instances do not produce placeholder cards.
 See [the localization guide](localization.md) for resource and extension rules.
 Closing the application waits for workspace
 resources to be released before disposing the service container.

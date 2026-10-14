@@ -19,6 +19,12 @@
         <Style x:Key="HomeCard" TargetType="Border" BasedOn="{StaticResource PanelBorder}">
             <Setter Property="CornerRadius" Value="10" />
         </Style>
+        <Style x:Key="RecentCardText" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}"><Setter Property="TextOptions.TextFormattingMode" Value="Ideal" /><Setter Property="FontWeight" Value="Normal" /><Setter Property="TextTrimming" Value="CharacterEllipsis" /></Style>
+        <Style x:Key="RecentCardButton" TargetType="Button" BasedOn="{StaticResource StandardButton}">
+            <Setter Property="Height" Value="112" /><Setter Property="Padding" Value="16" /><Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}" /><Setter Property="BorderBrush" Value="{DynamicResource LineSoftBrush}" />
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Card" CornerRadius="8" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"><ContentPresenter Margin="{TemplateBinding Padding}" HorizontalAlignment="Stretch" VerticalAlignment="Center" /></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Card" Property="Background" Value="{DynamicResource AccentWeakBrush}" /><Setter TargetName="Card" Property="BorderBrush" Value="{DynamicResource AccentBrush}" /></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+        </Style>
     </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
                   Padding="24" Focusable="False">
@@ -91,7 +97,7 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl></StackPanel>
 
-            <Border x:Name="RecentCard" Padding="18" Margin="0,16,0,0" MinHeight="184"><Border.Style><Style TargetType="Border" BasedOn="{StaticResource HomeCard}"><Setter Property="Grid.Row" Value="2" /><Style.Triggers><DataTrigger Binding="{Binding HasRecentInstances}" Value="True"><Setter Property="Grid.Row" Value="0" /></DataTrigger></Style.Triggers></Style></Border.Style>
+            <Border x:Name="RecentCard" Padding="18" MinHeight="184"><Border.Style><Style TargetType="Border" BasedOn="{StaticResource HomeCard}"><Setter Property="Grid.Row" Value="2" /><Setter Property="Margin" Value="0,16,0,0" /><Style.Triggers><DataTrigger Binding="{Binding HasRecentInstances}" Value="True"><Setter Property="Grid.Row" Value="0" /><Setter Property="Margin" Value="0,0,0,16" /></DataTrigger></Style.Triggers></Style></Border.Style>
                 <StackPanel>
                     <Grid Margin="0,0,0,12">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
@@ -120,31 +126,24 @@
                             </StackPanel>
                         </Grid>
                     </Border>
-                    <ItemsControl ItemsSource="{Binding RecentInstances}">
+                    <ItemsControl x:Name="RecentItems" ItemsSource="{Binding RecentInstances}">
+                        <ItemsControl.ItemsPanel><ItemsPanelTemplate><controls:HomeRecentPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Button Command="{Binding DataContext.OpenRecentCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                        CommandParameter="{Binding}" Style="{StaticResource GhostButton}" Height="Auto" MinHeight="46"
-                                        Padding="0,5" Margin="0,0,0,6" HorizontalContentAlignment="Stretch"
+                                        CommandParameter="{Binding}" Style="{StaticResource RecentCardButton}"
                                         AutomationProperties.Name="{Binding AccessibleName}" ToolTip="{Binding AccessibleName}">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <Border Background="{DynamicResource AccentWeakBrush}" CornerRadius="8" Width="36" Height="36" Margin="0,0,12,0">
-                                            <controls:IconView Kind="{Binding Instance.Icon}" Width="17" Height="17" Foreground="{DynamicResource AccentTextBrush}" />
-                                        </Border>
-                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Instance.DisplayName}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"
-                                                       Foreground="{DynamicResource TextPrimaryBrush}" />
-                                            <TextBlock Text="{Binding Instance.Name}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}"
-                                                       TextTrimming="CharacterEllipsis" Margin="0,4,0,0" />
-                                        </StackPanel>
-                                        <TextBlock Grid.Column="2" Text="{Binding OpenedAtText}" Foreground="{DynamicResource TextMutedBrush}"
-                                                   FontSize="12" Margin="12,0" VerticalAlignment="Center" />
-                                        <controls:IconView Grid.Column="3" Kind="arrow-right" Width="16" Height="16"
-                                                           Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
+                                    <Grid><Grid.RowDefinitions><RowDefinition Height="40" /><RowDefinition Height="Auto" /></Grid.RowDefinitions><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                        <Grid Margin="0,0,8,0"><Grid.ColumnDefinitions><ColumnDefinition Width="52" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                            <Border Background="{DynamicResource AccentWeakBrush}" CornerRadius="8" Width="40" Height="40" HorizontalAlignment="Left"><controls:IconView Kind="{Binding Instance.TypeIcon}" Width="20" Height="20" Foreground="{DynamicResource AccentTextBrush}" /></Border>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center"><TextBlock Text="{Binding Instance.DisplayName}" Style="{StaticResource RecentCardText}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" /><TextBlock Text="{Binding Instance.TypeName}" Style="{StaticResource RecentCardText}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,5,0,0" /></StackPanel>
+                                        </Grid>
+                                        <controls:IconView Grid.Column="1" Kind="{Binding Instance.Icon}" Width="16" Height="16" Foreground="{DynamicResource TextMutedBrush}" ToolTip="{Binding Instance.ProviderHint}"><controls:IconView.Style><Style TargetType="controls:IconView"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding Instance.HasProviderIcon}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></controls:IconView.Style></controls:IconView>
+                                        <Grid Grid.Row="1" Grid.ColumnSpan="2" Height="16" Margin="0,12,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="18" /><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /></Grid.ColumnDefinitions>
+                                            <controls:IconView Kind="clock-3" Width="12" Height="12" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Left" />
+                                            <TextBlock x:Name="OpenedAt" Grid.Column="1" Text="{Binding OpenedAtText}" ToolTip="{Binding OpenedAtHint}" Style="{StaticResource RecentCardText}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
+                                            <controls:IconView Grid.Column="2" Kind="arrow-right" Width="16" Height="16" Foreground="{DynamicResource TextMutedBrush}" />
+                                        </Grid>
                                     </Grid>
                                 </Button>
                             </DataTemplate>

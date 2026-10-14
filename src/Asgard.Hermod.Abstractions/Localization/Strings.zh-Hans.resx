@@ -1980,11 +1980,12 @@
     <value>打开 {0}，上次打开时间为 {1}</value>
   </data>
   <data name="HomeRecentDescription" xml:space="preserve">
-    <value>回到此设备上最近打开的五个实例。</value>
+    <value>回到此设备上最近打开的六个实例。</value>
   </data>
   <data name="HomeRecentEmpty" xml:space="preserve">
     <value>从这里开始下一次工作</value>
   </data>
+  <data name="HomeRecentOpenedAt" xml:space="preserve"><value>上次打开：{0}</value></data>
   <data name="HomeRecentEmptyHint" xml:space="preserve">
     <value>从侧栏打开实例，或启动本地终端，下次就能在这里快速返回。</value>
   </data>
