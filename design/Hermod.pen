@@ -45221,6 +45221,7 @@
           "type": "frame",
           "id": "HfFtU",
           "name": "component/实例导航行",
+          "context": "实例行右键或 Shift+F10 提供重命名、编辑标签。仅更新显示元数据；稳定 ID、连接和会话不变化。",
           "reusable": true,
           "width": "fill_container",
           "height": 34,
@@ -239295,6 +239296,834 @@
                   "fontFamily": "Inter",
                   "fontSize": 12,
                   "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "n9Fk0G",
+      "x": 21164,
+      "y": 29992,
+      "name": "04C / 轻量元数据编辑 · 名称与标签",
+      "theme": {
+        "mode": "light"
+      },
+      "width": 1280,
+      "fill": "$app-bg",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": 28,
+      "children": [
+        {
+          "type": "text",
+          "id": "H4273",
+          "name": "轻量编辑标题",
+          "fill": "$ink",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "轻量编辑 / Rename and edit tags",
+          "fontFamily": "Inter",
+          "fontSize": 24,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "Of2aj",
+          "name": "实例快捷操作与保存规则",
+          "width": "fill_container",
+          "gap": 24,
+          "children": [
+            {
+              "type": "frame",
+              "id": "as3gK",
+              "name": "实例行上下文菜单",
+              "width": 260,
+              "fill": "$surface",
+              "cornerRadius": 6,
+              "stroke": "$line",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 4,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "o5ZevB",
+                  "name": "菜单说明",
+                  "fill": "$muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "实例行 · 右键 / Shift+F10",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "FgT0T",
+                  "name": "重命名 菜单项",
+                  "width": "fill_container",
+                  "height": 36,
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    8
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "B6BJJi",
+                      "name": "重命名 图标",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "pencil",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "U4v6y",
+                      "name": "重命名 菜单文字",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "重命名",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "GAwAx",
+                  "name": "编辑标签 菜单项",
+                  "width": "fill_container",
+                  "height": 36,
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    8
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "gK7rc",
+                      "name": "编辑标签 图标",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "tags",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "vht1s",
+                      "name": "编辑标签 菜单文字",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "编辑标签",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qTkoa",
+              "name": "轻量编辑交互契约",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "yDBTb",
+                  "name": "操作契约",
+                  "fill": "$ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "实例重命名、实例标签调整、标签重命名各有独立入口。取消不落库，失败保留草稿并可重试；保存成功后列表、最近访问和打开的实例页签立即同步。",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "PcT5T",
+                  "name": "身份与会话契约",
+                  "fill": "$muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "保留稳定实例 / 标签 ID、标签关系、连接参数、密文、当前会话和内部草稿。重命名不触发连接测试；标签重命名保留当前父级与颜色。内置环境标签禁止重命名。",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "uEEmX",
+                  "name": "键盘与语言契约",
+                  "fill": "$muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Tab / Shift+Tab 只遍历操作项。首个字段接收焦点，Esc 先取消标签浮层，再关闭窗口；关闭后回到入口。全部应用文案使用中英文共享资源。",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "fpc3a",
+          "name": "轻量编辑弹窗行 0",
+          "width": "fill_container",
+          "gap": 24,
+          "children": [
+            {
+              "type": "frame",
+              "id": "mGpOj",
+              "name": "重命名实例 · 公共轻量窗口",
+              "theme": {
+                "mode": "light"
+              },
+              "clip": true,
+              "width": "fill_container",
+              "height": 280,
+              "fill": "$surface",
+              "cornerRadius": 8,
+              "stroke": "$win-border",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "B8L6O",
+                  "name": "重命名实例 标题栏",
+                  "width": "fill_container",
+                  "height": 36,
+                  "fill": "$win",
+                  "gap": 8,
+                  "padding": [
+                    0,
+                    14
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "D5mIb",
+                      "name": "重命名实例 标题",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "重命名实例",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "rkbWs",
+                      "name": "重命名实例 关闭按钮",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "x",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ffCyh",
+                  "name": "重命名实例 单一正文",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": 24,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "TJYAJ",
+                      "name": "重命名实例 提示",
+                      "fill": "$muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "修改立即生效，当前会话继续运行。",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "BvULr",
+                      "name": "重命名实例 字段标签",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "实例名称",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "id": "Y58cse",
+                      "type": "ref",
+                      "ref": "jeqpu",
+                      "name": "重命名实例 唯一输入",
+                      "width": "fill_container",
+                      "height": 36,
+                      "descendants": {
+                        "JVZ1P": {
+                          "content": "Production · MySQL",
+                          "fontSize": 13,
+                          "fill": "$body"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "gncvd",
+                  "name": "重命名实例 固定操作栏",
+                  "width": "fill_container",
+                  "height": 56,
+                  "stroke": "$line-soft",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "justifyContent": "end",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "nQfWp",
+                      "type": "ref",
+                      "ref": "Q2r8z",
+                      "name": "重命名实例 取消",
+                      "fill": "$surface",
+                      "stroke": "$line",
+                      "strokeWidth": 1,
+                      "descendants": {
+                        "NpJY2": {
+                          "content": "取消",
+                          "fill": "$body",
+                          "fontSize": 13
+                        }
+                      }
+                    },
+                    {
+                      "id": "hi8yw",
+                      "type": "ref",
+                      "ref": "Q2r8z",
+                      "name": "重命名实例 保存",
+                      "descendants": {
+                        "NpJY2": {
+                          "content": "保存修改",
+                          "fontSize": 13
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "UDJWQ",
+              "name": "Rename instance · 公共轻量窗口",
+              "theme": {
+                "mode": "dark"
+              },
+              "clip": true,
+              "width": "fill_container",
+              "height": 280,
+              "fill": "$surface",
+              "cornerRadius": 8,
+              "stroke": "$win-border",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "OAIVF",
+                  "name": "Rename instance 标题栏",
+                  "width": "fill_container",
+                  "height": 36,
+                  "fill": "$win",
+                  "gap": 8,
+                  "padding": [
+                    0,
+                    14
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "HGmCe",
+                      "name": "Rename instance 标题",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Rename instance",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "RG4pC",
+                      "name": "Rename instance 关闭按钮",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "x",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "aM3LP",
+                  "name": "Rename instance 单一正文",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": 24,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "fS0dc",
+                      "name": "Rename instance 提示",
+                      "fill": "$muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Changes apply immediately. Existing sessions continue.",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "otWz3",
+                      "name": "Rename instance 字段标签",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Instance name",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "id": "d8NSZZ",
+                      "type": "ref",
+                      "ref": "jeqpu",
+                      "name": "Rename instance 唯一输入",
+                      "width": "fill_container",
+                      "height": 36,
+                      "descendants": {
+                        "JVZ1P": {
+                          "content": "Production · MySQL",
+                          "fontSize": 13,
+                          "fill": "$body"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "vF2i3",
+                  "name": "Rename instance 固定操作栏",
+                  "width": "fill_container",
+                  "height": 56,
+                  "stroke": "$line-soft",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "justifyContent": "end",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "MOw87",
+                      "type": "ref",
+                      "ref": "Q2r8z",
+                      "name": "Rename instance 取消",
+                      "fill": "$surface",
+                      "stroke": "$line",
+                      "strokeWidth": 1,
+                      "descendants": {
+                        "NpJY2": {
+                          "content": "Cancel",
+                          "fill": "$body",
+                          "fontSize": 13
+                        }
+                      }
+                    },
+                    {
+                      "id": "hP8GD",
+                      "type": "ref",
+                      "ref": "Q2r8z",
+                      "name": "Rename instance 保存",
+                      "descendants": {
+                        "NpJY2": {
+                          "content": "Save changes",
+                          "fontSize": 13
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "A4s2k",
+          "name": "轻量编辑弹窗行 1",
+          "width": "fill_container",
+          "gap": 24,
+          "children": [
+            {
+              "type": "frame",
+              "id": "w99cO",
+              "name": "编辑标签 · 公共轻量窗口",
+              "theme": {
+                "mode": "light"
+              },
+              "clip": true,
+              "width": "fill_container",
+              "height": 280,
+              "fill": "$surface",
+              "cornerRadius": 8,
+              "stroke": "$win-border",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ssMLX",
+                  "name": "编辑标签 标题栏",
+                  "width": "fill_container",
+                  "height": 36,
+                  "fill": "$win",
+                  "gap": 8,
+                  "padding": [
+                    0,
+                    14
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "IHXOM",
+                      "name": "编辑标签 标题",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "编辑标签",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "Dq4Tb",
+                      "name": "编辑标签 关闭按钮",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "x",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ZJyNt",
+                  "name": "编辑标签 单一正文",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": 24,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "yADvT",
+                      "name": "编辑标签 提示",
+                      "fill": "$muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "修改立即生效，当前会话继续运行。",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "WZKEi",
+                      "name": "编辑标签 字段标签",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "标签（可选）",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "id": "AQbaF",
+                      "type": "ref",
+                      "ref": "jeqpu",
+                      "name": "编辑标签 唯一输入",
+                      "width": "fill_container",
+                      "height": 36,
+                      "context": "共享 InstanceTagSelector 入口，打开可搜索复选草稿，不是自由文字输入。确认后才回显，取消不改变已确认关联。",
+                      "descendants": {
+                        "JVZ1P": {
+                          "content": "生产 / 团队 / Payments",
+                          "fontSize": 13,
+                          "fill": "$body"
+                        },
+                        "ZYlF2": {
+                          "enabled": true,
+                          "icon": "chevron-down"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Pc1aP",
+                  "name": "编辑标签 固定操作栏",
+                  "width": "fill_container",
+                  "height": 56,
+                  "stroke": "$line-soft",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "justifyContent": "end",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "Nsf8W",
+                      "type": "ref",
+                      "ref": "Q2r8z",
+                      "name": "编辑标签 取消",
+                      "fill": "$surface",
+                      "stroke": "$line",
+                      "strokeWidth": 1,
+                      "descendants": {
+                        "NpJY2": {
+                          "content": "取消",
+                          "fill": "$body",
+                          "fontSize": 13
+                        }
+                      }
+                    },
+                    {
+                      "id": "qhaEd",
+                      "type": "ref",
+                      "ref": "Q2r8z",
+                      "name": "编辑标签 保存",
+                      "descendants": {
+                        "NpJY2": {
+                          "content": "保存修改",
+                          "fontSize": 13
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "wgUyv",
+              "name": "重命名标签 · 公共轻量窗口",
+              "theme": {
+                "mode": "light"
+              },
+              "clip": true,
+              "width": "fill_container",
+              "height": 280,
+              "fill": "$surface",
+              "cornerRadius": 8,
+              "stroke": "$win-border",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "xwMca",
+                  "name": "重命名标签 标题栏",
+                  "width": "fill_container",
+                  "height": 36,
+                  "fill": "$win",
+                  "gap": 8,
+                  "padding": [
+                    0,
+                    14
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "VAJYg",
+                      "name": "重命名标签 标题",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "重命名标签",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "RodlP",
+                      "name": "重命名标签 关闭按钮",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "x",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "FWJVG",
+                  "name": "重命名标签 单一正文",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": 24,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Isx76",
+                      "name": "重命名标签 提示",
+                      "fill": "$muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "修改立即生效，当前会话继续运行。",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "xfAmB",
+                      "name": "重命名标签 字段标签",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "标签名称",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "id": "TXi8L",
+                      "type": "ref",
+                      "ref": "jeqpu",
+                      "name": "重命名标签 唯一输入",
+                      "width": "fill_container",
+                      "height": 36,
+                      "descendants": {
+                        "JVZ1P": {
+                          "content": "Payments",
+                          "fontSize": 13,
+                          "fill": "$body"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ztvRC",
+                  "name": "重命名标签 固定操作栏",
+                  "width": "fill_container",
+                  "height": 56,
+                  "stroke": "$line-soft",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "justifyContent": "end",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "GM1lF",
+                      "type": "ref",
+                      "ref": "Q2r8z",
+                      "name": "重命名标签 取消",
+                      "fill": "$surface",
+                      "stroke": "$line",
+                      "strokeWidth": 1,
+                      "descendants": {
+                        "NpJY2": {
+                          "content": "取消",
+                          "fill": "$body",
+                          "fontSize": 13
+                        }
+                      }
+                    },
+                    {
+                      "id": "d0bSC",
+                      "type": "ref",
+                      "ref": "Q2r8z",
+                      "name": "重命名标签 保存",
+                      "descendants": {
+                        "NpJY2": {
+                          "content": "保存修改",
+                          "fontSize": 13
+                        }
+                      }
+                    }
+                  ]
                 }
               ]
             }
