@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:Asgard.Hermod.UI.Controls"
              xmlns:models="clr-namespace:Asgard.Hermod.Abstractions.Models;assembly=Asgard.Hermod.Abstractions"
              FontFamily="{DynamicResource UiFont}"
-             FontSize="11.5"
+             FontSize="12"
              FontWeight="SemiBold">
     <Border CornerRadius="5">
         <Border.Style>
@@ -35,13 +35,13 @@
             </Style.Triggers>
         </Style>
         </Border.Style>
-        <StackPanel Orientation="Horizontal">
+        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
             <Ellipse VerticalAlignment="Center" Fill="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource AncestorType=Border}}">
                 <Ellipse.Style><Style TargetType="Ellipse"><Setter Property="Width" Value="7" /><Setter Property="Height" Value="7" /><Setter Property="Margin" Value="0,0,5,0" /><Style.Triggers><DataTrigger Binding="{Binding IsInline, RelativeSource={RelativeSource AncestorType={x:Type local:StatusBadge}}}" Value="True"><Setter Property="Width" Value="6" /><Setter Property="Height" Value="6" /><Setter Property="Margin" Value="0,0,6,0" /></DataTrigger><DataTrigger Binding="{Binding ShowIndicator, RelativeSource={RelativeSource AncestorType={x:Type local:StatusBadge}}}" Value="False"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></Ellipse.Style>
             </Ellipse>
-            <TextBlock Text="{Binding Text, RelativeSource={RelativeSource AncestorType={x:Type local:StatusBadge}}}">
-                <TextBlock.Style><Style TargetType="TextBlock"><Setter Property="FontSize" Value="11.5" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="Foreground" Value="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource AncestorType=Border}}" /><Style.Triggers><DataTrigger Binding="{Binding IsInline, RelativeSource={RelativeSource AncestorType={x:Type local:StatusBadge}}}" Value="True"><Setter Property="FontSize" Value="11" /><Setter Property="FontWeight" Value="Normal" /><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" /></DataTrigger></Style.Triggers></Style></TextBlock.Style>
+            <TextBlock Grid.Column="1" TextTrimming="CharacterEllipsis" Text="{Binding Text, RelativeSource={RelativeSource AncestorType={x:Type local:StatusBadge}}}">
+                <TextBlock.Style><Style TargetType="TextBlock"><Setter Property="FontSize" Value="12" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="Foreground" Value="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource AncestorType=Border}}" /><Style.Triggers><DataTrigger Binding="{Binding IsInline, RelativeSource={RelativeSource AncestorType={x:Type local:StatusBadge}}}" Value="True"><Setter Property="FontWeight" Value="Normal" /><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" /></DataTrigger></Style.Triggers></Style></TextBlock.Style>
             </TextBlock>
-        </StackPanel>
+        </Grid>
     </Border>
 </UserControl>

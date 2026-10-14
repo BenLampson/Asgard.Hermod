@@ -58,7 +58,7 @@
     <value>添加实例</value>
   </data>
   <data xml:space="preserve" name="AddInstance2">
-    <value>添加 实例</value>
+    <value>添加实例</value>
   </data>
   <data xml:space="preserve" name="AlibabaCloudOSS">
     <value>阿里云 OSS</value>
@@ -112,7 +112,7 @@
     <value>系统固定环境标签</value>
   </data>
   <data xml:space="preserve" name="BuiltInEnvironmentTagsCannotBeDeleted">
-    <value>系统内置环境标签 不允许删除。</value>
+    <value>系统内置环境标签不允许删除。</value>
   </data>
   <data xml:space="preserve" name="BuiltInEnvironmentTagsCannotBeEditedOrDeleted">
     <value>内置环境标签不能修改或删除。</value>
@@ -298,7 +298,7 @@
     <value>颜色须使用 #RGB 或 #RRGGBB 十六进制格式。</value>
   </data>
   <data xml:space="preserve" name="CommonTagColors">
-    <value>常用 标签 颜色</value>
+    <value>常用标签颜色</value>
   </data>
   <data xml:space="preserve" name="CompleteOrCancelTransfersBeforeEditingTheConnection">
     <value>请先完成或取消传输，再编辑连接。</value>
@@ -376,13 +376,13 @@
     <value>创建</value>
   </data>
   <data xml:space="preserve" name="CreateCustomTagsWithoutChangingBuiltInEnvironmentTagsSavedTagsAppearImmediatelyInTagM">
-    <value>仅创建自定义标签，不修改系统内置环境标签。保存后立即出现在 标签 管理和实例 标签 选择器中。</value>
+    <value>仅创建自定义标签，不修改系统内置环境标签。保存后立即出现在标签管理和实例标签选择器中。</value>
   </data>
   <data xml:space="preserve" name="CreateInstance">
     <value>创建实例</value>
   </data>
   <data xml:space="preserve" name="CreateTag">
-    <value>创建 标签</value>
+    <value>创建标签</value>
   </data>
   <data xml:space="preserve" name="Creating">
     <value>创建中…</value>
@@ -424,7 +424,7 @@
     <value>删除对象…</value>
   </data>
   <data xml:space="preserve" name="DeleteTag">
-    <value>删除 标签</value>
+    <value>删除标签</value>
   </data>
   <data xml:space="preserve" name="DeleteTags">
     <value>删除 {0} 个标签</value>
@@ -484,7 +484,7 @@
     <value>编辑对象存储连接</value>
   </data>
   <data xml:space="preserve" name="EditTag">
-    <value>编辑 标签</value>
+    <value>编辑标签</value>
   </data>
   <data xml:space="preserve" name="EditingCannotChangeTheInstanceTypeOrProviderCreateAnInstanceOfTheRequiredTypeInstead">
     <value>编辑实例不能更改实例类型或服务商，请新增对应类型的实例。</value>
@@ -502,7 +502,7 @@
     <value>请输入文件夹名称。</value>
   </data>
   <data xml:space="preserve" name="EnterATagName">
-    <value>请输入 标签 名称。</value>
+    <value>请输入标签名称。</value>
   </data>
   <data xml:space="preserve" name="EnterAValidAccessKeyIDAndAccessKeySecret">
     <value>请填写有效的 AccessKey ID 和 AccessKey Secret。</value>
@@ -532,7 +532,7 @@
     <value>展开或收起常用颜色</value>
   </data>
   <data xml:space="preserve" name="ExpandOrCollapseTag">
-    <value>展开或折叠 标签</value>
+    <value>展开或折叠标签</value>
   </data>
   <data xml:space="preserve" name="ExpandSidebar">
     <value>展开侧边栏</value>
@@ -556,13 +556,13 @@
     <value>按名称筛选实例</value>
   </data>
   <data xml:space="preserve" name="FilterInstancesByTags">
-    <value>按 标签 筛选实例</value>
+    <value>按标签筛选实例</value>
   </data>
   <data xml:space="preserve" name="FilterOptions">
     <value>筛选选项</value>
   </data>
   <data xml:space="preserve" name="FilterTags">
-    <value>筛选 标签</value>
+    <value>筛选标签</value>
   </data>
   <data xml:space="preserve" name="FindInstances">
     <value>查找实例</value>
@@ -739,7 +739,7 @@
     <value>本地工作区</value>
   </data>
   <data xml:space="preserve" name="ManageTags">
-    <value>管理 标签</value>
+    <value>管理标签</value>
   </data>
   <data xml:space="preserve" name="MatchAllSelected">
     <value>匹配所有选中标签</value>
@@ -793,7 +793,7 @@
     <value>新建对象文件夹</value>
   </data>
   <data xml:space="preserve" name="NewTag">
-    <value>新建 标签</value>
+    <value>新建标签</value>
   </data>
   <data xml:space="preserve" name="Next">
     <value>下一步</value>
@@ -832,7 +832,7 @@
     <value>没有匹配的标签</value>
   </data>
   <data xml:space="preserve" name="NoMatchingTags2">
-    <value>没有匹配的 标签</value>
+    <value>没有匹配的标签</value>
   </data>
   <data xml:space="preserve" name="NotConfigured">
     <value>未配置</value>
@@ -895,7 +895,7 @@
     <value>将从 OSS 删除对象，操作不可直接撤销。</value>
   </data>
   <data xml:space="preserve" name="OrganizeYourInstancesWithCustomTags">
-    <value>用自定义标签 分类你的实例</value>
+    <value>用自定义标签分类你的实例</value>
   </data>
   <data xml:space="preserve" name="OverwriteAndUpload">
     <value>覆盖并上传</value>
@@ -907,7 +907,7 @@
     <value>覆盖这个同名对象？</value>
   </data>
   <data xml:space="preserve" name="ParentTag">
-    <value>父级 标签</value>
+    <value>父级标签</value>
   </data>
   <data xml:space="preserve" name="Passed">
     <value>通过</value>
@@ -949,7 +949,7 @@
     <value>正在读取对象…</value>
   </data>
   <data xml:space="preserve" name="ReadingTags">
-    <value>正在读取 标签…</value>
+    <value>正在读取标签…</value>
   </data>
   <data xml:space="preserve" name="RecentEvents">
     <value>最近事件</value>
@@ -958,7 +958,7 @@
     <value>刷新对象列表</value>
   </data>
   <data xml:space="preserve" name="RelatedTagLinksWillAlsoBeRemovedFromInstancesInstancesAndConnectionInformationWillRem">
-    <value>同时移除 {0} 个实例上的相关 标签 关联；不会删除实例或连接信息。此操作不可撤销。</value>
+    <value>同时移除 {0} 个实例上的相关标签关联；不会删除实例或连接信息。此操作不可撤销。</value>
   </data>
   <data xml:space="preserve" name="Remove">
     <value>移除</value>
@@ -1039,10 +1039,10 @@
     <value>搜索服务和任务</value>
   </data>
   <data xml:space="preserve" name="SearchTags">
-    <value>搜索 标签</value>
+    <value>搜索标签</value>
   </data>
   <data xml:space="preserve" name="SearchTags2">
-    <value>搜索 标签…</value>
+    <value>搜索标签…</value>
   </data>
   <data xml:space="preserve" name="SearchTagsOrPaths">
     <value>搜索标签或路径</value>
@@ -1054,10 +1054,10 @@
     <value>请先选择一个已配置的实例。</value>
   </data>
   <data xml:space="preserve" name="SelectATagToViewDetails">
-    <value>选择 标签 查看详情</value>
+    <value>选择标签查看详情</value>
   </data>
   <data xml:space="preserve" name="SelectATagToViewDetailsOrManageItUsing">
-    <value>选择 标签 查看详情，或通过 ··· 管理。</value>
+    <value>选择标签查看详情，或通过 ··· 管理。</value>
   </data>
   <data xml:space="preserve" name="SelectAValidLocalFileLocation">
     <value>请选择有效的本地文件位置。</value>
@@ -1180,13 +1180,13 @@
     <value>标签层级数据损坏，请检查本地数据库。</value>
   </data>
   <data xml:space="preserve" name="TagManagement">
-    <value>标签 管理</value>
+    <value>标签管理</value>
   </data>
   <data xml:space="preserve" name="TagMatchingMode">
     <value>标签匹配模式</value>
   </data>
   <data xml:space="preserve" name="TagName">
-    <value>标签 名称</value>
+    <value>标签名称</value>
   </data>
   <data xml:space="preserve" name="TagNamesMustContain180CharactersAndNoSlashesOrControlCharacters">
     <value>标签名称须为 1–80 个字符，且不能包含斜杠或控制字符。</value>
@@ -1417,7 +1417,7 @@
     <value>当前服务商尚未提供支持精确版本清理的读写连接测试，无法确认完整连接能力。</value>
   </data>
   <data xml:space="preserve" name="ThisTagIsReferencedByInstancesSavingUpdatesItsNamePathAndColorWithoutChangingInstance">
-    <value>此 标签 被 {0} 个实例引用。保存后同步更新名称、路径与颜色，不改变这些实例的关联关系。</value>
+    <value>此标签被 {0} 个实例引用。保存后同步更新名称、路径与颜色，不改变这些实例的关联关系。</value>
   </data>
   <data xml:space="preserve" name="TransferFailedTaskRetainedTryAgain">
     <value>传输失败 · 已保留任务，请重试。</value>
