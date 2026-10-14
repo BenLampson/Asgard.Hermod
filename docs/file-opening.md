@@ -110,3 +110,10 @@ Contracts and validation live in Abstractions, rule persistence in
 Persistence.Sqlite, temporary file lifecycle in Core, Windows program launching
 and read-only text windows in UI, and object download orchestration in ObjectStorage.UI.
 Provider protocols remain independent of WPF.
+
+Automatic image preview is opt-in and remembered only for the current workspace session.
+It downloads only the selected, recognized image after its metadata is available; unknown
+files and directories stay manual. The checkbox remains below a loaded image and explains
+data transfer charges. Turning it off cancels the pending read and keeps subsequent images
+manual. Selection changes cancel obsolete work; a per-workspace gate waits for old providers
+to finish before another download, retaining existing byte limits and managed cache cleanup.

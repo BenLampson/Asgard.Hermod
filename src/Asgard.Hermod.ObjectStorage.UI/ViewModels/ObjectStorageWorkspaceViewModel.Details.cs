@@ -97,6 +97,8 @@ public sealed partial class ObjectStorageWorkspaceViewModel
             if (ReferenceEquals(_detailOperation, operation)) _detailOperation = null;
             if (!IsClosed && version == _detailVersion) IsDetailLoading = false;
         }
+        if (!operation.IsCancellationRequested && version == _detailVersion && ReferenceEquals(SelectedEntry, entry))
+            await TryAutoPreviewImageAsync(operation.Token);
     }
 
     /// <summary>刷新所有元数据、预览和详情操作启用条件。</summary>

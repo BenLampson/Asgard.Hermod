@@ -3498,4 +3498,10 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="MainCloseSettingsHint" xml:space="preserve">
     <value>Changes apply to the next close immediately and are saved on this device. Exiting still checks unsaved work.</value>
   </data>
+  <data name="AutomaticImagePreview" xml:space="preserve">
+    <value>Automatically preview images</value>
+  </data>
+  <data name="AutomaticImagePreviewHint" xml:space="preserve">
+    <value>Applies only to this workspace session. Selecting an image downloads it and may incur data transfer charges. Turn this off to load subsequent images manually.</value>
+  </data>
 </root>

@@ -45,10 +45,13 @@
                                 </DockPanel>
                                 <Image Source="{Binding ImagePreview}" Stretch="Uniform" MaxHeight="240" AutomationProperties.Name="{loc:Loc FileImagePreview}" />
                             </StackPanel>
-                            <StackPanel Grid.Row="4" Visibility="{Binding ShowForcePreviewActions, Converter={StaticResource OssDetailVisible}}">
+                            <StackPanel Grid.Row="4" Visibility="{Binding HasFileSelection, Converter={StaticResource OssDetailVisible}}">
                                 <TextBlock Text="{loc:Loc ForcePreviewIntroduction}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,10,0,0"
                                            Visibility="{Binding ShowForcePreviewIntroduction, Converter={StaticResource OssDetailVisible}}" />
-                                <Button Command="{Binding ForcePreviewCommand}" Margin="0,14,0,0" Height="32" AutomationProperties.Name="{loc:Loc ForcePreview}">
+                                <CheckBox IsChecked="{Binding AutoPreviewImages, Mode=TwoWay}" Content="{loc:Loc AutomaticImagePreview}" Margin="0,12,0,0"
+                                          ToolTip="{loc:Loc AutomaticImagePreviewHint}" AutomationProperties.Name="{loc:Loc AutomaticImagePreview}" AutomationProperties.HelpText="{loc:Loc AutomaticImagePreviewHint}" />
+                                <Button Command="{Binding ForcePreviewCommand}" Margin="0,14,0,0" Height="32" AutomationProperties.Name="{loc:Loc ForcePreview}"
+                                        Visibility="{Binding ShowForcePreviewActions, Converter={StaticResource OssDetailVisible}}">
                                     <StackPanel Orientation="Horizontal"><controls:IconView Kind="eye" Width="16" Height="16" Margin="0,0,8,0" /><TextBlock Text="{Binding ForcePreviewLabel}" FontWeight="SemiBold" /></StackPanel>
                                 </Button>
                             </StackPanel>

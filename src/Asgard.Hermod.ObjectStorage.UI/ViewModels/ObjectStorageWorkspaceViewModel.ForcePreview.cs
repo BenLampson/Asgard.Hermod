@@ -13,6 +13,25 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     private long _imagePreviewBytes;
     private long _imagePreviewSize;
     private IManagedTemporaryFile? _imagePreviewFile;
+    private readonly SemaphoreSlim _imagePreviewGate = new(1, 1);
+
+    /// <summary>默认关闭，仅当前工作区会话记住；关闭后取消进行中的自动读取。</summary>
+    public bool AutoPreviewImages
+    {
+        get; set
+        {
+            if (!SetProperty(ref field, value)) return;
+            if (value) _ = TryAutoPreviewImageAsync();
+            else _imagePreviewOperation?.Cancel();
+        }
+    }
+
+    /// <summary>只读取已确认的当前图片；不嗅探未知对象、不重试失败、不预取列表。</summary>
+    private Task TryAutoPreviewImageAsync(CancellationToken cancellationToken = default) =>
+        AutoPreviewImages && CanOperate && IsDetailsOpen && !IsDetailLoading && Details is not null && DetailError.Length == 0
+        && IsRecognizedPreviewImage && !HasImagePreview && !IsImagePreviewLoading && _temporaryFiles is not null
+        && SelectedEntry is { IsDirectory: false } entry && SelectedBucket is { } bucket
+            ? StartImagePreviewAsync(entry, bucket, Details.Size, cancellationToken) : Task.CompletedTask;
 
     /// <summary>用户点击后，已识别图片直接读取，未知类型先确认类型与费用。</summary>
     public AsyncRelayCommand ForcePreviewCommand { get; private set; } = null!;
@@ -136,9 +155,15 @@ public sealed partial class ObjectStorageWorkspaceViewModel
         ImagePreview = null;
         IsImagePreviewLoading = true;
         IManagedTemporaryFile? file = null;
+        bool acquired = false;
         try
         {
             if (size > FilePreviewPolicy.ImageLimit) throw Text.Exception("FilePreviewTooLarge");
+            // 切换对象时先取消旧读取，再等待其释放；即使供应商忽略取消也不并行下载。
+            await _imagePreviewGate.WaitAsync(operation.Token);
+            acquired = true;
+            operation.Token.ThrowIfCancellationRequested();
+            if (!IsCurrentImagePreview(entry, bucket, version)) return;
             file = _temporaryFiles!.CreateFile(entry.Name);
             var progress = new Progress<ObjectStorageTransferProgress>(value =>
             {
@@ -172,6 +197,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
         finally
         {
             file?.Dispose();
+            if (acquired) _imagePreviewGate.Release();
             if (ReferenceEquals(_imagePreviewOperation, operation)) _imagePreviewOperation = null;
             if (IsCurrentImagePreview(entry, bucket, version))
             {
