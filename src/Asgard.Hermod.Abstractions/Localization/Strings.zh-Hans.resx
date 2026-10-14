@@ -3297,4 +3297,7 @@
   <data name="MySqlNoOpenTabs" xml:space="preserve"><value>尚未打开表或查询</value></data>
   <data name="SshKeyImportFailed" xml:space="preserve"><value>无法导入私钥。请选择可读取且不超过 32 KiB 的 UTF-8 私钥文件后重试。</value></data>
   <data name="MySqlNoOpenTabsHint" xml:space="preserve"><value>从左侧对象树选择一张表，或新建查询继续操作。</value></data>
+  <data name="MySqlNoDatabaseSelected" xml:space="preserve"><value>未选择数据库</value></data>
+  <data name="MySqlDatabaseSchema" xml:space="preserve"><value>数据库 / Schema</value></data>
+  <data name="MySqlNoStructureItems" xml:space="preserve"><value>当前分区没有对象。</value></data>
 </root>

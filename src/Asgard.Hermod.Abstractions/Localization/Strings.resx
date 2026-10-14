@@ -3297,4 +3297,7 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="MySqlNoOpenTabs" xml:space="preserve"><value>No tabs open</value></data>
   <data name="SshKeyImportFailed" xml:space="preserve"><value>Could not import the private key. Choose a readable UTF-8 key file up to 32 KiB and try again.</value></data>
   <data name="MySqlNoOpenTabsHint" xml:space="preserve"><value>Select a table from the object tree or create a query to continue.</value></data>
+  <data name="MySqlNoDatabaseSelected" xml:space="preserve"><value>No database selected</value></data>
+  <data name="MySqlDatabaseSchema" xml:space="preserve"><value>Database / schema</value></data>
+  <data name="MySqlNoStructureItems" xml:space="preserve"><value>No objects in this section.</value></data>
 </root>

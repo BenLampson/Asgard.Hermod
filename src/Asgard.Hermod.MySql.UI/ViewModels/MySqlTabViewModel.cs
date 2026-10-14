@@ -25,6 +25,7 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
         InstanceConnectionOptions options, IMySqlWorkspaceDialogs dialogs, CancellationToken lifetime = default, InstanceItemViewModel? instance = null)
     {
         Name = name; Database = database; Kind = kind; _factory = factory; _options = options; _dialogs = dialogs;
+        StructureSections = CreateStructureSections(kind); StructureSection = StructureSections[0].Id;
         Instance = instance;
         _lifetime = CancellationTokenSource.CreateLinkedTokenSource(lifetime);
         RefreshCommand = new AsyncRelayCommand(_ => ReadAsync(), _ => !IsBusy && !IsQuery);
@@ -53,6 +54,8 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
     public string Definition { get; private set; } = "";
     /// <summary>完整页签标题，截断只由公共视图负责。</summary>
     public string Header => IsQuery ? Name : Text.Format("MySqlObjectTitle", Database, Name);
+    /// <summary>正文固定显示实际数据库上下文，空上下文明确说明，不受对象树展开状态影响。</summary>
+    public string DatabaseContext => Database.Length == 0 ? Text.Get("MySqlNoDatabaseSelected") : Database;
     /// <summary>按真实对象类型选择的公共图标。</summary>
     public string Icon => IsQuery ? "file-code" : Kind switch { MySqlObjectKind.View => "eye", MySqlObjectKind.Procedure => "workflow", MySqlObjectKind.Function => "square-function", MySqlObjectKind.Event => "clock-3", _ => "table-2" };
     /// <summary>当前 SQL 文稿，与表格草稿独立。</summary>
@@ -157,7 +160,7 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
                 try { var page = await session.ListAsync(new(kind, "", Database, Name), 0, token); structure.AddRange(page.Items); }
                 catch (Exception error) { Error = Text.Error(error, "MySqlCommandFailed"); }
             }
-            Structure = structure; OnPropertyChanged(nameof(Structure));
+            Structure = structure; OnPropertyChanged(nameof(Structure)); RefreshStructure();
             try { Definition = await session.ReadDefinitionAsync(new(Kind, Name, Database), token); OnPropertyChanged(nameof(Definition)); }
             catch (Exception error) { Error = Text.Error(error, "MySqlCommandFailed"); }
         });
@@ -193,8 +196,9 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
     }
     private void Refresh()
     {
-        foreach (string property in new[] { nameof(IsBusy), nameof(CanRun), nameof(Error), nameof(HasError), nameof(Message), nameof(HasMessage), nameof(Status), nameof(StateLabel), nameof(OutcomeUnknown), nameof(EditHint), nameof(Header), nameof(Database) }) OnPropertyChanged(property);
+        foreach (string property in new[] { nameof(IsBusy), nameof(CanRun), nameof(Error), nameof(HasError), nameof(Message), nameof(HasMessage), nameof(Status), nameof(StateLabel), nameof(OutcomeUnknown), nameof(EditHint), nameof(Header), nameof(Database), nameof(DatabaseContext) }) OnPropertyChanged(property);
         foreach (var command in new[] { RefreshCommand, ExecuteCommand, SaveDocumentCommand, SaveChangesCommand, VerifyCommand, PreviousCommand, NextCommand }) command.NotifyCanExecuteChanged();
         CancelCommand.NotifyCanExecuteChanged(); RevertCommand.NotifyCanExecuteChanged(); DraftChanged();
+        RefreshStructure();
     }
 }
