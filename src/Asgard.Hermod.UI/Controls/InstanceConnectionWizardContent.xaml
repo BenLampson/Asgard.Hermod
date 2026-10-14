@@ -48,7 +48,8 @@
         <TextBlock Text="{Binding StepTitle}" FontSize="24" FontWeight="SemiBold" />
         <TextBlock Text="{Binding StepDescription}" FontSize="13" TextWrapping="Wrap"
                    Foreground="{DynamicResource TextMutedBrush}" Margin="0,16,0,24" />
-        <StackPanel Visibility="{Binding IsProviderStep, Converter={StaticResource WizardVisibility}}">
+        <Expander Header="{Binding ProviderLabel}" IsExpanded="{Binding IsRouteSelectionExpanded, Mode=TwoWay}" Visibility="{Binding IsProviderSelectionVisible, Converter={StaticResource WizardVisibility}}" Margin="0,0,0,16">
+            <StackPanel>
             <TextBlock Text="{Binding ProviderLabel}" Margin="0,16,0,8" />
             <ListBox x:Name="ProviderList" Style="{StaticResource WizardCardList}" ItemsSource="{Binding Providers}" SelectedItem="{Binding SelectedProvider}"
                      IsEnabled="{Binding IsProviderSelectionEditable}"
@@ -65,9 +66,10 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <TextBlock Text="{loc:Loc ChooseAProviderThenEnterConnectionInformationInTheNextStep}"
+            <TextBlock Text="{loc:Loc WizardRouteSelectionHint}"
                        Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,28,0,0" />
-        </StackPanel>
+            </StackPanel>
+        </Expander>
         <StackPanel>
             <StackPanel.Style>
                 <Style TargetType="StackPanel">

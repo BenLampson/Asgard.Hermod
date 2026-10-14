@@ -44,7 +44,8 @@ public sealed class SshLayoutTests(WpfTestFixture fixture)
                 try
                 {
                     WindowPreviewCapture.Show(window); await WindowPreviewCapture.VerifyAsync(window, $"ssh-method-{route}-{language}-{theme}");
-                    model.NextCommand.Execute(null); SshWizardTests.Fill(model, route);
+                    Assert.True(model.IsInformationStep); Assert.False(model.IsRouteSelectionExpanded);
+                    SshWizardTests.Fill(model, route); model.IsRouteSelectionExpanded = true;
                     await WindowPreviewCapture.VerifyAsync(window, $"ssh-form-{route}-{language}-{theme}");
                     var name = Assert.IsType<TextBox>(WindowTestVisuals.Named(window, "SshNameInput"));
                     Assert.True(name.IsVisible); Assert.True(name.Focusable); Assert.True(name.IsTabStop);

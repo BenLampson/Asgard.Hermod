@@ -29,7 +29,7 @@ public sealed class SshEditingTests(WpfTestFixture fixture)
         var original = Assert.Single(services.GetRequiredService<ILocalConfigurationRepository>().GetSnapshot().Instances);
         using var wizard = new NewInstanceViewModel(services.GetRequiredService<IInstanceProviderRegistry>(), store, saved,
             (await store.GetConnectionAsync(saved.Id, TestContext.Current.CancellationToken))!);
-        Assert.Equal(4, wizard.Steps.Count); Assert.False(wizard.IsTypeSelectionEditable); Assert.True(wizard.IsProviderSelectionEditable);
+        Assert.Equal(3, wizard.Steps.Count); Assert.False(wizard.IsTypeSelectionEditable); Assert.True(wizard.IsProviderSelectionEditable);
         wizard.SelectedProvider = wizard.Providers.Single(item => item.Id == route);
         Assert.Equal("target.example", SshWizardTests.Field(wizard, "host").Value);
         Assert.Equal("test-only", SshWizardTests.Field(wizard, "password").Value);

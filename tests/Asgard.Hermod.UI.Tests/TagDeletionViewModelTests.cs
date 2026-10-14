@@ -16,10 +16,10 @@ public sealed class TagDeletionViewModelTests
         await model.InitializeAsync(TestContext.Current.CancellationToken);
 
         Assert.Equal(new[] { "Team", "Team/Platform", "Team/Platform/API" }, model.Tags.Select(tag => tag.Path));
-        Assert.Contains("及其子 Tag", model.Title);
+        Assert.Equal(Text.Format("DeleteAndItsChildTags", "Team"), model.Title);
         Assert.Contains("2 个实例", model.Impact);
         Assert.Contains("不会删除实例或连接信息", model.Impact);
-        Assert.Equal("删除 3 个 Tag", model.DeleteLabel);
+        Assert.Equal(Text.Format("DeleteTags", 3), model.DeleteLabel);
         Assert.True(model.CanDelete);
         Assert.Equal(0, service.DeleteCount);
         model.CancelCommand.Execute(null);
@@ -69,8 +69,8 @@ public sealed class TagDeletionViewModelTests
         await model.RetryCommand.ExecuteAsync();
         Assert.True(model.CanDelete);
         Assert.Single(model.Tags);
-        Assert.DoesNotContain("及其子 Tag", model.Title);
-        Assert.Equal("删除 1 个 Tag", model.DeleteLabel);
+        Assert.Equal(Text.Format("Delete2", "API"), model.Title);
+        Assert.Equal(Text.Format("DeleteTags", 1), model.DeleteLabel);
     }
 
     /// <summary>即使直接创建确认状态，内置环境也不能进入预览和删除服务。</summary>

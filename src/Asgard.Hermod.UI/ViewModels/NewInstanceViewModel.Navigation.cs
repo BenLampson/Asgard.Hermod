@@ -3,6 +3,12 @@ namespace Asgard.Hermod.UI.ViewModels;
 /// <summary>集中管理受校验的步骤导航、脱敏确认信息和绑定通知。</summary>
 public sealed partial class NewInstanceViewModel
 {
+    /// <summary>流程简化由类型声明，公共容器不识别 SSH 等协议。</summary>
+    public bool CombinesProviderAndInformation => SelectedType?.CombineProviderAndInformation == true;
+    /// <summary>路由仅在首个信息页按需展开，原有独立服务商页仍直接展开。</summary>
+    public bool IsRouteSelectionExpanded { get; set => SetProperty(ref field, value); }
+    /// <summary>独立和合并流程复用同一组服务商卡片。</summary>
+    public bool IsProviderSelectionVisible => IsProviderStep || CombinesProviderAndInformation && IsInformationStep;
     /// <summary>只有明确选择类型和服务商才可进入信息填写。</summary>
     public bool HasProviderSelection => SelectedType is not null && SelectedProvider is not null
         && SelectedType.Id == SelectedProvider.Type.Id && Providers.Contains(SelectedProvider);
@@ -25,7 +31,7 @@ public sealed partial class NewInstanceViewModel
     });
     /// <summary>测试和保存期间不能切换步骤。</summary>
     public bool CanGoPrevious => !_disposed && !IsTesting && !IsSaving && HasTypeSelection
-        && (!IsEditing || CurrentStep > 1);
+        && (!IsEditing || CurrentStep != Steps.FirstOrDefault()?.Id);
     /// <summary>测试只能从信息已完整的测试步骤开始。</summary>
     public bool CanTest => !_disposed && !IsTesting && !IsSaving && CurrentStep == 3 && IsInformationComplete;
     /// <summary>提交必须处于确认页，并且当前配置已经验证成功。</summary>
@@ -34,14 +40,14 @@ public sealed partial class NewInstanceViewModel
     /// <summary>创建期间冻结表单信息。</summary>
     public bool IsInformationEditable => !_disposed && !IsSaving;
     /// <summary>页脚的当前步骤提示。</summary>
-    public string StepCountText => HasTypeSelection ? Text.Format("WizardStepOfTotal", CurrentStep, Steps.Count) : "";
+    public string StepCountText => HasTypeSelection ? Text.Format("WizardStepOfTotal", Steps.FirstOrDefault(step => step.Id == CurrentStep)?.Number ?? 1, Steps.Count) : "";
     /// <summary>页脚只有一个默认按钮，在末步切换为真实保存命令。</summary>
     public ICommand ContinueCommand => IsConfirmationStep ? SubmitCommand : NextCommand;
     /// <summary>创建期间展示设计稿指定的提交状态。</summary>
     public string ContinueLabel => !IsConfirmationStep ? Text.Get("Next")
         : IsEditing ? IsSaving ? Text.Get("Saving") : Text.Get("SaveChanges") : IsSaving ? Text.Get("Creating") : Text.Get("InstanceConfirmAddition");
     /// <summary>添加流程的首步可以返回类型入口，编辑模式不允许更换类型。</summary>
-    public bool HasPreviousStep => HasTypeSelection && (!IsEditing || CurrentStep > 1);
+    public bool HasPreviousStep => HasTypeSelection && (!IsEditing || CurrentStep != Steps.FirstOrDefault()?.Id);
     /// <summary>未选择类型时只展示公共入口，不显示任何流程进度。</summary>
     public bool IsChoosingType => !HasTypeSelection;
     /// <summary>所选类型的服务商选择页是否可见。</summary>
@@ -51,7 +57,7 @@ public sealed partial class NewInstanceViewModel
     /// <summary>连接测试内容是否可见。</summary>
     public bool IsTestStep => CurrentStep == 3;
     /// <summary>保存范围内容是否可见。</summary>
-    public bool IsSaveLocationStep => CurrentStep == 4 && !OmitEditSaveLocation;
+    public bool IsSaveLocationStep => CurrentStep == 4 && !OmitEditSaveLocation && SelectedType?.OmitSaveLocation != true;
     /// <summary>脱敏确认内容是否可见。</summary>
     public bool IsConfirmationStep => CurrentStep == ConfirmationStep;
     /// <summary>当前服务商的展示名称。</summary>
@@ -100,7 +106,9 @@ public sealed partial class NewInstanceViewModel
     /// <summary>连接流程自行声明步骤；类型入口与公共布局都不预设连接步骤。</summary>
     private void RebuildSteps()
     {
-        Steps = SelectedType is null ? [] : OmitEditSaveLocation ?
+        Steps = SelectedType is null ? [] : CombinesProviderAndInformation ?
+            [new(2, Text.Get("ConnectionInformation"), 1), new(3, Text.Get("TestConnection"), 2),
+             new(5, Text.Get(IsEditing ? "ConfirmChanges" : "InstanceConfirmAddition"), 3)] : OmitEditSaveLocation ?
             [new(1, Text.Get(SelectedType.ProviderSelectionTitleResourceKey)), new(2, Text.Get("EnterInformation")),
              new(3, Text.Get("TestConnection")), new(4, Text.Get("ConfirmChanges"))] :
             [new(1, Text.Get(SelectedType.ProviderSelectionTitleResourceKey)), new(2, Text.Get("EnterInformation")), new(3, Text.Get("TestConnection")),
@@ -113,10 +121,10 @@ public sealed partial class NewInstanceViewModel
     {
         if (!CanGoPrevious)
             return;
-        if (CurrentStep == 1)
+        if (CurrentStep == Steps[0].Id)
             SelectedType = null;
         else
-            SetCurrentStep(CurrentStep - 1);
+            SetCurrentStep(Steps.TakeWhile(step => step.Id != CurrentStep).Last().Id);
     }
 
     /// <summary>推进之前显示字段错误，并在测试步骤阻止绕过验证。</summary>
@@ -133,7 +141,8 @@ public sealed partial class NewInstanceViewModel
             if (!IsInformationComplete)
                 return;
         }
-        SetCurrentStep(CurrentStep + 1);
+        if (Steps.SkipWhile(step => step.Id != CurrentStep).Skip(1).FirstOrDefault() is { } next)
+            SetCurrentStep(next.Id);
     }
 
     /// <summary>名称规则与配置服务一致，最终保存之前就能定位字段错误。</summary>
@@ -143,7 +152,8 @@ public sealed partial class NewInstanceViewModel
     /// <summary>内部步骤切换统一更新侧栏和正文绑定。</summary>
     private void SetCurrentStep(int step)
     {
-        CurrentStep = Math.Clamp(step, 1, Math.Max(1, Steps.Count));
+        if (!Steps.Any(item => item.Id == step)) return;
+        CurrentStep = step;
         OnPropertyChanged(nameof(CurrentStep));
         RefreshState();
     }
@@ -173,7 +183,7 @@ public sealed partial class NewInstanceViewModel
             nameof(CanGoNext), nameof(CanGoPrevious), nameof(CanTest), nameof(CanCreate), nameof(IsInformationEditable),
             nameof(IsTypeSelectionEditable), nameof(IsProviderSelectionEditable), nameof(WindowTitle), nameof(WizardHeading), nameof(ConfirmationHint),
             nameof(StepCountText), nameof(ContinueCommand), nameof(ContinueLabel), nameof(HasPreviousStep),
-            nameof(IsProviderStep), nameof(ProviderLabel), nameof(IsInformationStep), nameof(IsTestStep), nameof(IsSaveLocationStep),
+            nameof(IsProviderStep), nameof(IsProviderSelectionVisible), nameof(CombinesProviderAndInformation), nameof(ProviderLabel), nameof(IsInformationStep), nameof(IsTestStep), nameof(IsSaveLocationStep),
             nameof(IsConfirmationStep), nameof(ProviderName), nameof(ProviderSummary),
             nameof(TestSummary), nameof(TestHeading), nameof(TestDescription), nameof(TestActionLabel),
             nameof(HasTestFailure), nameof(HasTestErrorCode), nameof(StepTitle), nameof(StepDescription),

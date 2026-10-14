@@ -55,6 +55,12 @@ provider card lists do not intercept the mouse wheel with nested scroll viewers.
 Save notifications and creation callbacks update navigation by stable instance
 ID, preserving the existing item and preventing duplicate rows.
 
+SSH defaults to direct connection and opens its information form immediately. Its
+optional route selector expands on that page; route changes retain common fields
+and invalidate the verified test. The confirmation page includes the automatic
+save location, so a separate save-location page is unnecessary. Other types retain
+their declared flows. Step identities and visible sequence numbers are separate.
+
 Instance creation begins with the independent `InstanceTypePicker`, which lays
 out registered types in two columns. This entrance has no steps or total count.
 Selecting a type opens its connection flow; returning from the first flow step
@@ -117,8 +123,8 @@ and cleanup. Module views must not recreate those shell elements or duplicate th
 shared details layout.
 
 SSH exposes configuration editing only in its Content toolbar. The shared wizard
-uses type-declared edit capabilities: SSH permits route changes and has four edit
-steps, while other types retain their existing provider lock and save-location
+uses type-declared edit capabilities: SSH permits route changes and combines route selection with connection information
+in a three-step create/edit flow, while other types retain their existing provider lock and save-location
 step. Editing preserves the instance ID, encrypted credentials and current
 connection; a verified save applies when the user explicitly reconnects.
 

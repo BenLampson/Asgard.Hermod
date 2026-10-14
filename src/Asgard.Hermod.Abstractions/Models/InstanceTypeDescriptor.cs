@@ -13,4 +13,10 @@ public sealed record InstanceTypeDescriptor(string Id, string Name, string Descr
     public bool AllowProviderChangeOnEdit { get; init; }
     /// <summary>编辑流程可省略保存范围提示页，确认页仍展示实际保存位置。</summary>
     public bool OmitSaveLocationOnEdit { get; init; }
+    /// <summary>类型可将路由选择合并到基础信息页，复杂路径按需展开。</summary>
+    public bool CombineProviderAndInformation { get; init; }
+    /// <summary>合并流程的默认服务商必须使用注册表中的稳定标识。</summary>
+    public string? DefaultProviderId { get; init; }
+    /// <summary>自动保存范围无需独立提示页时，仍在确认页显示真实位置。</summary>
+    public bool OmitSaveLocation { get; init; }
 }

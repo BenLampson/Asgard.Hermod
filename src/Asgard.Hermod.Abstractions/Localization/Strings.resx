@@ -3286,4 +3286,5 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="MySqlFieldOperationTarget" xml:space="preserve"><value>Instance: {0} · Environment: {1}
 {2}</value></data>
   <data name="MySqlResultRow" xml:space="preserve"><value>Result row {0}</value></data>
+  <data name="WizardRouteSelectionHint" xml:space="preserve"><value>Choose a connection method. Advanced routes keep separate authentication and identity verification.</value></data>
 </root>

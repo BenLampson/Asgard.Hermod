@@ -109,10 +109,10 @@
     <value>上一步</value>
   </data>
   <data xml:space="preserve" name="BuiltInEnvironmentTag">
-    <value>系统固定环境 标签</value>
+    <value>系统固定环境标签</value>
   </data>
   <data xml:space="preserve" name="BuiltInEnvironmentTagsCannotBeDeleted">
-    <value>系统内置环境 标签 不允许删除。</value>
+    <value>系统内置环境标签 不允许删除。</value>
   </data>
   <data xml:space="preserve" name="BuiltInEnvironmentTagsCannotBeEditedOrDeleted">
     <value>内置环境标签不能修改或删除。</value>
@@ -241,7 +241,7 @@
     <value>选择服务商</value>
   </data>
   <data xml:space="preserve" name="ChooseTheRootOrAnotherCustomTag">
-    <value>可选根级或其他自定义 标签。</value>
+    <value>可选根级或其他自定义标签。</value>
   </data>
   <data xml:space="preserve" name="ChooseType">
     <value>选择类型</value>
@@ -376,7 +376,7 @@
     <value>创建</value>
   </data>
   <data xml:space="preserve" name="CreateCustomTagsWithoutChangingBuiltInEnvironmentTagsSavedTagsAppearImmediatelyInTagM">
-    <value>仅创建自定义 标签，不修改系统内置环境 标签。保存后立即出现在 标签 管理和实例 标签 选择器中。</value>
+    <value>仅创建自定义标签，不修改系统内置环境标签。保存后立即出现在 标签 管理和实例 标签 选择器中。</value>
   </data>
   <data xml:space="preserve" name="CreateInstance">
     <value>创建实例</value>
@@ -412,7 +412,7 @@
     <value>删除 {0}？</value>
   </data>
   <data xml:space="preserve" name="DeleteAndItsChildTags">
-    <value>删除 {0} 及其子 标签？</value>
+    <value>删除 {0} 及其子标签？</value>
   </data>
   <data xml:space="preserve" name="DeleteObjects">
     <value>删除 {0} 个对象</value>
@@ -427,7 +427,7 @@
     <value>删除 标签</value>
   </data>
   <data xml:space="preserve" name="DeleteTags">
-    <value>删除 {0} 个 标签</value>
+    <value>删除 {0} 个标签</value>
   </data>
   <data xml:space="preserve" name="DeleteTheseObjects">
     <value>删除这 {0} 个对象？</value>
@@ -817,7 +817,7 @@
     <value>没有为页面类型 {0} 注册内容视图。</value>
   </data>
   <data xml:space="preserve" name="NoCustomTagsYet">
-    <value>尚无自定义 标签</value>
+    <value>尚无自定义标签</value>
   </data>
   <data xml:space="preserve" name="NoMatchingInstances">
     <value>没有匹配的实例</value>
@@ -895,7 +895,7 @@
     <value>将从 OSS 删除对象，操作不可直接撤销。</value>
   </data>
   <data xml:space="preserve" name="OrganizeYourInstancesWithCustomTags">
-    <value>用自定义 标签 分类你的实例</value>
+    <value>用自定义标签 分类你的实例</value>
   </data>
   <data xml:space="preserve" name="OverwriteAndUpload">
     <value>覆盖并上传</value>
@@ -1078,7 +1078,7 @@
     <value>选择文件夹</value>
   </data>
   <data xml:space="preserve" name="SelectTheRootOrAnotherAvailableCustomTag">
-    <value>请选择根级或其他可用的自定义 标签。</value>
+    <value>请选择根级或其他可用的自定义标签。</value>
   </data>
   <data xml:space="preserve" name="SelectUploadFiles">
     <value>选择上传文件</value>
@@ -1294,7 +1294,7 @@
     <value>文件超过 OSS 分片上传的大小限制。</value>
   </data>
   <data xml:space="preserve" name="TheFollowingCustomTagsWillBeDeleted">
-    <value>将删除 {0} 个自定义 标签：</value>
+    <value>将删除 {0} 个自定义标签：</value>
   </data>
   <data xml:space="preserve" name="TheInstanceConfigurationNoLongerExistsConfigureTheInstanceAgain">
     <value>实例配置已不存在，请重新配置实例。</value>
@@ -3286,4 +3286,5 @@
   <data name="MySqlFieldOperationTarget" xml:space="preserve"><value>实例：{0} · 环境：{1}
 {2}</value></data>
   <data name="MySqlResultRow" xml:space="preserve"><value>结果第 {0} 行</value></data>
+  <data name="WizardRouteSelectionHint" xml:space="preserve"><value>选择连接方式。高级路由保留独立认证和主机身份验证。</value></data>
 </root>

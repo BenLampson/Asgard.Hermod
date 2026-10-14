@@ -39,7 +39,7 @@ public sealed class TagDialogWindowTests
                 Assert.True(edit.IsVisible);
                 Assert.True(edit.IsEnabled);
 
-                var search = Assert.Single(WindowTestVisuals.Descendants<TextBox>(window), input => AutomationProperties.GetName(input) == "搜索 Tag");
+                var search = Assert.Single(WindowTestVisuals.Descendants<TextBox>(window), input => AutomationProperties.GetName(input) == Asgard.Hermod.Abstractions.Localization.Text.Get("SearchTags"));
                 search.Text = "unmatched value";
                 await WpfTestFixture.DrainDispatcherAsync();
                 Assert.True(model.Tags.HasNoMatches);
@@ -137,7 +137,7 @@ public sealed class TagDialogWindowTests
                 var delete = Assert.Single(WindowTestVisuals.Descendants<Button>(window), button => ReferenceEquals(button.Command, model.DeleteCommand));
                 Assert.False(delete.IsDefault);
                 Assert.True(delete.IsEnabled);
-                Assert.Equal("删除 3 个 Tag", delete.Content);
+                Assert.Equal(Asgard.Hermod.Abstractions.Localization.Text.Format("DeleteTags", 3), delete.Content);
                 AssertContained(WindowTestVisuals.ScreenBounds(window), WindowTestVisuals.ScreenBounds(delete));
                 WindowTestVisuals.Invoke(delete);
                 await WpfTestFixture.DrainDispatcherAsync();

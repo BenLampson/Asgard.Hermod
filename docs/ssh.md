@@ -1,6 +1,8 @@
 # SSH connections
 
-SSH is an independent instance type. Its five-step flow reuses the common type
+SSH is an independent instance type. Direct connection is selected by default;
+connection information and optional route selection share the first page.
+Testing and confirmation follow, and automatic save location is shown at confirmation. Its three-step flow reuses the common type
 picker, connection wizard, field validation, connection test, encrypted settings
 and confirmation. English and Simplified Chinese are available in both the
 wizard and terminal workspace.

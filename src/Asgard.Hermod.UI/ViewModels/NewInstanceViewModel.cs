@@ -77,9 +77,12 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
             SelectedProvider = null;
             if (Providers.Count == 1)
                 SelectedProvider = Providers[0];
+            else if (value?.CombineProviderAndInformation == true)
+                SelectedProvider = Providers.FirstOrDefault(provider => provider.Id == value.DefaultProviderId);
             Name = "";
             TagSelection.Reset();
-            CurrentStep = 1;
+            CurrentStep = CombinesProviderAndInformation ? 2 : 1;
+            IsRouteSelectionExpanded = !CombinesProviderAndInformation;
             RebuildSteps();
             OnPropertyChanged(nameof(CurrentStep));
             InvalidateConnection();
@@ -97,7 +100,7 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
                 return;
             if (SetProperty(ref field, value))
             {
-                var retained = IsEditing ? Fields.ToDictionary(item => item.Key, item => (item.Value, item.Definition.Kind)) : null;
+                var retained = IsEditing || CombinesProviderAndInformation ? Fields.ToDictionary(item => item.Key, item => (item.Value, item.Definition.Kind)) : null;
                 ReplaceFields(value);
                 if (retained is not null)
                     foreach (var item in Fields)
