@@ -1,9 +1,10 @@
 using System.Globalization;
 using System.Windows.Automation;
+using Asgard.Hermod.Abstractions.Localization;
 
 namespace Asgard.Hermod.UI.Tests;
 
-/// <summary>验证保存实例的搜索范围、首页优先级和按实际字体测量的长名称。</summary>
+/// <summary>验证保存实例的搜索范围、首页固定顺序和按实际字体测量的长名称。</summary>
 [Collection(WpfTestCollection.Name)]
 public sealed class WorkspaceRefinementTests(WpfTestFixture fixture)
 {
@@ -24,7 +25,7 @@ public sealed class WorkspaceRefinementTests(WpfTestFixture fixture)
     [Theory]
     [InlineData("en", UiTheme.Dark)]
     [InlineData("zh-Hans", UiTheme.Light)]
-    public Task RecentInstances_MoveAboveIntroduction(string language, UiTheme theme) => fixture.RunAsync(async () =>
+    public Task HomeSections_KeepOverviewIntroductionRecentOrder(string language, UiTheme theme) => fixture.RunAsync(async () =>
     {
         var previous = CultureInfo.CurrentUICulture;
         try
@@ -40,12 +41,17 @@ public sealed class WorkspaceRefinementTests(WpfTestFixture fixture)
                 window.Show();
                 await WpfTestFixture.DrainDispatcherAsync();
                 var recent = Assert.IsType<Border>(view.FindName("RecentCard"));
+                var overview = Assert.IsType<StackPanel>(view.FindName("OverviewSection")); var introduction = Assert.IsType<Border>(view.FindName("IntroductionCard"));
+                Assert.Equal(0, Grid.GetRow(overview)); Assert.Equal(1, Grid.GetRow(introduction));
                 Assert.Equal(2, Grid.GetRow(recent));
                 home.RecordOpened(environment.Shell.Sidebar.AllInstances.First());
                 await WpfTestFixture.DrainDispatcherAsync();
-                Assert.Equal(0, Grid.GetRow(recent));
+                Assert.Equal(0, Grid.GetRow(overview)); Assert.Equal(1, Grid.GetRow(introduction)); Assert.Equal(2, Grid.GetRow(recent));
+                Assert.True(overview.TranslatePoint(new Point(), view).Y < introduction.TranslatePoint(new Point(), view).Y);
+                Assert.True(introduction.TranslatePoint(new Point(), view).Y < recent.TranslatePoint(new Point(), view).Y);
                 Assert.DoesNotContain(home.Types, item => item.Id == "local");
-                Assert.False(Assert.Single(WindowTestVisuals.Descendants<Expander>(view)).IsExpanded);
+                Assert.Empty(WindowTestVisuals.Descendants<Expander>(view));
+                Assert.DoesNotContain(WindowTestVisuals.Descendants<TextBlock>(view), text => text.Text == Text.Get("HomeOpenSource"));
             }
             finally { window.Close(); }
         }

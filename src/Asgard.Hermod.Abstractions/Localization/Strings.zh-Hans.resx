@@ -1986,6 +1986,7 @@
     <value>从这里开始下一次工作</value>
   </data>
   <data name="HomeRecentOpenedAt" xml:space="preserve"><value>上次打开：{0}</value></data>
+  <data name="AboutRepositoryAddress" xml:space="preserve"><value>项目仓库地址</value></data>
   <data name="HomeRecentEmptyHint" xml:space="preserve">
     <value>从侧栏打开实例，或启动本地终端，下次就能在这里快速返回。</value>
   </data>

@@ -11,9 +11,5 @@ public partial class HomeWorkspaceView : UserControl
     {
         HeroLogo.Visibility = args.NewSize.Width >= 640 ? Visibility.Visible : Visibility.Collapsed;
         RecentDescription.Visibility = args.NewSize.Width >= 640 ? Visibility.Visible : Visibility.Collapsed;
-        // 作者信息在窄窗口移到简介上方，避免与标题重叠。
-        bool compact = args.NewSize.Width < 800;
-        AuthorDetails.HorizontalAlignment = compact ? HorizontalAlignment.Left : HorizontalAlignment.Right;
-        AuthorDetails.Margin = compact ? new Thickness(0, 30, 0, 8) : new Thickness();
     }
 }

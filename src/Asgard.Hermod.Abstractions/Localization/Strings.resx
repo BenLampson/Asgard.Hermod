@@ -1986,6 +1986,7 @@
     <value>Your next session starts here</value>
   </data>
   <data name="HomeRecentOpenedAt" xml:space="preserve"><value>Last opened: {0}</value></data>
+  <data name="AboutRepositoryAddress" xml:space="preserve"><value>Project repository address</value></data>
   <data name="HomeRecentEmptyHint" xml:space="preserve">
     <value>Open an instance from the sidebar or start a local terminal. It will appear here next time.</value>
   </data>

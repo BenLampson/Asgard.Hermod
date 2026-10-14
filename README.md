@@ -21,6 +21,10 @@ as images or text. Settings → Open with manages local extension rules. See the
 Settings → Storage shows temporary file usage and safely cleans unused files.
 See the [storage settings guide](docs/storage-settings.md).
 
+Home shows the instance overview, workspace introduction and quick actions, then
+six recently opened instances. Settings → About shows the application version,
+author, open-source license and project repository without a collapsed section.
+
 Heimdall browser sign-in enables automatic configuration synchronization after
 one-time password setup. Configuration details are stored individually; credentials
 remain encrypted. Independent changes merge automatically and conflicts can be

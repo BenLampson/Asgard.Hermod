@@ -41,7 +41,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
             new("file-opening", Text.Get("FileOpening"), "folder-open", fileRules is not null),
             new("account", Text.Get("Account"), "user-round", accounts is not null && openAccount is not null),
             new("shortcuts", Text.Get("KeyboardShortcuts"), "keyboard", false),
-            new("about", Text.Get("About"), "info", false),
+            new("about", Text.Get("About"), "info", true),
         ];
         Languages = [new("", Text.Get("FollowWindows"), []), .. Text.Languages];
         _selectedLanguage = Languages[0];
@@ -103,6 +103,10 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
     public bool IsStorageSelected => SelectedCategory.Id == "storage";
     /// <summary>账号入口复用宿主的登录与同步管理，不维护另一份登录状态。</summary>
     public bool IsAccountSelected => SelectedCategory.Id == "account";
+    /// <summary>关于页通过固定分类标识控制可见性。</summary>
+    public bool IsAboutSelected => SelectedCategory.Id == "about";
+    /// <summary>版本、作者、许可与源码入口统一归于关于页。</summary>
+    public AboutViewModel About { get; } = new();
     /// <summary>只显示已验证的 JWT 用户名。</summary>
     public string AccountName => _accounts?.Account?.Username ?? _signedOutStatus;
     /// <summary>登录状态与云端同步是否成功分开展示。</summary>
@@ -129,6 +133,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
             OnPropertyChanged(nameof(IsFileOpeningSelected));
             OnPropertyChanged(nameof(IsStorageSelected));
             OnPropertyChanged(nameof(IsAccountSelected));
+            OnPropertyChanged(nameof(IsAboutSelected));
         }
     }
     /// <summary>可复用的标签管理状态。</summary>

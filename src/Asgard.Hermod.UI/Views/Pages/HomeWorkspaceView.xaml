@@ -28,8 +28,8 @@
     </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
                   Padding="24" Focusable="False">
-        <Grid MaxWidth="1200" HorizontalAlignment="Stretch"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-            <Border Padding="24"><Border.Style><Style TargetType="Border" BasedOn="{StaticResource HomeCard}"><Setter Property="Grid.Row" Value="0" /><Setter Property="MinHeight" Value="184" /><Style.Triggers><DataTrigger Binding="{Binding HasRecentInstances}" Value="True"><Setter Property="Grid.Row" Value="1" /><Setter Property="MinHeight" Value="112" /></DataTrigger></Style.Triggers></Style></Border.Style>
+        <Grid MaxWidth="1200" HorizontalAlignment="Stretch"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+            <Border x:Name="IntroductionCard" Grid.Row="1" Padding="24" Margin="0,16,0,0" MinHeight="184" Style="{StaticResource HomeCard}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -69,7 +69,7 @@
                 </Grid>
             </Border>
 
-            <StackPanel><StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Grid.Row" Value="1" /><Style.Triggers><DataTrigger Binding="{Binding HasRecentInstances}" Value="True"><Setter Property="Grid.Row" Value="2" /></DataTrigger></Style.Triggers></Style></StackPanel.Style><Grid Margin="0,16,0,12">
+            <StackPanel x:Name="OverviewSection" Grid.Row="0"><Grid Margin="0,0,0,12">
                 <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                 <TextBlock Text="{loc:Loc HomeOverview}" Style="{StaticResource SectionHeading}" />
                 <TextBlock Grid.Column="1" Text="{Binding InstanceCount}" Style="{StaticResource MutedText}"
@@ -97,7 +97,7 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl></StackPanel>
 
-            <Border x:Name="RecentCard" Padding="18" MinHeight="184"><Border.Style><Style TargetType="Border" BasedOn="{StaticResource HomeCard}"><Setter Property="Grid.Row" Value="2" /><Setter Property="Margin" Value="0,16,0,0" /><Style.Triggers><DataTrigger Binding="{Binding HasRecentInstances}" Value="True"><Setter Property="Grid.Row" Value="0" /><Setter Property="Margin" Value="0,0,0,16" /></DataTrigger></Style.Triggers></Style></Border.Style>
+            <Border x:Name="RecentCard" Grid.Row="2" Padding="18" Margin="0,16,0,0" MinHeight="184" Style="{StaticResource HomeCard}">
                 <StackPanel>
                     <Grid Margin="0,0,0,12">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
@@ -152,27 +152,7 @@
                 </StackPanel>
             </Border>
 
-            <Border Grid.Row="3" Style="{StaticResource HomeCard}" Padding="18" Margin="0,16,0,0"><Expander Header="{loc:Loc HomeOpenSource}" IsExpanded="{Binding HasNoRecentInstances, Mode=OneWay}">
-                <Grid>
-                    <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-                    <TextBlock Text="{loc:Loc HomeOpenSource}" Style="{StaticResource SectionHeading}" Margin="0,0,0,9" />
-                    <WrapPanel x:Name="AuthorDetails" HorizontalAlignment="Right">
-                        <TextBlock Text="{loc:Loc HomeAuthor}" Style="{StaticResource MutedText}" Margin="0,0,16,0" />
-                        <TextBlock Text="{loc:Loc HomeLicense}" Style="{StaticResource MutedText}" />
-                    </WrapPanel>
-                    <TextBlock Grid.Row="1" Text="{loc:Loc HomeOpenSourceDescription}" Style="{StaticResource MutedText}" Margin="0,0,0,5" />
-                    <Button Grid.Row="2" Command="{Binding OpenGitHubCommand}" Style="{StaticResource GhostButton}" Height="Auto"
-                            Padding="0,2" HorizontalAlignment="Left" HorizontalContentAlignment="Left" ToolTip="{Binding RepositoryUrl}"
-                            AutomationProperties.Name="{loc:Loc HomeOpenGitHub}">
-                        <Grid>
-                            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                            <controls:IconView Kind="external-link" Width="15" Height="15" Margin="0,0,8,0" Foreground="{DynamicResource AccentTextBrush}" VerticalAlignment="Center" />
-                            <TextBlock Grid.Column="1" Text="{Binding RepositoryUrl}" Foreground="{DynamicResource AccentTextBrush}" TextWrapping="Wrap" />
-                        </Grid>
-                    </Button>
-                </Grid></Expander>
-            </Border>
-            <TextBlock Grid.Row="4" Text="{Binding Message}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" Margin="0,12,0,0"
+            <TextBlock Grid.Row="3" Text="{Binding Message}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" Margin="0,12,0,0"
                        AutomationProperties.LiveSetting="Polite" />
         </Grid>
     </ScrollViewer>

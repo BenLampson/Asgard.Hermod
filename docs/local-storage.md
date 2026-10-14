@@ -63,7 +63,7 @@ version-1 baseline to represent a later schema.
 
 ## Service lifetime and verification
 
-The Home page stores up to five recently opened instance IDs and UTC timestamps
+The Home page stores up to six recently opened instance IDs and UTC timestamps
 in `app_setting` under `workspace.recent`, through `IRecentInstanceStore`. Names,
 endpoints and credentials are not copied into this history. The page resolves
 names from current instance snapshots and hides records for deleted instances.

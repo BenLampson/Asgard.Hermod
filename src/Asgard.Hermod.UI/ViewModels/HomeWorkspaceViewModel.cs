@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace Asgard.Hermod.UI.ViewModels;
 
 /// <summary>首页仅呈现安全实例快照，打开动作不代表远程连接成功。</summary>
@@ -26,17 +24,10 @@ public sealed class HomeWorkspaceViewModel : WorkspacePageViewModel
             if (value is RecentInstanceViewModel recent && _instances.Any(item => item.Id == recent.Instance.Id))
                 openInstance(recent.Instance);
         }, value => value is RecentInstanceViewModel recent && _instances.Any(item => item.Id == recent.Instance.Id));
-        OpenGitHubCommand = new RelayCommand(_ =>
-        {
-            try { Process.Start(new ProcessStartInfo(RepositoryUrl) { UseShellExecute = true }); }
-            catch (Exception) { Message = Text.Get("HomeOpenRepositoryFailed"); }
-        });
     }
 
-    /// <summary>公开项目地址固定来自仓库，不接受用户输入作为启动参数。</summary>
-    public string RepositoryUrl => "https://github.com/BenLampson/Asgard.Hermod";
     /// <summary>显示于软件简介中的程序集版本。</summary>
-    public string Version => "v" + (typeof(HomeWorkspaceViewModel).Assembly.GetName().Version?.ToString(3) ?? "0.1.0");
+    public string Version => ApplicationInfo.Version;
     /// <summary>已配置实例数，不计内置本地终端。</summary>
     public string InstanceCount => Text.Format("HomeInstanceCount", _instances.Count(item => !item.IsLocal));
     /// <summary>真实注册类型与已有配置中的未知类型均保留。</summary>
@@ -45,14 +36,12 @@ public sealed class HomeWorkspaceViewModel : WorkspacePageViewModel
     public ObservableCollection<RecentInstanceViewModel> RecentInstances { get; } = [];
     /// <summary>空记录引导。</summary>
     public bool HasNoRecentInstances => RecentInstances.Count == 0;
-    /// <summary>存在有效访问记录时将最近实例放在介绍和统计之前。</summary>
+    /// <summary>是否存在有效访问记录，首页分区顺序始终保持稳定。</summary>
     public bool HasRecentInstances => !HasNoRecentInstances;
-    /// <summary>安全且本地化的持久化或浏览器失败提示。</summary>
+    /// <summary>安全且本地化的持久化失败提示。</summary>
     public string Message { get => _message; private set => SetProperty(ref _message, value); }
     /// <summary>重用外壳工作页入口。</summary>
     public RelayCommand OpenRecentCommand { get; }
-    /// <summary>在系统默认浏览器打开公开仓库。</summary>
-    public RelayCommand OpenGitHubCommand { get; }
     /// <summary>首页与侧栏共用新建实例入口。</summary>
     public ICommand? AddInstanceCommand { get; internal set; }
     /// <summary>首页与侧栏共用本地终端入口。</summary>

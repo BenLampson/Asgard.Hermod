@@ -229,6 +229,10 @@ display language is the default; unsupported languages fall back to English.
 Each launch opens only Home and does not save or restore the previous tabs.
 Home stays open and has no close action. Other tabs, including tag pages, can
 be closed. Closing the last work tab returns to Home.
+Home always orders its sections as instance overview, workspace introduction
+and quick actions, then recently opened instances, including when history is
+empty. Settings → About owns the version, author, open-source license and
+repository link; the complete information is visible without expanding a panel.
 The Home recent-instance history remains persisted separately from open tabs.
 It keeps six unique instance IDs and UTC opening times on this device. Existing
 five-entry history needs no migration. The home section uses three columns and
