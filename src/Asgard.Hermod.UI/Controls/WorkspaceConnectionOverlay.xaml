@@ -1,0 +1,26 @@
+<UserControl x:Class="Asgard.Hermod.UI.Controls.WorkspaceConnectionOverlay"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls" xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization"
+ x:Name="OverlayRoot" Focusable="False" IsVisibleChanged="OnVisibilityChanged" PreviewKeyDown="OnKeyDown" KeyboardNavigation.TabNavigation="Cycle" KeyboardNavigation.ControlTabNavigation="Cycle">
+ <UserControl.Resources><BooleanToVisibilityConverter x:Key="Visible" /></UserControl.Resources>
+ <Grid Background="#66000000" DataContext="{Binding State, ElementName=OverlayRoot}">
+  <Border x:Name="ConnectionCard" MaxWidth="440" Margin="24" Padding="28" HorizontalAlignment="Stretch" VerticalAlignment="Center" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1" CornerRadius="10">
+   <StackPanel>
+    <Grid Margin="0,0,0,16"><Grid.ColumnDefinitions><ColumnDefinition Width="40" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+     <controls:IconView Kind="circle-dashed" Width="26" Height="26" Foreground="{DynamicResource AccentBrush}" Visibility="{Binding IsConnecting, Converter={StaticResource Visible}}" RenderTransformOrigin="0.5,0.5">
+      <controls:IconView.RenderTransform><RotateTransform /></controls:IconView.RenderTransform><controls:IconView.Triggers><EventTrigger RoutedEvent="Loaded"><BeginStoryboard><Storyboard><DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" From="0" To="360" Duration="0:0:1.2" RepeatBehavior="Forever" /></Storyboard></BeginStoryboard></EventTrigger></controls:IconView.Triggers>
+     </controls:IconView>
+     <controls:IconView Kind="circle-x" Width="26" Height="26" Foreground="{DynamicResource DangerBrush}" Visibility="{Binding HasError, Converter={StaticResource Visible}}" />
+     <StackPanel Grid.Column="1"><TextBlock Text="{Binding Title}" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" /><TextBlock Text="{Binding TargetName, ElementName=OverlayRoot}" Margin="0,5,0,0" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" /></StackPanel>
+    </Grid>
+    <ScrollViewer MaxHeight="240" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"><TextBlock Text="{Binding Detail}" TextWrapping="Wrap" Foreground="{DynamicResource TextBodyBrush}" FontSize="13" AutomationProperties.LiveSetting="Polite" /></ScrollViewer>
+    <Button x:Name="CancelConnection" Content="{loc:Loc Cancel}" Command="{Binding CancelCommand}" Visibility="{Binding IsConnecting, Converter={StaticResource Visible}}" HorizontalAlignment="Right" Margin="0,24,0,0" />
+    <WrapPanel x:Name="FailureActions" HorizontalAlignment="Right" Margin="0,24,0,0" Visibility="{Binding HasError, Converter={StaticResource Visible}}">
+     <Button Content="{loc:Loc WorkspaceConnectionClose}" Command="{Binding DismissCommand}" Margin="0,0,8,0" />
+     <Button Content="{loc:Loc WorkspaceConnectionEdit}" Command="{Binding EditCommand, ElementName=OverlayRoot}" Margin="0,0,8,0" />
+     <Button x:Name="RetryConnection" Content="{loc:Loc WorkspaceConnectionRetry}" Command="{Binding RetryCommand, ElementName=OverlayRoot}" Style="{StaticResource PrimaryButton}" />
+    </WrapPanel>
+   </StackPanel>
+  </Border>
+ </Grid>
+</UserControl>

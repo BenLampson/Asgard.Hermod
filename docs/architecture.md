@@ -339,6 +339,12 @@ visible focus treatment. WPF test hosts use the desktop application's selection
 rendering switch and verify rendered text above opaque selection backgrounds.
 Module tab title hints use the WPF tooltip service with a bounded hover duration;
 focus does not manually open a popup. Complete titles remain in automation names.
+MySQL and Redis share `WorkspaceConnectionOverlay` and its presentation state.
+`WorkspacePageLayout` reserves an overlay slot spanning the existing page rows;
+loading and failure do not shift the body. Modules own cancellation, session
+cleanup and retries, and provide safe localized errors. Closing a failure keeps
+a short disconnected badge, and retry resets the error. Underlying controls pause
+while the overlay is visible; tree templates retain the current theme when disabled.
 
 Instance type icons share one mapping across the picker, navigation and workspace:
 MySQL uses `database`, storage uses `box`, Redis uses `layers`, and SSH uses

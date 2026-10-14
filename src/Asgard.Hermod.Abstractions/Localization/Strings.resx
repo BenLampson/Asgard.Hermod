@@ -3222,6 +3222,14 @@
   <data name="MySqlExportLoaded" xml:space="preserve"><value>Export loaded rows</value></data>
   <data name="MySqlNoResults" xml:space="preserve"><value>Run SQL or open a table to view results.</value></data>
   <data name="MySqlNoRows" xml:space="preserve"><value>No rows to display.</value></data>
+  <data name="WorkspaceConnectionConnecting" xml:space="preserve"><value>Connecting…</value></data>
+  <data name="WorkspaceConnectionCancelling" xml:space="preserve"><value>Cancelling connection…</value></data>
+  <data name="WorkspaceConnectionFailed" xml:space="preserve"><value>Connection failed</value></data>
+  <data name="WorkspaceConnectionWaiting" xml:space="preserve"><value>Establishing the connection. Please wait.</value></data>
+  <data name="WorkspaceConnectionDisconnected" xml:space="preserve"><value>Disconnected</value></data>
+  <data name="WorkspaceConnectionEdit" xml:space="preserve"><value>Edit connection</value></data>
+  <data name="WorkspaceConnectionRetry" xml:space="preserve"><value>Retry</value></data>
+  <data name="WorkspaceConnectionClose" xml:space="preserve"><value>Close</value></data>
   <data name="MySqlMessages" xml:space="preserve"><value>Execution messages</value></data>
   <data name="MySqlStatementSucceeded" xml:space="preserve"><value>Statement {0} completed; {1} rows affected.</value></data>
   <data name="MySqlStatementStopped" xml:space="preserve"><value>Statement {0} stopped. Earlier statements may have taken effect.</value></data>

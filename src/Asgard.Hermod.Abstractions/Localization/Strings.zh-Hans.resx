@@ -3222,6 +3222,14 @@
   <data name="MySqlExportLoaded" xml:space="preserve"><value>导出已加载行</value></data>
   <data name="MySqlNoResults" xml:space="preserve"><value>执行 SQL 或打开表以查看结果。</value></data>
   <data name="MySqlNoRows" xml:space="preserve"><value>暂无数据。</value></data>
+  <data name="WorkspaceConnectionConnecting" xml:space="preserve"><value>正在连接…</value></data>
+  <data name="WorkspaceConnectionCancelling" xml:space="preserve"><value>正在取消连接…</value></data>
+  <data name="WorkspaceConnectionFailed" xml:space="preserve"><value>连接失败</value></data>
+  <data name="WorkspaceConnectionWaiting" xml:space="preserve"><value>正在建立连接，请稍候。</value></data>
+  <data name="WorkspaceConnectionDisconnected" xml:space="preserve"><value>未连接</value></data>
+  <data name="WorkspaceConnectionEdit" xml:space="preserve"><value>编辑连接</value></data>
+  <data name="WorkspaceConnectionRetry" xml:space="preserve"><value>重试</value></data>
+  <data name="WorkspaceConnectionClose" xml:space="preserve"><value>关闭</value></data>
   <data name="MySqlMessages" xml:space="preserve"><value>执行消息</value></data>
   <data name="MySqlStatementSucceeded" xml:space="preserve"><value>语句 {0} 执行完成，影响 {1} 行。</value></data>
   <data name="MySqlStatementStopped" xml:space="preserve"><value>语句 {0} 已停止。此前的语句可能已经生效。</value></data>

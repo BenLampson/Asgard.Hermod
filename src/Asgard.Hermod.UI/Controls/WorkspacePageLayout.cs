@@ -9,6 +9,10 @@ public class WorkspacePageLayout : ContentControl
     /// <summary>正文上方的通知插槽。</summary>
     public static readonly DependencyProperty NotificationProperty = DependencyProperty.Register(
         nameof(Notification), typeof(object), typeof(WorkspacePageLayout));
+    /// <summary>覆盖页面的加载或对话框插槽，不改变正文尺寸。</summary>
+    public static readonly DependencyProperty OverlayProperty = DependencyProperty.Register(nameof(Overlay), typeof(object), typeof(WorkspacePageLayout));
+    /// <summary>打开覆盖层时暂停底层页面交互。</summary>
+    public static readonly DependencyProperty IsOverlayOpenProperty = DependencyProperty.Register(nameof(IsOverlayOpen), typeof(bool), typeof(WorkspacePageLayout));
     /// <summary>按需展开的详情正文。</summary>
     public static readonly DependencyProperty DetailsProperty = DependencyProperty.Register(
         nameof(Details), typeof(object), typeof(WorkspacePageLayout));
@@ -45,6 +49,10 @@ public class WorkspacePageLayout : ContentControl
     public object? Toolbar { get => GetValue(ToolbarProperty); set => SetValue(ToolbarProperty, value); }
     /// <summary>通知内容。</summary>
     public object? Notification { get => GetValue(NotificationProperty); set => SetValue(NotificationProperty, value); }
+    /// <summary>覆盖层内容。</summary>
+    public object? Overlay { get => GetValue(OverlayProperty); set => SetValue(OverlayProperty, value); }
+    /// <summary>覆盖层显隐与底层交互状态。</summary>
+    public bool IsOverlayOpen { get => (bool)GetValue(IsOverlayOpenProperty); set => SetValue(IsOverlayOpenProperty, value); }
     /// <summary>详情内容。</summary>
     public object? Details { get => GetValue(DetailsProperty); set => SetValue(DetailsProperty, value); }
     /// <summary>状态栏内容。</summary>

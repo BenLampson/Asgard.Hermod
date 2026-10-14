@@ -28,8 +28,10 @@
                     <Border x:Name="PART_StatusBar" Grid.Row="3" Height="28" Padding="16,0" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,1,0,0">
                         <ContentPresenter Content="{TemplateBinding StatusContent}" />
                     </Border>
+                    <ContentPresenter x:Name="PART_Overlay" Grid.RowSpan="4" Panel.ZIndex="100" Content="{TemplateBinding Overlay}" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                 </Grid>
                 <ControlTemplate.Triggers>
+                    <Trigger Property="IsOverlayOpen" Value="True"><Setter TargetName="PART_Overlay" Property="Visibility" Value="Visible" /><Setter TargetName="PART_Toolbar" Property="IsEnabled" Value="False" /><Setter TargetName="PART_Body" Property="IsEnabled" Value="False" /><Setter TargetName="PART_Details" Property="IsEnabled" Value="False" /></Trigger>
                     <Trigger Property="Toolbar" Value="{x:Null}"><Setter TargetName="PART_Toolbar" Property="Visibility" Value="Collapsed" /></Trigger>
                     <Trigger Property="StatusContent" Value="{x:Null}"><Setter TargetName="PART_StatusBar" Property="Visibility" Value="Collapsed" /></Trigger>
                     <Trigger Property="IsDetailsOpen" Value="True"><Setter TargetName="PART_Details" Property="Visibility" Value="Visible" /></Trigger>
