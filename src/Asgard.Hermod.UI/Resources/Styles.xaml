@@ -10,6 +10,7 @@
         <ResourceDictionary Source="MainNavigationTabs.xaml" />
         <ResourceDictionary Source="WorkspaceDataGrid.xaml" />
         <ResourceDictionary Source="WorkspaceTreeView.xaml" />
+        <ResourceDictionary Source="TerminalControl.xaml" />
     </ResourceDictionary.MergedDictionaries>
     <!-- 纯内容宿主不作为操作项；其子控件仍可通过 Tab 访问。 -->
     <Style TargetType="ContentControl">

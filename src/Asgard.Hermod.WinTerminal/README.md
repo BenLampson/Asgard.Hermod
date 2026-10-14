@@ -127,3 +127,11 @@ The solution uses xUnit v3 and the .NET 10 Microsoft Testing Platform runner.
 This is the starting implementation. Complex grapheme/emoji shaping, IME candidate
 placement, accessibility, common full-screen application compatibility, and
 sustained high-output performance still need dedicated verification.
+
+Numeric input distinguishes ordinary auto-completed text from active IME candidate
+composition. Keypad digits use the WPF NumPad identity independently of thread NumLock
+translation. A matching TextInput commit is still deduplicated once per KeyDown.
+Local text selection starts only after the Windows drag threshold; a click clears it.
+Host-provided context menus use the shared Copy, Paste and SelectAll routed commands,
+including PreviewPaste confirmation. TUI mouse reporting keeps priority; Shift selects
+local text and opens the local menu.

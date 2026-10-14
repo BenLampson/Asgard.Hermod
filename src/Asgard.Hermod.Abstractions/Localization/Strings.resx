@@ -3504,4 +3504,13 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="AutomaticImagePreviewHint" xml:space="preserve">
     <value>Applies only to this workspace session. Selecting an image downloads it and may incur data transfer charges. Turn this off to load subsequent images manually.</value>
   </data>
+  <data name="TerminalCopy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="TerminalPaste" xml:space="preserve">
+    <value>Paste</value>
+  </data>
+  <data name="TerminalSelectAll" xml:space="preserve">
+    <value>Select all</value>
+  </data>
 </root>

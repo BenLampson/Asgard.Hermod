@@ -47,6 +47,14 @@ public sealed partial class TerminalControl
         return text.ToString();
     }
 
+    /// <summary>单击或离开终端只清除选择，不修改终端缓冲区。</summary>
+    public void ClearSelection()
+    {
+        VerifyAccess();
+        _selection = null; _selectionAnchor = null; _selectionDragOrigin = null; _selectionDragging = false;
+        InvalidateVisual();
+    }
+
     /// <summary>左键开始选区；应用鼠标模式下发送按钮报告，Shift 保留本地选择。</summary>
     protected override void OnMouseDown(MouseButtonEventArgs args)
     {
@@ -64,15 +72,8 @@ public sealed partial class TerminalControl
         }
         else if (args.ChangedButton == MouseButton.Left)
         {
-            _selectionAnchor = GetCellPosition(args.GetPosition(this), true);
-            var anchor = _selectionAnchor.Value;
-            _selection = new TerminalSelection(anchor.X, anchor.Y, anchor.X, anchor.Y);
+            BeginSelection(args.GetPosition(this));
             CaptureMouse();
-        }
-        else if (args.ChangedButton == MouseButton.Right && ContextMenu is null)
-        {
-            if (_selection is not null) CopySelection();
-            else Paste();
         }
         else return;
         args.Handled = true;
@@ -100,9 +101,7 @@ public sealed partial class TerminalControl
         }
         else if (_selectionAnchor is { } anchor && args.LeftButton == MouseButtonState.Pressed)
         {
-            var (x, y) = GetCellPosition(args.GetPosition(this), true);
-            _selection = new TerminalSelection(anchor.X, anchor.Y, x, y);
-            InvalidateVisual();
+            ExtendSelection(args.GetPosition(this));
         }
     }
 
@@ -113,9 +112,43 @@ public sealed partial class TerminalControl
         if (_pressedButton is { } button && ShouldReportMouse())
             SendMouseButton(button, false, GetCellPosition(args.GetPosition(this), false));
         _pressedButton = null;
-        _selectionAnchor = null;
+        EndSelection();
         ReleaseMouseCapture();
-        args.Handled = true;
+        if (args.ChangedButton != MouseButton.Right || ShouldReportMouse()) args.Handled = true;
+        InvalidateVisual();
+    }
+
+    private void BeginSelection(Point point)
+    {
+        ClearSelection(); _selectionAnchor = GetCellPosition(point, true); _selectionDragOrigin = point;
+    }
+    private void ExtendSelection(Point point)
+    {
+        if (_selectionAnchor is not { } anchor || _selectionDragOrigin is not { } origin) return;
+        if (!_selectionDragging && Math.Abs(point.X - origin.X) < SystemParameters.MinimumHorizontalDragDistance
+            && Math.Abs(point.Y - origin.Y) < SystemParameters.MinimumVerticalDragDistance) return;
+        _selectionDragging = true;
+        var (x, y) = GetCellPosition(point, true);
+        _selection = new TerminalSelection(anchor.X, anchor.Y, x, y); InvalidateVisual();
+    }
+    private void EndSelection()
+    {
+        _selectionAnchor = null; _selectionDragOrigin = null; _selectionDragging = false;
+        if (string.IsNullOrWhiteSpace(GetSelectedText())) _selection = null;
+    }
+
+    /// <summary>捕获丢失后停止拖动，保留已有非空选区。</summary>
+    protected override void OnLostMouseCapture(MouseEventArgs args)
+    {
+        base.OnLostMouseCapture(args);
+        _selectionAnchor = null; _selectionDragOrigin = null; _selectionDragging = false;
+    }
+
+    /// <summary>TUI 鼠标报告优先，Shift 沿用现有策略打开本地文字菜单。</summary>
+    protected override void OnContextMenuOpening(ContextMenuEventArgs args)
+    {
+        base.OnContextMenuOpening(args);
+        if (ShouldReportMouse()) args.Handled = true;
     }
 
     /// <summary>滚动历史；Ctrl 调整字号，应用鼠标模式下发送滚轮报告。</summary>

@@ -3504,4 +3504,13 @@
   <data name="AutomaticImagePreviewHint" xml:space="preserve">
     <value>仅在当前工作区会话内生效。选择图片会下载内容，可能产生流量费用。取消勾选后，后续图片需手动加载。</value>
   </data>
+  <data name="TerminalCopy" xml:space="preserve">
+    <value>复制</value>
+  </data>
+  <data name="TerminalPaste" xml:space="preserve">
+    <value>粘贴</value>
+  </data>
+  <data name="TerminalSelectAll" xml:space="preserve">
+    <value>全选</value>
+  </data>
 </root>

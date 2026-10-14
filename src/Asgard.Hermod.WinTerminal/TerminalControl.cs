@@ -23,6 +23,8 @@ public sealed partial class TerminalControl : Control, IDisposable
     private TerminalSession? _session;
     private TerminalSelection? _selection;
     private (int X, int Y)? _selectionAnchor;
+    private Point? _selectionDragOrigin;
+    private bool _selectionDragging;
     private TerminalMouseButton? _pressedButton;
     private int _scrollOffset;
     private int _pendingRender = 1;
@@ -72,6 +74,7 @@ public sealed partial class TerminalControl : Control, IDisposable
         Loaded += OnLoaded;
         Unloaded += OnUnloaded;
         TextCompositionManager.AddPreviewTextInputStartHandler(this, OnCompositionStarted);
+        InitializeClipboardCommands();
     }
 
     /// <summary>切换会话时解除旧订阅并清空与旧缓冲区关联的选区。</summary>

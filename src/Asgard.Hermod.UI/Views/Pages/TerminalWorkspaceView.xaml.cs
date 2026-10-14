@@ -9,6 +9,7 @@ public partial class TerminalWorkspaceView : UserControl, IDisposable
     public TerminalWorkspaceView()
     {
         InitializeComponent();
+        TerminalView.PreviewPaste += OnPreviewPaste;
         Loaded += OnLoaded;
     }
 
@@ -19,6 +20,15 @@ public partial class TerminalWorkspaceView : UserControl, IDisposable
             TerminalView.Focus();
     }
 
+    /// <summary>本地终端与 SSH 复用相同的多行粘贴确认语义。</summary>
+    private void OnPreviewPaste(object? sender, WinTerminal.TerminalPasteEventArgs args)
+    {
+        if (!args.Text.Contains('\n') && !args.Text.Contains('\r')) return;
+        var dialog = new Dialogs.ConfirmationDialog(Text.Get("SshPasteTitle"), Text.Get("SshPasteDescription"), Text.Get("SshPasteConfirm"), preview: args.Text)
+        { Owner = Window.GetWindow(this) };
+        args.Cancel = dialog.ShowDialog() != true;
+    }
+
     /// <summary>关闭页签时解除会话绑定并释放控件；切换页签的 Unloaded 不执行此操作。</summary>
     public void Dispose()
     {
@@ -27,6 +37,7 @@ public partial class TerminalWorkspaceView : UserControl, IDisposable
             return;
         _disposed = true;
         Loaded -= OnLoaded;
+        TerminalView.PreviewPaste -= OnPreviewPaste;
         BindingOperations.ClearBinding(TerminalView, WinTerminal.TerminalControl.SessionProperty);
         TerminalView.Session = null;
         TerminalView.Dispose();

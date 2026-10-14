@@ -6,6 +6,10 @@ internal static class WindowsKeyboard
     /// <summary>保留 Shift/CapsLock，清除 Alt 状态后取得字符；不改变系统死键状态。</summary>
     internal static string? GetTextWithoutAlt(Key key, ModifierKeys? modifiers = null)
     {
+        // WPF 已按 NumLock 把导航键与数字分开；数字小键盘不依赖 ToUnicode 的线程状态。
+        if (key is >= Key.NumPad0 and <= Key.NumPad9 && modifiers is { } numericModifiers
+            && !numericModifiers.HasFlag(ModifierKeys.Control) && !numericModifiers.HasFlag(ModifierKeys.Alt))
+            return ((char)('0' + key - Key.NumPad0)).ToString();
         int virtualKey = KeyInterop.VirtualKeyFromKey(key);
         if (virtualKey == 0)
             return null;

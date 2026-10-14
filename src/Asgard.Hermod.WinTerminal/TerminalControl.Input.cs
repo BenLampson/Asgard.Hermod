@@ -10,7 +10,8 @@ public sealed partial class TerminalControl
     /// <summary>输入法组合期间，数字键必须继续用于选候选，不能提前发给远端。</summary>
     private void OnCompositionStarted(object sender, TextCompositionEventArgs args)
     {
-        _isComposing = true;
+        // AutoComplete.On 是普通字符的自动组合，不能留下候选锁吞掉后续数字。
+        _isComposing = args.TextComposition.AutoComplete == TextCompositionAutoComplete.Off;
         // 普通字符会自动开始并结束组合；真正的候选组合属于新的输入，不沿用上一数字的去重。
         if (args.TextComposition.AutoComplete == TextCompositionAutoComplete.Off)
             _pendingNumericText = null;
@@ -205,7 +206,11 @@ public sealed partial class TerminalControl
     protected override void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs args)
     {
         base.OnIsKeyboardFocusWithinChanged(args);
-        if (!IsKeyboardFocusWithin) ResetInputState();
+        if (!IsKeyboardFocusWithin)
+        {
+            ResetInputState();
+            if (ContextMenu?.IsOpen != true) ClearSelection();
+        }
         if (!IsReadOnly && _session is { IsDisposed: false } session)
         {
             lock (session.Buffer.SyncRoot)
