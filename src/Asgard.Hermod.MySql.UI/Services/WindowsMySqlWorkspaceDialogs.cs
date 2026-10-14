@@ -9,6 +9,7 @@ namespace Asgard.Hermod.MySql.UI.Services;
 /// <summary>公共窗口、原生文件选择和本地 SQL 文件；不自动持久化查询历史。</summary>
 public sealed class WindowsMySqlWorkspaceDialogs(Func<Window?> owner) : IMySqlWorkspaceDialogs
 {
+    /// <summary>提供保存、放弃和取消三种明确选择。</summary>
     public Task<MySqlDraftChoice> ResolveDraftAsync(string name, bool queryDocument = false)
     {
         var dialog = new HermodDialog { Owner = owner(), Title = Text.Get("MySqlUnsavedChanges"), Width = 560, Height = 280 };
@@ -23,8 +24,11 @@ public sealed class WindowsMySqlWorkspaceDialogs(Func<Window?> owner) : IMySqlWo
             button.Click += (_, _) => { result = choice; dialog.DialogResult = choice != MySqlDraftChoice.Cancel; }; buttons.Children.Add(button);
         }
     }
+    /// <summary>确认停止执行，明确取消不回滚已执行写入。</summary>
     public Task<bool> ConfirmStopAsync() => Task.FromResult(new ConfirmationDialog(Text.Get("MySqlStopAndClose"), Text.Get("MySqlQueryCancelled"), Text.Get("MySqlStopAndClose")) { Owner = owner() }.ShowDialog() == true);
+    /// <summary>确认事务状态和显式回滚。</summary>
     public Task<bool> ConfirmEndSessionAsync() => Task.FromResult(new ConfirmationDialog(Text.Get("MySqlEndTransaction"), Text.Get("MySqlEndTransactionHint"), Text.Get("MySqlRollbackAndContinue")) { Owner = owner() }.ShowDialog() == true);
+    /// <summary>保存完整 SQL 文稿，失败不截断原文件。</summary>
     public async Task<string?> SaveQueryAsync(string sql, string? path, CancellationToken token)
     {
         if (path is null)
@@ -38,6 +42,7 @@ public sealed class WindowsMySqlWorkspaceDialogs(Func<Window?> owner) : IMySqlWo
         finally { if (File.Exists(temporary)) File.Delete(temporary); }
         return path;
     }
+    /// <summary>读取有大小边界的本地 SQL 文件。</summary>
     public async Task<string?> OpenQueryAsync(CancellationToken token)
     {
         var dialog = new OpenFileDialog { Title = Text.Get("MySqlOpenQuery"), Filter = Text.Get("MySqlSqlFileFilter") };
@@ -45,6 +50,7 @@ public sealed class WindowsMySqlWorkspaceDialogs(Func<Window?> owner) : IMySqlWo
         if (new FileInfo(dialog.FileName).Length > 10 * 1024 * 1024) throw Text.Exception("MySqlFileTooLarge");
         return await File.ReadAllTextAsync(dialog.FileName, token);
     }
+    /// <summary>只导出当前加载范围，不隐式重跑查询。</summary>
     public async Task<string?> ExportAsync(MySqlGridViewModel grid, CancellationToken token)
     {
         var dialog = new SaveFileDialog { Title = Text.Get("MySqlExportLoaded"), Filter = Text.Get("MySqlCsvFileFilter"), DefaultExt = ".csv", AddExtension = true };
@@ -55,6 +61,7 @@ public sealed class WindowsMySqlWorkspaceDialogs(Func<Window?> owner) : IMySqlWo
         return dialog.FileName;
         static string Csv(string value) => "\"" + value.Replace("\"", "\"\"", StringComparison.Ordinal) + "\"";
     }
+    /// <summary>并排展示原始、服务器和草稿值，默认保留草稿。</summary>
     public Task ShowConflictAsync(MySqlConflict conflict)
     {
         var dialog = new HermodDialog { Owner = owner(), Title = Text.Get("MySqlConflictTitle"), Width = 900, Height = 600, ResizeMode = ResizeMode.CanResize };
@@ -72,5 +79,6 @@ public sealed class WindowsMySqlWorkspaceDialogs(Func<Window?> owner) : IMySqlWo
         dialog.Content = panel; dialog.FooterContent = new DialogActionBar { Content = new Button { Content = Text.Get("MySqlKeepDraft"), IsCancel = true } };
         dialog.ShowDialog(); return Task.CompletedTask;
     }
+    /// <summary>显示公共独立字段窗口。</summary>
     public Task EditFieldAsync(MySqlFieldEditorViewModel field) { new MySqlFieldDialog(field) { Owner = owner() }.ShowDialog(); return Task.CompletedTask; }
 }

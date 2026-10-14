@@ -16,6 +16,7 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
     private InstanceConnectionOptions? _options;
     private bool _initialized;
     private int _queryNumber;
+    /// <summary>创建模块状态和依赖；真实连接或写入由显式操作启动。</summary>
     public MySqlWorkspaceViewModel(InstanceItemViewModel instance, IInstanceConfigurationService configurations, IMySqlSessionFactory factory,
         IInstanceEditor editor, IMySqlWorkspaceDialogs dialogs) : base("mysql:" + Guid.NewGuid().ToString("N"), instance.Name, "database", instance.Id)
     {
@@ -31,16 +32,27 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
             new("result.export", Text.Get("MySqlExportLoaded"), "download", ExportCommand), new("tree.refresh", Text.Get("MySqlRefreshBranch"), "refresh-cw", RefreshTreeCommand),
             new("connection.reconnect", Text.Get("MySqlReconnect"), "refresh-cw", ReconnectCommand)];
     }
+    /// <summary>对象原始名称或已本地化的文稿标题。</summary>
     public string Name => Header;
+    /// <summary>不含凭据的公开端点。</summary>
     public string Endpoint { get; private set; } = "";
+    /// <summary>实例连接初始化状态。</summary>
     public bool IsConnecting { get; private set; }
+    /// <summary>当前物理连接是否可用；失败后不自动重连。</summary>
     public bool IsConnected => _metadata?.IsConnected == true;
+    /// <summary>读取状态或安全失败说明。</summary>
     public string Status => Text.Get(IsConnecting ? "MySqlConnecting" : IsConnected ? "MySqlConnected" : "MySqlDisconnected");
+    /// <summary>可安全展示的本地化错误。</summary>
     public string Error { get; private set; } = "";
+    /// <summary>当前是否有需要呈现的错误。</summary>
     public bool HasError => Error.Length > 0;
+    /// <summary>此实例的分支懒加载对象树。</summary>
     public MySqlObjectTree? Tree { get; private set; }
+    /// <summary>当前操作的树分支，不改变查询数据库上下文。</summary>
     public MySqlTreeNode? SelectedNode { get; set; }
+    /// <summary>只对已加载对象进行层级过滤。</summary>
     public string Search { get; set { if (SetProperty(ref field, value)) Tree?.Filter(value); } } = "";
+    /// <summary>按打开顺序保存的独立对象和查询页签。</summary>
     public ObservableCollection<MySqlTabViewModel> Tabs { get; } = [];
     public MySqlTabViewModel? ActiveTab
     {
@@ -53,14 +65,23 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
             OnPropertyChanged(); ExportCommand.NotifyCanExecuteChanged();
         }
     }
+    /// <summary>公共工具面板中的稳定入口。</summary>
     public IReadOnlyList<WorkspaceTool> Tools { get; }
+    /// <summary>协调公共控件的操作命令，启用条件由当前状态决定。</summary>
     public RelayCommand NewQueryCommand { get; }
+    /// <summary>协调公共控件的操作命令，启用条件由当前状态决定。</summary>
     public AsyncRelayCommand CloseTabCommand { get; }
+    /// <summary>协调公共控件的操作命令，启用条件由当前状态决定。</summary>
     public AsyncRelayCommand RefreshTreeCommand { get; }
+    /// <summary>协调公共控件的操作命令，启用条件由当前状态决定。</summary>
     public AsyncRelayCommand ReconnectCommand { get; }
+    /// <summary>协调公共控件的操作命令，启用条件由当前状态决定。</summary>
     public AsyncRelayCommand EditConnectionCommand { get; }
+    /// <summary>协调公共控件的操作命令，启用条件由当前状态决定。</summary>
     public AsyncRelayCommand OpenQueryCommand { get; }
+    /// <summary>协调公共控件的操作命令，启用条件由当前状态决定。</summary>
     public AsyncRelayCommand ExportCommand { get; }
+    /// <summary>首次激活页面时建立元数据连接。</summary>
     public override async Task InitializeAsync(CancellationToken cancellationToken = default) { if (_initialized) return; _initialized = true; await ConnectAsync(cancellationToken); }
     private async Task ConnectAsync(CancellationToken token = default)
     {
@@ -81,6 +102,7 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
         catch (Exception error) { Error = Text.Error(error, "MySqlConnectionFailed"); }
         finally { IsConnecting = false; Refresh(); }
     }
+    /// <summary>创建独立 SQL 文稿和延迟会话。</summary>
     public MySqlTabViewModel? NewQuery(string? database = null)
     {
         if (_options is null) return null;
@@ -93,6 +115,7 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
         { Databases = Tree?.Root.Children.Where(node => !node.IsPlaceholder).Select(node => node.Object.Name).ToArray() ?? [] };
         tab.PropertyChanged += OnTabChanged; return tab;
     }
+    /// <summary>创建独立连接，不使用池化或自动重试。</summary>
     public async Task OpenAsync(MySqlTreeNode node)
     {
         if (_options is null || node.IsPlaceholder) return;
@@ -106,6 +129,7 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
         }
         await OpenObjectAsync(node.Object, structure);
     }
+    /// <summary>按对象身份去重或激活页签。</summary>
     public async Task OpenObjectAsync(MySqlObject item, bool structure = false)
     {
         if (_options is null) return;
@@ -147,6 +171,7 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
         catch (Exception error) { Error = Text.Error(error, "MySqlFileFailed"); Refresh(); }
     }
     private void OnTabChanged(object? sender, PropertyChangedEventArgs args) { if (args.PropertyName is nameof(MySqlTabViewModel.HasResult) or nameof(MySqlTabViewModel.IsBusy)) ExportCommand.NotifyCanExecuteChanged(); }
+    /// <summary>确认正在执行的命令、数据草稿、文稿和事务后才关闭。</summary>
     public override async Task<bool> RequestCloseAsync() { foreach (var tab in Tabs.ToArray()) if (!await tab.RequestCloseAsync()) return false; return true; }
     protected override async ValueTask ReleaseAsync()
     {

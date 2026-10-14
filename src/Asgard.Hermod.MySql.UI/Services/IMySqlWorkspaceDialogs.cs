@@ -14,5 +14,3 @@ public interface IMySqlWorkspaceDialogs
     Task ShowConflictAsync(MySqlConflict conflict);
     Task EditFieldAsync(MySqlFieldEditorViewModel field);
 }
-
-public enum MySqlDraftChoice { Cancel, Discard, Save }

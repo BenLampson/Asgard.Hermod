@@ -2,6 +2,7 @@ namespace Asgard.Hermod.MySql;
 
 internal sealed partial class MySqlSession
 {
+    /// <summary>提供模块的公开状态或生命周期入口，协议行为使用稳定标识。</summary>
     public Task<string> ReadDefinitionAsync(MySqlObject item, CancellationToken token = default) => SerializedAsync(async () =>
     {
         var (type, field) = item.Kind switch
@@ -21,6 +22,7 @@ internal sealed partial class MySqlSession
         if (reader.IsDBNull(ordinal)) throw new MySqlFailure("MySqlPermissionDenied", "MYSQL_PERMISSION");
         return reader.GetString(ordinal);
     }, token);
+    /// <summary>按分支独立读取对象页，失败与空结果不同。</summary>
     public Task<MySqlObjectPage> ListAsync(MySqlObject parent, int offset, CancellationToken token = default) => SerializedAsync(async () =>
     {
         if (offset < 0) throw Text.Exception("MySqlConfigurationInvalid");
@@ -65,6 +67,7 @@ internal sealed partial class MySqlSession
     private static MySqlObject[] Categories(MySqlObject parent, params MySqlObjectKind[] kinds) =>
         kinds.Select(kind => new MySqlObject(kind, "", parent.Database, parent.Name)).ToArray();
 
+    /// <summary>读取基表类型、主键和列权限。</summary>
     public Task<MySqlTable> DescribeAsync(string database, string table, CancellationToken token = default) => SerializedAsync(() => DescribeCoreAsync(database, table, token), token);
     private async Task<MySqlTable> DescribeCoreAsync(string database, string table, CancellationToken token)
     {
@@ -82,7 +85,8 @@ internal sealed partial class MySqlSession
             {
                 string name = reader.GetString("Field"), type = reader.GetString("Type"), extra = reader.GetString("Extra");
                 columns.Add(new(columns.Count, name, type, typeof(string), reader.GetString("Null") == "YES", database, table, name, reader.GetString("Key") == "PRI",
-                    reader.GetString("Privileges").Split(',').Contains("update", StringComparer.OrdinalIgnoreCase), extra.Contains("GENERATED", StringComparison.OrdinalIgnoreCase)));
+                    reader.GetString("Privileges").Split(',').Contains("update", StringComparer.OrdinalIgnoreCase),
+                    extra.Contains("VIRTUAL GENERATED", StringComparison.OrdinalIgnoreCase) || extra.Contains("STORED GENERATED", StringComparison.OrdinalIgnoreCase)));
             }
         }
         // CLR 类型从真实零行结果获取，不手写 MySQL 类型映射。
@@ -90,7 +94,7 @@ internal sealed partial class MySqlSession
         {
             await using var reader = await command.ExecuteReaderAsync(token).ConfigureAwait(false);
             var schema = reader.GetColumnSchema();
-            for (int i = 0; i < columns.Count; i++) columns[i] = columns[i] with { ValueType = schema[i].DataType ?? typeof(string) };
+            for (int i = 0; i < columns.Count; i++) columns[i] = columns[i] with { ValueType = schema[i].DataType ?? typeof(string), CanUpdate = columns[i].CanUpdate && MySqlValues.SupportsInput(schema[i].DataType ?? typeof(string)) };
         }
         return new(database, table, columns, engine);
     }

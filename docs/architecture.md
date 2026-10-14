@@ -23,6 +23,8 @@ storage and owns application startup and shutdown.
 | `Asgard.Hermod.Ssh.UI` | SSH configuration content, host verification and independent terminal workspace pages | Shared UI, SSH protocol module |
 | `Asgard.Hermod.Redis` | Redis 7+ topology discovery, verified TLS and routed TCP transport, bounded reads and guarded writes | Shared contracts, SSH forwarding contract, StackExchange.Redis |
 | `Asgard.Hermod.Redis.UI` | Redis connection forms, lazy key trees, per-key tabs and value editors | Shared UI, Redis protocol module |
+| `Asgard.Hermod.MySql` | Verified MySQL connections, object metadata, bounded SQL results and transactional row updates | Shared contracts, SSH forwarding contract, MySqlConnector |
+| `Asgard.Hermod.MySql.UI` | Connection forms, lazy object trees, SQL tabs, inline editing and field windows | Shared UI, MySQL protocol module |
 | `Asgard.Hermod.ObjectStorage.Abstractions` | Object storage models, service and client contracts | Shared contracts |
 | `Asgard.Hermod.ObjectStorage` | Resource client factory, connection probe, transfers, previews and deletion policies | Object storage contracts, DI abstractions |
 | `Asgard.Hermod.ObjectStorage.UI` | Object browser, feature dialogs, view models and page template | Shared UI, object storage contracts, DI abstractions |
@@ -169,11 +171,13 @@ services.AddMinio();
 services.AddS3Connector<S3CompatibleStorageProvider>();
 services.AddSsh();
 services.AddRedis();
+services.AddMySql();
 services.AddSingleton<ITerminalSessionFactory, LocalTerminalSessionFactory>();
 services.AddHermodUi(() => MainWindow, Resources);
 services.AddObjectStorageUi(() => MainWindow);
 services.AddSshUi(() => MainWindow);
 services.AddRedisUi(() => MainWindow);
+services.AddMySqlUi(() => MainWindow);
 ```
 
 `AddLocalStorage` registers SQLite and local configuration/tag services. The host

@@ -28,6 +28,7 @@ public sealed partial class MySqlTabViewModel
         return prepared;
     }
 
+    /// <summary>打开当前行的单个字段窗口，不编辑整列。</summary>
     public async Task OpenFieldAsync(MySqlGridViewModel grid, MySqlRowViewModel row, MySqlCellViewModel cell)
     {
         bool editable = await PrepareCellAsync(grid, row, cell);

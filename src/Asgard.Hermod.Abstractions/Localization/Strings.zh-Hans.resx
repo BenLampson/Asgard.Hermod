@@ -3269,4 +3269,6 @@
   <data name="MySqlServerValue" xml:space="preserve"><value>服务器当前值</value></data>
   <data name="MySqlYourDraft" xml:space="preserve"><value>当前草稿</value></data>
   <data name="MySqlKeepDraft" xml:space="preserve"><value>保留草稿</value></data>
+  <data name="MySqlDedicatedWriterRequired" xml:space="preserve"><value>表格更改需要专用的新会话，与 SQL 执行及其事务独立。</value></data>
+  <data name="MySqlFieldTooLarge" xml:space="preserve"><value>字段值超过 10 MiB 编辑上限，输入已保留。</value></data>
 </root>

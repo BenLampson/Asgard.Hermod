@@ -13,6 +13,11 @@ the current language and explains when the saved preference takes effect.
 
 ## Shared resources
 
+After loading the preference, the desktop host calls `Text.SetApplicationCulture`
+to keep resource lookup stable across Dispatcher and asynchronous callbacks.
+Windows regional number and date formatting remains independent. Tests can clear
+this application override to exercise contextual resource lookup in isolation.
+
 All modules use `Asgard.Hermod.Abstractions.Localization.Text`. The neutral
 `Strings.resx` contains English; `Strings.zh-Hans.resx` contains Chinese. Standard
 .NET satellite resource lookup falls back to English for missing translations.

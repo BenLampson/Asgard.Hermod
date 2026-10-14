@@ -50,6 +50,13 @@ public sealed class ProtocolTests
 
     [Fact]
     public void IdentifierQuoting_DoesNotAllowSqlInjection() => Assert.Equal("`a``;DROP TABLE b`", MySqlSql.Quote("a`;DROP TABLE b"));
+    [Fact]
+    public void ProjectionSource_PreservesEscapedNamesAndNumericInputRejectsGrouping()
+    {
+        var source = MySqlSql.ProjectionSource("SELECT `id` FROM `app`.`a``b` WHERE id=1");
+        Assert.Equal(("app", "a`b"), source);
+        Assert.Throws<InvalidOperationException>(() => MySqlValues.Parse("1,25", new(0, "price", "DECIMAL", typeof(decimal), false), false));
+    }
 
     [Fact]
     public void Options_DefaultToVerifiedTlsAndBoundedTimeouts()

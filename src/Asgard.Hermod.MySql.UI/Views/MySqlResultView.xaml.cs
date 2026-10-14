@@ -7,7 +7,9 @@ namespace Asgard.Hermod.MySql.UI.Views;
 public partial class MySqlResultView : UserControl
 {
     private bool _prepared;
+    /// <summary>此网格所属的独立会话页签。</summary>
     public MySqlTabViewModel? Tab { get; set; }
+    /// <summary>创建模块状态和依赖；真实连接或写入由显式操作启动。</summary>
     public MySqlResultView() { InitializeComponent(); DataContextChanged += (_, _) => BuildColumns(); }
     private void BuildColumns()
     {
@@ -95,5 +97,6 @@ public partial class MySqlResultView : UserControl
         if (Tab is { IsBusy: false, OutcomeUnknown: false } && ResultGrid.CurrentCell.Item is MySqlRowViewModel row && ResultGrid.CurrentCell.Column is { } column) row.Cells[column.DisplayIndex].Revert();
     }
     private async void OnKeyDown(object sender, KeyEventArgs args) { if (args.Key == Key.Enter && Keyboard.Modifiers == ModifierKeys.Alt) { args.Handled = true; await OpenCurrentAsync(); } }
+    /// <summary>提交原生编辑器输入到本地草稿，校验失败时保留编辑。</summary>
     public bool CommitInput() => ResultGrid.CommitEdit(DataGridEditingUnit.Cell, true) && ResultGrid.CommitEdit(DataGridEditingUnit.Row, true);
 }

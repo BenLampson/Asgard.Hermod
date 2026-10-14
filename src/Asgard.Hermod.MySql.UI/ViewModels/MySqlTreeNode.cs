@@ -10,11 +10,17 @@ public sealed class MySqlTreeNode : ObservableObject
         LoadMoreCommand = new AsyncRelayCommand(_ => _tree.LoadAsync(this), _ => HasMore && !IsLoading);
         if (!placeholder && CanExpand) Children.Add(new(new(MySqlObjectKind.Column, ""), tree, true));
     }
+    /// <summary>稳定对象身份和原始名称。</summary>
     public MySqlObject Object { get; }
+    /// <summary>所属树分支，元数据选择可定位原对象。</summary>
     public MySqlTreeNode? Parent { get; internal set; }
+    /// <summary>与翻译无关的去重身份。</summary>
     public string Identity => string.Join('\0', Object.Database, Object.Kind, Object.ParentName, Object.Name);
+    /// <summary>供公共控件展示的已本地化标题。</summary>
     public string Label => IsPlaceholder ? Text.Get("MySqlNotLoaded") : Object.Name.Length > 0 ? Object.Name : Text.Get("MySql" + Object.Kind);
+    /// <summary>服务器返回的元数据说明。</summary>
     public string Detail => Object.Detail;
+    /// <summary>按真实对象类型选择的公共图标。</summary>
     public string Icon => Object.Kind switch
     {
         MySqlObjectKind.Root or MySqlObjectKind.Database => "database",
@@ -29,6 +35,7 @@ public sealed class MySqlTreeNode : ObservableObject
         MySqlObjectKind.Triggers or MySqlObjectKind.Trigger => "zap",
         _ => "list-filter",
     };
+    /// <summary>随浅深主题更新的公共颜色资源键。</summary>
     public string ColorResource => Object.Kind switch
     {
         MySqlObjectKind.Table or MySqlObjectKind.Tables => "SuccessBrush",
@@ -38,17 +45,27 @@ public sealed class MySqlTreeNode : ObservableObject
         MySqlObjectKind.Column or MySqlObjectKind.Columns or MySqlObjectKind.Parameter or MySqlObjectKind.Parameters => "TextMutedBrush",
         _ => "AccentBrush",
     };
+    /// <summary>此类型是否具有懒加载子分支。</summary>
     public bool CanExpand => Object.Kind is MySqlObjectKind.Root or MySqlObjectKind.Database or MySqlObjectKind.Table or MySqlObjectKind.View
         or MySqlObjectKind.Procedure or MySqlObjectKind.Function or MySqlObjectKind.Tables or MySqlObjectKind.Views or MySqlObjectKind.Procedures
         or MySqlObjectKind.Functions or MySqlObjectKind.Events or MySqlObjectKind.Columns or MySqlObjectKind.Indexes or MySqlObjectKind.ForeignKeys or MySqlObjectKind.Triggers or MySqlObjectKind.Parameters;
+    /// <summary>只用于提示原生树可展开，不代表真实数据库对象。</summary>
     public bool IsPlaceholder { get; }
+    /// <summary>只包含此分支已加载的节点。</summary>
     public ObservableCollection<MySqlTreeNode> Children { get; } = [];
+    /// <summary>原生树展开状态。</summary>
     public bool IsExpanded { get; set { if (SetProperty(ref field, value) && value && !_tree.IsFiltering && !Loaded) _ = _tree.LoadAsync(this); } }
+    /// <summary>搜索是否保留此节点和祖先。</summary>
     public bool IsVisible { get; set => SetProperty(ref field, value); } = true;
+    /// <summary>此分支是否正在读取。</summary>
     public bool IsLoading { get; internal set { if (SetProperty(ref field, value)) LoadMoreCommand.NotifyCanExecuteChanged(); } }
+    /// <summary>保留后续分页或失败重试入口。</summary>
     public bool HasMore { get; internal set { if (SetProperty(ref field, value)) LoadMoreCommand.NotifyCanExecuteChanged(); } } = true;
+    /// <summary>读取状态或安全失败说明。</summary>
     public string Status { get; internal set => SetProperty(ref field, value); } = "";
+    /// <summary>是否需要显示分支状态。</summary>
     public bool HasStatus => Status.Length > 0;
+    /// <summary>协调公共控件的操作命令，启用条件由当前状态决定。</summary>
     public AsyncRelayCommand LoadMoreCommand { get; }
     internal int Offset { get; set; }
     internal bool Loaded { get; set; }

@@ -26,6 +26,12 @@ public sealed class WorkspaceLayoutTests(WpfTestFixture fixture)
             var grid = Assert.Single(WindowTestVisuals.Descendants<DataGrid>(view), candidate => candidate.Name == "ResultGrid");
             Assert.Equal(44, grid.ColumnHeaderHeight); Assert.True(grid.EnableColumnVirtualization); Assert.Equal(44, grid.RowHeaderWidth); Assert.Equal(4, grid.Columns.Count);
             Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(grid), text => text.Text == "Alice");
+            grid.CurrentCell = new DataGridCellInfo(table.SelectedResult!.Rows[0], grid.Columns[1]);
+            grid.BeginEdit(); await WindowTestVisuals.UpdateLayoutAsync(window);
+            var inline = Assert.Single(WindowTestVisuals.Descendants<TextBox>(grid), input => !input.IsReadOnly);
+            inline.Text = "native inline"; Assert.True(table.HasDataDraft); Assert.True(Assert.IsType<MySqlTabView>(Assert.IsType<ContentControl>(view.FindName("TabHost")).Content).CommitInput());
+            Assert.Equal("native inline", table.SelectedResult.Rows[0].Cells[1].Value);
+            table.RevertCommand.Execute(null);
             var scroll = Assert.Single(WindowTestVisuals.Descendants<ScrollViewer>(grid), item => item.Name == "DG_ScrollViewer");
             grid.Columns[2].Width = 500; await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.True(scroll.ScrollableWidth > 0); scroll.ScrollToHorizontalOffset(100); await WindowTestVisuals.UpdateLayoutAsync(window); Assert.True(scroll.HorizontalOffset > 0);

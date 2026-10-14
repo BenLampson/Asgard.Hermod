@@ -5,6 +5,7 @@ namespace Asgard.Hermod.MySql;
 /// <summary>无池化、无自动重试，避免会话事务混用和写入重放。</summary>
 public sealed class MySqlSessionFactory(ISshTcpStreamFactory ssh) : IMySqlSessionFactory
 {
+    /// <summary>创建独立连接，不使用池化或自动重试。</summary>
     public async Task<IMySqlSession> OpenAsync(InstanceConnectionOptions options, CancellationToken cancellationToken = default)
     {
         var profile = MySqlSessionOptions.Parse(options); var owned = new List<IDisposable>();

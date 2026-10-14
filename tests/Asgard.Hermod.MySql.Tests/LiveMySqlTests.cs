@@ -34,6 +34,8 @@ public sealed class LiveMySqlTests
     {
         await using var fixture = await Fixture.CreateAsync(); await using var session = await fixture.OpenAsync();
         var result = await session.ReadTableAsync(fixture.Database, "users", 0, TestContext.Current.CancellationToken); var table = Assert.IsType<MySqlTable>(result.EditableTable);
+        Assert.True(table.Columns.Single(column => column.Name == "created").CanUpdate);
+        Assert.False(table.Columns.Single(column => column.Name == "computed").CanUpdate && !table.Columns.Single(column => column.Name == "computed").Generated);
         var original = await session.ReadRowAsync(table, new Dictionary<string, object?> { ["id"] = 1 }, TestContext.Current.CancellationToken);
         await session.SaveAsync(table, [new(original, new Dictionary<string, object?> { ["name"] = "changed", ["payload"] = new byte[] { 0, 255, 128 }, ["profile"] = null })], TestContext.Current.CancellationToken);
         var current = await session.ReadRowAsync(table, original, TestContext.Current.CancellationToken);
@@ -77,6 +79,20 @@ public sealed class LiveMySqlTests
         Assert.DoesNotContain("password", error.Message, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Fact(Skip = "Set HERMOD_MYSQL_TEST_PORT for local integration checks.", SkipUnless = nameof(Enabled))]
+    public async Task RealServer_GridSaveCannotImplicitlyCommitUserSqlTransaction()
+    {
+        await using var fixture = await Fixture.CreateAsync(); await using var session = await fixture.OpenAsync();
+        var table = await session.DescribeAsync(fixture.Database, "users", TestContext.Current.CancellationToken);
+        var original = await session.ReadRowAsync(table, new Dictionary<string, object?> { ["id"] = 1 }, TestContext.Current.CancellationToken);
+        Assert.Null((await session.ExecuteAsync("START TRANSACTION; UPDATE users SET name='pending' WHERE id=1", fixture.Database, TestContext.Current.CancellationToken)).Failure);
+        var failure = await Assert.ThrowsAsync<MySqlFailure>(() => session.SaveAsync(table, [new(original, new Dictionary<string, object?> { ["name"] = "grid" })], TestContext.Current.CancellationToken));
+        Assert.Equal("MYSQL_WRITER_REQUIRED", failure.Code);
+        await using var other = await fixture.OpenAsync();
+        Assert.Equal("one", (await other.ReadRowAsync(table, original, TestContext.Current.CancellationToken))["name"]);
+        await session.RollbackAsync(TestContext.Current.CancellationToken);
+    }
+
     private sealed class Fixture : IAsyncDisposable
     {
         public string Database { get; } = "hermod_test_" + Guid.NewGuid().ToString("N");
@@ -91,7 +107,7 @@ public sealed class LiveMySqlTests
         public static async Task<Fixture> CreateAsync()
         {
             var fixture = new Fixture(); await using var session = await fixture.OpenAsync();
-            var result = await session.ExecuteAsync($"CREATE DATABASE {MySqlSql.Quote(fixture.Database)}; USE {MySqlSql.Quote(fixture.Database)}; CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100), profile JSON, payload BLOB, computed INT GENERATED ALWAYS AS (id+1) STORED) ENGINE=InnoDB; INSERT INTO users(id,name,profile) VALUES(1,'one','{{\"a\":1}}'),(2,'two','{{\"a\":2}}')", "");
+            var result = await session.ExecuteAsync($"CREATE DATABASE {MySqlSql.Quote(fixture.Database)}; USE {MySqlSql.Quote(fixture.Database)}; CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100), profile JSON, payload BLOB, created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, computed INT GENERATED ALWAYS AS (id+1) STORED) ENGINE=InnoDB; INSERT INTO users(id,name,profile) VALUES(1,'one','{{\"a\":1}}'),(2,'two','{{\"a\":2}}')", "");
             Assert.Null(result.Failure); return fixture;
         }
         public async ValueTask DisposeAsync() { await using var session = await OpenAsync(); await session.ExecuteAsync($"DROP DATABASE {MySqlSql.Quote(Database)}", ""); }

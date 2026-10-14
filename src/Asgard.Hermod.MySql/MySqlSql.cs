@@ -75,6 +75,16 @@ public static class MySqlSql
     }
 
     private static bool HasSql(string sql) => Tokens(sql).Count > 0;
+    /// <summary>只提取保守单表投影中的来源名称，再与服务器物理表身份核对；视图不绕过其约束编辑基表。</summary>
+    public static (string Database, string Table)? ProjectionSource(string sql)
+    {
+        if (!IsSimpleProjection(sql)) return null;
+        var tokens = Tokens(sql); int from = tokens.FindIndex(token => token.Equals("FROM", StringComparison.OrdinalIgnoreCase));
+        if (from + 1 >= tokens.Count) return null;
+        string Name(string token) => token.StartsWith('`') ? token[1..] : token;
+        string first = Name(tokens[from + 1]);
+        return from + 3 < tokens.Count && tokens[from + 2] == "." ? (first, Name(tokens[from + 3])) : ("", first);
+    }
     private static List<string> Tokens(string sql)
     {
         var tokens = new List<string>(); int index = 0;
@@ -96,7 +106,7 @@ public static class MySqlSql
                 while (index < sql.Length)
                 {
                     if (sql[index] == '\\' && c != '`') { index = Math.Min(index + 2, sql.Length); continue; }
-                    if (sql[index] == c) { index++; if (index < sql.Length && sql[index] == c) { index++; continue; } break; }
+                    if (sql[index] == c) { index++; if (index < sql.Length && sql[index] == c) { value.Append(c); index++; continue; } break; }
                     value.Append(sql[index++]);
                 }
                 tokens.Add(c == '`' ? "`" + value : "'" + sql[start..index]); continue;
@@ -108,6 +118,3 @@ public static class MySqlSql
         return tokens;
     }
 }
-
-/// <summary>字符位置用于定位光标语句，不改变用户文本。</summary>
-public sealed record MySqlStatement(string Sql, int Start, int Length, string Delimiter = ";");

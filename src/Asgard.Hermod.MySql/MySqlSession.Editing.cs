@@ -2,6 +2,7 @@ namespace Asgard.Hermod.MySql;
 
 internal sealed partial class MySqlSession
 {
+    /// <summary>按完整主键读取类型化基线。</summary>
     public Task<IReadOnlyDictionary<string, object?>> ReadRowAsync(MySqlTable table, IReadOnlyDictionary<string, object?> key, CancellationToken token = default) =>
         SerializedAsync(async () => await ReadRowCoreAsync(table, key, null, token).ConfigureAwait(false)
             ?? throw new MySqlFailure("MySqlRowUnavailable", "MYSQL_ROW_MISSING"), token);
@@ -26,9 +27,12 @@ internal sealed partial class MySqlSession
         return values;
     }
 
+    /// <summary>在专用事务内锁定并比较原行，再提交更改；未知结果不重放。</summary>
     public Task SaveAsync(MySqlTable table, IReadOnlyList<MySqlRowChange> changes, CancellationToken token = default) => SerializedAsync(async () =>
     {
         if (changes.Count == 0) return true;
+        if (_unknownGridWrite) throw new MySqlFailure("MySqlSaveOutcomeUnknown", "MYSQL_WRITE_UNKNOWN");
+        if (_hasExecutedUserSql) throw new MySqlFailure("MySqlDedicatedWriterRequired", "MYSQL_WRITER_REQUIRED");
         if (changes.Count > 1000) throw Text.Exception("MySqlFieldInvalid");
         var currentTable = await DescribeCoreAsync(table.Database, table.Name, token).ConfigureAwait(false);
         if (!currentTable.SupportsEditing || currentTable.Columns.Count != table.Columns.Count
@@ -68,7 +72,9 @@ internal sealed partial class MySqlSession
             if (error is MySqlConflict && rolledBack) throw;
             if (!dispatched && token.IsCancellationRequested) throw new OperationCanceledException(token);
             // COMMIT 已发出后即使 ROLLBACK 成功也无法证明此前是否提交，因此不重放。
-            throw MySqlFailure.Safe(error, dispatched);
+            var failure = MySqlFailure.Safe(error, dispatched);
+            if (failure.Code == "MYSQL_WRITE_UNKNOWN") _unknownGridWrite = true;
+            throw failure;
         }
     }, token);
 

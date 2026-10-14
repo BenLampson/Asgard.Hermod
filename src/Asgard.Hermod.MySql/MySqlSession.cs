@@ -8,10 +8,17 @@ internal sealed partial class MySqlSession(MySqlConnection connection, MySqlSess
 {
     private readonly SemaphoreSlim _gate = new(1, 1);
     private bool _disposed;
+    private bool _hasExecutedUserSql;
+    private bool _unknownGridWrite;
+    /// <summary>本会话已验证的连接选项。</summary>
     public MySqlSessionOptions Options { get; } = options;
+    /// <summary>当前物理连接是否可用；失败后不自动重连。</summary>
     public bool IsConnected => !_disposed && connection.State == ConnectionState.Open;
+    /// <summary>服务器报告的自动提交和事务状态；无法读取时保留未知。</summary>
     public MySqlSessionState State { get; private set; } = new(null, null);
+    /// <summary>提供模块的公开状态或生命周期入口，协议行为使用稳定标识。</summary>
     public string CurrentDatabase => connection.Database;
+    /// <summary>提供模块的公开状态或生命周期入口，协议行为使用稳定标识。</summary>
     public Task<IReadOnlyList<MySqlStatement>> SplitAsync(string sql, CancellationToken token = default) => SerializedAsync(async () =>
     {
         string mode = Convert.ToString(await ScalarAsync("SELECT @@sql_mode", token).ConfigureAwait(false), CultureInfo.InvariantCulture) ?? "";
@@ -31,6 +38,7 @@ internal sealed partial class MySqlSession(MySqlConnection connection, MySqlSess
         finally { _gate.Release(); }
     }
 
+    /// <summary>串行执行 SQL，保留已完成的结果和安全失败状态。</summary>
     public Task<MySqlExecution> ExecuteAsync(string sql, string database, CancellationToken token = default) => SerializedAsync(async () =>
     {
         var watch = Stopwatch.StartNew(); var results = new List<MySqlResult>(); var outcomes = new List<MySqlStatementOutcome>();
@@ -38,6 +46,7 @@ internal sealed partial class MySqlSession(MySqlConnection connection, MySqlSess
         if (database.Length > 0 && connection.Database != database) await connection.ChangeDatabaseAsync(database, token).ConfigureAwait(false);
         string mode = Convert.ToString(await ScalarAsync("SELECT @@sql_mode", token).ConfigureAwait(false), CultureInfo.InvariantCulture) ?? "";
         var statements = MySqlSql.Split(sql, mode.Split(',').Contains("NO_BACKSLASH_ESCAPES", StringComparer.OrdinalIgnoreCase));
+        if (statements.Count > 0) _hasExecutedUserSql = true;
         for (int ordinal = 0; ordinal < statements.Count; ordinal++)
         {
             using var command = Command(statements[ordinal].Sql);
@@ -78,6 +87,9 @@ internal sealed partial class MySqlSession(MySqlConnection connection, MySqlSess
         {
             var result = results[i];
             if (result.IsTruncated || !MySqlSql.IsSimpleProjection(statements[result.Statement - 1].Sql)) continue;
+            var source = MySqlSql.ProjectionSource(statements[result.Statement - 1].Sql);
+            if (source is null || result.Columns.Count == 0 || source.Value.Table != result.Columns[0].Table
+                || source.Value.Database.Length > 0 && source.Value.Database != result.Columns[0].Database) continue;
             try { results[i] = await AttachEditingAsync(result, token).ConfigureAwait(false); }
             catch (Exception) { /* 无法证明编辑资格时保持只读。 */ }
         }
@@ -121,6 +133,7 @@ internal sealed partial class MySqlSession(MySqlConnection connection, MySqlSess
         return result with { Columns = columns, EditableTable = table };
     }
 
+    /// <summary>读取一页完整表行，不冒充全表结果。</summary>
     public Task<MySqlResult> ReadTableAsync(string database, string table, int offset, CancellationToken token = default) => SerializedAsync(async () =>
     {
         if (offset < 0) throw Text.Exception("MySqlConfigurationInvalid");
@@ -134,9 +147,10 @@ internal sealed partial class MySqlSession(MySqlConnection connection, MySqlSess
             result = await ReadResultAsync(reader, 1, 1, token).ConfigureAwait(false);
             if (result.IsTruncated) command.Cancel();
         }
-        return result.IsTruncated ? result : await AttachEditingAsync(result, token).ConfigureAwait(false);
+        return result.IsTruncated || !description.SupportsEditing ? result : await AttachEditingAsync(result, token).ConfigureAwait(false);
     }, token);
 
+    /// <summary>读取真实事务遥测，权限不足时明确返回未知。</summary>
     public Task<MySqlSessionState> ReadStateAsync(CancellationToken token = default) => SerializedAsync(() => ReadStateCoreAsync(token), token);
     private async Task<MySqlSessionState> ReadStateCoreAsync(CancellationToken token)
     {
@@ -155,8 +169,10 @@ internal sealed partial class MySqlSession(MySqlConnection connection, MySqlSess
     }
     private async Task<object?> ScalarAsync(string sql, CancellationToken token)
     { using var command = Command(sql); return await command.ExecuteScalarAsync(token).ConfigureAwait(false); }
+    /// <summary>显式回滚当前事务，不承诺撤销 DDL 或已提交写入。</summary>
     public Task RollbackAsync(CancellationToken token = default) => SerializedAsync(async () =>
     { using var command = Command("ROLLBACK"); await command.ExecuteNonQueryAsync(token).ConfigureAwait(false); await ReadStateCoreAsync(token).ConfigureAwait(false); return true; }, token);
+    /// <summary>取消或等待未完成工作后释放会话资源。</summary>
     public async ValueTask DisposeAsync()
     {
         // 等待正在执行的命令被调用者取消并结束，之后回收转发和证书。

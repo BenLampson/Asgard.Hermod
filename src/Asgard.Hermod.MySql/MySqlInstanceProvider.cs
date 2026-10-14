@@ -3,7 +3,9 @@ namespace Asgard.Hermod.MySql;
 /// <summary>连接测试只建立会话、选择可选数据库和读取常量，不修改业务数据。</summary>
 public sealed class MySqlInstanceProvider(string route, IMySqlSessionFactory factory) : IInstanceProvider
 {
+    /// <summary>语言初始化后创建的公共连接器描述。</summary>
     public InstanceProviderDescriptor Descriptor { get; } = MySqlProfile.Descriptor(route);
+    /// <summary>验证路由和数据库访问，不修改业务数据。</summary>
     public async Task<InstanceConnectionTestResult> TestConnectionAsync(InstanceConnectionOptions options, CancellationToken cancellationToken = default)
     {
         if (options.ProviderId != route) throw Text.Exception("MySqlConfigurationInvalid");

@@ -8,6 +8,7 @@ public partial class MySqlFieldDialog : HermodDialog
 {
     private readonly MySqlFieldEditorViewModel _model;
     private bool _applied;
+    /// <summary>创建模块状态和依赖；真实连接或写入由显式操作启动。</summary>
     public MySqlFieldDialog(MySqlFieldEditorViewModel model)
     {
         _model = model; InitializeComponent(); DataContext = model;

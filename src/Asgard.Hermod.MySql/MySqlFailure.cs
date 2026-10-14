@@ -6,9 +6,13 @@ namespace Asgard.Hermod.MySql;
 /// <summary>只向 UI 传递稳定错误和允许公开的数字错误码。</summary>
 public sealed class MySqlFailure(string key, string code, params object?[] arguments) : Exception(Text.Get(key)), ILocalizedError
 {
+    /// <summary>供共享资源渲染的稳定错误键。</summary>
     public string ResourceKey { get; } = key;
+    /// <summary>仅包含允许公开的错误参数。</summary>
     public object?[] ResourceArguments { get; } = arguments;
+    /// <summary>诊断使用的稳定错误码。</summary>
     public string Code { get; } = code;
+    /// <summary>将第三方错误映射为脱敏资源，不显示原始消息。</summary>
     public static MySqlFailure Safe(Exception error, bool dispatchedWrite = false)
     {
         if (error is MySqlFailure safe) return safe;

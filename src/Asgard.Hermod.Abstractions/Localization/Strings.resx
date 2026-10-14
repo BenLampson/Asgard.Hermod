@@ -3269,4 +3269,6 @@
   <data name="MySqlServerValue" xml:space="preserve"><value>Current server value</value></data>
   <data name="MySqlYourDraft" xml:space="preserve"><value>Your draft</value></data>
   <data name="MySqlKeepDraft" xml:space="preserve"><value>Keep draft</value></data>
+  <data name="MySqlDedicatedWriterRequired" xml:space="preserve"><value>Grid changes require a new dedicated session, separate from SQL execution and its transactions.</value></data>
+  <data name="MySqlFieldTooLarge" xml:space="preserve"><value>The field value exceeds the 10 MiB edit limit. Your input is retained.</value></data>
 </root>

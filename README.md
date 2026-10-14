@@ -29,6 +29,11 @@ its own Heimdall service client. See the [identity and synchronization guide](do
 
 ## Requirements
 
+MySQL supports direct TCP and verified SSH forwarding, lazy database object
+browsing, independent SQL documents and editable table/result grids. Long text,
+JSON, SQL NULL and binary fields can be edited in a resizable field window.
+See the [MySQL guide](docs/mysql.md) for permissions, transactions and limits.
+
 - Windows with support for .NET 10 desktop applications.
 - .NET 10 SDK (the SDK policy is defined in `global.json`).
 - Optional: a Visual Studio installation supporting .NET 10 with the .NET desktop development workload.

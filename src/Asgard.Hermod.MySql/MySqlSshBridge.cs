@@ -49,6 +49,7 @@ internal sealed class MySqlSshBridge : IAsyncDisposable
             finally { if (remote is not null) await remote.DisposeAsync().ConfigureAwait(false); }
         }
     }
+    /// <summary>取消或等待未完成工作后释放会话资源。</summary>
     public async ValueTask DisposeAsync()
     {
         _stop.Cancel(); _listener.Stop(); Interlocked.Exchange(ref _first, null)?.Dispose();

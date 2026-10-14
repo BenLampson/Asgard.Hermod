@@ -7,13 +7,17 @@ public sealed class MySqlObjectTree : IDisposable
     private readonly CancellationTokenSource _lifetime;
     private string _search = "";
     private bool _disposed;
+    /// <summary>创建模块状态和依赖；真实连接或写入由显式操作启动。</summary>
     public MySqlObjectTree(IMySqlSession session, CancellationToken lifetime = default)
     {
         _session = session; _lifetime = CancellationTokenSource.CreateLinkedTokenSource(lifetime);
         Root = new(new(MySqlObjectKind.Root, ""), this);
     }
+    /// <summary>数据库对象树的根分支。</summary>
     public MySqlTreeNode Root { get; }
+    /// <summary>搜索只检查已经加载的节点，不触发隐式扫描。</summary>
     public bool IsFiltering { get; private set; }
+    /// <summary>加载当前分支，使用请求版本拒绝迟到结果。</summary>
     public async Task LoadAsync(MySqlTreeNode node)
     {
         if (_disposed || !node.CanExpand || node.IsLoading || !node.HasMore || IsFiltering) return;
@@ -44,6 +48,7 @@ public sealed class MySqlObjectTree : IDisposable
             if (revision == node.Revision) { node.Pending = null; node.IsLoading = false; node.RefreshStatus(); }
         }
     }
+    /// <summary>仅刷新指定分支，不修改其他页签草稿。</summary>
     public async Task RefreshAsync(MySqlTreeNode? node = null)
     {
         node ??= Root;
@@ -51,6 +56,7 @@ public sealed class MySqlObjectTree : IDisposable
         if (_search.Length > 0) Filter("");
         await LoadAsync(node);
     }
+    /// <summary>过滤已加载节点并保留祖先层级。</summary>
     public void Filter(string search)
     {
         bool wasSearching = _search.Length > 0; _search = search; IsFiltering = true;
@@ -69,5 +75,6 @@ public sealed class MySqlObjectTree : IDisposable
     }
     private static void Cancel(MySqlTreeNode node)
     { node.Pending?.Cancel(); foreach (var child in node.Children) Cancel(child); }
+    /// <summary>取消分支读取并解除监听。</summary>
     public void Dispose() { if (_disposed) return; _disposed = true; _lifetime.Cancel(); Cancel(Root); _lifetime.Dispose(); }
 }

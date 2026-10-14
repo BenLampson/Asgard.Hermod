@@ -9,6 +9,7 @@ public partial class MySqlWorkspaceView : UserControl
     private MySqlWorkspaceViewModel? _model;
     private bool _compact, _drawer;
     private double _treeWidth = 280;
+    /// <summary>创建模块状态和依赖；真实连接或写入由显式操作启动。</summary>
     public MySqlWorkspaceView()
     {
         InitializeComponent(); DataContextChanged += (_, _) => Attach(); Loaded += (_, _) => Attach();

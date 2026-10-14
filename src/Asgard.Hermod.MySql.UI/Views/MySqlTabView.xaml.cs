@@ -7,6 +7,7 @@ public partial class MySqlTabView : UserControl
 {
     private readonly Dictionary<MySqlGridViewModel, MySqlResultView> _views = [];
     private MySqlTabViewModel? _model;
+    /// <summary>创建模块状态和依赖；真实连接或写入由显式操作启动。</summary>
     public MySqlTabView()
     {
         InitializeComponent(); DataContextChanged += (_, _) => Attach(); Loaded += (_, _) => Attach();
@@ -41,6 +42,7 @@ public partial class MySqlTabView : UserControl
     {
         if (_model?.IsQuery == true) EditorRow.MaxHeight = Math.Max(80, args.NewSize.Height - 210);
     }
+    /// <summary>提交原生编辑器输入到本地草稿，校验失败时保留编辑。</summary>
     public bool CommitInput() => GridHost.Content is not MySqlResultView view || view.CommitInput();
     private async Task RunAsync(bool all)
     {

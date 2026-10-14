@@ -12,7 +12,7 @@
   <DockPanel Grid.Row="1" Margin="0,0,0,12"><TextBlock Text="{Binding TypeName}" FontFamily="{DynamicResource MonoFont}" Foreground="{DynamicResource AccentTextBrush}" />
    <CheckBox Content="{loc:Loc MySqlSetNull}" IsChecked="{Binding IsNull}" IsEnabled="{Binding AllowsNull}" HorizontalAlignment="Right" /></DockPanel>
   <controls:SectionSelector Grid.Row="2" ItemsSource="{Binding Formats}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding Format, Mode=TwoWay}" Visibility="{Binding IsBinary, Converter={StaticResource Visible}}" Margin="0,0,0,12" />
-  <controls:CodeEditor Grid.Row="3" x:Name="FieldInput" Text="{Binding Input, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding EditorEnabled}" MaxLength="10485760" AutomationProperties.Name="{loc:Loc MySqlFieldValue}">
+  <controls:CodeEditor Grid.Row="3" x:Name="FieldInput" Text="{Binding Input, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding EditorEnabled}" MaxLength="20971520" AutomationProperties.Name="{loc:Loc MySqlFieldValue}">
    <controls:CodeEditor.Style><Style TargetType="controls:CodeEditor"><Setter Property="IsReadOnly" Value="True" /><Style.Triggers><DataTrigger Binding="{Binding IsEditable}" Value="True"><Setter Property="IsReadOnly" Value="False" /></DataTrigger></Style.Triggers></Style></controls:CodeEditor.Style>
   </controls:CodeEditor>
   <TextBlock Grid.Row="4" Text="{Binding Error}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" Margin="0,10,0,0" Visibility="{Binding HasError, Converter={StaticResource Visible}}" />
