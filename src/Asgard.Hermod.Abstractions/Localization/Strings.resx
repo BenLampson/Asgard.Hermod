@@ -3522,4 +3522,37 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="WorkspaceViewLoaded" xml:space="preserve">
     <value>View loaded content</value>
   </data>
+  <data name="MySqlFilterInvalid" xml:space="preserve">
+    <value>Enter a supported WHERE condition using column comparisons, LIKE, IN, IS NULL, AND/OR and parentheses. Statements and functions are not supported.</value>
+  </data>
+  <data name="MySqlWhereCondition" xml:space="preserve">
+    <value>Temporary WHERE condition</value>
+  </data>
+  <data name="MySqlWhereHint" xml:space="preserve">
+    <value>Applies only to this table tab. Example: id &gt;= 10 AND name LIKE 'A%'. Supports comparisons, LIKE, IN, IS NULL, AND/OR and parentheses; statements and functions are not supported.</value>
+  </data>
+  <data name="MySqlApplyFilter" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="MySqlClearFilter" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="MySqlRowsPerPage" xml:space="preserve">
+    <value>Rows per page</value>
+  </data>
+  <data name="MySqlRowsPerPageHint" xml:space="preserve">
+    <value>Read up to {0} rows per table page.</value>
+  </data>
+  <data name="MySqlRunCurrentButton" xml:space="preserve">
+    <value>Run current / selection</value>
+  </data>
+  <data name="MySqlRunAllButton" xml:space="preserve">
+    <value>Run all</value>
+  </data>
+  <data name="MySqlRunCurrentHint" xml:space="preserve">
+    <value>Run selected SQL, or the statement at the caret (Ctrl+Enter).</value>
+  </data>
+  <data name="MySqlRunAllHint" xml:space="preserve">
+    <value>Run every statement in this document (Ctrl+Shift+Enter).</value>
+  </data>
 </root>

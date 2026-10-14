@@ -3522,4 +3522,37 @@
   <data name="WorkspaceViewLoaded" xml:space="preserve">
     <value>查看已加载内容</value>
   </data>
+  <data name="MySqlFilterInvalid" xml:space="preserve">
+    <value>请输入受支持的 WHERE 条件：字段比较、LIKE、IN、IS NULL、AND/OR 和括号。不支持完整语句和函数。</value>
+  </data>
+  <data name="MySqlWhereCondition" xml:space="preserve">
+    <value>临时 WHERE 条件</value>
+  </data>
+  <data name="MySqlWhereHint" xml:space="preserve">
+    <value>仅对当前表页签生效。例如：id &gt;= 10 AND name LIKE 'A%'。支持字段比较、LIKE、IN、IS NULL、AND/OR 和括号；不支持完整语句和函数。</value>
+  </data>
+  <data name="MySqlApplyFilter" xml:space="preserve">
+    <value>应用</value>
+  </data>
+  <data name="MySqlClearFilter" xml:space="preserve">
+    <value>清除</value>
+  </data>
+  <data name="MySqlRowsPerPage" xml:space="preserve">
+    <value>每页行数</value>
+  </data>
+  <data name="MySqlRowsPerPageHint" xml:space="preserve">
+    <value>每个表数据页最多读取 {0} 行。</value>
+  </data>
+  <data name="MySqlRunCurrentButton" xml:space="preserve">
+    <value>执行当前/选中</value>
+  </data>
+  <data name="MySqlRunAllButton" xml:space="preserve">
+    <value>执行全部</value>
+  </data>
+  <data name="MySqlRunCurrentHint" xml:space="preserve">
+    <value>执行选中的 SQL；未选中时执行光标所在语句（Ctrl+Enter）。</value>
+  </data>
+  <data name="MySqlRunAllHint" xml:space="preserve">
+    <value>执行当前文稿中的全部语句（Ctrl+Shift+Enter）。</value>
+  </data>
 </root>

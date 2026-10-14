@@ -27,6 +27,10 @@ public interface IMySqlSession : IAsyncDisposable
     Task<MySqlExecution> ExecuteAsync(string sql, string database, CancellationToken token = default);
     /// <summary>读取有界表页，视图和不具备编辑资格的对象只读。</summary>
     Task<MySqlResult> ReadTableAsync(string database, string table, int offset, CancellationToken token = default);
+    /// <summary>读取真实表分页；筛选只支持受限参数化条件，不执行任意 SQL。</summary>
+    Task<MySqlResult> ReadTableAsync(string database, string table, int offset, int pageSize, string filter, CancellationToken token = default) =>
+        pageSize == 200 && string.IsNullOrWhiteSpace(filter) ? ReadTableAsync(database, table, offset, token)
+            : throw Text.Exception("MySqlConfigurationInvalid");
     /// <summary>使用完整主键读取类型化行基线。</summary>
     Task<IReadOnlyDictionary<string, object?>> ReadRowAsync(MySqlTable table, IReadOnlyDictionary<string, object?> key, CancellationToken token = default);
     /// <summary>专用会话内锁定并比较完整原行，事务提交修改列；未知结果禁止重试。</summary>

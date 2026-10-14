@@ -38,7 +38,7 @@ public partial class MySqlTabView : UserControl
         StructurePanel.Visibility = structure ? Visibility.Visible : Visibility.Collapsed; DataPanel.Visibility = structure ? Visibility.Collapsed : Visibility.Visible;
         DataActions.Visibility = structure ? Visibility.Collapsed : Visibility.Visible;
         // 空的后续页保留返回上一页；首个空页不提供无效分页。
-        PageButtons.Visibility = _model?.IsQuery == false && !structure && (_model.HasDataRows || _model.Offset > 0) ? Visibility.Visible : Visibility.Collapsed;
+        PageButtons.Visibility = _model?.IsQuery == false && !structure && _model.ShowPageNavigation ? Visibility.Visible : Visibility.Collapsed;
     }
     private void OnDataSizeChanged(object sender, SizeChangedEventArgs args)
     {
@@ -52,10 +52,11 @@ public partial class MySqlTabView : UserControl
         await _model.ExecuteScopeAsync(SqlEditor.SelectedText, SqlEditor.CaretIndex, all);
     }
     private async void OnRun(object sender, RoutedEventArgs args) => await RunAsync(false);
-    private void OnRunMenu(object sender, RoutedEventArgs args)
+    private async void OnRunAll(object sender, RoutedEventArgs args) => await RunAsync(true);
+    private async void OnPageSizeChanged(object sender, SelectionChangedEventArgs args)
     {
-        var menu = new ContextMenu(); var current = new MenuItem { Header = Text.Get("MySqlRunCurrent") }; var all = new MenuItem { Header = Text.Get("MySqlRunAll") };
-        current.Click += async (_, _) => await RunAsync(false); all.Click += async (_, _) => await RunAsync(true); menu.Items.Add(current); menu.Items.Add(all); menu.PlacementTarget = (Button)sender; menu.IsOpen = true;
+        if (!IsLoaded || _model is null || PageSizeSelector.SelectedItem is not int size || size == _model.PageSize) return;
+        await _model.ChangePageSizeAsync(size); PageSizeSelector.SelectedItem = _model.PageSize;
     }
     private async void OnDatabaseChanged(object sender, SelectionChangedEventArgs args)
     {

@@ -39,6 +39,7 @@ internal sealed partial class MySqlSession(MySqlConnection connection, MySqlSess
         try { ObjectDisposedException.ThrowIf(_disposed, this); return await operation().ConfigureAwait(false); }
         catch (OperationCanceledException) when (token.IsCancellationRequested) { throw; }
         catch (MySqlConflict) { throw; }
+        catch (Exception error) when (error is Asgard.Hermod.Abstractions.Localization.ILocalizedError) { throw; }
         catch (Exception error) { throw MySqlFailure.Safe(error); }
         finally
         {
@@ -143,19 +144,23 @@ internal sealed partial class MySqlSession(MySqlConnection connection, MySqlSess
     }
 
     /// <summary>读取一页完整表行，不冒充全表结果。</summary>
-    public Task<MySqlResult> ReadTableAsync(string database, string table, int offset, CancellationToken token = default) => SerializedAsync(async () =>
+    public Task<MySqlResult> ReadTableAsync(string database, string table, int offset, CancellationToken token = default) => ReadTableAsync(database, table, offset, 200, "", token);
+
+    /// <inheritdoc />
+    public Task<MySqlResult> ReadTableAsync(string database, string table, int offset, int pageSize, string filter, CancellationToken token = default) => SerializedAsync(async () =>
     {
         if (offset < 0) throw Text.Exception("MySqlConfigurationInvalid");
         var description = await DescribeCoreAsync(database, table, token).ConfigureAwait(false);
-        string order = description.Keys.Count == 0 ? "" : " ORDER BY " + string.Join(",", description.Keys.Select(key => MySqlSql.Quote(key.Name)));
-        using var command = Command($"SELECT * FROM {MySqlSql.Quote(database)}.{MySqlSql.Quote(table)}{order} LIMIT 200 OFFSET @offset");
-        command.Parameters.AddWithValue("@offset", offset);
+        var plan = MySqlTableReadPlan.Create(description, offset, pageSize, filter);
+        using var command = Command(plan.Sql);
+        foreach (var parameter in plan.Parameters) command.Parameters.AddWithValue(parameter.Key, parameter.Value ?? DBNull.Value);
         MySqlResult result;
         await using (var reader = await command.ExecuteReaderAsync(token).ConfigureAwait(false))
         {
             result = await ReadResultAsync(reader, 1, 1, token).ConfigureAwait(false);
             if (result.IsTruncated) command.Cancel();
         }
+        result = result with { Rows = result.Rows.Take(pageSize).ToArray(), HasMore = !result.IsTruncated && result.Rows.Count > pageSize };
         return result.IsTruncated || !description.SupportsEditing ? result : await AttachEditingAsync(result, token).ConfigureAwait(false);
     }, token);
 

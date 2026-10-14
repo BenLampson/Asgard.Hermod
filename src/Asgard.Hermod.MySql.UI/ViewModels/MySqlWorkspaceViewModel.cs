@@ -127,8 +127,17 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
     public MySqlTabViewModel? NewQuery(string? database = null)
     {
         if (_options is null || !IsConnected || IsClosed) return null;
-        var tab = CreateTab(Text.Format("MySqlQueryTitle", ++_queryNumber), database ?? _metadata?.Options.Database ?? "", MySqlObjectKind.Root);
+        var tab = CreateTab(Text.Format("MySqlQueryTitle", ++_queryNumber), database ?? SelectedDatabase(), MySqlObjectKind.Root);
         Tabs.Add(tab); ActiveTab = tab; return tab;
+    }
+    private string SelectedDatabase()
+    {
+        for (var node = SelectedNode; node is not null; node = node.Parent)
+        {
+            if (node.Object.Database.Length > 0) return node.Object.Database;
+            if (node.Object.Kind == MySqlObjectKind.Database) return node.Object.Name;
+        }
+        return ActiveTab?.Database is { Length: > 0 } active ? active : _metadata?.Options.Database ?? "";
     }
     private MySqlTabViewModel CreateTab(string name, string database, MySqlObjectKind kind)
     {

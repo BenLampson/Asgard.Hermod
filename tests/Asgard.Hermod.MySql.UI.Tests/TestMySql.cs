@@ -8,6 +8,9 @@ internal sealed class TestMySql : IMySqlSessionFactory
     internal static readonly MySqlColumn[] Columns = [new(0, "id", "INT", typeof(int), false, "app", "users", "id", true, true),
         new(1, "name", "VARCHAR(100)", typeof(string), true, "app", "users", "name", false, true), new(2, "profile", "JSON", typeof(string), true, "app", "users", "profile", false, true),
         new(3, "payload", "BLOB", typeof(byte[]), true, "app", "users", "payload", false, true)];
+    internal List<(string Database, string Table, int Offset, int Size, string Filter)> PageReads { get; } = [];
+    internal Func<int, int, string, MySqlResult>? PageResult;
+    internal List<(string Sql, string Database)> ExecutedSql { get; } = [];
     internal MySqlTable Table { get; } = new("app", "users", Columns, "InnoDB");
     internal Dictionary<string, object?> Values { get; } = new() { ["id"] = 1, ["name"] = "Alice", ["profile"] = "{\"ok\":true}", ["payload"] = new byte[] { 0, 255 } };
     internal int Writes, Executions, Opens, Disposals;
@@ -50,10 +53,12 @@ internal sealed class TestMySql : IMySqlSessionFactory
         public Task<MySqlTable> DescribeAsync(string database, string table, CancellationToken token = default) => Task.FromResult(server.Table);
         public async Task<MySqlExecution> ExecuteAsync(string sql, string database, CancellationToken token = default)
         {
-            server.Executions++; if (server.BlockedQuery is { } blocked) await blocked.Task.WaitAsync(token);
+            server.ExecutedSql.Add((sql, database)); server.Executions++; if (server.BlockedQuery is { } blocked) await blocked.Task.WaitAsync(token);
             return new([server.Result()], [new(1, 0, true)], null, TimeSpan.FromMilliseconds(2), State);
         }
-        public Task<MySqlResult> ReadTableAsync(string database, string table, int offset, CancellationToken token = default) => Task.FromResult(server.Result());
+        public Task<MySqlResult> ReadTableAsync(string database, string table, int offset, CancellationToken token = default) => ReadTableAsync(database, table, offset, 200, "", token);
+        public Task<MySqlResult> ReadTableAsync(string database, string table, int offset, int pageSize, string filter, CancellationToken token = default)
+        { server.PageReads.Add((database, table, offset, pageSize, filter)); return Task.FromResult(server.PageResult?.Invoke(offset, pageSize, filter) ?? server.Result()); }
         public Task<IReadOnlyDictionary<string, object?>> ReadRowAsync(MySqlTable table, IReadOnlyDictionary<string, object?> key, CancellationToken token = default) => Task.FromResult<IReadOnlyDictionary<string, object?>>(server.Values.ToDictionary(pair => pair.Key, pair => MySqlValues.Clone(pair.Value)));
         public Task SaveAsync(MySqlTable table, IReadOnlyList<MySqlRowChange> changes, CancellationToken token = default)
         {

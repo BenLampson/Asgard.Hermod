@@ -39,7 +39,7 @@ public sealed class WorkspaceLayoutTests(WpfTestFixture fixture)
             }
             Assert.Same(Application.Current.Resources["AccentBrush"], Assert.IsType<Border>(objectItem.Template.FindName("Row", objectItem)).BorderBrush);
             Assert.DoesNotContain(WindowTestVisuals.Descendants<IconView>(Assert.IsType<Border>(view.FindName("TreePanel"))), icon => icon.Kind == "plus");
-            Assert.Equal(Text.Get("MySqlOpenKnownObject"), Assert.IsType<MenuItem>(Assert.Single(tree.ContextMenu.Items.Cast<object>())).Header);
+            Assert.Null(tree.ContextMenu);
             var emptyBranch = database.Children[1]; await model.Tree.LoadAsync(emptyBranch); emptyBranch.IsExpanded = true;
             await WindowTestVisuals.UpdateLayoutAsync(window);
             var emptyItem = Assert.IsType<WorkspaceTreeViewItem>(databaseItem.ItemContainerGenerator.ContainerFromItem(emptyBranch));
@@ -50,7 +50,7 @@ public sealed class WorkspaceLayoutTests(WpfTestFixture fixture)
             var context = Assert.IsType<Grid>(tableView.FindName("ObjectContext"));
             Assert.True(context.IsVisible); Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(context), text => text.Text == "app");
             Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(context), text => text.Text == "users");
-            VerifyDataActions(tableView, table, true);
+            VerifyDataActions(tableView, table, false);
             Assert.Equal(table.Status, Assert.IsType<TextBlock>(tableView.FindName("FooterStatus")).Text);
             table.Section = "structure"; await WindowTestVisuals.UpdateLayoutAsync(window);
             var structure = Assert.IsType<DataGrid>(tableView.FindName("StructureGrid"));
@@ -72,7 +72,7 @@ public sealed class WorkspaceLayoutTests(WpfTestFixture fixture)
             inline.Text = "native inline"; Assert.True(table.HasDataDraft); Assert.True(Assert.IsType<MySqlTabView>(Assert.IsType<ContentControl>(view.FindName("TabHost")).Content).CommitInput());
             Assert.Equal("native inline", table.SelectedResult.Rows[0].Cells[1].Value);
             await WindowTestVisuals.UpdateLayoutAsync(window);
-            VerifyDataActions(tableView, table, true);
+            VerifyDataActions(tableView, table, false);
             Assert.Equal(table.DraftSummary, Assert.IsType<TextBlock>(tableView.FindName("FooterStatus")).Text);
             table.RevertCommand.Execute(null);
             var scroll = Assert.Single(WindowTestVisuals.Descendants<ScrollViewer>(grid), item => item.Name == "DG_ScrollViewer");
@@ -82,12 +82,12 @@ public sealed class WorkspaceLayoutTests(WpfTestFixture fixture)
             var query = model.NewQuery()!; query.Sql = "SELECT * FROM users"; await query.ExecuteAsync(query.Sql); model.ActiveTab = table; await WindowTestVisuals.UpdateLayoutAsync(window); Assert.Same(firstView, host.Content); Assert.True(scroll.HorizontalOffset > 0);
             window.Width = 650; window.Height = 660; await WindowPreviewCapture.VerifyAsync(window, $"mysql-table-narrow-{language}-{theme}");
             Assert.False(Assert.IsType<Border>(view.FindName("TreePanel")).IsVisible); Assert.True(host.ActualWidth > 500);
-            VerifyDataActions(tableView, table, true);
+            VerifyDataActions(tableView, table, false);
             var draft = table.SelectedResult.Rows[0].Cells[1];
             Assert.True(await table.PrepareCellAsync(table.SelectedResult, table.SelectedResult.Rows[0], draft)); draft.Apply("pending footer");
             server.Unknown = true; await table.SaveChangesCommand.ExecuteAsync(); Assert.True(table.OutcomeUnknown);
             await WindowPreviewCapture.VerifyAsync(window, $"mysql-footer-verify-narrow-{language}-{theme}");
-            VerifyDataActions(tableView, table, true);
+            VerifyDataActions(tableView, table, false);
             Assert.True(Assert.IsType<Button>(tableView.FindName("VerifyRows")).IsVisible);
             Assert.False(Assert.IsType<Button>(tableView.FindName("SaveChanges")).IsEnabled);
             model.ActiveTab = query; await WindowPreviewCapture.VerifyAsync(window, $"mysql-query-narrow-{language}-{theme}");

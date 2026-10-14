@@ -29,9 +29,9 @@ public sealed class EmptyResultTests(WpfTestFixture fixture)
             await WindowPreviewCapture.VerifyAsync(window, $"mysql-empty-result-{language}-{theme}");
             server.ResultOverride = populated with { EditableTable = null }; await tab.ReadAsync(); await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.True(tab.HasDataRows); Assert.False(tab.CanEditRows);
-            Assert.True(Assert.IsType<StackPanel>(view.FindName("PageButtons")).IsVisible);
+            Assert.False(Assert.IsType<StackPanel>(view.FindName("PageButtons")).IsVisible);
             Assert.False(Assert.IsType<StackPanel>(view.FindName("EditActions")).IsVisible);
-            server.ResultOverride = populated with { Rows = Enumerable.Repeat(populated.Rows[0], 200).ToArray() }; await tab.ReadAsync(); await WindowTestVisuals.UpdateLayoutAsync(window);
+            server.ResultOverride = populated with { Rows = Enumerable.Repeat(populated.Rows[0], 200).ToArray(), HasMore = true }; await tab.ReadAsync(); await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.True(tab.CanEditRows); Assert.True(Assert.IsType<StackPanel>(view.FindName("EditActions")).IsVisible); Assert.True(tab.NextCommand.CanExecute(null));
             server.ResultOverride = populated with { Rows = [] }; await tab.NextCommand.ExecuteAsync(); await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.Equal(200, tab.Offset); VerifyEmptyResult(view, language);

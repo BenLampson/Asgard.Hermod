@@ -194,6 +194,21 @@ surface. Instance rename commands inherit an explicit metadata scope in both the
 shell and independent workspace windows, retaining the same page, session and drafts.
 The main title bar theme toggle uses the shell's application-wide theme service.
 
+MySQL table and view tabs keep an independent page size and temporary WHERE condition.
+Sizes 50/100/200/500 reach the protocol reader; one look-ahead row determines HasMore.
+Filters accept catalog column comparisons, LIKE, IN, IS NULL, AND/OR, NOT and parentheses.
+Every value is parameterized, identifiers are quoted, and statements, subqueries and
+functions are rejected. Paging/filter changes reuse save/discard/cancel for cell drafts.
+SQL documents retain independent execution databases and expose current/selection and
+whole-document execution as visible wrapping actions.
+
+MySQL and Redis share the same rounded internal tab/section resources. Middle-click
+passes the pointed tab to the existing guarded close command. Shared grid scrolling
+uses Shift+wheel only on the grid viewport and preserves editors and ordinary wheel
+handling. Empty tool groups do not reserve an extra line. The tree container intercepts
+its own bring-into-view request before the [WPF base class handler](https://github.com/dotnet/wpf/blob/main/src/Microsoft.DotNet.Wpf/src/PresentationFramework/System/Windows/Controls/TreeViewItem.cs),
+then brings only its row into view, preserving expanded branches.
+
 ## Composition
 
 The application calls the independently owned registration entry points:

@@ -28,15 +28,16 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
         StructureSections = CreateStructureSections(kind); StructureSection = StructureSections[0].Id;
         Instance = instance;
         _lifetime = CancellationTokenSource.CreateLinkedTokenSource(lifetime);
-        RefreshCommand = new AsyncRelayCommand(_ => ReadAsync(), _ => !IsBusy && !IsQuery);
-        ExecuteCommand = new AsyncRelayCommand(sql => ExecuteAsync(sql as string ?? Sql), _ => !IsBusy && IsQuery);
+        RefreshCommand = new AsyncRelayCommand(_ => ReadAsync(), _ => ConnectionAvailable && !IsBusy && !IsQuery);
+        ExecuteCommand = new AsyncRelayCommand(sql => ExecuteAsync(sql as string ?? Sql), _ => CanRun);
         CancelCommand = new RelayCommand(_ => _pending?.Cancel(), _ => IsBusy);
         SaveDocumentCommand = new AsyncRelayCommand(_ => SaveDocumentAsync(), _ => IsQuery && !IsBusy);
-        SaveChangesCommand = new AsyncRelayCommand(_ => SaveChangesAsync(), _ => !IsBusy && HasDataDraft && !OutcomeUnknown);
-        RevertCommand = new RelayCommand(_ => { foreach (var grid in Results) grid.Revert(); }, _ => !IsBusy && HasDataDraft && !OutcomeUnknown);
-        VerifyCommand = new AsyncRelayCommand(_ => VerifyAsync(), _ => !IsBusy && OutcomeUnknown);
-        PreviousCommand = new AsyncRelayCommand(_ => PageAsync(-200), _ => !IsBusy && !IsQuery && Offset > 0);
-        NextCommand = new AsyncRelayCommand(_ => PageAsync(200), _ => !IsBusy && !IsQuery && SelectedResult?.Rows.Count == 200);
+        SaveChangesCommand = new AsyncRelayCommand(_ => SaveChangesAsync(), _ => ConnectionAvailable && !IsBusy && HasDataDraft && !OutcomeUnknown);
+        RevertCommand = new RelayCommand(_ => { foreach (var grid in Results) grid.Revert(); }, _ => ConnectionAvailable && !IsBusy && HasDataDraft && !OutcomeUnknown);
+        VerifyCommand = new AsyncRelayCommand(_ => VerifyAsync(), _ => ConnectionAvailable && !IsBusy && OutcomeUnknown);
+        PreviousCommand = new AsyncRelayCommand(_ => PageAsync(-PageSize), _ => ConnectionAvailable && !IsBusy && HasPreviousPage);
+        NextCommand = new AsyncRelayCommand(_ => PageAsync(PageSize), _ => ConnectionAvailable && !IsBusy && HasNextPage);
+        InitializePagingCommands();
     }
     /// <summary>此页签在当前工作区中的稳定身份。</summary>
     public string Id { get; } = Guid.NewGuid().ToString("N");
@@ -106,13 +107,13 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
     /// <summary>当前结果实际包含数据行，区别于尚未查询和已查询的空结果。</summary>
     public bool HasDataRows => SelectedResult?.HasRows == true;
     /// <summary>仅已有且允许编辑的数据行提供草稿操作入口。</summary>
-    public bool CanEditRows => HasDataRows && SelectedResult?.IsEditable == true;
+    public bool CanEditRows => ConnectionAvailable && HasDataRows && SelectedResult?.IsEditable == true;
     /// <summary>当前对象已读取的结构元数据。</summary>
     public IReadOnlyList<MySqlObject> Structure { get; private set; } = [];
     /// <summary>数据和结构区使用公共选择器。</summary>
     public IReadOnlyList<InstanceFieldChoice> Sections { get; } = [new("data", Text.Get("MySqlData")), new("structure", Text.Get("MySqlStructure"))];
     /// <summary>当前对象正文分区。</summary>
-    public string Section { get; set => SetProperty(ref field, value); } = "data";
+    public string Section { get; set { if (SetProperty(ref field, value)) RefreshPaging(); } } = "data";
     /// <summary>当前表页的起始偏移，不表示精确总行数。</summary>
     public int Offset { get; private set; }
     /// <summary>协调公共控件的操作命令，启用条件由当前状态决定。</summary>
@@ -160,7 +161,7 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
             var session = await SessionAsync(token);
             if (!IsMetadataOnly)
             {
-                var result = await session.ReadTableAsync(Database, Name, Offset, token); SetResults([result]);
+                var result = await session.ReadTableAsync(Database, Name, Offset, PageSize, _appliedFilter, token); SetResults([result]);
                 Status = result.Rows.Count == 0 ? Text.Get("MySqlNoRows") : Text.Format("MySqlPageStatus", Offset + 1, Offset + result.Rows.Count);
             }
             var structure = new List<MySqlObject>();
@@ -209,5 +210,6 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
         foreach (var command in new[] { RefreshCommand, ExecuteCommand, SaveDocumentCommand, SaveChangesCommand, VerifyCommand, PreviousCommand, NextCommand }) command.NotifyCanExecuteChanged();
         CancelCommand.NotifyCanExecuteChanged(); RevertCommand.NotifyCanExecuteChanged(); DraftChanged();
         RefreshStructure();
+        RefreshPaging();
     }
 }
