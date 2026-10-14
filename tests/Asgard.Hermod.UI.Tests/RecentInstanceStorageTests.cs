@@ -20,7 +20,7 @@ public sealed class RecentInstanceStorageTests
         using var restarted = environment.CreateServices();
         restarted.GetRequiredService<LocalDatabaseInitializer>().Initialize();
         var restored = restarted.GetRequiredService<IRecentInstanceStore>();
-        Assert.Equal(entries.Take(6), restored.Load());
+        Assert.Equal(entries, restored.Load());
         restarted.GetRequiredService<IFreeSql>().Ado.ExecuteNonQuery(
             "UPDATE app_setting SET value = 'broken json' WHERE id = 'workspace.recent';");
         Assert.Empty(restored.Load());

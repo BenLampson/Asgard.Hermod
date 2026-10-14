@@ -110,6 +110,7 @@ public sealed partial class LocalInstanceConfigurationService : IInstanceConfigu
                     existing?.CreatedAt ?? DateTime.UtcNow,
                     existing is not null && !draft.ReplaceTags ? existing.TagIds : requestedTagIds);
                 // 提交前准备所有导航字段；提交后再查询可能把已保存操作误报成失败。
+                _addresses[instance.Id] = (instance.ProtectedParameters, InstanceAddress.Format(instance.TypeId, parameters, instance.ProviderId));
                 InstanceSummary summary = ToSummary(instance, snapshot.Tags);
                 if (existing is null) _repository.CreateInstance(instance, cancellationToken);
                 else _repository.UpdateInstance(instance, draft.ReplaceTags, cancellationToken);
@@ -159,7 +160,7 @@ public sealed partial class LocalInstanceConfigurationService : IInstanceConfigu
         InstanceProviderDescriptor? descriptor = _providers.Types.Any(type => type.Id == instance.TypeId)
             ? _providers.GetProviders(instance.TypeId).FirstOrDefault(value => value.Id == instance.ProviderId)
             : null;
-        return CreateSummary(instance, tags, descriptor);
+        return CreateSummary(instance, tags, descriptor) with { ConnectionAddress = descriptor is null ? "" : ReadSafeAddress(instance) };
     }
 
     /// <summary>提交后只使用已经准备好的描述，不调用插件或数据库。</summary>

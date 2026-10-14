@@ -6,32 +6,32 @@
                  UriSource="pack://application:,,,/Asgard.Hermod.UI;component/Assets/Brand/hermod-dark.png" />
     <!-- ImageSource 转换器保留 ICO 的全部帧，原生窗口可选择合适的大、小图标。 -->
     <ImageSource x:Key="HermodWindowIcon">pack://application:,,,/Asgard.Hermod.UI;component/Assets/Brand/hermod-dark.ico</ImageSource>
-    <SolidColorBrush x:Key="SurfaceBrush" Color="#20252C" />
-    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#15181D" />
-    <SolidColorBrush x:Key="SidebarBrush" Color="#1A1E25" />
-    <SolidColorBrush x:Key="TitleBarBrush" Color="#101318" />
-    <SolidColorBrush x:Key="TabInactiveBrush" Color="#181C23" />
-    <SolidColorBrush x:Key="LineBrush" Color="#2E3540" />
-    <SolidColorBrush x:Key="LineSoftBrush" Color="#252B34" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#303C4D" />
+    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#252F3D" />
+    <SolidColorBrush x:Key="SidebarBrush" Color="#202C3B" />
+    <SolidColorBrush x:Key="TitleBarBrush" Color="#111820" />
+    <SolidColorBrush x:Key="TabInactiveBrush" Color="#111820" />
+    <SolidColorBrush x:Key="LineBrush" Color="#7B8EA8" />
+    <SolidColorBrush x:Key="LineSoftBrush" Color="#52647D" />
     <SolidColorBrush x:Key="ThemeTrackBrush" Color="#252B34" />
-    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#EAEEF5" />
-    <SolidColorBrush x:Key="TextBodyBrush" Color="#BFC7D4" />
-    <SolidColorBrush x:Key="TextMutedBrush" Color="#8C96A7" />
-    <SolidColorBrush x:Key="TextFaintBrush" Color="#606A7B" />
-    <SolidColorBrush x:Key="AccentBrush" Color="#5189F8" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F5F8FD" />
+    <SolidColorBrush x:Key="TextBodyBrush" Color="#DBE4F1" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="#C2CEE0" />
+    <SolidColorBrush x:Key="TextFaintBrush" Color="#A8B8CE" />
+    <SolidColorBrush x:Key="AccentBrush" Color="#80B2FF" />
     <SolidColorBrush x:Key="ActionFillBrush" Color="#3468CD" />
     <SolidColorBrush x:Key="ActionHoverBrush" Color="#2C5DBA" />
-    <SolidColorBrush x:Key="AccentTextBrush" Color="#A8C6FF" />
-    <SolidColorBrush x:Key="AccentWeakBrush" Color="#1E2C47" />
+    <SolidColorBrush x:Key="AccentTextBrush" Color="#C4DCFF" />
+    <SolidColorBrush x:Key="AccentWeakBrush" Color="#3A567F" />
     <SolidColorBrush x:Key="SuccessBrush" Color="#38C98E" />
     <SolidColorBrush x:Key="SuccessWeakBrush" Color="#103324" />
-    <SolidColorBrush x:Key="WarningBrush" Color="#F2994A" />
+    <SolidColorBrush x:Key="WarningBrush" Color="#FFC58F" />
     <SolidColorBrush x:Key="CodeObjectBrush" Color="#B99CF6" />
-    <SolidColorBrush x:Key="WarningWeakBrush" Color="#3A2712" />
-    <SolidColorBrush x:Key="DangerBrush" Color="#F26057" />
-    <SolidColorBrush x:Key="DangerWeakBrush" Color="#3D1B19" />
+    <SolidColorBrush x:Key="WarningWeakBrush" Color="#493625" />
+    <SolidColorBrush x:Key="DangerBrush" Color="#FF938D" />
+    <SolidColorBrush x:Key="DangerWeakBrush" Color="#542B2D" />
     <SolidColorBrush x:Key="InverseTextBrush" Color="#FFFFFF" />
-    <SolidColorBrush x:Key="WindowBorderBrush" Color="#3E4756" />
+    <SolidColorBrush x:Key="WindowBorderBrush" Color="#6F83A0" />
     <SolidColorBrush x:Key="OnAccentSoftBrush" Color="#C2D4FF" />
     <SolidColorBrush x:Key="TerminalSurfaceBrush" Color="#20252C" />
     <SolidColorBrush x:Key="TerminalTextBrush" Color="#EAEEF5" />

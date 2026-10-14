@@ -5,6 +5,14 @@ public sealed class SyncedInstanceConfigurationService(IInstanceConfigurationSer
     IAccountService accounts) : IInstanceConfigurationService
 {
     /// <inheritdoc />
+    public Task DeleteAsync(string instanceId, InstanceDeleteRequest request, CancellationToken cancellationToken = default) =>
+        sync.RunLocalChangeAsync(async () =>
+        {
+            if (request.ExpectedAccount?.SubjectId != accounts.Account?.SubjectId || request.ExpectedAccount?.TenantId != accounts.Account?.TenantId
+                || request.ExpectedAccount?.ApplicationId != accounts.Account?.ApplicationId) throw Text.Exception("SyncAccountChanged");
+            await local.DeleteAsync(instanceId, request, cancellationToken);
+        }, cancellationToken);
+    /// <inheritdoc />
     public IReadOnlyList<InstanceSummary> GetInstances() => local.GetInstances();
     /// <inheritdoc />
     public async Task<InstanceSummary> UpdateMetadataAsync(string instanceId, InstanceMetadataChange change, CancellationToken cancellationToken = default)

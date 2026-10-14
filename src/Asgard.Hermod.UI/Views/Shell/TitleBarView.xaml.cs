@@ -1,15 +1,13 @@
 namespace Asgard.Hermod.UI.Views.Shell;
 
-/// <summary>
-/// 显示应用标识、全局搜索、账号入口和原生窗口按钮。
-/// </summary>
+/// <summary>固定页签与品牌属于主窗体标题栏，空白区域保留原生拖动。</summary>
 public partial class TitleBarView : UserControl
 {
-    /// <summary>
-    /// 创建标题栏。
-    /// </summary>
-    public TitleBarView()
+    /// <summary>从 Shell 绑定真实账号、设置和工作台导航。</summary>
+    public TitleBarView() => InitializeComponent();
+    private void OnSizeChanged(object sender, SizeChangedEventArgs args)
     {
-        InitializeComponent();
+        BrandName.Visibility = ActualWidth < 1160 ? Visibility.Collapsed : Visibility.Visible;
+        Account.IsCompact = ActualWidth < 1160;
     }
 }

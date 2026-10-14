@@ -53,6 +53,22 @@ internal static class WindowInteractionNativeMethods
             || !PostMessage(handle, 0x0101, new IntPtr(virtualKey), new IntPtr(unchecked((int)up))))
             throw new Win32Exception(Marshal.GetLastWin32Error());
     }
+    /// <summary>双击消息仅发给被测 HWND，不移动系统鼠标或影响其他应用。</summary>
+    internal static void PostDoubleClick(Window window, FrameworkElement target)
+    {
+        Point origin = window.PointToScreen(new Point());
+        Point point = target.PointToScreen(new Point(target.ActualWidth / 3, target.ActualHeight / 2));
+        int x = (int)(point.X - origin.X), y = (int)(point.Y - origin.Y);
+        nint position = new((y << 16) | (x & 0xffff)); nint handle = Handle(window);
+        PostMessage(handle, 0x0201, 1, position); PostMessage(handle, 0x0202, 0, position);
+        PostMessage(handle, 0x0203, 1, position); PostMessage(handle, 0x0202, 0, position);
+    }
+    /// <summary>将 Escape 送到实际 Popup 的 HWND，让 WPF 原生菜单逻辑关闭。</summary>
+    internal static void PostPopupEscape(Visual popup)
+    {
+        var source = Assert.IsType<HwndSource>(PresentationSource.FromVisual(popup), exactMatch: false);
+        PostMessage(source.Handle, 0x0100, 0x1B, 1); PostMessage(source.Handle, 0x0101, 0x1B, new nint(unchecked((int)0xC0000001)));
+    }
 
     /// <summary>读取已有真实窗口的样式，禁止以零 HWND 执行查询。</summary>
     private static uint Style(Window window)

@@ -56,10 +56,9 @@
             </Border>
             <TextBlock Text="{Binding AccountName}" FontSize="12" MaxWidth="140"
                        TextTrimming="CharacterEllipsis" ToolTip="{Binding AccountName}"
-                       Foreground="{DynamicResource TextBodyBrush}" VerticalAlignment="Center" Margin="6,0,0,0" />
+                       Foreground="{DynamicResource TextBodyBrush}" VerticalAlignment="Center" Margin="6,0,0,0"><TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers><DataTrigger Binding="{Binding IsCompact, RelativeSource={RelativeSource AncestorType=controls:AccountMenu}}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
             <StackPanel x:Name="LocalSignIn" Orientation="Horizontal" VerticalAlignment="Center">
-                <StackPanel.Style><Style TargetType="StackPanel">
-                    <Style.Triggers><DataTrigger Binding="{Binding IsSignedIn}" Value="True">
+                <StackPanel.Style><Style TargetType="StackPanel"><Style.Triggers><DataTrigger Binding="{Binding IsCompact, RelativeSource={RelativeSource AncestorType=controls:AccountMenu}}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger><DataTrigger Binding="{Binding IsSignedIn}" Value="True">
                         <Setter Property="Visibility" Value="Collapsed" />
                     </DataTrigger></Style.Triggers>
                 </Style></StackPanel.Style>

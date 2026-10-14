@@ -6,6 +6,10 @@ internal static partial class IconCatalog
     /// <summary>统一补充新界面所需图标；保留设计稿使用的旧别名。</summary>
     static IconCatalog()
     {
+        Geometries.Add("list", Create("M9 6h12", "M9 12h12", "M9 18h12", "M3 5h2v2H3Z", "M3 11h2v2H3Z", "M3 17h2v2H3Z"));
+        Geometries.Add("chevron-left", Create("m15 18-6-6 6-6"));
+        Geometries.Add("monitor", Create("M4 3h16a2 2 0 0 1 2 2v12H2V5a2 2 0 0 1 2-2Z", "M8 21h8", "M12 17v4"));
+        Geometries.Add("text-cursor-input", Create("M5 4h2", "M6 4v16", "M5 20h2", "M10 6h10v12H10", "M2 6v12"));
         Geometries.Add("tags", Create(
             "M13.172 2a2 2 0 0 1 1.414.586l6.71 6.71a2.4 2.4 0 0 1 0 3.408l-4.592 4.592a2.4 2.4 0 0 1-3.408 0l-6.71-6.71A2 2 0 0 1 6 9.172V3a1 1 0 0 1 1-1z",
             "M2 7v6.172a2 2 0 0 0 .586 1.414l6.71 6.71a2.4 2.4 0 0 0 3.191.193",

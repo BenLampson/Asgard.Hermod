@@ -33,6 +33,14 @@ public partial class MainWindow : HermodWindow
         model.Sidebar.AddInstanceCommand.ExecutionFailed += OnCommandFailed;
         model.Workspace.CloseTabCommand.ExecutionFailed += OnCommandFailed;
         Closing += OnWindowClosing;
+        PreviewKeyDown += (_, args) =>
+        {
+            if (args.Key == System.Windows.Input.Key.F && System.Windows.Input.Keyboard.Modifiers == System.Windows.Input.ModifierKeys.Control)
+            {
+                if (ShellView.FindName("MainContent") is Asgard.Hermod.UI.Views.Shell.MainWorkspaceView view) view.FocusSearch();
+                args.Handled = true;
+            }
+        };
         if (tray is not null)
         {
             tray.Activated += ActivateMain; tray.MenuRequested += OpenTrayMenu;

@@ -42,7 +42,7 @@ public sealed class MainWindowBoundsTests
             var frame = WindowTestVisuals.ScreenBounds(WindowTestVisuals.Frame(window));
             var title = Assert.Single(WindowTestVisuals.Descendants<TitleBarView>(window));
             var controls = Assert.Single(WindowTestVisuals.Descendants<WindowControls>(title));
-            var footer = Assert.Single(WindowTestVisuals.Descendants<SidebarFooterView>(window));
+            var footer = WindowTestVisuals.Named(window, "MainStatusBar");
             foreach (var element in new FrameworkElement[] { WindowTestVisuals.Frame(window), title, controls, footer })
             {
                 var bounds = WindowTestVisuals.ScreenBounds(element);
@@ -121,7 +121,7 @@ public sealed class MainWindowBoundsTests
     {
         Rect work = WindowBoundsNativeMethods.GetWorkArea(new WindowInteropHelper(window).Handle);
         var title = Assert.Single(WindowTestVisuals.Descendants<TitleBarView>(window));
-        var footer = Assert.Single(WindowTestVisuals.Descendants<SidebarFooterView>(shell));
+        var footer = WindowTestVisuals.Named(shell, "MainStatusBar");
         var controls = Assert.Single(WindowTestVisuals.Descendants<WindowControls>(title));
         Rect frameBounds = WindowTestVisuals.ScreenBounds(WindowTestVisuals.Frame(window));
         Rect shellBounds = WindowTestVisuals.ScreenBounds(shell);

@@ -148,7 +148,7 @@ public sealed class HomeWorkspaceTests(WpfTestFixture fixture)
             };
             window.Show();
             await WpfTestFixture.DrainDispatcherAsync();
-            var home = Assert.Single(WindowTestVisuals.Descendants<HomeWorkspaceView>(window));
+            var home = Assert.Single(WindowTestVisuals.Descendants<Asgard.Hermod.UI.Views.Shell.MainWorkspaceView>(window));
             var button = Assert.Single(WindowTestVisuals.Descendants<Button>(home),
                 item => ReferenceEquals(item.Command, environment.Shell.Sidebar.AddInstanceCommand));
             Assert.True(button.Focus());

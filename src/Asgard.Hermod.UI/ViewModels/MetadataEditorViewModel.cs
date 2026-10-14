@@ -11,10 +11,11 @@ public sealed class MetadataEditorViewModel : ObservableObject, IDisposable
     /// <summary>调用方提供持久化动作，公共窗口不接触连接或凭据。</summary>
     public MetadataEditorViewModel(string title, string nameLabel, string name, int maxLength,
         Func<string, IReadOnlyList<string>, CancellationToken, Task> save, bool isTagName = false,
-        bool isTagEditing = false, IReadOnlyList<ManagedTag>? tags = null, IReadOnlyList<string>? selectedIds = null)
+        bool isTagEditing = false, IReadOnlyList<ManagedTag>? tags = null, IReadOnlyList<string>? selectedIds = null, bool editNameAndTags = false)
     {
         Title = title; NameLabel = nameLabel; Name = name; MaxLength = maxLength; _save = save; _isTagName = isTagName;
         IsTagEditing = isTagEditing;
+        EditNameAndTags = editNameAndTags;
         Tags = new(tags, selectedIds); Tags.SetEditable(isTagEditing); Tags.PropertyChanged += OnTagsChanged;
         SaveCommand = new AsyncRelayCommand(_ => SaveAsync(), _ => CanSave);
         CancelCommand = new RelayCommand(_ => CloseRequested?.Invoke(this, false), _ => !IsBusy);
@@ -28,8 +29,10 @@ public sealed class MetadataEditorViewModel : ObservableObject, IDisposable
     public int MaxLength { get; }
     /// <summary>标签编辑不展示名称输入。</summary>
     public bool IsTagEditing { get; }
+    /// <summary>实例重命名同时编辑名称和标签，在一次事务中提交。</summary>
+    public bool EditNameAndTags { get; }
     /// <summary>重命名只展示名称。</summary>
-    public bool IsNameEditing => !IsTagEditing;
+    public bool IsNameEditing => !IsTagEditing || EditNameAndTags;
     /// <summary>提交期间冻结输入。</summary>
     public bool IsEditable => !_disposed && !IsBusy;
     /// <summary>独立弹出标签草稿复用共享选择规则。</summary>
@@ -37,7 +40,7 @@ public sealed class MetadataEditorViewModel : ObservableObject, IDisposable
     /// <summary>名称输入在失败后原样保留。</summary>
     public string Name { get; set { if (SetProperty(ref field, value ?? "")) Refresh(); } } = "";
     /// <summary>实例和标签使用各自已有的名称校验文案。</summary>
-    public string NameError => IsTagEditing ? "" : _isTagName
+    public string NameError => !IsNameEditing ? "" : _isTagName
         ? string.IsNullOrWhiteSpace(Name) ? Text.Get("EnterATagName")
             : Name.Trim().Length > 80 || Name.Contains('/') || Name.Any(char.IsControl)
                 ? Text.Get("TagNamesMustContain180CharactersAndNoSlashesOrControlCharacters") : ""

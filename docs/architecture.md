@@ -47,10 +47,10 @@ Both editors preserve the same two-way binding and maximum length. Hiding the
 password, hiding or closing the window, and reapplying the template clear the
 plain-text editor; its undo history is disabled. Visibility is never persisted.
 
-Instance navigation puts the registered type icon before the instance name and
-the provider brand after it. The collapsed rail retains the type icon with small
-brand and cloud status marks. Tooltips and accessibility labels identify each
-role. The creation wizard uses one outer scroll viewer for its body; type and
+The main window uses fixed Overview, All instances, MySQL, Redis, SSH and object
+storage navigation above a configuration table. Type icons, safe connection
+addresses, provider identities and tags have separate columns. Tooltips and
+accessibility labels preserve names at narrow sizes. The creation wizard uses one outer scroll viewer for its body; type and
 provider card lists do not intercept the mouse wheel with nested scroll viewers.
 Save notifications and creation callbacks update navigation by stable instance
 ID, preserving the existing item and preventing duplicate rows.
@@ -228,19 +228,18 @@ carry stable icon IDs, with no UI assembly dependency. See the
 Startup validates the service container, initializes the database off the UI
 thread, applies the saved language preference and opens the main window. Windows
 display language is the default; unsupported languages fall back to English.
-Each launch opens only Home and does not save or restore the previous tabs.
-Home stays open and has no close action. Other tabs, including tag pages, can
-be closed. Closing the last work tab returns to Home.
-Home always orders its sections as instance overview, workspace introduction
-and quick actions, then recently opened instances, including when history is
-empty. Settings → About owns the version, author, open-source license and
+Each launch opens Overview and does not restore previous work windows.
+Overview shows four type counts and a six-row recent-access table. All instances
+and type pages use the same configuration catalog, search, tag and provider
+filters, sorting and pagination. Selection does not open a connection; double-click,
+Enter or the row menu opens or activates its independent work window.
+Settings → About owns the version, author, open-source license and
 repository link; the complete information is visible without expanding a panel.
-The Home recent-instance history remains persisted separately from open tabs.
-It keeps six unique instance IDs and UTC opening times on this device. Existing
-five-entry history needs no migration. The home section uses three columns and
-two rows at wide sizes, dropping to two or one column as space narrows. Cards
-show the current instance name and type once, with opening time at the bottom
-and a full local-date tooltip. Deleted instances do not produce placeholder cards.
+Local access history remains persisted separately from open windows. It retains
+each instance's last UTC access time; only the Overview projection is limited to
+six rows. All-instance sorting uses the complete history. Existing history needs
+no migration, and deleted instances are pruned. See [the main-window guide](main-window.md)
+for public navigation controls, table behavior and verification.
 See [the localization guide](localization.md) for resource and extension rules.
 Closing the application waits for workspace
 resources to be released before disposing the service container.
@@ -371,7 +370,7 @@ Instance type icons share one mapping across the picker, navigation and workspac
 MySQL uses `database`, storage uses `box`, Redis uses `layers`, and SSH uses
 `terminal`. Their silhouettes remain distinct in monochrome. The shared
 `InstanceNameButton` places a visible pencil beside workspace titles and uses the
-shell metadata command; the sidebar context menu retains tag editing. Renaming
+shell metadata command; the main table's Rename dialog saves name and tags together. Renaming
 preserves stable IDs, connections and drafts. MySQL selects an adjacent internal
 tab before removal, and shows a localized query/object guide after the last tab
 closes while keeping its metadata connection and object tree.
@@ -381,5 +380,5 @@ Actual instance navigation, recent items, local terminals and new sessions share
 existing workspace page registry and module templates. Each window has its own taskbar
 entry and no main-window Owner; closing it uses the existing module confirmation and
 awaits page cleanup. Reopening an instance activates the same page and window. The
-main shell retains its home page, search, configuration and account navigation.
+main shell retains its overview, search, configuration and account navigation.
 Module dialogs resolve the active work window as their owner.

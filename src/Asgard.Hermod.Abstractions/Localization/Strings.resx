@@ -3330,4 +3330,145 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="HideMainWindowToTray" xml:space="preserve">
     <value>Hide main window to notification area</value>
   </data>
+  <data name="MainOverview" xml:space="preserve">
+    <value>Overview</value>
+  </data>
+  <data name="MainAllInstances" xml:space="preserve">
+    <value>All instances</value>
+  </data>
+  <data name="MainWorkbench" xml:space="preserve">
+    <value>Instance workbench</value>
+  </data>
+  <data name="MainMySql" xml:space="preserve">
+    <value>MySQL</value>
+  </data>
+  <data name="MainRedis" xml:space="preserve">
+    <value>Redis</value>
+  </data>
+  <data name="MainSsh" xml:space="preserve">
+    <value>SSH</value>
+  </data>
+  <data name="MainDatabaseConnections" xml:space="preserve">
+    <value>Database connections</value>
+  </data>
+  <data name="MainCacheConnections" xml:space="preserve">
+    <value>Cache connections</value>
+  </data>
+  <data name="MainServerConnections" xml:space="preserve">
+    <value>Server connections</value>
+  </data>
+  <data name="MainStorageConnections" xml:space="preserve">
+    <value>Storage connections</value>
+  </data>
+  <data name="MainAddressUnavailable" xml:space="preserve">
+    <value>Address unavailable</value>
+  </data>
+  <data name="MainNeverOpened" xml:space="preserve">
+    <value>No local visit record</value>
+  </data>
+  <data name="MainOpenHint" xml:space="preserve">
+    <value>Double-click an instance to start work in an independent window.</value>
+  </data>
+  <data name="MainListDescription" xml:space="preserve">
+    <value>{0} instances. Double-click an instance to start work in an independent window.</value>
+  </data>
+  <data name="MainAllProviders" xml:space="preserve">
+    <value>All providers</value>
+  </data>
+  <data name="MainAllTags" xml:space="preserve">
+    <value>All tags</value>
+  </data>
+  <data name="MainSortRecent" xml:space="preserve">
+    <value>Recently opened</value>
+  </data>
+  <data name="MainSortName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="MainRange" xml:space="preserve">
+    <value>Showing {0}–{1} of {2} instances</value>
+  </data>
+  <data name="MainPage" xml:space="preserve">
+    <value>{0} / {1}</value>
+  </data>
+  <data name="MainNavigation" xml:space="preserve">
+    <value>Main navigation</value>
+  </data>
+  <data name="MainManageTags" xml:space="preserve">
+    <value>Manage tags</value>
+  </data>
+  <data name="MainSearch" xml:space="preserve">
+    <value>Search instance name, address or tags…</value>
+  </data>
+  <data name="MainSearchShortcut" xml:space="preserve">
+    <value>Ctrl+F</value>
+  </data>
+  <data name="MainSort" xml:space="preserve">
+    <value>Sort instances</value>
+  </data>
+  <data name="MainViewAll" xml:space="preserve">
+    <value>View all instances</value>
+  </data>
+  <data name="MainLastOpened" xml:space="preserve">
+    <value>Last opened</value>
+  </data>
+  <data name="TagsLabel" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+  <data name="MainInstanceTable" xml:space="preserve">
+    <value>Instances</value>
+  </data>
+  <data name="MainMoreActions" xml:space="preserve">
+    <value>More instance actions</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="MainEmptyList" xml:space="preserve">
+    <value>No instances match. Add an instance or change the filters.</value>
+  </data>
+  <data name="PreviousPage" xml:space="preserve">
+    <value>Previous page</value>
+  </data>
+  <data name="NextPage" xml:space="preserve">
+    <value>Next page</value>
+  </data>
+  <data name="MainRecentLocalHint" xml:space="preserve">
+    <value>Recent visits are recorded only on this device.</value>
+  </data>
+  <data name="MainTableHint" xml:space="preserve">
+    <value>Double-click an instance or use the “…” menu to open it.</value>
+  </data>
+  <data name="MainRecent" xml:space="preserve">
+    <value>Recently opened</value>
+  </data>
+  <data name="MainCount" xml:space="preserve">
+    <value>{0} instances</value>
+  </data>
+  <data name="MainStorage" xml:space="preserve">
+    <value>Object storage</value>
+  </data>
+  <data name="MainProvider" xml:space="preserve">
+    <value>Provider</value>
+  </data>
+  <data name="MainRename" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="MainDeleteInstance" xml:space="preserve">
+    <value>Delete instance</value>
+  </data>
+  <data name="MainDeleteWarning" xml:space="preserve">
+    <value>Delete the configuration for “{0}” and its tag associations? This does not delete remote services or data.</value>
+  </data>
+  <data name="MainDeletePrompt" xml:space="preserve">
+    <value>Enter “{0}” to enable deletion.</value>
+  </data>
+  <data name="MainDeletePhrase" xml:space="preserve">
+    <value>I understand</value>
+  </data>
+  <data name="MainDeleteConfirmation" xml:space="preserve">
+    <value>Deletion confirmation</value>
+  </data>
+  <data name="MainRecentEmpty" xml:space="preserve">
+    <value>No recent visits. Open an instance to show it here.</value>
+  </data>
 </root>

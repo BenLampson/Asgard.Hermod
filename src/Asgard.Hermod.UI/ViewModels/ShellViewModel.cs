@@ -33,6 +33,7 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
         Workspace.Home.AddInstanceCommand = Sidebar.AddInstanceCommand;
         Workspace.Home.OpenLocalTerminalCommand = Sidebar.OpenLocalTerminalCommand;
         Workspace.RefreshInstanceMetadata(Sidebar.AllInstances);
+        Main = new MainWorkspaceViewModel(Sidebar, Workspace, editor, registry, settings);
         OpenSettingsCommand = new AsyncRelayCommand(_ => settings?.OpenAsync() ?? Task.CompletedTask,
             _ => settings is not null);
         OpenAccountCommand = new AsyncRelayCommand(_ => (IsSignedIn ? accountEditor?.OpenAsync() : accountEditor?.OpenForSignInAsync()) ?? Task.CompletedTask,
@@ -70,6 +71,8 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     public InstanceSidebarViewModel Sidebar { get; }
     /// <summary>工作页状态。</summary>
     public WorkspaceViewModel Workspace { get; }
+    /// <summary>新版主窗体固定导航、概览及实例表格。</summary>
+    public MainWorkspaceViewModel Main { get; }
     /// <summary>当前使用设备上的用户级工作区。</summary>
     public string WorkspaceName => Text.Get(IsSignedIn ? "SyncCloudWorkspace" : "LocalWorkspace");
     /// <summary>账户菜单同步徽标的完整提示，沿用同步服务的安全本地化信息。</summary>
@@ -80,6 +83,16 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     public ConfigurationSyncStatus SyncStatus => _sync?.Status ?? ConfigurationSyncStatus.Local;
     /// <summary>与登录状态并列的简短同步状态，详细说明通过提示和账户信息查看。</summary>
     public string SyncStatusLabel => HasSyncStatus ? Text.Get("SyncBadge" + SyncStatus) : "";
+    /// <summary>主窗体状态栏在本地、同步中和错误状态均有真实完整文案。</summary>
+    public string MainSyncLabel => HasSyncStatus ? SyncStatusLabel : Text.Get("LocalWorkspace");
+    /// <summary>绿色对勾仅用于实际已同步，本地模式使用设备图标。</summary>
+    public string MainSyncIcon => !HasSyncStatus ? "laptop" : SyncStatus switch
+    {
+        ConfigurationSyncStatus.Synced => "cloud-check",
+        ConfigurationSyncStatus.Synchronizing => "refresh-cw",
+        ConfigurationSyncStatus.Failed or ConfigurationSyncStatus.Conflict => "circle-alert",
+        _ => "cloud-upload"
+    };
     /// <summary>登录后显示已验证 JWT 用户名，否则显示本地模式。</summary>
     public string AccountName => _accounts?.Account?.Username ?? Text.Get("Local");
     /// <summary>头像取 JWT 用户名的前两个完整字素，不拆分中文、组合字符或 Emoji。</summary>
@@ -169,6 +182,7 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
         OnPropertyChanged(nameof(IsSignedIn)); OnPropertyChanged(nameof(AccountStatus));
         OnPropertyChanged(nameof(WorkspaceName)); OnPropertyChanged(nameof(SyncStatusText)); OnPropertyChanged(nameof(HasSyncStatus));
         OnPropertyChanged(nameof(SyncStatus)); OnPropertyChanged(nameof(SyncStatusLabel));
+        OnPropertyChanged(nameof(MainSyncLabel)); OnPropertyChanged(nameof(MainSyncIcon));
         SignOutAccountCommand.NotifyCanExecuteChanged();
         AccountMessage = "";
         OnPropertyChanged(nameof(AccountMessage));
@@ -182,6 +196,7 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
         Sidebar.RefreshSyncStates();
         OnPropertyChanged(nameof(SyncStatusText)); OnPropertyChanged(nameof(HasSyncStatus));
         OnPropertyChanged(nameof(SyncStatus)); OnPropertyChanged(nameof(SyncStatusLabel));
+        OnPropertyChanged(nameof(MainSyncLabel)); OnPropertyChanged(nameof(MainSyncIcon));
         if (_sync?.Status is ConfigurationSyncStatus.Synced or ConfigurationSyncStatus.Local or ConfigurationSyncStatus.PasswordRequired)
             _ = RefreshSyncSidebarAsync();
     }
@@ -262,6 +277,7 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
             page.PropertyChanged -= OnInstancePageChanged;
         _instancePages.Clear();
         Sidebar.Dispose();
+        Main.Dispose();
         await Workspace.DisposeAsync();
     }
 }

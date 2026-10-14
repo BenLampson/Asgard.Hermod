@@ -5,6 +5,10 @@ namespace Asgard.Hermod.UI.Controls;
 /// </summary>
 public partial class AccountMenu : UserControl
 {
+    /// <summary>窄主窗体只展示完整头像按钮及下拉箭头，名称仍可由 tooltip 与无障碍读取。</summary>
+    public static readonly DependencyProperty IsCompactProperty = DependencyProperty.Register(nameof(IsCompact), typeof(bool), typeof(AccountMenu), new PropertyMetadata(false));
+    /// <summary>紧凑布局直接折叠文字，不裁剪可点击入口。</summary>
+    public bool IsCompact { get => (bool)GetValue(IsCompactProperty); set => SetValue(IsCompactProperty, value); }
     /// <summary>
     /// 创建账号菜单。
     /// </summary>

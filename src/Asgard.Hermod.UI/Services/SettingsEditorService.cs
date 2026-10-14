@@ -31,7 +31,10 @@ public sealed class SettingsEditorService : ISettingsEditor
     }
 
     /// <inheritdoc />
-    public async Task OpenAsync()
+    public Task OpenAsync() => OpenCategoryAsync("general");
+    /// <inheritdoc />
+    public Task OpenTagsAsync() => OpenCategoryAsync("tags");
+    private async Task OpenCategoryAsync(string category)
     {
         SettingsWindow? window = null;
         var dialogs = new WindowsTagDialogService(() => window ?? _getOwner(), _tags);
@@ -39,6 +42,7 @@ public sealed class SettingsEditorService : ISettingsEditor
         using var model = new SettingsViewModel(_tags, dialogs, _languages, _fileRules, _temporaryFiles, storageDialogs,
             _accounts, _accountEditor is null ? null : () => _accountEditor.OpenAsync(window));
         await model.InitializeAsync();
+        model.SelectCategoryCommand.Execute(model.Categories.First(item => item.Id == category));
         window = new SettingsWindow(model) { Owner = _getOwner() };
         window.ShowDialog();
     }

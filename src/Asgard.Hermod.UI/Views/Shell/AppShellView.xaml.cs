@@ -1,40 +1,10 @@
 namespace Asgard.Hermod.UI.Views.Shell;
 
-/// <summary>
-/// 组合实例导航与工作区，管理内容区域的界面生命周期。
-/// </summary>
+/// <summary>主窗体只承载固定导航的实例工作台；独立模块页面由工作窗口呈现。</summary>
 public partial class AppShellView : UserControl, IDisposable
 {
-    /// <summary>
-    /// 创建外壳组件。
-    /// </summary>
-    public AppShellView()
-    {
-        InitializeComponent();
-    }
-
-    /// <summary>
-    /// 收起侧栏的搜索入口先展开侧栏，再把焦点交给过滤框。
-    /// </summary>
-    private void OnExpandSearchRequested(object sender, RoutedEventArgs e)
-    {
-        if (DataContext is ShellViewModel shell && !shell.IsSidebarExpanded
-            && shell.ToggleSidebarCommand.CanExecute(null))
-        {
-            shell.ToggleSidebarCommand.Execute(null);
-        }
-
-        Dispatcher.BeginInvoke(DispatcherPriority.Input, () => SidebarView.FocusSearch());
-        e.Handled = true;
-    }
-
-    /// <summary>
-    /// 释放工作区视图；会话仍由宿主与对应的 ViewModel 管理。
-    /// </summary>
-    public void Dispose()
-    {
-        SidebarView.CloseTagPicker();
-        Workspace.Dispose();
-        GC.SuppressFinalize(this);
-    }
+    /// <summary>组合工作台，不再创建旧左侧实例侧栏或旧品牌首页。</summary>
+    public AppShellView() => InitializeComponent();
+    /// <summary>关闭未提交的标签筛选草稿。</summary>
+    public void Dispose() { MainContent.CloseTagPicker(); GC.SuppressFinalize(this); }
 }

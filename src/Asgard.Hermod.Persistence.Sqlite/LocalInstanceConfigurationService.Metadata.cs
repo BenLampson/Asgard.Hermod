@@ -17,7 +17,9 @@ public sealed partial class LocalInstanceConfigurationService
             var descriptors = _providers.Types.SelectMany(type => _providers.GetProviders(type.Id)).ToArray();
             var snapshot = _repository.UpdateInstanceMetadata(instanceId, normalized, cancellationToken);
             var saved = snapshot.Instances.Single(instance => instance.Id == instanceId);
-            return CreateSummary(saved, snapshot.Tags, descriptors.FirstOrDefault(provider => provider.Type.Id == saved.TypeId && provider.Id == saved.ProviderId));
+            return CreateSummary(saved, snapshot.Tags, descriptors.FirstOrDefault(provider => provider.Type.Id == saved.TypeId && provider.Id == saved.ProviderId))
+                with
+            { ConnectionAddress = _addresses.GetValueOrDefault(saved.Id).Address ?? "" };
         }, cancellationToken);
     }
 }

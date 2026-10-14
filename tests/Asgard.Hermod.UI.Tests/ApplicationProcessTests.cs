@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 using System.Windows.Automation;
+using Asgard.Hermod.Abstractions.Security;
 
 namespace Asgard.Hermod.UI.Tests;
 
@@ -18,6 +20,10 @@ public sealed class ApplicationProcessTests
         {
             services.GetRequiredService<LocalDatabaseInitializer>().Initialize();
             services.GetRequiredService<ILanguagePreferenceStore>().Save("en");
+            var encrypted = services.GetRequiredService<ISecretProtector>().Protect(JsonSerializer.SerializeToUtf8Bytes(new Dictionary<string, string>
+            { ["host"] = "127.0.0.1", ["port"] = "1", ["user"] = "acceptance", ["auth"] = "password", ["password"] = "local-test-only" }));
+            services.GetRequiredService<ILocalConfigurationRepository>().CreateInstance(new("acceptance-saved", "Acceptance database", "mysql", "mysql.direct", encrypted, DateTime.UtcNow, []), TestContext.Current.CancellationToken);
+            services.GetRequiredService<IRecentInstanceStore>().Save([new("acceptance-saved", DateTimeOffset.UtcNow)]);
             services.GetRequiredService<IFreeSql>().Dispose();
         }
         using var primary = Start(config.DatabasePath, storage.DirectoryPath);
@@ -28,6 +34,12 @@ public sealed class ApplicationProcessTests
             await UntilAsync(() => { primary.Refresh(); main = primary.MainWindowHandle; return main != 0 && IsWindowVisible(main); });
             var root = AutomationElement.FromHandle(main);
             Assert.Equal("Asgard Hermod", root.Current.Name);
+            await OpenSavedInstanceAsync(root, main);
+            AutomationElement? saved = null;
+            await UntilAsync(() => (saved = Windows(primary.Id).FirstOrDefault(window => window.Current.Name == "Acceptance database")) is not null);
+            nint savedHandle = new(saved!.Current.NativeWindowHandle);
+            await OpenSavedInstanceAsync(root, main);
+            Assert.Single(Windows(primary.Id), window => window.Current.Name == "Acceptance database");
             AutomationElement? local = null;
             await UntilAsync(() => (local = root.FindFirst(TreeScope.Descendants, new AndCondition(
                 new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button),
@@ -38,6 +50,7 @@ public sealed class ApplicationProcessTests
             nint workHandle = new(work!.Current.NativeWindowHandle);
             PostMessage(main, 0x0010, 0, 0);
             await UntilAsync(() => !IsWindowVisible(main)); Assert.True(IsWindowVisible(workHandle));
+            Assert.True(IsWindowVisible(savedHandle));
             string duplicateDatabase = Path.Combine(storage.DirectoryPath, "must-not-create", "secondary.db");
             using (var duplicate = Start(duplicateDatabase, storage.DirectoryPath))
             {
@@ -69,6 +82,17 @@ public sealed class ApplicationProcessTests
             try { storage.Dispose(); }
             catch (IOException) when (!completed) { /* 失败时保留隔离目录用于诊断，成功路径必须完整清理。 */ }
         }
+    }
+
+    private static async Task OpenSavedInstanceAsync(AutomationElement root, nint main)
+    {
+        var text = root.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, "Acceptance database"));
+        Assert.NotNull(text);
+        var row = text;
+        while (row.Current.ControlType != ControlType.ListItem) row = TreeWalker.ControlViewWalker.GetParent(row);
+        ((SelectionItemPattern)row.GetCurrentPattern(SelectionItemPattern.Pattern)).Select(); row.SetFocus();
+        PostMessage(main, 0x0100, 0x0D, 0x001C0001); PostMessage(main, 0x0101, 0x0D, unchecked((nint)0xC01C0001));
+        await Task.Delay(100, TestContext.Current.CancellationToken);
     }
 
     private static Process Start(string database, string directory)

@@ -11,6 +11,7 @@ public partial class MetadataEditorWindow : HermodDialog
     public MetadataEditorWindow(MetadataEditorViewModel model)
     {
         _model = model; InitializeComponent(); DataContext = model;
+        if (model.EditNameAndTags) Height = 400;
         model.CloseRequested += OnCloseRequested;
         Loaded += (_, _) => { if (model.IsNameEditing) NameInput.Focus(); else (TagSelector.FindName("TagTrigger") as Button)?.Focus(); };
         Closing += (_, args) => { if (model.IsBusy && !model.WasSaved) args.Cancel = true; };

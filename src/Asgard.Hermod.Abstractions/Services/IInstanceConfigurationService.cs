@@ -3,6 +3,9 @@ namespace Asgard.Hermod.Abstractions.Services;
 /// <summary>管理实例配置，界面不直接接触数据库或凭据保护实现。</summary>
 public interface IInstanceConfigurationService
 {
+    /// <summary>删除本工作区配置和标签关联，不删除远程资源、不关闭已有会话。</summary>
+    Task DeleteAsync(string instanceId, InstanceDeleteRequest request, CancellationToken cancellationToken = default) =>
+        throw new NotSupportedException(Text.Get("TheCurrentConfigurationServiceDoesNotSupportEditingInstances"));
     /// <summary>读取不包含凭据的导航快照。</summary>
     IReadOnlyList<InstanceSummary> GetInstances();
     /// <summary>仅更新名称或标签，不读取、测试或改写连接参数和凭据。</summary>

@@ -3330,4 +3330,145 @@
   <data name="HideMainWindowToTray" xml:space="preserve">
     <value>将主窗体隐藏到通知区域</value>
   </data>
+  <data name="MainOverview" xml:space="preserve">
+    <value>概览</value>
+  </data>
+  <data name="MainAllInstances" xml:space="preserve">
+    <value>全部实例</value>
+  </data>
+  <data name="MainWorkbench" xml:space="preserve">
+    <value>实例工作台</value>
+  </data>
+  <data name="MainMySql" xml:space="preserve">
+    <value>MySQL</value>
+  </data>
+  <data name="MainRedis" xml:space="preserve">
+    <value>Redis</value>
+  </data>
+  <data name="MainSsh" xml:space="preserve">
+    <value>SSH</value>
+  </data>
+  <data name="MainDatabaseConnections" xml:space="preserve">
+    <value>数据库连接</value>
+  </data>
+  <data name="MainCacheConnections" xml:space="preserve">
+    <value>缓存连接</value>
+  </data>
+  <data name="MainServerConnections" xml:space="preserve">
+    <value>服务器连接</value>
+  </data>
+  <data name="MainStorageConnections" xml:space="preserve">
+    <value>存储连接</value>
+  </data>
+  <data name="MainAddressUnavailable" xml:space="preserve">
+    <value>暂无地址</value>
+  </data>
+  <data name="MainNeverOpened" xml:space="preserve">
+    <value>暂无本机访问记录</value>
+  </data>
+  <data name="MainOpenHint" xml:space="preserve">
+    <value>双击实例，在独立窗口中开始工作。</value>
+  </data>
+  <data name="MainListDescription" xml:space="preserve">
+    <value>{0} 个实例。双击实例，在独立窗口中开始工作。</value>
+  </data>
+  <data name="MainAllProviders" xml:space="preserve">
+    <value>所有提供商</value>
+  </data>
+  <data name="MainAllTags" xml:space="preserve">
+    <value>所有标签</value>
+  </data>
+  <data name="MainSortRecent" xml:space="preserve">
+    <value>最近打开</value>
+  </data>
+  <data name="MainSortName" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="MainRange" xml:space="preserve">
+    <value>显示 {0}–{1} 项，共 {2} 个实例</value>
+  </data>
+  <data name="MainPage" xml:space="preserve">
+    <value>{0} / {1}</value>
+  </data>
+  <data name="MainNavigation" xml:space="preserve">
+    <value>主窗体导航</value>
+  </data>
+  <data name="MainManageTags" xml:space="preserve">
+    <value>管理标签</value>
+  </data>
+  <data name="MainSearch" xml:space="preserve">
+    <value>搜索实例名称、地址或标签…</value>
+  </data>
+  <data name="MainSearchShortcut" xml:space="preserve">
+    <value>Ctrl+F</value>
+  </data>
+  <data name="MainSort" xml:space="preserve">
+    <value>实例排序</value>
+  </data>
+  <data name="MainViewAll" xml:space="preserve">
+    <value>查看全部实例</value>
+  </data>
+  <data name="MainLastOpened" xml:space="preserve">
+    <value>上次打开</value>
+  </data>
+  <data name="TagsLabel" xml:space="preserve">
+    <value>标签</value>
+  </data>
+  <data name="MainInstanceTable" xml:space="preserve">
+    <value>实例列表</value>
+  </data>
+  <data name="MainMoreActions" xml:space="preserve">
+    <value>更多实例操作</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>打开</value>
+  </data>
+  <data name="MainEmptyList" xml:space="preserve">
+    <value>暂无匹配实例。请添加实例或调整筛选条件。</value>
+  </data>
+  <data name="PreviousPage" xml:space="preserve">
+    <value>上一页</value>
+  </data>
+  <data name="NextPage" xml:space="preserve">
+    <value>下一页</value>
+  </data>
+  <data name="MainRecentLocalHint" xml:space="preserve">
+    <value>仅记录此设备的最近访问。</value>
+  </data>
+  <data name="MainTableHint" xml:space="preserve">
+    <value>双击实例或通过“…”菜单打开</value>
+  </data>
+  <data name="MainRecent" xml:space="preserve">
+    <value>最近打开</value>
+  </data>
+  <data name="MainCount" xml:space="preserve">
+    <value>{0} 个实例</value>
+  </data>
+  <data name="MainStorage" xml:space="preserve">
+    <value>对象存储</value>
+  </data>
+  <data name="MainProvider" xml:space="preserve">
+    <value>提供商</value>
+  </data>
+  <data name="MainRename" xml:space="preserve">
+    <value>重命名</value>
+  </data>
+  <data name="MainDeleteInstance" xml:space="preserve">
+    <value>删除实例</value>
+  </data>
+  <data name="MainDeleteWarning" xml:space="preserve">
+    <value>是否删除“{0}”的配置及标签关联？此操作不会删除远程服务或数据。</value>
+  </data>
+  <data name="MainDeletePrompt" xml:space="preserve">
+    <value>输入“{0}”后才能删除。</value>
+  </data>
+  <data name="MainDeletePhrase" xml:space="preserve">
+    <value>我知道了</value>
+  </data>
+  <data name="MainDeleteConfirmation" xml:space="preserve">
+    <value>删除确认文字</value>
+  </data>
+  <data name="MainRecentEmpty" xml:space="preserve">
+    <value>暂无最近访问，打开实例后将在这里显示。</value>
+  </data>
 </root>

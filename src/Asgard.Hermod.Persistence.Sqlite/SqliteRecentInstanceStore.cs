@@ -16,7 +16,7 @@ public sealed class SqliteRecentInstanceStore(IFreeSql database) : IRecentInstan
         {
             return (JsonSerializer.Deserialize<RecentInstance[]>(value) ?? [])
                 .Where(item => item is not null && !string.IsNullOrWhiteSpace(item.InstanceId))
-                .OrderByDescending(item => item.OpenedAt).DistinctBy(item => item.InstanceId).Take(RecentInstance.MaximumCount).ToArray();
+                .OrderByDescending(item => item.OpenedAt).DistinctBy(item => item.InstanceId).ToArray();
         }
         catch (JsonException) { return []; }
     }
@@ -33,7 +33,7 @@ public sealed class SqliteRecentInstanceStore(IFreeSql database) : IRecentInstan
             """;
         var value = command.CreateParameter();
         value.ParameterName = "@value";
-        value.Value = JsonSerializer.Serialize(instances.Take(RecentInstance.MaximumCount).ToArray());
+        value.Value = JsonSerializer.Serialize(instances.DistinctBy(item => item.InstanceId).ToArray());
         command.Parameters.Add(value);
         var time = command.CreateParameter();
         time.ParameterName = "@time";

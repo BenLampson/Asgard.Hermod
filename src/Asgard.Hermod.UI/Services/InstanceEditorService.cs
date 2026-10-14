@@ -51,14 +51,18 @@ public sealed class InstanceEditorService : IInstanceEditor
         var tagIds = _tags is null ? null : await _configurations.GetTagIdsAsync(instanceId);
         using var model = new NewInstanceViewModel(_providers, _configurations, existing, connection, _accounts, _sync, tags, tagIds);
         var dialog = new NewInstanceWindow(model, _contents) { Owner = _getOwner() };
+        var expectedAccount = _accounts?.Account;
+        dialog.DeleteRequested = () => Task.FromResult(new DeleteInstanceDialog(existing.Name,
+            () => _configurations.DeleteAsync(instanceId, new InstanceDeleteRequest(expectedAccount)))
+        { Owner = dialog }.ShowDialog() == true);
         return ShowAndClose(dialog, model);
     }
 
     /// <inheritdoc />
-    public Task<InstanceSummary?> RenameAsync(string instanceId) => EditMetadataAsync(instanceId, false);
+    public Task<InstanceSummary?> RenameAsync(string instanceId) => EditMetadataAsync(instanceId, true, true);
     /// <inheritdoc />
     public Task<InstanceSummary?> EditTagsAsync(string instanceId) => EditMetadataAsync(instanceId, true);
-    private async Task<InstanceSummary?> EditMetadataAsync(string instanceId, bool editTags)
+    private async Task<InstanceSummary?> EditMetadataAsync(string instanceId, bool editTags, bool editNameAndTags = false)
     {
         if (_sync is not null) await _sync.PrepareWorkspaceAsync();
         var expectedAccount = _accounts?.Account;
@@ -67,10 +71,10 @@ public sealed class InstanceEditorService : IInstanceEditor
         var tags = editTags && _tags is not null ? await _tags.GetTagsAsync() : null;
         var selectedIds = editTags ? await _configurations.GetTagIdsAsync(instanceId) : null;
         InstanceSummary? result = null;
-        using var model = new MetadataEditorViewModel(Text.Get(editTags ? "EditInstanceTags" : "RenameInstance"), Text.Get("InstanceName"), existing.Name, 128,
+        using var model = new MetadataEditorViewModel(Text.Get(editTags && !editNameAndTags ? "EditInstanceTags" : "RenameInstance"), Text.Get("InstanceName"), existing.Name, 128,
             async (name, ids, token) => result = await _configurations.UpdateMetadataAsync(instanceId, new()
-            { Name = editTags ? null : name, TagIds = editTags ? ids : null, ExpectedAccount = expectedAccount, CheckExpectedAccount = true }, token),
-            isTagEditing: editTags, tags: tags, selectedIds: selectedIds);
+            { Name = editTags && !editNameAndTags ? null : name, TagIds = editTags ? ids : null, ExpectedAccount = expectedAccount, CheckExpectedAccount = true }, token),
+            isTagEditing: editTags, tags: tags, selectedIds: selectedIds, editNameAndTags: editNameAndTags);
         var dialog = new MetadataEditorWindow(model) { Owner = _getOwner() };
         try { return dialog.ShowDialog() == true ? result : null; }
         finally { dialog.Close(); }

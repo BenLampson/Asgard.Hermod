@@ -63,10 +63,13 @@ version-1 baseline to represent a later schema.
 
 ## Service lifetime and verification
 
-The Home page stores up to six recently opened instance IDs and UTC timestamps
+The main window stores each instance's last access ID and UTC timestamp
 in `app_setting` under `workspace.recent`, through `IRecentInstanceStore`. Names,
-endpoints and credentials are not copied into this history. The page resolves
-names from current instance snapshots and hides records for deleted instances.
+endpoints and credentials are not copied into this history. The table resolves
+names from current instance snapshots and prunes records for deleted instances.
+Overview displays only the six most recent entries; all-instance sorting retains
+older access facts, so visiting a seventh instance does not erase the first one's
+last-opened time. Existing bounded history remains readable without migration.
 The built-in local terminal remains available without a saved instance profile.
 History is specific to this device and is not included in workspace sync.
 Opening a page is recorded as an access, not as a successful remote connection.

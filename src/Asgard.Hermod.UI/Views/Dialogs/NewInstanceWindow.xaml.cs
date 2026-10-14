@@ -10,6 +10,9 @@ public partial class NewInstanceWindow : HermodDialog
     private readonly IReadOnlyDictionary<string, IInstanceConfigurationContentProvider> _contents;
     private Size _preferredSize = new(820, 600);
     private bool _closingAfterFailure;
+    private bool _deleting;
+    /// <summary>仅编辑已有配置时装配删除入口；操作由应用服务执行。</summary>
+    public Func<Task<bool>>? DeleteRequested { get; set; }
 
     /// <summary>绑定由宿主提供的真实连接器和持久化状态。</summary>
     public NewInstanceWindow(NewInstanceViewModel model, IEnumerable<IInstanceConfigurationContentProvider>? contents = null)
@@ -28,7 +31,7 @@ public partial class NewInstanceWindow : HermodDialog
     /// <summary>保存事务正在提交时暂缓关闭，避免保存成功却返回取消结果。</summary>
     protected override void OnClosing(CancelEventArgs args)
     {
-        if (_model.IsSaving && !_closingAfterFailure)
+        if ((_model.IsSaving || _deleting) && !_closingAfterFailure)
         {
             args.Cancel = true;
             return;
@@ -36,6 +39,17 @@ public partial class NewInstanceWindow : HermodDialog
         base.OnClosing(args);
         if (!args.Cancel)
             _model.Dispose();
+    }
+    private async void OnDeleteClick(object sender, RoutedEventArgs args)
+    {
+        if (_deleting || _model.IsSaving || _model.IsTesting || DeleteRequested is null) return;
+        _deleting = true;
+        try
+        {
+            if (await DeleteRequested()) { _closingAfterFailure = true; DialogResult = true; }
+        }
+        catch (Exception error) { new MessageDialog(Text.Get("Hermod"), Text.Error(error)) { Owner = this }.ShowDialog(); }
+        finally { _deleting = false; }
     }
 
     /// <summary>模态流程已退出时取消异步工作并回收窗口；异常路径不留下禁用的保存表单。</summary>

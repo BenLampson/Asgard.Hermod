@@ -3,6 +3,9 @@ namespace Asgard.Hermod.Persistence.Sqlite;
 /// <summary>隔离 SQLite 连接、密文记录和事务；界面通过应用服务消费安全快照。</summary>
 public interface ILocalConfigurationRepository
 {
+    /// <summary>同一写事务删除配置及其标签关联，不读取明文连接。</summary>
+    void DeleteInstance(string instanceId, CancellationToken cancellationToken = default) =>
+        throw new NotSupportedException(Text.Get("TheCurrentConfigurationServiceDoesNotSupportEditingInstances"));
     /// <summary>读取实例与完整标签快照，不进行任何凭据解密。</summary>
     LocalConfigurationSnapshot GetSnapshot(CancellationToken cancellationToken = default);
     /// <summary>事务只更新指定元数据列和关联，提交前准备返回快照，不触碰密文。</summary>

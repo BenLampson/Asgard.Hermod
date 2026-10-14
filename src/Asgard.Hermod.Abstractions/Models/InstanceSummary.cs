@@ -8,6 +8,8 @@ public sealed record InstanceSummary(
 {
     /// <summary>稳定标签标识用于环境辨识；显示路径不能作为环境身份。</summary>
     public IReadOnlyList<string> TagIds { get; init; } = [];
+    /// <summary>仅包含主机与端口或无用户信息、路径和查询参数的服务地址；不复用提供商名称。</summary>
+    public string ConnectionAddress { get; init; } = "";
     /// <summary>持久化配置身份已存在；不代表此刻仍能访问远程服务。</summary>
     public bool HasConfiguration => !string.IsNullOrWhiteSpace(TypeId) && !string.IsNullOrWhiteSpace(ProviderId);
 }
