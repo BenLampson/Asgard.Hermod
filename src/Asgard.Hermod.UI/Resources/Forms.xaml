@@ -88,14 +88,14 @@
                                              VerticalContentAlignment="Center" PasswordChar="●"
                                              MaxLength="{TemplateBinding MaxLength}"
                                              CaretBrush="{DynamicResource TextPrimaryBrush}"
-                                             SelectionBrush="{DynamicResource AccentWeakBrush}"
+                                             SelectionBrush="{DynamicResource ActionFillBrush}" SelectionTextBrush="{DynamicResource InverseTextBrush}" SelectionOpacity="1"
                                              AutomationProperties.Name="{Binding Path=(AutomationProperties.Name), RelativeSource={RelativeSource TemplatedParent}}" />
                                 <TextBox x:Name="PART_PlainEditor" Style="{x:Null}" Visibility="Collapsed" IsUndoEnabled="False"
                                          Background="Transparent" BorderThickness="0" FocusVisualStyle="{x:Null}"
                                          FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}"
                                          Foreground="{TemplateBinding Foreground}" Padding="{TemplateBinding Padding}"
                                          VerticalContentAlignment="Center" MaxLength="{TemplateBinding MaxLength}"
-                                         CaretBrush="{DynamicResource TextPrimaryBrush}" SelectionBrush="{DynamicResource AccentWeakBrush}"
+                                         CaretBrush="{DynamicResource TextPrimaryBrush}" SelectionBrush="{DynamicResource ActionFillBrush}" SelectionTextBrush="{DynamicResource InverseTextBrush}" SelectionOpacity="1"
                                          AutomationProperties.Name="{Binding Path=(AutomationProperties.Name), RelativeSource={RelativeSource TemplatedParent}}" />
                                 <Button x:Name="PART_RevealButton" Grid.Column="1" Style="{DynamicResource IconButton}"
                                         Margin="0,0,4,0" VerticalAlignment="Center" IsDefault="False">

@@ -15,7 +15,9 @@
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="CaretBrush" Value="{DynamicResource TextPrimaryBrush}" />
-        <Setter Property="SelectionBrush" Value="{DynamicResource AccentWeakBrush}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource ActionFillBrush}" />
+        <Setter Property="SelectionTextBrush" Value="{DynamicResource InverseTextBrush}" />
+        <Setter Property="SelectionOpacity" Value="1" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
