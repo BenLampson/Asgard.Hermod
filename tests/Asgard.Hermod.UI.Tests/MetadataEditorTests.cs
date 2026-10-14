@@ -74,7 +74,19 @@ public sealed class MetadataEditorTests(WpfTestFixture fixture)
         var page = environment.Shell.Workspace.SelectedTab!;
         string pageId = page.Id;
         environment.Editor.RenameHandler = id => Task.FromResult<InstanceSummary?>(item.Summary with { Name = "Renamed", DisplayName = "Renamed" });
-        await environment.Shell.Sidebar.RenameInstanceCommand.ExecuteAsync(item);
+        var title = new InstanceNameButton { Instance = item, FontSize = 15 };
+        var view = new AppShellView { DataContext = environment.Shell, Content = title };
+        var window = new HermodWindow { Content = view, Width = 520, Height = 260 };
+        try
+        {
+            WindowPreviewCapture.Show(window); await WindowTestVisuals.UpdateLayoutAsync(window);
+            var rename = Assert.Single(WindowTestVisuals.Descendants<Button>(title));
+            Assert.Same(environment.Shell.Sidebar.RenameInstanceCommand, rename.Command);
+            Assert.Same(item, rename.CommandParameter);
+            await environment.Shell.Sidebar.RenameInstanceCommand.ExecuteAsync(rename.CommandParameter);
+            Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(title), text => text.Text == "Renamed");
+        }
+        finally { window.Close(); }
         Assert.Same(page, environment.Shell.Workspace.SelectedTab);
         Assert.Equal(pageId, page.Id); Assert.Equal(item.Id, page.InstanceId); Assert.Equal("Renamed", page.Header);
         environment.Editor.EditTagsHandler = id => Task.FromResult<InstanceSummary?>(item.Summary with
@@ -106,7 +118,7 @@ public sealed class MetadataEditorTests(WpfTestFixture fixture)
                 await WpfTestFixture.DrainDispatcherAsync();
                 var rename = Assert.IsType<MenuItem>(menu.Items[0]);
                 Assert.Same(instance, rename.CommandParameter);
-                Assert.Same(environment.Shell.Sidebar.RenameInstanceCommand, rename.Command);
+                Assert.Same(environment.Shell.Sidebar.EditInstanceTagsCommand, rename.Command);
                 Assert.Equal(!instance.IsLocal, rename.IsEnabled);
                 menu.IsOpen = false;
             }

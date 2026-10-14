@@ -31,6 +31,7 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
         Tools = [new("query.new", Text.Get("MySqlNewQuery"), "file-code", NewQueryCommand), new("query.open", Text.Get("MySqlOpenQuery"), "file", OpenQueryCommand),
             new("result.export", Text.Get("MySqlExportLoaded"), "download", ExportCommand), new("tree.refresh", Text.Get("MySqlRefreshBranch"), "refresh-cw", RefreshTreeCommand),
             new("connection.reconnect", Text.Get("MySqlReconnect"), "refresh-cw", ReconnectCommand)];
+        Tabs.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasTabs));
     }
     /// <summary>对象原始名称或已本地化的文稿标题。</summary>
     public string Name => Header;
@@ -56,6 +57,8 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
     public string Search { get; set { if (SetProperty(ref field, value)) Tree?.Filter(value); } } = "";
     /// <summary>按打开顺序保存的独立对象和查询页签。</summary>
     public ObservableCollection<MySqlTabViewModel> Tabs { get; } = [];
+    /// <summary>最后一个页签关闭后展示引导，并隐藏空页签轨道。</summary>
+    public bool HasTabs => Tabs.Count > 0;
     public MySqlTabViewModel? ActiveTab
     {
         get; set
@@ -141,9 +144,15 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
     }
     private async Task CloseTabAsync(MySqlTabViewModel? tab)
     {
-        if (tab is null || !await tab.RequestCloseAsync()) return;
-        int index = Tabs.IndexOf(tab); tab.PropertyChanged -= OnTabChanged; Tabs.Remove(tab); await tab.DisposeAsync();
-        if (ReferenceEquals(ActiveTab, tab)) ActiveTab = Tabs.Count == 0 ? null : Tabs[Math.Min(Math.Max(0, index), Tabs.Count - 1)];
+        if (tab is null || !Tabs.Contains(tab) || !await tab.RequestCloseAsync()) return;
+        int index = Tabs.IndexOf(tab);
+        // ListBox 删除选中项会同步回写空值，必须在移除前选定相邻页签。
+        if (ReferenceEquals(ActiveTab, tab))
+        {
+            ActiveTab = Tabs.Count == 1 ? null : Tabs[index + 1 < Tabs.Count ? index + 1 : index - 1];
+            if (ReferenceEquals(ActiveTab, tab)) return;
+        }
+        tab.PropertyChanged -= OnTabChanged; Tabs.Remove(tab); await tab.DisposeAsync();
     }
     private async Task RefreshTreeAsync()
     {

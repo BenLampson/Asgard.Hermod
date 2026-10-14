@@ -86,6 +86,8 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     public ObservableCollection<ObjectStorageTransferViewModel> Transfers { get; } = [];
     /// <summary>实例编辑后立即更新标题。</summary>
     public string Name => _instance.DisplayName;
+    /// <summary>标题改名和类型图标使用外壳的安全元数据。</summary>
+    public InstanceItemViewModel Instance => _instance;
     /// <summary>区域随当前容器变化，未选择时仅显示服务身份。</summary>
     public string Subtitle => (string.IsNullOrWhiteSpace(_instance.Summary.Endpoint) ? Text.Get("ObjectStorage") : _instance.Summary.Endpoint)
         + (SelectedBucket is null ? "" : " / " + SelectedBucket.Region);

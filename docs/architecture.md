@@ -337,3 +337,12 @@ with native arrow-key selection; modal editors cycle within the window and
 restore focus to their entry point on close. Interactive controls retain their
 visible focus treatment. WPF test hosts use the desktop application's selection
 rendering switch and verify rendered text above opaque selection backgrounds.
+
+Instance type icons share one mapping across the picker, navigation and workspace:
+MySQL uses `database`, storage uses `box`, Redis uses `layers`, and SSH uses
+`terminal`. Their silhouettes remain distinct in monochrome. The shared
+`InstanceNameButton` places a visible pencil beside workspace titles and uses the
+shell metadata command; the sidebar context menu retains tag editing. Renaming
+preserves stable IDs, connections and drafts. MySQL selects an adjacent internal
+tab before removal, and shows a localized query/object guide after the last tab
+closes while keeping its metadata connection and object tree.

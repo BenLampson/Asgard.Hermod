@@ -7,7 +7,6 @@
              x:Name="SidebarRoot">
     <UserControl.Resources>
         <ContextMenu x:Key="InstanceActions" x:Shared="False" DataContext="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource Self}}">
-            <MenuItem Header="{loc:Loc Rename}" Command="{Binding RenameInstanceCommand}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
             <MenuItem Header="{loc:Loc EditInstanceTags}" Command="{Binding EditInstanceTagsCommand}" CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
         </ContextMenu>
         <!-- 所有存储提供商共用琥珀色类型图标，实例列表不展示 Bucket 展开箭头。 -->

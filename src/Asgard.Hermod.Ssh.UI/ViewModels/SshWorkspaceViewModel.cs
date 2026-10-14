@@ -52,6 +52,8 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
 
     /// <summary>当前实例显示名。</summary>
     public string Name { get; private set; }
+    /// <summary>标题改名与侧栏共用安全元数据对象。</summary>
+    public InstanceItemViewModel Instance => _instance;
     /// <summary>连接完成后替换缓冲区，失败时保留原输出；关闭时解绑。</summary>
     public TerminalSession? Session => IsClosed ? null : _terminal;
     /// <summary>稳定状态决定命令与输入。</summary>

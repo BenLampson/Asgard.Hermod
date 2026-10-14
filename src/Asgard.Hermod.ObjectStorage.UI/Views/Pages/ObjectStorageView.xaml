@@ -12,9 +12,9 @@
         <Border BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,0,0,1" Padding="24,22,24,18" MinHeight="86">
             <Grid>
                 <Grid.ColumnDefinitions><ColumnDefinition Width="22" /><ColumnDefinition Width="12" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="32" /></Grid.ColumnDefinitions>
-                <controls:IconView Kind="{Binding Icon}" Width="22" Height="22" Foreground="{DynamicResource WarningBrush}" VerticalAlignment="Center" />
+                <controls:IconView Kind="{Binding Instance.TypeIcon}" Width="22" Height="22" Foreground="{DynamicResource WarningBrush}" VerticalAlignment="Center" />
                 <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,0,16,0">
-                    <TextBlock Text="{Binding Name}" FontSize="20" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" ToolTip="{Binding Name}" />
+                    <controls:InstanceNameButton Instance="{Binding Instance}" FontSize="20" HorizontalAlignment="Left" MaxWidth="340" />
                     <TextBlock Text="{Binding Subtitle}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,7,0,0" TextTrimming="CharacterEllipsis" />
                 </StackPanel>
                 <ItemsControl Grid.Column="3" ItemsSource="{Binding Tags}" VerticalAlignment="Center" MaxWidth="240">

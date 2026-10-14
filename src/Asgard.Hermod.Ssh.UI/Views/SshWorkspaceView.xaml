@@ -11,7 +11,7 @@
     <Grid.ColumnDefinitions><ColumnDefinition Width="32" /><ColumnDefinition x:Name="IdentityColumn" Width="220" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
     <Border Width="32" Height="32" CornerRadius="7" Background="{DynamicResource AccentWeakBrush}"><controls:IconView Kind="terminal" Width="18" Height="18" Foreground="{DynamicResource AccentBrush}" /></Border>
     <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0" HorizontalAlignment="Stretch">
-     <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+     <controls:InstanceNameButton Instance="{Binding Instance}" FontSize="16" HorizontalAlignment="Left" MaxWidth="280" />
      <TextBlock Text="{Binding RemoteIdentity}" FontSize="11" FontFamily="{DynamicResource MonoFont}" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
     </StackPanel>
     <controls:StatusBadge x:Name="ConnectionBadge" Grid.Column="2" Text="{Binding Status}" Tone="{Binding Tone}" VerticalAlignment="Center" Margin="0,0,12,0" />
