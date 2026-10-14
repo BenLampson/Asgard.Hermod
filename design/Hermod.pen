@@ -52681,7 +52681,7 @@
                           "fill": "$muted",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
-                          "content": "私钥保留在本机，其他设备需要重新选择文件。",
+                          "content": "测试时导入私钥，保存时加密；账号同步后可在其他电脑上使用。",
                           "lineHeight": 1.5,
                           "fontFamily": "Inter",
                           "fontSize": 11,
@@ -56509,7 +56509,7 @@
                           "fill": "$accent-ink",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
-                          "content": "私钥文件路径和 Agent 依赖当前设备，其他设备需要重新配置。",
+                          "content": "私钥内容随配置加密同步；Agent 仍依赖当前设备。旧路径需在有文件的设备上重新测试并保存。",
                           "lineHeight": 1.5,
                           "fontFamily": "Inter",
                           "fontSize": 12,
@@ -60018,7 +60018,7 @@
               "fill": "$muted",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "保存文件引用，不上传私钥文件。Agent 依赖本机；其他设备需重新选择凭据。指纹信任按设备记录，账户同步不替代本机核验。",
+              "content": "私钥文件限制 UTF-8 / 32 KiB。测试与保存使用同一导入内容，本机 DPAPI 与云端同步密码分别加密；连接从内存读取，不产生临时明文文件。Agent 及指纹信任仍属于当前设备。",
               "lineHeight": 1.5,
               "fontFamily": "Inter",
               "fontSize": 12,
@@ -164126,7 +164126,7 @@
       "x": 13910,
       "y": 29992,
       "name": "10B / component/MySQL Object Tree · 数据库对象树",
-      "context": "层级树：数据库→对象分类→对象→列/索引/外键。分支展开懒加载，叶对象打开标签。树选中不隐式更改 SQL 标签的执行数据库。",
+      "context": "标题仅提供刷新，不显示暗示新增的 +。按名称打开已有对象移入对象树菜单。确认加载为空的分支隐藏展开按钮；加载失败保留重试。选中与焦点装饰仅作用于当前行。",
       "reusable": true,
       "clip": true,
       "width": 240,
@@ -164189,6 +164189,7 @@
               "height": 28,
               "fill": "#00000000",
               "stroke": "#00000000",
+              "enabled": false,
               "descendants": {
                 "yIeTC": {
                   "icon": "panel-left-close",
@@ -164973,7 +164974,7 @@
       "x": 14230,
       "y": 29992,
       "name": "10B / component/MySQL Object Tabs · 表与查询标签",
-      "context": "实例内部的对象标签。对象按数据库+对象类型+名称去重，SQL 查询按本地文档 ID 独立。保留各自数据库上下文、SQL 草稿、结果、滚动位置。",
+      "context": "页签只显示对象名，完整路径通过悬停提示与无障碍名称提供。鼠标移开立即关闭提示，最长显示 3 秒；键盘焦点不打开悬浮提示。",
       "reusable": true,
       "width": 800,
       "height": 40,
@@ -165039,7 +165040,7 @@
                   "id": "U6YGD8",
                   "name": "标签标题",
                   "fill": "$accent-ink",
-                  "content": "app.users",
+                  "content": "users",
                   "lineHeight": 1.45,
                   "fontFamily": "Inter",
                   "fontSize": 13,
@@ -165101,7 +165102,7 @@
                   "id": "rmcci",
                   "name": "标签标题",
                   "fill": "$muted",
-                  "content": "app.orders",
+                  "content": "orders",
                   "lineHeight": 1.45,
                   "fontFamily": "Inter",
                   "fontSize": 13,
@@ -165534,6 +165535,83 @@
                   "children": [
                     {
                       "type": "frame",
+                      "id": "U6F7X",
+                      "name": "10B / component/MySQL Object Context · 数据库与对象定位",
+                      "context": "数据库 / Schema 为当前对象固定上下文，不由树展开或其他查询切换改变。长名称省略并用完整路径提示。",
+                      "reusable": true,
+                      "width": "fill_container",
+                      "height": 64,
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "cqzhe",
+                          "name": "对象类型",
+                          "width": 24,
+                          "height": 24,
+                          "icon": "table-2",
+                          "library": "lucide",
+                          "fill": "$accent"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "QhjiV",
+                          "name": "对象位置文案",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 5,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "jO834",
+                              "name": "对象原名",
+                              "fill": "$ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "users",
+                              "fontFamily": "Inter",
+                              "fontSize": 18,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "XQN4d",
+                              "name": "数据库 Schema 路径",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "VEV2y",
+                                  "name": "上下文标签",
+                                  "fill": "$muted",
+                                  "content": "数据库 / Schema",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "Do25y",
+                                  "name": "数据库原名",
+                                  "fill": "$body",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "app",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
                       "id": "gUMRb",
                       "name": "对象内容分区",
                       "width": "fill_container",
@@ -165604,8 +165682,11 @@
                         {
                           "type": "frame",
                           "id": "n8SYM",
+                          "x": 114,
+                          "y": 0,
                           "name": "索引 分区",
-                          "height": "fill_container",
+                          "enabled": false,
+                          "height": 38,
                           "stroke": "#00000000",
                           "strokeWidth": {
                             "bottom": 2
@@ -165632,8 +165713,11 @@
                         {
                           "type": "frame",
                           "id": "zEIwh",
+                          "x": 171,
+                          "y": 0,
                           "name": "外键 分区",
-                          "height": "fill_container",
+                          "enabled": false,
+                          "height": 38,
                           "stroke": "#00000000",
                           "strokeWidth": {
                             "bottom": 2
@@ -165660,8 +165744,11 @@
                         {
                           "type": "frame",
                           "id": "E9e2t1",
+                          "x": 228,
+                          "y": 0,
                           "name": "DDL 分区",
-                          "height": "fill_container",
+                          "enabled": false,
+                          "height": 38,
                           "stroke": "#00000000",
                           "strokeWidth": {
                             "bottom": 2
@@ -165783,7 +165870,7 @@
                       "ref": "U5loSX",
                       "name": "MySQL 表数据网格组件引用",
                       "width": 802,
-                      "height": 442,
+                      "height": "fill_container",
                       "descendants": {
                         "IWGv7": {
                           "fontSize": 12
@@ -167534,10 +167621,12 @@
                     {
                       "type": "frame",
                       "id": "CCoON",
-                      "name": "表分页与范围",
+                      "name": "10B / component/MySQL Data Footer · 单行分页与草稿",
+                      "context": "32px 单行。编辑动作仅在已有且可编辑的数据行出现。首个空页隐藏分页；后续空页保留返回上一页。空结果不显示编辑帮助。左侧有草稿时显示待保存数量。",
+                      "reusable": true,
                       "width": "fill_container",
-                      "height": 36,
-                      "gap": 10,
+                      "height": 32,
+                      "gap": 8,
                       "alignItems": "center",
                       "children": [
                         {
@@ -167547,94 +167636,73 @@
                           "fill": "$muted",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
-                          "content": "第 1–100 行 · 按 id 排序",
+                          "content": "第 1–200 行（分页视图）",
                           "lineHeight": 1.45,
                           "fontFamily": "Inter",
                           "fontSize": 12,
                           "fontWeight": "normal"
                         },
                         {
-                          "id": "HErG8",
-                          "type": "ref",
-                          "ref": "P1khT",
-                          "name": "每页行数",
-                          "width": 120,
-                          "height": 28,
-                          "descendants": {
-                            "KGdRn": {
-                              "content": "100 行 / 页"
-                            }
-                          }
+                          "type": "icon",
+                          "id": "UHQ0s",
+                          "name": "编辑说明 · 悬停查看完整帮助",
+                          "width": 14,
+                          "height": 14,
+                          "icon": "info",
+                          "library": "lucide",
+                          "fill": "$muted"
                         },
                         {
-                          "id": "Kw8Hi",
+                          "id": "MdW5C",
                           "type": "ref",
-                          "ref": "Q2r8z",
-                          "name": "上一页 按钮",
+                          "ref": "WH5j4",
+                          "name": "上一页 · 提示与无障碍名称",
+                          "width": 32,
                           "height": 32,
                           "opacity": 0.45,
-                          "fill": "$surface",
-                          "stroke": "$line",
-                          "strokeWidth": 1,
+                          "x": 575,
+                          "y": 0,
                           "descendants": {
-                            "u5fFux": {
-                              "enabled": false,
-                              "icon": "plus",
-                              "fill": "$muted"
-                            },
-                            "NpJY2": {
-                              "content": "上一页",
-                              "fill": "$body",
-                              "fontSize": 13
+                            "yIeTC": {
+                              "icon": "arrow-left",
+                              "fill": "$body"
                             }
                           }
                         },
                         {
-                          "id": "OURlK",
+                          "id": "rky43",
                           "type": "ref",
-                          "ref": "Q2r8z",
-                          "name": "下一页 按钮",
+                          "ref": "WH5j4",
+                          "name": "下一页 · 提示与无障碍名称",
+                          "width": 32,
                           "height": 32,
-                          "opacity": 1,
-                          "fill": "$surface",
-                          "stroke": "$line",
-                          "strokeWidth": 1,
+                          "x": 615,
+                          "y": 0,
                           "descendants": {
-                            "u5fFux": {
-                              "enabled": false,
-                              "icon": "plus",
-                              "fill": "$muted"
-                            },
-                            "NpJY2": {
-                              "content": "下一页",
-                              "fill": "$body",
-                              "fontSize": 13
+                            "yIeTC": {
+                              "icon": "arrow-right",
+                              "fill": "$body"
                             }
                           }
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "y8ihEY",
-                      "name": "表格更改操作栏",
-                      "width": "fill_container",
-                      "height": 36,
-                      "gap": 8,
-                      "alignItems": "center",
-                      "children": [
+                        },
                         {
-                          "type": "text",
-                          "id": "DrnJl",
-                          "name": "表格编辑操作帮助",
-                          "fill": "$muted",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "双击编辑 · 展开按钮打开字段窗口",
-                          "lineHeight": 1.45,
-                          "fontFamily": "Inter",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
+                          "type": "frame",
+                          "id": "XVsRf",
+                          "name": "分页与草稿操作分隔",
+                          "width": 17,
+                          "height": 32,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "BRVNu",
+                              "name": "操作组分隔线",
+                              "fill": "$line",
+                              "width": 1,
+                              "height": 18
+                            }
+                          ]
                         },
                         {
                           "id": "J3uxgJ",
@@ -167655,7 +167723,7 @@
                             "NpJY2": {
                               "content": "还原更改",
                               "fill": "$body",
-                              "fontSize": 13
+                              "fontSize": 12
                             }
                           }
                         },
@@ -167671,14 +167739,14 @@
                           "strokeWidth": 1,
                           "descendants": {
                             "u5fFux": {
-                              "enabled": true,
+                              "enabled": false,
                               "icon": "save",
                               "fill": "$ink-inv"
                             },
                             "NpJY2": {
                               "content": "保存更改",
                               "fill": "$ink-inv",
-                              "fontSize": 13
+                              "fontSize": 12
                             }
                           }
                         }
@@ -168037,12 +168105,6 @@
                   "fontSize": 13
                 },
                 "Xry6g": {
-                  "fontSize": 13
-                },
-                "HErG8": {
-                  "width": 120
-                },
-                "DrnJl": {
                   "fontSize": 13
                 },
                 "TAVX5": {
@@ -170916,15 +170978,24 @@
                   "type": "frame",
                   "id": "mDhnB",
                   "name": "MySQL 页面内容",
-                  "width": 834,
-                  "height": 650,
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$surface",
                   "layout": "vertical",
-                  "gap": 8,
+                  "gap": 12,
                   "padding": [
                     12,
                     16
                   ],
                   "children": [
+                    {
+                      "id": "l4JIZ",
+                      "type": "ref",
+                      "ref": "U6F7X",
+                      "name": "当前对象数据库与名称",
+                      "width": "fill_container",
+                      "height": 64
+                    },
                     {
                       "type": "frame",
                       "id": "fSity",
@@ -170997,8 +171068,11 @@
                         {
                           "type": "frame",
                           "id": "NSU2n",
+                          "x": 114,
+                          "y": 0,
                           "name": "索引 分区",
-                          "height": "fill_container",
+                          "enabled": false,
+                          "height": 38,
                           "stroke": "#00000000",
                           "strokeWidth": {
                             "bottom": 2
@@ -171025,8 +171099,11 @@
                         {
                           "type": "frame",
                           "id": "dtplO",
+                          "x": 171,
+                          "y": 0,
                           "name": "外键 分区",
-                          "height": "fill_container",
+                          "enabled": false,
+                          "height": 38,
                           "stroke": "#00000000",
                           "strokeWidth": {
                             "bottom": 2
@@ -171053,8 +171130,11 @@
                         {
                           "type": "frame",
                           "id": "lTKM3",
+                          "x": 228,
+                          "y": 0,
                           "name": "DDL 分区",
-                          "height": "fill_container",
+                          "enabled": false,
+                          "height": 38,
                           "stroke": "#00000000",
                           "strokeWidth": {
                             "bottom": 2
@@ -171082,10 +171162,143 @@
                     },
                     {
                       "type": "frame",
+                      "id": "b85ZM",
+                      "name": "10B / component/MySQL Structure Sections · 结构导航",
+                      "context": "复用 ui/segmented 视觉规范，分别切换列、索引、外键、触发器与 DDL；DDL 使用完整正文。无适用分类时不展示。",
+                      "reusable": true,
+                      "width": 520,
+                      "height": 36,
+                      "fill": "$line-soft",
+                      "cornerRadius": 6,
+                      "gap": 2,
+                      "padding": 3,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "lPWl0",
+                          "name": "columns segment",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "fill": "$surface",
+                          "cornerRadius": 4,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "GXVus",
+                              "name": "columns label",
+                              "fill": "$ink",
+                              "content": "列",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "okEIB",
+                          "name": "indexes segment",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "fill": "#00000000",
+                          "cornerRadius": 4,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "M4fxMT",
+                              "name": "indexes label",
+                              "fill": "$muted",
+                              "content": "索引",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "TErpv",
+                          "name": "foreign-keys segment",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "fill": "#00000000",
+                          "cornerRadius": 4,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "qS4XK",
+                              "name": "foreign-keys label",
+                              "fill": "$muted",
+                              "content": "外键",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "ShFOp",
+                          "name": "triggers segment",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "fill": "#00000000",
+                          "cornerRadius": 4,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "fdHuK",
+                              "name": "triggers label",
+                              "fill": "$muted",
+                              "content": "触发器",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Ith6n",
+                          "name": "definition segment",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "fill": "#00000000",
+                          "cornerRadius": 4,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "hnvBC",
+                              "name": "definition label",
+                              "fill": "$muted",
+                              "content": "DDL",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
                       "id": "sMklc",
+                      "x": 16,
+                      "y": 186,
                       "name": "表结构身份与操作",
-                      "width": "fill_container",
-                      "height": 38,
+                      "enabled": false,
+                      "width": "fill_container(882)",
+                      "height": 36,
                       "gap": 8,
                       "alignItems": "center",
                       "children": [
@@ -171129,1271 +171342,296 @@
                     },
                     {
                       "type": "frame",
-                      "id": "n5IGm5",
-                      "name": "表字段结构",
+                      "id": "YdANz",
+                      "name": "10B / component/MySQL Structure Metadata · 分类只读列表",
+                      "context": "名称采用 Inter / 中文 UI 13 px，类型详情采用 JetBrains Mono 12 px。表头 12 px 半粗，行高 40 px，只有浅色水平分隔线；行与列可滚动，不与 DDL 分享高度。",
+                      "reusable": true,
                       "clip": true,
                       "width": "fill_container",
                       "height": "fill_container",
-                      "stroke": "$line-soft",
+                      "fill": "$surface",
+                      "stroke": "$line",
                       "strokeWidth": 1,
                       "layout": "vertical",
                       "children": [
                         {
                           "type": "frame",
-                          "id": "v3uhH",
-                          "name": "表格列标题",
+                          "id": "V2wNVd",
+                          "name": "元数据列标题",
                           "width": "fill_container",
-                          "height": 34,
+                          "height": 36,
                           "fill": "$app-bg",
                           "stroke": "$line-soft",
                           "strokeWidth": {
                             "bottom": 1
                           },
+                          "padding": [
+                            0,
+                            12
+                          ],
                           "alignItems": "center",
                           "children": [
                             {
-                              "type": "frame",
-                              "id": "l2MNd",
-                              "name": "列名 列标题",
-                              "width": 148,
-                              "height": "fill_container",
-                              "gap": 5,
-                              "padding": [
-                                0,
-                                10
-                              ],
-                              "alignItems": "center",
-                              "children": [
-                                {
-                                  "type": "text",
-                                  "id": "FaGpS",
-                                  "name": "列名 标题",
-                                  "fill": "$muted",
-                                  "textGrowth": "fixed-width",
-                                  "width": "fill_container",
-                                  "content": "列名",
-                                  "lineHeight": 1.45,
-                                  "fontFamily": "Inter",
-                                  "fontSize": 12,
-                                  "fontWeight": "normal"
-                                }
-                              ]
+                              "type": "text",
+                              "id": "r14hdk",
+                              "fill": "$muted",
+                              "textGrowth": "fixed-width",
+                              "width": 240,
+                              "content": "对象名称",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "600"
                             },
                             {
-                              "type": "frame",
-                              "id": "MkDg3",
-                              "name": "类型 列标题",
-                              "width": 138,
-                              "height": "fill_container",
-                              "gap": 5,
-                              "padding": [
-                                0,
-                                10
-                              ],
-                              "alignItems": "center",
-                              "children": [
-                                {
-                                  "type": "text",
-                                  "id": "N4HBL",
-                                  "name": "类型 标题",
-                                  "fill": "$muted",
-                                  "textGrowth": "fixed-width",
-                                  "width": "fill_container",
-                                  "content": "类型",
-                                  "lineHeight": 1.45,
-                                  "fontFamily": "Inter",
-                                  "fontSize": 12,
-                                  "fontWeight": "normal"
-                                }
-                              ]
-                            },
-                            {
-                              "type": "frame",
-                              "id": "Axs0q",
-                              "name": "允许 NULL 列标题",
-                              "width": 92,
-                              "height": "fill_container",
-                              "gap": 5,
-                              "padding": [
-                                0,
-                                10
-                              ],
-                              "alignItems": "center",
-                              "children": [
-                                {
-                                  "type": "text",
-                                  "id": "Gt1DR",
-                                  "name": "允许 NULL 标题",
-                                  "fill": "$muted",
-                                  "textGrowth": "fixed-width",
-                                  "width": "fill_container",
-                                  "content": "允许 NULL",
-                                  "lineHeight": 1.45,
-                                  "fontFamily": "Inter",
-                                  "fontSize": 12,
-                                  "fontWeight": "normal"
-                                }
-                              ]
-                            },
-                            {
-                              "type": "frame",
-                              "id": "Yjftb",
-                              "name": "键 列标题",
-                              "width": 66,
-                              "height": "fill_container",
-                              "gap": 5,
-                              "padding": [
-                                0,
-                                10
-                              ],
-                              "alignItems": "center",
-                              "children": [
-                                {
-                                  "type": "text",
-                                  "id": "DIowS",
-                                  "name": "键 标题",
-                                  "fill": "$muted",
-                                  "textGrowth": "fixed-width",
-                                  "width": "fill_container",
-                                  "content": "键",
-                                  "lineHeight": 1.45,
-                                  "fontFamily": "Inter",
-                                  "fontSize": 12,
-                                  "fontWeight": "normal"
-                                }
-                              ]
-                            },
-                            {
-                              "type": "frame",
-                              "id": "W9VaO",
-                              "name": "默认值 列标题",
-                              "width": 100,
-                              "height": "fill_container",
-                              "gap": 5,
-                              "padding": [
-                                0,
-                                10
-                              ],
-                              "alignItems": "center",
-                              "children": [
-                                {
-                                  "type": "text",
-                                  "id": "I4j9Ng",
-                                  "name": "默认值 标题",
-                                  "fill": "$muted",
-                                  "textGrowth": "fixed-width",
-                                  "width": "fill_container",
-                                  "content": "默认值",
-                                  "lineHeight": 1.45,
-                                  "fontFamily": "Inter",
-                                  "fontSize": 12,
-                                  "fontWeight": "normal"
-                                }
-                              ]
-                            },
-                            {
-                              "type": "frame",
-                              "id": "deUWX",
-                              "name": "说明 列标题",
+                              "type": "text",
+                              "id": "Bsfzm",
+                              "fill": "$muted",
+                              "textGrowth": "fixed-width",
                               "width": "fill_container",
-                              "height": "fill_container",
-                              "gap": 5,
-                              "padding": [
-                                0,
-                                10
-                              ],
-                              "alignItems": "center",
-                              "children": [
-                                {
-                                  "type": "text",
-                                  "id": "Fg7k7",
-                                  "name": "说明 标题",
-                                  "fill": "$muted",
-                                  "textGrowth": "fixed-width",
-                                  "width": "fill_container",
-                                  "content": "说明",
-                                  "lineHeight": 1.45,
-                                  "fontFamily": "Inter",
-                                  "fontSize": 12,
-                                  "fontWeight": "normal"
-                                }
-                              ]
+                              "content": "类型 / 详情",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "600"
                             }
                           ]
                         },
                         {
                           "type": "frame",
-                          "id": "QOydw",
-                          "name": "可滚动虚拟化表格",
-                          "clip": true,
+                          "id": "T1iHeS",
+                          "name": "id 元数据行",
                           "width": "fill_container",
-                          "height": "fill_container",
-                          "layout": "vertical",
+                          "height": 40,
+                          "stroke": "$line-soft",
+                          "strokeWidth": {
+                            "bottom": 1
+                          },
+                          "padding": [
+                            0,
+                            12
+                          ],
+                          "alignItems": "center",
                           "children": [
                             {
-                              "type": "frame",
-                              "id": "fvKQN",
-                              "name": "数据行 1",
-                              "width": "fill_container",
-                              "height": 34,
-                              "fill": "$surface",
-                              "stroke": "$line-soft",
-                              "strokeWidth": {
-                                "bottom": 1
-                              },
-                              "alignItems": "center",
-                              "children": [
-                                {
-                                  "type": "frame",
-                                  "id": "uBteX",
-                                  "name": "列名 单元格",
-                                  "clip": true,
-                                  "width": 148,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "wlqmg",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "id",
-                                        "tooltip": "id"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "id",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "JetBrains Mono",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "Z9EOW",
-                                  "name": "类型 单元格",
-                                  "clip": true,
-                                  "width": 138,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "rb99G",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "bigint unsigned",
-                                        "tooltip": "bigint unsigned"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "bigint unsigned",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "k01Ny1",
-                                  "name": "允许 NULL 单元格",
-                                  "clip": true,
-                                  "width": 92,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "YS3aa",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "否",
-                                        "tooltip": "否"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "否",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "gnjeC",
-                                  "name": "键 单元格",
-                                  "clip": true,
-                                  "width": 66,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "dqA4A",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "PRI",
-                                        "tooltip": "PRI"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "PRI",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "tLQCb",
-                                  "name": "默认值 单元格",
-                                  "clip": true,
-                                  "width": 100,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "L1y3o5",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "—",
-                                        "tooltip": "—"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "—",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "rV9Nn",
-                                  "name": "说明 单元格",
-                                  "clip": true,
-                                  "width": "fill_container",
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "q2zB4n",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "AUTO_INCREMENT",
-                                        "tooltip": "AUTO_INCREMENT"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "AUTO_INCREMENT",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                }
-                              ]
+                              "type": "text",
+                              "id": "bGH1B",
+                              "fill": "$body",
+                              "textGrowth": "fixed-width",
+                              "width": 240,
+                              "content": "id",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
                             },
                             {
-                              "type": "frame",
-                              "id": "UUZDi",
-                              "name": "数据行 2",
+                              "type": "text",
+                              "id": "I1vfzI",
+                              "fill": "$body",
+                              "textGrowth": "fixed-width",
                               "width": "fill_container",
-                              "height": 34,
-                              "fill": "$app-bg",
-                              "stroke": "$line-soft",
-                              "strokeWidth": {
-                                "bottom": 1
-                              },
-                              "alignItems": "center",
-                              "children": [
-                                {
-                                  "type": "frame",
-                                  "id": "oCcsk",
-                                  "name": "列名 单元格",
-                                  "clip": true,
-                                  "width": 148,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "BA6t2",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "name",
-                                        "tooltip": "name"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "name",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "JetBrains Mono",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "D28VD",
-                                  "name": "类型 单元格",
-                                  "clip": true,
-                                  "width": 138,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "TcFV1",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "varchar(128)",
-                                        "tooltip": "varchar(128)"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "varchar(128)",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "FZJCS",
-                                  "name": "允许 NULL 单元格",
-                                  "clip": true,
-                                  "width": 92,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "D3qn9",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "否",
-                                        "tooltip": "否"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "否",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "fucyc",
-                                  "name": "键 单元格",
-                                  "clip": true,
-                                  "width": 66,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "Q7HJv",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "—",
-                                        "tooltip": "—"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "—",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "hhti5",
-                                  "name": "默认值 单元格",
-                                  "clip": true,
-                                  "width": 100,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "OmUQB",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "—",
-                                        "tooltip": "—"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "—",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "ZpOYb",
-                                  "name": "说明 单元格",
-                                  "clip": true,
-                                  "width": "fill_container",
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "qsjbe",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "显示名称",
-                                        "tooltip": "显示名称"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "显示名称",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                }
-                              ]
+                              "content": "bigint unsigned · NOT NULL · PRIMARY KEY",
+                              "fontFamily": "JetBrains Mono",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "IhVMG",
+                          "name": "tenant_id 元数据行",
+                          "width": "fill_container",
+                          "height": 40,
+                          "stroke": "$line-soft",
+                          "strokeWidth": {
+                            "bottom": 1
+                          },
+                          "padding": [
+                            0,
+                            12
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "HTM9B",
+                              "fill": "$body",
+                              "textGrowth": "fixed-width",
+                              "width": 240,
+                              "content": "tenant_id",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
                             },
                             {
-                              "type": "frame",
-                              "id": "QjOoA",
-                              "name": "数据行 3",
+                              "type": "text",
+                              "id": "k3VUsI",
+                              "fill": "$body",
+                              "textGrowth": "fixed-width",
                               "width": "fill_container",
-                              "height": 34,
-                              "fill": "$surface",
-                              "stroke": "$line-soft",
-                              "strokeWidth": {
-                                "bottom": 1
-                              },
-                              "alignItems": "center",
-                              "children": [
-                                {
-                                  "type": "frame",
-                                  "id": "pPUGS",
-                                  "name": "列名 单元格",
-                                  "clip": true,
-                                  "width": 148,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "MAy92",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "email",
-                                        "tooltip": "email"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "email",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "JetBrains Mono",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "H2RAj",
-                                  "name": "类型 单元格",
-                                  "clip": true,
-                                  "width": 138,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "npUf6",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "varchar(255)",
-                                        "tooltip": "varchar(255)"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "varchar(255)",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "um4Jr",
-                                  "name": "允许 NULL 单元格",
-                                  "clip": true,
-                                  "width": 92,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "otKIj",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "是",
-                                        "tooltip": "是"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "是",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "qFIWI",
-                                  "name": "键 单元格",
-                                  "clip": true,
-                                  "width": 66,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "uk65C",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "UNI",
-                                        "tooltip": "UNI"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "UNI",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "fPv8v",
-                                  "name": "默认值 单元格",
-                                  "clip": true,
-                                  "width": 100,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "MdCGr",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "NULL",
-                                        "tooltip": "NULL"
-                                      },
-                                      "fill": "$faint",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "NULL",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal",
-                                      "fontStyle": "italic"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "jyw9Z",
-                                  "name": "说明 单元格",
-                                  "clip": true,
-                                  "width": "fill_container",
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "JSFrB",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "邮箱",
-                                        "tooltip": "邮箱"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "邮箱",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                }
-                              ]
+                              "content": "varchar(64) · NOT NULL",
+                              "fontFamily": "JetBrains Mono",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "OfhRB",
+                          "name": "project_id 元数据行",
+                          "width": "fill_container",
+                          "height": 40,
+                          "stroke": "$line-soft",
+                          "strokeWidth": {
+                            "bottom": 1
+                          },
+                          "padding": [
+                            0,
+                            12
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "MM9a0",
+                              "fill": "$body",
+                              "textGrowth": "fixed-width",
+                              "width": 240,
+                              "content": "project_id",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
                             },
                             {
-                              "type": "frame",
-                              "id": "odNMP",
-                              "name": "数据行 4",
+                              "type": "text",
+                              "id": "NykS4",
+                              "fill": "$body",
+                              "textGrowth": "fixed-width",
                               "width": "fill_container",
-                              "height": 34,
-                              "fill": "$app-bg",
-                              "stroke": "$line-soft",
-                              "strokeWidth": {
-                                "bottom": 1
-                              },
-                              "alignItems": "center",
-                              "children": [
-                                {
-                                  "type": "frame",
-                                  "id": "o9MuY",
-                                  "name": "列名 单元格",
-                                  "clip": true,
-                                  "width": 148,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "KoSXd",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "status",
-                                        "tooltip": "status"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "status",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "JetBrains Mono",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "syZpi",
-                                  "name": "类型 单元格",
-                                  "clip": true,
-                                  "width": 138,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "zNxLR",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "varchar(32)",
-                                        "tooltip": "varchar(32)"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "varchar(32)",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "TFlbD",
-                                  "name": "允许 NULL 单元格",
-                                  "clip": true,
-                                  "width": 92,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "Z0ieSo",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "否",
-                                        "tooltip": "否"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "否",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "VR0zk",
-                                  "name": "键 单元格",
-                                  "clip": true,
-                                  "width": 66,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "qx5o3",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "MUL",
-                                        "tooltip": "MUL"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "MUL",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "l9XzKG",
-                                  "name": "默认值 单元格",
-                                  "clip": true,
-                                  "width": 100,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "L0Rln",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "'active'",
-                                        "tooltip": "'active'"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "'active'",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "C0jF0",
-                                  "name": "说明 单元格",
-                                  "clip": true,
-                                  "width": "fill_container",
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "X3LKcQ",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "账号状态",
-                                        "tooltip": "账号状态"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "账号状态",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                }
-                              ]
+                              "content": "varchar(64) · NOT NULL",
+                              "fontFamily": "JetBrains Mono",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "xfZrw",
+                          "name": "sync_group_id 元数据行",
+                          "width": "fill_container",
+                          "height": 40,
+                          "stroke": "$line-soft",
+                          "strokeWidth": {
+                            "bottom": 1
+                          },
+                          "padding": [
+                            0,
+                            12
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "lCIVA",
+                              "fill": "$body",
+                              "textGrowth": "fixed-width",
+                              "width": 240,
+                              "content": "sync_group_id",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
                             },
                             {
-                              "type": "frame",
-                              "id": "htTUo",
-                              "name": "数据行 5",
+                              "type": "text",
+                              "id": "nC8oM",
+                              "fill": "$body",
+                              "textGrowth": "fixed-width",
                               "width": "fill_container",
-                              "height": 34,
-                              "fill": "$surface",
-                              "stroke": "$line-soft",
-                              "strokeWidth": {
-                                "bottom": 1
-                              },
-                              "alignItems": "center",
-                              "children": [
-                                {
-                                  "type": "frame",
-                                  "id": "MiukK",
-                                  "name": "列名 单元格",
-                                  "clip": true,
-                                  "width": 148,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "b4n8r",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "created_at",
-                                        "tooltip": "created_at"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "created_at",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "JetBrains Mono",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "LfDH4",
-                                  "name": "类型 单元格",
-                                  "clip": true,
-                                  "width": 138,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "Z3GBV1",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "datetime",
-                                        "tooltip": "datetime"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "datetime",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "mokUD",
-                                  "name": "允许 NULL 单元格",
-                                  "clip": true,
-                                  "width": 92,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "L9BqL",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "否",
-                                        "tooltip": "否"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "否",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "pmSK8",
-                                  "name": "键 单元格",
-                                  "clip": true,
-                                  "width": 66,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "UxnhJ",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "—",
-                                        "tooltip": "—"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "—",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "eLvoc",
-                                  "name": "默认值 单元格",
-                                  "clip": true,
-                                  "width": 100,
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "OKiPZ",
-                                      "name": "单元格值",
-                                      "context": "单行省略展示；悬停与复制保留完整 CURRENT_TIMESTAMP。",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "CURRENT_TIMESTAMP",
-                                        "tooltip": "CURRENT_TIMESTAMP"
-                                      },
-                                      "fill": "$body",
-                                      "content": "CURRENT…",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "frame",
-                                  "id": "CbvK8",
-                                  "name": "说明 单元格",
-                                  "clip": true,
-                                  "width": "fill_container",
-                                  "height": "fill_container",
-                                  "padding": [
-                                    0,
-                                    10
-                                  ],
-                                  "alignItems": "center",
-                                  "children": [
-                                    {
-                                      "type": "text",
-                                      "id": "RLov3",
-                                      "name": "单元格值",
-                                      "metadata": {
-                                        "type": "mysql-cell",
-                                        "rawValue": "创建时间",
-                                        "tooltip": "创建时间"
-                                      },
-                                      "fill": "$body",
-                                      "textGrowth": "fixed-width",
-                                      "width": "fill_container",
-                                      "content": "创建时间",
-                                      "lineHeight": 1.45,
-                                      "fontFamily": "Inter",
-                                      "fontSize": 13,
-                                      "fontWeight": "normal"
-                                    }
-                                  ]
-                                }
-                              ]
+                              "content": "varchar(64) · NULL",
+                              "fontFamily": "JetBrains Mono",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "nWt2a",
+                          "name": "created_at 元数据行",
+                          "width": "fill_container",
+                          "height": 40,
+                          "stroke": "$line-soft",
+                          "strokeWidth": {
+                            "bottom": 1
+                          },
+                          "padding": [
+                            0,
+                            12
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "P1j4L8",
+                              "fill": "$body",
+                              "textGrowth": "fixed-width",
+                              "width": 240,
+                              "content": "created_at",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "C7Yd7",
+                              "fill": "$body",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "datetime(6) · NOT NULL",
+                              "fontFamily": "JetBrains Mono",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "RX4Id",
+                          "name": "updated_at 元数据行",
+                          "width": "fill_container",
+                          "height": 40,
+                          "stroke": "$line-soft",
+                          "strokeWidth": {
+                            "bottom": 1
+                          },
+                          "padding": [
+                            0,
+                            12
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "AsyfB",
+                              "fill": "$body",
+                              "textGrowth": "fixed-width",
+                              "width": 240,
+                              "content": "updated_at",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "SURg3",
+                              "fill": "$body",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "datetime(6) · NULL",
+                              "fontFamily": "JetBrains Mono",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
                             }
                           ]
                         }
@@ -172402,7 +171640,10 @@
                     {
                       "type": "text",
                       "id": "g5Aa1",
+                      "x": 16,
+                      "y": 629,
                       "name": "结构操作帮助",
+                      "enabled": false,
                       "fill": "$muted",
                       "content": "结构只读。修改表结构请新建 SQL 查询。",
                       "lineHeight": 1.45,
@@ -172676,13 +171917,22 @@
                   "name": "MySQL 页面内容",
                   "width": 834,
                   "height": 650,
+                  "fill": "$surface",
                   "layout": "vertical",
-                  "gap": 8,
+                  "gap": 12,
                   "padding": [
                     12,
                     16
                   ],
                   "children": [
+                    {
+                      "id": "GTQHK",
+                      "type": "ref",
+                      "ref": "U6F7X",
+                      "name": "DDL 对象完整位置",
+                      "width": "fill_container",
+                      "height": 64
+                    },
                     {
                       "type": "frame",
                       "id": "F7iaC",
@@ -172729,7 +171979,7 @@
                           "id": "SLEk1",
                           "name": "结构 分区",
                           "height": "fill_container",
-                          "stroke": "#00000000",
+                          "stroke": "$accent",
                           "strokeWidth": {
                             "bottom": 2
                           },
@@ -172743,7 +171993,7 @@
                               "type": "text",
                               "id": "R8lRf",
                               "name": "分区名称",
-                              "fill": "$muted",
+                              "fill": "$accent-ink",
                               "content": "结构",
                               "lineHeight": 1.45,
                               "fontFamily": "Inter",
@@ -172755,8 +172005,11 @@
                         {
                           "type": "frame",
                           "id": "aCFJr",
+                          "x": 114,
+                          "y": 0,
                           "name": "索引 分区",
-                          "height": "fill_container",
+                          "enabled": false,
+                          "height": 38,
                           "stroke": "#00000000",
                           "strokeWidth": {
                             "bottom": 2
@@ -172783,8 +172036,11 @@
                         {
                           "type": "frame",
                           "id": "d4OXa5",
+                          "x": 171,
+                          "y": 0,
                           "name": "外键 分区",
-                          "height": "fill_container",
+                          "enabled": false,
+                          "height": 38,
                           "stroke": "#00000000",
                           "strokeWidth": {
                             "bottom": 2
@@ -172811,8 +172067,11 @@
                         {
                           "type": "frame",
                           "id": "aTzLx",
+                          "x": 228,
+                          "y": 0,
                           "name": "DDL 分区",
-                          "height": "fill_container",
+                          "enabled": false,
+                          "height": 38,
                           "stroke": "$accent",
                           "strokeWidth": {
                             "bottom": 2
@@ -172840,10 +172099,142 @@
                     },
                     {
                       "type": "frame",
-                      "id": "MlI49",
-                      "name": "DDL 操作栏",
-                      "width": "fill_container",
+                      "id": "b9iQqn",
+                      "name": "DDL 结构分区",
+                      "context": "复用 ui/segmented 视觉规范，分别切换列、索引、外键、触发器与 DDL；DDL 使用完整正文。无适用分类时不展示。",
+                      "width": 520,
                       "height": 36,
+                      "fill": "$line-soft",
+                      "cornerRadius": 6,
+                      "gap": 2,
+                      "padding": 3,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "pO8rU",
+                          "name": "columns segment",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "fill": "#00000000",
+                          "cornerRadius": 4,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "J49PY",
+                              "name": "columns label",
+                              "fill": "$muted",
+                              "content": "列",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "QI9GH",
+                          "name": "indexes segment",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "fill": "#00000000",
+                          "cornerRadius": 4,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "b2zpsX",
+                              "name": "indexes label",
+                              "fill": "$muted",
+                              "content": "索引",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Yty6Y",
+                          "name": "foreign-keys segment",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "fill": "#00000000",
+                          "cornerRadius": 4,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "I0OhTm",
+                              "name": "foreign-keys label",
+                              "fill": "$muted",
+                              "content": "外键",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "FEED5",
+                          "name": "triggers segment",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "fill": "#00000000",
+                          "cornerRadius": 4,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "C9IP5",
+                              "name": "triggers label",
+                              "fill": "$muted",
+                              "content": "触发器",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Ijpur",
+                          "name": "definition segment",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "fill": "$surface",
+                          "cornerRadius": 4,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "HYrZ6",
+                              "name": "definition label",
+                              "fill": "$ink",
+                              "content": "DDL",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "MlI49",
+                      "x": 16,
+                      "y": 58,
+                      "name": "DDL 操作栏",
+                      "enabled": false,
+                      "width": 802,
+                      "height": 38,
                       "gap": 8,
                       "alignItems": "center",
                       "children": [
@@ -172915,7 +172306,7 @@
                       "context": "共享 CodeEditor：语法着色、行号、选择、查找、补全。保存 SQL 文档与执行分开。",
                       "clip": true,
                       "width": "fill_container",
-                      "height": 370,
+                      "height": "fill_container",
                       "fill": "$app-bg",
                       "stroke": "$line-soft",
                       "strokeWidth": 1,
@@ -173318,8 +172709,12 @@
                     {
                       "type": "frame",
                       "id": "yoTBR",
+                      "x": 16,
+                      "y": 480,
                       "name": "DDL 只读提示",
-                      "width": "fill_container",
+                      "enabled": false,
+                      "width": 802,
+                      "height": 40,
                       "fill": "$accent-weak",
                       "gap": 8,
                       "padding": [
@@ -235569,7 +234964,7 @@
       "x": 19082,
       "y": 30072,
       "name": "10B / component/MySQL Table Data Grid · 字段编辑",
-      "context": "表数据网格。可定位主键并具备权限时双击编辑；短值在单元格编辑，长值从展开按钮进入独立字段窗口。更改先进入草稿，显式保存后提交。",
+      "context": "结果网格保留服务器列定义。空结果显示暂无数据，没有新行 +、保存、还原或编辑说明；只读结果隐藏草稿操作。最后空页保留上一页。",
       "reusable": true,
       "clip": true,
       "width": 802,
@@ -239794,7 +239189,8 @@
             {
               "type": "frame",
               "id": "as3gK",
-              "name": "实例行上下文菜单",
+              "name": "工作区标题与标签快捷入口",
+              "context": "实例名称在工作区标题旁点击铅笔修改；侧栏右键只保留编辑标签。",
               "width": 260,
               "fill": "$surface",
               "cornerRadius": 6,
@@ -239819,8 +239215,11 @@
                 {
                   "type": "frame",
                   "id": "FgT0T",
+                  "x": 12,
+                  "y": 31,
                   "name": "重命名 菜单项",
-                  "width": "fill_container",
+                  "enabled": false,
+                  "width": "fill_container(236)",
                   "height": 36,
                   "gap": 10,
                   "padding": [
@@ -241117,6 +240516,535 @@
           ]
         }
       }
+    },
+    {
+      "type": "frame",
+      "id": "bezAV",
+      "x": 19082,
+      "y": 30512,
+      "name": "10B / component/MySQL Empty Result · 无数据无新增入口",
+      "context": "实际已执行但返回 0 行，保留列头。没有插入行、+、编辑操作、编辑提示或首个空页分页；再次读取有数据后根据真实权限恢复。",
+      "reusable": true,
+      "width": 802,
+      "height": 424,
+      "fill": "$surface",
+      "layout": "vertical",
+      "gap": 12,
+      "padding": 16,
+      "children": [
+        {
+          "id": "glsZ3",
+          "type": "ref",
+          "ref": "U6F7X",
+          "name": "固定对象与数据库上下文",
+          "width": "fill_container",
+          "height": 64
+        },
+        {
+          "type": "frame",
+          "id": "V6aAp",
+          "name": "空结果列头与内容",
+          "width": "fill_container",
+          "height": "fill_container",
+          "stroke": "$line",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "t1ka8g",
+              "name": "服务器列定义",
+              "width": "fill_container",
+              "height": 44,
+              "fill": "$app-bg",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "gKUGl",
+                  "name": "id 列",
+                  "width": "fill_container",
+                  "height": 44,
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    6,
+                    12
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "UUwKr",
+                      "name": "id 列名称",
+                      "fill": "$body",
+                      "content": "id",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "qGlQo",
+                      "name": "id 列类型",
+                      "fill": "$muted",
+                      "content": "INT",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "pSj5X",
+                  "name": "name 列",
+                  "width": "fill_container",
+                  "height": 44,
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    6,
+                    12
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "C3kpnX",
+                      "name": "name 列名称",
+                      "fill": "$body",
+                      "content": "name",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "tMpi8",
+                      "name": "name 列类型",
+                      "fill": "$muted",
+                      "content": "VARCHAR(100)",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Y3JYd",
+                  "name": "profile 列",
+                  "width": "fill_container",
+                  "height": 44,
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    6,
+                    12
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Z0FQp9",
+                      "name": "profile 列名称",
+                      "fill": "$body",
+                      "content": "profile",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Tmlxt",
+                      "name": "profile 列类型",
+                      "fill": "$muted",
+                      "content": "JSON",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "vHKVl",
+                  "name": "payload 列",
+                  "width": "fill_container",
+                  "height": 44,
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    6,
+                    12
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "f26J5G",
+                      "name": "payload 列名称",
+                      "fill": "$body",
+                      "content": "payload",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "y5U2L4",
+                      "name": "payload 列类型",
+                      "fill": "$muted",
+                      "content": "BLOB",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "N5hiSY",
+              "name": "空数据视口",
+              "width": "fill_container",
+              "height": "fill_container",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Ui0b7",
+                  "name": "MySqlNoRows 本地化空状态",
+                  "fill": "$muted",
+                  "content": "暂无数据。",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "nuEfV",
+          "name": "空结果状态 · 无不可用动作",
+          "width": "fill_container",
+          "height": 32,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "Nf4Kk",
+              "name": "空结果行范围",
+              "fill": "$muted",
+              "content": "暂无数据。",
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "RuhqG",
+      "x": 19082,
+      "y": 31016,
+      "name": "10C / Connection Feedback · 连接加载与失败浮层",
+      "context": "Redis 与 MySQL 共用覆盖层。0.4 遮罩覆盖工作区，正文尺寸不变且暂停交互。等待支持取消，取消后释放迟到会话；失败保留安全错误与关闭、编辑连接、重试。状态徽标仅用短文本与真实语义色。",
+      "width": 1000,
+      "height": 330,
+      "fill": "$app-bg",
+      "gap": 24,
+      "padding": 24,
+      "children": [
+        {
+          "type": "frame",
+          "id": "BIMaB",
+          "name": "en 连接浮层场景",
+          "width": "fill_container",
+          "height": "fill_container",
+          "fill": "#00000066",
+          "layout": "vertical",
+          "padding": 12,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "cxFUS",
+              "name": "ui/connection-overlay/loading",
+              "reusable": true,
+              "width": "fill_container",
+              "height": 220,
+              "fill": "$surface",
+              "cornerRadius": 10,
+              "stroke": "$line",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 28,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "kinNs",
+                  "name": "连接状态与目标",
+                  "width": "fill_container",
+                  "height": 44,
+                  "gap": 14,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "O9ZCpX",
+                      "name": "旋转等待图标",
+                      "width": 26,
+                      "height": 26,
+                      "icon": "circle-dashed",
+                      "library": "lucide",
+                      "fill": "$accent"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "N37R3",
+                      "name": "状态标题与实例名称",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 5,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "g170FK",
+                          "name": "本地化连接状态标题",
+                          "fill": "$ink",
+                          "content": "Connecting…",
+                          "fontFamily": "Inter",
+                          "fontSize": 18,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "edt7m",
+                          "name": "用户实例名称",
+                          "fill": "$muted",
+                          "content": "Local MySQL",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "MBMbR",
+                  "name": "安全本地化连接说明",
+                  "fill": "$body",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Establishing the connection. Please wait.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "IOTSd",
+                  "name": "显式连接操作",
+                  "width": "fill_container",
+                  "height": 32,
+                  "gap": 8,
+                  "justifyContent": "end",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "jazj9",
+                      "type": "ref",
+                      "ref": "Q2r8z",
+                      "name": "Cancel 按钮",
+                      "height": 32,
+                      "fill": "$surface",
+                      "descendants": {
+                        "u5fFux": {
+                          "enabled": false
+                        },
+                        "NpJY2": {
+                          "content": "Cancel",
+                          "fontSize": 12,
+                          "fill": "$body"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "b6tX1",
+          "name": "zh-Hans 连接浮层场景",
+          "width": "fill_container",
+          "height": "fill_container",
+          "fill": "#00000066",
+          "layout": "vertical",
+          "padding": 12,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "OZ76c",
+              "name": "ui/connection-overlay/failure",
+              "reusable": true,
+              "width": "fill_container",
+              "height": 220,
+              "fill": "$surface",
+              "cornerRadius": 10,
+              "stroke": "$line",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 28,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "cMDGD",
+                  "name": "连接状态与目标",
+                  "width": "fill_container",
+                  "height": 44,
+                  "gap": 14,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "Q8E0UE",
+                      "name": "失败图标",
+                      "width": 26,
+                      "height": 26,
+                      "icon": "circle-x",
+                      "library": "lucide",
+                      "fill": "$red"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "gQ2kY",
+                      "name": "状态标题与实例名称",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 5,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ip1Cs",
+                          "name": "本地化连接状态标题",
+                          "fill": "$ink",
+                          "content": "连接失败",
+                          "fontFamily": "Inter",
+                          "fontSize": 18,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "QVTVd",
+                          "name": "用户实例名称",
+                          "fill": "$muted",
+                          "content": "本地测试",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "XPg4Y",
+                  "name": "安全本地化连接说明",
+                  "fill": "$body",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "无法连接 Redis，请检查端点、路径、TLS 和凭据。",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "RYaGg",
+                  "name": "显式连接操作",
+                  "width": "fill_container",
+                  "height": 32,
+                  "gap": 8,
+                  "justifyContent": "end",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "saxpP",
+                      "type": "ref",
+                      "ref": "Q2r8z",
+                      "name": "关闭 按钮",
+                      "height": 32,
+                      "fill": "$surface",
+                      "descendants": {
+                        "u5fFux": {
+                          "enabled": false
+                        },
+                        "NpJY2": {
+                          "content": "关闭",
+                          "fontSize": 12,
+                          "fill": "$body"
+                        }
+                      }
+                    },
+                    {
+                      "id": "OCEFJ",
+                      "type": "ref",
+                      "ref": "Q2r8z",
+                      "name": "编辑连接 按钮",
+                      "height": 32,
+                      "fill": "$surface",
+                      "descendants": {
+                        "u5fFux": {
+                          "enabled": false
+                        },
+                        "NpJY2": {
+                          "content": "编辑连接",
+                          "fontSize": 12,
+                          "fill": "$body"
+                        }
+                      }
+                    },
+                    {
+                      "id": "E3HHV",
+                      "type": "ref",
+                      "ref": "Q2r8z",
+                      "name": "重试 按钮",
+                      "height": 32,
+                      "fill": "$action-fill",
+                      "descendants": {
+                        "u5fFux": {
+                          "enabled": false
+                        },
+                        "NpJY2": {
+                          "content": "重试",
+                          "fontSize": 12,
+                          "fill": "$ink-inv"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "themes": {
