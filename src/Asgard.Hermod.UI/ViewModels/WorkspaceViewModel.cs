@@ -9,6 +9,7 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
     private WorkspacePageViewModel? _selectedTab;
     private Task? _disposeTask;
     private int _terminalNumber;
+    private bool _useIndependentWindows;
     private readonly Dictionary<WorkspacePageViewModel, InstanceItemViewModel> _instances = [];
 
     /// <summary>启动时仅打开首页，实例页签由用户主动打开。</summary>
@@ -38,6 +39,23 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
 
     /// <summary>活动页变化后同步侧栏状态。</summary>
     public event EventHandler? SelectedTabChanged;
+    /// <summary>宿主收到打开请求后创建或唤回对应的独立窗口。</summary>
+    public event Action<WorkspacePageViewModel>? PageActivated;
+    /// <summary>桌面宿主启用独立窗口；嵌入式消费者仍可复用原有页签。</summary>
+    public bool UseIndependentWindows
+    {
+        get => _useIndependentWindows;
+        set
+        {
+            if (!SetProperty(ref _useIndependentWindows, value)) return;
+            OnPropertyChanged(nameof(DisplayedPage));
+            OnPropertyChanged(nameof(TabStripVisibility));
+        }
+    }
+    /// <summary>独立窗口模式下主窗体始终保留首页。</summary>
+    public WorkspacePageViewModel? DisplayedPage => UseIndependentWindows ? Home : SelectedTab;
+    /// <summary>独立窗口不在主窗体重复呈现外层页签。</summary>
+    public Visibility TabStripVisibility => UseIndependentWindows ? Visibility.Collapsed : Visibility.Visible;
     /// <summary>按显示顺序排列的页签。</summary>
     public ObservableCollection<WorkspacePageViewModel> Tabs { get; } = [];
     /// <summary>首页负责统计与本机最近访问，关闭页签后仍维护访问记录。</summary>
@@ -67,6 +85,7 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
             _selectedTab = value;
             _selectedTab?.IsSelected = true;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(DisplayedPage));
             SelectedTabChanged?.Invoke(this, EventArgs.Empty);
         }
     }
@@ -88,6 +107,7 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
             RegisterSessionPage(page, instance);
         }
         SelectedTab = page;
+        PageActivated?.Invoke(page);
         Home.RecordOpened(instance);
     }
 
@@ -100,6 +120,7 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
         var page = CreateTerminalPage(local);
         Tabs.Add(page);
         SelectedTab = page;
+        PageActivated?.Invoke(page);
         Home.RecordOpened(local);
     }
 
@@ -138,6 +159,7 @@ public sealed class WorkspaceViewModel : ObservableObject, IAsyncDisposable
         if (_disposeTask is not null || sender is not WorkspacePageViewModel original || !_instances.TryGetValue(original, out var instance)) return;
         var page = CreateServicePage(instance); RegisterSessionPage(page, instance);
         Tabs.Add(page); SelectedTab = page; Home.RecordOpened(instance);
+        PageActivated?.Invoke(page);
     }
 
     /// <summary>用户退出应用前逐页确认，取消任一页面时保持所有会话和草稿。</summary>

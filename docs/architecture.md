@@ -375,3 +375,11 @@ shell metadata command; the sidebar context menu retains tag editing. Renaming
 preserves stable IDs, connections and drafts. MySQL selects an adjacent internal
 tab before removal, and shows a localized query/object guide after the last tab
 closes while keeping its metadata connection and object tree.
+
+The desktop host enables independent workspace windows through `WorkspaceWindowHost`.
+Actual instance navigation, recent items, local terminals and new sessions share the
+existing workspace page registry and module templates. Each window has its own taskbar
+entry and no main-window Owner; closing it uses the existing module confirmation and
+awaits page cleanup. Reopening an instance activates the same page and window. The
+main shell retains its home page, search, configuration and account navigation.
+Module dialogs resolve the active work window as their owner.

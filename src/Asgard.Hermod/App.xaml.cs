@@ -37,10 +37,10 @@ public partial class App : Application
             services.AddMySql();
             services.AddSingleton<ITerminalSessionFactory, LocalTerminalSessionFactory>();
             services.AddHermodUi(() => MainWindow, Resources);
-            services.AddObjectStorageUi(() => MainWindow);
-            services.AddSshUi(() => MainWindow);
-            services.AddRedisUi(() => MainWindow);
-            services.AddMySqlUi(() => MainWindow);
+            services.AddObjectStorageUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow);
+            services.AddSshUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow);
+            services.AddRedisUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow);
+            services.AddMySqlUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow);
             var provider = services.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,
@@ -57,8 +57,10 @@ public partial class App : Application
             catch (Exception) { }
             // 外壳由窗口拥有，窗口会在关闭前异步释放终端。
             var shell = ActivatorUtilities.CreateInstance<ShellViewModel>(provider);
+            var workspaceWindows = new Asgard.Hermod.UI.Windowing.WorkspaceWindowHost(shell.Workspace);
             await shell.InitializeAsync();
             MainWindow = new MainWindow(shell);
+            MainWindow.Closed += (_, _) => workspaceWindows.Dispose();
             MainWindow.Show();
             ShutdownMode = ShutdownMode.OnMainWindowClose;
         }

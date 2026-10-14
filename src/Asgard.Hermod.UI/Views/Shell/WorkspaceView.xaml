@@ -5,10 +5,10 @@
              xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls">
     <Grid Background="{DynamicResource AppBackgroundBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="36" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <shell:WorkspaceTabStrip />
-        <controls:WorkspaceContentHost x:Name="ContentHost" Grid.Row="1" Page="{Binding SelectedTab}" />
+        <shell:WorkspaceTabStrip Height="36" Visibility="{Binding TabStripVisibility}" />
+        <controls:WorkspaceContentHost x:Name="ContentHost" Grid.Row="1" Page="{Binding DisplayedPage}" />
     </Grid>
 </UserControl>
