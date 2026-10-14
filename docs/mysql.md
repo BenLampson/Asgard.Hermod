@@ -76,6 +76,12 @@ aggregates, joins and unverified projections remain read-only. A simple SQL resu
 must also match the server's physical source identity. Finish a draft in one result
 set before editing another.
 
+Paging and edit actions share one 32px footer row. The left side shows the table's
+row range or pending-change count; full editing guidance is available on the info
+icon. Arrow buttons have localized previous/next tooltips and accessibility names.
+Narrow windows truncate status text while keeping paging, revert, save and any
+required verification action on the same row. Query results have no page buttons.
+
 The save transaction locks each original row, compares its complete typed baseline
 and commits the batch only if all comparisons succeed. Conflicts show original,
 current-server and draft values and retain the draft. Unknown dispatched-write

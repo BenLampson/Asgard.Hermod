@@ -101,3 +101,5 @@ The MySQL follow-up uses the object-context component U6F7X and grouped structur
 navigation b85ZM. Only the selected tree row receives focus decoration. Object
 names, database/schema context, metadata typography and separate full-height DDL
 views match the real WPF previews in both themes and languages.
+The table footer combines row status, paging arrows and edit actions in one 32px
+row, with guidance on the info icon and a separator between paging and saving.

@@ -59,12 +59,24 @@
     <controls:CodeEditor Grid.Row="1" x:Name="DefinitionEditor" Text="{Binding Definition, Mode=OneWay}" IsReadOnly="True" Visibility="{Binding IsDefinitionSelected, Converter={StaticResource Visible}}" AutomationProperties.Name="{loc:Loc MySqlObjectDefinition}" />
    </Grid>
   </Grid>
-  <Grid Grid.Row="3" x:Name="DataActions" Margin="0,12,0,0"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-   <DockPanel><StackPanel DockPanel.Dock="Right" Orientation="Horizontal"><Button Content="{loc:Loc MySqlRevertChanges}" Command="{Binding RevertCommand}" Margin="0,0,8,0" /><Button Content="{loc:Loc MySqlSaveChanges}" Command="{Binding SaveChangesCommand}" Style="{StaticResource PrimaryButton}" />
-    <Button Content="{loc:Loc MySqlVerifyRows}" Command="{Binding VerifyCommand}" Margin="8,0,0,0" Visibility="{Binding OutcomeUnknown, Converter={StaticResource Visible}}" /></StackPanel>
-    <TextBlock Text="{Binding EditHint}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="0,0,16,0" />
-   </DockPanel>
-   <DockPanel Grid.Row="1" Margin="0,8,0,0"><StackPanel DockPanel.Dock="Right" Orientation="Horizontal" x:Name="PageButtons"><Button Command="{Binding PreviousCommand}" Content="{loc:Loc MySqlPrevious}" Margin="0,0,8,0" /><Button Command="{Binding NextCommand}" Content="{loc:Loc MySqlNext}" /></StackPanel><TextBlock Text="{Binding DraftSummary}" Foreground="{DynamicResource WarningBrush}" Visibility="{Binding HasDataDraft, Converter={StaticResource Visible}}" /></DockPanel>
+  <!-- 分页和草稿操作始终共用一行；窄窗口只截断状态文字，不挤压操作按钮。 -->
+  <Grid Grid.Row="3" x:Name="DataActions" Margin="0,12,0,0" AutomationProperties.HelpText="{Binding EditHint}"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+   <Grid VerticalAlignment="Center" Margin="0,0,16,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="28" /></Grid.ColumnDefinitions>
+    <TextBlock x:Name="FooterStatus" FontSize="12" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}">
+     <TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}"><Setter Property="Text" Value="{Binding EditHint}" /><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" /><Style.Triggers><DataTrigger Binding="{Binding IsQuery}" Value="False"><Setter Property="Text" Value="{Binding Status}" /></DataTrigger><DataTrigger Binding="{Binding HasDataDraft}" Value="True"><Setter Property="Text" Value="{Binding DraftSummary}" /><Setter Property="Foreground" Value="{DynamicResource WarningBrush}" /></DataTrigger></Style.Triggers></Style></TextBlock.Style>
+    </TextBlock>
+    <Border Grid.Column="1" Background="Transparent" ToolTip="{Binding EditHint}" AutomationProperties.HelpText="{Binding EditHint}"><controls:IconView Kind="info" Width="14" Height="14" Foreground="{DynamicResource TextMutedBrush}" /></Border>
+   </Grid>
+   <StackPanel Grid.Column="1" Orientation="Horizontal">
+    <StackPanel Orientation="Horizontal" x:Name="PageButtons">
+     <Button x:Name="PreviousPage" Command="{Binding PreviousCommand}" Width="32" Padding="0" ToolTip="{loc:Loc MySqlPrevious}" ToolTipService.ShowOnDisabled="True" AutomationProperties.Name="{loc:Loc MySqlPrevious}" Margin="0,0,6,0"><controls:IconView Kind="arrow-left" Width="16" Height="16" /></Button>
+     <Button x:Name="NextPage" Command="{Binding NextCommand}" Width="32" Padding="0" ToolTip="{loc:Loc MySqlNext}" ToolTipService.ShowOnDisabled="True" AutomationProperties.Name="{loc:Loc MySqlNext}"><controls:IconView Kind="arrow-right" Width="16" Height="16" /></Button>
+     <Border Width="1" Height="18" Background="{DynamicResource LineBrush}" Margin="12,0" VerticalAlignment="Center" />
+    </StackPanel>
+    <Button x:Name="RevertChanges" Content="{loc:Loc MySqlRevertChanges}" Command="{Binding RevertCommand}" Margin="0,0,8,0" />
+    <Button x:Name="SaveChanges" Content="{loc:Loc MySqlSaveChanges}" Command="{Binding SaveChangesCommand}" Style="{StaticResource PrimaryButton}" />
+    <Button x:Name="VerifyRows" Content="{loc:Loc MySqlVerifyRows}" Command="{Binding VerifyCommand}" Margin="8,0,0,0" Visibility="{Binding OutcomeUnknown, Converter={StaticResource Visible}}" />
+   </StackPanel>
   </Grid>
  </Grid>
 </UserControl>
