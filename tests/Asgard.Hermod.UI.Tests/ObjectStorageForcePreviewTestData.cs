@@ -14,9 +14,9 @@ internal static class ObjectStorageForcePreviewTestData
     };
 
     /// <summary>使用已有工作区与临时存储边界，不打开真实外部程序。</summary>
-    internal static ObjectStorageWorkspaceViewModel Model(ObjectStorageTestService service, ObjectStorageTestDialogs dialogs, ITemporaryFileStorage storage) =>
+    internal static ObjectStorageWorkspaceViewModel Model(ObjectStorageTestService service, ObjectStorageTestDialogs dialogs, ITemporaryFileStorage storage, IFileOpenService? files = null) =>
         new(new(new InstanceSummary("oss", "oss", "test", "cloud", [], TypeId: "storage", ProviderId: "aliyun-oss")),
-            service, dialogs, temporaryFiles: storage);
+            service, dialogs, files: files, temporaryFiles: storage);
 
     /// <summary>费用确认替身只确认图片，其他测试可显式改为取消或延迟。</summary>
     internal static ObjectStorageTestDialogs ConfirmingDialogs() => new()

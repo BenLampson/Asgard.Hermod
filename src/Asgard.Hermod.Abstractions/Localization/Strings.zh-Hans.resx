@@ -1784,15 +1784,6 @@
   <data xml:space="preserve" name="FileImagePreview">
     <value>图片预览</value>
   </data>
-  <data xml:space="preserve" name="ImageZoom">
-    <value>缩放</value>
-  </data>
-  <data xml:space="preserve" name="ImageZoomPercent">
-    <value>{0:P0}</value>
-  </data>
-  <data xml:space="preserve" name="ImageFit">
-    <value>适应窗口</value>
-  </data>
   <data xml:space="preserve" name="StorageDescription">
     <value>管理 Hermod 在本机生成的临时文件。</value>
   </data>
@@ -2154,7 +2145,7 @@
   <data name="ForcePreviewFailed" xml:space="preserve"><value>无法加载图片预览。请检查网络和访问权限后重试。</value></data>
   <data name="ForcePreviewFailureWithTraffic" xml:space="preserve"><value>{0} 已读取的流量仍可能计费。</value></data>
   <data name="ForcePreviewImageReady" xml:space="preserve"><value>图片预览</value></data>
-  <data name="ForcePreviewEnlarge" xml:space="preserve"><value>放大图片预览</value></data>
+  <data name="ForcePreviewOpenExternal" xml:space="preserve"><value>用看图软件打开</value></data>
   <data name="ForcePreviewRetryImage" xml:space="preserve"><value>重新加载图片</value></data>
   <data name="HideObjectDetails" xml:space="preserve"><value>收起对象详情</value></data>
   <data name="ShowObjectDetails" xml:space="preserve"><value>展开对象详情</value></data>

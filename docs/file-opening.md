@@ -21,15 +21,14 @@ continue to navigate. The row menu and details menu include **Open file** and
 the entire file, and only then starts the program. Transfers keep progress,
 cancellation and retry. Failed or canceled downloads never start a program.
 
-**Preview file** displays a read-only Hermod window for common text and image
-formats. PNG, JPEG, BMP, GIF, TIFF and ICO are supported by the image viewer;
-multi-frame images display their first frame. Images support zoom and fit to
-window. Text supports selection and copying, including JSON, Markdown, CSV,
-configuration and source files. HTML, SVG and scripts are displayed as plain
+**Preview file** opens images with the configured program or Windows association.
+Common text formats use a read-only text window. Text supports selection and
+copying, including JSON, Markdown, CSV, configuration and source files.
+HTML, SVG and scripts are displayed as plain
 text. UTF-8 and BOM-marked UTF-16/32 are supported. Other encodings or damaged
 files can be downloaded or opened with a configured external program.
 
-Text preview is limited to 2 MiB; image preview is limited to 20 MiB and supported
+Text preview is limited to 2 MiB; inline image preview is limited to 20 MiB and supported
 dimensions. Downloads enforce the limit against actual bytes, including streams
 without a trustworthy length. Large images are decoded at a maximum dimension
 of 4096 pixels. The existing details panel retains its 256 KiB text preview.
@@ -41,12 +40,19 @@ The preview area displays a traffic-charge notice before, during and after loadi
 Unknown types retain **Force preview**: the user must select Image and confirm the
 object size and provider traffic charges before downloading content.
 
-Images appear in the details panel and can be enlarged without another
-download. Force preview ignores the extension but retains the 20 MiB actual-byte
+Images appear in the details panel. **Open in image viewer** reuses the downloaded
+file and opens the configured program or Windows image association, without
+another download or a Hermod image window. The row's Open file and Preview file
+actions also reuse the current image preview file. Unknown extensions are changed
+only in the local cache to match the decoded image format; original bytes are
+preserved. Force preview ignores the extension but retains the 20 MiB actual-byte
 limit and existing decoded-image dimension limits. Cancellation, switching
 objects, refreshing, navigation, closing details, and closing the page cancel the
-read and discard obsolete results. Temporary files are removed on success,
-failure, and cancellation. Recognized images retry directly; unknown types require
+read and discard obsolete results. A successful preview keeps its temporary file
+until the selection changes or the preview closes. Failed and canceled previews
+are removed immediately. Externally opened images remain protected for the
+current Hermod session so the image viewer can continue reading them.
+Recognized images retry directly; unknown types require
 another type and traffic-charge confirmation. Traffic already used may still be
 charged. Objects and Content-Type
 are never modified.
@@ -92,7 +98,8 @@ does not grant preview support or change file-opening security policies.
 Each open operation uses a separate directory beneath
 `%LOCALAPPDATA%\Asgard\Hermod\file-cache`. Remote keys cannot supply local paths
 or overwrite existing files. Failed and canceled operations remove their cache;
-preview files are removed when the window closes. Files opened externally remain
+text-preview files are removed when their window closes. Inline image files are
+removed when the selection changes or details close. Files opened externally remain
 available to the external application and are protected for the current Hermod
 session, even when the external program does not keep a file handle open. Startup
 cleans unused caches older than seven days. Editing a cached file does not upload
@@ -101,5 +108,5 @@ cleanup and actual usage statistics.
 
 Contracts and validation live in Abstractions, rule persistence in
 Persistence.Sqlite, temporary file lifecycle in Core, Windows program launching
-and preview windows in UI, and object download orchestration in ObjectStorage.UI.
+and read-only text windows in UI, and object download orchestration in ObjectStorage.UI.
 Provider protocols remain independent of WPF.

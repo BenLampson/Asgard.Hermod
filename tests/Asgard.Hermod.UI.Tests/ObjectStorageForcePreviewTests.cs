@@ -56,9 +56,11 @@ public sealed class ObjectStorageForcePreviewTests
         Assert.False(model.HasTextPreview);
         Assert.False(model.ShowForcePreviewActions);
         Assert.False(model.IsImagePreviewLoading);
-        Assert.False(File.Exists(path));
+        Assert.Equal(FilePreviewPolicy.IsImage(name), File.Exists(path));
         Assert.Equal(contentType, model.DetailContentType);
         Assert.Empty(model.Transfers);
+        await model.SelectEntryAsync(model.Entries.Single(row => row.Name == "other.dat"), TestContext.Current.CancellationToken);
+        Assert.False(File.Exists(path));
     }
 
     /// <summary>取消确认或返回未知枚举不创建临时文件，也不发出内容下载。</summary>

@@ -26,12 +26,13 @@ public sealed class WindowsFileOpenService(Func<Window?> owner, IFileOpenRuleSto
     /// <inheritdoc />
     public async Task PreviewAsync(string localPath, CancellationToken cancellationToken = default)
     {
+        if (FilePreviewPolicy.IsImage(localPath)) { await OpenAsync(localPath, cancellationToken); return; }
         FilePreviewContent content;
         try { content = await FilePreviewLoader.LoadAsync(localPath, cancellationToken); }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
         catch (Exception exception) when (exception.Data["Hermod.ResourceKey"] is not string) { throw Text.Exception("FilePreviewFailed"); }
         cancellationToken.ThrowIfCancellationRequested();
-        var window = new FilePreviewWindow(content) { Owner = owner() };
+        var window = new TextPreviewWindow(content) { Owner = owner() };
         using var registration = cancellationToken.Register(() => window.Dispatcher.BeginInvoke(() => { if (window.IsVisible) window.Close(); }));
         window.ShowDialog();
     }

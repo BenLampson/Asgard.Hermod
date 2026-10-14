@@ -39,8 +39,8 @@
                             </TextBlock>
                             <StackPanel Grid.Row="3" Visibility="{Binding HasImagePreview, Converter={StaticResource OssDetailVisible}}">
                                 <DockPanel Margin="0,0,0,10">
-                                    <Button DockPanel.Dock="Right" Click="OnImagePreviewClick" Style="{StaticResource IconButton}" Width="20" Height="20" Padding="3"
-                                            ToolTip="{loc:Loc ForcePreviewEnlarge}" AutomationProperties.Name="{loc:Loc ForcePreviewEnlarge}"><controls:IconView Kind="maximize-2" Width="14" Height="14" /></Button>
+                                    <Button DockPanel.Dock="Right" Command="{Binding OpenImagePreviewCommand}" Style="{StaticResource IconButton}" Width="20" Height="20" Padding="3"
+                                            ToolTip="{loc:Loc ForcePreviewOpenExternal}" AutomationProperties.Name="{loc:Loc ForcePreviewOpenExternal}"><controls:IconView Kind="external-link" Width="14" Height="14" /></Button>
                                     <TextBlock Text="{loc:Loc ForcePreviewImageReady}" FontSize="11" Foreground="{DynamicResource SuccessBrush}" VerticalAlignment="Center" />
                                 </DockPanel>
                                 <Image Source="{Binding ImagePreview}" Stretch="Uniform" MaxHeight="240" AutomationProperties.Name="{loc:Loc FileImagePreview}" />

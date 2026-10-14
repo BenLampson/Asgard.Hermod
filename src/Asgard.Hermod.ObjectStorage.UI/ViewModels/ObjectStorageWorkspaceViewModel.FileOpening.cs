@@ -5,7 +5,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
 {
     /// <summary>下载完成后按本机规则或系统默认关联打开。</summary>
     public AsyncRelayCommand OpenFileCommand { get; }
-    /// <summary>图片和文本以只读方式在 Hermod 内预览。</summary>
+    /// <summary>文本只读预览，图片调用本机看图软件。</summary>
     public AsyncRelayCommand PreviewFileCommand { get; }
 
     /// <summary>捕获当前文件与 Bucket，重试创建新的隔离缓存目录。</summary>
@@ -13,10 +13,16 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     {
         if (_files is null || _temporaryFiles is null || Target(parameter) is not { IsDirectory: false } entry || SelectedBucket is not { } bucket)
             return Task.CompletedTask;
-        return InteractAsync(() =>
+        return InteractAsync(async () =>
         {
-            long? limit = preview ? FilePreviewPolicy.Limit(entry.Name) : null;
-            if (preview && (limit == 0 || entry.Entry.Size > limit))
+            if (_imagePreviewFile is not null && ReferenceEquals(entry, SelectedEntry) && HasImagePreview)
+            {
+                await TrackImagePreviewTask(OpenCachedImageAsync(_lifetime.Token));
+                return;
+            }
+            bool textPreview = preview && !FilePreviewPolicy.IsImage(entry.Name);
+            long? limit = textPreview ? FilePreviewPolicy.Limit(entry.Name) : null;
+            if (textPreview && (limit == 0 || entry.Entry.Size > limit))
                 throw Text.Exception(limit == 0 ? "FilePreviewUnsupported" : "FilePreviewTooLarge");
             QueueTransfer(new(entry.Key, false, entry.Entry.Size, async (task, progress, token) =>
             {
@@ -33,12 +39,11 @@ public sealed partial class ObjectStorageWorkspaceViewModel
                     finally { _transferGate.Release(); }
                     token.ThrowIfCancellationRequested();
                     if (IsClosed) return;
-                    if (preview) await _files.PreviewAsync(file.Path, token);
+                    if (textPreview) await _files.PreviewAsync(file.Path, token);
                     else { await _files.OpenAsync(file.Path, token); file.RetainForExternalUse(); }
                 }
                 finally { file?.Dispose(); }
             }, _lifetime.Token), bucket, Prefix);
-            return Task.CompletedTask;
         });
     }
 }

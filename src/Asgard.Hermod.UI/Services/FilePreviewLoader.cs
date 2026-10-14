@@ -59,6 +59,17 @@ public static class FilePreviewLoader
         image.EndInit();
         image.Freeze();
         cancellationToken.ThrowIfCancellationRequested();
-        return new(Path.GetFileName(path), "", image);
+        // 扩展名来自已验证的解码器，使未知扩展名图片也能调用正确的系统关联。
+        string extension = frame.Decoder switch
+        {
+            JpegBitmapDecoder => ".jpg",
+            BmpBitmapDecoder => ".bmp",
+            GifBitmapDecoder => ".gif",
+            TiffBitmapDecoder => ".tiff",
+            IconBitmapDecoder => ".ico",
+            PngBitmapDecoder => ".png",
+            _ => throw Text.Exception("ForcePreviewDecodeFailed"),
+        };
+        return new(Path.GetFileName(path), "", image, extension);
     }
 }

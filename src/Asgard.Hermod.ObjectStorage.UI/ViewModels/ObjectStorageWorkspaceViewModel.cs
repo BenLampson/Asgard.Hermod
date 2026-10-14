@@ -54,7 +54,8 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         OpenFileCommand = new AsyncRelayCommand(parameter => QueueFileOpenAsync(parameter, false),
             parameter => CanOperate && _files is not null && _temporaryFiles is not null && Target(parameter) is { IsDirectory: false });
         PreviewFileCommand = new AsyncRelayCommand(parameter => QueueFileOpenAsync(parameter, true),
-            parameter => CanOperate && _files is not null && _temporaryFiles is not null && Target(parameter) is { IsDirectory: false } entry && _files.CanPreview(entry.Name));
+            parameter => CanOperate && _files is not null && _temporaryFiles is not null && Target(parameter) is { IsDirectory: false } entry
+                && (_files.CanPreview(entry.Name) || (_imagePreviewFile is not null && ReferenceEquals(entry, SelectedEntry))));
         BatchDownloadCommand = new AsyncRelayCommand(_ => DownloadCheckedAsync(), _ => CanOperate && HasCheckedEntries);
         DeleteCommand = new AsyncRelayCommand(DeleteAsync, parameter => CanOperate && (Target(parameter) is not null || HasCheckedEntries));
         TemporaryLinkCommand = new AsyncRelayCommand(ShowTemporaryLinkAsync, parameter => CanOperate && Target(parameter) is { IsDirectory: false });
@@ -369,6 +370,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         RefreshScanCommands();
         ForcePreviewCommand?.NotifyCanExecuteChanged();
         CancelImagePreviewCommand?.NotifyCanExecuteChanged();
+        OpenImagePreviewCommand?.NotifyCanExecuteChanged();
     }
     /// <summary>关闭取消所有读取和传输，过期响应不会更新已释放页面。</summary>
     protected override async ValueTask ReleaseAsync()

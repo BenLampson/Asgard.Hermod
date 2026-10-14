@@ -69,7 +69,8 @@ public sealed class ObjectStorageForcePreviewWindowTests(WpfTestFixture fixture)
         themes.SetTheme(theme);
         using var environment = new TemporaryStorageTestEnvironment();
         var service = ObjectStorageForcePreviewTestData.Service();
-        await using var model = ObjectStorageForcePreviewTestData.Model(service, ObjectStorageForcePreviewTestData.ConfirmingDialogs(), environment.Storage);
+        var files = new FileOpenTestService();
+        await using var model = ObjectStorageForcePreviewTestData.Model(service, ObjectStorageForcePreviewTestData.ConfirmingDialogs(), environment.Storage, files);
         var view = new ObjectStorageView { DataContext = model };
         var window = new HermodWindow { Content = view, Width = width, Height = 620, Opacity = 0, ShowInTaskbar = false, ShowActivated = false };
         try
@@ -95,15 +96,13 @@ public sealed class ObjectStorageForcePreviewWindowTests(WpfTestFixture fixture)
             var action = WindowTestVisuals.ScreenBounds(download);
             Assert.True(action.Left >= bounds.Left && action.Right <= bounds.Right + 1 && action.Bottom <= bounds.Bottom + 1);
             await WindowPreviewCapture.VerifyAsync(window, $"force-preview-image-{theme}-{language}");
-            var enlarge = Assert.Single(WindowTestVisuals.Descendants<Button>(details), button => AutomationProperties.GetName(button) == Text.Get("ForcePreviewEnlarge"));
-            var closePreview = window.Dispatcher.InvokeAsync(() =>
-            {
-                var preview = Assert.Single(Application.Current.Windows.Cast<Window>().OfType<UI.Views.Dialogs.FilePreviewWindow>());
-                Assert.Same(model.ImagePreview, Assert.IsType<FilePreviewContent>(preview.DataContext).Image);
-                preview.Close();
-            }, DispatcherPriority.Background);
-            enlarge.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            await closePreview;
+            var open = Assert.Single(WindowTestVisuals.Descendants<Button>(details), button => AutomationProperties.GetName(button) == Text.Get("ForcePreviewOpenExternal"));
+            Assert.Same(model.OpenImagePreviewCommand, open.Command);
+            Assert.True(open.IsEnabled);
+            var windows = Application.Current.Windows.Cast<Window>().ToArray();
+            WindowTestVisuals.Invoke(open);
+            Assert.False(Assert.Single(files.Calls).Preview);
+            Assert.Equal(windows, Application.Current.Windows.Cast<Window>().ToArray());
             Assert.Single(service.DownloadLimits);
             await model.SelectEntryAsync(model.Entries.Single(row => row.Name == "other.dat"), TestContext.Current.CancellationToken);
             await WindowTestVisuals.UpdateLayoutAsync(window);
