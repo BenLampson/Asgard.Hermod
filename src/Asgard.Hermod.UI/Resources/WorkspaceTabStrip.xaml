@@ -16,6 +16,9 @@
    </Border>
   </ControlTemplate></Setter.Value></Setter>
   <Setter Property="ItemContainerStyle"><Setter.Value><Style TargetType="ListBoxItem">
+   <Setter Property="ToolTipService.ShowsToolTipOnKeyboardFocus" Value="False" />
+   <Setter Property="ToolTipService.InitialShowDelay" Value="600" />
+   <Setter Property="ToolTipService.ShowDuration" Value="3000" />
    <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
    <Setter Property="Padding" Value="10,0,8,0" />
    <Setter Property="MinHeight" Value="40" />
