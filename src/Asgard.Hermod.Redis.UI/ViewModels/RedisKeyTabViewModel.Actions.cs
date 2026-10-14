@@ -127,7 +127,7 @@ public sealed partial class RedisKeyTabViewModel
     }
     private async Task DeleteAsync()
     {
-        if (!await _dialogs.DeleteAsync(FullName, Database)) return;
+        if (!await _dialogs.DeleteAsync(FullName, Database, TargetLabel)) return;
         IsBusy = true; Error = ""; RefreshState();
         try
         {

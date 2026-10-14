@@ -32,8 +32,8 @@ public sealed partial class MySqlTabViewModel
     public async Task OpenFieldAsync(MySqlGridViewModel grid, MySqlRowViewModel row, MySqlCellViewModel cell)
     {
         bool editable = await PrepareCellAsync(grid, row, cell);
-        string key = grid.Result.EditableTable is { } table ? string.Join(", ", table.Keys.Select(column => column.Name + "=" + MySqlValues.Format(row.OriginalProjection.GetValueOrDefault(column.Name)))) : "";
-        var field = new MySqlFieldEditorViewModel(cell, Text.Format("MySqlFieldContext", cell.Column.Database, cell.Column.Table, cell.Column.Name, key), editable);
+        string key = grid.Result.EditableTable is { } table ? string.Join(", ", table.Keys.Select(column => column.Name + "=" + MySqlValues.Format(row.OriginalProjection.GetValueOrDefault(column.Name)))) : Text.Format("MySqlResultRow", Array.IndexOf(grid.Rows.ToArray(), row) + 1);
+        var field = new MySqlFieldEditorViewModel(cell, Text.Format("MySqlFieldOperationTarget", Instance?.Name ?? Text.Get("InstanceUnknown"), Instance?.EnvironmentLabel ?? Text.Get("EnvironmentNotSet"), Text.Format("MySqlFieldContext", cell.Column.Database, cell.Column.Table, cell.Column.Name, key)), editable);
         await _dialogs.EditFieldAsync(field);
     }
 

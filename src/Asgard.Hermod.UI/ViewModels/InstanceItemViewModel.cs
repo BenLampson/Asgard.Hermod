@@ -23,6 +23,24 @@ public sealed class InstanceItemViewModel : ObservableObject
     public string Name => Summary.Name;
     /// <summary>详情和页签标题。</summary>
     public string DisplayName => Summary.DisplayName;
+    /// <summary>只识别内置环境标签的稳定标识，多个环境明确显示，缺失不猜测。</summary>
+    public string EnvironmentLabel
+    {
+        get
+        {
+            var labels = Summary.TagIds.Select(id => id switch
+            {
+                "builtin.environment.production" => "Production",
+                "builtin.environment.staging" => "Staging",
+                "builtin.environment.development" => "Development",
+                _ => null,
+            }).Where(key => key is not null).Distinct().Select(key => Text.Get(key!)).ToArray();
+            return labels.Length == 0 ? Text.Get("EnvironmentNotSet") : string.Join(" / ", labels);
+        }
+    }
+    /// <summary>生产环境使用主题感知琥珀色，颜色只辅助文字。</summary>
+    public StatusTone EnvironmentTone => Summary.TagIds.Contains("builtin.environment.production") ? StatusTone.Warning
+        : Summary.TagIds.Any(id => id is "builtin.environment.staging" or "builtin.environment.development") ? StatusTone.Accent : StatusTone.Muted;
     /// <summary>矢量图标名称。</summary>
     public string Icon => Summary.Icon;
     /// <summary>类型来自连接器注册表，品牌图标不能替代类型图标。</summary>
@@ -88,7 +106,7 @@ public sealed class InstanceItemViewModel : ObservableObject
         foreach (string property in new[] { nameof(Summary), nameof(Name), nameof(DisplayName),
             nameof(Icon), nameof(IsStorage), nameof(Tags), nameof(IsLocal), nameof(HasAlert), nameof(TypeIcon),
             nameof(TypeName), nameof(HasProviderIcon), nameof(ProviderName), nameof(TypeHint), nameof(ProviderHint),
-            nameof(HasSyncStatus), nameof(AccessibleName) })
+            nameof(HasSyncStatus), nameof(AccessibleName), nameof(EnvironmentLabel), nameof(EnvironmentTone) })
             OnPropertyChanged(property);
     }
 }

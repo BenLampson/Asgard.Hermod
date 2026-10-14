@@ -7,7 +7,7 @@
   <Button x:Name="SaveButton" Content="{loc:Loc RedisSaveValue}" Style="{StaticResource PrimaryButton}" Click="OnSave" IsEnabled="{Binding CanSave}" />
  </StackPanel></controls:DialogActionBar></controls:HermodDialog.FooterContent>
  <Grid Margin="24"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
-  <TextBlock Text="{Binding FullName}" FontFamily="{DynamicResource MonoFont}" TextTrimming="CharacterEllipsis" ToolTip="{Binding FullName}" Margin="0,0,0,10" />
+  <StackPanel><TextBlock Text="{Binding TargetLabel}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8" /><TextBlock Text="{Binding FullName}" FontFamily="{DynamicResource MonoFont}" TextTrimming="CharacterEllipsis" ToolTip="{Binding FullName}" Margin="0,0,0,10" /></StackPanel>
   <views:RedisKeyContentView Grid.Row="1" x:Name="Editor" IsEditorHost="True" />
  </Grid>
 </controls:HermodDialog>

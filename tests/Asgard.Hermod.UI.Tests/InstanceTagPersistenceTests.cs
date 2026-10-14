@@ -20,6 +20,7 @@ public sealed class InstanceTagPersistenceTests
         var instance = await configurations.CreateAsync(Draft("Original", [first.Id]), TestContext.Current.CancellationToken);
         await tags.SaveAsync(first.Id, new("Renamed", null, "#123456"), TestContext.Current.CancellationToken);
         Assert.Equal([first.Id], await configurations.GetTagIdsAsync(instance.Id, TestContext.Current.CancellationToken));
+        Assert.Equal([first.Id], Assert.Single(configurations.GetInstances()).TagIds);
 
         await configurations.UpdateAsync(instance.Id, Draft("Updated", clear ? [] : [second.Id, second.Id], replace),
             TestContext.Current.CancellationToken);

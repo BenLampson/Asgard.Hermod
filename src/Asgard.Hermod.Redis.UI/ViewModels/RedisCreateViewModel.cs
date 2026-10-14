@@ -7,9 +7,11 @@ public sealed class RedisCreateViewModel : ObservableObject, IDisposable
     private readonly CancellationTokenSource _lifetime;
     private string _format = "text";
     /// <summary>数据库及前缀在打开时固定，不受工作区后来切换影响。</summary>
-    public RedisCreateViewModel(IRedisSession session, int database, string prefix = "", CancellationToken cancellationToken = default)
+    public RedisCreateViewModel(IRedisSession session, int database, string prefix = "", CancellationToken cancellationToken = default,
+        string? target = null)
     {
         _session = session; Database = database; Key = prefix;
+        TargetLabel = target ?? Text.Format("RedisWriteTarget", Text.Get("InstanceUnknown"), Text.Get("EnvironmentNotSet"), database);
         _lifetime = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         SubmitCommand = new AsyncRelayCommand(_ => SubmitAsync(), _ => CanSubmit);
         AddRowCommand = new RelayCommand(_ => AddRow(), _ => CanAddRow);
@@ -19,7 +21,7 @@ public sealed class RedisCreateViewModel : ObservableObject, IDisposable
     /// <summary>创建目标数据库，不随窗口其他状态改变。</summary>
     public int Database { get; }
     /// <summary>目标数据库的完整本地化句式。</summary>
-    public string TargetLabel => Text.Format("RedisCreateTarget", Database);
+    public string TargetLabel { get; }
     /// <summary>真实键名保持原样，不裁剪空白或解释 MATCH。</summary>
     public string Key { get; set => SetProperty(ref field, value); } = "";
     /// <summary>协议类型名称不翻译。</summary>

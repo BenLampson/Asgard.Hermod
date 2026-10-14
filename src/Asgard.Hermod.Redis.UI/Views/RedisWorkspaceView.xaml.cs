@@ -145,6 +145,8 @@ public partial class RedisWorkspaceView : UserControl
         _compact = compact; UpdateLayoutMode();
         ConnectionBadge.Visibility = args.NewSize.Width < 760 ? Visibility.Collapsed : Visibility.Visible;
         ToolbarTypeIcon.Visibility = args.NewSize.Width < 760 ? Visibility.Collapsed : Visibility.Visible;
+        DatabaseField.Width = args.NewSize.Width < 600 ? 150 : 190;
+        NewKeyLabel.Visibility = args.NewSize.Width < 600 ? Visibility.Collapsed : Visibility.Visible;
         IdentityColumn.Width = new(args.NewSize.Width < 600 ? 0 : args.NewSize.Width < 760 ? 70 : 225);
     }
     private void OnCompactChanged(object sender, SelectionChangedEventArgs args)

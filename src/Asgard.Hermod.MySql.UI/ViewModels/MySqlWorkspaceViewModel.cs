@@ -34,6 +34,8 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
     }
     /// <summary>对象原始名称或已本地化的文稿标题。</summary>
     public string Name => Header;
+    /// <summary>公共环境徽标直接绑定稳定实例元数据。</summary>
+    public InstanceItemViewModel Instance => _instance;
     /// <summary>不含凭据的公开端点。</summary>
     public string Endpoint { get; private set; } = "";
     /// <summary>实例连接初始化状态。</summary>
@@ -111,7 +113,7 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
     }
     private MySqlTabViewModel CreateTab(string name, string database, MySqlObjectKind kind)
     {
-        var tab = new MySqlTabViewModel(name, database, kind, _factory, _options!, _dialogs, _lifetime.Token)
+        var tab = new MySqlTabViewModel(name, database, kind, _factory, _options!, _dialogs, _lifetime.Token, _instance)
         { Databases = Tree?.Root.Children.Where(node => !node.IsPlaceholder).Select(node => node.Object.Name).ToArray() ?? [] };
         tab.PropertyChanged += OnTabChanged; return tab;
     }

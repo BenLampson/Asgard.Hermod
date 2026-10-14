@@ -18,11 +18,14 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
     private bool _executed;
     /// <summary>视图提交正在输入的原生表格单元格，验证失败时阻止保存、刷新和关闭。</summary>
     public Func<bool>? CommitInputRequested { get; set; }
+    /// <summary>实例元数据只用于操作目标，不改变本页签的数据库上下文。</summary>
+    public InstanceItemViewModel? Instance { get; }
     /// <summary>创建模块状态和依赖；真实连接或写入由显式操作启动。</summary>
     public MySqlTabViewModel(string name, string database, MySqlObjectKind kind, IMySqlSessionFactory factory,
-        InstanceConnectionOptions options, IMySqlWorkspaceDialogs dialogs, CancellationToken lifetime = default)
+        InstanceConnectionOptions options, IMySqlWorkspaceDialogs dialogs, CancellationToken lifetime = default, InstanceItemViewModel? instance = null)
     {
         Name = name; Database = database; Kind = kind; _factory = factory; _options = options; _dialogs = dialogs;
+        Instance = instance;
         _lifetime = CancellationTokenSource.CreateLinkedTokenSource(lifetime);
         RefreshCommand = new AsyncRelayCommand(_ => ReadAsync(), _ => !IsBusy && !IsQuery);
         ExecuteCommand = new AsyncRelayCommand(sql => ExecuteAsync(sql as string ?? Sql), _ => !IsBusy && IsQuery);

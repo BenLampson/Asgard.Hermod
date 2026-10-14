@@ -3278,4 +3278,12 @@
     <value>筛选实例列表…</value>
   </data>
 
+  <data name="EnvironmentNotSet" xml:space="preserve"><value>未设置</value></data>
+  <data name="InstanceUnknown" xml:space="preserve"><value>未知实例</value></data>
+  <data name="RedisWriteTarget" xml:space="preserve"><value>实例：{0} · 环境：{1} · DB {2}</value></data>
+  <data name="RedisDeleteTargetConfirm" xml:space="preserve"><value>{0}
+删除键“{1}”？此操作无法撤销。</value></data>
+  <data name="MySqlFieldOperationTarget" xml:space="preserve"><value>实例：{0} · 环境：{1}
+{2}</value></data>
+  <data name="MySqlResultRow" xml:space="preserve"><value>结果第 {0} 行</value></data>
 </root>

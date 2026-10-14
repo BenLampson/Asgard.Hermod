@@ -3278,4 +3278,12 @@
     <value>Filter instance list…</value>
   </data>
 
+  <data name="EnvironmentNotSet" xml:space="preserve"><value>Not set</value></data>
+  <data name="InstanceUnknown" xml:space="preserve"><value>Unknown instance</value></data>
+  <data name="RedisWriteTarget" xml:space="preserve"><value>Instance: {0} · Environment: {1} · DB {2}</value></data>
+  <data name="RedisDeleteTargetConfirm" xml:space="preserve"><value>{0}
+Delete the key “{1}”? This action cannot be undone.</value></data>
+  <data name="MySqlFieldOperationTarget" xml:space="preserve"><value>Instance: {0} · Environment: {1}
+{2}</value></data>
+  <data name="MySqlResultRow" xml:space="preserve"><value>Result row {0}</value></data>
 </root>

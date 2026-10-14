@@ -157,6 +157,7 @@ public sealed class LocalInstanceConfigurationService : IInstanceConfigurationSe
         HashSet<string> tagIds = instance.TagIds.ToHashSet(StringComparer.Ordinal);
         return new InstanceSummary(instance.Id, instance.Name, instance.Name,
             descriptor?.Icon ?? "database", tags.Where(tag => tagIds.Contains(tag.Id)).Select(tag => tag.Path).ToArray(),
-            Endpoint: descriptor?.Name ?? Text.Get("InstanceConnectorNotInstalled"), TypeId: instance.TypeId, ProviderId: instance.ProviderId);
+            Endpoint: descriptor?.Name ?? Text.Get("InstanceConnectorNotInstalled"), TypeId: instance.TypeId, ProviderId: instance.ProviderId)
+        { TagIds = instance.TagIds.ToArray() };
     }
 }

@@ -18,9 +18,10 @@ public sealed partial class RedisKeyTabViewModel : ObservableObject, IDisposable
     private bool _formatInitialized;
 
     /// <summary>页签顺序由工作页管理，不连接外层 AppShell 页签。</summary>
-    public RedisKeyTabViewModel(IRedisSession session, int database, RedisKeyId key, IRedisWorkspaceDialogs dialogs)
+    public RedisKeyTabViewModel(IRedisSession session, int database, RedisKeyId key, IRedisWorkspaceDialogs dialogs, InstanceItemViewModel? instance = null)
     {
         _session = session; Database = database; Key = key; _dialogs = dialogs;
+        Instance = instance;
         EditCommand = new AsyncRelayCommand(_ => EditAsync(), _ => CanEdit);
         OpenEditorCommand = new AsyncRelayCommand(_ => _dialogs.EditAsync(this), _ => CanEdit && !IsBusy);
         SaveCommand = new AsyncRelayCommand(_ => SaveAsync(), _ => CanSave);
@@ -40,6 +41,11 @@ public sealed partial class RedisKeyTabViewModel : ObservableObject, IDisposable
     public RedisKeyId Key { get; }
     /// <summary>当前键所属数据库。</summary>
     public int Database { get; }
+    /// <summary>当前操作的实例身份来自工作页，与树的选中项无关。</summary>
+    public InstanceItemViewModel? Instance { get; }
+    /// <summary>编辑和删除始终使用此页签的数据库，而非当前浏览数据库。</summary>
+    public string TargetLabel => Text.Format("RedisWriteTarget", Instance?.Name ?? Text.Get("InstanceUnknown"),
+        Instance?.EnvironmentLabel ?? Text.Get("EnvironmentNotSet"), Database);
     /// <summary>完整键名用于悬浮、键盘焦点提示和可访问名称。</summary>
     public string FullName => Key.DisplayName;
     /// <summary>原始标题由公共控件按实际宽度省略，不影响键身份。</summary>

@@ -33,6 +33,8 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
     }
     /// <summary>实例标题。</summary>
     public string Name => Header;
+    /// <summary>公共环境徽标直接绑定稳定实例元数据。</summary>
+    public InstanceItemViewModel Instance => _instance;
     /// <summary>只显示公开端点。</summary>
     public string Endpoint { get; private set; } = "";
     /// <summary>公共状态徽标。</summary>
@@ -177,7 +179,7 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
         if (_session is null) return;
         var tab = Tabs.FirstOrDefault(item => item.Database == _database && item.Key.Equals(key));
         if (tab is not null) { ActiveTab = tab; ShowTree = false; return; }
-        tab = new(_session, _database, key, _dialogs); tab.Deleted += RemoveTab; tab.PropertyChanged += OnKeyChanged;
+        tab = new(_session, _database, key, _dialogs, _instance); tab.Deleted += RemoveTab; tab.PropertyChanged += OnKeyChanged;
         Tabs.Add(tab); ActiveTab = tab; ShowTree = false; await tab.ReadAsync();
     }
     private Task OpenKnownAsync() => OpenAsync(RedisKeyId.FromText(KnownKey));
@@ -210,7 +212,7 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
         int database = _database;
         try
         {
-            var key = await _dialogs.CreateAsync(_session, database, CreatePrefix, _lifetime.Token);
+            var key = await _dialogs.CreateAsync(_session, database, CreatePrefix, Text.Format("RedisWriteTarget", _instance.Name, _instance.EnvironmentLabel, database), _lifetime.Token);
             if (key is null || IsClosed) return;
             DatabaseText = database.ToString(CultureInfo.InvariantCulture); _database = database;
             await OpenAsync(key); Pattern = ""; SelectedType = ""; await QueryAsync(); Tree?.Reveal(key); await RefreshDatabaseCountsAsync();
