@@ -19,7 +19,7 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
 
     /// <summary>不打开真实连接，首次激活时由公共页签生命周期初始化。</summary>
     public RedisWorkspaceViewModel(InstanceItemViewModel instance, IInstanceConfigurationService configurations, IRedisSessionFactory connections,
-        IInstanceEditor editor, IRedisWorkspaceDialogs dialogs) : base("redis:" + Guid.NewGuid().ToString("N"), instance.Name, "database", instance.Id)
+        IInstanceEditor editor, IRedisWorkspaceDialogs dialogs) : base("redis:" + Guid.NewGuid().ToString("N"), instance.Name, "layers", instance.Id)
     {
         _instance = instance; _configurations = configurations; _connections = connections; _editor = editor; _dialogs = dialogs;
         OpenKnownCommand = new AsyncRelayCommand(_ => OpenKnownAsync(), _ => _session is not null && KnownKey.Length > 0);

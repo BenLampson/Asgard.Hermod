@@ -7,7 +7,7 @@ public sealed class FakeStorageProvider : IStorageProvider
     public FakeStorageProvider(string id)
     {
         Descriptor = new(id, "Third-party storage", "Future storage", "database",
-            new("storage", "存储", "连接对象存储服务", "database"), []);
+            new("storage", "存储", "连接对象存储服务", "box"), []);
     }
 
     /// <inheritdoc />

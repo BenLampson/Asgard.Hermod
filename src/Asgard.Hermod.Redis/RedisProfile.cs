@@ -9,7 +9,7 @@ public static class RedisProfile
     public static InstanceProviderDescriptor Descriptor(string topology) => new(topology,
         Text.Get(topology switch { RedisIds.Sentinel => "RedisSentinel", RedisIds.Cluster => "RedisCluster", _ => "RedisStandalone" }),
         Text.Get(topology switch { RedisIds.Sentinel => "RedisSentinelHint", RedisIds.Cluster => "RedisClusterHint", _ => "RedisStandaloneHint" }),
-        topology switch { RedisIds.Sentinel => "radar", RedisIds.Cluster => "network", _ => "database" }, new(RedisIds.Type, "Redis", Text.Get("RedisTypeHint"), "database")
+        topology switch { RedisIds.Sentinel => "radar", RedisIds.Cluster => "network", _ => "layers" }, new(RedisIds.Type, "Redis", Text.Get("RedisTypeHint"), "layers")
         {
             ProviderSelectionTitleResourceKey = "RedisTopology",
             ProviderSelectionDescriptionResourceKey = "RedisTopologyHint",

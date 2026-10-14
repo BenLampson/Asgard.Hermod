@@ -53,7 +53,7 @@ public sealed class InstanceSidebarPresentationTests(WpfTestFixture fixture)
             var type = Assert.Single(WindowTestVisuals.Descendants<IconView>(button), icon => icon.Name == "InstanceTypeIcon");
             var brand = Assert.Single(WindowTestVisuals.Descendants<IconView>(button), icon => icon.Name == "InstanceProviderIcon");
             var cloud = Assert.Single(WindowTestVisuals.Descendants<IconView>(button), icon => icon.Name == "InstanceCloudStatus");
-            Assert.Equal("database", type.Kind);
+            Assert.Equal("box", type.Kind);
             Assert.Equal("provider-aliyun-oss", brand.Kind);
             Assert.Equal(Text.Format("InstanceTypeHint", Text.Get("Storage")), type.ToolTip);
             Assert.Equal(Text.Format("InstanceProviderHint", "Aliyun OSS"), brand.ToolTip);

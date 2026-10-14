@@ -61,7 +61,7 @@ public sealed class ObjectStorageUiPreviewTests(WpfTestFixture fixture)
             Assert.Equal(FontWeights.SemiBold, instanceName.FontWeight);
             Assert.Same(Application.Current.Resources["AccentTextBrush"], instanceName.Foreground);
             var instanceIcon = Assert.Single(WindowTestVisuals.Descendants<IconView>(instanceButton), icon => icon.Name == "InstanceTypeIcon");
-            Assert.Equal("database", instanceIcon.Kind);
+            Assert.Equal("box", instanceIcon.Kind);
             var brand = Assert.Single(WindowTestVisuals.Descendants<IconView>(instanceButton), icon => icon.Name == "InstanceProviderIcon");
             Assert.Equal("provider-aliyun-oss", brand.Kind);
             Assert.True(brand.IsVisible);
@@ -97,7 +97,7 @@ public sealed class ObjectStorageUiPreviewTests(WpfTestFixture fixture)
                 button => button.IsVisible && ReferenceEquals(button.Command, shell.Sidebar.OpenInstanceCommand));
             Assert.Equal(36, collapsedButton.ActualWidth);
             Assert.Same(item, collapsedButton.CommandParameter);
-            var collapsedIcon = Assert.Single(WindowTestVisuals.Descendants<IconView>(collapsedButton), icon => icon.Kind == "database");
+            var collapsedIcon = Assert.Single(WindowTestVisuals.Descendants<IconView>(collapsedButton), icon => icon.Kind == "box");
             Assert.Same(Application.Current.Resources["WarningBrush"], collapsedIcon.Foreground);
             WindowTestVisuals.Invoke(collapsedButton);
             Assert.Same(page, shell.Workspace.SelectedTab);

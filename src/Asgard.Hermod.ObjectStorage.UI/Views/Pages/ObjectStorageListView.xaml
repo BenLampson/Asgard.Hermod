@@ -31,7 +31,7 @@
         <Grid>
             <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="8" /><ColumnDefinition Width="*" /><ColumnDefinition Width="32" /><ColumnDefinition Width="8" /><ColumnDefinition Width="32" /></Grid.ColumnDefinitions>
             <controls:SearchableSelect x:Name="BucketSelector" ItemsSource="{Binding Buckets}" SelectedItem="{Binding SelectedBucket, Mode=OneWay}"
-                                      DisplayMemberPath="Name" Icon="database" Height="32" SelectionCommitted="OnBucketSelected" AutomationProperties.Name="{loc:Loc SwitchBucket}" />
+                                      DisplayMemberPath="Name" Icon="box" Height="32" SelectionCommitted="OnBucketSelected" AutomationProperties.Name="{loc:Loc SwitchBucket}" />
             <ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled" Margin="0,0,12,0">
                 <ItemsControl ItemsSource="{Binding DirectoryBreadcrumbs}" VerticalAlignment="Center">
                     <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>

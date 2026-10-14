@@ -85,7 +85,7 @@ public abstract class S3StorageProvider(S3ProviderProfile profile, IHttpClientFa
             fields.Add(new("addressingStyle", Text.Get("StorageAddressingStyle"), IsRequired: false, MaxLength: 7,
                 Hint: Text.Get("StorageAddressingStyleHint")));
         return new(profile.Id, Text.Get(profile.NameResource), Text.Get(profile.DescriptionResource), profile.Icon,
-            new("storage", Text.Get("Storage"), Text.Get("ConnectToObjectStorage"), "database"), fields.AsReadOnly())
+            new("storage", Text.Get("Storage"), Text.Get("ConnectToObjectStorage"), "box"), fields.AsReadOnly())
         {
             ConnectionTestDescription = Text.Get("StorageConnectionTestHint"),
         };
