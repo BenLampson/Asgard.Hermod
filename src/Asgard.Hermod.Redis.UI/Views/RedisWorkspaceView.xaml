@@ -45,12 +45,13 @@
    </Grid>
   </HierarchicalDataTemplate>
  </UserControl.Resources>
- <controls:WorkspacePageLayout>
+ <controls:WorkspacePageLayout x:Name="WorkspaceLayout" IsOverlayOpen="{Binding Connection.IsOpen}">
+  <controls:WorkspacePageLayout.Overlay><controls:WorkspaceConnectionOverlay State="{Binding Connection}" TargetName="{Binding Name}" RetryCommand="{Binding ReconnectCommand}" EditCommand="{Binding EditConnectionCommand}" /></controls:WorkspacePageLayout.Overlay>
   <controls:WorkspacePageLayout.Toolbar>
    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="24" /><ColumnDefinition x:Name="IdentityColumn" Width="225" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
     <controls:IconView x:Name="ToolbarTypeIcon" Kind="layers" Width="24" Height="24" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
     <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center"><controls:InstanceNameButton Instance="{Binding Instance}" FontSize="15" HorizontalAlignment="Left" MaxWidth="280" /><TextBlock Text="{Binding Endpoint}" FontSize="12" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource TextMutedBrush}" Margin="0,2,0,0" /></StackPanel>
-    <controls:StatusBadge Grid.Column="2" x:Name="ConnectionBadge" Text="{Binding Status}" Tone="Success" ShowIndicator="False" VerticalAlignment="Center" Margin="12,0" />
+    <controls:StatusBadge Grid.Column="2" x:Name="ConnectionBadge" Text="{Binding Status}" Tone="{Binding ConnectionTone}" ShowIndicator="False" VerticalAlignment="Center" Margin="12,0" />
     <controls:StatusBadge Grid.Column="3" MaxWidth="180" Text="{Binding Instance.EnvironmentLabel}" Tone="{Binding Instance.EnvironmentTone}" ShowIndicator="False" ToolTip="{Binding Instance.EnvironmentLabel}" AutomationProperties.Name="{Binding Instance.EnvironmentLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,8,0" /><StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
      <StackPanel x:Name="DatabaseField" Width="190"><TextBlock Text="{loc:Loc RedisDatabase}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,3" />
       <ComboBox x:Name="DatabaseSelector" ItemsSource="{Binding Databases}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding DatabaseText, Mode=TwoWay}" MinHeight="32" Height="32" SelectionChanged="OnDatabaseChanged" DropDownOpened="OnDatabasesOpened" ToolTip="{loc:Loc RedisDatabaseCountHint}" AutomationProperties.Name="{loc:Loc RedisDatabase}" />

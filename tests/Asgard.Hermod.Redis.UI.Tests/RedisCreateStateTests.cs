@@ -75,7 +75,7 @@ public sealed class RedisCreateStateTests
         var configs = new RedisTestConfigurations(); await using var workspace = new RedisWorkspaceViewModel(new(RedisTestConfigurations.Instance), configs, session, configs, new RedisTestDialogs());
         await workspace.InitializeAsync(TestContext.Current.CancellationToken); workspace.DatabaseText = "5"; await workspace.QueryAsync();
         var options = workspace.Databases; var fifth = options[5]; int requests = session.Calls.Count;
-        await workspace.RefreshDatabaseCountsAsync(); Assert.Same(options, workspace.Databases); Assert.Same(fifth, workspace.Databases[5]);
+        await workspace.RefreshDatabaseCountsAsync(TestContext.Current.CancellationToken); Assert.Same(options, workspace.Databases); Assert.Same(fifth, workspace.Databases[5]);
         Assert.Equal(Text.Format("RedisDatabaseWithCount", 5, "500"), fifth.Name); Assert.Equal("5", workspace.DatabaseText); Assert.Equal(requests, session.Calls.Count);
         Assert.Contains(Text.Get("RedisDatabaseCountUnknown"), options[2].Name);
     }

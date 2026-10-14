@@ -1,4 +1,5 @@
 using Asgard.Hermod.Redis.UI.Services;
+using Asgard.Hermod.UI.Models;
 
 namespace Asgard.Hermod.Redis.UI.ViewModels;
 
@@ -38,7 +39,11 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
     /// <summary>只显示公开端点。</summary>
     public string Endpoint { get; private set; } = "";
     /// <summary>公共状态徽标。</summary>
-    public string Status => Text.Get(IsConnecting ? "RedisConnecting" : _session is null ? "RedisConnectionFailed" : "RedisConnected");
+    public string Status => Text.Get(IsConnecting ? "RedisConnecting" : _session is null ? "WorkspaceConnectionDisconnected" : "RedisConnected");
+    /// <summary>共享连接浮层与短状态徽标分别承载详情和摘要。</summary>
+    public WorkspaceConnectionViewModel Connection { get; } = new();
+    /// <summary>失败不使用成功绿色，等待与未连接也有独立色调。</summary>
+    public StatusTone ConnectionTone => IsConnecting ? StatusTone.Accent : IsConnected ? StatusTone.Success : Connection.HasError ? StatusTone.Danger : StatusTone.Muted;
     /// <summary>连接中可以等待或关闭，禁止重复连接。</summary>
     public bool IsConnecting { get; private set; }
     /// <summary>实际会话建立状态。</summary>
@@ -52,21 +57,22 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
     /// <summary>选项来自服务器实际数据库数量，不假设固定十六个数据库。</summary>
     public IReadOnlyList<RedisDatabaseViewModel> Databases { get; private set; } = [];
     /// <summary>DBSIZE 不遍历键或加载值；独立更新标签，不改变数据库选择。</summary>
-    public async Task RefreshDatabaseCountsAsync()
+    public async Task RefreshDatabaseCountsAsync(CancellationToken cancellationToken = default)
     {
         if (_session is not { } session || _readingDatabaseCounts) return;
         _readingDatabaseCounts = true;
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token, cancellationToken);
         try
         {
             var choices = Databases;
             foreach (var choice in choices)
             {
-                long? count = await session.ReadDatabaseKeyCountAsync(choice.Database, _lifetime.Token);
-                if (!ReferenceEquals(session, _session) || IsClosed) return;
+                long? count = await session.ReadDatabaseKeyCountAsync(choice.Database, linked.Token).WaitAsync(linked.Token);
+                if (!ReferenceEquals(session, _session) || !ReferenceEquals(choices, Databases) || IsClosed) return;
                 choice.SetCount(count);
             }
         }
-        catch (OperationCanceledException) when (_lifetime.IsCancellationRequested) { }
+        catch (OperationCanceledException) when (linked.IsCancellationRequested) { }
         finally { _readingDatabaseCounts = false; }
     }
     /// <summary>状态栏只展示协议提供的拓扑和公开认证身份。</summary>
@@ -126,13 +132,11 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
     private async Task ConnectAsync(CancellationToken token = default)
     {
         if (IsConnecting || IsClosed || Tabs.Any(tab => tab.IsDirty || tab.IsBusy)) return;
-        IsConnecting = true; Error = ""; Refresh();
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token, token);
+        IsConnecting = true; Error = ""; Connection.Begin(linked.Cancel); Refresh(); string connectionError = "";
         try
         {
-            foreach (var tree in _trees.Values) tree.Dispose(); _trees.Clear(); Tree = null;
-            ReleaseTabs();
-            if (_session is not null) await _session.DisposeAsync(); _session = null;
+            await ClearConnectionAsync();
             var options = await _configurations.GetConnectionAsync(InstanceId!, linked.Token);
             if (options is null) throw Text.Exception("RedisConfigurationInvalid");
             var session = await _connections.OpenAsync(options, linked.Token);
@@ -140,12 +144,21 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
             _session = session; _database = session.Options.Database; DatabaseText = _database.ToString(CultureInfo.InvariantCulture);
             Databases = Enumerable.Range(0, session.DatabaseCount).Select(database => new RedisDatabaseViewModel(database)).ToArray();
             OnPropertyChanged(nameof(Databases));
-            await RefreshDatabaseCountsAsync();
-            Endpoint = string.Join(", ", session.Options.Endpoints); await QueryAsync();
+            await RefreshDatabaseCountsAsync(linked.Token); linked.Token.ThrowIfCancellationRequested();
+            Endpoint = string.Join(", ", session.Options.Endpoints); await QueryAsync().WaitAsync(linked.Token);
+            linked.Token.ThrowIfCancellationRequested();
         }
-        catch (OperationCanceledException) when (linked.IsCancellationRequested) { }
-        catch (Exception error) { Error = Text.Error(error, "RedisConnectionFailed"); }
-        finally { IsConnecting = false; Refresh(); }
+        catch (OperationCanceledException) when (linked.IsCancellationRequested)
+        { await ClearConnectionAsync(); }
+        catch (Exception error) { connectionError = Text.Error(error, "RedisConnectionFailed"); await ClearConnectionAsync(); }
+        finally { IsConnecting = false; Connection.Finish(IsClosed || linked.IsCancellationRequested ? "" : connectionError); Refresh(); }
+    }
+
+    private async Task ClearConnectionAsync()
+    {
+        foreach (var tree in _trees.Values) tree.Dispose(); _trees.Clear(); Tree = null; ReleaseTabs(); Databases = []; Endpoint = "";
+        var session = _session; _session = null; if (session is not null) await session.DisposeAsync();
+        OnPropertyChanged(nameof(Tree)); OnPropertyChanged(nameof(Databases));
     }
 
     /// <summary>切换数据库和查询复用对应树缓存，草稿页签独立保留。</summary>
@@ -251,7 +264,7 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
     }
     private void Refresh()
     {
-        foreach (string name in new[] { nameof(Status), nameof(ConnectionSummary), nameof(IsConnecting), nameof(IsConnected), nameof(Error), nameof(HasError), nameof(Endpoint) }) OnPropertyChanged(name);
+        foreach (string name in new[] { nameof(Status), nameof(ConnectionTone), nameof(ConnectionSummary), nameof(IsConnecting), nameof(IsConnected), nameof(Error), nameof(HasError), nameof(Endpoint) }) OnPropertyChanged(name);
         OpenKnownCommand.NotifyCanExecuteChanged(); QueryCommand.NotifyCanExecuteChanged(); NewKeyCommand.NotifyCanExecuteChanged();
         ReconnectCommand.NotifyCanExecuteChanged(); EditConnectionCommand.NotifyCanExecuteChanged();
         RefreshTreeCommand.NotifyCanExecuteChanged();

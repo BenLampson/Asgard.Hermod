@@ -106,3 +106,6 @@ row, with guidance on the info icon and a separator between paging and saving.
 The empty-result component bezAV retains column headers with a no-data message
 and no insert or edit actions. Tree headers expose refresh only; title hints use
 bounded hover timing rather than a persistent keyboard-focus popup.
+Region 10C adds the shared connection-feedback board RuhqG: loading cxFUS and
+failure OZ76c use a centered card over a scrim, matching the WPF overlay without
+shifting the page. Failed badges use a short disconnected state and danger tone.

@@ -65,6 +65,12 @@ Closing an active or unknown transaction offers an explicit rollback. MySQL DDL
 and previously committed writes cannot be undone by that action. Connections do
 not automatically reconnect or replay SQL.
 
+Opening or reconnecting a workspace shows the shared centered connection overlay
+with cancellation. Failures replace the waiting state with a safe message and
+close, edit-connection and retry actions. Connection errors do not occupy the
+page notification row. The body keeps its size and pauses interaction while the
+overlay is open. Cancellation disposes late sessions instead of activating them.
+
 ## Editing
 
 Double-click or F2 edits short values inline. Enter/Tab accepts the local draft;

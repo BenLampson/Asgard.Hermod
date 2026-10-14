@@ -112,7 +112,7 @@ public partial class RedisWorkspaceView : UserControl
     private void OnTabSelected(object sender, SelectionChangedEventArgs args) => ShowActive();
     private async void OnKeyDown(object sender, KeyEventArgs args)
     {
-        if (_model is null || (Keyboard.Modifiers & ModifierKeys.Control) == 0 || !KeyPanel.IsKeyboardFocusWithin) return;
+        if (_model is null || _model.Connection.IsOpen || (Keyboard.Modifiers & ModifierKeys.Control) == 0 || !KeyPanel.IsKeyboardFocusWithin) return;
         if (args.Key == Key.S) { args.Handled = true; if (_model.ActiveTab is { } tab) await tab.SaveCommand.ExecuteAsync(); }
         else if (args.Key == Key.W) { args.Handled = true; await _model.CloseTabCommand.ExecuteAsync(_model.ActiveTab); }
         else if (args.Key == Key.Tab) { args.Handled = true; _model.CycleTab((Keyboard.Modifiers & ModifierKeys.Shift) == 0 ? 1 : -1); }

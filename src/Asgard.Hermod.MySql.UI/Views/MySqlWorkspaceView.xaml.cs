@@ -65,7 +65,7 @@ public partial class MySqlWorkspaceView : UserControl
     }
     private async void OnKeyDown(object sender, KeyEventArgs args)
     {
-        if (_model is null) return;
+        if (_model is null || _model.Connection.IsOpen) return;
         if (args.Key == Key.Escape && _drawer) { _drawer = false; Layout(); args.Handled = true; return; }
         if ((Keyboard.Modifiers & ModifierKeys.Control) == 0) return;
         if (args.Key == Key.W) { if (TabHost.Content is MySqlTabView current && !current.CommitInput()) return; args.Handled = true; await _model.CloseTabCommand.ExecuteAsync(_model.ActiveTab); }

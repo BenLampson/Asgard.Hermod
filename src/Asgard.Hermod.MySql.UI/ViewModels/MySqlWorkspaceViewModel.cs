@@ -41,6 +41,10 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
     public string Endpoint { get; private set; } = "";
     /// <summary>实例连接初始化状态。</summary>
     public bool IsConnecting { get; private set; }
+    /// <summary>共享浮层只负责当前连接等待和安全失败反馈。</summary>
+    public WorkspaceConnectionViewModel Connection { get; } = new();
+    /// <summary>徽标按真实连接状态选择语义色。</summary>
+    public StatusTone ConnectionTone => IsConnecting ? StatusTone.Accent : IsConnected ? StatusTone.Success : Connection.HasError ? StatusTone.Danger : StatusTone.Muted;
     /// <summary>当前物理连接是否可用；失败后不自动重连。</summary>
     public bool IsConnected => _metadata?.IsConnected == true;
     /// <summary>读取状态或安全失败说明。</summary>
@@ -91,8 +95,8 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
     private async Task ConnectAsync(CancellationToken token = default)
     {
         if (IsConnecting || IsClosed) return;
-        IsConnecting = true; Error = ""; Refresh();
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(token, _lifetime.Token);
+        IsConnecting = true; Error = ""; Connection.Begin(linked.Cancel); Refresh(); string connectionError = "";
         try
         {
             Tree?.Dispose(); Tree = null; if (_metadata is not null) await _metadata.DisposeAsync(); _metadata = null;
@@ -100,12 +104,15 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
             var session = await _factory.OpenAsync(_options, linked.Token);
             if (IsClosed || linked.IsCancellationRequested) { await session.DisposeAsync(); return; }
             _metadata = session; Endpoint = Text.Format("MySqlEndpoint", session.Options.Host, session.Options.Port);
-            Tree = new(session, _lifetime.Token); OnPropertyChanged(nameof(Tree)); await Tree.LoadAsync(Tree.Root);
+            Tree = new(session, _lifetime.Token); OnPropertyChanged(nameof(Tree)); await Tree.LoadAsync(Tree.Root).WaitAsync(linked.Token);
+            linked.Token.ThrowIfCancellationRequested();
             NewQuery();
         }
-        catch (OperationCanceledException) when (linked.IsCancellationRequested) { }
-        catch (Exception error) { Error = Text.Error(error, "MySqlConnectionFailed"); }
-        finally { IsConnecting = false; Refresh(); }
+        catch (OperationCanceledException) when (linked.IsCancellationRequested)
+        { Tree?.Dispose(); Tree = null; if (_metadata is not null) await _metadata.DisposeAsync(); _metadata = null; }
+        catch (Exception error)
+        { connectionError = Text.Error(error, "MySqlConnectionFailed"); Tree?.Dispose(); Tree = null; if (_metadata is not null) await _metadata.DisposeAsync(); _metadata = null; }
+        finally { IsConnecting = false; Connection.Finish(IsClosed || linked.IsCancellationRequested ? "" : connectionError); Refresh(); }
     }
     /// <summary>创建独立 SQL 文稿和延迟会话。</summary>
     public MySqlTabViewModel? NewQuery(string? database = null)
@@ -192,7 +199,7 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
     }
     private void Refresh()
     {
-        foreach (string property in new[] { nameof(Endpoint), nameof(IsConnecting), nameof(IsConnected), nameof(Status), nameof(Error), nameof(HasError), nameof(Tree) }) OnPropertyChanged(property);
+        foreach (string property in new[] { nameof(Endpoint), nameof(IsConnecting), nameof(IsConnected), nameof(Status), nameof(ConnectionTone), nameof(Error), nameof(HasError), nameof(Tree) }) OnPropertyChanged(property);
         NewQueryCommand.NotifyCanExecuteChanged(); OpenQueryCommand.NotifyCanExecuteChanged(); RefreshTreeCommand.NotifyCanExecuteChanged(); ReconnectCommand.NotifyCanExecuteChanged(); EditConnectionCommand.NotifyCanExecuteChanged();
     }
 }
