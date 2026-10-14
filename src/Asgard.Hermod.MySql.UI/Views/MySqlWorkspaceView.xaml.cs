@@ -41,7 +41,7 @@ public partial class MySqlWorkspaceView : UserControl
     private void OnBodySizeChanged(object sender, SizeChangedEventArgs args)
     {
         bool compact = args.NewSize.Width < 760; if (!_compact && compact) _treeWidth = TreeColumn.ActualWidth;
-        _compact = compact; Badge.Visibility = compact ? Visibility.Collapsed : Visibility.Visible; Layout();
+        _compact = compact; Layout();
     }
     private void OnDrawer(object sender, RoutedEventArgs args) { _drawer = !_drawer; Layout(); }
     private void Layout()

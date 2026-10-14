@@ -52,20 +52,19 @@
  </UserControl.Resources>
  <controls:WorkspacePageLayout x:Name="WorkspaceLayout" IsOverlayOpen="{Binding Connection.IsOpen}">
   <controls:WorkspacePageLayout.Overlay><controls:WorkspaceConnectionOverlay CloseWorkspaceCommand="{Binding CloseWindowCommand}" State="{Binding Connection}" TargetName="{Binding Name}" RetryCommand="{Binding ReconnectCommand}" EditCommand="{Binding EditConnectionCommand}" /></controls:WorkspacePageLayout.Overlay>
-  <controls:WorkspacePageLayout.Toolbar>
-   <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="24" /><ColumnDefinition x:Name="IdentityColumn" Width="225" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-    <controls:IconView x:Name="ToolbarTypeIcon" Kind="layers" Width="24" Height="24" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
-    <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center"><controls:InstanceNameButton Instance="{Binding Instance}" FontSize="15" HorizontalAlignment="Left" MaxWidth="280" /><TextBlock Text="{Binding Endpoint}" FontSize="12" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource TextMutedBrush}" Margin="0,2,0,0" /></StackPanel>
-    <controls:StatusBadge Grid.Column="2" x:Name="ConnectionBadge" Text="{Binding Status}" Tone="{Binding ConnectionTone}" ShowIndicator="False" VerticalAlignment="Center" Margin="12,0" />
-    <controls:StatusBadge Grid.Column="3" MaxWidth="180" Text="{Binding Instance.EnvironmentLabel}" Tone="{Binding Instance.EnvironmentTone}" ShowIndicator="False" ToolTip="{Binding Instance.EnvironmentLabel}" AutomationProperties.Name="{Binding Instance.EnvironmentLabel}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,8,0" /><StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
-     <StackPanel x:Name="DatabaseField" Orientation="Horizontal" VerticalAlignment="Center"><TextBlock Text="{loc:Loc RedisDatabase}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,8,0" VerticalAlignment="Center" />
+  <controls:WorkspacePageLayout.Toolbar><controls:WorkspaceHeader State="{Binding Connection}" RetryCommand="{Binding ReconnectCommand}" EditCommand="{Binding EditConnectionCommand}">
+   <controls:WorkspaceHeader.IdentityContent><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="40" /><ColumnDefinition x:Name="IdentityColumn" Width="*" /></Grid.ColumnDefinitions>
+    <controls:IconView x:Name="ToolbarTypeIcon" Kind="layers" Width="28" Height="28" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Left" />
+    <StackPanel Grid.Column="1" VerticalAlignment="Center"><controls:InstanceNameButton Instance="{Binding Instance}" FontSize="14" HorizontalAlignment="Stretch" /><TextBlock Text="{Binding Endpoint}" ToolTip="{Binding Endpoint}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" /></StackPanel>
+   </Grid></controls:WorkspaceHeader.IdentityContent>
+   <controls:WorkspaceHeader.StatusContent><StackPanel Orientation="Horizontal"><controls:StatusBadge Style="{DynamicResource WorkspaceHeaderSecondaryStatus}" Text="{Binding Instance.EnvironmentLabel}" Tone="{Binding Instance.EnvironmentTone}" ShowIndicator="False" Margin="0,0,10,0" /><controls:StatusBadge x:Name="ConnectionBadge" Text="{Binding Status}" Tone="{Binding ConnectionTone}" ShowIndicator="False" /></StackPanel></controls:WorkspaceHeader.StatusContent>
+   <controls:WorkspaceHeader.ActionsContent><StackPanel Orientation="Horizontal" VerticalAlignment="Center"><StackPanel x:Name="DatabaseField" Orientation="Horizontal" VerticalAlignment="Center"><TextBlock Text="{loc:Loc RedisDatabase}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,8,0" VerticalAlignment="Center" />
       <ComboBox x:Name="DatabaseSelector" ItemsSource="{Binding Databases}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding DatabaseText, Mode=TwoWay}" Width="142" MinHeight="32" Height="32" VerticalAlignment="Center" SelectionChanged="OnDatabaseChanged" DropDownOpened="OnDatabasesOpened" ToolTip="{loc:Loc RedisDatabaseCountHint}" AutomationProperties.Name="{loc:Loc RedisDatabase}" />
      </StackPanel>
      <Button Command="{Binding NewKeyCommand}" Height="32" MinHeight="32" VerticalAlignment="Center" Margin="12,0" ToolTip="{loc:Loc RedisNewKey}" AutomationProperties.Name="{loc:Loc RedisNewKey}"><StackPanel Orientation="Horizontal"><controls:IconView Kind="plus" Width="14" Height="14" Margin="0,0,6,0" /><TextBlock x:Name="NewKeyLabel" Text="{loc:Loc RedisNewKey}" /></StackPanel></Button>
      <Button Click="OnConnectionMenu" Style="{StaticResource IconButton}" ToolTip="{loc:Loc RedisConnectionInformation}" AutomationProperties.Name="{loc:Loc RedisConnectionInformation}"><controls:IconView Kind="settings-2" Width="16" Height="16" /></Button>
-    </StackPanel>
-   </Grid>
-  </controls:WorkspacePageLayout.Toolbar>
+    </StackPanel></controls:WorkspaceHeader.ActionsContent>
+  </controls:WorkspaceHeader></controls:WorkspacePageLayout.Toolbar>
   <controls:WorkspacePageLayout.Notification><StackPanel>
    <StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers>
     <DataTrigger Binding="{Binding HasError}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger>

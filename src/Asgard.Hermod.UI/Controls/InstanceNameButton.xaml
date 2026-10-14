@@ -2,8 +2,12 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
+             xmlns:chrome="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
              xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization" x:Name="Root">
-    <Button x:Name="RenameButton" CommandParameter="{Binding Instance, ElementName=Root}"
+    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+    <TextBlock Text="{Binding Instance.Name, ElementName=Root}" ToolTip="{Binding Instance.Name, ElementName=Root}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+    <Button x:Name="RenameButton" Grid.Column="1" Width="22" Height="22" Margin="6,0,0,0" CommandParameter="{Binding Instance, ElementName=Root}"
+            chrome:WindowChrome.IsHitTestVisibleInChrome="True"
             Command="{Binding (controls:InstanceMetadataScope.RenameCommand), RelativeSource={RelativeSource Self}}"
             ToolTip="{loc:Loc RenameInstance}" AutomationProperties.Name="{loc:Loc RenameInstance}"
             HorizontalContentAlignment="Stretch" Padding="3,2" Background="Transparent" BorderThickness="0">
@@ -16,9 +20,7 @@
                 <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Hover" Property="BorderBrush" Value="{DynamicResource AccentBrush}" /></Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate></Button.Template>
-        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-            <TextBlock Text="{Binding Instance.Name, ElementName=Root}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
-            <controls:IconView Grid.Column="1" Kind="pencil" Width="13" Height="13" Margin="8,0,2,0" Foreground="{DynamicResource TextMutedBrush}" />
-        </Grid>
+        <controls:IconView Kind="pencil" Width="13" Height="13" Foreground="{DynamicResource TextMutedBrush}" />
     </Button>
+    </Grid>
 </UserControl>

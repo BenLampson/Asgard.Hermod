@@ -23,6 +23,12 @@ public sealed class WorkspaceWindow : HermodWindow
         ShowInTaskbar = true;
         _host = new WorkspaceContentHost { Page = page };
         Content = _host;
+        CaptionHeight = 72;
+        var fallbackName = new TextBlock { VerticalAlignment = VerticalAlignment.Center };
+        fallbackName.SetBinding(TextBlock.TextProperty, new Binding(nameof(WorkspacePageViewModel.Header)) { Source = page });
+        var header = _host.TakeHeader() ?? new WorkspaceHeader { DataContext = page, IdentityContent = fallbackName };
+        header.ShowWindowControls = true;
+        CaptionContent = header;
         Closing += OnClosing;
         page.PropertyChanged += OnPageChanged;
     }

@@ -33,6 +33,28 @@ public sealed class WorkspaceContentHost : ContentControl, IDisposable
         Focusable = false;
     }
 
+    /// <summary>独立窗口接管同一标题元素，正文不保留重复工具栏，也不重建页面或控件。</summary>
+    public WorkspaceHeader? TakeHeader()
+    {
+        if (Content is not FrameworkElement root) return null;
+        var header = Detach(root);
+        if (header is not null) header.DataContext = Page;
+        return header;
+
+        WorkspaceHeader? Detach(DependencyObject parent)
+        {
+            if (parent is WorkspacePageLayout { Toolbar: WorkspaceHeader toolbar } layout)
+            { toolbar.DataContext = Page; layout.Toolbar = null; return toolbar; }
+            foreach (var child in LogicalTreeHelper.GetChildren(parent).OfType<DependencyObject>().ToArray())
+            {
+                if (child is WorkspaceHeader header && parent is Panel panel)
+                { header.DataContext = Page; panel.Children.Remove(header); return header; }
+                if (Detach(child) is { } found) return found;
+            }
+            return null;
+        }
+    }
+
     /// <summary>响应绑定的页面切换，仅为首次打开的页签创建视图。</summary>
     private static void OnPageChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
     {

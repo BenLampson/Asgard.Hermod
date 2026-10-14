@@ -116,6 +116,16 @@ it; modules supply stable IDs and localized labels instead of copying selection
 templates. It retains native ListBox keyboard navigation without an inner scroll
 viewer.
 
+`WorkspaceHeader` provides a 72-pixel independent window caption with module-owned
+`IdentityContent`, `StatusContent` and `ActionsContent` slots and fixed window controls.
+The window host transfers the same header element out of the module body, setting its
+data context before detachment to preserve two-way selections. All five workspace kinds
+use it; ordinary pages have a live-bound title fallback. Connection status remains visible
+in compact captions, secondary environment information yields, and failure replaces module
+actions with direct edit/retry controls. Read-only name and empty caption areas remain
+draggable, with the pencil and action controls explicitly hit-testable in WindowChrome.
+The main window title bar is unchanged.
+
 `WorkspacePageLayout` provides the shared content layout: a toolbar with a 56-pixel minimum height,
 optional notification, fill-sized body, 300-pixel details panel and 28-pixel status
 bar. Below 760 pixels the details overlay the body rather than reducing its width.

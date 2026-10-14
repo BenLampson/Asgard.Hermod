@@ -7,30 +7,26 @@
  <UserControl.Resources><BooleanToVisibilityConverter x:Key="Visible" /></UserControl.Resources>
  <controls:WorkspacePageLayout x:Name="WorkspaceLayout" IsDetailsOpen="{Binding IsDetailsOpen}" IsOverlayOpen="{Binding Connection.IsOpen}">
   <controls:WorkspacePageLayout.Overlay><controls:WorkspaceConnectionOverlay CloseWorkspaceCommand="{Binding CloseWindowCommand}" State="{Binding Connection}" TargetName="{Binding Name}" RetryCommand="{Binding ReconnectCommand}" EditCommand="{Binding EditConnectionCommand}" /></controls:WorkspacePageLayout.Overlay>
-  <controls:WorkspacePageLayout.Toolbar>
-   <Grid>
-    <Grid.ColumnDefinitions><ColumnDefinition Width="32" /><ColumnDefinition x:Name="IdentityColumn" Width="220" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-    <Border Width="32" Height="32" CornerRadius="7" Background="{DynamicResource AccentWeakBrush}"><controls:IconView Kind="terminal" Width="18" Height="18" Foreground="{DynamicResource AccentBrush}" /></Border>
-    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0" HorizontalAlignment="Stretch">
-     <controls:InstanceNameButton Instance="{Binding Instance}" FontSize="16" HorizontalAlignment="Left" MaxWidth="280" />
-     <TextBlock Text="{Binding RemoteIdentity}" FontSize="11" FontFamily="{DynamicResource MonoFont}" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
-    </StackPanel>
-    <controls:StatusBadge x:Name="ConnectionBadge" Grid.Column="2" Text="{Binding Status}" Tone="{Binding Tone}" VerticalAlignment="Center" Margin="0,0,12,0" />
-    <StackPanel x:Name="ToolbarActions" Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center" SizeChanged="OnToolbarActionsSizeChanged">
+  <controls:WorkspacePageLayout.Toolbar><controls:WorkspaceHeader State="{Binding Connection}" RetryCommand="{Binding ReconnectCommand}" EditCommand="{Binding EditConnectionCommand}">
+   <controls:WorkspaceHeader.IdentityContent><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="40" /><ColumnDefinition x:Name="IdentityColumn" Width="*" /></Grid.ColumnDefinitions>
+    <controls:IconView x:Name="ToolbarTypeIcon" Kind="terminal" Width="28" Height="28" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Left" />
+    <StackPanel Grid.Column="1" VerticalAlignment="Center"><controls:InstanceNameButton Instance="{Binding Instance}" FontSize="14" HorizontalAlignment="Stretch" /><TextBlock Text="{Binding RemoteIdentity}" ToolTip="{Binding RemoteIdentity}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" /></StackPanel>
+   </Grid></controls:WorkspaceHeader.IdentityContent>
+   <controls:WorkspaceHeader.StatusContent><StackPanel Orientation="Horizontal"><controls:StatusBadge Style="{DynamicResource WorkspaceHeaderSecondaryStatus}" Text="{Binding Instance.EnvironmentLabel}" Tone="{Binding Instance.EnvironmentTone}" ShowIndicator="False" Margin="0,0,10,0" /><controls:StatusBadge x:Name="ConnectionBadge" Text="{Binding Status}" Tone="{Binding Tone}" ShowIndicator="False" /></StackPanel></controls:WorkspaceHeader.StatusContent>
+   <controls:WorkspaceHeader.ActionsContent><StackPanel x:Name="ToolbarActions" Orientation="Horizontal" VerticalAlignment="Center" SizeChanged="OnToolbarActionsSizeChanged">
      <Button x:Name="SearchAction" Click="OnSearchClick" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshSearchOutput}" AutomationProperties.Name="{loc:Loc SshSearchOutput}"><controls:IconView Kind="search" Width="15" Height="15" /></Button>
      <Button x:Name="CopyAction" Focusable="False" Click="OnCopyClick" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshCopySelection}" AutomationProperties.Name="{loc:Loc SshCopySelection}"><controls:IconView Kind="copy" Width="15" Height="15" /></Button>
      <Button x:Name="PasteAction" Click="OnPasteClick" IsEnabled="{Binding IsConnected}" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshPaste}" AutomationProperties.Name="{loc:Loc SshPaste}"><controls:IconView Kind="clipboard" Width="15" Height="15" /></Button>
      <Button x:Name="EditAction" Command="{Binding EditConnectionCommand}" Style="{StaticResource StandardButton}" ToolTip="{loc:Loc SshEditConfiguration}" AutomationProperties.Name="{loc:Loc SshEditConfiguration}" Margin="6,0,0,0" Padding="8,0">
       <StackPanel Orientation="Horizontal"><controls:IconView Kind="settings-2" Width="15" Height="15" /><TextBlock Text="{loc:Loc SshEditConfiguration}" Margin="7,0,0,0" /></StackPanel>
      </Button>
-     <controls:WorkspaceTools x:Name="SessionTools" FocusTarget="{Binding ElementName=TerminalView}" VerticalAlignment="Center" Margin="6,0,0,0" />
+     <controls:WorkspaceTools x:Name="SessionTools" VerticalAlignment="Center" Margin="6,0,0,0" />
      <Button x:Name="DetailsAction" Command="{Binding ToggleDetailsCommand}" Style="{StaticResource StandardButton}" ToolTip="{loc:Loc SshConnectionDetails}" AutomationProperties.Name="{loc:Loc SshConnectionDetails}" Margin="6,0,0,0" Padding="8,0">
       <StackPanel Orientation="Horizontal"><controls:IconView Kind="panel-right" Width="15" Height="15" /><TextBlock x:Name="DetailsActionLabel" Text="{loc:Loc SshConnectionDetails}" Margin="7,0,0,0" /></StackPanel>
      </Button>
      <Button x:Name="MoreAction" Click="OnMoreClick" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshMore}" AutomationProperties.Name="{loc:Loc SshMore}"><controls:IconView Kind="ellipsis" Width="15" Height="15" /></Button>
-    </StackPanel>
-   </Grid>
-  </controls:WorkspacePageLayout.Toolbar>
+    </StackPanel></controls:WorkspaceHeader.ActionsContent>
+  </controls:WorkspaceHeader></controls:WorkspacePageLayout.Toolbar>
   <controls:WorkspacePageLayout.Notification>
    <StackPanel>
    <Border Visibility="{Binding HasSaveFeedback, Converter={StaticResource Visible}}" Background="{DynamicResource SuccessWeakBrush}" Padding="18,8">

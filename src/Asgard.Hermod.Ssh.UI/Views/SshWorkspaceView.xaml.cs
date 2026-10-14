@@ -14,6 +14,7 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     public SshWorkspaceView()
     {
         InitializeComponent();
+        SessionTools.FocusTarget = TerminalView;
         DataContextChanged += OnModelChanged;
         Loaded += OnLoaded;
         PreviewKeyDown += OnKeyDown;
@@ -43,11 +44,10 @@ public partial class SshWorkspaceView : UserControl, IDisposable
         bool wide = ActualWidth >= 1000;
         CopyAction.Visibility = PasteAction.Visibility = wide ? Visibility.Visible : Visibility.Collapsed;
         SearchAction.Visibility = DetailsAction.Visibility = ActualWidth >= 600 ? Visibility.Visible : Visibility.Collapsed;
-        ConnectionBadge.Visibility = ActualWidth >= 500 ? Visibility.Visible : Visibility.Collapsed;
         DetailsActionLabel.Visibility = ActualWidth >= 900 ? Visibility.Visible : Visibility.Collapsed;
         FooterRoute.Visibility = FooterTerminalType.Visibility = ActualWidth >= 800 ? Visibility.Visible : Visibility.Collapsed;
-        double statusWidth = ConnectionBadge.Visibility == Visibility.Visible ? ConnectionBadge.ActualWidth + 12 : 0;
-        IdentityColumn.Width = new GridLength(Math.Clamp(ActualWidth - 68 - statusWidth - ToolbarActions.ActualWidth, 0, 220));
+
+        IdentityColumn.Width = new GridLength(1, GridUnitType.Star);
         ResizeSearchOverlay();
     }
     /// <summary>公共详情栏展开会改变正文宽度，搜索浮层跟随实际终端空间。</summary>

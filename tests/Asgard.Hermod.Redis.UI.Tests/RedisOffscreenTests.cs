@@ -114,11 +114,60 @@ public sealed class RedisOffscreenTests(WpfTestFixture fixture)
         typeof(MouseButtonEventArgs).GetProperty(nameof(MouseButtonEventArgs.ClickCount))!.SetValue(args, 1);
         typeof(RedisWorkspaceView).GetMethod("OnTreeClick", BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(view, [view, args]);
     }
+
+    [Theory]
+    [InlineData("en", UiTheme.Light, 800)]
+    [InlineData("zh-Hans", UiTheme.Dark, 800)]
+    [InlineData("en", UiTheme.Dark, 1200)]
+    [InlineData("zh-Hans", UiTheme.Light, 1200)]
+    public Task HeaderTransfer_ReusesModuleElementsAndShowsRecoveryAfterDismiss(string language, UiTheme theme, double width) => fixture.RunOffscreenAsync(async () =>
+    {
+        Text.SetApplicationCulture(CultureInfo.GetCultureInfo(language));
+        try
+        {
+            new ThemeService(Application.Current.Resources).SetTheme(theme);
+            var configs = new RedisTestConfigurations(); var session = new RedisTestSession();
+            await using var page = new RedisWorkspaceViewModel(new(configs.CurrentInstance), configs, session, configs, new RedisTestDialogs());
+            await page.InitializeAsync();
+            using var host = new WorkspaceContentHost();
+            host.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("pack://application:,,,/Asgard.Hermod.Redis.UI;component/Resources/WorkspacePages.xaml") });
+            host.Page = page;
+            var view = Assert.IsType<RedisWorkspaceView>(host.Content); Layout(view, width);
+            var layout = (WorkspacePageLayout)view.FindName("WorkspaceLayout");
+            var original = Assert.IsType<WorkspaceHeader>(layout.Toolbar);
+            var header = Assert.IsType<WorkspaceHeader>(host.TakeHeader());
+            Assert.Same(original, header); Assert.Null(layout.Toolbar); Assert.Same(page, header.DataContext);
+            Assert.Same(page, view.DataContext); header.ShowWindowControls = true;
+            // 真实应用重启后才换语言；同进程的跨语言离屏用例重新加载按启动语言缓存的模板。
+            header.Style = (Style)new ResourceDictionary { Source = new Uri("pack://application:,,,/Asgard.Hermod.UI;component/Resources/WorkspaceHeader.xaml") }[typeof(WorkspaceHeader)];
+            var caption = new Border { Child = header };
+            await WpfTestFixture.DrainDispatcherAsync(); Layout(caption, width, 72);
+            Assert.Equal(72, header.ActualHeight); Assert.Same(page.Instance, Descendants<InstanceNameButton>(header).Single().Instance);
+            var database = Descendants<ComboBox>(header).Single(); Assert.Equal(32, database.ActualHeight);
+            Assert.Equal("0", page.DatabaseText); Assert.Equal("0", database.SelectedValue); Assert.Same(page.Connection, header.State);
+            var windows = Descendants<WindowControls>(header).Single();
+            Assert.Equal(Visibility.Visible, windows.Visibility); Assert.True(windows.ActualWidth > 0);
+            var snapshot = header.ActionsContent;
+            Capture(header, $"workspace-header-{language}-{theme}-{width}");
+            session.Disconnect(); page.Connection.DismissCommand.Execute(null);
+            await WpfTestFixture.DrainDispatcherAsync(); Layout(caption, width, 72);
+            Assert.False(page.Connection.IsOpen);
+            Assert.Equal(page.Status, Descendants<StatusBadge>(header).Last().Text);
+            var retry = Descendants<Button>(header).Single(button => ReferenceEquals(button.Command, page.ReconnectCommand));
+            Assert.Equal(Text.Get("WorkspaceConnectionRetry"), retry.Content);
+            Assert.Equal(Visibility.Visible, ((FrameworkElement)VisualTreeHelper.GetParent(retry)).Visibility); Assert.True(retry.IsEnabled);
+            Capture(header, $"workspace-header-disconnected-{language}-{theme}-{width}");
+            await page.ReconnectCommand.ExecuteAsync(); Layout(caption, width, 72);
+            Assert.Same(snapshot, header.ActionsContent); Assert.True(page.IsConnected);
+        }
+        finally { Text.SetApplicationCulture(null); }
+    });
     private static void Layout(FrameworkElement view, double width = 1200, double height = 700)
     {
         // 离屏根不参与 Application.Windows 的资源广播，显式注册共享字典的视图所有者。
         if (!view.Resources.MergedDictionaries.Contains(Application.Current.Resources))
             view.Resources.MergedDictionaries.Add(Application.Current.Resources);
+        view.InvalidateMeasure(); view.InvalidateArrange();
         view.Measure(new(width, height)); view.Arrange(new(0, 0, width, height)); view.UpdateLayout();
         Assert.Null(PresentationSource.FromVisual(view)); Assert.Null(Window.GetWindow(view));
     }
@@ -136,6 +185,8 @@ public sealed class RedisOffscreenTests(WpfTestFixture fixture)
         string? directory = Environment.GetEnvironmentVariable("HERMOD_OFFSCREEN_OUTPUT");
         if (string.IsNullOrEmpty(directory)) return;
         Directory.CreateDirectory(directory);
+        foreach (var element in Descendants<UIElement>(view)) element.InvalidateVisual();
+        view.InvalidateVisual(); view.UpdateLayout();
         var bitmap = new RenderTargetBitmap((int)view.ActualWidth, (int)view.ActualHeight, 96, 96, PixelFormats.Pbgra32); bitmap.Render(view);
         var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
         using var output = File.Create(Path.Combine(directory, name + ".png")); encoder.Save(output);

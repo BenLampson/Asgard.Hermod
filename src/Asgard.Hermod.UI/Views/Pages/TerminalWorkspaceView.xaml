@@ -13,55 +13,13 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="18" />
-                <ColumnDefinition Width="12" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="12" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <controls:IconView Kind="terminal" Width="18" Height="18" Foreground="{DynamicResource AccentBrush}" />
-            <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                <TextBlock Text="{Binding Name}" FontSize="19" FontWeight="Bold"
-                           Foreground="{DynamicResource TextPrimaryBrush}" />
-                <TextBlock Text="{Binding Subtitle}" Margin="0,2,0,0"
-                           FontFamily="{DynamicResource MonoFont}" FontSize="11.5"
-                           Foreground="{DynamicResource TextMutedBrush}" />
-            </StackPanel>
-            <controls:StatusBadge Grid.Column="4" Text="{Binding Status}" VerticalAlignment="Center">
-                <controls:StatusBadge.Style>
-                    <Style TargetType="{x:Type controls:StatusBadge}">
-                        <Setter Property="Tone" Value="{x:Static models:StatusTone.Muted}" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsRunning}" Value="True">
-                                <Setter Property="Tone" Value="{x:Static models:StatusTone.Success}" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </controls:StatusBadge.Style>
-            </controls:StatusBadge>
-            <Button Grid.Column="6" Command="{Binding RetryCommand}" Padding="13,6" VerticalAlignment="Center"
-                    ToolTip="{loc:Loc StartANewLocalPowerShellSession}">
-                <Button.Style>
-                    <Style TargetType="Button" BasedOn="{StaticResource StandardButton}">
-                        <Setter Property="Visibility" Value="Collapsed" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding CanRetry}" Value="True">
-                                <Setter Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-                <StackPanel Orientation="Horizontal">
-                    <controls:IconView Kind="rotate-cw" Width="13" Height="13" Margin="0,0,6,0" />
-                    <TextBlock Text="{loc:Loc Retry}" FontSize="12.5"
-                               Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
-                </StackPanel>
-            </Button>
-        </Grid>
+        <controls:WorkspaceHeader State="{Binding ConnectionState}" RetryCommand="{Binding RetryCommand}">
+            <controls:WorkspaceHeader.IdentityContent><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="40" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                <controls:IconView Kind="terminal" Width="28" Height="28" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Left" />
+                <StackPanel Grid.Column="1" VerticalAlignment="Center"><TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" /><TextBlock Text="{Binding Subtitle}" ToolTip="{Binding Subtitle}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" /></StackPanel>
+            </Grid></controls:WorkspaceHeader.IdentityContent>
+            <controls:WorkspaceHeader.StatusContent><controls:StatusBadge Text="{Binding Status}" ShowIndicator="False"><controls:StatusBadge.Style><Style TargetType="controls:StatusBadge"><Setter Property="Tone" Value="{x:Static models:StatusTone.Muted}" /><Style.Triggers><DataTrigger Binding="{Binding IsRunning}" Value="True"><Setter Property="Tone" Value="{x:Static models:StatusTone.Success}" /></DataTrigger></Style.Triggers></Style></controls:StatusBadge.Style></controls:StatusBadge></controls:WorkspaceHeader.StatusContent>
+        </controls:WorkspaceHeader>
         <Border Grid.Row="1" Margin="0,18,0,0" Padding="12,9" CornerRadius="6"
                 Background="{DynamicResource DangerWeakBrush}">
             <Border.Style>

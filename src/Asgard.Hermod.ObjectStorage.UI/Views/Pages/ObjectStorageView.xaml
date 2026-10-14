@@ -10,29 +10,14 @@
     <Grid x:Name="BrowserSurface" IsEnabled="{Binding IsConnectionInteractionEnabled}">
         <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
         <!-- 页头只使用安全摘要；在线状态由实际读取结果决定。 -->
-        <Border BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,0,0,1" Padding="24,22,24,18" MinHeight="86">
-            <Grid>
-                <Grid.ColumnDefinitions><ColumnDefinition Width="22" /><ColumnDefinition Width="12" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="32" /></Grid.ColumnDefinitions>
-                <controls:IconView Kind="{Binding Instance.TypeIcon}" Width="22" Height="22" Foreground="{DynamicResource WarningBrush}" VerticalAlignment="Center" />
-                <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,0,16,0">
-                    <controls:InstanceNameButton Instance="{Binding Instance}" FontSize="20" HorizontalAlignment="Left" MaxWidth="340" />
-                    <TextBlock Text="{Binding Subtitle}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,7,0,0" TextTrimming="CharacterEllipsis" />
-                </StackPanel>
-                <ItemsControl Grid.Column="3" ItemsSource="{Binding Tags}" VerticalAlignment="Center" MaxWidth="240">
-                    <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate><DataTemplate>
-                        <Border CornerRadius="5" Background="{DynamicResource SuccessWeakBrush}" Padding="8,4" Margin="0,0,6,0">
-                            <TextBlock Text="{Binding}" FontSize="11" Foreground="{DynamicResource SuccessBrush}" TextTrimming="CharacterEllipsis" MaxWidth="150" />
-                        </Border>
-                    </DataTemplate></ItemsControl.ItemTemplate>
-                </ItemsControl>
-                <controls:StatusBadge Grid.Column="4" Text="{Binding Status}" Tone="{Binding StatusTone}" IsInline="True" VerticalAlignment="Center" Margin="10,0,14,0" />
-                <Button Grid.Column="5" x:Name="EditConnectionButton" Command="{Binding EditConnectionCommand}" Width="32" Height="32" Padding="7"
-                        ToolTip="{Binding EditConnectionHint}" ToolTipService.ShowOnDisabled="True" AutomationProperties.Name="{loc:Loc EditObjectStorageConnection}">
-                    <controls:IconView Kind="settings-2" Width="16" Height="16" Foreground="{DynamicResource TextMutedBrush}" />
-                </Button>
-            </Grid>
-        </Border>
+        <controls:WorkspaceHeader State="{Binding Connection}" RetryCommand="{Binding ReconnectCommand}" EditCommand="{Binding EditConnectionCommand}">
+            <controls:WorkspaceHeader.IdentityContent><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="40" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                <controls:IconView Kind="{Binding Instance.TypeIcon}" Width="28" Height="28" Foreground="{DynamicResource WarningBrush}" HorizontalAlignment="Left" />
+                <StackPanel Grid.Column="1" VerticalAlignment="Center"><controls:InstanceNameButton Instance="{Binding Instance}" FontSize="14" HorizontalAlignment="Stretch" /><TextBlock Text="{Binding Subtitle}" ToolTip="{Binding Subtitle}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" /></StackPanel>
+            </Grid></controls:WorkspaceHeader.IdentityContent>
+            <controls:WorkspaceHeader.StatusContent><StackPanel Orientation="Horizontal"><controls:StatusBadge Style="{DynamicResource WorkspaceHeaderSecondaryStatus}" Text="{Binding Instance.EnvironmentLabel}" Tone="{Binding Instance.EnvironmentTone}" ShowIndicator="False" Margin="0,0,10,0" /><controls:StatusBadge Text="{Binding Status}" Tone="{Binding StatusTone}" ShowIndicator="False" /></StackPanel></controls:WorkspaceHeader.StatusContent>
+            <controls:WorkspaceHeader.ActionsContent><Button x:Name="EditConnectionButton" Command="{Binding EditConnectionCommand}" Width="32" Height="32" Padding="7" ToolTip="{Binding EditConnectionHint}" ToolTipService.ShowOnDisabled="True" AutomationProperties.Name="{loc:Loc EditObjectStorageConnection}"><controls:IconView Kind="settings-2" Width="16" Height="16" Foreground="{DynamicResource TextMutedBrush}" /></Button></controls:WorkspaceHeader.ActionsContent>
+        </controls:WorkspaceHeader>
         <Grid Grid.Row="1" x:Name="BrowserPanels">
             <Grid.ColumnDefinitions><ColumnDefinition x:Name="ListColumn" Width="*" /><ColumnDefinition x:Name="SplitterColumn" Width="6" /><ColumnDefinition x:Name="DetailsColumn" Width="278" /></Grid.ColumnDefinitions>
             <pages:ObjectStorageListView />
