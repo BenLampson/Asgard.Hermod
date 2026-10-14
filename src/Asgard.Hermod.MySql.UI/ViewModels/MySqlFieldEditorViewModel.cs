@@ -1,17 +1,26 @@
 namespace Asgard.Hermod.MySql.UI.ViewModels;
 
 /// <summary>独立字段窗口应用到表格草稿，关闭窗口不提交数据库。</summary>
-public sealed class MySqlFieldEditorViewModel : ObservableObject
+public sealed class MySqlFieldEditorViewModel : ObservableObject, IDisposable
 {
     private readonly MySqlCellViewModel _cell;
+    private readonly string _context;
+    private readonly InstanceItemViewModel? _instance;
     /// <summary>创建模块状态和依赖；真实连接或写入由显式操作启动。</summary>
-    public MySqlFieldEditorViewModel(MySqlCellViewModel cell, string context, bool editable)
+    public MySqlFieldEditorViewModel(MySqlCellViewModel cell, string context, bool editable, InstanceItemViewModel? instance = null)
     {
-        _cell = cell; Context = context; IsEditable = editable; IsNull = cell.Value is null;
+        _cell = cell; _context = context; _instance = instance; IsEditable = editable; IsNull = cell.Value is null;
+        if (_instance is not null) _instance.PropertyChanged += OnInstanceMetadataChanged;
         Input = cell.Value is null ? "" : MySqlValues.Format(cell.Value); Format = IsBinary ? "hex" : "text"; Validate();
     }
     /// <summary>窗口中展示的完整对象和行身份。</summary>
-    public string Context { get; }
+    public string Context => _instance is null ? _context : Text.Format("MySqlFieldOperationTarget", _instance.Name, _instance.EnvironmentLabel, _context);
+    private void OnInstanceMetadataChanged(object? sender, PropertyChangedEventArgs args)
+    {
+        if (args.PropertyName is nameof(InstanceItemViewModel.Name) or nameof(InstanceItemViewModel.EnvironmentLabel)) OnPropertyChanged(nameof(Context));
+    }
+    /// <inheritdoc />
+    public void Dispose() { if (_instance is not null) _instance.PropertyChanged -= OnInstanceMetadataChanged; }
     /// <summary>对象原始名称或已本地化的文稿标题。</summary>
     public string Name => _cell.Column.Name;
     /// <summary>服务器提供的字段类型名称。</summary>

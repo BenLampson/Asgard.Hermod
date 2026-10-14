@@ -16,6 +16,10 @@ public interface IRedisWorkspaceDialogs
     /// <summary>创建目标绑定当前操作，后续树或数据库选择不能改变它。</summary>
     Task<RedisKeyId?> CreateAsync(IRedisSession session, int database, string prefix, string target,
         CancellationToken cancellationToken = default) => CreateAsync(session, database, prefix, cancellationToken);
+    /// <summary>环境与名称跟随同一稳定实例，数据库在打开时固定。</summary>
+    Task<RedisKeyId?> CreateAsync(IRedisSession session, int database, string prefix, InstanceItemViewModel instance,
+        CancellationToken cancellationToken = default) => CreateAsync(session, database, prefix,
+            Text.Format("RedisWriteTarget", instance.Name, instance.EnvironmentLabel, database), cancellationToken);
     /// <summary>已有键在公共模态窗口中编辑，内容页保持只读。</summary>
     Task EditAsync(RedisKeyTabViewModel tab, bool append = false);
     /// <summary>空文本为永久，正数为秒。</summary>

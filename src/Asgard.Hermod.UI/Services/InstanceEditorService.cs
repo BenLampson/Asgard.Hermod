@@ -61,11 +61,11 @@ public sealed class InstanceEditorService : IInstanceEditor
     private async Task<InstanceSummary?> EditMetadataAsync(string instanceId, bool editTags)
     {
         if (_sync is not null) await _sync.PrepareWorkspaceAsync();
+        var expectedAccount = _accounts?.Account;
         var existing = _configurations.GetInstances().SingleOrDefault(instance => instance.Id == instanceId)
             ?? throw Text.Exception("ThisInstanceNoLongerExistsRefreshTheInstanceList");
         var tags = editTags && _tags is not null ? await _tags.GetTagsAsync() : null;
         var selectedIds = editTags ? await _configurations.GetTagIdsAsync(instanceId) : null;
-        var expectedAccount = _accounts?.Account;
         InstanceSummary? result = null;
         using var model = new MetadataEditorViewModel(Text.Get(editTags ? "EditInstanceTags" : "RenameInstance"), Text.Get("InstanceName"), existing.Name, 128,
             async (name, ids, token) => result = await _configurations.UpdateMetadataAsync(instanceId, new()

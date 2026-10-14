@@ -212,7 +212,7 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
         int database = _database;
         try
         {
-            var key = await _dialogs.CreateAsync(_session, database, CreatePrefix, Text.Format("RedisWriteTarget", _instance.Name, _instance.EnvironmentLabel, database), _lifetime.Token);
+            var key = await _dialogs.CreateAsync(_session, database, CreatePrefix, _instance, _lifetime.Token);
             if (key is null || IsClosed) return;
             DatabaseText = database.ToString(CultureInfo.InvariantCulture); _database = database;
             await OpenAsync(key); Pattern = ""; SelectedType = ""; await QueryAsync(); Tree?.Reveal(key); await RefreshDatabaseCountsAsync();

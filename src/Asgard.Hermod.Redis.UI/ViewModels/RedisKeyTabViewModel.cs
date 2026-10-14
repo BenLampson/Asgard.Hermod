@@ -22,6 +22,7 @@ public sealed partial class RedisKeyTabViewModel : ObservableObject, IDisposable
     {
         _session = session; Database = database; Key = key; _dialogs = dialogs;
         Instance = instance;
+        if (Instance is not null) Instance.PropertyChanged += OnInstanceMetadataChanged;
         EditCommand = new AsyncRelayCommand(_ => EditAsync(), _ => CanEdit);
         OpenEditorCommand = new AsyncRelayCommand(_ => _dialogs.EditAsync(this), _ => CanEdit && !IsBusy);
         SaveCommand = new AsyncRelayCommand(_ => SaveAsync(), _ => CanSave);
@@ -46,6 +47,11 @@ public sealed partial class RedisKeyTabViewModel : ObservableObject, IDisposable
     /// <summary>编辑和删除始终使用此页签的数据库，而非当前浏览数据库。</summary>
     public string TargetLabel => Text.Format("RedisWriteTarget", Instance?.Name ?? Text.Get("InstanceUnknown"),
         Instance?.EnvironmentLabel ?? Text.Get("EnvironmentNotSet"), Database);
+    private void OnInstanceMetadataChanged(object? sender, PropertyChangedEventArgs args)
+    {
+        if (args.PropertyName is nameof(InstanceItemViewModel.Name) or nameof(InstanceItemViewModel.EnvironmentLabel))
+            OnPropertyChanged(nameof(TargetLabel));
+    }
     /// <summary>完整键名用于悬浮、键盘焦点提示和可访问名称。</summary>
     public string FullName => Key.DisplayName;
     /// <summary>原始标题由公共控件按实际宽度省略，不影响键身份。</summary>
@@ -208,5 +214,5 @@ public sealed partial class RedisKeyTabViewModel : ObservableObject, IDisposable
         AppendCommand.NotifyCanExecuteChanged(); ExpiryCommand.NotifyCanExecuteChanged(); DeleteCommand.NotifyCanExecuteChanged();
     }
     /// <inheritdoc />
-    public void Dispose() { _readGeneration++; _lifetime.Cancel(); _lifetime.Dispose(); }
+    public void Dispose() { if (Instance is not null) Instance.PropertyChanged -= OnInstanceMetadataChanged; _readGeneration++; _lifetime.Cancel(); _lifetime.Dispose(); }
 }

@@ -6,12 +6,16 @@ public sealed class RedisCreateViewModel : ObservableObject, IDisposable
     private readonly IRedisSession _session;
     private readonly CancellationTokenSource _lifetime;
     private string _format = "text";
+    private readonly InstanceItemViewModel? _instance;
+    private readonly string _target;
     /// <summary>数据库及前缀在打开时固定，不受工作区后来切换影响。</summary>
     public RedisCreateViewModel(IRedisSession session, int database, string prefix = "", CancellationToken cancellationToken = default,
-        string? target = null)
+        string? target = null, InstanceItemViewModel? instance = null)
     {
         _session = session; Database = database; Key = prefix;
-        TargetLabel = target ?? Text.Format("RedisWriteTarget", Text.Get("InstanceUnknown"), Text.Get("EnvironmentNotSet"), database);
+        _target = target ?? Text.Format("RedisWriteTarget", Text.Get("InstanceUnknown"), Text.Get("EnvironmentNotSet"), database);
+        _instance = instance;
+        if (_instance is not null) _instance.PropertyChanged += OnInstanceMetadataChanged;
         _lifetime = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         SubmitCommand = new AsyncRelayCommand(_ => SubmitAsync(), _ => CanSubmit);
         AddRowCommand = new RelayCommand(_ => AddRow(), _ => CanAddRow);
@@ -21,7 +25,11 @@ public sealed class RedisCreateViewModel : ObservableObject, IDisposable
     /// <summary>创建目标数据库，不随窗口其他状态改变。</summary>
     public int Database { get; }
     /// <summary>目标数据库的完整本地化句式。</summary>
-    public string TargetLabel { get; }
+    public string TargetLabel => _instance is null ? _target : Text.Format("RedisWriteTarget", _instance.Name, _instance.EnvironmentLabel, Database);
+    private void OnInstanceMetadataChanged(object? sender, PropertyChangedEventArgs args)
+    {
+        if (args.PropertyName is nameof(InstanceItemViewModel.Name) or nameof(InstanceItemViewModel.EnvironmentLabel)) OnPropertyChanged(nameof(TargetLabel));
+    }
     /// <summary>真实键名保持原样，不裁剪空白或解释 MATCH。</summary>
     public string Key { get; set => SetProperty(ref field, value); } = "";
     /// <summary>协议类型名称不翻译。</summary>
@@ -181,5 +189,5 @@ public sealed class RedisCreateViewModel : ObservableObject, IDisposable
         SubmitCommand.NotifyCanExecuteChanged(); AddRowCommand.NotifyCanExecuteChanged(); RemoveRowCommand.NotifyCanExecuteChanged();
     }
     /// <inheritdoc />
-    public void Dispose() { _lifetime.Cancel(); _lifetime.Dispose(); }
+    public void Dispose() { if (_instance is not null) _instance.PropertyChanged -= OnInstanceMetadataChanged; _lifetime.Cancel(); _lifetime.Dispose(); }
 }

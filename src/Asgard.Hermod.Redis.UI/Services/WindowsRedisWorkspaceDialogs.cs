@@ -47,6 +47,13 @@ public sealed class WindowsRedisWorkspaceDialogs(Func<Window?> owner) : IRedisWo
         return Task.FromResult(dialog.ShowDialog() == true ? dialog.ResultKey : null);
     }
     /// <inheritdoc />
+    public Task<RedisKeyId?> CreateAsync(IRedisSession session, int database, string prefix, InstanceItemViewModel instance, CancellationToken cancellationToken = default)
+    {
+        using var model = new RedisCreateViewModel(session, database, prefix, cancellationToken, instance: instance);
+        var dialog = new RedisCreateDialog(model) { Owner = owner() };
+        return Task.FromResult(dialog.ShowDialog() == true ? dialog.ResultKey : null);
+    }
+    /// <inheritdoc />
     public async Task EditAsync(RedisKeyTabViewModel tab, bool append = false)
     {
         if (!tab.IsEditing)

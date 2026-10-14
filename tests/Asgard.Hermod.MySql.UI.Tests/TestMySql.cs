@@ -67,6 +67,7 @@ internal sealed class TestMySqlDialogs : IMySqlWorkspaceDialogs
 {
     internal MySqlDraftChoice Choice = MySqlDraftChoice.Cancel;
     internal int Conflicts, Fields;
+    internal Func<MySqlFieldEditorViewModel, Task>? FieldOpened;
     public Task<MySqlDraftChoice> ResolveDraftAsync(string name, bool queryDocument = false) => Task.FromResult(Choice);
     public Task<bool> ConfirmStopAsync() => Task.FromResult(true);
     public Task<bool> ConfirmEndSessionAsync() => Task.FromResult(true);
@@ -74,5 +75,5 @@ internal sealed class TestMySqlDialogs : IMySqlWorkspaceDialogs
     public Task<string?> OpenQueryAsync(CancellationToken token) => Task.FromResult<string?>(null);
     public Task<string?> ExportAsync(MySqlGridViewModel grid, CancellationToken token) => Task.FromResult<string?>(null);
     public Task ShowConflictAsync(MySqlConflict conflict) { Conflicts++; return Task.CompletedTask; }
-    public Task EditFieldAsync(MySqlFieldEditorViewModel field) { Fields++; return Task.CompletedTask; }
+    public Task EditFieldAsync(MySqlFieldEditorViewModel field) { Fields++; return FieldOpened?.Invoke(field) ?? Task.CompletedTask; }
 }
