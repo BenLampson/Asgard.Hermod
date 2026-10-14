@@ -33,9 +33,9 @@ public sealed class TerminalNumericInputTests
         using var session = new TerminalSession(); using var control = new TerminalControl { Session = session };
         using var source = new HwndSource(new HwndSourceParameters("IME input test") { Width = 100, Height = 100 }); source.RootVisual = control;
         var sent = new List<string>(); session.InputReceived += (_, bytes) => sent.Add(Encoding.UTF8.GetString(bytes.Span));
-        var composition = new TextComposition(InputManager.Current, control, "中文123");
+        var composition = new TextComposition(InputManager.Current, control, "中文123", TextCompositionAutoComplete.Off);
         control.RaiseEvent(new TextCompositionEventArgs(Keyboard.PrimaryDevice, composition) { RoutedEvent = TextCompositionManager.PreviewTextInputStartEvent });
-        foreach (var key in new[] { Key.D1, Key.Enter, Key.Left, Key.Down })
+        foreach (var key in new[] { Key.D1, Key.NumPad1, Key.Enter, Key.Left, Key.Down })
         {
             var candidate = new KeyEventArgs(Keyboard.PrimaryDevice, source, 0, key) { RoutedEvent = Keyboard.PreviewKeyDownEvent };
             control.RaiseEvent(candidate); Assert.False(candidate.Handled); Assert.Empty(sent);
@@ -65,7 +65,7 @@ public sealed class TerminalNumericInputTests
         using var session = new TerminalSession(); using var control = new TerminalControl { Session = session };
         using var source = new HwndSource(new HwndSourceParameters("Cancelled IME test") { Width = 100, Height = 100 }); source.RootVisual = control;
         var sent = new List<string>(); session.InputReceived += (_, bytes) => sent.Add(Encoding.UTF8.GetString(bytes.Span));
-        control.RaiseEvent(new TextCompositionEventArgs(Keyboard.PrimaryDevice, new TextComposition(InputManager.Current, control, "候选"))
+        control.RaiseEvent(new TextCompositionEventArgs(Keyboard.PrimaryDevice, new TextComposition(InputManager.Current, control, "候选", TextCompositionAutoComplete.Off))
         { RoutedEvent = TextCompositionManager.PreviewTextInputStartEvent });
         var cancel = new KeyEventArgs(Keyboard.PrimaryDevice, source, 0, Key.Escape) { RoutedEvent = Keyboard.PreviewKeyDownEvent };
         control.RaiseEvent(cancel); Assert.False(cancel.Handled); Assert.Empty(sent);

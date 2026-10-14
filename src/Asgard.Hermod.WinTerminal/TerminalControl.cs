@@ -78,6 +78,7 @@ public sealed partial class TerminalControl : Control, IDisposable
     private static void OnSessionChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
     {
         var control = (TerminalControl)sender;
+        control.ResetInputState();
         if (control._session is { } oldSession)
             oldSession.BufferUpdated -= control.OnBufferUpdated;
         control._session = (TerminalSession?)args.NewValue;
@@ -111,6 +112,7 @@ public sealed partial class TerminalControl : Control, IDisposable
     /// <summary>移出可视树时暂停计时器，保留会话与字体缓存供再次挂载。</summary>
     private void OnUnloaded(object sender, RoutedEventArgs args)
     {
+        ResetInputState();
         _renderTimer.Stop();
         _resizeTimer.Stop();
     }
@@ -121,6 +123,8 @@ public sealed partial class TerminalControl : Control, IDisposable
         base.OnPropertyChanged(args);
         if (_renderer is null || _disposed)
             return;
+        if (args.Property == IsReadOnlyProperty)
+            ResetInputState();
         if (args.Property == FontFamilyProperty || args.Property == FontSizeProperty
             || args.Property == ForegroundProperty || args.Property == BackgroundProperty)
         {

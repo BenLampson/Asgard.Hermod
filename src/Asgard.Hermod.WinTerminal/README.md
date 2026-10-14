@@ -93,10 +93,15 @@ Shift bypasses application mouse reporting for local selection.
 
 Number-row and numeric-keypad digits use the current Windows keyboard layout at
 the key event boundary, so they work even when an input method does not commit a
-normal text event. Handled keys suppress the subsequent text event, avoiding
-duplicate input. During IME composition, digits, Enter and arrow keys stay with
-the candidate chooser; committed Unicode text is sent once. Focus loss or Escape
-ends the composition guard. Disconnected/read-only sessions never send input.
+normal text event. If the same keystroke also commits matching text, the control
+consumes that duplicate without sending it again. Each new key-down is independent,
+including repeated digits and key repeat; key release, focus loss, unloading,
+session changes and read-only changes clear the pending input state. Keys claimed
+by the IME remain with the input method even before its composition-start event.
+During candidate composition, digits, Enter and arrow keys stay with the candidate
+chooser; committed Unicode text is sent once. A new candidate composition does not
+inherit suppression from an earlier numeric key. Focus loss or Escape ends the
+composition guard. Disconnected/read-only sessions never send input.
 
 ConPTY requires Windows 10 version 1809 or later. Inputs, outputs, and control-plane
 teardown use separate workers. Startup explicitly resets inherited standard
