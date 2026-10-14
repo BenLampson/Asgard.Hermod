@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0-windows</TargetFramework><UseWPF>true</UseWPF><OutputType>Exe</OutputType><IsTestProject>true</IsTestProject><IsPackable>false</IsPackable></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../Asgard.Hermod.UI.Tests/WpfTestFixture.cs" Link="Shared/WpfTestFixture.cs" />
+    <Compile Include="../Asgard.Hermod.UI.Tests/WpfTestCollection.cs" Link="Shared/WpfTestCollection.cs" />
+    <Compile Include="../Asgard.Hermod.UI.Tests/WindowTestVisuals.cs" Link="Shared/WindowTestVisuals.cs" />
+    <Compile Include="../Asgard.Hermod.UI.Tests/WindowPreviewCapture.cs" Link="Shared/WindowPreviewCapture.cs" />
+    <Compile Include="../Asgard.Hermod.UI.Tests/WpfBindingTrace.cs" Link="Shared/WpfBindingTrace.cs" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
+    <PackageReference Include="xunit.v3" Version="4.0.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1"><PrivateAssets>all</PrivateAssets></PackageReference>
+    <ProjectReference Include="../../src/Asgard.Hermod.MySql.UI/Asgard.Hermod.MySql.UI.csproj" />
+    <ProjectReference Include="../../src/Asgard.Hermod.Core/Asgard.Hermod.Core.csproj" />
+    <ProjectReference Include="../../src/Asgard.Hermod/Asgard.Hermod.csproj" />
+  </ItemGroup>
+</Project>

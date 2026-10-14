@@ -34,11 +34,13 @@ public partial class App : Application
             services.AddS3Connector<S3CompatibleStorageProvider>();
             services.AddSsh();
             services.AddRedis();
+            services.AddMySql();
             services.AddSingleton<ITerminalSessionFactory, LocalTerminalSessionFactory>();
             services.AddHermodUi(() => MainWindow, Resources);
             services.AddObjectStorageUi(() => MainWindow);
             services.AddSshUi(() => MainWindow);
             services.AddRedisUi(() => MainWindow);
+            services.AddMySqlUi(() => MainWindow);
             var provider = services.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,

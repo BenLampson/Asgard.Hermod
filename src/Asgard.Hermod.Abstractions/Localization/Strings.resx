@@ -3156,4 +3156,7 @@
   <data name="MySqlModeChanged" xml:space="preserve">
     <value>SQL_MODE changed. Run the remaining statements separately using the new session mode.</value>
   </data>
+  <data name="MySqlConnectionDetails" xml:space="preserve"><value>Connection details</value></data>
+  <data name="MySqlSecurity" xml:space="preserve"><value>Security</value></data>
+  <data name="MySqlAdvanced" xml:space="preserve"><value>Advanced</value></data>
 </root>

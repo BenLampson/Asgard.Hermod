@@ -3156,4 +3156,7 @@
   <data name="MySqlModeChanged" xml:space="preserve">
     <value>SQL_MODE 已变化，请按新的会话模式单独执行剩余语句。</value>
   </data>
+  <data name="MySqlConnectionDetails" xml:space="preserve"><value>连接信息</value></data>
+  <data name="MySqlSecurity" xml:space="preserve"><value>安全设置</value></data>
+  <data name="MySqlAdvanced" xml:space="preserve"><value>高级设置</value></data>
 </root>
