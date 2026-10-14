@@ -15,7 +15,6 @@ public static class SshProfile
             ProviderLabelResourceKey = "SshConnectionMethod",
             AllowProviderChangeOnEdit = true,
             OmitSaveLocationOnEdit = true,
-            CombineProviderAndInformation = true,
             DefaultProviderId = SshIds.Direct,
             OmitSaveLocation = true,
         }, Fields(route))

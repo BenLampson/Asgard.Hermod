@@ -2350,7 +2350,7 @@
     <value>当前设备 → {0} → {1}</value>
   </data>
   <data name="SshChangeRoute" xml:space="preserve">
-    <value>更改</value>
+    <value>更改连接方式</value>
   </data>
   <data name="SshProxySettings" xml:space="preserve">
     <value>代理设置</value>
@@ -3288,7 +3288,6 @@
   <data name="MySqlFieldOperationTarget" xml:space="preserve"><value>实例：{0} · 环境：{1}
 {2}</value></data>
   <data name="MySqlResultRow" xml:space="preserve"><value>结果第 {0} 行</value></data>
-  <data name="WizardRouteSelectionHint" xml:space="preserve"><value>选择连接方式。高级路由保留独立认证和主机身份验证。</value></data>
   <data name="Rename" xml:space="preserve"><value>重命名</value></data>
   <data name="RenameInstance" xml:space="preserve"><value>重命名实例</value></data>
   <data name="RenameTag" xml:space="preserve"><value>重命名标签</value></data>

@@ -42,7 +42,7 @@ public sealed partial class NewInstanceViewModel
     /// <summary>类型决定编辑时的保存范围提示页是否需要显示。</summary>
     private bool OmitEditSaveLocation => IsEditing && SelectedType?.OmitSaveLocationOnEdit == true;
     /// <summary>末步编号来自当前流程，不要求公共向导固定五步。</summary>
-    private int ConfirmationStep => CombinesProviderAndInformation ? 5 : OmitEditSaveLocation ? 4 : 5;
+    private int ConfirmationStep => OmitEditSaveLocation ? 4 : 5;
     /// <summary>确认页说明提交后的结果。</summary>
     public string ConfirmationHint => IsEditing ? Text.Get(OmitEditSaveLocation ? "ConfigurationAppliesToNextConnection"
         : "TheUpdatedConnectionInformationWillBeUsedAfterSaving") : Text.Get("TheConnectionWillOpenInTheInstanceListAfterCreation");

@@ -44,12 +44,17 @@ public sealed class SshLayoutTests(WpfTestFixture fixture)
                 try
                 {
                     WindowPreviewCapture.Show(window); await WindowPreviewCapture.VerifyAsync(window, $"ssh-method-{route}-{language}-{theme}");
-                    Assert.True(model.IsInformationStep); Assert.False(model.IsRouteSelectionExpanded);
-                    SshWizardTests.Fill(model, route); model.IsRouteSelectionExpanded = true;
+                    Assert.True(model.IsProviderStep); Assert.False(model.IsInformationStep);
+                    Assert.True(WindowTestVisuals.Named(window, "ProviderList").IsVisible);
+                    Assert.DoesNotContain(WindowTestVisuals.Descendants<TextBox>(window), input => input.Name == "SshNameInput" && input.IsVisible);
+                    Assert.DoesNotContain(WindowTestVisuals.Descendants<Expander>(window), item => Equals(item.Header, model.ProviderLabel));
+                    model.NextCommand.Execute(null);
+                    Assert.True(model.IsInformationStep);
+                    SshWizardTests.Fill(model, route);
                     await WindowPreviewCapture.VerifyAsync(window, $"ssh-form-{route}-{language}-{theme}");
                     var name = Assert.IsType<TextBox>(WindowTestVisuals.Named(window, "SshNameInput"));
                     Assert.True(name.IsVisible); Assert.True(name.Focusable); Assert.True(name.IsTabStop);
-                    Assert.Contains(WindowTestVisuals.Descendants<ListBox>(window), list => list.IsVisible && list.Items.Count == 3);
+                    Assert.False(WindowTestVisuals.Named(window, "ProviderList").IsVisible);
                     Assert.Contains(WindowTestVisuals.Descendants<SecretInput>(window), input => input.IsVisible);
                     Assert.DoesNotContain(WindowTestVisuals.Descendants<TextBlock>(window), label => label.Text.Contains("test-only", StringComparison.Ordinal));
                     if (route == SshIds.Direct)

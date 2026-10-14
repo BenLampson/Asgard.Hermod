@@ -12,7 +12,7 @@ public sealed class SshWizardTests
     [InlineData(SshIds.Direct)]
     [InlineData(SshIds.Jump)]
     [InlineData(SshIds.Proxy)]
-    public async Task AllRoutesUseSharedCompactWorkflow(string route)
+    public async Task AllRoutesSelectMethodBeforeConnectionInformation(string route)
     {
         var factory = new SshTestFactory(); var saves = new NewInstanceWizardTestConfigurationService();
         using var model = Create(factory, saves, route); model.NextCommand.Execute(null);

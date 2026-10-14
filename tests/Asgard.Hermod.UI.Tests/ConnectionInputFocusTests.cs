@@ -135,7 +135,7 @@ public sealed class ConnectionInputFocusTests(WpfTestFixture fixture)
             var fields = adapter.Fields;
             var genericFields = wizard.ConfigurationEditor.Fields;
             var oldHost = wizard.Fields.Single(field => field.Key == "host");
-            if (!wizard.CombinesProviderAndInformation) wizard.PreviousCommand.Execute(null);
+            wizard.PreviousCommand.Execute(null);
             wizard.SelectedProvider = wizard.Providers[1];
             wizard.NextCommand.Execute(null);
             await WindowTestVisuals.UpdateLayoutAsync(window);

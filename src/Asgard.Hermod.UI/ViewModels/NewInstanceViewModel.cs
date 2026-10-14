@@ -77,12 +77,11 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
             SelectedProvider = null;
             if (Providers.Count == 1)
                 SelectedProvider = Providers[0];
-            else if (value?.CombineProviderAndInformation == true)
+            else if (value?.DefaultProviderId is not null)
                 SelectedProvider = Providers.FirstOrDefault(provider => provider.Id == value.DefaultProviderId);
             Name = "";
             TagSelection.Reset();
-            CurrentStep = CombinesProviderAndInformation ? 2 : 1;
-            IsRouteSelectionExpanded = !CombinesProviderAndInformation;
+            CurrentStep = 1;
             RebuildSteps();
             OnPropertyChanged(nameof(CurrentStep));
             InvalidateConnection();
@@ -100,7 +99,8 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
                 return;
             if (SetProperty(ref field, value))
             {
-                var retained = IsEditing || CombinesProviderAndInformation ? Fields.ToDictionary(item => item.Key, item => (item.Value, item.Definition.Kind)) : null;
+                // 同一类型允许切换连接路径时保留共同字段；跨类型和不同云服务商不继承凭据。
+                var retained = IsEditing || SelectedType?.AllowProviderChangeOnEdit == true ? Fields.ToDictionary(item => item.Key, item => (item.Value, item.Definition.Kind)) : null;
                 ReplaceFields(value);
                 if (retained is not null)
                     foreach (var item in Fields)

@@ -118,7 +118,7 @@ public partial class NewInstanceWindow : HermodDialog
             return;
         if (!_model.HasTypeSelection)
             TypeList.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
-        else if (!ConnectionContent.FocusCurrentStep(_model.CurrentStep, _model.IsEditing))
+        else if (!ConnectionContent.FocusCurrentStep(_model.CurrentStep))
             ContinueButton.Focus();
     }
 

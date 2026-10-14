@@ -3,12 +3,8 @@ namespace Asgard.Hermod.UI.ViewModels;
 /// <summary>集中管理受校验的步骤导航、脱敏确认信息和绑定通知。</summary>
 public sealed partial class NewInstanceViewModel
 {
-    /// <summary>流程简化由类型声明，公共容器不识别 SSH 等协议。</summary>
-    public bool CombinesProviderAndInformation => SelectedType?.CombineProviderAndInformation == true;
-    /// <summary>路由仅在首个信息页按需展开，原有独立服务商页仍直接展开。</summary>
-    public bool IsRouteSelectionExpanded { get; set => SetProperty(ref field, value); }
-    /// <summary>独立和合并流程复用同一组服务商卡片。</summary>
-    public bool IsProviderSelectionVisible => IsProviderStep || CombinesProviderAndInformation && IsInformationStep;
+    /// <summary>省略自动保存范围提示不影响独立连接方式选择；确认页仍展示真实位置。</summary>
+    private bool SkipsSaveLocation => SelectedType?.OmitSaveLocation == true || OmitEditSaveLocation;
     /// <summary>只有明确选择类型和服务商才可进入信息填写。</summary>
     public bool HasProviderSelection => SelectedType is not null && SelectedProvider is not null
         && SelectedType.Id == SelectedProvider.Type.Id && Providers.Contains(SelectedProvider);
@@ -26,7 +22,7 @@ public sealed partial class NewInstanceViewModel
         1 => HasProviderSelection,
         2 => true,
         3 => HasSuccessfulConnectionTest,
-        4 => !OmitEditSaveLocation && HasSuccessfulConnectionTest,
+        4 => !SkipsSaveLocation && HasSuccessfulConnectionTest,
         _ => false,
     });
     /// <summary>测试和保存期间不能切换步骤。</summary>
@@ -57,7 +53,7 @@ public sealed partial class NewInstanceViewModel
     /// <summary>连接测试内容是否可见。</summary>
     public bool IsTestStep => CurrentStep == 3;
     /// <summary>保存范围内容是否可见。</summary>
-    public bool IsSaveLocationStep => CurrentStep == 4 && !OmitEditSaveLocation && SelectedType?.OmitSaveLocation != true;
+    public bool IsSaveLocationStep => CurrentStep == 4 && !SkipsSaveLocation;
     /// <summary>脱敏确认内容是否可见。</summary>
     public bool IsConfirmationStep => CurrentStep == ConfirmationStep;
     /// <summary>当前服务商的展示名称。</summary>
@@ -89,7 +85,7 @@ public sealed partial class NewInstanceViewModel
         1 => Text.Get(SelectedType?.ProviderSelectionTitleResourceKey ?? "ChooseProvider"),
         2 => Text.Get("ConnectionInformation"),
         3 => Text.Get("ConnectionTest"),
-        4 when !OmitEditSaveLocation => Text.Get("SaveLocation"),
+        4 when !SkipsSaveLocation => Text.Get("SaveLocation"),
         _ => IsEditing ? Text.Get("ConfirmChanges") : Text.Get("InstanceConfirmAddition"),
     };
     /// <summary>步骤说明匹配当前操作，具体测试范围由服务商描述。</summary>
@@ -99,20 +95,23 @@ public sealed partial class NewInstanceViewModel
             : Text.Get(SelectedType?.ProviderSelectionDescriptionResourceKey ?? "ChooseProviderForInstanceType"),
         2 => Text.Format("EnterTheInstanceNameAndConnectionInformationFor", ProviderName),
         3 => Text.Get("VerifyConnectionInformationAndAccessPermissions"),
-        4 when !OmitEditSaveLocation => Text.Get("SyncSaveAutomaticHint"),
+        4 when !SkipsSaveLocation => Text.Get("SyncSaveAutomaticHint"),
         _ => Text.Get("InstanceConfirmTagsDescription"),
     };
 
     /// <summary>连接流程自行声明步骤；类型入口与公共布局都不预设连接步骤。</summary>
     private void RebuildSteps()
     {
-        Steps = SelectedType is null ? [] : CombinesProviderAndInformation ?
-            [new(2, Text.Get("ConnectionInformation"), 1), new(3, Text.Get("TestConnection"), 2),
-             new(5, Text.Get(IsEditing ? "ConfirmChanges" : "InstanceConfirmAddition"), 3)] : OmitEditSaveLocation ?
-            [new(1, Text.Get(SelectedType.ProviderSelectionTitleResourceKey)), new(2, Text.Get("EnterInformation")),
-             new(3, Text.Get("TestConnection")), new(4, Text.Get("ConfirmChanges"))] :
-            [new(1, Text.Get(SelectedType.ProviderSelectionTitleResourceKey)), new(2, Text.Get("EnterInformation")), new(3, Text.Get("TestConnection")),
-             new(4, Text.Get("SaveLocation")), new(5, Text.Get(IsEditing ? "ConfirmChanges" : "InstanceConfirmAddition"))];
+        List<InstanceWizardStep> steps = [];
+        if (SelectedType is not null)
+        {
+            steps.Add(new(1, Text.Get(SelectedType.ProviderSelectionTitleResourceKey)));
+            steps.Add(new(2, Text.Get("ConnectionInformation")));
+            steps.Add(new(3, Text.Get("TestConnection")));
+            if (!SkipsSaveLocation) steps.Add(new(4, Text.Get("SaveLocation")));
+            steps.Add(new(ConfirmationStep, Text.Get(IsEditing ? "ConfirmChanges" : "InstanceConfirmAddition"), steps.Count + 1));
+        }
+        Steps = steps;
         OnPropertyChanged(nameof(Steps));
     }
 
@@ -184,7 +183,7 @@ public sealed partial class NewInstanceViewModel
             nameof(CanGoNext), nameof(CanGoPrevious), nameof(CanTest), nameof(CanCreate), nameof(IsInformationEditable),
             nameof(IsTypeSelectionEditable), nameof(IsProviderSelectionEditable), nameof(WindowTitle), nameof(WizardHeading), nameof(ConfirmationHint),
             nameof(StepCountText), nameof(ContinueCommand), nameof(ContinueLabel), nameof(HasPreviousStep),
-            nameof(IsProviderStep), nameof(IsProviderSelectionVisible), nameof(CombinesProviderAndInformation), nameof(ProviderLabel), nameof(IsInformationStep), nameof(IsTestStep), nameof(IsSaveLocationStep),
+            nameof(IsProviderStep), nameof(ProviderLabel), nameof(IsInformationStep), nameof(IsTestStep), nameof(IsSaveLocationStep),
             nameof(IsConfirmationStep), nameof(ProviderName), nameof(ProviderSummary),
             nameof(TestSummary), nameof(TestHeading), nameof(TestDescription), nameof(TestActionLabel),
             nameof(HasTestFailure), nameof(HasTestErrorCode), nameof(StepTitle), nameof(StepDescription),
