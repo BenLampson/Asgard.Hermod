@@ -51108,7 +51108,8 @@
       "id": "m6C8gG",
       "x": 6396,
       "y": 19442,
-      "name": "08 / SSH · 02 · SSH / 连接方式",
+      "name": "08 / SSH · 高级路由 · 展开内容状态",
+      "context": "连接信息页中的高级路由展开状态，非单独步骤。",
       "theme": {
         "mode": "light"
       },
@@ -51165,9 +51166,10 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接方式",
+                  "content": "连接信息",
                   "fill": "$accent-ink",
-                  "fontWeight": "600"
+                  "fontWeight": "600",
+                  "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
                   "fill": "#00000000"
@@ -51181,9 +51183,10 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "连接信息",
+                  "content": "测试连接",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
                   "fill": "#00000000"
@@ -51197,12 +51200,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "测试连接",
+                  "content": "确认添加",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -51218,7 +51223,8 @@
                   "fontWeight": "normal"
                 },
                 "i3PkJc/v1WT4A": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/dh17s": {
                   "fill": "$line-soft"
@@ -51530,7 +51536,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 1 / 5 步"
+                  "content": "第 1 / 3 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -51615,12 +51621,12 @@
               "content": "添加实例"
             },
             "tPoaK": {
-              "id": "cUMTy",
+              "id": "f98GLB",
               "type": "ref",
               "ref": "fRqXZ",
               "name": "公共向导布局实例",
-              "width": "fill_container",
-              "height": "fill_container",
+              "width": 912,
+              "height": 628,
               "descendants": {
                 "i3PkJc/K9v2lr": {
                   "content": "SSH"
@@ -51629,36 +51635,38 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "#00000000"
-                },
-                "i3PkJc/YJv81": {
-                  "fill": "$green-weak"
-                },
-                "i3PkJc/V4Dvj": {
-                  "content": "✓",
-                  "fill": "$green",
-                  "fontWeight": "600"
-                },
-                "i3PkJc/heFqU": {
-                  "content": "连接方式",
-                  "fill": "$muted",
-                  "fontWeight": "normal"
-                },
-                "i3PkJc/gjF5X": {
                   "fill": "$accent-weak"
                 },
-                "i3PkJc/cpyB6": {
+                "i3PkJc/YJv81": {
                   "fill": "$action-fill"
                 },
-                "i3PkJc/U9mCq": {
-                  "content": "2",
+                "i3PkJc/V4Dvj": {
+                  "content": "1",
                   "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
-                "i3PkJc/Lfxov": {
+                "i3PkJc/heFqU": {
                   "content": "连接信息",
                   "fill": "$accent-ink",
+                  "fontWeight": "normal",
+                  "fontSize": 13
+                },
+                "i3PkJc/gjF5X": {
+                  "fill": "#00000000"
+                },
+                "i3PkJc/cpyB6": {
+                  "fill": "$line-soft"
+                },
+                "i3PkJc/U9mCq": {
+                  "content": "2",
+                  "fill": "$muted",
                   "fontWeight": "600"
+                },
+                "i3PkJc/Lfxov": {
+                  "content": "测试连接",
+                  "fill": "$muted",
+                  "fontWeight": "600",
+                  "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
                   "fill": "#00000000"
@@ -51672,12 +51680,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "测试连接",
+                  "content": "确认添加",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -51693,7 +51703,8 @@
                   "fontWeight": "normal"
                 },
                 "i3PkJc/v1WT4A": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/dh17s": {
                   "fill": "$line-soft"
@@ -51709,17 +51720,12 @@
                   "fontWeight": "normal"
                 },
                 "D0syG": {
-                  "id": "KL6oV",
+                  "id": "H0Lcr",
                   "type": "ref",
                   "ref": "Gi3EU",
-                  "name": "SSH 正文插槽",
-                  "width": "fill_container",
-                  "height": "fill_container",
-                  "descendants": {
-                    "fdir8": {
-                      "alignItems": "center"
-                    }
-                  }
+                  "name": "SSH 信息正文 · 默认直连",
+                  "width": 736,
+                  "height": 628
                 }
               }
             },
@@ -51732,7 +51738,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 2 / 5 步"
+                  "content": "第 1 / 3 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -51831,36 +51837,38 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "#00000000"
-                },
-                "i3PkJc/YJv81": {
-                  "fill": "$green-weak"
-                },
-                "i3PkJc/V4Dvj": {
-                  "content": "✓",
-                  "fill": "$green",
-                  "fontWeight": "600"
-                },
-                "i3PkJc/heFqU": {
-                  "content": "连接方式",
-                  "fill": "$muted",
-                  "fontWeight": "normal"
-                },
-                "i3PkJc/gjF5X": {
                   "fill": "$accent-weak"
                 },
-                "i3PkJc/cpyB6": {
+                "i3PkJc/YJv81": {
                   "fill": "$action-fill"
                 },
-                "i3PkJc/U9mCq": {
-                  "content": "2",
+                "i3PkJc/V4Dvj": {
+                  "content": "1",
                   "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
-                "i3PkJc/Lfxov": {
+                "i3PkJc/heFqU": {
                   "content": "连接信息",
                   "fill": "$accent-ink",
+                  "fontWeight": "normal",
+                  "fontSize": 13
+                },
+                "i3PkJc/gjF5X": {
+                  "fill": "#00000000"
+                },
+                "i3PkJc/cpyB6": {
+                  "fill": "$line-soft"
+                },
+                "i3PkJc/U9mCq": {
+                  "content": "2",
+                  "fill": "$muted",
                   "fontWeight": "600"
+                },
+                "i3PkJc/Lfxov": {
+                  "content": "测试连接",
+                  "fill": "$muted",
+                  "fontWeight": "600",
+                  "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
                   "fill": "#00000000"
@@ -51874,12 +51882,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "测试连接",
+                  "content": "确认添加",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -51895,7 +51905,8 @@
                   "fontWeight": "normal"
                 },
                 "i3PkJc/v1WT4A": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/dh17s": {
                   "fill": "$line-soft"
@@ -52520,7 +52531,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 2 / 5 步"
+                  "content": "第 1 / 3 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -52619,36 +52630,38 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "#00000000"
-                },
-                "i3PkJc/YJv81": {
-                  "fill": "$green-weak"
-                },
-                "i3PkJc/V4Dvj": {
-                  "content": "✓",
-                  "fill": "$green",
-                  "fontWeight": "600"
-                },
-                "i3PkJc/heFqU": {
-                  "content": "连接方式",
-                  "fill": "$muted",
-                  "fontWeight": "normal"
-                },
-                "i3PkJc/gjF5X": {
                   "fill": "$accent-weak"
                 },
-                "i3PkJc/cpyB6": {
+                "i3PkJc/YJv81": {
                   "fill": "$action-fill"
                 },
-                "i3PkJc/U9mCq": {
-                  "content": "2",
+                "i3PkJc/V4Dvj": {
+                  "content": "1",
                   "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
-                "i3PkJc/Lfxov": {
+                "i3PkJc/heFqU": {
                   "content": "连接信息",
                   "fill": "$accent-ink",
+                  "fontWeight": "normal",
+                  "fontSize": 13
+                },
+                "i3PkJc/gjF5X": {
+                  "fill": "#00000000"
+                },
+                "i3PkJc/cpyB6": {
+                  "fill": "$line-soft"
+                },
+                "i3PkJc/U9mCq": {
+                  "content": "2",
+                  "fill": "$muted",
                   "fontWeight": "600"
+                },
+                "i3PkJc/Lfxov": {
+                  "content": "测试连接",
+                  "fill": "$muted",
+                  "fontWeight": "600",
+                  "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
                   "fill": "#00000000"
@@ -52662,12 +52675,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "测试连接",
+                  "content": "确认添加",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -52683,7 +52698,8 @@
                   "fontWeight": "normal"
                 },
                 "i3PkJc/v1WT4A": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/dh17s": {
                   "fill": "$line-soft"
@@ -53327,7 +53343,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 2 / 5 步"
+                  "content": "第 1 / 3 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -53426,36 +53442,38 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "#00000000"
-                },
-                "i3PkJc/YJv81": {
-                  "fill": "$green-weak"
-                },
-                "i3PkJc/V4Dvj": {
-                  "content": "✓",
-                  "fill": "$green",
-                  "fontWeight": "600"
-                },
-                "i3PkJc/heFqU": {
-                  "content": "连接方式",
-                  "fill": "$muted",
-                  "fontWeight": "normal"
-                },
-                "i3PkJc/gjF5X": {
                   "fill": "$accent-weak"
                 },
-                "i3PkJc/cpyB6": {
+                "i3PkJc/YJv81": {
                   "fill": "$action-fill"
                 },
-                "i3PkJc/U9mCq": {
-                  "content": "2",
+                "i3PkJc/V4Dvj": {
+                  "content": "1",
                   "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
-                "i3PkJc/Lfxov": {
+                "i3PkJc/heFqU": {
                   "content": "连接信息",
                   "fill": "$accent-ink",
+                  "fontWeight": "normal",
+                  "fontSize": 13
+                },
+                "i3PkJc/gjF5X": {
+                  "fill": "#00000000"
+                },
+                "i3PkJc/cpyB6": {
+                  "fill": "$line-soft"
+                },
+                "i3PkJc/U9mCq": {
+                  "content": "2",
+                  "fill": "$muted",
                   "fontWeight": "600"
+                },
+                "i3PkJc/Lfxov": {
+                  "content": "测试连接",
+                  "fill": "$muted",
+                  "fontWeight": "600",
+                  "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
                   "fill": "#00000000"
@@ -53469,12 +53487,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "测试连接",
+                  "content": "确认添加",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -53490,7 +53510,8 @@
                   "fontWeight": "normal"
                 },
                 "i3PkJc/v1WT4A": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/dh17s": {
                   "fill": "$line-soft"
@@ -54061,7 +54082,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 2 / 5 步"
+                  "content": "第 1 / 3 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -54160,36 +54181,38 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "#00000000"
-                },
-                "i3PkJc/YJv81": {
-                  "fill": "$green-weak"
-                },
-                "i3PkJc/V4Dvj": {
-                  "content": "✓",
-                  "fill": "$green",
-                  "fontWeight": "600"
-                },
-                "i3PkJc/heFqU": {
-                  "content": "连接方式",
-                  "fill": "$muted",
-                  "fontWeight": "normal"
-                },
-                "i3PkJc/gjF5X": {
                   "fill": "$accent-weak"
                 },
-                "i3PkJc/cpyB6": {
+                "i3PkJc/YJv81": {
                   "fill": "$action-fill"
                 },
-                "i3PkJc/U9mCq": {
-                  "content": "2",
+                "i3PkJc/V4Dvj": {
+                  "content": "1",
                   "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
-                "i3PkJc/Lfxov": {
+                "i3PkJc/heFqU": {
                   "content": "连接信息",
                   "fill": "$accent-ink",
+                  "fontWeight": "normal",
+                  "fontSize": 13
+                },
+                "i3PkJc/gjF5X": {
+                  "fill": "#00000000"
+                },
+                "i3PkJc/cpyB6": {
+                  "fill": "$line-soft"
+                },
+                "i3PkJc/U9mCq": {
+                  "content": "2",
+                  "fill": "$muted",
                   "fontWeight": "600"
+                },
+                "i3PkJc/Lfxov": {
+                  "content": "测试连接",
+                  "fill": "$muted",
+                  "fontWeight": "600",
+                  "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
                   "fill": "#00000000"
@@ -54203,12 +54226,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "测试连接",
+                  "content": "确认添加",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -54224,7 +54249,8 @@
                   "fontWeight": "normal"
                 },
                 "i3PkJc/v1WT4A": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/dh17s": {
                   "fill": "$line-soft"
@@ -54756,7 +54782,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 2 / 5 步"
+                  "content": "第 1 / 3 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -54858,52 +54884,56 @@
                   "fill": "#00000000"
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$green-weak"
+                  "fill": "$line-soft"
                 },
                 "i3PkJc/V4Dvj": {
                   "content": "✓",
-                  "fill": "$green",
+                  "fill": "$muted",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接方式",
-                  "fill": "$muted",
-                  "fontWeight": "normal"
-                },
-                "i3PkJc/gjF5X": {
-                  "fill": "#00000000"
-                },
-                "i3PkJc/cpyB6": {
-                  "fill": "$green-weak"
-                },
-                "i3PkJc/U9mCq": {
-                  "content": "✓",
-                  "fill": "$green",
-                  "fontWeight": "600"
-                },
-                "i3PkJc/Lfxov": {
                   "content": "连接信息",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
-                "i3PkJc/Qj1VJ": {
+                "i3PkJc/gjF5X": {
                   "fill": "$accent-weak"
                 },
-                "i3PkJc/WHoye": {
+                "i3PkJc/cpyB6": {
                   "fill": "$action-fill"
                 },
-                "i3PkJc/ixO40": {
-                  "content": "3",
+                "i3PkJc/U9mCq": {
+                  "content": "2",
                   "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
-                "i3PkJc/R4G0x4": {
+                "i3PkJc/Lfxov": {
                   "content": "测试连接",
                   "fill": "$accent-ink",
+                  "fontWeight": "normal",
+                  "fontSize": 13
+                },
+                "i3PkJc/Qj1VJ": {
+                  "fill": "#00000000"
+                },
+                "i3PkJc/WHoye": {
+                  "fill": "$line-soft"
+                },
+                "i3PkJc/ixO40": {
+                  "content": "3",
+                  "fill": "$muted",
                   "fontWeight": "600"
                 },
+                "i3PkJc/R4G0x4": {
+                  "content": "确认添加",
+                  "fill": "$muted",
+                  "fontWeight": "600",
+                  "fontSize": 13
+                },
                 "i3PkJc/HzS6E": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -54919,7 +54949,8 @@
                   "fontWeight": "normal"
                 },
                 "i3PkJc/v1WT4A": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/dh17s": {
                   "fill": "$line-soft"
@@ -55355,7 +55386,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 3 / 5 步"
+                  "content": "第 2 / 3 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -55457,52 +55488,56 @@
                   "fill": "#00000000"
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$green-weak"
+                  "fill": "$line-soft"
                 },
                 "i3PkJc/V4Dvj": {
                   "content": "✓",
-                  "fill": "$green",
+                  "fill": "$muted",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接方式",
-                  "fill": "$muted",
-                  "fontWeight": "normal"
-                },
-                "i3PkJc/gjF5X": {
-                  "fill": "#00000000"
-                },
-                "i3PkJc/cpyB6": {
-                  "fill": "$green-weak"
-                },
-                "i3PkJc/U9mCq": {
-                  "content": "✓",
-                  "fill": "$green",
-                  "fontWeight": "600"
-                },
-                "i3PkJc/Lfxov": {
                   "content": "连接信息",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
-                "i3PkJc/Qj1VJ": {
+                "i3PkJc/gjF5X": {
                   "fill": "$accent-weak"
                 },
-                "i3PkJc/WHoye": {
+                "i3PkJc/cpyB6": {
                   "fill": "$action-fill"
                 },
-                "i3PkJc/ixO40": {
-                  "content": "3",
+                "i3PkJc/U9mCq": {
+                  "content": "2",
                   "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
-                "i3PkJc/R4G0x4": {
+                "i3PkJc/Lfxov": {
                   "content": "测试连接",
                   "fill": "$accent-ink",
+                  "fontWeight": "normal",
+                  "fontSize": 13
+                },
+                "i3PkJc/Qj1VJ": {
+                  "fill": "#00000000"
+                },
+                "i3PkJc/WHoye": {
+                  "fill": "$line-soft"
+                },
+                "i3PkJc/ixO40": {
+                  "content": "3",
+                  "fill": "$muted",
                   "fontWeight": "600"
                 },
+                "i3PkJc/R4G0x4": {
+                  "content": "确认添加",
+                  "fill": "$muted",
+                  "fontWeight": "600",
+                  "fontSize": 13
+                },
                 "i3PkJc/HzS6E": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -55518,7 +55553,8 @@
                   "fontWeight": "normal"
                 },
                 "i3PkJc/v1WT4A": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/dh17s": {
                   "fill": "$line-soft"
@@ -55874,7 +55910,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 3 / 5 步"
+                  "content": "第 2 / 3 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -55927,7 +55963,8 @@
       "id": "PkTj1",
       "x": 6396,
       "y": 21062,
-      "name": "08 / SSH · 10 · 保存位置 / 本地或账户",
+      "name": "08 / SSH · 保存位置 · 确认页信息状态",
+      "context": "自动保存范围在确认页内展示，非独立步骤。",
       "theme": {
         "mode": "light"
       },
@@ -55976,52 +56013,56 @@
                   "fill": "#00000000"
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$green-weak"
+                  "fill": "$line-soft"
                 },
                 "i3PkJc/V4Dvj": {
                   "content": "✓",
-                  "fill": "$green",
+                  "fill": "$muted",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接方式",
+                  "content": "连接信息",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
                   "fill": "#00000000"
                 },
                 "i3PkJc/cpyB6": {
-                  "fill": "$green-weak"
+                  "fill": "$line-soft"
                 },
                 "i3PkJc/U9mCq": {
                   "content": "✓",
-                  "fill": "$green",
+                  "fill": "$muted",
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "连接信息",
+                  "content": "测试连接",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
-                  "fill": "#00000000"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/WHoye": {
-                  "fill": "$green-weak"
+                  "fill": "$action-fill"
                 },
                 "i3PkJc/ixO40": {
-                  "content": "✓",
-                  "fill": "$green",
+                  "content": "3",
+                  "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "测试连接",
-                  "fill": "$muted",
-                  "fontWeight": "normal"
+                  "content": "确认添加",
+                  "fill": "$accent-ink",
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
-                  "fill": "$accent-weak"
+                  "fill": "$accent-weak",
+                  "enabled": false
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$action-fill"
@@ -56037,7 +56078,8 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/v1WT4A": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/dh17s": {
                   "fill": "$line-soft"
@@ -56353,7 +56395,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 4 / 5 步"
+                  "content": "第 3 / 3 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -56455,52 +56497,56 @@
                   "fill": "#00000000"
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$green-weak"
+                  "fill": "$line-soft"
                 },
                 "i3PkJc/V4Dvj": {
                   "content": "✓",
-                  "fill": "$green",
+                  "fill": "$muted",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接方式",
+                  "content": "连接信息",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
                   "fill": "#00000000"
                 },
                 "i3PkJc/cpyB6": {
-                  "fill": "$green-weak"
+                  "fill": "$line-soft"
                 },
                 "i3PkJc/U9mCq": {
                   "content": "✓",
-                  "fill": "$green",
+                  "fill": "$muted",
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "连接信息",
+                  "content": "测试连接",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
-                  "fill": "#00000000"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/WHoye": {
-                  "fill": "$green-weak"
+                  "fill": "$action-fill"
                 },
                 "i3PkJc/ixO40": {
-                  "content": "✓",
-                  "fill": "$green",
+                  "content": "3",
+                  "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "测试连接",
-                  "fill": "$muted",
-                  "fontWeight": "normal"
+                  "content": "确认添加",
+                  "fill": "$accent-ink",
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$green-weak"
@@ -56516,7 +56562,8 @@
                   "fontWeight": "normal"
                 },
                 "i3PkJc/v1WT4A": {
-                  "fill": "$accent-weak"
+                  "fill": "$accent-weak",
+                  "enabled": false
                 },
                 "i3PkJc/dh17s": {
                   "fill": "$action-fill"
@@ -56995,7 +57042,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 5 / 5 步"
+                  "content": "第 3 / 3 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -57097,52 +57144,56 @@
                   "fill": "#00000000"
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$green-weak"
+                  "fill": "$line-soft"
                 },
                 "i3PkJc/V4Dvj": {
                   "content": "✓",
-                  "fill": "$green",
+                  "fill": "$muted",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接方式",
-                  "fill": "$muted",
-                  "fontWeight": "normal"
-                },
-                "i3PkJc/gjF5X": {
-                  "fill": "#00000000"
-                },
-                "i3PkJc/cpyB6": {
-                  "fill": "$green-weak"
-                },
-                "i3PkJc/U9mCq": {
-                  "content": "✓",
-                  "fill": "$green",
-                  "fontWeight": "600"
-                },
-                "i3PkJc/Lfxov": {
                   "content": "连接信息",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
-                "i3PkJc/Qj1VJ": {
+                "i3PkJc/gjF5X": {
                   "fill": "$accent-weak"
                 },
-                "i3PkJc/WHoye": {
+                "i3PkJc/cpyB6": {
                   "fill": "$action-fill"
                 },
-                "i3PkJc/ixO40": {
-                  "content": "3",
+                "i3PkJc/U9mCq": {
+                  "content": "2",
                   "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
-                "i3PkJc/R4G0x4": {
+                "i3PkJc/Lfxov": {
                   "content": "测试连接",
                   "fill": "$accent-ink",
+                  "fontWeight": "normal",
+                  "fontSize": 13
+                },
+                "i3PkJc/Qj1VJ": {
+                  "fill": "#00000000"
+                },
+                "i3PkJc/WHoye": {
+                  "fill": "$line-soft"
+                },
+                "i3PkJc/ixO40": {
+                  "content": "3",
+                  "fill": "$muted",
                   "fontWeight": "600"
                 },
+                "i3PkJc/R4G0x4": {
+                  "content": "确认添加",
+                  "fill": "$muted",
+                  "fontWeight": "600",
+                  "fontSize": 13
+                },
                 "i3PkJc/HzS6E": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -57158,7 +57209,8 @@
                   "fontWeight": "normal"
                 },
                 "i3PkJc/v1WT4A": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/dh17s": {
                   "fill": "$line-soft"
@@ -57512,7 +57564,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 3 / 5 步"
+                  "content": "第 2 / 3 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -57611,36 +57663,38 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "#00000000"
-                },
-                "i3PkJc/YJv81": {
-                  "fill": "$green-weak"
-                },
-                "i3PkJc/V4Dvj": {
-                  "content": "✓",
-                  "fill": "$green",
-                  "fontWeight": "600"
-                },
-                "i3PkJc/heFqU": {
-                  "content": "连接方式",
-                  "fill": "$muted",
-                  "fontWeight": "normal"
-                },
-                "i3PkJc/gjF5X": {
                   "fill": "$accent-weak"
                 },
-                "i3PkJc/cpyB6": {
+                "i3PkJc/YJv81": {
                   "fill": "$action-fill"
                 },
-                "i3PkJc/U9mCq": {
-                  "content": "2",
+                "i3PkJc/V4Dvj": {
+                  "content": "1",
                   "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
-                "i3PkJc/Lfxov": {
+                "i3PkJc/heFqU": {
                   "content": "连接信息",
                   "fill": "$accent-ink",
+                  "fontWeight": "normal",
+                  "fontSize": 13
+                },
+                "i3PkJc/gjF5X": {
+                  "fill": "#00000000"
+                },
+                "i3PkJc/cpyB6": {
+                  "fill": "$line-soft"
+                },
+                "i3PkJc/U9mCq": {
+                  "content": "2",
+                  "fill": "$muted",
                   "fontWeight": "600"
+                },
+                "i3PkJc/Lfxov": {
+                  "content": "测试连接",
+                  "fill": "$muted",
+                  "fontWeight": "600",
+                  "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
                   "fill": "#00000000"
@@ -57654,12 +57708,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "测试连接",
+                  "content": "确认添加",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -57675,7 +57731,8 @@
                   "fontWeight": "normal"
                 },
                 "i3PkJc/v1WT4A": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/dh17s": {
                   "fill": "$line-soft"
@@ -58267,7 +58324,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 2 / 5 步"
+                  "content": "第 1 / 3 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -58369,52 +58426,56 @@
                   "fill": "#00000000"
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$green-weak"
+                  "fill": "$line-soft"
                 },
                 "i3PkJc/V4Dvj": {
                   "content": "✓",
-                  "fill": "$green",
+                  "fill": "$muted",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接方式",
-                  "fill": "$muted",
-                  "fontWeight": "normal"
-                },
-                "i3PkJc/gjF5X": {
-                  "fill": "#00000000"
-                },
-                "i3PkJc/cpyB6": {
-                  "fill": "$green-weak"
-                },
-                "i3PkJc/U9mCq": {
-                  "content": "✓",
-                  "fill": "$green",
-                  "fontWeight": "600"
-                },
-                "i3PkJc/Lfxov": {
                   "content": "连接信息",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
-                "i3PkJc/Qj1VJ": {
+                "i3PkJc/gjF5X": {
                   "fill": "$accent-weak"
                 },
-                "i3PkJc/WHoye": {
+                "i3PkJc/cpyB6": {
                   "fill": "$action-fill"
                 },
-                "i3PkJc/ixO40": {
-                  "content": "3",
+                "i3PkJc/U9mCq": {
+                  "content": "2",
                   "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
-                "i3PkJc/R4G0x4": {
+                "i3PkJc/Lfxov": {
                   "content": "测试连接",
                   "fill": "$accent-ink",
+                  "fontWeight": "normal",
+                  "fontSize": 13
+                },
+                "i3PkJc/Qj1VJ": {
+                  "fill": "#00000000"
+                },
+                "i3PkJc/WHoye": {
+                  "fill": "$line-soft"
+                },
+                "i3PkJc/ixO40": {
+                  "content": "3",
+                  "fill": "$muted",
                   "fontWeight": "600"
                 },
+                "i3PkJc/R4G0x4": {
+                  "content": "确认添加",
+                  "fill": "$muted",
+                  "fontWeight": "600",
+                  "fontSize": 13
+                },
                 "i3PkJc/HzS6E": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -58430,7 +58491,8 @@
                   "fontWeight": "normal"
                 },
                 "i3PkJc/v1WT4A": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/dh17s": {
                   "fill": "$line-soft"
@@ -58781,7 +58843,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 3 / 5 步"
+                  "content": "第 2 / 3 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -58880,36 +58942,38 @@
                   "content": "Remote terminal"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "#00000000"
-                },
-                "i3PkJc/YJv81": {
-                  "fill": "$green-weak"
-                },
-                "i3PkJc/V4Dvj": {
-                  "content": "✓",
-                  "fill": "$green",
-                  "fontWeight": "600"
-                },
-                "i3PkJc/heFqU": {
-                  "content": "Connection method",
-                  "fill": "$muted",
-                  "fontWeight": "normal"
-                },
-                "i3PkJc/gjF5X": {
                   "fill": "$accent-weak"
                 },
-                "i3PkJc/cpyB6": {
+                "i3PkJc/YJv81": {
                   "fill": "$action-fill"
                 },
-                "i3PkJc/U9mCq": {
-                  "content": "2",
+                "i3PkJc/V4Dvj": {
+                  "content": "1",
                   "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
-                "i3PkJc/Lfxov": {
-                  "content": "Connection details",
+                "i3PkJc/heFqU": {
+                  "content": "Connection information",
                   "fill": "$accent-ink",
+                  "fontWeight": "normal",
+                  "fontSize": 13
+                },
+                "i3PkJc/gjF5X": {
+                  "fill": "#00000000"
+                },
+                "i3PkJc/cpyB6": {
+                  "fill": "$line-soft"
+                },
+                "i3PkJc/U9mCq": {
+                  "content": "2",
+                  "fill": "$muted",
                   "fontWeight": "600"
+                },
+                "i3PkJc/Lfxov": {
+                  "content": "Test connection",
+                  "fill": "$muted",
+                  "fontWeight": "600",
+                  "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
                   "fill": "#00000000"
@@ -58923,12 +58987,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "Test connection",
+                  "content": "Confirm",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -58944,7 +59010,8 @@
                   "fontWeight": "normal"
                 },
                 "i3PkJc/v1WT4A": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/dh17s": {
                   "fill": "$line-soft"
@@ -59492,7 +59559,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "Step 2 of 5"
+                  "content": "Step 1 of 3"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -59747,7 +59814,7 @@
               "fill": "$muted",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "本地始终可选；账户未登录时引导登录并保留表单。保存中按钮禁用，失败保留信息与重试入口；成功只新增一次并打开终端。",
+              "content": "默认直连进入信息页，复杂路由按需展开；连接信息→测试→确认共三步。保存范围由当前账户自动决定，确认页显示真实位置。路由和认证变化要求重新测试；保存失败保留输入，成功只新增一次。",
               "lineHeight": 1.5,
               "fontFamily": "Inter",
               "fontSize": 12,
@@ -59862,7 +59929,7 @@
       "x": 5440,
       "y": 18632,
       "name": "08 / component/SSH Instance · 连接流程",
-      "context": "SSH 类型流程引用通用 Instance Wizard；5 个步骤由 SSH 定义。连接路径与认证方式独立，正文和操作栏随步骤更新。",
+      "context": "SSH 添加与编辑为三步：连接信息、测试连接、确认。默认直连，路由选择在信息页按需展开。自动保存范围只在确认页显示。公共容器由步骤集合驱动。",
       "reusable": true,
       "clip": true,
       "width": 912,
@@ -59906,9 +59973,10 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接方式",
+                  "content": "连接信息",
                   "fill": "$accent-ink",
-                  "fontWeight": "600"
+                  "fontWeight": "600",
+                  "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
                   "fill": "#00000000"
@@ -59922,9 +59990,10 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "连接信息",
+                  "content": "测试连接",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
                   "fill": "#00000000"
@@ -59938,12 +60007,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "测试连接",
+                  "content": "确认添加",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -59959,7 +60030,8 @@
                   "fontWeight": "normal"
                 },
                 "i3PkJc/v1WT4A": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/dh17s": {
                   "fill": "$line-soft"
@@ -59988,8 +60060,11 @@
                     {
                       "type": "frame",
                       "id": "EBv2J",
+                      "x": 28,
+                      "y": 28,
                       "name": "页面标题",
-                      "width": "fill_container",
+                      "enabled": false,
+                      "width": "fill_container(680)",
                       "layout": "vertical",
                       "gap": 7,
                       "children": [
@@ -60021,8 +60096,11 @@
                     {
                       "type": "frame",
                       "id": "O0AEy",
+                      "x": 28,
+                      "y": 98,
                       "name": "直接连接",
-                      "width": "fill_container",
+                      "enabled": false,
+                      "width": "fill_container(680)",
                       "fill": "$accent-weak",
                       "cornerRadius": 6,
                       "stroke": "$accent",
@@ -60089,8 +60167,11 @@
                     {
                       "type": "frame",
                       "id": "l8vpTd",
+                      "x": 28,
+                      "y": 188,
                       "name": "SSH 跳板机",
-                      "width": "fill_container",
+                      "enabled": false,
+                      "width": "fill_container(680)",
                       "fill": "$surface",
                       "cornerRadius": 6,
                       "stroke": "$line",
@@ -60157,8 +60238,11 @@
                     {
                       "type": "frame",
                       "id": "XQwF6",
+                      "x": 28,
+                      "y": 278,
                       "name": "代理连接",
-                      "width": "fill_container",
+                      "enabled": false,
+                      "width": "fill_container(680)",
                       "fill": "$surface",
                       "cornerRadius": 6,
                       "stroke": "$line",
@@ -60225,8 +60309,11 @@
                     {
                       "type": "frame",
                       "id": "fCUhT",
+                      "x": 28,
+                      "y": 368,
                       "name": "认证提示",
-                      "width": "fill_container",
+                      "enabled": false,
+                      "width": "fill_container(680)",
                       "fill": "$accent-weak",
                       "cornerRadius": 6,
                       "gap": 12,
@@ -60257,6 +60344,14 @@
                           "fontWeight": "normal"
                         }
                       ]
+                    },
+                    {
+                      "id": "koNsa",
+                      "type": "ref",
+                      "ref": "Gi3EU",
+                      "name": "SSH 信息正文 · 默认直连",
+                      "width": 600,
+                      "height": 550
                     }
                   ]
                 }
@@ -60271,7 +60366,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 1 / 5 步"
+                  "content": "第 1 / 3 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -86973,6 +87068,7 @@
           "type": "frame",
           "id": "arfgC",
           "name": "连接路径摘要",
+          "context": "默认直连摘要；展开后可选择直连、SSH跳板或代理。切换保留公共目标字段，并使旧测试失效。",
           "width": "fill_container",
           "height": 34,
           "fill": "$app-bg",
@@ -87015,6 +87111,16 @@
               "fontFamily": "Inter",
               "fontSize": 11,
               "fontWeight": "600"
+            },
+            {
+              "type": "icon",
+              "id": "XqcD1",
+              "name": "展开连接方式",
+              "width": 14,
+              "height": 14,
+              "icon": "chevron-down",
+              "library": "lucide",
+              "fill": "$muted"
             }
           ]
         },
@@ -145985,193 +146091,15 @@
           "fontWeight": "600"
         },
         {
-          "id": "QYsoz",
+          "id": "lNEUX",
           "type": "ref",
           "ref": "mECWd",
-          "name": "SSH 流程实例",
-          "width": "fill_container",
+          "name": "编辑 SSH · 连接信息",
+          "width": 912,
           "height": 720,
           "descendants": {
             "vr8IS/C3lvQ": {
-              "content": "编辑 SSH 配置"
-            },
-            "tPoaK": {
-              "id": "dUVIc",
-              "type": "ref",
-              "ref": "fRqXZ",
-              "name": "公共向导布局实例",
-              "width": "fill_container",
-              "height": "fill_container",
-              "descendants": {
-                "i3PkJc/K9v2lr": {
-                  "content": "SSH"
-                },
-                "i3PkJc/WAScJ": {
-                  "content": "远程终端"
-                },
-                "i3PkJc/swYqB": {
-                  "fill": "#00000000"
-                },
-                "i3PkJc/YJv81": {
-                  "fill": "$green-weak"
-                },
-                "i3PkJc/V4Dvj": {
-                  "content": "✓",
-                  "fill": "$green",
-                  "fontWeight": "600"
-                },
-                "i3PkJc/heFqU": {
-                  "content": "连接方式",
-                  "fill": "$muted",
-                  "fontWeight": "normal"
-                },
-                "i3PkJc/gjF5X": {
-                  "fill": "$accent-weak"
-                },
-                "i3PkJc/cpyB6": {
-                  "fill": "$action-fill"
-                },
-                "i3PkJc/U9mCq": {
-                  "content": "2",
-                  "fill": "$ink-inv",
-                  "fontWeight": "600"
-                },
-                "i3PkJc/Lfxov": {
-                  "content": "连接信息",
-                  "fill": "$accent-ink",
-                  "fontWeight": "600"
-                },
-                "i3PkJc/Qj1VJ": {
-                  "fill": "#00000000"
-                },
-                "i3PkJc/WHoye": {
-                  "fill": "$line-soft"
-                },
-                "i3PkJc/ixO40": {
-                  "content": "3",
-                  "fill": "$muted",
-                  "fontWeight": "600"
-                },
-                "i3PkJc/R4G0x4": {
-                  "content": "测试连接",
-                  "fill": "$muted",
-                  "fontWeight": "normal"
-                },
-                "i3PkJc/HzS6E": {
-                  "fill": "#00000000"
-                },
-                "i3PkJc/zbsXl": {
-                  "fill": "$line-soft"
-                },
-                "i3PkJc/OkB9F": {
-                  "content": "4",
-                  "fill": "$muted",
-                  "fontWeight": "600"
-                },
-                "i3PkJc/WH63g": {
-                  "content": "确认修改",
-                  "fill": "$muted",
-                  "fontWeight": "normal"
-                },
-                "i3PkJc/v1WT4A": {
-                  "fill": "#00000000",
-                  "enabled": false,
-                  "width": 144,
-                  "height": 42
-                },
-                "i3PkJc/dh17s": {
-                  "fill": "$line-soft"
-                },
-                "i3PkJc/YaGNl": {
-                  "content": "5",
-                  "fill": "$muted",
-                  "fontWeight": "600"
-                },
-                "i3PkJc/eIy1X": {
-                  "content": "确认添加",
-                  "fill": "$muted",
-                  "fontWeight": "normal"
-                },
-                "D0syG": {
-                  "id": "iYgRa",
-                  "type": "ref",
-                  "ref": "Gi3EU",
-                  "name": "SSH 正文插槽",
-                  "width": "fill_container",
-                  "height": "fill_container",
-                  "descendants": {
-                    "sENer": {
-                      "content": "修改已保存的配置。当前会话会继续运行。"
-                    },
-                    "eAdq9/JVZ1P": {
-                      "content": "2222"
-                    },
-                    "x7m5W/JVZ1P": {
-                      "content": "已保存的密码",
-                      "fill": "$muted"
-                    },
-                    "fdir8": {
-                      "alignItems": "center"
-                    },
-                    "A9CaqC": {
-                      "content": "保留已保存的密码；选择更换认证方式时，再填写新凭据。"
-                    }
-                  }
-                }
-              }
-            },
-            "MR6Lk": {
-              "id": "Q3l6xU",
-              "type": "ref",
-              "ref": "xbvO9",
-              "name": "公共向导操作栏实例",
-              "width": "fill_container",
-              "height": 56,
-              "descendants": {
-                "QnqPf": {
-                  "content": "第 2 / 4 步"
-                },
-                "F68oH": {
-                  "fill": "$surface",
-                  "name": "取消"
-                },
-                "F68oH/u5fFux": {
-                  "enabled": false,
-                  "icon": "plus",
-                  "fill": "$muted"
-                },
-                "F68oH/NpJY2": {
-                  "content": "取消",
-                  "fill": "$body"
-                },
-                "d8U1x": {
-                  "fill": "$surface",
-                  "name": "上一步"
-                },
-                "d8U1x/u5fFux": {
-                  "enabled": false,
-                  "icon": "plus",
-                  "fill": "$muted"
-                },
-                "d8U1x/NpJY2": {
-                  "content": "上一步",
-                  "fill": "$body"
-                },
-                "ZO1YT": {
-                  "fill": "$action-fill",
-                  "opacity": 1,
-                  "name": "下一步"
-                },
-                "ZO1YT/u5fFux": {
-                  "enabled": true,
-                  "icon": "arrow-right",
-                  "fill": "$ink-inv"
-                },
-                "ZO1YT/NpJY2": {
-                  "content": "测试修改",
-                  "fill": "$ink-inv"
-                }
-              }
+              "content": "编辑实例"
             }
           }
         }
@@ -146231,52 +146159,56 @@
                   "fill": "#00000000"
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$green-weak"
+                  "fill": "$line-soft"
                 },
                 "i3PkJc/V4Dvj": {
                   "content": "✓",
-                  "fill": "$green",
+                  "fill": "$muted",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接方式",
-                  "fill": "$muted",
-                  "fontWeight": "normal"
-                },
-                "i3PkJc/gjF5X": {
-                  "fill": "#00000000"
-                },
-                "i3PkJc/cpyB6": {
-                  "fill": "$green-weak"
-                },
-                "i3PkJc/U9mCq": {
-                  "content": "✓",
-                  "fill": "$green",
-                  "fontWeight": "600"
-                },
-                "i3PkJc/Lfxov": {
                   "content": "连接信息",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
-                "i3PkJc/Qj1VJ": {
+                "i3PkJc/gjF5X": {
                   "fill": "$accent-weak"
                 },
-                "i3PkJc/WHoye": {
+                "i3PkJc/cpyB6": {
                   "fill": "$action-fill"
                 },
-                "i3PkJc/ixO40": {
-                  "content": "3",
+                "i3PkJc/U9mCq": {
+                  "content": "2",
                   "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
-                "i3PkJc/R4G0x4": {
+                "i3PkJc/Lfxov": {
                   "content": "测试连接",
                   "fill": "$accent-ink",
+                  "fontWeight": "normal",
+                  "fontSize": 13
+                },
+                "i3PkJc/Qj1VJ": {
+                  "fill": "#00000000"
+                },
+                "i3PkJc/WHoye": {
+                  "fill": "$line-soft"
+                },
+                "i3PkJc/ixO40": {
+                  "content": "3",
+                  "fill": "$muted",
                   "fontWeight": "600"
                 },
+                "i3PkJc/R4G0x4": {
+                  "content": "确认添加",
+                  "fill": "$muted",
+                  "fontWeight": "600",
+                  "fontSize": 13
+                },
                 "i3PkJc/HzS6E": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": false
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -146731,7 +146663,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 3 / 4 步"
+                  "content": "第 2 / 3 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -147180,52 +147112,56 @@
                   "fill": "#00000000"
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$green-weak"
+                  "fill": "$line-soft"
                 },
                 "i3PkJc/V4Dvj": {
                   "content": "✓",
-                  "fill": "$green",
+                  "fill": "$muted",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接方式",
+                  "content": "连接信息",
                   "fill": "$muted",
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
                   "fill": "#00000000"
                 },
                 "i3PkJc/cpyB6": {
-                  "fill": "$green-weak"
+                  "fill": "$line-soft"
                 },
                 "i3PkJc/U9mCq": {
                   "content": "✓",
-                  "fill": "$green",
+                  "fill": "$muted",
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "连接信息",
+                  "content": "测试连接",
                   "fill": "$muted",
-                  "fontWeight": "600"
+                  "fontWeight": "600",
+                  "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
-                  "fill": "#00000000"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/WHoye": {
-                  "fill": "$green-weak"
+                  "fill": "$action-fill"
                 },
                 "i3PkJc/ixO40": {
-                  "content": "✓",
-                  "fill": "$green",
+                  "content": "3",
+                  "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "测试连接",
-                  "fill": "$muted",
-                  "fontWeight": "normal"
+                  "content": "确认添加",
+                  "fill": "$accent-ink",
+                  "fontWeight": "normal",
+                  "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
-                  "fill": "$accent-weak"
+                  "fill": "$accent-weak",
+                  "enabled": false
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$action-fill"
@@ -147568,7 +147504,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 4 / 4 步"
+                  "content": "第 3 / 3 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
