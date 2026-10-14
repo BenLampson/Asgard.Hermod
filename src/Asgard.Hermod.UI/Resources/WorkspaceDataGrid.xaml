@@ -17,4 +17,21 @@
   <Setter Property="BorderBrush" Value="{DynamicResource LineBrush}" /><Setter Property="BorderThickness" Value="1" />
   <Setter Property="FontFamily" Value="{DynamicResource MonoFont}" /><Setter Property="FontSize" Value="12" />
  </Style>
+ <Style x:Key="WorkspaceResultGridHeader" TargetType="DataGridColumnHeader" BasedOn="{StaticResource WorkspaceColumnHeader}">
+  <Setter Property="Height" Value="44" /><Setter Property="Padding" Value="12,4" /><Setter Property="BorderBrush" Value="{DynamicResource LineSoftBrush}" /><Setter Property="BorderThickness" Value="0,0,1,1" />
+ </Style>
+ <Style x:Key="WorkspaceResultGridCell" TargetType="DataGridCell" BasedOn="{StaticResource WorkspaceGridCell}">
+  <Setter Property="Padding" Value="0" /><Setter Property="BorderBrush" Value="Transparent" /><Setter Property="BorderThickness" Value="1" />
+  <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="DataGridCell"><Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"><ContentPresenter VerticalAlignment="Center" /></Border></ControlTemplate></Setter.Value></Setter>
+  <Style.Triggers><Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" /></Trigger></Style.Triggers>
+ </Style>
+ <Style x:Key="WorkspaceResultGrid" TargetType="DataGrid" BasedOn="{StaticResource WorkspaceDataGrid}">
+  <Setter Property="ColumnHeaderStyle" Value="{StaticResource WorkspaceResultGridHeader}" /><Setter Property="CellStyle" Value="{StaticResource WorkspaceResultGridCell}" />
+  <Setter Property="RowHeight" Value="36" /><Setter Property="MinRowHeight" Value="36" /><Setter Property="ColumnHeaderHeight" Value="44" /><Setter Property="RowHeaderWidth" Value="44" />
+  <Setter Property="AutoGenerateColumns" Value="False" /><Setter Property="CanUserAddRows" Value="False" /><Setter Property="CanUserDeleteRows" Value="False" /><Setter Property="CanUserSortColumns" Value="False" /><Setter Property="CanUserReorderColumns" Value="False" />
+  <Setter Property="GridLinesVisibility" Value="All" /><Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource LineSoftBrush}" /><Setter Property="VerticalGridLinesBrush" Value="{DynamicResource LineSoftBrush}" />
+  <Setter Property="EnableRowVirtualization" Value="True" /><Setter Property="EnableColumnVirtualization" Value="True" /><Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling" />
+  <Setter Property="HorizontalScrollBarVisibility" Value="Auto" /><Setter Property="VerticalScrollBarVisibility" Value="Auto" /><Setter Property="MinColumnWidth" Value="80" /><Setter Property="MaxColumnWidth" Value="1600" /><Setter Property="SelectionUnit" Value="CellOrRowHeader" />
+  <Setter Property="RowHeaderStyle"><Setter.Value><Style TargetType="DataGridRowHeader"><Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}" /><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" /><Setter Property="BorderBrush" Value="{DynamicResource LineSoftBrush}" /><Setter Property="BorderThickness" Value="0,0,1,1" /><Setter Property="HorizontalContentAlignment" Value="Center" /></Style></Setter.Value></Setter>
+ </Style>
 </ResourceDictionary>

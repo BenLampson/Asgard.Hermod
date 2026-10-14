@@ -1,0 +1,21 @@
+<controls:HermodDialog x:Class="Asgard.Hermod.MySql.UI.Views.MySqlFieldDialog"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI" xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI"
+ Title="{loc:Loc MySqlEditField}" Width="760" Height="690" MinWidth="500" MinHeight="420" ResizeMode="CanResize" Closing="OnClosing">
+ <controls:HermodDialog.Resources><BooleanToVisibilityConverter x:Key="Visible" /></controls:HermodDialog.Resources>
+ <controls:HermodDialog.FooterContent><controls:DialogActionBar><StackPanel Orientation="Horizontal">
+  <Button Content="{loc:Loc Cancel}" IsCancel="True" Margin="0,0,10,0" />
+  <Button Content="{loc:Loc MySqlApplyToGrid}" Style="{StaticResource PrimaryButton}" IsEnabled="{Binding CanApply}" Visibility="{Binding IsEditable, Converter={StaticResource Visible}}" Click="OnApply" />
+ </StackPanel></controls:DialogActionBar></controls:HermodDialog.FooterContent>
+ <Grid Margin="24"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+  <StackPanel><TextBlock Text="{Binding Name}" FontSize="20" FontWeight="SemiBold" /><TextBlock Text="{Binding Context}" FontFamily="{DynamicResource MonoFont}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Context}" Foreground="{DynamicResource TextMutedBrush}" Margin="0,8" /></StackPanel>
+  <DockPanel Grid.Row="1" Margin="0,0,0,12"><TextBlock Text="{Binding TypeName}" FontFamily="{DynamicResource MonoFont}" Foreground="{DynamicResource AccentTextBrush}" />
+   <CheckBox Content="{loc:Loc MySqlSetNull}" IsChecked="{Binding IsNull}" IsEnabled="{Binding AllowsNull}" HorizontalAlignment="Right" /></DockPanel>
+  <controls:SectionSelector Grid.Row="2" ItemsSource="{Binding Formats}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding Format, Mode=TwoWay}" Visibility="{Binding IsBinary, Converter={StaticResource Visible}}" Margin="0,0,0,12" />
+  <controls:CodeEditor Grid.Row="3" x:Name="FieldInput" Text="{Binding Input, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding EditorEnabled}" MaxLength="10485760" AutomationProperties.Name="{loc:Loc MySqlFieldValue}">
+   <controls:CodeEditor.Style><Style TargetType="controls:CodeEditor"><Setter Property="IsReadOnly" Value="True" /><Style.Triggers><DataTrigger Binding="{Binding IsEditable}" Value="True"><Setter Property="IsReadOnly" Value="False" /></DataTrigger></Style.Triggers></Style></controls:CodeEditor.Style>
+  </controls:CodeEditor>
+  <TextBlock Grid.Row="4" Text="{Binding Error}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" Margin="0,10,0,0" Visibility="{Binding HasError, Converter={StaticResource Visible}}" />
+  <TextBlock Grid.Row="5" Text="{Binding Help}" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" FontSize="12" Margin="0,12,0,0" />
+ </Grid>
+</controls:HermodDialog>

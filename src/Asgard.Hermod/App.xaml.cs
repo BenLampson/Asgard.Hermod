@@ -51,6 +51,7 @@ public partial class App : Application
             await Task.Run(() => provider.GetRequiredService<LocalDatabaseInitializer>().Initialize());
             var languageStore = provider.GetRequiredService<ILanguagePreferenceStore>();
             Text.Initialize(languageStore.Load(), systemCulture);
+            Text.SetApplicationCulture(Text.Culture);
             // 临时文件维护失败不阻断登录或工作区；设置页可重新扫描并给出安全提示。
             try { await provider.GetRequiredService<ITemporaryFileStorage>().CleanupAsync(expiredOnly: true); }
             catch (Exception) { }

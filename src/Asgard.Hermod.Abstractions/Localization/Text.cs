@@ -6,6 +6,7 @@ namespace Asgard.Hermod.Abstractions.Localization;
 /// <summary>所有模块共享的文案资源入口；不翻译用户数据、协议值或终端输出。</summary>
 public static class Text
 {
+    private static CultureInfo? _applicationCulture;
     private static readonly ResourceManager Resources = new(
         "Asgard.Hermod.Abstractions.Localization.Strings", typeof(Text).Assembly);
 
@@ -17,7 +18,12 @@ public static class Text
     ]);
 
     /// <summary>界面文化只控制文案；数字、日期及协议序列化继续使用原有文化约定。</summary>
-    public static CultureInfo Culture => ResolveCulture(null, CultureInfo.CurrentUICulture);
+    public static CultureInfo Culture => Volatile.Read(ref _applicationCulture) ?? ResolveCulture(null, CultureInfo.CurrentUICulture);
+
+    /// <summary>宿主在读取保存偏好后固定应用资源语言，避免 Dispatcher 和异步上下文恢复成 Windows 语言。
+    /// 传入 null 恢复按当前上下文解析，供独立测试使用；区域格式仍不改变。</summary>
+    public static void SetApplicationCulture(CultureInfo? culture) => Volatile.Write(ref _applicationCulture,
+        culture is null ? null : ResolveCulture(null, culture));
 
     /// <summary>手动选择优先，跟随当前 Windows 用户显示语言，未支持时回退英语。</summary>
     public static CultureInfo ResolveCulture(string? preference, CultureInfo systemCulture)

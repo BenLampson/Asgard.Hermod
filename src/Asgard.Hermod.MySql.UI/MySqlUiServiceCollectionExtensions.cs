@@ -11,6 +11,8 @@ public static class MySqlUiServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services); ArgumentNullException.ThrowIfNull(owner);
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IInstanceConfigurationContentProvider, MySqlConfigurationContentProvider>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IInstancePageProvider, MySqlPageProvider>());
+        services.TryAddSingleton<IMySqlWorkspaceDialogs>(_ => new WindowsMySqlWorkspaceDialogs(owner));
         return services;
     }
 }

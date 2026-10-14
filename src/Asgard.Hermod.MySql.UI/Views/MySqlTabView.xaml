@@ -1,0 +1,49 @@
+<UserControl x:Class="Asgard.Hermod.MySql.UI.Views.MySqlTabView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI" xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI"
+ PreviewKeyDown="OnKeyDown">
+ <UserControl.Resources><BooleanToVisibilityConverter x:Key="Visible" /></UserControl.Resources>
+ <Grid Margin="0,12,0,0"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+  <StackPanel>
+   <DockPanel x:Name="QueryToolbar" Visibility="{Binding IsQuery, Converter={StaticResource Visible}}" Margin="0,0,0,10">
+    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal"><Button Content="{loc:Loc MySqlRun}" Style="{StaticResource PrimaryButton}" Click="OnRun" ToolTip="{loc:Loc MySqlRunHint}" Margin="0,0,4,0" />
+     <Button Style="{StaticResource IconButton}" Click="OnRunMenu" ToolTip="{loc:Loc MySqlExecutionScope}" AutomationProperties.Name="{loc:Loc MySqlExecutionScope}"><controls:IconView Kind="chevron-down" Width="12" Height="12" /></Button>
+     <Button Content="{loc:Loc MySqlCancelQuery}" Command="{Binding CancelCommand}" Margin="8,0" />
+     <Button Content="{loc:Loc MySqlSaveQuery}" Command="{Binding SaveDocumentCommand}" /></StackPanel>
+    <StackPanel Orientation="Horizontal"><TextBlock Text="{loc:Loc MySqlExecutionDatabase}" VerticalAlignment="Center" Margin="0,0,8,0" />
+     <ComboBox x:Name="DatabaseSelector" Width="140" ItemsSource="{Binding Databases}" SelectedItem="{Binding Database, Mode=OneWay}" IsEditable="True" Text="{Binding Database, Mode=OneWay}" SelectionChanged="OnDatabaseChanged" PreviewKeyDown="OnDatabaseKeyDown" AutomationProperties.Name="{loc:Loc MySqlExecutionDatabase}" /></StackPanel>
+   </DockPanel>
+   <DockPanel x:Name="ObjectToolbar" Margin="0,0,0,10"><Button DockPanel.Dock="Right" Content="{loc:Loc MySqlRefresh}" Command="{Binding RefreshCommand}" />
+    <controls:SectionSelector ItemsSource="{Binding Sections}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding Section, Mode=TwoWay}" />
+    <DockPanel.Style><Style TargetType="DockPanel"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding IsQuery}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger><DataTrigger Binding="{Binding IsMetadataOnly}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></DockPanel.Style>
+   </DockPanel>
+  </StackPanel>
+  <Border Grid.Row="1" Background="{DynamicResource DangerWeakBrush}" Padding="12,9" Margin="0,0,0,10" CornerRadius="5" Visibility="{Binding HasError, Converter={StaticResource Visible}}"><TextBlock Text="{Binding Error}" TextWrapping="Wrap" Foreground="{DynamicResource DangerBrush}" /></Border>
+  <Grid Grid.Row="2">
+   <Grid x:Name="DataPanel" SizeChanged="OnDataSizeChanged"><Grid.RowDefinitions><RowDefinition x:Name="EditorRow" Height="210" /><RowDefinition x:Name="EditorSplitterRow" Height="6" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+    <controls:CodeEditor x:Name="SqlEditor" Text="{Binding Sql, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="False" MinHeight="80" MaxLength="10485760" Visibility="{Binding IsQuery, Converter={StaticResource Visible}}" AutomationProperties.Name="{loc:Loc MySqlSqlEditor}" />
+    <GridSplitter Grid.Row="1" Height="6" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" Background="{DynamicResource LineSoftBrush}" ShowsPreview="True" Visibility="{Binding IsQuery, Converter={StaticResource Visible}}" />
+    <Grid Grid.Row="2"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+     <DockPanel Margin="0,10,0,8"><TextBlock DockPanel.Dock="Right" Text="{Binding SelectedResult.Summary}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" /><controls:SectionSelector ItemsSource="{Binding Results}" DisplayMemberPath="Label" SelectedItem="{Binding SelectedResult, Mode=TwoWay}" /></DockPanel>
+     <ContentControl x:Name="GridHost" Grid.Row="1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+     <TextBlock Grid.Row="1" Text="{loc:Loc MySqlNoResults}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding HasResult}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+    </Grid>
+    <Expander Grid.Row="3" Header="{loc:Loc MySqlMessages}" Visibility="{Binding HasMessage, Converter={StaticResource Visible}}" Margin="0,8,0,0"><TextBox Text="{Binding Message, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" MaxHeight="100" VerticalScrollBarVisibility="Auto" FontFamily="{DynamicResource MonoFont}" /></Expander>
+   </Grid>
+   <Grid x:Name="StructurePanel" Visibility="Collapsed"><Grid.RowDefinitions><RowDefinition Height="180" /><RowDefinition Height="8" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+    <DataGrid ItemsSource="{Binding Structure}" Style="{StaticResource WorkspaceDataGrid}" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False" EnableRowVirtualization="True" EnableColumnVirtualization="True" HorizontalScrollBarVisibility="Auto">
+     <DataGrid.Columns><DataGridTextColumn Header="{loc:Loc MySqlObjectName}" Binding="{Binding Name}" Width="200" /><DataGridTextColumn Header="{loc:Loc MySqlObjectDetails}" Binding="{Binding Detail}" Width="*" MinWidth="200" /></DataGrid.Columns>
+    </DataGrid>
+    <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" ResizeDirection="Rows" Background="{DynamicResource LineSoftBrush}" ShowsPreview="True" />
+    <controls:CodeEditor Grid.Row="2" Text="{Binding Definition, Mode=OneWay}" IsReadOnly="True" AutomationProperties.Name="{loc:Loc MySqlObjectDefinition}" />
+   </Grid>
+  </Grid>
+  <Grid Grid.Row="3" Margin="0,12,0,0"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+   <DockPanel><StackPanel DockPanel.Dock="Right" Orientation="Horizontal"><Button Content="{loc:Loc MySqlRevertChanges}" Command="{Binding RevertCommand}" Margin="0,0,8,0" /><Button Content="{loc:Loc MySqlSaveChanges}" Command="{Binding SaveChangesCommand}" Style="{StaticResource PrimaryButton}" />
+    <Button Content="{loc:Loc MySqlVerifyRows}" Command="{Binding VerifyCommand}" Margin="8,0,0,0" Visibility="{Binding OutcomeUnknown, Converter={StaticResource Visible}}" /></StackPanel>
+    <TextBlock Text="{Binding EditHint}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="0,0,16,0" />
+   </DockPanel>
+   <DockPanel Grid.Row="1" Margin="0,8,0,0"><StackPanel DockPanel.Dock="Right" Orientation="Horizontal" x:Name="PageButtons"><Button Command="{Binding PreviousCommand}" Content="{loc:Loc MySqlPrevious}" Margin="0,0,8,0" /><Button Command="{Binding NextCommand}" Content="{loc:Loc MySqlNext}" /></StackPanel><TextBlock Text="{Binding DraftSummary}" Foreground="{DynamicResource WarningBrush}" Visibility="{Binding HasDataDraft, Converter={StaticResource Visible}}" /></DockPanel>
+  </Grid>
+ </Grid>
+</UserControl>

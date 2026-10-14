@@ -3159,4 +3159,114 @@
   <data name="MySqlConnectionDetails" xml:space="preserve"><value>连接信息</value></data>
   <data name="MySqlSecurity" xml:space="preserve"><value>安全设置</value></data>
   <data name="MySqlAdvanced" xml:space="preserve"><value>高级设置</value></data>
+  <data name="MySqlReady" xml:space="preserve"><value>就绪</value></data>
+  <data name="MySqlDatabaseObjects" xml:space="preserve"><value>数据库对象</value></data>
+  <data name="MySqlRoot" xml:space="preserve"><value>数据库</value></data>
+  <data name="MySqlDatabase" xml:space="preserve"><value>数据库</value></data>
+  <data name="MySqlTables" xml:space="preserve"><value>表</value></data>
+  <data name="MySqlViews" xml:space="preserve"><value>视图</value></data>
+  <data name="MySqlProcedures" xml:space="preserve"><value>存储过程</value></data>
+  <data name="MySqlFunctions" xml:space="preserve"><value>函数</value></data>
+  <data name="MySqlEvents" xml:space="preserve"><value>事件</value></data>
+  <data name="MySqlColumns" xml:space="preserve"><value>字段</value></data>
+  <data name="MySqlIndexes" xml:space="preserve"><value>索引</value></data>
+  <data name="MySqlForeignKeys" xml:space="preserve"><value>外键</value></data>
+  <data name="MySqlTriggers" xml:space="preserve"><value>触发器</value></data>
+  <data name="MySqlParameters" xml:space="preserve"><value>参数</value></data>
+  <data name="MySqlParameter" xml:space="preserve"><value>参数</value></data>
+  <data name="MySqlNotLoaded" xml:space="preserve"><value>尚未加载</value></data>
+  <data name="MySqlLoading" xml:space="preserve"><value>正在加载…</value></data>
+  <data name="MySqlEmptyBranch" xml:space="preserve"><value>此分支没有对象。</value></data>
+  <data name="MySqlLoadMore" xml:space="preserve"><value>加载更多 / 重试</value></data>
+  <data name="MySqlData" xml:space="preserve"><value>数据</value></data>
+  <data name="MySqlStructure" xml:space="preserve"><value>结构</value></data>
+  <data name="MySqlObjectName" xml:space="preserve"><value>对象名称</value></data>
+  <data name="MySqlObjectDetails" xml:space="preserve"><value>类型 / 详情</value></data>
+  <data name="MySqlObjectDefinition" xml:space="preserve"><value>对象定义</value></data>
+  <data name="MySqlResultTab" xml:space="preserve"><value>语句 {0} · 结果 {1}</value></data>
+  <data name="MySqlLoadedRows" xml:space="preserve"><value>已加载 {0} 行 · {1} 列</value></data>
+  <data name="MySqlPreviewRows" xml:space="preserve"><value>不完整预览：{0} 行 · {1} 列</value></data>
+  <data name="MySqlBinaryValue" xml:space="preserve"><value>[BINARY · {0} 字节]</value></data>
+  <data name="MySqlObjectTitle" xml:space="preserve"><value>{0}.{1}</value></data>
+  <data name="MySqlQueryTitle" xml:space="preserve"><value>查询 {0}</value></data>
+  <data name="MySqlNewQuery" xml:space="preserve"><value>新建查询</value></data>
+  <data name="MySqlConnecting" xml:space="preserve"><value>正在连接…</value></data>
+  <data name="MySqlConnected" xml:space="preserve"><value>已连接</value></data>
+  <data name="MySqlDisconnected" xml:space="preserve"><value>已断开</value></data>
+  <data name="MySqlEndpoint" xml:space="preserve"><value>{0}:{1}</value></data>
+  <data name="MySqlReconnect" xml:space="preserve"><value>重新连接</value></data>
+  <data name="MySqlEditConnection" xml:space="preserve"><value>编辑连接</value></data>
+  <data name="MySqlReconnectToApply" xml:space="preserve"><value>连接设置已保存，请手动重新连接以应用。</value></data>
+  <data name="MySqlCloseTab" xml:space="preserve"><value>关闭页签</value></data>
+  <data name="MySqlRefresh" xml:space="preserve"><value>刷新</value></data>
+  <data name="MySqlRefreshBranch" xml:space="preserve"><value>刷新所选分支</value></data>
+  <data name="MySqlSearchLoaded" xml:space="preserve"><value>搜索已加载对象</value></data>
+  <data name="MySqlSearchLoadedHint" xml:space="preserve"><value>仅搜索已加载对象并保留祖先层级。展开分支以加载更多对象。</value></data>
+  <data name="MySqlOpenKnownObject" xml:space="preserve"><value>按名称打开表</value></data>
+  <data name="MySqlOpenObject" xml:space="preserve"><value>打开</value></data>
+  <data name="MySqlSqlEditor" xml:space="preserve"><value>SQL 编辑器</value></data>
+  <data name="MySqlQueryResults" xml:space="preserve"><value>查询结果</value></data>
+  <data name="MySqlExecutionDatabase" xml:space="preserve"><value>执行数据库</value></data>
+  <data name="MySqlRun" xml:space="preserve"><value>执行</value></data>
+  <data name="MySqlRunHint" xml:space="preserve"><value>Ctrl+Enter 执行选中 SQL 或当前语句，Ctrl+Shift+Enter 执行全部语句。</value></data>
+  <data name="MySqlExecutionScope" xml:space="preserve"><value>执行范围</value></data>
+  <data name="MySqlRunCurrent" xml:space="preserve"><value>执行选中内容 / 当前语句</value></data>
+  <data name="MySqlRunAll" xml:space="preserve"><value>执行全部语句</value></data>
+  <data name="MySqlCancelQuery" xml:space="preserve"><value>取消执行</value></data>
+  <data name="MySqlSaveQuery" xml:space="preserve"><value>保存 SQL 文件</value></data>
+  <data name="MySqlOpenQuery" xml:space="preserve"><value>打开 SQL 文件</value></data>
+  <data name="MySqlSqlFileFilter" xml:space="preserve"><value>SQL 文件 (*.sql)|*.sql|所有文件 (*.*)|*.*</value></data>
+  <data name="MySqlCsvFileFilter" xml:space="preserve"><value>CSV 文件 (*.csv)|*.csv</value></data>
+  <data name="MySqlFileFailed" xml:space="preserve"><value>文件操作失败，请检查路径和权限。查询内容已保留。</value></data>
+  <data name="MySqlFileTooLarge" xml:space="preserve"><value>SQL 文件超过 10 MiB 上限。</value></data>
+  <data name="MySqlExportLoaded" xml:space="preserve"><value>导出已加载行</value></data>
+  <data name="MySqlNoResults" xml:space="preserve"><value>执行 SQL 或打开表以查看结果。</value></data>
+  <data name="MySqlMessages" xml:space="preserve"><value>执行消息</value></data>
+  <data name="MySqlStatementSucceeded" xml:space="preserve"><value>语句 {0} 执行完成，影响 {1} 行。</value></data>
+  <data name="MySqlStatementStopped" xml:space="preserve"><value>语句 {0} 已停止。此前的语句可能已经生效。</value></data>
+  <data name="MySqlExecutionStatus" xml:space="preserve"><value>{0} 条语句 · {1:N0} 毫秒</value></data>
+  <data name="MySqlPageStatus" xml:space="preserve"><value>第 {0}–{1} 行（分页视图）</value></data>
+  <data name="MySqlPrevious" xml:space="preserve"><value>上一页</value></data>
+  <data name="MySqlNext" xml:space="preserve"><value>下一页</value></data>
+  <data name="MySqlOn" xml:space="preserve"><value>开启</value></data>
+  <data name="MySqlOff" xml:space="preserve"><value>关闭</value></data>
+  <data name="MySqlUnknown" xml:space="preserve"><value>未知</value></data>
+  <data name="MySqlTransactionActive" xml:space="preserve"><value>活动中</value></data>
+  <data name="MySqlTransactionNone" xml:space="preserve"><value>无</value></data>
+  <data name="MySqlSessionStatus" xml:space="preserve"><value>自动提交：{0} · 事务：{1}</value></data>
+  <data name="MySqlPendingChanges" xml:space="preserve"><value>{0} 个字段待保存</value></data>
+  <data name="MySqlInlineEditHint" xml:space="preserve"><value>双击或 F2 编辑，展开单元格可打开字段窗口。表格保存使用独立事务。</value></data>
+  <data name="MySqlOpenField" xml:space="preserve"><value>打开字段窗口（Alt+Enter）</value></data>
+  <data name="MySqlRevertCell" xml:space="preserve"><value>还原此单元格</value></data>
+  <data name="MySqlFieldValue" xml:space="preserve"><value>字段值</value></data>
+  <data name="MySqlSaveChanges" xml:space="preserve"><value>保存更改</value></data>
+  <data name="MySqlRevertChanges" xml:space="preserve"><value>还原更改</value></data>
+  <data name="MySqlOtherResultDraft" xml:space="preserve"><value>请先保存或还原其他结果集中的草稿，再编辑此结果集。</value></data>
+  <data name="MySqlChangesSaved" xml:space="preserve"><value>更改已成功提交。</value></data>
+  <data name="MySqlSaveConfirmedReloadFailed" xml:space="preserve"><value>保存已提交，但无法读取更新后的数据行。继续编辑前请核对数据行，不要重复提交此草稿。</value></data>
+  <data name="MySqlVerifyRows" xml:space="preserve"><value>重新连接并核对数据行</value></data>
+  <data name="MySqlVerifySaved" xml:space="preserve"><value>服务器数据行与提交的更改一致，草稿已清除。</value></data>
+  <data name="MySqlVerifyUnchanged" xml:space="preserve"><value>服务器数据行与原始基线一致，草稿已保留；如需重试，请手动保存。</value></data>
+  <data name="MySqlVerifyConflict" xml:space="preserve"><value>数据行与原始基线及提交值均不一致，请保留草稿并处理差异。</value></data>
+  <data name="MySqlEditField" xml:space="preserve"><value>编辑字段</value></data>
+  <data name="MySqlViewField" xml:space="preserve"><value>查看字段</value></data>
+  <data name="MySqlApplyToGrid" xml:space="preserve"><value>应用到表格</value></data>
+  <data name="MySqlSetNull" xml:space="preserve"><value>设为 SQL NULL</value></data>
+  <data name="MySqlFieldContext" xml:space="preserve"><value>{0}.{1} · {2} · 行主键：{3}</value></data>
+  <data name="MySqlFieldApplyHelp" xml:space="preserve"><value>应用只更新本地表格草稿中的此字段。点击“保存更改”才提交到数据库。</value></data>
+  <data name="MySqlDiscardField" xml:space="preserve"><value>放弃字段输入？</value></data>
+  <data name="MySqlDiscardFieldHint" xml:space="preserve"><value>字段窗口中有尚未应用的输入，是否放弃并关闭？</value></data>
+  <data name="MySqlUnsavedChanges" xml:space="preserve"><value>未保存的更改</value></data>
+  <data name="MySqlQueryCloseHint" xml:space="preserve"><value>关闭前是否保存 SQL 文稿“{0}”？保存不会执行 SQL。</value></data>
+  <data name="MySqlGridCloseHint" xml:space="preserve"><value>“{0}”中的表格有未保存更改。可保存、放弃草稿或取消。放弃草稿不会撤销此前已提交的写入。</value></data>
+  <data name="MySqlDiscard" xml:space="preserve"><value>放弃草稿</value></data>
+  <data name="MySqlStopAndClose" xml:space="preserve"><value>停止执行并关闭</value></data>
+  <data name="MySqlEndTransaction" xml:space="preserve"><value>结束当前会话事务</value></data>
+  <data name="MySqlEndTransactionHint" xml:space="preserve"><value>事务活动中或状态未知。是否先发送 ROLLBACK 再继续？此操作无法撤销 MySQL DDL 及此前已提交的写入。</value></data>
+  <data name="MySqlRollbackAndContinue" xml:space="preserve"><value>回滚并继续</value></data>
+  <data name="MySqlConflictTitle" xml:space="preserve"><value>处理数据行冲突</value></data>
+  <data name="MySqlOriginal" xml:space="preserve"><value>原始基线</value></data>
+  <data name="MySqlServerValue" xml:space="preserve"><value>服务器当前值</value></data>
+  <data name="MySqlYourDraft" xml:space="preserve"><value>当前草稿</value></data>
+  <data name="MySqlKeepDraft" xml:space="preserve"><value>保留草稿</value></data>
 </root>

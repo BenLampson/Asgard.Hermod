@@ -53,7 +53,7 @@ public static class MySqlSql
         void Add(int from, int to)
         {
             string text = sql[from..to];
-            if (HasSql(text)) statements.Add(new(text.Trim(), from, to - from));
+            if (HasSql(text)) statements.Add(new(text.Trim(), from, to - from, delimiter));
         }
     }
 
@@ -110,4 +110,4 @@ public static class MySqlSql
 }
 
 /// <summary>字符位置用于定位光标语句，不改变用户文本。</summary>
-public sealed record MySqlStatement(string Sql, int Start, int Length);
+public sealed record MySqlStatement(string Sql, int Start, int Length, string Delimiter = ";");

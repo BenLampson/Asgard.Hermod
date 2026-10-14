@@ -2,6 +2,25 @@ namespace Asgard.Hermod.MySql;
 
 internal sealed partial class MySqlSession
 {
+    public Task<string> ReadDefinitionAsync(MySqlObject item, CancellationToken token = default) => SerializedAsync(async () =>
+    {
+        var (type, field) = item.Kind switch
+        {
+            MySqlObjectKind.Table => ("TABLE", "Create Table"),
+            MySqlObjectKind.View => ("VIEW", "Create View"),
+            MySqlObjectKind.Procedure => ("PROCEDURE", "Create Procedure"),
+            MySqlObjectKind.Function => ("FUNCTION", "Create Function"),
+            MySqlObjectKind.Event => ("EVENT", "Create Event"),
+            MySqlObjectKind.Trigger => ("TRIGGER", "SQL Original Statement"),
+            _ => throw Text.Exception("MySqlConfigurationInvalid"),
+        };
+        using var command = Command($"SHOW CREATE {type} {MySqlSql.Quote(item.Database)}.{MySqlSql.Quote(item.Name)}");
+        await using var reader = await command.ExecuteReaderAsync(token).ConfigureAwait(false);
+        if (!await reader.ReadAsync(token).ConfigureAwait(false)) throw new MySqlFailure("MySqlRowUnavailable", "MYSQL_OBJECT_MISSING");
+        int ordinal = reader.GetOrdinal(field);
+        if (reader.IsDBNull(ordinal)) throw new MySqlFailure("MySqlPermissionDenied", "MYSQL_PERMISSION");
+        return reader.GetString(ordinal);
+    }, token);
     public Task<MySqlObjectPage> ListAsync(MySqlObject parent, int offset, CancellationToken token = default) => SerializedAsync(async () =>
     {
         if (offset < 0) throw Text.Exception("MySqlConfigurationInvalid");

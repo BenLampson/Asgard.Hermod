@@ -9,6 +9,7 @@ Feature geometry conversion: Controls/IconCatalog.FeatureIcons.cs
 Object storage geometry conversion: Controls/IconCatalog.ObjectStorageIcons.cs
 File type geometry conversion: Controls/IconCatalog.FileTypeIcons.cs
 Redis workspace geometry conversion: Controls/IconCatalog.RedisIcons.cs
+MySQL object geometry conversion: Controls/IconCatalog.MySqlIcons.cs
 The design alias file-json uses the official file-braces.svg icon at the same revision.
 The design alias trash-2 uses the official trash.svg icon at the same revision.
 The design alias circle-help uses the official circle-question-mark.svg icon at the same revision.

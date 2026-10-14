@@ -11,6 +11,12 @@ internal sealed partial class MySqlSession(MySqlConnection connection, MySqlSess
     public MySqlSessionOptions Options { get; } = options;
     public bool IsConnected => !_disposed && connection.State == ConnectionState.Open;
     public MySqlSessionState State { get; private set; } = new(null, null);
+    public string CurrentDatabase => connection.Database;
+    public Task<IReadOnlyList<MySqlStatement>> SplitAsync(string sql, CancellationToken token = default) => SerializedAsync(async () =>
+    {
+        string mode = Convert.ToString(await ScalarAsync("SELECT @@sql_mode", token).ConfigureAwait(false), CultureInfo.InvariantCulture) ?? "";
+        return MySqlSql.Split(sql, mode.Split(',').Contains("NO_BACKSLASH_ESCAPES", StringComparer.OrdinalIgnoreCase));
+    }, token);
 
     private MySqlCommand Command(string sql) => new(sql, connection) { CommandTimeout = Options.CommandTimeout };
 

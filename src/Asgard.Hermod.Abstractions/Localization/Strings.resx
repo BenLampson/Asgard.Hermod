@@ -3159,4 +3159,114 @@
   <data name="MySqlConnectionDetails" xml:space="preserve"><value>Connection details</value></data>
   <data name="MySqlSecurity" xml:space="preserve"><value>Security</value></data>
   <data name="MySqlAdvanced" xml:space="preserve"><value>Advanced</value></data>
+  <data name="MySqlReady" xml:space="preserve"><value>Ready</value></data>
+  <data name="MySqlDatabaseObjects" xml:space="preserve"><value>Database objects</value></data>
+  <data name="MySqlRoot" xml:space="preserve"><value>Databases</value></data>
+  <data name="MySqlDatabase" xml:space="preserve"><value>Database</value></data>
+  <data name="MySqlTables" xml:space="preserve"><value>Tables</value></data>
+  <data name="MySqlViews" xml:space="preserve"><value>Views</value></data>
+  <data name="MySqlProcedures" xml:space="preserve"><value>Procedures</value></data>
+  <data name="MySqlFunctions" xml:space="preserve"><value>Functions</value></data>
+  <data name="MySqlEvents" xml:space="preserve"><value>Events</value></data>
+  <data name="MySqlColumns" xml:space="preserve"><value>Columns</value></data>
+  <data name="MySqlIndexes" xml:space="preserve"><value>Indexes</value></data>
+  <data name="MySqlForeignKeys" xml:space="preserve"><value>Foreign keys</value></data>
+  <data name="MySqlTriggers" xml:space="preserve"><value>Triggers</value></data>
+  <data name="MySqlParameters" xml:space="preserve"><value>Parameters</value></data>
+  <data name="MySqlParameter" xml:space="preserve"><value>Parameter</value></data>
+  <data name="MySqlNotLoaded" xml:space="preserve"><value>Not loaded</value></data>
+  <data name="MySqlLoading" xml:space="preserve"><value>Loading…</value></data>
+  <data name="MySqlEmptyBranch" xml:space="preserve"><value>No objects in this branch.</value></data>
+  <data name="MySqlLoadMore" xml:space="preserve"><value>Load more / retry</value></data>
+  <data name="MySqlData" xml:space="preserve"><value>Data</value></data>
+  <data name="MySqlStructure" xml:space="preserve"><value>Structure</value></data>
+  <data name="MySqlObjectName" xml:space="preserve"><value>Object name</value></data>
+  <data name="MySqlObjectDetails" xml:space="preserve"><value>Type / details</value></data>
+  <data name="MySqlObjectDefinition" xml:space="preserve"><value>Object definition</value></data>
+  <data name="MySqlResultTab" xml:space="preserve"><value>Statement {0} · Result {1}</value></data>
+  <data name="MySqlLoadedRows" xml:space="preserve"><value>{0} rows · {1} columns loaded</value></data>
+  <data name="MySqlPreviewRows" xml:space="preserve"><value>Incomplete preview: {0} rows · {1} columns</value></data>
+  <data name="MySqlBinaryValue" xml:space="preserve"><value>[BINARY · {0} bytes]</value></data>
+  <data name="MySqlObjectTitle" xml:space="preserve"><value>{0}.{1}</value></data>
+  <data name="MySqlQueryTitle" xml:space="preserve"><value>Query {0}</value></data>
+  <data name="MySqlNewQuery" xml:space="preserve"><value>New query</value></data>
+  <data name="MySqlConnecting" xml:space="preserve"><value>Connecting…</value></data>
+  <data name="MySqlConnected" xml:space="preserve"><value>Connected</value></data>
+  <data name="MySqlDisconnected" xml:space="preserve"><value>Disconnected</value></data>
+  <data name="MySqlEndpoint" xml:space="preserve"><value>{0}:{1}</value></data>
+  <data name="MySqlReconnect" xml:space="preserve"><value>Reconnect</value></data>
+  <data name="MySqlEditConnection" xml:space="preserve"><value>Edit connection</value></data>
+  <data name="MySqlReconnectToApply" xml:space="preserve"><value>Connection settings saved. Reconnect explicitly to apply them.</value></data>
+  <data name="MySqlCloseTab" xml:space="preserve"><value>Close tab</value></data>
+  <data name="MySqlRefresh" xml:space="preserve"><value>Refresh</value></data>
+  <data name="MySqlRefreshBranch" xml:space="preserve"><value>Refresh selected branch</value></data>
+  <data name="MySqlSearchLoaded" xml:space="preserve"><value>Search loaded objects</value></data>
+  <data name="MySqlSearchLoadedHint" xml:space="preserve"><value>Search only includes loaded objects and preserves their ancestors. Expand a branch to load more.</value></data>
+  <data name="MySqlOpenKnownObject" xml:space="preserve"><value>Open table by name</value></data>
+  <data name="MySqlOpenObject" xml:space="preserve"><value>Open</value></data>
+  <data name="MySqlSqlEditor" xml:space="preserve"><value>SQL editor</value></data>
+  <data name="MySqlQueryResults" xml:space="preserve"><value>Query results</value></data>
+  <data name="MySqlExecutionDatabase" xml:space="preserve"><value>Database</value></data>
+  <data name="MySqlRun" xml:space="preserve"><value>Run</value></data>
+  <data name="MySqlRunHint" xml:space="preserve"><value>Ctrl+Enter runs selected SQL or the current statement. Ctrl+Shift+Enter runs all statements.</value></data>
+  <data name="MySqlExecutionScope" xml:space="preserve"><value>Execution scope</value></data>
+  <data name="MySqlRunCurrent" xml:space="preserve"><value>Run selection / current statement</value></data>
+  <data name="MySqlRunAll" xml:space="preserve"><value>Run all statements</value></data>
+  <data name="MySqlCancelQuery" xml:space="preserve"><value>Cancel query</value></data>
+  <data name="MySqlSaveQuery" xml:space="preserve"><value>Save SQL file</value></data>
+  <data name="MySqlOpenQuery" xml:space="preserve"><value>Open SQL file</value></data>
+  <data name="MySqlSqlFileFilter" xml:space="preserve"><value>SQL files (*.sql)|*.sql|All files (*.*)|*.*</value></data>
+  <data name="MySqlCsvFileFilter" xml:space="preserve"><value>CSV files (*.csv)|*.csv</value></data>
+  <data name="MySqlFileFailed" xml:space="preserve"><value>The file operation failed. Check the destination and permissions. Your query is retained.</value></data>
+  <data name="MySqlFileTooLarge" xml:space="preserve"><value>The SQL file exceeds the 10 MiB limit.</value></data>
+  <data name="MySqlExportLoaded" xml:space="preserve"><value>Export loaded rows</value></data>
+  <data name="MySqlNoResults" xml:space="preserve"><value>Run SQL or open a table to view results.</value></data>
+  <data name="MySqlMessages" xml:space="preserve"><value>Execution messages</value></data>
+  <data name="MySqlStatementSucceeded" xml:space="preserve"><value>Statement {0} completed; {1} rows affected.</value></data>
+  <data name="MySqlStatementStopped" xml:space="preserve"><value>Statement {0} stopped. Earlier statements may have taken effect.</value></data>
+  <data name="MySqlExecutionStatus" xml:space="preserve"><value>{0} statements · {1:N0} ms</value></data>
+  <data name="MySqlPageStatus" xml:space="preserve"><value>Rows {0}–{1} (paged view)</value></data>
+  <data name="MySqlPrevious" xml:space="preserve"><value>Previous</value></data>
+  <data name="MySqlNext" xml:space="preserve"><value>Next</value></data>
+  <data name="MySqlOn" xml:space="preserve"><value>On</value></data>
+  <data name="MySqlOff" xml:space="preserve"><value>Off</value></data>
+  <data name="MySqlUnknown" xml:space="preserve"><value>Unknown</value></data>
+  <data name="MySqlTransactionActive" xml:space="preserve"><value>Active</value></data>
+  <data name="MySqlTransactionNone" xml:space="preserve"><value>None</value></data>
+  <data name="MySqlSessionStatus" xml:space="preserve"><value>Autocommit: {0} · Transaction: {1}</value></data>
+  <data name="MySqlPendingChanges" xml:space="preserve"><value>{0} pending field changes</value></data>
+  <data name="MySqlInlineEditHint" xml:space="preserve"><value>Double-click or F2 to edit; expand a cell to open the field window. Grid saves use a separate transaction.</value></data>
+  <data name="MySqlOpenField" xml:space="preserve"><value>Open field window (Alt+Enter)</value></data>
+  <data name="MySqlRevertCell" xml:space="preserve"><value>Revert this cell</value></data>
+  <data name="MySqlFieldValue" xml:space="preserve"><value>Field value</value></data>
+  <data name="MySqlSaveChanges" xml:space="preserve"><value>Save changes</value></data>
+  <data name="MySqlRevertChanges" xml:space="preserve"><value>Revert changes</value></data>
+  <data name="MySqlOtherResultDraft" xml:space="preserve"><value>Save or revert the draft in the other result set before editing this one.</value></data>
+  <data name="MySqlChangesSaved" xml:space="preserve"><value>Changes committed successfully.</value></data>
+  <data name="MySqlSaveConfirmedReloadFailed" xml:space="preserve"><value>The save was committed, but the refreshed row could not be read. Verify rows before editing again; do not resubmit this draft.</value></data>
+  <data name="MySqlVerifyRows" xml:space="preserve"><value>Reconnect and verify rows</value></data>
+  <data name="MySqlVerifySaved" xml:space="preserve"><value>The server rows match the submitted changes. The draft is now cleared.</value></data>
+  <data name="MySqlVerifyUnchanged" xml:space="preserve"><value>The server rows match the original baseline. The draft is retained; save explicitly to retry.</value></data>
+  <data name="MySqlVerifyConflict" xml:space="preserve"><value>The rows differ from both the original baseline and the submitted values. Keep the draft and resolve the differences.</value></data>
+  <data name="MySqlEditField" xml:space="preserve"><value>Edit field</value></data>
+  <data name="MySqlViewField" xml:space="preserve"><value>View field</value></data>
+  <data name="MySqlApplyToGrid" xml:space="preserve"><value>Apply to grid</value></data>
+  <data name="MySqlSetNull" xml:space="preserve"><value>Set SQL NULL</value></data>
+  <data name="MySqlFieldContext" xml:space="preserve"><value>{0}.{1} · {2} · Row key: {3}</value></data>
+  <data name="MySqlFieldApplyHelp" xml:space="preserve"><value>Applying updates only this field in the local grid draft. Use Save changes to commit it to the database.</value></data>
+  <data name="MySqlDiscardField" xml:space="preserve"><value>Discard field input?</value></data>
+  <data name="MySqlDiscardFieldHint" xml:space="preserve"><value>The field window has unapplied input. Discard it and close the window?</value></data>
+  <data name="MySqlUnsavedChanges" xml:space="preserve"><value>Unsaved changes</value></data>
+  <data name="MySqlQueryCloseHint" xml:space="preserve"><value>Save the SQL document “{0}” before closing? Saving does not execute SQL.</value></data>
+  <data name="MySqlGridCloseHint" xml:space="preserve"><value>The grid in “{0}” contains unsaved changes. Save them, discard the draft, or cancel. Discarding a draft does not undo previously submitted writes.</value></data>
+  <data name="MySqlDiscard" xml:space="preserve"><value>Discard draft</value></data>
+  <data name="MySqlStopAndClose" xml:space="preserve"><value>Stop execution and close</value></data>
+  <data name="MySqlEndTransaction" xml:space="preserve"><value>End current session transaction</value></data>
+  <data name="MySqlEndTransactionHint" xml:space="preserve"><value>A transaction is active or its state is unknown. Send ROLLBACK before continuing? MySQL DDL and previously committed writes cannot be undone this way.</value></data>
+  <data name="MySqlRollbackAndContinue" xml:space="preserve"><value>Roll back and continue</value></data>
+  <data name="MySqlConflictTitle" xml:space="preserve"><value>Resolve row conflict</value></data>
+  <data name="MySqlOriginal" xml:space="preserve"><value>Original baseline</value></data>
+  <data name="MySqlServerValue" xml:space="preserve"><value>Current server value</value></data>
+  <data name="MySqlYourDraft" xml:space="preserve"><value>Your draft</value></data>
+  <data name="MySqlKeepDraft" xml:space="preserve"><value>Keep draft</value></data>
 </root>

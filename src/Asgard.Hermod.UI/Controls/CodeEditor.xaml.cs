@@ -15,6 +15,12 @@ public partial class CodeEditor : UserControl
     public bool IsReadOnly { get => (bool)GetValue(IsReadOnlyProperty); set => SetValue(IsReadOnlyProperty, value); }
     /// <summary>允许的文本长度，零为不限制。</summary>
     public int MaxLength { get => (int)GetValue(MaxLengthProperty); set => SetValue(MaxLengthProperty, value); }
+    /// <summary>提供 SQL 等调用方的选区范围，不解释编辑器文本。</summary>
+    public string SelectedText => Input.SelectedText;
+    /// <summary>光标字符位置由调用方定位当前语句。</summary>
+    public int CaretIndex => Input.CaretIndex;
+    /// <summary>公共输入控件保持原生选择和键盘焦点。</summary>
+    public void FocusInput() => Input.Focus();
     /// <summary>只渲染可视行的行号，避免大值创建完整行号集合。</summary>
     public CodeEditor() { InitializeComponent(); Loaded += (_, _) => UpdateNumbers(); }
     private void OnTextChanged(object sender, TextChangedEventArgs args) => UpdateNumbers();
