@@ -30,6 +30,8 @@ public sealed class TrayMenuInteractionTests(WpfTestFixture fixture)
         int toggleCalls = 0, exitCalls = 0;
         CursorPoint original = default; if (physicalPointer) Assert.True(GetCursorPos(out original));
         var menu = new TrayMenuWindow(true, () => toggleCalls++, () => exitCalls++);
+        // 在窗口销毁前归还桌面指针；关闭后的 SetCursorPos 在当前测试环境可能失败。
+        if (physicalPointer) menu.Closing += (_, _) => SetCursorPos(original.X, original.Y);
         Exception? failure = null;
         try
         {
@@ -41,10 +43,13 @@ public sealed class TrayMenuInteractionTests(WpfTestFixture fixture)
             Assert.Same(Brushes.Transparent, toggle.Background); Assert.Same(Brushes.Transparent, exit.Background);
             Assert.DoesNotContain(WindowTestVisuals.Descendants<TextBlock>(menu), text => text.Text == Text.Get("AsgardHermod"));
             Save(menu, $"tray-menu-{language}-{theme}-normal");
-            Move(toggle.TranslatePoint(new Point(toggle.ActualWidth / 2, toggle.ActualHeight / 2), menu)); await UntilAsync(() => toggle.IsMouseOver);
-            Assert.Same(Application.Current.Resources["AccentWeakBrush"], toggle.Background); Assert.Equal(new Thickness(0), toggle.BorderThickness);
-            Save(menu, $"tray-menu-{language}-{theme}-hover");
-            Move(new Point(30, 12)); await UntilAsync(() => !toggle.IsMouseOver);
+            if (physicalPointer)
+            {
+                Move(toggle.TranslatePoint(new Point(toggle.ActualWidth / 2, toggle.ActualHeight / 2), menu)); await UntilAsync(() => toggle.IsMouseOver);
+                Assert.Same(Application.Current.Resources["AccentWeakBrush"], toggle.Background); Assert.Equal(new Thickness(0), toggle.BorderThickness);
+                Save(menu, $"tray-menu-{language}-{theme}-hover");
+                Move(new Point(30, 12)); await UntilAsync(() => !toggle.IsMouseOver);
+            }
             await WindowInteractionNativeMethods.DrainNativeMessagesAsync();
             await WindowInteractionNativeMethods.PressKeyAsync(menu, 0x09); await WpfTestFixture.DrainDispatcherAsync();
             Assert.True(menu.KeyboardNavigationActive, "Tab 导航不能被合成鼠标移动清除。");

@@ -100,11 +100,12 @@ Focused xUnit v3 cases:
   immediate General settings, all cancellation paths, work-window preservation,
   tray failure, system ending and malformed SQLite values. Exit choices retain the
   existing global preflight and module draft protection.
-- `TrayMenuInteractionTests`: targeted HWND mouse messages without moving the desktop pointer,
-  ordinary/hover/keyboard screenshots in both languages and themes, native Tab,
-  arrows and Enter, and no initial selection. Native/UIA suites run serially.
-  The additional physical-pointer cases require explicit user authorization and
-  `HERMOD_RUN_DESKTOP_POINTER_TESTS=1`; default runs do not move the desktop pointer.
+- `TrayMenuInteractionTests`: default cases check ordinary appearance, native Tab,
+  arrows and Enter, and no initial selection without moving the desktop pointer.
+  Physical-pointer cases additionally verify actual hover and capture all three
+  states in both languages and themes. They restore the pointer before closing the
+  menu and require explicit user authorization plus
+  `HERMOD_RUN_DESKTOP_POINTER_TESTS=1`. Native/UIA suites run serially.
 - `WindowsTrayIconTests`: real GUID registration and rectangle retrieval, deletion
   and `TaskbarCreated` restoration of the test icon, removal on disposal, localized
   light/dark menus, Escape, and placement at 100/150/200% scale with negative coordinates.
