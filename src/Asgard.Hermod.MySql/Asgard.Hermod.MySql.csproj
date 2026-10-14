@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MySqlConnector" Version="2.6.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.12" />
+    <ProjectReference Include="../Asgard.Hermod.Abstractions/Asgard.Hermod.Abstractions.csproj" />
+    <ProjectReference Include="../Asgard.Hermod.Ssh/Asgard.Hermod.Ssh.csproj" />
+  </ItemGroup>
+</Project>

@@ -3009,4 +3009,151 @@
     <value>Key counts are read from Redis primaries. Unavailable means they could not be read.</value>
   </data>
   <data name="RedisCreateExpirySeconds" xml:space="preserve"><value>Expiration (seconds)</value></data>
+  <data name="MySqlTypeHint" xml:space="preserve">
+    <value>Browse databases and tables, run SQL, and edit verified rows.</value>
+  </data>
+  <data name="MySqlDirect" xml:space="preserve">
+    <value>Direct TCP connection</value>
+  </data>
+  <data name="MySqlSsh" xml:space="preserve">
+    <value>SSH tunnel</value>
+  </data>
+  <data name="MySqlDirectHint" xml:space="preserve">
+    <value>Connect to a single MySQL server over TCP.</value>
+  </data>
+  <data name="MySqlSshHint" xml:space="preserve">
+    <value>Reuse SSH authentication and host verification to forward the database connection.</value>
+  </data>
+  <data name="MySqlConnectionMethod" xml:space="preserve">
+    <value>Connection method</value>
+  </data>
+  <data name="MySqlConnectionMethodHint" xml:space="preserve">
+    <value>Choose direct TCP or an SSH tunnel. Database credentials are separate from SSH credentials.</value>
+  </data>
+  <data name="MySqlHost" xml:space="preserve">
+    <value>Database host</value>
+  </data>
+  <data name="MySqlDefaultDatabase" xml:space="preserve">
+    <value>Default database (optional)</value>
+  </data>
+  <data name="MySqlDefaultDatabaseHint" xml:space="preserve">
+    <value>Leave empty to choose a database after connecting.</value>
+  </data>
+  <data name="MySqlTlsMode" xml:space="preserve">
+    <value>TLS mode</value>
+  </data>
+  <data name="MySqlVerifyFull" xml:space="preserve">
+    <value>Verify certificate and hostname</value>
+  </data>
+  <data name="MySqlTlsRequired" xml:space="preserve">
+    <value>Require encryption without identity verification</value>
+  </data>
+  <data name="MySqlTlsDisabled" xml:space="preserve">
+    <value>Disable TLS (unencrypted)</value>
+  </data>
+  <data name="MySqlTlsWarning" xml:space="preserve">
+    <value>This mode does not verify the server identity. Disabled TLS also sends database traffic without encryption.</value>
+  </data>
+  <data name="MySqlClientPfx" xml:space="preserve">
+    <value>Client certificate (PFX)</value>
+  </data>
+  <data name="MySqlCommandTimeout" xml:space="preserve">
+    <value>Command timeout (seconds)</value>
+  </data>
+  <data name="MySqlTestHint" xml:space="preserve">
+    <value>Verify the route, TLS, authentication, and optional default database without changing business data.</value>
+  </data>
+  <data name="MySqlTestPassed" xml:space="preserve">
+    <value>Connection verified. Object browsing and editing still depend on database permissions.</value>
+  </data>
+  <data name="MySqlNetworkVerified" xml:space="preserve">
+    <value>Network route verified</value>
+  </data>
+  <data name="MySqlTlsVerified" xml:space="preserve">
+    <value>TLS established</value>
+  </data>
+  <data name="MySqlPlaintextConnection" xml:space="preserve">
+    <value>Unencrypted connection established</value>
+  </data>
+  <data name="MySqlAuthenticationVerified" xml:space="preserve">
+    <value>Database authentication verified</value>
+  </data>
+  <data name="MySqlDatabaseVerified" xml:space="preserve">
+    <value>Optional database and query access verified</value>
+  </data>
+  <data name="MySqlConfigurationInvalid" xml:space="preserve">
+    <value>The MySQL connection configuration is invalid.</value>
+  </data>
+  <data name="MySqlConnectionFailed" xml:space="preserve">
+    <value>Unable to connect to MySQL. Check the connection settings and network.</value>
+  </data>
+  <data name="MySqlConnectionTimeout" xml:space="preserve">
+    <value>The MySQL connection timed out.</value>
+  </data>
+  <data name="MySqlSshFailed" xml:space="preserve">
+    <value>The SSH tunnel could not be established. Check SSH authentication and host trust.</value>
+  </data>
+  <data name="MySqlTlsFailed" xml:space="preserve">
+    <value>TLS verification failed. Check the database hostname and trusted certificate chain.</value>
+  </data>
+  <data name="MySqlCertificateInvalid" xml:space="preserve">
+    <value>The client certificate or trusted CA file is invalid.</value>
+  </data>
+  <data name="MySqlPermissionDenied" xml:space="preserve">
+    <value>The database denied this operation. Check your account permissions.</value>
+  </data>
+  <data name="MySqlAuthenticationFailed" xml:space="preserve">
+    <value>Database authentication failed. Check your username and password.</value>
+  </data>
+  <data name="MySqlDatabaseUnavailable" xml:space="preserve">
+    <value>The database does not exist or cannot be accessed.</value>
+  </data>
+  <data name="MySqlStatementRejected" xml:space="preserve">
+    <value>The server rejected the statement (MySQL error {0}).</value>
+  </data>
+  <data name="MySqlQueryCancelled" xml:space="preserve">
+    <value>Execution stopped or was cancelled. Previously executed writes may still have taken effect; cancellation does not roll them back.</value>
+  </data>
+  <data name="MySqlCommandFailed" xml:space="preserve">
+    <value>The MySQL operation failed. Check the connection and database permissions.</value>
+  </data>
+  <data name="MySqlSaveOutcomeUnknown" xml:space="preserve">
+    <value>The save outcome is unknown. Your draft is retained. Verify the affected rows after reconnecting before trying again.</value>
+  </data>
+  <data name="MySqlDelimiterInvalid" xml:space="preserve">
+    <value>Use DELIMITER on its own line between complete statements.</value>
+  </data>
+  <data name="MySqlSqlIncomplete" xml:space="preserve">
+    <value>SQL contains an unclosed quote or block comment.</value>
+  </data>
+  <data name="MySqlNullNotAllowed" xml:space="preserve">
+    <value>This field does not allow SQL NULL.</value>
+  </data>
+  <data name="MySqlJsonInvalid" xml:space="preserve">
+    <value>Invalid JSON near line {0}. Your input is retained.</value>
+  </data>
+  <data name="MySqlFieldInvalid" xml:space="preserve">
+    <value>The value is not valid for this field type.</value>
+  </data>
+  <data name="MySqlReadOnlyResult" xml:space="preserve">
+    <value>Editing requires a verified InnoDB base table, a complete primary key, and UPDATE permission.</value>
+  </data>
+  <data name="MySqlEditConflict" xml:space="preserve">
+    <value>The row changed on the server or no longer exists. Your draft has been retained.</value>
+  </data>
+  <data name="MySqlRowUnavailable" xml:space="preserve">
+    <value>The original row is no longer available.</value>
+  </data>
+  <data name="MySqlRowTooLarge" xml:space="preserve">
+    <value>This row exceeds the edit limit and can only be previewed.</value>
+  </data>
+  <data name="MySqlEditTransactionActive" xml:space="preserve">
+    <value>Finish the current transaction before submitting grid changes.</value>
+  </data>
+  <data name="MySqlPreviewStopped" xml:space="preserve">
+    <value>The preview limit was reached (1,000 rows or 10 MiB). Execution was stopped; later results or statements were not executed. Writes already executed are not rolled back.</value>
+  </data>
+  <data name="MySqlModeChanged" xml:space="preserve">
+    <value>SQL_MODE changed. Run the remaining statements separately using the new session mode.</value>
+  </data>
 </root>

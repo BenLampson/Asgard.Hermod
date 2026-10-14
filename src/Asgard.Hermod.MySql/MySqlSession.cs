@@ -1,0 +1,166 @@
+using System.Diagnostics;
+
+namespace Asgard.Hermod.MySql;
+
+/// <summary>每个会话只执行一个请求，连接失败后不透明重连。</summary>
+internal sealed partial class MySqlSession(MySqlConnection connection, MySqlSessionOptions options,
+    IReadOnlyList<IDisposable> owned, MySqlSshBridge? bridge) : IMySqlSession
+{
+    private readonly SemaphoreSlim _gate = new(1, 1);
+    private bool _disposed;
+    public MySqlSessionOptions Options { get; } = options;
+    public bool IsConnected => !_disposed && connection.State == ConnectionState.Open;
+    public MySqlSessionState State { get; private set; } = new(null, null);
+
+    private MySqlCommand Command(string sql) => new(sql, connection) { CommandTimeout = Options.CommandTimeout };
+
+    /// <summary>元数据请求使用同一锁，避免与该页签 SQL 交错。</summary>
+    private async Task<T> SerializedAsync<T>(Func<Task<T>> operation, CancellationToken token)
+    {
+        await _gate.WaitAsync(token).ConfigureAwait(false);
+        try { ObjectDisposedException.ThrowIf(_disposed, this); return await operation().ConfigureAwait(false); }
+        catch (OperationCanceledException) when (token.IsCancellationRequested) { throw; }
+        catch (MySqlConflict) { throw; }
+        catch (Exception error) { throw MySqlFailure.Safe(error); }
+        finally { _gate.Release(); }
+    }
+
+    public Task<MySqlExecution> ExecuteAsync(string sql, string database, CancellationToken token = default) => SerializedAsync(async () =>
+    {
+        var watch = Stopwatch.StartNew(); var results = new List<MySqlResult>(); var outcomes = new List<MySqlStatementOutcome>();
+        MySqlFailure? failure = null;
+        if (database.Length > 0 && connection.Database != database) await connection.ChangeDatabaseAsync(database, token).ConfigureAwait(false);
+        string mode = Convert.ToString(await ScalarAsync("SELECT @@sql_mode", token).ConfigureAwait(false), CultureInfo.InvariantCulture) ?? "";
+        var statements = MySqlSql.Split(sql, mode.Split(',').Contains("NO_BACKSLASH_ESCAPES", StringComparer.OrdinalIgnoreCase));
+        for (int ordinal = 0; ordinal < statements.Count; ordinal++)
+        {
+            using var command = Command(statements[ordinal].Sql);
+            bool previewStopped = false;
+            try
+            {
+                await using (var reader = await command.ExecuteReaderAsync(token).ConfigureAwait(false))
+                {
+                    int resultIndex = 0;
+                    do
+                    {
+                        if (reader.FieldCount == 0) continue;
+                        var result = await ReadResultAsync(reader, ordinal + 1, ++resultIndex, token).ConfigureAwait(false);
+                        results.Add(result);
+                        if (result.IsTruncated)
+                        {
+                            // 及时停止服务器继续传送大结果；不暗改 SQL 或偷偷追加 LIMIT。
+                            previewStopped = true; command.Cancel(); break;
+                        }
+                    } while (await reader.NextResultAsync(token).ConfigureAwait(false));
+                    outcomes.Add(new(ordinal + 1, reader.RecordsAffected, !previewStopped));
+                }
+                if (previewStopped) { failure = new("MySqlPreviewStopped", "MYSQL_PREVIEW_LIMIT"); break; }
+                // SQL_MODE 改变后的批次需要重新解析，避免把后续文本按旧转义规则执行。
+                string nextMode = Convert.ToString(await ScalarAsync("SELECT @@sql_mode", token).ConfigureAwait(false), CultureInfo.InvariantCulture) ?? "";
+                if (nextMode != mode && ordinal + 1 < statements.Count) { failure = new("MySqlModeChanged", "MYSQL_MODE_CHANGED"); break; }
+            }
+            catch (Exception error)
+            {
+                if (!outcomes.Any(outcome => outcome.Statement == ordinal + 1)) outcomes.Add(new(ordinal + 1, 0, false));
+                failure = previewStopped ? new("MySqlPreviewStopped", "MYSQL_PREVIEW_LIMIT")
+                    : token.IsCancellationRequested ? new("MySqlQueryCancelled", "MYSQL_CANCELLED") : MySqlFailure.Safe(error);
+                break;
+            }
+        }
+        // 元数据只能在 reader 释放后读取；权限不足仍保留查询结果。
+        for (int i = 0; i < results.Count; i++)
+        {
+            var result = results[i];
+            if (result.IsTruncated || !MySqlSql.IsSimpleProjection(statements[result.Statement - 1].Sql)) continue;
+            try { results[i] = await AttachEditingAsync(result, token).ConfigureAwait(false); }
+            catch (Exception) { /* 无法证明编辑资格时保持只读。 */ }
+        }
+        try { await ReadStateCoreAsync(token).ConfigureAwait(false); } catch (Exception) { State = new(null, null); }
+        return new MySqlExecution(results, outcomes, failure, watch.Elapsed, State);
+    }, token);
+
+    private static async Task<MySqlResult> ReadResultAsync(MySqlDataReader reader, int statement, int resultIndex, CancellationToken token)
+    {
+        var columns = reader.GetColumnSchema().Select((column, index) => new MySqlColumn(index, column.ColumnName ?? "", column.DataTypeName ?? "",
+            column.DataType ?? typeof(string), column.AllowDBNull ?? true, column.BaseSchemaName ?? "", column.BaseTableName ?? "", column.BaseColumnName ?? "", column.IsKey ?? false)).ToArray();
+        var rows = new List<object?[]>(); long bytes = 0; bool truncated = false;
+        while (await reader.ReadAsync(token).ConfigureAwait(false))
+        {
+            if (rows.Count == 1000) { truncated = true; break; }
+            var row = new object?[columns.Length];
+            for (int i = 0; i < row.Length; i++)
+            {
+                row[i] = reader.IsDBNull(i) ? null : reader.GetValue(i);
+                bytes += MySqlValues.Bytes(row[i]);
+            }
+            if (bytes > 10 * 1024 * 1024) { truncated = true; break; }
+            rows.Add(row);
+        }
+        return new(statement, resultIndex, columns, rows, truncated);
+    }
+
+    private async Task<MySqlResult> AttachEditingAsync(MySqlResult result, CancellationToken token)
+    {
+        if (result.Columns.Count == 0) return result;
+        var first = result.Columns[0];
+        if (first.Database.Length == 0 || first.Table.Length == 0 || result.Columns.Any(column => column.Database != first.Database || column.Table != first.Table || column.BaseName.Length == 0)
+            || result.Columns.Select(column => column.BaseName).Distinct(StringComparer.Ordinal).Count() != result.Columns.Count) return result;
+        var table = await DescribeCoreAsync(first.Database, first.Table, token).ConfigureAwait(false);
+        if (!table.SupportsEditing || table.Keys.Any(key => !result.Columns.Any(column => column.BaseName == key.Name))) return result;
+        var columns = result.Columns.Select(column =>
+        {
+            var real = table.Columns.FirstOrDefault(item => item.Name == column.BaseName);
+            return real is null ? column : column with { TypeName = real.TypeName, CanUpdate = real.CanUpdate && !real.Generated, Generated = real.Generated, PrimaryKey = real.PrimaryKey };
+        }).ToArray();
+        return result with { Columns = columns, EditableTable = table };
+    }
+
+    public Task<MySqlResult> ReadTableAsync(string database, string table, int offset, CancellationToken token = default) => SerializedAsync(async () =>
+    {
+        if (offset < 0) throw Text.Exception("MySqlConfigurationInvalid");
+        var description = await DescribeCoreAsync(database, table, token).ConfigureAwait(false);
+        string order = description.Keys.Count == 0 ? "" : " ORDER BY " + string.Join(",", description.Keys.Select(key => MySqlSql.Quote(key.Name)));
+        using var command = Command($"SELECT * FROM {MySqlSql.Quote(database)}.{MySqlSql.Quote(table)}{order} LIMIT 200 OFFSET @offset");
+        command.Parameters.AddWithValue("@offset", offset);
+        MySqlResult result;
+        await using (var reader = await command.ExecuteReaderAsync(token).ConfigureAwait(false))
+        {
+            result = await ReadResultAsync(reader, 1, 1, token).ConfigureAwait(false);
+            if (result.IsTruncated) command.Cancel();
+        }
+        return result.IsTruncated ? result : await AttachEditingAsync(result, token).ConfigureAwait(false);
+    }, token);
+
+    public Task<MySqlSessionState> ReadStateAsync(CancellationToken token = default) => SerializedAsync(() => ReadStateCoreAsync(token), token);
+    private async Task<MySqlSessionState> ReadStateCoreAsync(CancellationToken token)
+    {
+        bool autocommit = Convert.ToInt32(await ScalarAsync("SELECT @@autocommit", token).ConfigureAwait(false), CultureInfo.InvariantCulture) != 0;
+        bool? transaction = null;
+        try
+        {
+            // 只有监控明确启用，空结果才可以解释为无活动事务。
+            var enabled = await ScalarAsync("SELECT COUNT(*) FROM performance_schema.setup_consumers WHERE NAME='events_transactions_current' AND ENABLED='YES'", token).ConfigureAwait(false);
+            var instrument = await ScalarAsync("SELECT COUNT(*) FROM performance_schema.setup_instruments WHERE NAME='transaction' AND ENABLED='YES'", token).ConfigureAwait(false);
+            if (Convert.ToInt32(enabled, CultureInfo.InvariantCulture) > 0 && Convert.ToInt32(instrument, CultureInfo.InvariantCulture) > 0)
+                transaction = Convert.ToInt32(await ScalarAsync("SELECT COUNT(*) FROM performance_schema.events_transactions_current e JOIN performance_schema.threads t ON e.THREAD_ID=t.THREAD_ID WHERE t.PROCESSLIST_ID=CONNECTION_ID() AND e.STATE='ACTIVE'", token).ConfigureAwait(false), CultureInfo.InvariantCulture) > 0;
+        }
+        catch (MySqlException) { }
+        State = new(autocommit, transaction); return State;
+    }
+    private async Task<object?> ScalarAsync(string sql, CancellationToken token)
+    { using var command = Command(sql); return await command.ExecuteScalarAsync(token).ConfigureAwait(false); }
+    public Task RollbackAsync(CancellationToken token = default) => SerializedAsync(async () =>
+    { using var command = Command("ROLLBACK"); await command.ExecuteNonQueryAsync(token).ConfigureAwait(false); await ReadStateCoreAsync(token).ConfigureAwait(false); return true; }, token);
+    public async ValueTask DisposeAsync()
+    {
+        // 等待正在执行的命令被调用者取消并结束，之后回收转发和证书。
+        await _gate.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            if (_disposed) return; _disposed = true;
+            await connection.DisposeAsync().ConfigureAwait(false);
+            if (bridge is not null) await bridge.DisposeAsync().ConfigureAwait(false); foreach (var item in owned) item.Dispose();
+        }
+        finally { _gate.Release(); }
+    }
+}

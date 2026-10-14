@@ -6,6 +6,7 @@
     <Project Path="src/Asgard.Hermod.Abstractions/Asgard.Hermod.Abstractions.csproj" />
     <Project Path="src/Asgard.Hermod.Core/Asgard.Hermod.Core.csproj" />
     <Project Path="src/Asgard.Hermod.ObjectStorage/Asgard.Hermod.ObjectStorage.csproj" />
+    <Project Path="src/Asgard.Hermod.MySql/Asgard.Hermod.MySql.csproj" />
     <Project Path="src/Asgard.Hermod.ObjectStorage.Abstractions/Asgard.Hermod.ObjectStorage.Abstractions.csproj" />
     <Project Path="src/Asgard.Hermod.ObjectStorage.UI/Asgard.Hermod.ObjectStorage.UI.csproj" />
     <Project Path="src/Asgard.Hermod.Persistence.Sqlite/Asgard.Hermod.Persistence.Sqlite.csproj" />
@@ -26,6 +27,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Asgard.Hermod.Ssh.Tests/Asgard.Hermod.Ssh.Tests.csproj" />
+    <Project Path="tests/Asgard.Hermod.MySql.Tests/Asgard.Hermod.MySql.Tests.csproj" />
     <Project Path="tests/Asgard.Hermod.Redis.Tests/Asgard.Hermod.Redis.Tests.csproj" />
     <Project Path="tests/Asgard.Hermod.Redis.UI.Tests/Asgard.Hermod.Redis.UI.Tests.csproj" />
     <Project Path="tests/Asgard.Hermod.Sync.Tests/Asgard.Hermod.Sync.Tests.csproj" />
