@@ -34,7 +34,7 @@ public sealed class WorkspaceRefinementTests(WpfTestFixture fixture)
             environment.Themes.SetTheme(theme);
             var home = environment.Shell.Workspace.Home;
             var view = new HomeWorkspaceView { DataContext = home };
-            var window = new Window { Content = view, Width = 1100, Height = 800, ShowInTaskbar = false, Opacity = 0 };
+            var window = new Window { Content = view, Width = 1100, Height = 800, ShowInTaskbar = false, ShowActivated = false, Opacity = 0 };
             try
             {
                 window.Show();
@@ -59,7 +59,7 @@ public sealed class WorkspaceRefinementTests(WpfTestFixture fixture)
         var profile = new MiddleEllipsisTextBlock { FullText = prefix + "profile", FontSize = 13, MaxWidth = 130 };
         var session = new MiddleEllipsisTextBlock { FullText = prefix + "session", FontSize = 13, MaxWidth = 130 };
         var panel = new StackPanel(); panel.Children.Add(profile); panel.Children.Add(session);
-        var window = new Window { Content = panel, Width = 600, Height = 150, ShowInTaskbar = false, Opacity = 0 };
+        var window = new Window { Content = panel, Width = 600, Height = 150, ShowInTaskbar = false, ShowActivated = false, Opacity = 0 };
         try
         {
             window.Show(); await WpfTestFixture.DrainDispatcherAsync();
