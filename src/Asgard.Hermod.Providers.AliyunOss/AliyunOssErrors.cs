@@ -38,7 +38,7 @@ internal static class AliyunOssErrors
         Oss.ServiceException? service = Find<Oss.ServiceException>(error);
         return service?.ErrorCode switch
         {
-            "InvalidAccessKeyId" or "SignatureDoesNotMatch" => ObjectStorageException.FromResource("AuthenticationFailedEditTheInstanceConnectionCredentials", "AuthenticationFailed"),
+            "InvalidAccessKeyId" or "SignatureDoesNotMatch" or "SecurityTokenExpired" or "InvalidSecurityToken" or "ExpiredToken" => ObjectStorageException.FromResource("AuthenticationFailedEditTheInstanceConnectionCredentials", "AuthenticationFailed"),
             "AccessDenied" => ObjectStorageException.FromResource("InsufficientPermissionsCheckThatTheCurrentCredentialsPermitThisObjectOperation", "AccessDenied"),
             "FileAlreadyExists" or "ObjectAlreadyExists" => ObjectStorageException.FromResource("AnObjectWithThisNameAlreadyExistsConfirmOverwriteOrSkip", "FileAlreadyExists"),
             "NoSuchBucket" => ObjectStorageException.FromResource("TheBucketNoLongerExistsRefreshTheBucketList", "NoSuchBucket"),

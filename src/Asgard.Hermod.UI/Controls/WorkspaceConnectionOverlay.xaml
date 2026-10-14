@@ -17,7 +17,9 @@
     <Button x:Name="CancelConnection" Content="{loc:Loc Cancel}" Command="{Binding CancelCommand}" Visibility="{Binding IsConnecting, Converter={StaticResource Visible}}" HorizontalAlignment="Right" Margin="0,24,0,0" />
     <WrapPanel x:Name="FailureActions" HorizontalAlignment="Right" Margin="0,24,0,0" Visibility="{Binding HasError, Converter={StaticResource Visible}}">
      <Button Content="{loc:Loc WorkspaceConnectionClose}" Command="{Binding DismissCommand}" Margin="0,0,8,0" />
-     <Button Content="{loc:Loc WorkspaceConnectionEdit}" Command="{Binding EditCommand, ElementName=OverlayRoot}" Margin="0,0,8,0" />
+     <Button Content="{loc:Loc WorkspaceConnectionEdit}" Command="{Binding EditCommand, ElementName=OverlayRoot}" Margin="0,0,8,0">
+      <Button.Style><Style TargetType="Button" BasedOn="{StaticResource StandardButton}"><Style.Triggers><DataTrigger Binding="{Binding EditCommand, ElementName=OverlayRoot}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></Button.Style>
+     </Button>
      <Button x:Name="RetryConnection" Content="{loc:Loc WorkspaceConnectionRetry}" Command="{Binding RetryCommand, ElementName=OverlayRoot}" Style="{StaticResource PrimaryButton}" />
     </WrapPanel>
    </StackPanel>

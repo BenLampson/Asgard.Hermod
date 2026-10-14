@@ -12,6 +12,7 @@ public sealed partial class SshWorkspaceViewModel
         if (IsClosed) return;
         _connecting?.Dispose();
         _connecting = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token, cancellationToken);
+        Connection.Begin(_connecting.Cancel);
         _phase = SshWorkspacePhase.Connecting; Error = ""; ErrorCode = ""; Refresh();
         ISshConnection? opened = null;
         try
@@ -28,14 +29,17 @@ public sealed partial class SshWorkspaceViewModel
             { SingleReader = true, SingleWriter = false, FullMode = BoundedChannelFullMode.Wait, AllowSynchronousContinuations = false });
             _ioCancellation?.Dispose(); _ioCancellation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
             _inputOverflow = false; _connection = opened;
+            _disconnectRequested = false;
             HostKeys = opened.HostKeys; _phase = SshWorkspacePhase.Connected; _connectedAt = DateTime.UtcNow;
             _terminal.InputReceived += OnInput; _terminal.SizeChanged += OnResize;
             _clock.Start(); Refresh();
+            Connection.Finish();
             _runTask = ObserveAsync(opened, _terminal, _input, _ioCancellation);
         }
         catch (OperationCanceledException) when (_connecting.IsCancellationRequested || IsClosed)
         {
             if (opened is not null) await opened.DisposeAsync();
+            Connection.Finish();
             if (!IsClosed) { _phase = SshWorkspacePhase.Disconnected; Error = Text.Get("SshConnectionCanceled"); Refresh(); }
         }
         catch (Exception error)
@@ -44,7 +48,8 @@ public sealed partial class SshWorkspaceViewModel
             if (!IsClosed)
             {
                 var safe = SshConnectionFactory.SafeError(error);
-                Error = Text.Error(error, safe.ResourceKey); ErrorCode = safe.Code; _phase = SshWorkspacePhase.Failed; Refresh();
+                Error = Text.Error(error, safe.ResourceKey); ErrorCode = safe.Code; _phase = SshWorkspacePhase.Failed;
+                Connection.Finish(Error); Refresh();
             }
         }
     }
@@ -95,6 +100,8 @@ public sealed partial class SshWorkspaceViewModel
                 if (_inputOverflow) { Error = Text.Get("SshInputOverflow"); ErrorCode = "SSH_INPUT_OVERFLOW"; }
                 else if (failure is not null) { var safe = SshConnectionFactory.SafeError(failure); Error = Text.Error(safe); ErrorCode = safe.Code; }
                 _phase = failure is null && !_inputOverflow ? SshWorkspacePhase.Disconnected : SshWorkspacePhase.Failed;
+                if (_disconnectRequested) Connection.Finish();
+                else Connection.Disconnected(EndedMessage);
                 Refresh();
             });
 
@@ -119,6 +126,7 @@ public sealed partial class SshWorkspaceViewModel
     /// <summary>用户断开先停止传输，观察任务完成后继续保留终端缓冲区。</summary>
     private async Task DisconnectAsync()
     {
+        _disconnectRequested = true;
         _ioCancellation?.Cancel();
         if (_connection is { } connection) await connection.DisposeAsync();
         if (_runTask is not null) await _runTask;
@@ -128,6 +136,7 @@ public sealed partial class SshWorkspaceViewModel
     protected override async ValueTask ReleaseAsync()
     {
         OnPropertyChanged(nameof(Session)); _clock.Stop(); _saveFeedbackTimer.Stop(); _lifetime.Cancel();
+        Connection.Finish();
         _connecting?.Cancel(); _ioCancellation?.Cancel();
         if (_connection is { } connection) await connection.DisposeAsync();
         if (_connectTask is not null) await _connectTask;

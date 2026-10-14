@@ -25,6 +25,7 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
     private Task? _runTask;
     private bool _initialized;
     private bool _inputOverflow;
+    private bool _disconnectRequested;
     private DateTime _connectedAt;
     private SshConnectionOptions? _profile;
     private SshWorkspacePhase _phase = SshWorkspacePhase.Connecting;
@@ -38,7 +39,7 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
         _instance = instance;
         ReconnectCommand = new AsyncRelayCommand(_ => StartReconnectAsync(), _ => !IsClosed && IsEnded);
         DisconnectCommand = new AsyncRelayCommand(_ => DisconnectAsync(), _ => !IsClosed && IsConnected);
-        CancelConnectionCommand = new RelayCommand(_ => _connecting?.Cancel(), _ => !IsClosed && IsConnecting);
+        CancelConnectionCommand = Connection.CancelCommand;
         ToggleDetailsCommand = new RelayCommand(_ => IsDetailsOpen = !IsDetailsOpen, _ => !IsClosed);
         EditConnectionCommand = new AsyncRelayCommand(_ => EditAsync(), _ => !IsClosed && !IsConnecting);
         NewSessionCommand = new RelayCommand(_ => RequestNewSession(), _ => !IsClosed);
@@ -62,6 +63,8 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
     public bool IsConnecting => _phase == SshWorkspacePhase.Connecting;
     /// <summary>只有有效连接允许输入。</summary>
     public bool IsConnected => _phase == SshWorkspacePhase.Connected;
+    /// <summary>建立连接、认证失败与运行中断统一使用公共弹窗。</summary>
+    public WorkspaceConnectionViewModel Connection { get; } = new();
     /// <summary>终止状态保留输出和重连入口。</summary>
     public bool IsEnded => _phase is SshWorkspacePhase.Disconnected or SshWorkspacePhase.Failed;
     /// <summary>保持终端选择与复制功能，但拒绝断线后的输入。</summary>

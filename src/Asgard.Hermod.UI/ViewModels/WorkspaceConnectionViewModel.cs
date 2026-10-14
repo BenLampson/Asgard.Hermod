@@ -20,8 +20,11 @@ public sealed class WorkspaceConnectionViewModel : ObservableObject
     public string Error { get; private set; } = "";
     /// <summary>失败状态在关闭浮层后仍保留。</summary>
     public bool HasError => Error.Length > 0;
+    /// <summary>已建立连接后失效的状态，与首次连接失败区分，重复报告不反复弹出。</summary>
+    public bool IsDisconnected { get; private set; }
     /// <summary>加载、取消和失败的完整本地化标题。</summary>
-    public string Title => Text.Get(IsCancelling ? "WorkspaceConnectionCancelling" : IsConnecting ? "WorkspaceConnectionConnecting" : "WorkspaceConnectionFailed");
+    public string Title => Text.Get(IsCancelling ? "WorkspaceConnectionCancelling" : IsConnecting ? "WorkspaceConnectionConnecting"
+        : IsDisconnected ? "WorkspaceConnectionInterrupted" : "WorkspaceConnectionFailed");
     /// <summary>加载说明或安全失败内容。</summary>
     public string Detail => IsConnecting ? Text.Get("WorkspaceConnectionWaiting") : Error;
     /// <summary>取消只影响调用者提供的本次连接请求。</summary>
@@ -30,13 +33,21 @@ public sealed class WorkspaceConnectionViewModel : ObservableObject
     public RelayCommand DismissCommand { get; }
     /// <summary>模块开始连接时绑定本次取消动作并清除上次错误。</summary>
     public void Begin(Action cancel)
-    { _cancel = cancel; IsConnecting = true; IsCancelling = false; IsOpen = true; Error = ""; Refresh(); }
+    { _cancel = cancel; IsConnecting = true; IsCancelling = false; IsDisconnected = false; IsOpen = true; Error = ""; Refresh(); }
     /// <summary>成功或取消隐藏浮层；失败留在同一位置展示安全说明。</summary>
     public void Finish(string error = "")
-    { _cancel = null; IsConnecting = false; IsCancelling = false; Error = error; IsOpen = HasError; Refresh(); }
+    { _cancel = null; IsConnecting = false; IsCancelling = false; IsDisconnected = false; Error = error; IsOpen = HasError; Refresh(); }
+    /// <summary>连接中断时复用失败弹窗；关闭后同一次失效不会被后续失败请求再次打开。</summary>
+    public void Disconnected(string error)
+    {
+        if (IsDisconnected) return;
+        _cancel = null; IsConnecting = false; IsCancelling = false; IsDisconnected = true;
+        Error = error.Length == 0 ? Text.Get("WorkspaceConnectionInterruptedHint") : error;
+        IsOpen = true; Refresh();
+    }
     private void Refresh()
     {
-        foreach (string property in new[] { nameof(IsConnecting), nameof(IsCancelling), nameof(IsOpen), nameof(Error), nameof(HasError), nameof(Title), nameof(Detail) }) OnPropertyChanged(property);
+        foreach (string property in new[] { nameof(IsConnecting), nameof(IsCancelling), nameof(IsDisconnected), nameof(IsOpen), nameof(Error), nameof(HasError), nameof(Title), nameof(Detail) }) OnPropertyChanged(property);
         CancelCommand.NotifyCanExecuteChanged(); DismissCommand.NotifyCanExecuteChanged();
     }
 }

@@ -3218,6 +3218,8 @@
   <data name="WorkspaceConnectionConnecting" xml:space="preserve"><value>Connecting…</value></data>
   <data name="WorkspaceConnectionCancelling" xml:space="preserve"><value>Cancelling connection…</value></data>
   <data name="WorkspaceConnectionFailed" xml:space="preserve"><value>Connection failed</value></data>
+  <data name="WorkspaceConnectionInterrupted" xml:space="preserve"><value>Connection interrupted</value></data>
+  <data name="WorkspaceConnectionInterruptedHint" xml:space="preserve"><value>The connection is no longer available. Reconnect or edit the connection settings.</value></data>
   <data name="WorkspaceConnectionWaiting" xml:space="preserve"><value>Establishing the connection. Please wait.</value></data>
   <data name="WorkspaceConnectionDisconnected" xml:space="preserve"><value>Disconnected</value></data>
   <data name="WorkspaceConnectionEdit" xml:space="preserve"><value>Edit connection</value></data>

@@ -5,7 +5,8 @@
  xmlns:terminal="clr-namespace:Asgard.Hermod.WinTerminal;assembly=Asgard.Hermod.WinTerminal"
  Background="{DynamicResource SurfaceBrush}" SizeChanged="OnViewportSizeChanged">
  <UserControl.Resources><BooleanToVisibilityConverter x:Key="Visible" /></UserControl.Resources>
- <controls:WorkspacePageLayout x:Name="WorkspaceLayout" IsDetailsOpen="{Binding IsDetailsOpen}">
+ <controls:WorkspacePageLayout x:Name="WorkspaceLayout" IsDetailsOpen="{Binding IsDetailsOpen}" IsOverlayOpen="{Binding Connection.IsOpen}">
+  <controls:WorkspacePageLayout.Overlay><controls:WorkspaceConnectionOverlay State="{Binding Connection}" TargetName="{Binding Name}" RetryCommand="{Binding ReconnectCommand}" EditCommand="{Binding EditConnectionCommand}" /></controls:WorkspacePageLayout.Overlay>
   <controls:WorkspacePageLayout.Toolbar>
    <Grid>
     <Grid.ColumnDefinitions><ColumnDefinition Width="32" /><ColumnDefinition x:Name="IdentityColumn" Width="220" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
@@ -34,13 +35,6 @@
    <StackPanel>
    <Border Visibility="{Binding HasSaveFeedback, Converter={StaticResource Visible}}" Background="{DynamicResource SuccessWeakBrush}" Padding="18,8">
     <TextBlock Text="{loc:Loc SshConfigurationSaved}" Foreground="{DynamicResource SuccessBrush}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
-   </Border>
-   <Border Visibility="{Binding IsEnded, Converter={StaticResource Visible}}" Background="{DynamicResource WarningWeakBrush}" Padding="18,8">
-    <DockPanel><Button DockPanel.Dock="Right" Content="{loc:Loc SshReconnect}" Command="{Binding ReconnectCommand}" Style="{StaticResource PrimaryButton}" Margin="12,0,0,0" />
-     <StackPanel><TextBlock Text="{Binding EndedMessage}" TextWrapping="Wrap" Foreground="{DynamicResource WarningBrush}" AutomationProperties.LiveSetting="Polite" />
-      <TextBlock Text="{Binding ErrorCode}" FontSize="10" FontFamily="{DynamicResource MonoFont}" Foreground="{DynamicResource WarningBrush}" />
-     </StackPanel>
-    </DockPanel>
    </Border>
    </StackPanel>
   </controls:WorkspacePageLayout.Notification>
@@ -84,16 +78,6 @@
      <terminal:TerminalControl x:Name="TerminalView" Session="{Binding Session}" IsReadOnly="{Binding IsReadOnly}" Margin="20,18"
       FontFamily="{DynamicResource MonoFont}" FontSize="14" Background="{DynamicResource TerminalSurfaceBrush}" Foreground="{DynamicResource TerminalTextBrush}"
       AutomationProperties.Name="{loc:Loc SshTerminalLabel}" PreviewPaste="OnPreviewPaste" />
-     <Border Background="{DynamicResource TerminalSurfaceBrush}" Visibility="{Binding IsConnecting, Converter={StaticResource Visible}}">
-      <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="440" Margin="24">
-       <controls:IconView Kind="terminal" Width="40" Height="40" Foreground="{DynamicResource AccentBrush}" Margin="0,0,0,16" />
-       <TextBlock Text="{Binding ConnectingTitle}" FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource TerminalTextBrush}" TextAlignment="Center" TextWrapping="Wrap" />
-       <TextBlock Text="{Binding RemoteIdentity}" FontFamily="{DynamicResource MonoFont}" Foreground="{DynamicResource TerminalTextBrush}" Opacity="0.65" TextAlignment="Center" Margin="0,10,0,0" />
-       <TextBlock Text="{loc:Loc SshStartingDescription}" Foreground="{DynamicResource TerminalTextBrush}" Opacity="0.65" TextAlignment="Center" TextWrapping="Wrap" Margin="0,18,0,0" />
-       <ProgressBar IsIndeterminate="True" Width="240" Height="3" Margin="0,18,0,18" />
-       <Button Content="{loc:Loc SshStopConnection}" Command="{Binding CancelConnectionCommand}" HorizontalAlignment="Center" />
-      </StackPanel>
-     </Border>
      <Border x:Name="SearchOverlay" Visibility="Collapsed" VerticalAlignment="Top" HorizontalAlignment="Right" Width="484" Margin="14" Padding="8" CornerRadius="6" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1">
       <DockPanel>
        <Button DockPanel.Dock="Right" Click="OnCloseSearch" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshSearchClose}" AutomationProperties.Name="{loc:Loc SshSearchClose}"><controls:IconView Kind="x" Width="14" Height="14" /></Button>

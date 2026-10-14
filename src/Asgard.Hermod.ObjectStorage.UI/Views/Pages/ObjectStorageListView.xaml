@@ -9,7 +9,7 @@
         <Style x:Key="OssError" TargetType="Border">
             <Setter Property="Background" Value="{DynamicResource DangerWeakBrush}" /><Setter Property="CornerRadius" Value="5" />
             <Setter Property="Padding" Value="12" /><Setter Property="Visibility" Value="Visible" />
-            <Style.Triggers><DataTrigger Binding="{Binding ActionError}" Value=""><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers>
+            <Style.Triggers><DataTrigger Binding="{Binding DisplayActionError}" Value=""><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers>
         </Style>
         <Style x:Key="OssRow" TargetType="ListBoxItem">
             <Setter Property="Height" Value="44" />
@@ -117,7 +117,7 @@
         </StackPanel>
         <Border Grid.Row="4" Style="{StaticResource OssError}" Margin="0,12,0,0">
             <DockPanel><Button DockPanel.Dock="Right" Command="{Binding ClearErrorCommand}" Style="{StaticResource IconButton}" ToolTip="{loc:Loc DismissNotification}"><controls:IconView Kind="x" Width="12" Height="12" /></Button>
-                <TextBlock Text="{Binding ActionError}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" /></DockPanel>
+                <TextBlock Text="{Binding DisplayActionError}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" /></DockPanel>
         </Border>
         <Border Grid.Row="5" Background="{DynamicResource AccentWeakBrush}" Padding="10,8" CornerRadius="5" Margin="0,12,0,0" Visibility="{Binding HasCheckedEntries, Converter={StaticResource OssVisible}}">
             <DockPanel><StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
@@ -176,8 +176,8 @@
                     <Button.Style><Style TargetType="Button" BasedOn="{StaticResource StandardButton}"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding SearchText}" Value=""><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></Button.Style>
                 </Button>
             </StackPanel>
-            <TextBlock Grid.Row="2" Text="{Binding ReadError}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" Margin="0,6,0,0">
-                <TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding ShowState}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger><DataTrigger Binding="{Binding ReadError}" Value=""><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></TextBlock.Style>
+            <TextBlock Grid.Row="2" Text="{Binding DisplayReadError}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" Margin="0,6,0,0">
+                <TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding ShowState}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger><DataTrigger Binding="{Binding DisplayReadError}" Value=""><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></TextBlock.Style>
             </TextBlock>
         </Grid>
         <Border Grid.Row="7" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,1,0,0">

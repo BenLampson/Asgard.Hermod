@@ -125,7 +125,7 @@ public sealed class ObjectStorageViewTests
             window.Show();
             await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.Empty(model.Entries);
-            Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(view), text => text.IsVisible && text.Text == title);
+            Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(view), text => text.IsVisible && text.Text == (state == "failure" ? Text.Get("WorkspaceConnectionFailed") : title));
             var upload = WindowTestVisuals.Descendants<Button>(view).SingleOrDefault(button => button.Content is string label && label == "上传文件" && button.IsVisible);
             if (state == "empty") Assert.NotNull(upload);
             else

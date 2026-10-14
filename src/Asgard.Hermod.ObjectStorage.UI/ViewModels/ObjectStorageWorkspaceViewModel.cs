@@ -43,7 +43,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     {
         ArgumentNullException.ThrowIfNull(service);
         ArgumentNullException.ThrowIfNull(dialogs);
-        _instance = instance; _service = service; _dialogs = dialogs; _editor = editor;
+        _instance = instance; _service = new ConnectionAwareObjectStorageService(service, OnConnectionFailure); _dialogs = dialogs; _editor = editor;
         _files = files;
         _temporaryFiles = temporaryFiles;
         RefreshCommand = new AsyncRelayCommand(_ => RefreshAsync(), _ => !IsClosed);
@@ -69,6 +69,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         EditConnectionCommand = new AsyncRelayCommand(_ => EditConnectionAsync(), _ => !IsClosed && !_dialogOpen && !IsImagePreviewLoading && _editor is not null && !Transfers.Any(task => task.IsRunning));
         InitializeDirectoryScanCommands();
         InitializeForcePreviewCommands();
+        InitializeConnectionCommands();
     }
 
     /// <summary>当前目录完成导航或读取，通知页面订阅者。</summary>
@@ -95,9 +96,10 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     /// <summary>保存的环境及自定义标签。</summary>
     public IReadOnlyList<string> Tags => _instance.Tags;
     /// <summary>只有实际读取成功才呈现已连接。</summary>
-    public string Status => ReadError.Length > 0 ? Text.Get("ReadFailed") : _hasConnected ? Text.Get("Connected") : IsLoading ? Text.Get("Connecting") : Text.Get("Configured");
+    public string Status => Connection.IsConnecting ? Text.Get("Connecting") : Connection.HasError ? Text.Get("WorkspaceConnectionDisconnected")
+        : ReadError.Length > 0 ? Text.Get("ReadFailed") : _hasConnected ? Text.Get("Connected") : IsLoading ? Text.Get("Connecting") : Text.Get("Configured");
     /// <summary>保存状态和真实访问成功使用不同色调。</summary>
-    public StatusTone StatusTone => ReadError.Length > 0 ? StatusTone.Warning : _hasConnected ? StatusTone.Success : StatusTone.Muted;
+    public StatusTone StatusTone => Connection.IsConnecting ? StatusTone.Accent : Connection.HasError ? StatusTone.Danger : ReadError.Length > 0 ? StatusTone.Warning : _hasConnected ? StatusTone.Success : StatusTone.Muted;
     /// <summary>选择容器会进入根目录，旧的详情和勾选同步清除。</summary>
     public ObjectStorageBucket? SelectedBucket
     {
@@ -123,9 +125,9 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     /// <summary>元数据和预览的安全快照。</summary>
     public ObjectStorageObjectDetails? Details { get => _details; private set { if (SetProperty(ref _details, value)) NotifyDetails(); } }
     /// <summary>列表失败与操作失败独立，操作失败不会清空已读对象。</summary>
-    public string ReadError { get => _readError; private set { if (SetProperty(ref _readError, value)) NotifyListState(); } }
+    public string ReadError { get => _readError; private set { if (SetProperty(ref _readError, value)) { OnPropertyChanged(nameof(DisplayReadError)); NotifyListState(); } } }
     /// <summary>上传准备、复制或其他操作失败的可重试说明。</summary>
-    public string ActionError { get => _actionError; private set => SetProperty(ref _actionError, value); }
+    public string ActionError { get => _actionError; private set { if (SetProperty(ref _actionError, value)) OnPropertyChanged(nameof(DisplayActionError)); } }
     /// <summary>详情读取失败不锁住对象列表。</summary>
     public string DetailError { get => _detailError; private set { if (SetProperty(ref _detailError, value)) NotifyDetails(); } }
     /// <summary>仅当前列表请求控制加载状态，过期请求不会结束新请求的加载指示。</summary>
@@ -149,7 +151,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     /// <summary>当前查询仍有下一批，宿主不能把当前行当成目录的完整清单。</summary>
     public bool HasMore => _nextToken is not null;
     /// <summary>失败时仍保留恢复入口；有对象时错误作为行上方提示。</summary>
-    public bool ShowState => Entries.Count == 0;
+    public bool ShowState => !Connection.IsConnecting && !Connection.HasError && Entries.Count == 0;
     /// <summary>空目录允许上传和创建；无可见容器时只提供连接恢复。</summary>
     public bool ShowEmptyActions => !IsLoading && ReadError.Length == 0 && SelectedBucket is not null && Entries.Count == 0 && SearchText.Length == 0;
     /// <summary>错误和无容器状态显示恢复操作。</summary>
@@ -169,7 +171,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     /// <summary>编辑连接不能静默改变在途任务的凭据和目标。</summary>
     public string EditConnectionHint => Transfers.Any(task => task.IsRunning) ? Text.Get("CompleteOrCancelTransfersBeforeEditingTheConnection") : Text.Get("EditConnection");
     /// <summary>当前操作允许进入选择或确认窗体，浏览导航无需等待这些操作。</summary>
-    private bool CanOperate => !IsClosed && !_dialogOpen && !IsScanning && SelectedBucket is not null;
+    private bool CanOperate => !IsClosed && !Connection.HasError && !Connection.IsConnecting && !_dialogOpen && !IsScanning && SelectedBucket is not null;
 
     /// <summary>首次激活懒加载，重复调用复用同一读取任务。</summary>
     public override Task InitializeAsync(CancellationToken cancellationToken = default)
@@ -196,32 +198,6 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         BucketsChanged?.Invoke(this, EventArgs.Empty);
         _initializeTask = ReadBucketsAsync(cancellationToken);
         await _initializeTask;
-    }
-
-    /// <summary>容器读取失败保留错误，重试时明确重新请求。</summary>
-    private async Task ReadBucketsAsync(CancellationToken cancellationToken)
-    {
-        int version = ++_bucketVersion;
-        using var operation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token, cancellationToken);
-        _bucketOperation?.Cancel(); _bucketOperation = operation;
-        IsLoading = true; ReadError = "";
-        try
-        {
-            var buckets = await _service.ListBucketsAsync(_instance.Id, operation.Token);
-            if (IsClosed || operation.IsCancellationRequested || version != _bucketVersion) return;
-            Buckets.Clear();
-            foreach (var bucket in buckets) Buckets.Add(bucket);
-            _hasConnected = true; IsInitialized = true;
-            BucketsChanged?.Invoke(this, EventArgs.Empty);
-            if (Buckets.Count > 0) await NavigateAsync(Buckets[0], "", operation.Token);
-        }
-        catch (OperationCanceledException) when (operation.IsCancellationRequested) { }
-        catch (Exception exception) { if (!IsClosed && version == _bucketVersion) ReadError = ObjectStoragePresentation.Error(exception, Text.Get("CheckTheNetworkAndRAMPermissionsToListObjectsInThisBucket")); }
-        finally
-        {
-            if (ReferenceEquals(_bucketOperation, operation)) _bucketOperation = null;
-            if (!IsClosed && version == _bucketVersion && _listOperation is null) IsLoading = false;
-        }
     }
 
     /// <summary>切目录立即清除旧选择，并取消前一次列表与详情读取。</summary>
@@ -327,7 +303,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         else
         {
             _listOperation?.Cancel(); ++_navigationVersion;
-            SelectedEntry = null; Entries.Clear(); NotifyChecked();
+            SelectedEntry = null; NotifyChecked();
             await LoadPageAsync(false, cancellationToken);
         }
     }
@@ -378,6 +354,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         ResetDirectoryScan();
         ResetImagePreview();
         _lifetime.Cancel(); _bucketOperation?.Cancel(); _listOperation?.Cancel(); _detailOperation?.Cancel(); _searchOperation?.Cancel();
+        Connection.Finish(); Connection.PropertyChanged -= OnConnectionStateChanged;
         foreach (var transfer in Transfers) { transfer.Finished -= OnTransferFinished; transfer.Dispose(); }
         RefreshCommands();
         await Task.WhenAll(Transfers.Select(transfer => transfer.Completion));

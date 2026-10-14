@@ -43,7 +43,8 @@ public sealed class ObjectStoragePagingTests
         Assert.False(model.IsLoading);
         Assert.False(model.HasMore);
         Assert.False(model.LoadMoreCommand.CanExecute(null));
-        Assert.Empty(model.Entries);
+        if (search) Assert.Empty(model.Entries);
+        else Assert.Equal("original.txt", Assert.Single(model.Entries).Key);
         Assert.Contains("AccessDenied", model.ReadError, StringComparison.Ordinal);
 
         phase = 2;

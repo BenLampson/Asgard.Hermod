@@ -5,8 +5,9 @@
              xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI"
              xmlns:pages="clr-namespace:Asgard.Hermod.ObjectStorage.UI.Views.Pages"
              Background="{DynamicResource SurfaceBrush}" FontFamily="{DynamicResource UiFont}">
+    <UserControl.Resources><BooleanToVisibilityConverter x:Key="DetailsVisible" /></UserControl.Resources>
     <Grid>
-        <Grid.Resources><BooleanToVisibilityConverter x:Key="DetailsVisible" /></Grid.Resources>
+    <Grid x:Name="BrowserSurface" IsEnabled="{Binding IsConnectionInteractionEnabled}">
         <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
         <!-- 页头只使用安全摘要；在线状态由实际读取结果决定。 -->
         <Border BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,0,0,1" Padding="24,22,24,18" MinHeight="86">
@@ -52,5 +53,7 @@
             </GridSplitter>
             <pages:ObjectStorageDetailsView Grid.Column="2" Visibility="{Binding IsDetailsOpen, Converter={StaticResource DetailsVisible}}" />
         </Grid>
+    </Grid>
+    <controls:WorkspaceConnectionOverlay State="{Binding Connection}" TargetName="{Binding Name}" RetryCommand="{Binding ReconnectCommand}" EditCommand="{Binding EditConnectionCommand}" Visibility="{Binding Connection.IsOpen, Converter={StaticResource DetailsVisible}}" Panel.ZIndex="100" />
     </Grid>
 </UserControl>

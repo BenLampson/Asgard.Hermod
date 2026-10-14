@@ -3218,6 +3218,8 @@
   <data name="WorkspaceConnectionConnecting" xml:space="preserve"><value>正在连接…</value></data>
   <data name="WorkspaceConnectionCancelling" xml:space="preserve"><value>正在取消连接…</value></data>
   <data name="WorkspaceConnectionFailed" xml:space="preserve"><value>连接失败</value></data>
+  <data name="WorkspaceConnectionInterrupted" xml:space="preserve"><value>连接已断开</value></data>
+  <data name="WorkspaceConnectionInterruptedHint" xml:space="preserve"><value>当前连接已不可用，请重新连接或编辑连接设置。</value></data>
   <data name="WorkspaceConnectionWaiting" xml:space="preserve"><value>正在建立连接，请稍候。</value></data>
   <data name="WorkspaceConnectionDisconnected" xml:space="preserve"><value>未连接</value></data>
   <data name="WorkspaceConnectionEdit" xml:space="preserve"><value>编辑连接</value></data>

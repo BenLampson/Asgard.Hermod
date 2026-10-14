@@ -45,7 +45,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     public bool HasTextPreview => !HasImagePreview && !IsImagePreviewLoading && _imagePreviewMessage.Length == 0
         && Details?.PreviewText is { } text && Encoding.UTF8.GetByteCount(text) <= 256 * 1024;
     /// <summary>没有文本预览时显示原因，不影响列表或下载。</summary>
-    public string PreviewMessage => IsImagePreviewLoading ? Text.Get("ForcePreviewLoading") : _imagePreviewMessage.Length > 0 ? _imagePreviewMessage
+    public string PreviewMessage => Connection.HasError ? "" : IsImagePreviewLoading ? Text.Get("ForcePreviewLoading") : _imagePreviewMessage.Length > 0 ? _imagePreviewMessage
         : IsDetailLoading ? Text.Get("ReadingObjectDetails") : DetailError.Length > 0 ? DetailError
         : IsRecognizedPreviewImage ? Text.Get("ForcePreviewClickToLoadImage")
         : SelectedEntry is null ? Text.Get("ClickAnObjectToViewItsDetails") : SelectedEntry.IsDirectory ? Text.Get("DoubleClickAFolderToOpenItsPrefix")

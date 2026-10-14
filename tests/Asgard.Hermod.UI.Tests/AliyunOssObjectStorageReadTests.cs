@@ -6,6 +6,20 @@ namespace Asgard.Hermod.UI.Tests;
 /// <summary>以真实官方 SDK 验证列表分页、容器区域、元数据、权限和只读临时链接。</summary>
 public sealed class AliyunOssObjectStorageReadTests
 {
+    /// <summary>SDK 的过期临时凭据被识别为认证失效，原始响应和令牌不会进入界面错误。</summary>
+    [Theory]
+    [InlineData("SecurityTokenExpired")]
+    [InlineData("InvalidSecurityToken")]
+    [InlineData("ExpiredToken")]
+    public async Task ExpiredCredentials_ReturnSafeAuthenticationFailure(string code)
+    {
+        using var handler = new StorageTestHttpHandler((_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.Forbidden)
+        { Content = new StringContent($"<Error><Code>{code}</Code><Message>token=private-test-secret</Message><RequestId>test</RequestId></Error>") }));
+        using var client = AliyunOssResourceTestClient.Create(handler);
+        var error = await Assert.ThrowsAsync<ObjectStorageException>(() => client.ListBucketsAsync(TestContext.Current.CancellationToken));
+        Assert.Equal("AuthenticationFailed", error.ErrorCode);
+        Assert.DoesNotContain("private-test-secret", error.Message);
+    }
     /// <summary>账户列表遍历 Marker，并从 Region 或历史 Location 恢复每个容器自己的区域。</summary>
     [Fact]
     public async Task ListBucketsAsync_ReadsAllPagesAndNormalizesReturnedRegions()
