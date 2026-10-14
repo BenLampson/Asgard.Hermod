@@ -18,7 +18,8 @@ The canvas directory groups the designs into these regions:
 6. Settings, tags, file-opening rules and temporary storage
 7. Brand assets and alternative concepts
 8. SSH connection flows, workspace states and refinements (08 / 08B / 08C)
-9. Redis connection flows and workspace states (09 / 09B)
+9. Redis connection flows, workspace states, lazy key tree, key tabs and modal
+   value editors (09 / 09B / 09C / 09D / 09E)
 10. MySQL connection flows, TLS and SSH routing, test/save states and bilingual
     handoff contracts (10), plus database/table browsing and SQL workspaces (10B)
 
@@ -44,6 +45,17 @@ child windows. Screens cover table data and metadata, SQL execution and result
 limits, lazy tree loading/search, recoverable errors, unsaved drafts, English dark
 mode and a compact object-tree drawer. Interaction and localization contracts
 accompany the editable designs.
+
+Region 09E contains the Redis create/edit dialog components and their typed,
+validation, conflict, unknown-result and English dark examples. Create defaults
+to 640 x 720 and edit to 780 x 700; both reuse the shared child window with a
+36px title bar and 60px action area. Connected content remains read-only, and
+editing or appending opens a modal window that retains input after a failure.
+The database selector has a Database label, a 190px control and DB/key-count
+choices. Counts come from the server, independently of loaded tree nodes;
+unavailable counts are explicit. Existing Redis workspace boards reference the
+same selector, and creation timestamps are not invented. The implementation
+contract and bilingual resource examples accompany the editable designs.
 
 SSH and Redis workspaces inherit `App Shell` title bars, instance navigation,
 document tabs, theme controls and collapsed rails. Their instance lists reference
