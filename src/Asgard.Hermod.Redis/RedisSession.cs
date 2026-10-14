@@ -4,6 +4,39 @@ namespace Asgard.Hermod.Redis;
 internal sealed class RedisSession(ConnectionMultiplexer connection, RedisSessionOptions options, IReadOnlyList<IServer> servers,
     IReadOnlyList<IDisposable> owned) : IRedisSession
 {
+    private bool _disposed;
+    private EventHandler? _connectionLost;
+    /// <inheritdoc />
+    public bool IsConnected => !_disposed && connection.IsConnected;
+    /// <inheritdoc />
+    public event EventHandler? ConnectionLost
+    {
+        add
+        {
+            if (_connectionLost is null) { connection.ConnectionFailed += OnConnectionFailed; connection.ErrorMessage += OnErrorMessage; }
+            _connectionLost += value;
+        }
+        remove
+        {
+            _connectionLost -= value;
+            if (_connectionLost is null) { connection.ConnectionFailed -= OnConnectionFailed; connection.ErrorMessage -= OnErrorMessage; }
+        }
+    }
+    private void OnConnectionFailed(object? sender, ConnectionFailedEventArgs args)
+    { if (!_disposed) _connectionLost?.Invoke(this, EventArgs.Empty); }
+    private void OnErrorMessage(object? sender, RedisErrorEventArgs args)
+    {
+        // NOAUTH/WRONGPASS 是认证失效；对象权限 NOPERM 不代表连接中断，也不向界面暴露错误原文。
+        if (!_disposed && (args.Message.StartsWith("NOAUTH", StringComparison.OrdinalIgnoreCase) || args.Message.StartsWith("WRONGPASS", StringComparison.OrdinalIgnoreCase)))
+            _connectionLost?.Invoke(this, EventArgs.Empty);
+    }
+    private void ReportConnectionFailure(Exception error)
+    {
+        if (_disposed) return;
+        if (error is RedisConnectionException or RedisTimeoutException || error is RedisServerException server &&
+            (server.Message.StartsWith("NOAUTH", StringComparison.Ordinal) || server.Message.StartsWith("WRONGPASS", StringComparison.Ordinal)))
+            _connectionLost?.Invoke(this, EventArgs.Empty);
+    }
     public RedisSessionOptions Options { get; } = options;
     // Sentinel 切主或 Cluster 更新后，下一次查询应使用 SDK 当前发现的主节点。
     public IReadOnlyList<string> ScanNodes => connection.GetServers().Where(server => !server.IsReplica && server.ServerType != ServerType.Sentinel)
@@ -21,7 +54,7 @@ internal sealed class RedisSession(ConnectionMultiplexer connection, RedisSessio
             return counts.Sum();
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
-        catch { return null; }
+        catch (Exception error) { ReportConnectionFailure(error); return null; }
     }
 
     public async Task<RedisScanPage> ScanAsync(string node, int database, string cursor, string pattern, string type, CancellationToken cancellationToken)
@@ -38,7 +71,7 @@ internal sealed class RedisSession(ConnectionMultiplexer connection, RedisSessio
             return new((string)result[0]!, keys);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
-        catch (Exception error) { throw RedisException.Safe(error); }
+        catch (Exception error) { ReportConnectionFailure(error); throw RedisException.Safe(error); }
     }
 
     public Task<RedisSnapshot> ReadAsync(int database, RedisKeyId key, string cursor = "0", long offset = 0, CancellationToken cancellationToken = default) =>
@@ -66,9 +99,9 @@ internal sealed class RedisSession(ConnectionMultiplexer connection, RedisSessio
             // 无脚本读取权限时仍可查看已知键，但非原子读取永远不提供可写基线。
             try { return await RedisReadFallback.ReadAsync(connection.GetDatabase(database), key, cursor, offset, token).ConfigureAwait(false); }
             catch (OperationCanceledException) when (token.IsCancellationRequested) { throw; }
-            catch (Exception failure) { throw RedisException.Safe(failure); }
+            catch (Exception failure) { ReportConnectionFailure(failure); throw RedisException.Safe(failure); }
         }
-        catch (Exception error) { throw RedisException.Safe(error); }
+        catch (Exception error) { ReportConnectionFailure(error); throw RedisException.Safe(error); }
     }
 
     public Task SaveAsync(int database, RedisKeyId key, RedisSnapshot baseline, RedisSnapshot draft, CancellationToken cancellationToken = default) =>
@@ -136,7 +169,7 @@ internal sealed class RedisSession(ConnectionMultiplexer connection, RedisSessio
             if (result == -1) throw new RedisException("RedisPermissionDenied", "REDIS_PERMISSION");
             if (result == -2) throw new RedisException("RedisDraftInvalid", "REDIS_DRAFT");
         }
-        catch (Exception error) { throw RedisException.Safe(error, dispatched); }
+        catch (Exception error) { if (!token.IsCancellationRequested) ReportConnectionFailure(error); throw RedisException.Safe(error, dispatched); }
     }
 
     private Task<RedisResult> ExecuteAsync(int database, string command, ICollection<object> args, CancellationToken token)
@@ -167,6 +200,7 @@ internal sealed class RedisSession(ConnectionMultiplexer connection, RedisSessio
     }
     public ValueTask DisposeAsync()
     {
+        _disposed = true; connection.ConnectionFailed -= OnConnectionFailed; connection.ErrorMessage -= OnErrorMessage; _connectionLost = null;
         connection.Dispose(); foreach (var item in owned) item.Dispose(); return ValueTask.CompletedTask;
     }
 }

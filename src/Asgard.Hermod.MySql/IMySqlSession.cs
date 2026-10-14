@@ -7,6 +7,10 @@ public interface IMySqlSession : IAsyncDisposable
     MySqlSessionOptions Options { get; }
     /// <summary>物理连接是否可用，失败后不自动重连。</summary>
     bool IsConnected { get; }
+    /// <summary>实际传输失效通知，不包含 SDK 错误或凭据；主动释放不通知。</summary>
+    event EventHandler? ConnectionLost { add { } remove { } }
+    /// <summary>只检查当前连接是否存活，不重连或重放命令。</summary>
+    Task<bool> PingAsync(CancellationToken token = default) => Task.FromResult(IsConnected);
     /// <summary>服务器报告的自动提交及事务状态，无法读取时明确未知。</summary>
     MySqlSessionState State { get; }
     /// <summary>服务器实际的当前数据库，USE 语句后同步到查询页签。</summary>

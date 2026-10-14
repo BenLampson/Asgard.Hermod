@@ -18,7 +18,9 @@
    <TextBlock Text="{Binding Ttl}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="10,0,0,0" />
   </StackPanel></DockPanel>
   <controls:SectionSelector Grid.Row="2" ItemsSource="{Binding Sections}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding Section, Mode=TwoWay}" Margin="0,0,0,14" AutomationProperties.Name="{loc:Loc RedisValue}" />
-  <TextBlock Grid.Row="3" Text="{Binding Error}" Visibility="{Binding HasError, Converter={StaticResource Visible}}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" Margin="0,0,0,8" AutomationProperties.LiveSetting="Polite" />
+  <TextBlock x:Name="InlineError" Grid.Row="3" Text="{Binding Error}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" Margin="0,0,0,8" AutomationProperties.LiveSetting="Polite">
+   <TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}"><Setter Property="Visibility" Value="{Binding HasError, Converter={StaticResource Visible}}" /><Style.Triggers><DataTrigger Binding="{Binding (controls:WorkspaceConnectionScope.State).HasError, RelativeSource={RelativeSource Self}}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></TextBlock.Style>
+  </TextBlock>
   <Grid Grid.Row="4" Visibility="{Binding ShowValue, Converter={StaticResource Visible}}">
    <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
    <DockPanel Margin="0,0,0,14">

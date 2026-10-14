@@ -5,6 +5,10 @@ public interface IRedisSession : IAsyncDisposable
 {
     /// <summary>经过验证的连接配置。</summary>
     RedisSessionOptions Options { get; }
+    /// <summary>SDK 传输是否可用，界面在失效后等待用户主动重连。</summary>
+    bool IsConnected => true;
+    /// <summary>网络或认证失效通知，不包含服务器错误原文，主动释放不通知。</summary>
+    event EventHandler? ConnectionLost { add { } remove { } }
     /// <summary>各主节点稳定标识，SCAN 游标必须按节点隔离。</summary>
     IReadOnlyList<string> ScanNodes { get; }
     /// <summary>服务器实际数据库数量，Cluster 固定为一。</summary>

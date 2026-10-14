@@ -4,11 +4,11 @@ using Asgard.Hermod.UI.Models;
 namespace Asgard.Hermod.MySql.UI.ViewModels;
 
 /// <summary>公共外壳管理实例页签，此页面管理对象树和独立的内部会话页签。</summary>
-public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
+public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
 {
     private readonly InstanceItemViewModel _instance;
     private readonly IInstanceConfigurationService _configurations;
-    private readonly IMySqlSessionFactory _factory;
+    private readonly ConnectionAwareMySqlSessionFactory _factory;
     private readonly IInstanceEditor _editor;
     private readonly IMySqlWorkspaceDialogs _dialogs;
     private readonly CancellationTokenSource _lifetime = new();
@@ -20,7 +20,7 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
     public MySqlWorkspaceViewModel(InstanceItemViewModel instance, IInstanceConfigurationService configurations, IMySqlSessionFactory factory,
         IInstanceEditor editor, IMySqlWorkspaceDialogs dialogs) : base("mysql:" + Guid.NewGuid().ToString("N"), instance.Name, "database", instance.Id)
     {
-        _instance = instance; _configurations = configurations; _factory = factory; _editor = editor; _dialogs = dialogs;
+        _instance = instance; _configurations = configurations; _factory = new ConnectionAwareMySqlSessionFactory(factory, OnConnectionLost); _editor = editor; _dialogs = dialogs;
         NewQueryCommand = new RelayCommand(_ => NewQuery(), _ => _options is not null && !IsConnecting);
         CloseTabCommand = new AsyncRelayCommand(tab => CloseTabAsync(tab as MySqlTabViewModel));
         RefreshTreeCommand = new AsyncRelayCommand(_ => RefreshTreeAsync(), _ => Tree is not null && !IsConnecting);
@@ -46,7 +46,7 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
     /// <summary>徽标按真实连接状态选择语义色。</summary>
     public StatusTone ConnectionTone => IsConnecting ? StatusTone.Accent : IsConnected ? StatusTone.Success : Connection.HasError ? StatusTone.Danger : StatusTone.Muted;
     /// <summary>当前物理连接是否可用；失败后不自动重连。</summary>
-    public bool IsConnected => _metadata?.IsConnected == true;
+    public bool IsConnected => !_connectionLost && _metadata?.IsConnected == true;
     /// <summary>读取状态或安全失败说明。</summary>
     public string Status => Text.Get(IsConnecting ? "MySqlConnecting" : IsConnected ? "MySqlConnected" : "MySqlDisconnected");
     /// <summary>可安全展示的本地化错误。</summary>
@@ -99,6 +99,7 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
         IsConnecting = true; Error = ""; Connection.Begin(linked.Cancel); Refresh(); string connectionError = "";
         try
         {
+            _factory.Reset(); await StopConnectionWatchAsync(); _connectionLost = false;
             Tree?.Dispose(); Tree = null; if (_metadata is not null) await _metadata.DisposeAsync(); _metadata = null;
             _options = await _configurations.GetConnectionAsync(InstanceId!, linked.Token) ?? throw Text.Exception("MySqlConfigurationInvalid");
             var session = await _factory.OpenAsync(_options, linked.Token);
@@ -106,13 +107,18 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
             _metadata = session; Endpoint = Text.Format("MySqlEndpoint", session.Options.Host, session.Options.Port);
             Tree = new(session, _lifetime.Token); OnPropertyChanged(nameof(Tree)); await Tree.LoadAsync(Tree.Root).WaitAsync(linked.Token);
             linked.Token.ThrowIfCancellationRequested();
+            if (!session.IsConnected) throw Text.Exception("MySqlConnectionFailed");
             NewQuery();
         }
         catch (OperationCanceledException) when (linked.IsCancellationRequested)
         { Tree?.Dispose(); Tree = null; if (_metadata is not null) await _metadata.DisposeAsync(); _metadata = null; }
         catch (Exception error)
         { connectionError = Text.Error(error, "MySqlConnectionFailed"); Tree?.Dispose(); Tree = null; if (_metadata is not null) await _metadata.DisposeAsync(); _metadata = null; }
-        finally { IsConnecting = false; Connection.Finish(IsClosed || linked.IsCancellationRequested ? "" : connectionError); Refresh(); }
+        finally
+        {
+            IsConnecting = false; Connection.Finish(IsClosed || linked.IsCancellationRequested ? "" : connectionError); Refresh();
+            if (IsConnected && !IsClosed) StartConnectionWatch(_metadata!);
+        }
     }
     /// <summary>创建独立 SQL 文稿和延迟会话。</summary>
     public MySqlTabViewModel? NewQuery(string? database = null)
@@ -193,7 +199,7 @@ public sealed class MySqlWorkspaceViewModel : WorkspacePageViewModel
     public override async Task<bool> RequestCloseAsync() { foreach (var tab in Tabs.ToArray()) if (!await tab.RequestCloseAsync()) return false; return true; }
     protected override async ValueTask ReleaseAsync()
     {
-        _lifetime.Cancel(); Tree?.Dispose();
+        _lifetime.Cancel(); _factory.Reset(); Connection.Finish(); await StopConnectionWatchAsync(); Tree?.Dispose();
         foreach (var tab in Tabs) { tab.PropertyChanged -= OnTabChanged; await tab.DisposeAsync(); }
         Tabs.Clear(); if (_metadata is not null) await _metadata.DisposeAsync(); _lifetime.Dispose();
     }

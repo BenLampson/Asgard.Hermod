@@ -4,7 +4,7 @@ using Asgard.Hermod.UI.Models;
 namespace Asgard.Hermod.Redis.UI.ViewModels;
 
 /// <summary>实例页面拥有一个连接和多个内部键页签，外层实例页签仍由 AppShell 管理。</summary>
-public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
+public sealed partial class RedisWorkspaceViewModel : WorkspacePageViewModel
 {
     private readonly IInstanceConfigurationService _configurations;
     private readonly IRedisSessionFactory _connections;
@@ -39,7 +39,7 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
     /// <summary>只显示公开端点。</summary>
     public string Endpoint { get; private set; } = "";
     /// <summary>公共状态徽标。</summary>
-    public string Status => Text.Get(IsConnecting ? "RedisConnecting" : _session is null ? "WorkspaceConnectionDisconnected" : "RedisConnected");
+    public string Status => Text.Get(IsConnecting ? "RedisConnecting" : !IsConnected ? "WorkspaceConnectionDisconnected" : "RedisConnected");
     /// <summary>共享连接浮层与短状态徽标分别承载详情和摘要。</summary>
     public WorkspaceConnectionViewModel Connection { get; } = new();
     /// <summary>失败不使用成功绿色，等待与未连接也有独立色调。</summary>
@@ -47,7 +47,7 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
     /// <summary>连接中可以等待或关闭，禁止重复连接。</summary>
     public bool IsConnecting { get; private set; }
     /// <summary>实际会话建立状态。</summary>
-    public bool IsConnected => _session is not null;
+    public bool IsConnected => !_connectionLost && _session?.IsConnected == true;
     /// <summary>安全错误，不展示第三方异常。</summary>
     public string Error { get; private set; } = "";
     /// <summary>共享通知插槽只在有反馈时显示。</summary>
@@ -137,16 +137,18 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
         try
         {
             await ClearConnectionAsync();
+            _connectionLost = false;
             var options = await _configurations.GetConnectionAsync(InstanceId!, linked.Token);
             if (options is null) throw Text.Exception("RedisConfigurationInvalid");
             var session = await _connections.OpenAsync(options, linked.Token);
             if (linked.IsCancellationRequested || IsClosed) { await session.DisposeAsync(); return; }
-            _session = session; _database = session.Options.Database; DatabaseText = _database.ToString(CultureInfo.InvariantCulture);
+            _session = session; session.ConnectionLost += OnConnectionLost; _database = session.Options.Database; DatabaseText = _database.ToString(CultureInfo.InvariantCulture);
             Databases = Enumerable.Range(0, session.DatabaseCount).Select(database => new RedisDatabaseViewModel(database)).ToArray();
             OnPropertyChanged(nameof(Databases));
             await RefreshDatabaseCountsAsync(linked.Token); linked.Token.ThrowIfCancellationRequested();
             Endpoint = string.Join(", ", session.Options.Endpoints); await QueryAsync().WaitAsync(linked.Token);
             linked.Token.ThrowIfCancellationRequested();
+            if (_connectionLost || !session.IsConnected) throw Text.Exception("RedisConnectionFailed");
         }
         catch (OperationCanceledException) when (linked.IsCancellationRequested)
         { await ClearConnectionAsync(); }
@@ -157,7 +159,7 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
     private async Task ClearConnectionAsync()
     {
         foreach (var tree in _trees.Values) tree.Dispose(); _trees.Clear(); Tree = null; ReleaseTabs(); Databases = []; Endpoint = "";
-        var session = _session; _session = null; if (session is not null) await session.DisposeAsync();
+        var session = _session; _session = null; if (session is not null) { session.ConnectionLost -= OnConnectionLost; await session.DisposeAsync(); }
         OnPropertyChanged(nameof(Tree)); OnPropertyChanged(nameof(Databases));
     }
 
@@ -182,7 +184,7 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
             Tree.SetActiveKey(ActiveTab?.Database == database ? ActiveTab.Key : null);
             Error = ""; OnPropertyChanged(nameof(Tree)); await Tree.LoadAsync(Tree.Root);
         }
-        catch (Exception error) { Error = Text.Error(error, "RedisCommandFailed"); }
+        catch (Exception error) { Error = Connection.HasError ? "" : Text.Error(error, "RedisCommandFailed"); }
         Refresh();
     }
 
@@ -253,9 +255,10 @@ public sealed class RedisWorkspaceViewModel : WorkspacePageViewModel
     /// <inheritdoc />
     protected override async ValueTask ReleaseAsync()
     {
-        _lifetime.Cancel(); foreach (var tree in _trees.Values) tree.Dispose(); _trees.Clear();
+        _lifetime.Cancel(); Connection.Finish(); foreach (var tree in _trees.Values) tree.Dispose(); _trees.Clear();
         ReleaseTabs();
-        if (_session is not null) await _session.DisposeAsync(); _session = null; _lifetime.Dispose();
+        if (_session is not null) { _session.ConnectionLost -= OnConnectionLost; await _session.DisposeAsync(); }
+        _session = null; _lifetime.Dispose();
     }
     private void ReleaseTabs()
     {

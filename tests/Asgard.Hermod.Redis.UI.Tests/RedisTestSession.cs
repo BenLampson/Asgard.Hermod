@@ -13,6 +13,9 @@ internal sealed class RedisTestSession : IRedisSession, IRedisSessionFactory
     internal int Saves { get; private set; }
     internal List<(string Node, string Cursor, string Pattern)> Calls { get; } = [];
     public RedisSessionOptions Options { get; } = RedisSessionOptions.Parse(Connection);
+    public bool IsConnected { get; private set; } = true;
+    public event EventHandler? ConnectionLost;
+    internal void Disconnect() { IsConnected = false; ConnectionLost?.Invoke(this, EventArgs.Empty); }
     public static InstanceConnectionOptions Connection { get; } = new()
     {
         TypeId = RedisIds.Type,
@@ -24,7 +27,7 @@ internal sealed class RedisTestSession : IRedisSession, IRedisSessionFactory
     internal Func<int, Task<long?>>? DatabaseKeyCount { get; set; }
     public Task<long?> ReadDatabaseKeyCountAsync(int database, CancellationToken cancellationToken = default) => DatabaseKeyCount?.Invoke(database) ?? Task.FromResult<long?>(0);
     public async Task<IRedisSession> OpenAsync(InstanceConnectionOptions options, CancellationToken cancellationToken = default)
-    { if (BlockedOpen is { } blocked) await blocked.Task; if (OpenError is { } error) throw error; return this; }
+    { if (BlockedOpen is { } blocked) await blocked.Task; if (OpenError is { } error) throw error; IsConnected = true; return this; }
     public Task<RedisScanPage> ScanAsync(string node, int database, string cursor, string pattern, string type, CancellationToken cancellationToken)
     { Calls.Add((node, cursor, pattern)); return Scan?.Invoke(node, cursor, pattern) ?? Task.FromResult(new RedisScanPage("0", [])); }
     public Task<RedisSnapshot> ReadAsync(int database, RedisKeyId key, string cursor = "0", long offset = 0, CancellationToken cancellationToken = default)
@@ -39,5 +42,5 @@ internal sealed class RedisTestSession : IRedisSession, IRedisSessionFactory
     public Task SetExpiryAsync(int database, RedisKeyId key, TimeSpan? expiry, CancellationToken cancellationToken = default) => Task.CompletedTask;
     public Task AppendAsync(int database, RedisKeyId key, IReadOnlyList<RedisEntry> fields, CancellationToken cancellationToken = default)
     { Saves++; return SaveError is null ? Task.CompletedTask : Task.FromException(SaveError); }
-    public ValueTask DisposeAsync() { Disposals++; return ValueTask.CompletedTask; }
+    public ValueTask DisposeAsync() { IsConnected = false; Disposals++; return ValueTask.CompletedTask; }
 }

@@ -9,6 +9,42 @@ namespace Asgard.Hermod.MySql.Tests;
 [Collection(WpfTestCollection.Name)]
 public sealed class ConnectionFeedbackTests(WpfTestFixture fixture)
 {
+    /// <summary>查询新会话认证失败只在连接弹窗呈现，原页签的错误条不改变内容布局。</summary>
+    [Fact]
+    public Task QueryOpenFailure_DoesNotShowAnInlineConnectionError() => fixture.RunAsync(async () =>
+    {
+        var server = new TestMySql(); var configs = new Configurations();
+        await using var model = new MySqlWorkspaceViewModel(new(new("mysql-test", "MySQL", "MySQL", "database", [], TypeId: MySqlIds.Type, ProviderId: MySqlIds.Direct)), configs, server, configs, new TestMySqlDialogs());
+        await model.InitializeAsync(); var tab = Assert.Single(model.Tabs); tab.Sql = "SELECT 1";
+        var view = new MySqlWorkspaceView { DataContext = model }; var window = new HermodWindow { Content = view, Width = 1000, Height = 720 };
+        try
+        {
+            WindowPreviewCapture.Show(window); await WindowTestVisuals.UpdateLayoutAsync(window);
+            server.OpenError = new IOException("password=private-test-secret"); await tab.ExecuteAsync(tab.Sql); await WindowTestVisuals.UpdateLayoutAsync(window);
+            Assert.True(tab.HasError); Assert.True(model.Connection.IsOpen); Assert.DoesNotContain("private-test-secret", model.Connection.Detail);
+            var content = Assert.Single(WindowTestVisuals.Descendants<MySqlTabView>(view));
+            Assert.Same(model.Connection, WorkspaceConnectionScope.GetState(content));
+            Assert.Equal(Visibility.Collapsed, Assert.IsType<Border>(content.FindName("InlineError")).Visibility);
+            model.Connection.DismissCommand.Execute(null); await WindowTestVisuals.UpdateLayoutAsync(window);
+            Assert.Equal(Visibility.Collapsed, Assert.IsType<Border>(content.FindName("InlineError")).Visibility);
+        }
+        finally { window.Close(); }
+    });
+    /// <summary>子查询会话断线也提示实例弹窗，文稿原样保留，旧连接回调不会污染重连后的页面。</summary>
+    [Fact]
+    public Task QuerySessionDisconnect_PreservesDocumentAndDoesNotRepeatPopup() => fixture.RunAsync(async () =>
+    {
+        var server = new TestMySql(); var configs = new Configurations();
+        await using var model = new MySqlWorkspaceViewModel(new(new("mysql-test", "MySQL", "MySQL", "database", [], TypeId: MySqlIds.Type, ProviderId: MySqlIds.Direct)), configs, server, configs, new TestMySqlDialogs());
+        await model.InitializeAsync(); var tab = Assert.Single(model.Tabs); tab.Sql = "SELECT 'retained draft';";
+        await tab.ExecuteAsync(tab.Sql); var querySession = server.Sessions.Last();
+        await Task.Run(querySession.Disconnect); await WpfTestFixture.DrainDispatcherAsync();
+        Assert.True(model.Connection.IsOpen); Assert.True(model.Connection.IsDisconnected); Assert.False(model.IsConnected); Assert.False(model.HasError);
+        Assert.Equal("SELECT 'retained draft';", tab.Sql); Assert.Same(tab, model.ActiveTab); Assert.Equal(1, server.Executions); Assert.Equal(0, server.Writes);
+        model.Connection.DismissCommand.Execute(null); querySession.Disconnect(); Assert.False(model.Connection.IsOpen);
+        tab.Sql = ""; await model.ReconnectCommand.ExecuteAsync(); Assert.True(model.IsConnected);
+        querySession.Disconnect(); Assert.False(model.Connection.IsOpen);
+    });
     [Theory]
     [InlineData("en", UiTheme.Light)]
     [InlineData("zh-Hans", UiTheme.Dark)]

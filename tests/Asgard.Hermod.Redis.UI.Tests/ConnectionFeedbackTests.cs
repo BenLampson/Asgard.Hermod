@@ -8,6 +8,20 @@ namespace Asgard.Hermod.Redis.Tests;
 [Collection(WpfTestCollection.Name)]
 public sealed class ConnectionFeedbackTests(WpfTestFixture fixture)
 {
+    /// <summary>后台断线保持已有键页签和草稿，关闭只隐藏弹窗，重连前不执行写入。</summary>
+    [Fact]
+    public Task Disconnect_PreservesKeyTabAndShowsOnePopup() => fixture.RunAsync(async () =>
+    {
+        var session = new RedisTestSession(); var configs = new RedisTestConfigurations();
+        await using var model = new RedisWorkspaceViewModel(new(new("redis-test", "Redis", "Redis", "layers", [], TypeId: RedisIds.Type, ProviderId: RedisIds.Standalone)), configs, session, configs, new RedisTestDialogs());
+        await model.InitializeAsync(); await model.OpenAsync(RedisKeyId.FromText("kept-key")); var tab = Assert.Single(model.Tabs);
+        await Task.Run(session.Disconnect); await WpfTestFixture.DrainDispatcherAsync();
+        Assert.True(model.Connection.IsDisconnected); Assert.True(model.Connection.IsOpen); Assert.False(model.IsConnected); Assert.False(model.HasError);
+        Assert.Same(tab, model.ActiveTab); Assert.Single(model.Tabs); Assert.Equal(0, session.Saves);
+        model.Connection.DismissCommand.Execute(null); session.Disconnect(); Assert.False(model.Connection.IsOpen);
+        await model.ReconnectCommand.ExecuteAsync(); Assert.True(model.IsConnected); Assert.False(model.Connection.HasError);
+        Assert.Equal(0, session.Saves);
+    });
     /// <summary>连接后的数据库计数仍可取消，不保留半初始化会话或迟到计数。</summary>
     [Fact]
     public Task CancelDuringCounts_ReleasesSessionAndIgnoresLateData() => fixture.RunAsync(async () =>

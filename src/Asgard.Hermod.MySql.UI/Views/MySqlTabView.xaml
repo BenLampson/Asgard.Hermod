@@ -35,7 +35,10 @@
     <DockPanel.Style><Style TargetType="DockPanel"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding IsQuery}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger><DataTrigger Binding="{Binding IsMetadataOnly}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></DockPanel.Style>
    </DockPanel>
   </StackPanel>
-  <Border Grid.Row="1" Background="{DynamicResource DangerWeakBrush}" Padding="12,9" Margin="0,0,0,10" CornerRadius="5" Visibility="{Binding HasError, Converter={StaticResource Visible}}"><TextBlock Text="{Binding Error}" TextWrapping="Wrap" Foreground="{DynamicResource DangerBrush}" /></Border>
+  <Border x:Name="InlineError" Grid.Row="1" Background="{DynamicResource DangerWeakBrush}" Padding="12,9" Margin="0,0,0,10" CornerRadius="5">
+   <Border.Style><Style TargetType="Border"><Setter Property="Visibility" Value="{Binding HasError, Converter={StaticResource Visible}}" /><Style.Triggers><DataTrigger Binding="{Binding (controls:WorkspaceConnectionScope.State).HasError, RelativeSource={RelativeSource Self}}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></Border.Style>
+   <TextBlock Text="{Binding Error}" TextWrapping="Wrap" Foreground="{DynamicResource DangerBrush}" />
+  </Border>
   <Grid Grid.Row="2">
    <Grid x:Name="DataPanel" SizeChanged="OnDataSizeChanged"><Grid.RowDefinitions><RowDefinition x:Name="EditorRow" Height="210" /><RowDefinition x:Name="EditorSplitterRow" Height="6" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
     <controls:CodeEditor x:Name="SqlEditor" Text="{Binding Sql, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="False" MinHeight="80" MaxLength="10485760" Visibility="{Binding IsQuery, Converter={StaticResource Visible}}" AutomationProperties.Name="{loc:Loc MySqlSqlEditor}" />

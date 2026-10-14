@@ -8,6 +8,16 @@ namespace Asgard.Hermod.Redis.Tests;
 /// <summary>语言、复合条件与拓扑校验不依赖开发机器环境。</summary>
 public sealed class RedisProfileTests
 {
+    /// <summary>认证失效不能走权限降级读取，也不能显示协议原文或凭据。</summary>
+    [Theory]
+    [InlineData("NOAUTH token=private-test-secret", "REDIS_AUTH")]
+    [InlineData("WRONGPASS password=private-test-secret", "REDIS_AUTH")]
+    [InlineData("NOPERM key=private-test-secret", "REDIS_PERMISSION")]
+    public void AuthenticationAndObjectPermissions_AreDistinctSafeErrors(string response, string code)
+    {
+        var error = RedisException.Safe(new StackExchange.Redis.RedisServerException(default, StackExchange.Redis.CommandFlags.None, response));
+        Assert.Equal(code, error.Code); Assert.DoesNotContain("private-test-secret", error.Message);
+    }
     [Theory]
     [InlineData("en")]
     [InlineData("zh-Hans")]

@@ -17,7 +17,9 @@ public sealed class RedisException(string resourceKey, string code) : Exception(
         if (error is RedisException safe) return safe;
         if (error is RedisServerException server)
         {
-            if (server.Message.StartsWith("NOPERM", StringComparison.Ordinal) || server.Message.StartsWith("NOAUTH", StringComparison.Ordinal))
+            if (server.Message.StartsWith("NOAUTH", StringComparison.Ordinal) || server.Message.StartsWith("WRONGPASS", StringComparison.Ordinal))
+                return new("RedisConnectionFailed", "REDIS_AUTH");
+            if (server.Message.StartsWith("NOPERM", StringComparison.Ordinal))
                 return new("RedisPermissionDenied", "REDIS_PERMISSION");
             if (server.Message.StartsWith("WRONGTYPE", StringComparison.Ordinal)) return new("RedisConflict", "REDIS_CONFLICT");
             return new("RedisCommandFailed", "REDIS_COMMAND");

@@ -8,12 +8,17 @@ internal sealed partial class MySqlSession(MySqlConnection connection, MySqlSess
 {
     private readonly SemaphoreSlim _gate = new(1, 1);
     private bool _disposed;
+    private bool _connectionLost;
     private bool _hasExecutedUserSql;
     private bool _unknownGridWrite;
     /// <summary>本会话已验证的连接选项。</summary>
     public MySqlSessionOptions Options { get; } = options;
     /// <summary>当前物理连接是否可用；失败后不自动重连。</summary>
     public bool IsConnected => !_disposed && connection.State == ConnectionState.Open;
+    /// <inheritdoc />
+    public event EventHandler? ConnectionLost;
+    /// <inheritdoc />
+    public Task<bool> PingAsync(CancellationToken token = default) => SerializedAsync(() => connection.PingAsync(token), token);
     /// <summary>服务器报告的自动提交和事务状态；无法读取时保留未知。</summary>
     public MySqlSessionState State { get; private set; } = new(null, null);
     /// <summary>提供模块的公开状态或生命周期入口，协议行为使用稳定标识。</summary>
@@ -35,7 +40,11 @@ internal sealed partial class MySqlSession(MySqlConnection connection, MySqlSess
         catch (OperationCanceledException) when (token.IsCancellationRequested) { throw; }
         catch (MySqlConflict) { throw; }
         catch (Exception error) { throw MySqlFailure.Safe(error); }
-        finally { _gate.Release(); }
+        finally
+        {
+            _gate.Release();
+            if (!_disposed && !IsConnected && !_connectionLost) { _connectionLost = true; ConnectionLost?.Invoke(this, EventArgs.Empty); }
+        }
     }
 
     /// <summary>串行执行 SQL，保留已完成的结果和安全失败状态。</summary>
@@ -179,7 +188,7 @@ internal sealed partial class MySqlSession(MySqlConnection connection, MySqlSess
         await _gate.WaitAsync().ConfigureAwait(false);
         try
         {
-            if (_disposed) return; _disposed = true;
+            if (_disposed) return; _disposed = true; ConnectionLost = null;
             await connection.DisposeAsync().ConfigureAwait(false);
             if (bridge is not null) await bridge.DisposeAsync().ConfigureAwait(false); foreach (var item in owned) item.Dispose();
         }

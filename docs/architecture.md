@@ -350,12 +350,22 @@ visible focus treatment. WPF test hosts use the desktop application's selection
 rendering switch and verify rendered text above opaque selection backgrounds.
 Module tab title hints use the WPF tooltip service with a bounded hover duration;
 focus does not manually open a popup. Complete titles remain in automation names.
-MySQL and Redis share `WorkspaceConnectionOverlay` and its presentation state.
+SSH, object storage, MySQL and Redis share `WorkspaceConnectionOverlay` and its
+presentation state for the first connection, failures and unexpected disconnections.
 `WorkspacePageLayout` reserves an overlay slot spanning the existing page rows;
 loading and failure do not shift the body. Modules own cancellation, session
 cleanup and retries, and provide safe localized errors. Closing a failure keeps
 a short disconnected badge, and retry resets the error. Underlying controls pause
 while the overlay is visible; tree templates retain the current theme when disabled.
+Unexpected disconnections retain existing terminal output, object lists, query
+results and drafts. Dismissing an interruption does not reconnect or repeatedly
+show the same failure. Retry is explicit and never replays writes. MySQL reports
+physical session loss, including independent query sessions, and probes the idle
+metadata session every 15 seconds. Redis reports transport failures and authentication
+expiry; ordinary object permissions remain operation errors. Stateless object storage
+reports credential expiry and network failures when an actual request detects them,
+including detail, scan and transfer requests. Provider responses are mapped to stable
+safe resource errors before reaching the shared popup.
 
 Instance type icons share one mapping across the picker, navigation and workspace:
 MySQL uses `database`, storage uses `box`, Redis uses `layers`, and SSH uses

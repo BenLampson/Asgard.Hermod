@@ -1,6 +1,6 @@
 <UserControl x:Class="Asgard.Hermod.MySql.UI.Views.MySqlWorkspaceView"
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
- xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI" xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI" xmlns:vm="clr-namespace:Asgard.Hermod.MySql.UI.ViewModels" PreviewKeyDown="OnKeyDown">
+ xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI" xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI" xmlns:vm="clr-namespace:Asgard.Hermod.MySql.UI.ViewModels" PreviewKeyDown="OnKeyDown" controls:WorkspaceConnectionScope.State="{Binding Connection}">
  <UserControl.Resources>
   <BooleanToVisibilityConverter x:Key="Visible" />
   <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}"><Setter Property="TextOptions.TextFormattingMode" Value="Ideal" /></Style>

@@ -17,13 +17,16 @@ internal sealed class TestMySql : IMySqlSessionFactory
     internal MySqlResult? ResultOverride;
     internal TaskCompletionSource? BlockedOpen;
     internal Exception? OpenError;
+    internal List<Session> Sessions { get; } = [];
     public async Task<IMySqlSession> OpenAsync(InstanceConnectionOptions options, CancellationToken cancellationToken = default)
-    { Opens++; if (BlockedOpen is { } blocked) await blocked.Task; if (OpenError is { } error) throw error; return new Session(this); }
+    { Opens++; if (BlockedOpen is { } blocked) await blocked.Task; if (OpenError is { } error) throw error; var session = new Session(this); Sessions.Add(session); return session; }
     internal MySqlResult Result() => ResultOverride ?? new(1, 1, Columns, [Columns.Select(column => MySqlValues.Clone(Values[column.Name])).ToArray()], EditableTable: Table);
-    private sealed class Session(TestMySql server) : IMySqlSession
+    internal sealed class Session(TestMySql server) : IMySqlSession
     {
         public MySqlSessionOptions Options => MySqlSessionOptions.Parse(Connection);
         public bool IsConnected { get; private set; } = true;
+        public event EventHandler? ConnectionLost;
+        internal void Disconnect() { IsConnected = false; ConnectionLost?.Invoke(this, EventArgs.Empty); }
         public string CurrentDatabase => "app";
         public MySqlSessionState State => new(true, false);
         public Task<IReadOnlyList<MySqlStatement>> SplitAsync(string sql, CancellationToken token = default) => Task.FromResult(MySqlSql.Split(sql));
