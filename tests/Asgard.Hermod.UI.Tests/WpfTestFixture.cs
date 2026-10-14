@@ -49,6 +49,8 @@ public sealed class WpfTestFixture : IAsyncLifetime
     {
         try
         {
+            // 与桌面宿主的 runtimeconfig 保持一致，实色选区在文字底层绘制。
+            AppContext.SetSwitch("Switch.System.Windows.Controls.Text.UseAdornerForTextboxSelectionRendering", false);
             var dispatcher = Dispatcher.CurrentDispatcher;
             SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(dispatcher));
             _application = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
