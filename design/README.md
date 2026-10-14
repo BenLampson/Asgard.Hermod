@@ -46,6 +46,15 @@ limits, lazy tree loading/search, recoverable errors, unsaved drafts, English da
 mode and a compact object-tree drawer. Interaction and localization contracts
 accompany the editable designs.
 
+MySQL object categories use distinct type icons, including views, procedures,
+functions, events, indexes, foreign keys and triggers. The result grid retains
+readable column widths, fixed row numbers, synchronized headers and horizontal
+scrolling. Editable cells support inline input and a resizable field window for
+text, JSON, SQL NULL and binary values. Window changes apply to a grid draft;
+saving is explicit and retains input after conflicts or unknown write outcomes.
+Query result editing requires a verifiable base table, stable row key and update
+permission. The follow-up boards and bilingual contracts are in region 10B.
+
 Region 09E contains the Redis create/edit dialog components and their typed,
 validation, conflict, unknown-result and English dark examples. Create defaults
 to 640 x 720 and edit to 780 x 700; both reuse the shared child window with a
