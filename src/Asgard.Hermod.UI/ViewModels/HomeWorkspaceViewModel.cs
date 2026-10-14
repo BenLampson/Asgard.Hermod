@@ -19,7 +19,7 @@ public sealed class HomeWorkspaceViewModel : WorkspacePageViewModel
         ArgumentNullException.ThrowIfNull(openInstance);
         _registry = registry;
         _store = store;
-        try { _history.AddRange(store?.Load() ?? []); }
+        try { _history.AddRange((store?.Load() ?? []).Take(RecentInstance.MaximumCount)); }
         catch (Exception) { Message = Text.Get("HomeHistoryLoadFailed"); }
         OpenRecentCommand = new RelayCommand(value =>
         {
@@ -41,7 +41,7 @@ public sealed class HomeWorkspaceViewModel : WorkspacePageViewModel
     public string InstanceCount => Text.Format("HomeInstanceCount", _instances.Count(item => !item.IsLocal));
     /// <summary>真实注册类型与已有配置中的未知类型均保留。</summary>
     public ObservableCollection<HomeInstanceTypeViewModel> Types { get; } = [];
-    /// <summary>最近打开的五个仍存在的实例。</summary>
+    /// <summary>最近打开的六个仍存在的实例。</summary>
     public ObservableCollection<RecentInstanceViewModel> RecentInstances { get; } = [];
     /// <summary>空记录引导。</summary>
     public bool HasNoRecentInstances => RecentInstances.Count == 0;
@@ -82,7 +82,7 @@ public sealed class HomeWorkspaceViewModel : WorkspacePageViewModel
     {
         _history.RemoveAll(item => item.InstanceId == instance.Id);
         _history.Insert(0, new(instance.Id, DateTimeOffset.UtcNow));
-        if (_history.Count > 5) _history.RemoveRange(5, _history.Count - 5);
+        if (_history.Count > RecentInstance.MaximumCount) _history.RemoveRange(RecentInstance.MaximumCount, _history.Count - RecentInstance.MaximumCount);
         RefreshRecent();
         try { _store?.Save(_history); }
         catch (Exception) { Message = Text.Get("HomeHistorySaveFailed"); }

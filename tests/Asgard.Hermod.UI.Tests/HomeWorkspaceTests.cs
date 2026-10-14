@@ -8,6 +8,17 @@ namespace Asgard.Hermod.UI.Tests;
 [Collection(WpfTestCollection.Name)]
 public sealed class HomeWorkspaceTests(WpfTestFixture fixture)
 {
+    /// <summary>第七次访问淘汰最旧记录，重复访问移动到首位并保持六条上限。</summary>
+    [Fact]
+    public Task RecentHistory_KeepsSixLatestUniqueInstances() => fixture.RunAsync(() =>
+    {
+        var home = new HomeWorkspaceViewModel(_ => { });
+        var instances = Enumerable.Range(0, 7).Select(index => new InstanceItemViewModel(new("recent-" + index, "name-" + index, "name-" + index, "database", []))).ToArray();
+        home.Refresh(instances); foreach (var instance in instances) home.RecordOpened(instance);
+        Assert.Equal(instances.Skip(1).Reverse(), home.RecentInstances.Select(item => item.Instance));
+        home.RecordOpened(instances[2]); Assert.Same(instances[2], home.RecentInstances[0].Instance); Assert.Equal(6, home.RecentInstances.Count);
+        Assert.Equal(6, home.RecentInstances.Select(item => item.Instance.Id).Distinct().Count()); return Task.CompletedTask;
+    });
     /// <summary>首页从安全快照计数，显式访问去重，改名与删除及时更新。</summary>
     [Fact]
     public Task OverviewAndHistory_TrackUserActionsAndCurrentSnapshots() => fixture.RunAsync(async () =>
