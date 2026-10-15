@@ -9,6 +9,7 @@
     <Project Path="src/Asgard.Hermod.WinTerminal/Asgard.Hermod.WinTerminal.csproj" />
   </Folder>
   <Folder Name="/src/Infrastructure/">
+    <Project Path="src/Asgard.Hermod.Agent/Asgard.Hermod.Agent.csproj" />
     <Project Path="src/Asgard.Hermod.Identity/Asgard.Hermod.Identity.csproj" />
     <Project Path="src/Asgard.Hermod.Persistence.Sqlite/Asgard.Hermod.Persistence.Sqlite.csproj" />
     <Project Path="src/Asgard.Hermod.Security.Windows/Asgard.Hermod.Security.Windows.csproj" />
@@ -49,6 +50,7 @@
     <Project Path="tests/Asgard.Hermod.Sync.Tests/Asgard.Hermod.Sync.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Modules/">
+    <Project Path="tests/Asgard.Hermod.Agent.Tests/Asgard.Hermod.Agent.Tests.csproj" />
     <Project Path="tests/Asgard.Hermod.MySql.Tests/Asgard.Hermod.MySql.Tests.csproj" />
     <Project Path="tests/Asgard.Hermod.MySql.UI.Tests/Asgard.Hermod.MySql.UI.Tests.csproj" />
     <Project Path="tests/Asgard.Hermod.Redis.Tests/Asgard.Hermod.Redis.Tests.csproj" />

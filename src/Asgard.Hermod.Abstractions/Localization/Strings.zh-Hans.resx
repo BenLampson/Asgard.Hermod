@@ -3562,4 +3562,17 @@
   <data name="HostingVolcengine" xml:space="preserve"><value>火山引擎</value></data>
   <data name="HostingAws" xml:space="preserve"><value>AWS</value></data>
   <data name="CannotSaveThemePreference" xml:space="preserve"><value>无法保存主题偏好，主题尚未更改。请重试。</value></data>
+  <data name="AgentConfigurationRequired" xml:space="preserve"><value>请在设置中配置有效的模型地址和模型名称。</value></data>
+  <data name="AgentInvalidEndpoint" xml:space="preserve"><value>请使用 HTTPS 地址或本机 HTTP 地址，且不要在地址中包含凭据或查询参数。</value></data>
+  <data name="AgentInvalidModel" xml:space="preserve"><value>请输入有效的模型名称。</value></data>
+  <data name="AgentInvalidKey" xml:space="preserve"><value>API Key 包含无效字符。</value></data>
+  <data name="AgentPromptRequired" xml:space="preserve"><value>请输入发给助手的消息。</value></data>
+  <data name="AgentInputTooLarge" xml:space="preserve"><value>消息或上下文过长，请缩短后重试。</value></data>
+  <data name="AgentBusy" xml:space="preserve"><value>请等待当前回复完成，或先取消请求。</value></data>
+  <data name="AgentAuthenticationFailed" xml:space="preserve"><value>模型服务拒绝了 API Key，请检查设置后重试。</value></data>
+  <data name="AgentRateLimited" xml:space="preserve"><value>模型服务繁忙或已超出配额，请稍后重试。</value></data>
+  <data name="AgentRequestFailed" xml:space="preserve"><value>模型请求失败，请检查设置后重试。</value></data>
+  <data name="AgentTimedOut" xml:space="preserve"><value>模型请求超时，请重试。</value></data>
+  <data name="AgentInvalidResponse" xml:space="preserve"><value>模型服务返回了不完整或不受支持的回复。</value></data>
+  <data name="AgentUnsupportedDialect" xml:space="preserve"><value>助手暂不支持此 SQL 方言。</value></data>
 </root>

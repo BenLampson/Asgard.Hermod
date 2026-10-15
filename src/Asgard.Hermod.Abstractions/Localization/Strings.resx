@@ -3562,4 +3562,17 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="HostingVolcengine" xml:space="preserve"><value>Volcengine</value></data>
   <data name="HostingAws" xml:space="preserve"><value>AWS</value></data>
   <data name="CannotSaveThemePreference" xml:space="preserve"><value>Cannot save the theme preference. The theme has not changed. Try again.</value></data>
+  <data name="AgentConfigurationRequired" xml:space="preserve"><value>Configure a valid model endpoint and model in settings.</value></data>
+  <data name="AgentInvalidEndpoint" xml:space="preserve"><value>Use an HTTPS endpoint, or HTTP on localhost, without embedded credentials or query parameters.</value></data>
+  <data name="AgentInvalidModel" xml:space="preserve"><value>Enter a valid model name.</value></data>
+  <data name="AgentInvalidKey" xml:space="preserve"><value>The API key contains invalid characters.</value></data>
+  <data name="AgentPromptRequired" xml:space="preserve"><value>Enter a message for the assistant.</value></data>
+  <data name="AgentInputTooLarge" xml:space="preserve"><value>The message or context is too large. Shorten it and try again.</value></data>
+  <data name="AgentBusy" xml:space="preserve"><value>Wait for the current response or cancel it first.</value></data>
+  <data name="AgentAuthenticationFailed" xml:space="preserve"><value>The model service rejected the API key. Check settings and try again.</value></data>
+  <data name="AgentRateLimited" xml:space="preserve"><value>The model service is busy or its quota was exceeded. Try again later.</value></data>
+  <data name="AgentRequestFailed" xml:space="preserve"><value>The model request failed. Check settings and try again.</value></data>
+  <data name="AgentTimedOut" xml:space="preserve"><value>The model request timed out. Try again.</value></data>
+  <data name="AgentInvalidResponse" xml:space="preserve"><value>The model service returned an incomplete or unsupported response.</value></data>
+  <data name="AgentUnsupportedDialect" xml:space="preserve"><value>The assistant does not support this SQL dialect.</value></data>
 </root>
