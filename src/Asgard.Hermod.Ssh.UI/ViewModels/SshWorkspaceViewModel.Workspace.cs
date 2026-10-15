@@ -47,6 +47,7 @@ public sealed partial class SshWorkspaceViewModel
     {
         Files = new(() => IsConnected ? _connection as ISshWorkspaceConnection : null, _dialogs);
         Assistant = new(client, () => IsConnected ? _connection as ISshWorkspaceConnection : null, () => RemoteIdentity, _dialogs);
+        InitializeLogs(client);
         ToggleAgentCommand = new RelayCommand(_ => IsAgentOpen = !IsAgentOpen);
         ToggleMonitorCommand = new RelayCommand(_ => IsMonitorOpen = !IsMonitorOpen);
         AddForwardCommand = new AsyncRelayCommand(_ => AddForwardAsync(), _ => IsConnected);
@@ -70,7 +71,7 @@ public sealed partial class SshWorkspaceViewModel
 
     private async Task StopWorkspaceOperationsAsync()
     {
-        Files.Cancel(); Assistant.ConnectionChanged();
+        Files.Cancel(); Assistant.ConnectionChanged(); DisconnectLogs();
         foreach (var forward in Forwards) forward.Dispose(); Forwards.Clear();
         await Monitor.StopAsync();
     }

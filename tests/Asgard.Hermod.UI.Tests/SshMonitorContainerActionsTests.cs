@@ -47,20 +47,21 @@ public sealed class SshMonitorContainerActionsTests(WpfTestFixture fixture)
             Assert.Equal(Text.Get("SshMonitorViewDetails"), Assert.Single(WindowTestVisuals.Descendants<TextBlock>(details)).Text);
             AssertBelow(grid, actions, view); AssertInside(logs, actions); AssertInside(details, actions);
             Capture(surface, $"docker-bottom-actions-{language}-{theme}");
+            SshMonitorContainerItem? requested = null; model.ContainerLogsRequested += (_, item) => requested = item;
             await model.ReadLogsCommand.ExecuteAsync(logs.CommandParameter); await LayoutAsync(surface, 900);
-            Assert.EndsWith(model.SelectedContainer.Id, connection.Commands[^1]); Assert.True(model.IsLogOpen);
-            Assert.Equal(Visibility.Collapsed, Assert.IsType<Grid>(view.FindName("ContainerList")).Visibility);
+            Assert.Same(model.SelectedContainer, requested); Assert.False(model.IsContainerPaneOpen);
+            Assert.Equal(Visibility.Visible, Assert.IsType<Grid>(view.FindName("ContainerList")).Visibility);
             AssertInside(logs, actions); AssertInside(details, actions);
-            Capture(surface, $"docker-bottom-logs-compact-{language}-{theme}");
+            Capture(surface, $"docker-open-logs-keeps-list-{language}-{theme}");
             int requests = connection.Commands.Count;
             details.Command.Execute(details.CommandParameter); await LayoutAsync(surface, 520);
-            Assert.True(model.IsContainerDetailsOpen); Assert.False(model.IsLogOpen);
+            Assert.True(model.IsContainerDetailsOpen);
             Assert.Equal(requests, connection.Commands.Count);
             Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(Assert.IsType<StackPanel>(view.FindName("ContainerDetails"))), b => b.Text == model.SelectedContainer.Id);
             AssertInside(logs, actions); AssertInside(details, actions);
             AssertInside(actions, view);
             Capture(surface, $"docker-bottom-details-narrow-{language}-{theme}");
-            model.CloseLogsCommand.Execute(null); await LayoutAsync(surface, 900);
+            model.CloseContainerDetailsCommand.Execute(null); await LayoutAsync(surface, 900);
             Assert.False(model.IsContainerPaneOpen); Assert.Equal(Visibility.Visible, Assert.IsType<Grid>(view.FindName("ContainerList")).Visibility);
             model.Search = "no-match"; await LayoutAsync(surface, 900);
             Assert.Null(model.SelectedContainer); Assert.False(logs.IsEnabled); Assert.False(details.IsEnabled);
@@ -105,27 +106,6 @@ public sealed class SshMonitorContainerActionsTests(WpfTestFixture fixture)
         Assert.Null(model.SelectedContainer); Assert.False(model.ViewContainerDetailsCommand.CanExecute(null));
         connection.Handler = data.HandleAsync; await model.RefreshDetailsCommand.ExecuteAsync(); model.SelectedContainer = model.Containers[0];
         await model.StopAsync(); Assert.False(model.ReadLogsCommand.CanExecute(null)); Assert.False(model.IsContainerPaneOpen);
-    });
-
-    /// <summary>慢日志响应在选择变化后作废，不能覆盖新容器的详情。</summary>
-    [Fact]
-    public Task ChangingSelectionCancelsOldLogOutput() => fixture.RunOffscreenAsync(async () =>
-    {
-        var data = new SshMonitorTestData(); var connection = data.CreateConnection();
-        var arrived = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var blocked = new TaskCompletionSource<SshCommandResult>(TaskCreationOptions.RunContinuationsAsynchronously);
-        connection.Handler = (command, token) =>
-        {
-            if (!command.StartsWith("docker logs ", StringComparison.Ordinal)) return data.HandleAsync(command, token);
-            arrived.TrySetResult(); return blocked.Task;
-        };
-        await using var model = new SshMonitorViewModel(); await model.StartAsync(connection);
-        model.IsPaused = true; model.Section = "docker"; await model.RefreshDetailsCommand.ExecuteAsync();
-        model.SelectedContainer = model.Containers[0]; var reading = model.ReadLogsCommand.ExecuteAsync(); await arrived.Task;
-        model.SelectedContainer = model.Containers[1]; model.ViewContainerDetailsCommand.Execute(null);
-        await reading; blocked.SetResult(new("old container output", 0, false)); await WpfTestFixture.DrainDispatcherAsync();
-        Assert.True(model.IsContainerDetailsOpen); Assert.False(model.IsLogOpen); Assert.Empty(model.LogText);
-        Assert.Equal("hermod-api", model.SelectedContainer.Name);
     });
 
     private static async Task LayoutAsync(FrameworkElement surface, double width)

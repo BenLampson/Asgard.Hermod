@@ -6,17 +6,7 @@ namespace Asgard.Hermod.Ssh.UI.ViewModels;
 public sealed partial class SshMonitorViewModel
 {
     private readonly HashSet<string> _loadedSections = [];
-    private SshMonitorContainerItem? _logContainer;
     private DateTimeOffset? _detailsUpdated;
-
-    /// <summary>日志抽屉只能由用户显式打开。</summary>
-    public bool IsLogOpen { get; private set { if (SetProperty(ref field, value)) NotifyContainerPane(); } }
-    /// <summary>成功读取的终端日志保持原样，不作为界面文案翻译。</summary>
-    public string LogText { get; private set => SetProperty(ref field, value); } = "";
-    /// <summary>日志读取错误使用安全资源。</summary>
-    public string LogStatus { get; private set => SetProperty(ref field, value); } = "";
-    /// <summary>日志标题保留用户定义容器名称。</summary>
-    public string LogTitle => Text.Format("SshMonitorLogTitle", _logContainer?.Name ?? "");
 
     private async Task ReadSectionAsync(ISshWorkspaceConnection connection, long generation, CancellationToken token)
     {
@@ -49,7 +39,6 @@ public sealed partial class SshMonitorViewModel
                 Reconcile(Containers, containers, c => c.Id);
                 SelectedContainer = Containers.FirstOrDefault(c => c.Id == selected);
                 ValidateContainerSelection();
-                if (_logContainer is not null && !Containers.Any(c => c.Id == _logContainer.Id)) CloseLogs();
             }
             else
             {
@@ -95,34 +84,4 @@ public sealed partial class SshMonitorViewModel
         }
     }
 
-    private async Task ReadLogsAsync(SshMonitorContainerItem? item)
-    {
-        if (item is null || _connection is not { } connection || _sampling is null || !IsCurrentContainer(item)) return;
-        CloseContainerPane();
-        long generation = _generation;
-        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(_sampling.Token);
-        _logsCancellation = timeout; timeout.CancelAfter(TimeSpan.FromSeconds(10));
-        _logContainer = item; SelectedContainer = item; IsLogOpen = true;
-        LogText = ""; LogStatus = Text.Get("SshMonitorLogLoading"); OnPropertyChanged(nameof(LogTitle)); NotifyContainerPane();
-        bool acquired = false;
-        try
-        {
-            await _gate.WaitAsync(timeout.Token); acquired = true;
-            var result = await connection.ExecuteCommandAsync(SshMonitorDetailReader.ContainerLogCommand(item.Id), timeout.Token).WaitAsync(timeout.Token);
-            timeout.Token.ThrowIfCancellationRequested();
-            if (generation != _generation || !IsLogOpen) return;
-            if (result.ExitCode != 0) throw Text.Exception("SshMonitorLogFailed");
-            LogText = result.Output;
-            LogStatus = Text.Get(result.Truncated ? "SshMonitorLogTruncated" : result.Output.Length == 0 ? "SshMonitorLogEmpty" : "SshMonitorLogLoaded");
-        }
-        catch (OperationCanceledException) when (generation != _generation || !IsLogOpen) { }
-        catch (Exception error) { if (generation == _generation && IsLogOpen) LogStatus = Text.Error(error, "SshMonitorLogFailed"); }
-        finally { if (acquired) _gate.Release(); if (ReferenceEquals(_logsCancellation, timeout)) _logsCancellation = null; }
-    }
-
-    private void CloseLogs()
-    {
-        _logsCancellation?.Cancel(); IsLogOpen = false; _logContainer = null; LogText = ""; LogStatus = "";
-        OnPropertyChanged(nameof(LogTitle));
-    }
 }

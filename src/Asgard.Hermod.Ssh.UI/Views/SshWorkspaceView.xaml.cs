@@ -25,8 +25,11 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     /// <summary>读取当前协议模型；详情显隐直接绑定公共布局，不订阅后重画布局。</summary>
     private void OnModelChanged(object sender, DependencyPropertyChangedEventArgs args)
     {
+        if (_model is not null) _model.LogWindowRequested -= OnLogWindowRequested;
+        CloseLogWindows();
         if (_model is not null) { _model.Assistant.InsertRequested -= OnAgentInsert; _model.PropertyChanged -= OnWorkspacePropertyChanged; }
         _model = args.NewValue as SshWorkspaceViewModel;
+        if (_model is not null) _model.LogWindowRequested += OnLogWindowRequested;
         if (_model is not null) { _model.Assistant.InsertRequested += OnAgentInsert; _model.PropertyChanged += OnWorkspacePropertyChanged; }
         ConfigureTools();
         UpdateLayoutMode();
@@ -156,6 +159,8 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     public void Dispose()
     {
         if (_disposed) return; _disposed = true;
+        if (_model is not null) _model.LogWindowRequested -= OnLogWindowRequested;
+        CloseLogWindows();
         StopMonitorResizeTracking();
         if (_model is not null) { _model.Assistant.InsertRequested -= OnAgentInsert; _model.PropertyChanged -= OnWorkspacePropertyChanged; }
         SessionTools.Close(false);

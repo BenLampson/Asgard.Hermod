@@ -5,18 +5,18 @@ public sealed partial class SshMonitorViewModel
 {
     /// <summary>详情展示已采集的结构化字段，不额外读取环境变量或凭据。</summary>
     public RelayCommand ViewContainerDetailsCommand { get; }
-    /// <summary>日志与详情共享一个抽屉，操作栏始终保留。</summary>
+    /// <summary>详情抽屉只显示结构化字段；日志使用独立窗口。</summary>
     public bool IsContainerDetailsOpen { get; private set { if (SetProperty(ref field, value)) NotifyContainerPane(); } }
     /// <summary>宽屏并排、窄屏覆盖列表的统一显隐状态。</summary>
-    public bool IsContainerPaneOpen => IsLogOpen || IsContainerDetailsOpen;
+    public bool IsContainerPaneOpen => IsContainerDetailsOpen;
     /// <summary>没有选中项时显示明确提示。</summary>
     public string SelectedContainerName => SelectedContainer?.Name ?? Text.Get("SshMonitorSelectContainer");
     /// <summary>底部只显示短 ID，完整 ID 在详情中展示。</summary>
     public string SelectedContainerSummary => SelectedContainer is { } item ? Text.Format("SshMonitorSelectedContainer", item.Id[..Math.Min(12, item.Id.Length)]) : "";
     /// <summary>抽屉标题与实际内容保持一致。</summary>
-    public string ContainerPaneTitle => IsLogOpen ? LogTitle : Text.Format("SshMonitorContainerDetailsTitle", SelectedContainer?.Name ?? "");
+    public string ContainerPaneTitle => Text.Format("SshMonitorContainerDetailsTitle", SelectedContainer?.Name ?? "");
     /// <summary>关闭按钮的无障碍名称随内容变化。</summary>
-    public string ContainerPaneCloseLabel => Text.Get(IsLogOpen ? "SshMonitorCloseLogs" : "SshMonitorCloseDetails");
+    public string ContainerPaneCloseLabel => Text.Get("SshMonitorCloseDetails");
 
     private bool IsCurrentContainer(SshMonitorContainerItem? item) => IsDocker && item is not null &&
         ContainerAvailability == SshContainerAvailability.Available && Containers.Any(c => c.Id == item.Id) && ContainerView.Contains(item);
@@ -39,5 +39,5 @@ public sealed partial class SshMonitorViewModel
         OnPropertyChanged(nameof(IsContainerPaneOpen)); OnPropertyChanged(nameof(ContainerPaneTitle)); OnPropertyChanged(nameof(ContainerPaneCloseLabel));
     }
 
-    private void CloseContainerPane() { CloseLogs(); IsContainerDetailsOpen = false; }
+    private void CloseContainerPane() => IsContainerDetailsOpen = false;
 }

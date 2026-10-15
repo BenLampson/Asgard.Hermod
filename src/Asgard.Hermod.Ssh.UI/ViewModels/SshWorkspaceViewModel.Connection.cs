@@ -140,7 +140,7 @@ public sealed partial class SshWorkspaceViewModel
     protected override async ValueTask ReleaseAsync()
     {
         OnPropertyChanged(nameof(Session)); _clock.Stop(); _saveFeedbackTimer.Stop(); _lifetime.Cancel();
-        await StopWorkspaceOperationsAsync(); Files.Dispose(); Assistant.Dispose();
+        await StopWorkspaceOperationsAsync(); Files.Dispose(); Assistant.Dispose(); DisposeLogs();
         Connection.Finish();
         _connecting?.Cancel(); _ioCancellation?.Cancel();
         if (_connection is { } connection) await connection.DisposeAsync();

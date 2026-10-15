@@ -9,7 +9,7 @@ using Asgard.Hermod.UI.Views.Dialogs;
 
 namespace Asgard.Hermod.UI.Tests;
 
-/// <summary>在透明窗口中渲染实际五页，检查双语主题、绑定、数值网格与日志抽屉。</summary>
+/// <summary>在透明窗口中渲染实际五页，检查双语主题、绑定、数值网格与详情抽屉。</summary>
 [Collection(WpfTestCollection.Name)]
 public sealed class SshMonitorViewTests(WpfTestFixture fixture)
 {
@@ -64,16 +64,6 @@ public sealed class SshMonitorViewTests(WpfTestFixture fixture)
                 }
             }
             model.Monitor.Section = "docker"; await model.Monitor.RefreshDetailsCommand.ExecuteAsync();
-            await model.Monitor.ReadLogsCommand.ExecuteAsync(model.Monitor.Containers[0]);
-            await WindowPreviewCapture.VerifyAsync(window, $"ssh-monitor-logs-{language}-{theme}");
-            Assert.True(model.Monitor.IsLogOpen);
-            window.Width = 900; window.Height = 640;
-            await WindowPreviewCapture.VerifyAsync(window, $"ssh-monitor-compact-logs-{language}-{theme}");
-            var docker = Assert.Single(WindowTestVisuals.Descendants<SshMonitorDockerView>(view));
-            Assert.False(Assert.IsType<Grid>(docker.FindName("ContainerList")).IsVisible);
-            model.Monitor.CloseLogsCommand.Execute(null);
-            await WindowTestVisuals.UpdateLayoutAsync(window);
-            Assert.True(Assert.IsType<Grid>(docker.FindName("ContainerList")).IsVisible);
             Assert.True(Assert.IsType<TerminalControl>(view.FindName("TerminalView")).ActualHeight >= 80);
             model.Monitor.Search = "no-such-container";
             await WindowPreviewCapture.VerifyAsync(window, $"ssh-monitor-empty-{language}-{theme}");

@@ -74,22 +74,22 @@ public sealed class SshMonitorModelTests(WpfTestFixture fixture)
         Assert.Equal(expected, model.ContainerAvailability); Assert.True(model.ShowEmpty); Assert.Empty(model.Containers);
     });
 
-    /// <summary>日志仅接受列表中的容器，关闭保留所选行；失败不展示 stderr 原文。</summary>
+    /// <summary>日志入口只请求经过列表验证的目标，不在监测面板读取或占用抽屉。</summary>
     [Fact]
-    public Task ContainerLogsUseCanonicalIdAndHideFailures() => fixture.RunOffscreenAsync(async () =>
+    public Task ContainerLogRequestsOnlyTargetCurrentList() => fixture.RunOffscreenAsync(async () =>
     {
         var data = new SshMonitorTestData(); var connection = data.CreateConnection();
         await using var model = new SshMonitorViewModel(); await model.StartAsync(connection); model.IsPaused = true;
         model.Section = "docker"; await model.RefreshDetailsCommand.ExecuteAsync();
         var item = model.Containers[0];
-        await model.ReadLogsCommand.ExecuteAsync(item); Assert.True(model.IsLogOpen); Assert.Contains("GET /health 200", model.LogText);
-        Assert.EndsWith(item.Id, connection.Commands[^1]);
-        model.CloseLogsCommand.Execute(null); Assert.False(model.IsLogOpen); Assert.Same(item, model.SelectedContainer);
-        connection.Handler = (command, token) => command.StartsWith("docker logs ", StringComparison.Ordinal)
-            ? Task.FromResult(new SshCommandResult("secret credentials in stderr", 1, false)) : data.HandleAsync(command, token);
+        SshMonitorContainerItem? requested = null;
+        model.ContainerLogsRequested += (_, target) => requested = target;
+        int requests = connection.Commands.Count;
         await model.ReadLogsCommand.ExecuteAsync(item);
-        Assert.Empty(model.LogText); Assert.Equal(Text.Get("SshMonitorLogFailed"), model.LogStatus);
-        Assert.DoesNotContain("secret", model.LogStatus);
+        Assert.Same(item, requested); Assert.Equal(requests, connection.Commands.Count);
+        Assert.False(model.IsContainerPaneOpen);
+        model.Search = "no match"; requested = null;
+        await model.ReadLogsCommand.ExecuteAsync(item); Assert.Null(requested);
     });
 
     /// <summary>断线取消不合作的旧响应，重连后也不能填回上一台主机的进程。</summary>
@@ -108,6 +108,6 @@ public sealed class SshMonitorModelTests(WpfTestFixture fixture)
         model.Section = "processes"; var reading = model.RefreshDetailsCommand.ExecuteAsync(); await arrived.Task;
         await model.StopAsync(); await reading; await model.StartAsync(data.CreateConnection()); model.IsPaused = true;
         blocked.SetResult(new(SshMonitorTestData.Processes, 0, false)); await WpfTestFixture.DrainDispatcherAsync();
-        Assert.Empty(model.Processes); Assert.False(model.IsLogOpen);
+        Assert.Empty(model.Processes); Assert.False(model.IsContainerPaneOpen);
     });
 }

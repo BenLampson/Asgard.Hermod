@@ -8,7 +8,6 @@ namespace Asgard.Hermod.Ssh.UI.ViewModels;
 public sealed partial class SshMonitorViewModel : ObservableObject, IAsyncDisposable
 {
     private CancellationTokenSource? _sampling;
-    private CancellationTokenSource? _logsCancellation;
     private Task? _task;
     private readonly SemaphoreSlim _gate = new(1, 1);
     private ISshWorkspaceConnection? _connection;
@@ -30,9 +29,14 @@ public sealed partial class SshMonitorViewModel : ObservableObject, IAsyncDispos
         MountView.Filter = value => value is SshMonitorMountItem m && Matches(m.Path, m.Device);
         RefreshDetailsCommand = new AsyncRelayCommand(_ => RefreshAsync(true), _ => _connection is not null);
         TogglePauseCommand = new RelayCommand(_ => IsPaused = !IsPaused);
-        ReadLogsCommand = new AsyncRelayCommand(value => ReadLogsAsync(value as SshMonitorContainerItem ?? SelectedContainer), value => _connection is not null && IsCurrentContainer(value as SshMonitorContainerItem ?? SelectedContainer));
-        ViewContainerDetailsCommand = new RelayCommand(_ => { CloseLogs(); IsContainerDetailsOpen = true; }, _ => IsCurrentContainer(SelectedContainer));
-        CloseLogsCommand = new RelayCommand(_ => CloseContainerPane());
+        ReadLogsCommand = new AsyncRelayCommand(value =>
+        {
+            var item = value as SshMonitorContainerItem ?? SelectedContainer;
+            if (_connection is not null && IsCurrentContainer(item)) ContainerLogsRequested?.Invoke(this, item!);
+            return Task.CompletedTask;
+        }, value => _connection is not null && IsCurrentContainer(value as SshMonitorContainerItem ?? SelectedContainer));
+        ViewContainerDetailsCommand = new RelayCommand(_ => IsContainerDetailsOpen = true, _ => IsCurrentContainer(SelectedContainer));
+        CloseContainerDetailsCommand = new RelayCommand(_ => CloseContainerPane());
         ClearSearchCommand = new RelayCommand(_ => { Search = ""; ContainerState = ""; });
     }
 
@@ -60,10 +64,12 @@ public sealed partial class SshMonitorViewModel : ObservableObject, IAsyncDispos
     public AsyncRelayCommand RefreshDetailsCommand { get; }
     /// <summary>暂停不影响连接与终端。</summary>
     public RelayCommand TogglePauseCommand { get; }
-    /// <summary>读取容器最近一百行日志。</summary>
+    /// <summary>显式请求独立日志窗口；监测模型不再承载日志文本。</summary>
     public AsyncRelayCommand ReadLogsCommand { get; }
-    /// <summary>收起日志保留筛选和所选行。</summary>
-    public RelayCommand CloseLogsCommand { get; }
+    /// <summary>只传递经过列表校验的容器，窗口由工作区宿主打开。</summary>
+    public event EventHandler<SshMonitorContainerItem>? ContainerLogsRequested;
+    /// <summary>收起容器详情并保留筛选和所选行。</summary>
+    public RelayCommand CloseContainerDetailsCommand { get; }
     /// <summary>清空本地搜索。</summary>
     public RelayCommand ClearSearchCommand { get; }
     /// <summary>安全采样错误。</summary>
@@ -98,7 +104,6 @@ public sealed partial class SshMonitorViewModel : ObservableObject, IAsyncDispos
         get; set
         {
             if (!SetProperty(ref field, value)) return;
-            if (_logContainer is not null && _logContainer.Id != value?.Id) CloseLogs();
             if (value is null) IsContainerDetailsOpen = false;
             NotifyContainerSelection();
         }

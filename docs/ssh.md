@@ -135,9 +135,13 @@ Processes use structured PID, name, user, state, CPU, memory percentage and resi
 bytes. CPU is the `ps` lifetime average normalized by logical processor count,
 which is explained in the view. Process arguments are never requested. Docker
 includes stopped containers and separates runtime state from health checks.
-Container logs use only a validated full hexadecimal ID from the current list,
-read the latest 100 lines, and show truncation independently. Closing the log pane
-preserves selection and filters. Logs remain untranslated process output; failed
+Container logs open in an independent, resizable nonmodal window with its own
+taskbar entry. Requests use only a validated full hexadecimal ID from the current
+list. The reader defaults to the latest 500 timestamped lines and offers bounded
+100/500/1000-line ranges. Explicit refresh replaces the snapshot and reports
+output truncation independently. Search (Ctrl+F, F3/Shift+F3), wrapping, selection,
+copying and user-initiated export are local operations. Closing the window
+preserves monitor selection and filters. Logs remain untranslated process output; failed
 reads never expose raw stderr. Missing Docker, insufficient access, empty results
 and search misses have separate localized states.
 
@@ -154,8 +158,25 @@ action bar; View logs and View details operate on that selection. The bar stays
 available when a narrow window replaces the list with the drawer. Details show
 the collected name, full container ID, image, state, health and port mappings
 without an additional remote request. Filtering out the selection or removing a
-container clears its actions; selecting another container closes the old log
-drawer so its output cannot be mistaken for the new selection.
+container clears its actions. Each open log window retains its original container
+identity regardless of selection or monitoring section changes. Opening the same
+container again recalls its current window. Disconnect cancels outstanding reads
+and retains the last successful snapshot; after reconnecting, opening logs creates
+a document tied to the new connection. Closing the SSH workspace closes its log
+windows and cancels their requests.
+
+Each log window has a collapsible, resizable AI analysis pane with an independent
+conversation, using the configured model service. Nothing is sent until the user
+requests analysis. The user can attach the current snapshot or only selected text;
+an empty selected-text scope cannot silently become the entire log. Each request
+freezes its source, timestamp and evidence, so refresh cannot rewrite an ongoing
+analysis. The visible context label reports the actual size and incomplete input.
+At most the trailing 32,000 characters are sent per request. Previous raw logs
+are not retained in conversation history. Log analysis has no execution tools;
+model output cannot run commands. Responses use the shared selectable Markdown
+renderer. Safe configuration errors, cancellation, timeouts and read failures
+remain inside the log window. Existing server troubleshooting keeps its separate
+command confirmation flow.
 
 Port forwarding listens only on `127.0.0.1` and reuses the same verified SSH
 client. Each forward has an explicit stop action. Disconnect, reconnect and
