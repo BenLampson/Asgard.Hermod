@@ -24,7 +24,9 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     /// <summary>读取当前协议模型；详情显隐直接绑定公共布局，不订阅后重画布局。</summary>
     private void OnModelChanged(object sender, DependencyPropertyChangedEventArgs args)
     {
+        if (_model is not null) _model.Assistant.InsertRequested -= OnAgentInsert;
         _model = args.NewValue as SshWorkspaceViewModel;
+        if (_model is not null) _model.Assistant.InsertRequested += OnAgentInsert;
         ConfigureTools();
         UpdateLayoutMode();
     }
@@ -52,7 +54,7 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     {
         Dispatcher.BeginInvoke(DispatcherPriority.Input, new Action(() =>
         {
-            if (!_disposed && IsVisible && TerminalView.Session is not null)
+            if (!_disposed && IsVisible && _model?.IsTerminalSection == true && !_model.IsAgentOpen && TerminalView.Session is not null)
                 TerminalView.Focus();
         }));
     }
@@ -64,6 +66,7 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     private void UpdateLayoutMode()
     {
         if (WorkspaceLayout is null) return;
+        if (MonitorDetails is not null) MonitorDetails.Height = Math.Clamp(ActualHeight * 0.32, 150, 240);
         bool wide = ActualWidth >= 1000;
         CopyAction.Visibility = PasteAction.Visibility = wide ? Visibility.Visible : Visibility.Collapsed;
         SearchAction.Visibility = DetailsAction.Visibility = ActualWidth >= 600 ? Visibility.Visible : Visibility.Collapsed;
@@ -83,7 +86,7 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     /// <summary>复制仅操作当前选区，不改变远端状态。</summary>
     private void OnCopyClick(object sender, RoutedEventArgs args) { TerminalView.CopySelection(); TerminalView.Focus(); }
     /// <summary>所有粘贴入口经过终端的共用确认事件。</summary>
-    private void OnPasteClick(object sender, RoutedEventArgs args) { TerminalView.Paste(); TerminalView.Focus(); }
+    private void OnPasteClick(object sender, RoutedEventArgs args) { _model?.ActiveSection = "terminal"; TerminalView.Paste(); TerminalView.Focus(); }
     /// <summary>多行粘贴先显示原始文本；取消不发送任何内容。</summary>
     private void OnPreviewPaste(object? sender, TerminalPasteEventArgs args)
     {
@@ -103,7 +106,7 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     /// <summary>打开搜索不会向服务器发送任何命令。</summary>
     private void OnSearchClick(object sender, RoutedEventArgs args) => OpenSearch();
     /// <summary>给搜索框明确焦点，键盘输入不落入远端 shell。</summary>
-    private void OpenSearch() { SessionTools.Close(false); SearchOverlay.Visibility = Visibility.Visible; SearchInput.Focus(); SearchInput.SelectAll(); }
+    private void OpenSearch() { _model?.ActiveSection = "terminal"; SessionTools.Close(false); SearchOverlay.Visibility = Visibility.Visible; SearchInput.Focus(); SearchInput.SelectAll(); }
     /// <summary>关闭搜索后恢复终端焦点。</summary>
     private void OnCloseSearch(object sender, RoutedEventArgs args) => CloseSearch();
     /// <summary>清除搜索选区，但不清空终端输出。</summary>
@@ -151,6 +154,7 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     public void Dispose()
     {
         if (_disposed) return; _disposed = true;
+        if (_model is not null) _model.Assistant.InsertRequested -= OnAgentInsert;
         SessionTools.Close(false);
         if (SessionTools.ContextMenu is { } toolsMenu) { toolsMenu.IsOpen = false; toolsMenu.Items.Clear(); }
         if (MoreAction.ContextMenu is { } menu) { menu.IsOpen = false; menu.Items.Clear(); }

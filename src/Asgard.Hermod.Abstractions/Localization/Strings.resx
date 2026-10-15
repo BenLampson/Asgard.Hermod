@@ -3891,4 +3891,86 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="PostgreSqlRemoveFilter" xml:space="preserve">
     <value>Remove filter</value>
   </data>
+  <data name="WorkspacePaneResize" xml:space="preserve"><value>Resize the side pane</value></data>
+  <data name="SshWorkspaceUnavailable" xml:space="preserve"><value>This SSH connection is unavailable. Reconnect and try again.</value></data>
+  <data name="SshWorkspaceSections" xml:space="preserve"><value>SSH workspace sections</value></data>
+  <data name="SshTerminalPage" xml:space="preserve"><value>Terminal</value></data>
+  <data name="SshFilesTitle" xml:space="preserve"><value>Files</value></data>
+  <data name="SshFilesUpload" xml:space="preserve"><value>Upload</value></data>
+  <data name="SshFilesDownload" xml:space="preserve"><value>Download</value></data>
+  <data name="SshFilesNewFolder" xml:space="preserve"><value>New folder</value></data>
+  <data name="SshFilesRename" xml:space="preserve"><value>Rename</value></data>
+  <data name="SshFilesDelete" xml:space="preserve"><value>Delete</value></data>
+  <data name="SshFilesDeleteHint" xml:space="preserve"><value>Delete the selected remote file or empty folder? This cannot be undone.</value></data>
+  <data name="SshFilesUp" xml:space="preserve"><value>Up</value></data>
+  <data name="SshFilesRefresh" xml:space="preserve"><value>Refresh</value></data>
+  <data name="SshFilesPath" xml:space="preserve"><value>Remote directory path</value></data>
+  <data name="SshFilesFilter" xml:space="preserve"><value>Filter files in this directory</value></data>
+  <data name="SshFilesName" xml:space="preserve"><value>Name</value></data>
+  <data name="SshFilesDirectory" xml:space="preserve"><value>Folder</value></data>
+  <data name="SshFilesSize" xml:space="preserve"><value>Size (bytes)</value></data>
+  <data name="SshFilesPermissions" xml:space="preserve"><value>Permissions</value></data>
+  <data name="SshFilesModified" xml:space="preserve"><value>Modified</value></data>
+  <data name="SshFilesTransfers" xml:space="preserve"><value>Transfer tasks</value></data>
+  <data name="SshFilesFailed" xml:space="preserve"><value>The file operation failed. Check permissions, the path and whether the target already exists.</value></data>
+  <data name="SshFilesTooMany" xml:space="preserve"><value>This directory contains too many entries. Open a smaller directory.</value></data>
+  <data name="SshFileNameInvalid" xml:space="preserve"><value>Enter a single valid file or folder name without path separators or control characters.</value></data>
+  <data name="SshTransferBytes" xml:space="preserve"><value>{0:N0} bytes transferred</value></data>
+  <data name="SshTransferRunning" xml:space="preserve"><value>Transferring</value></data>
+  <data name="SshTransferCompleted" xml:space="preserve"><value>Completed</value></data>
+  <data name="SshTransferCanceled" xml:space="preserve"><value>Canceled</value></data>
+  <data name="SshTransferFailed" xml:space="preserve"><value>Failed</value></data>
+  <data name="SshMonitorTitle" xml:space="preserve"><value>Server monitoring</value></data>
+  <data name="SshMonitorSampling" xml:space="preserve"><value>Sampling…</value></data>
+  <data name="SshMonitorUnavailable" xml:space="preserve"><value>Monitoring is unavailable. Linux /proc and read permissions are required.</value></data>
+  <data name="SshMonitorSummary" xml:space="preserve"><value>CPU {0}    Memory {1}    Disk {2}    Network {3}</value></data>
+  <data name="SshMonitorPercent" xml:space="preserve"><value>{0:N1}%</value></data>
+  <data name="SshMonitorCapacity" xml:space="preserve"><value>{0:N1} / {1:N1} GB</value></data>
+  <data name="SshMonitorNetworkRate" xml:space="preserve"><value>↑ {0:N1} KB/s   ↓ {1:N1} KB/s</value></data>
+  <data name="SshMonitorCpuValue" xml:space="preserve"><value>CPU  {0}</value></data>
+  <data name="SshMonitorMemoryValue" xml:space="preserve"><value>Memory  {0}</value></data>
+  <data name="SshMonitorDiskValue" xml:space="preserve"><value>Root disk  {0}</value></data>
+  <data name="SshMonitorProcesses" xml:space="preserve"><value>Processes</value></data>
+  <data name="SshMonitorDocker" xml:space="preserve"><value>Docker</value></data>
+  <data name="SshMonitorNetwork" xml:space="preserve"><value>Network</value></data>
+  <data name="SshMonitorDisks" xml:space="preserve"><value>Disks</value></data>
+  <data name="SshAgentTitle" xml:space="preserve"><value>Agent</value></data>
+  <data name="SshAgentYou" xml:space="preserve"><value>You</value></data>
+  <data name="SshAgentHide" xml:space="preserve"><value>Hide Agent and keep the conversation and draft</value></data>
+  <data name="SshAgentToggle" xml:space="preserve"><value>Show or hide the Agent split pane</value></data>
+  <data name="SshAgentNewConversation" xml:space="preserve"><value>New conversation</value></data>
+  <data name="SshAgentAttachSelection" xml:space="preserve"><value>Attach terminal selection</value></data>
+  <data name="SshAgentIncludeSelection" xml:space="preserve"><value>Include the attached selection in this request</value></data>
+  <data name="SshAgentContext" xml:space="preserve"><value>Host: {0} · Attached output: {1:N0} characters</value></data>
+  <data name="SshAgentSuggestion" xml:space="preserve"><value>Suggested shell command</value></data>
+  <data name="SshAgentInsert" xml:space="preserve"><value>Insert into terminal</value></data>
+  <data name="SshAgentExecute" xml:space="preserve"><value>Run command</value></data>
+  <data name="SshAgentExecuteTitle" xml:space="preserve"><value>Confirm remote command</value></data>
+  <data name="SshAgentExecuteHint" xml:space="preserve"><value>Run the following command on {0}? Review the entire command and its effects before continuing.</value></data>
+  <data name="SshAgentCommandResult" xml:space="preserve"><value>Exit code: {0}
+{1}</value></data>
+  <data name="SshAgentCommandFailed" xml:space="preserve"><value>The command could not be completed. Check the connection and server permissions.</value></data>
+  <data name="SshOutputTruncated" xml:space="preserve"><value>Output reached the display limit and was truncated.</value></data>
+  <data name="SshAgentCanceled" xml:space="preserve"><value>The request was canceled. The conversation and draft are preserved.</value></data>
+  <data name="SshAgentThinking" xml:space="preserve"><value>Working…</value></data>
+  <data name="SshAgentPrompt" xml:space="preserve"><value>Ask about this server or describe a task</value></data>
+  <data name="SshAgentSend" xml:space="preserve"><value>Send</value></data>
+  <data name="SshAgentStop" xml:space="preserve"><value>Stop</value></data>
+  <data name="SshAgentSendHint" xml:space="preserve"><value>Enter to send · Shift+Enter for a new line</value></data>
+  <data name="SshForwardTitle" xml:space="preserve"><value>Port forwarding</value></data>
+  <data name="SshForwardHint" xml:space="preserve"><value>Forward a local loopback port through this SSH connection. Closing or disconnecting the workspace stops its forwards.</value></data>
+  <data name="SshForwardLocalPort" xml:space="preserve"><value>Local port</value></data>
+  <data name="SshForwardHost" xml:space="preserve"><value>Remote host</value></data>
+  <data name="SshForwardRemotePort" xml:space="preserve"><value>Remote port</value></data>
+  <data name="SshForwardStart" xml:space="preserve"><value>Start forwarding</value></data>
+  <data name="SshForwardInvalid" xml:space="preserve"><value>Enter a valid host and ports between 1 and 65535.</value></data>
+  <data name="SshForwardFailed" xml:space="preserve"><value>The port forward could not start. Check the port availability and server forwarding policy.</value></data>
+  <data name="SshForwardEndpoints" xml:space="preserve"><value>127.0.0.1:{0} → {1}:{2}</value></data>
+  <data name="SshActionConfirm" xml:space="preserve"><value>Confirm</value></data>
+  <data name="SshMonitorOverview" xml:space="preserve"><value>Overview</value></data>
+  <data name="SshMonitorCpu" xml:space="preserve"><value>CPU</value></data>
+  <data name="SshMonitorMemory" xml:space="preserve"><value>Memory</value></data>
+  <data name="SshMonitorRecent" xml:space="preserve"><value>Last 2 minutes</value></data>
+  <data name="SshMonitorRefreshHint" xml:space="preserve"><value>Read-only sampling every 5 seconds.</value></data>
+  <data name="SshMonitorNoData" xml:space="preserve"><value>Unavailable</value></data>
 </root>

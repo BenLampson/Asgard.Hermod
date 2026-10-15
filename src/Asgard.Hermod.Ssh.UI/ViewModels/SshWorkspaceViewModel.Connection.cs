@@ -35,6 +35,8 @@ public sealed partial class SshWorkspaceViewModel
             _clock.Start(); Refresh();
             Connection.Finish();
             _runTask = ObserveAsync(opened, _terminal, _input, _ioCancellation);
+            Assistant.ConnectionChanged();
+            await Monitor.StartAsync(opened as ISshWorkspaceConnection);
         }
         catch (OperationCanceledException) when (_connecting.IsCancellationRequested || IsClosed)
         {
@@ -93,17 +95,18 @@ public sealed partial class SshWorkspaceViewModel
             catch (Exception error) when (cancellation.IsCancellationRequested) { if (error is not OperationCanceledException and not ObjectDisposedException) failure ??= error; }
         }
         if (!_dispatcher.HasShutdownStarted)
-            await _dispatcher.InvokeAsync(() =>
+            await _dispatcher.InvokeAsync(async () =>
             {
                 if (IsClosed || !ReferenceEquals(_connection, connection)) return;
                 _connection = null; _clock.Stop();
+                await StopWorkspaceOperationsAsync();
                 if (_inputOverflow) { Error = Text.Get("SshInputOverflow"); ErrorCode = "SSH_INPUT_OVERFLOW"; }
                 else if (failure is not null) { var safe = SshConnectionFactory.SafeError(failure); Error = Text.Error(safe); ErrorCode = safe.Code; }
                 _phase = failure is null && !_inputOverflow ? SshWorkspacePhase.Disconnected : SshWorkspacePhase.Failed;
                 if (_disconnectRequested) Connection.Finish();
                 else Connection.Disconnected(EndedMessage);
                 Refresh();
-            });
+            }).Task.Unwrap();
 
         async Task ReadAsync()
         {
@@ -127,6 +130,7 @@ public sealed partial class SshWorkspaceViewModel
     private async Task DisconnectAsync()
     {
         _disconnectRequested = true;
+        await StopWorkspaceOperationsAsync();
         _ioCancellation?.Cancel();
         if (_connection is { } connection) await connection.DisposeAsync();
         if (_runTask is not null) await _runTask;
@@ -136,6 +140,7 @@ public sealed partial class SshWorkspaceViewModel
     protected override async ValueTask ReleaseAsync()
     {
         OnPropertyChanged(nameof(Session)); _clock.Stop(); _saveFeedbackTimer.Stop(); _lifetime.Cancel();
+        await StopWorkspaceOperationsAsync(); Files.Dispose(); Assistant.Dispose();
         Connection.Finish();
         _connecting?.Cancel(); _ioCancellation?.Cancel();
         if (_connection is { } connection) await connection.DisposeAsync();

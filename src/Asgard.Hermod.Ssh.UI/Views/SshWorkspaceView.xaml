@@ -1,7 +1,8 @@
-<UserControl x:Class="Asgard.Hermod.Ssh.UI.Views.SshWorkspaceView"
+<UserControl x:Class="Asgard.Hermod.Ssh.UI.Views.SshWorkspaceView" x:Name="SshWorkspaceRoot"
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
  xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI"
  xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI"
+ xmlns:views="clr-namespace:Asgard.Hermod.Ssh.UI.Views"
  xmlns:terminal="clr-namespace:Asgard.Hermod.WinTerminal;assembly=Asgard.Hermod.WinTerminal"
  Background="{DynamicResource SurfaceBrush}" SizeChanged="OnViewportSizeChanged">
  <UserControl.Resources><BooleanToVisibilityConverter x:Key="Visible" /></UserControl.Resources>
@@ -14,24 +15,20 @@
    </Grid></controls:WorkspaceHeader.IdentityContent>
    <controls:WorkspaceHeader.StatusContent><StackPanel Orientation="Horizontal"><controls:StatusBadge Style="{DynamicResource WorkspaceHeaderSecondaryStatus}" Text="{Binding Instance.EnvironmentLabel}" Tone="{Binding Instance.EnvironmentTone}" ShowIndicator="False" Margin="0,0,10,0" /><controls:StatusBadge x:Name="ConnectionBadge" Text="{Binding Status}" Tone="{Binding Tone}" ShowIndicator="False" /></StackPanel></controls:WorkspaceHeader.StatusContent>
    <controls:WorkspaceHeader.ActionsContent><StackPanel x:Name="ToolbarActions" Orientation="Horizontal" VerticalAlignment="Center" SizeChanged="OnToolbarActionsSizeChanged">
-     <Button x:Name="SearchAction" Click="OnSearchClick" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshSearchOutput}" AutomationProperties.Name="{loc:Loc SshSearchOutput}"><controls:IconView Kind="search" Width="15" Height="15" /></Button>
-     <Button x:Name="CopyAction" Focusable="False" Click="OnCopyClick" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshCopySelection}" AutomationProperties.Name="{loc:Loc SshCopySelection}"><controls:IconView Kind="copy" Width="15" Height="15" /></Button>
-     <Button x:Name="PasteAction" Click="OnPasteClick" IsEnabled="{Binding IsConnected}" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshPaste}" AutomationProperties.Name="{loc:Loc SshPaste}"><controls:IconView Kind="clipboard" Width="15" Height="15" /></Button>
-     <Button x:Name="EditAction" Command="{Binding EditConnectionCommand}" Style="{StaticResource StandardButton}" ToolTip="{loc:Loc SshEditConfiguration}" AutomationProperties.Name="{loc:Loc SshEditConfiguration}" Margin="6,0,0,0" Padding="8,0">
-      <StackPanel Orientation="Horizontal"><controls:IconView Kind="settings-2" Width="15" Height="15" /><TextBlock Text="{loc:Loc SshEditConfiguration}" Margin="7,0,0,0" /></StackPanel>
-     </Button>
-     <controls:WorkspaceTools x:Name="SessionTools" VerticalAlignment="Center" Margin="6,0,0,0" />
-     <Button x:Name="DetailsAction" Command="{Binding ToggleDetailsCommand}" Style="{StaticResource StandardButton}" ToolTip="{loc:Loc SshConnectionDetails}" AutomationProperties.Name="{loc:Loc SshConnectionDetails}" Margin="6,0,0,0" Padding="8,0">
-      <StackPanel Orientation="Horizontal"><controls:IconView Kind="panel-right" Width="15" Height="15" /><TextBlock x:Name="DetailsActionLabel" Text="{loc:Loc SshConnectionDetails}" Margin="7,0,0,0" /></StackPanel>
-     </Button>
-     <Button x:Name="MoreAction" Click="OnMoreClick" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshMore}" AutomationProperties.Name="{loc:Loc SshMore}"><controls:IconView Kind="ellipsis" Width="15" Height="15" /></Button>
-    </StackPanel></controls:WorkspaceHeader.ActionsContent>
+    <Button x:Name="EditAction" Command="{Binding EditConnectionCommand}" Style="{StaticResource StandardButton}" ToolTip="{loc:Loc SshEditConfiguration}" AutomationProperties.Name="{loc:Loc SshEditConfiguration}" Margin="0,0,8,0"><StackPanel Orientation="Horizontal"><controls:IconView Kind="settings-2" Width="15" Height="15" /><TextBlock Text="{loc:Loc SshEditConfiguration}" Margin="7,0,0,0" /></StackPanel></Button>
+    <controls:WorkspaceTools x:Name="SessionTools" Margin="0,0,8,0" />
+    <Button x:Name="AgentAction" Command="{Binding ToggleAgentCommand}" ToolTip="{loc:Loc SshAgentToggle}" AutomationProperties.Name="{loc:Loc SshAgentToggle}"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource StandardButton}"><Style.Triggers><DataTrigger Binding="{Binding IsAgentOpen}" Value="True"><Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" /><Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" /><Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" /></DataTrigger></Style.Triggers></Style></Button.Style><StackPanel Orientation="Horizontal"><controls:IconView Kind="sparkles" Width="15" Height="15" /><TextBlock Text="{loc:Loc SshAgentTitle}" Margin="7,0,0,0" /></StackPanel></Button>
+   </StackPanel></controls:WorkspaceHeader.ActionsContent>
   </controls:WorkspaceHeader></controls:WorkspacePageLayout.Toolbar>
   <controls:WorkspacePageLayout.Notification>
    <StackPanel>
    <Border Visibility="{Binding HasSaveFeedback, Converter={StaticResource Visible}}" Background="{DynamicResource SuccessWeakBrush}" Padding="18,8">
     <TextBlock Text="{loc:Loc SshConfigurationSaved}" Foreground="{DynamicResource SuccessBrush}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
    </Border>
+   <Border Background="{DynamicResource AppBackgroundBrush}" MinHeight="44" Padding="16,4" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,0,0,1"><DockPanel>
+    <Button DockPanel.Dock="Right" Command="{Binding ToggleMonitorCommand}" Content="{loc:Loc SshMonitorTitle}" Margin="12,0,0,0" />
+    <TextBlock Text="{Binding Monitor.Summary}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" ToolTip="{Binding Monitor.Summary}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
+   </DockPanel></Border>
    </StackPanel>
   </controls:WorkspacePageLayout.Notification>
   <controls:WorkspacePageLayout.Details>
@@ -69,7 +66,25 @@
     <TextBlock DockPanel.Dock="Right" Text="{loc:Loc SshEncoding}" VerticalAlignment="Center" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" Margin="14,0,0,0" />
    </DockPanel>
   </controls:WorkspacePageLayout.StatusContent>
-    <Grid x:Name="TerminalSurface" Background="{DynamicResource TerminalSurfaceBrush}" SizeChanged="OnTerminalSizeChanged">
+  <controls:WorkspaceSplitView x:Name="AgentSplit" IsPaneOpen="{Binding IsAgentOpen}">
+   <controls:WorkspaceSplitView.PaneContent><views:SshAssistantView x:Name="AssistantPanel" DataContext="{Binding DataContext.Assistant, ElementName=SshWorkspaceRoot}" CloseRequested="OnCloseAgent" AttachSelectionRequested="OnAttachAgentSelection" /></controls:WorkspaceSplitView.PaneContent>
+   <controls:WorkspaceSplitView.MainContent>
+    <Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+     <Border MinHeight="44" Padding="12,4" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,0,0,1"><DockPanel>
+      <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+       <Button Command="{Binding NewSessionCommand}" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshNewSession}" AutomationProperties.Name="{loc:Loc SshNewSession}"><controls:IconView Kind="plus" Width="15" Height="15" /></Button>
+       <Button x:Name="SearchAction" Click="OnSearchClick" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshSearchOutput}" AutomationProperties.Name="{loc:Loc SshSearchOutput}"><controls:IconView Kind="search" Width="15" Height="15" /></Button>
+       <Button x:Name="CopyAction" Focusable="False" Click="OnCopyClick" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshCopySelection}" AutomationProperties.Name="{loc:Loc SshCopySelection}"><controls:IconView Kind="copy" Width="15" Height="15" /></Button>
+       <Button x:Name="PasteAction" Click="OnPasteClick" IsEnabled="{Binding IsConnected}" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshPaste}" AutomationProperties.Name="{loc:Loc SshPaste}"><controls:IconView Kind="clipboard" Width="15" Height="15" /></Button>
+       <Button x:Name="DetailsAction" Command="{Binding ToggleDetailsCommand}" Style="{StaticResource StandardButton}" ToolTip="{loc:Loc SshConnectionDetails}" AutomationProperties.Name="{loc:Loc SshConnectionDetails}"><StackPanel Orientation="Horizontal"><controls:IconView Kind="panel-right" Width="15" Height="15" /><TextBlock x:Name="DetailsActionLabel" Text="{loc:Loc SshConnectionDetails}" Margin="7,0,0,0" /></StackPanel></Button>
+       <Button x:Name="MoreAction" Click="OnMoreClick" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshMore}" AutomationProperties.Name="{loc:Loc SshMore}"><controls:IconView Kind="ellipsis" Width="15" Height="15" /></Button>
+      </StackPanel>
+      <controls:SectionSelector x:Name="WorkspaceSections" SelectedValue="{Binding ActiveSection, Mode=TwoWay}" SelectedValuePath="Tag" SelectionChanged="OnSectionChanged" AutomationProperties.Name="{loc:Loc SshWorkspaceSections}">
+       <ListBoxItem Tag="terminal" Content="{loc:Loc SshTerminalPage}" /><ListBoxItem Tag="files" Content="{loc:Loc SshFilesTitle}" /><ListBoxItem Tag="forward" Content="{loc:Loc SshForwardTitle}" />
+      </controls:SectionSelector>
+     </DockPanel></Border>
+     <Grid Grid.Row="1">
+<Grid x:Name="TerminalSurface" Visibility="{Binding IsTerminalSection, Converter={StaticResource Visible}}" Background="{DynamicResource TerminalSurfaceBrush}" SizeChanged="OnTerminalSizeChanged">
      <Border BorderThickness="1" IsHitTestVisible="False"><Border.Style><Style TargetType="Border"><Setter Property="BorderBrush" Value="Transparent" /><Style.Triggers><DataTrigger Binding="{Binding IsKeyboardFocusWithin, ElementName=TerminalView}" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" /></DataTrigger></Style.Triggers></Style></Border.Style></Border>
      <terminal:TerminalControl x:Name="TerminalView" Session="{Binding Session}" IsReadOnly="{Binding IsReadOnly}" Margin="20,18"
       FontFamily="{DynamicResource MonoFont}" FontSize="14" Background="{DynamicResource TerminalSurfaceBrush}" Foreground="{DynamicResource TerminalTextBrush}"
@@ -84,5 +99,17 @@
       </DockPanel>
      </Border>
     </Grid>
+      <Border Visibility="{Binding IsFilesSection, Converter={StaticResource Visible}}"><views:SshFilesView DataContext="{Binding Files}" /></Border>
+      <ScrollViewer Visibility="{Binding IsForwardSection, Converter={StaticResource Visible}}" VerticalScrollBarVisibility="Auto"><StackPanel Margin="24">
+       <TextBlock Text="{loc:Loc SshForwardTitle}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,8" /><TextBlock Text="{loc:Loc SshForwardHint}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,20" />
+       <WrapPanel><controls:FormField Label="{loc:Loc SshForwardLocalPort}" Width="130" Margin="0,0,12,12"><TextBox Text="{Binding LocalForwardPort, UpdateSourceTrigger=PropertyChanged}" /></controls:FormField><controls:FormField Label="{loc:Loc SshForwardHost}" Width="220" Margin="0,0,12,12"><TextBox Text="{Binding ForwardHost, UpdateSourceTrigger=PropertyChanged}" /></controls:FormField><controls:FormField Label="{loc:Loc SshForwardRemotePort}" Width="130" Margin="0,0,12,12"><TextBox Text="{Binding RemoteForwardPort, UpdateSourceTrigger=PropertyChanged}" /></controls:FormField></WrapPanel>
+       <Button Content="{loc:Loc SshForwardStart}" Command="{Binding AddForwardCommand}" HorizontalAlignment="Left" Style="{StaticResource PrimaryButton}" /><TextBlock Text="{Binding ForwardError}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" Margin="0,12" />
+       <ItemsControl ItemsSource="{Binding Forwards}"><ItemsControl.ItemTemplate><DataTemplate><DockPanel Margin="0,8"><Button DockPanel.Dock="Right" Content="{loc:Loc SshAgentStop}" Command="{Binding DataContext.StopForwardCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" /><TextBlock Text="{Binding Label}" VerticalAlignment="Center" /></DockPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+      </StackPanel></ScrollViewer>
+     </Grid>
+     <Border x:Name="MonitorDetails" Grid.Row="2" Visibility="{Binding IsMonitorOpen, Converter={StaticResource Visible}}" Height="240"><views:SshMonitorView DataContext="{Binding Monitor}" CloseRequested="OnCloseMonitor" /></Border>
+    </Grid>
+   </controls:WorkspaceSplitView.MainContent>
+  </controls:WorkspaceSplitView>
  </controls:WorkspacePageLayout>
 </UserControl>

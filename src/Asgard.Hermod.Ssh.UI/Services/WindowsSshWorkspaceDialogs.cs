@@ -6,6 +6,26 @@ namespace Asgard.Hermod.Ssh.UI.Services;
 public sealed class WindowsSshWorkspaceDialogs(Func<Window?> owner) : ISshWorkspaceDialogs
 {
     /// <inheritdoc />
+    public Task<bool> ConfirmActionAsync(string title, string detail, string preview) => Task.FromResult(new ConfirmationDialog(title, detail, Text.Get("SshActionConfirm"), preview: preview) { Owner = owner() }.ShowDialog() == true);
+    /// <inheritdoc />
+    public string? ChooseUpload()
+    {
+        var dialog = new Microsoft.Win32.OpenFileDialog { Multiselect = false };
+        return dialog.ShowDialog(owner()) == true ? dialog.FileName : null;
+    }
+    /// <inheritdoc />
+    public string? ChooseDownload(string name)
+    {
+        var dialog = new Microsoft.Win32.SaveFileDialog { FileName = System.IO.Path.GetFileName(name), OverwritePrompt = true };
+        return dialog.ShowDialog(owner()) == true ? dialog.FileName : null;
+    }
+    /// <inheritdoc />
+    public string? RequestName(string title, string initial)
+    {
+        var dialog = new Views.SshNameDialog(title, initial) { Owner = owner() };
+        return dialog.ShowDialog() == true ? dialog.Value : null;
+    }
+    /// <inheritdoc />
     public Task<bool> ConfirmCloseAsync(string instanceName)
     {
         var dialog = new ConfirmationDialog(Text.Get("SshCloseTitle"), Text.Get("SshCloseDescription"), Text.Get("SshCloseConfirm"), true)

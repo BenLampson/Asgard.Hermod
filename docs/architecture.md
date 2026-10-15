@@ -27,8 +27,8 @@ storage and owns application startup and shutdown.
 | `Asgard.Hermod.Server` | Independent sync API plugin, online identity checks and encrypted server persistence | Shared contracts, identity module, Asgard PluginSdk, Microsoft.Data.Sqlite |
 | `Asgard.Hermod.Server.Starter` | Yggdrasil API composition and process lifetime | Sync API plugin |
 | `Asgard.Hermod.WinTerminal` | VT engine, rendering, WPF terminal control, ConPTY connections and local session adapter | Windows desktop framework |
-| `Asgard.Hermod.Ssh` | SSH authentication, verified host identity, jump routing and SOCKS5/HTTP CONNECT transport | Shared contracts, Tmds.Ssh, DI abstractions |
-| `Asgard.Hermod.Ssh.UI` | SSH configuration content, host verification and independent terminal workspace pages | Shared UI, SSH protocol module |
+| `Asgard.Hermod.Ssh` | Verified SSH transport, PTY, SFTP, bounded exec, Linux monitoring and loopback forwarding | Shared contracts, Tmds.Ssh, DI abstractions |
+| `Asgard.Hermod.Ssh.UI` | SSH configuration, terminal/files/forwarding workspace, monitoring and collapsible Agent | Shared UI, SSH protocol module, Agent module |
 | `Asgard.Hermod.Redis` | Redis 7+ topology discovery, verified TLS and routed TCP transport, bounded reads and guarded writes | Shared contracts, SSH forwarding contract, StackExchange.Redis |
 | `Asgard.Hermod.Redis.UI` | Redis connection forms, lazy key trees, per-key tabs and value editors | Shared UI, Redis protocol module |
 | `Asgard.Hermod.MySql` | Verified MySQL connections, object metadata, bounded SQL results and transactional row updates | Shared contracts, SSH forwarding contract, MySqlConnector |
@@ -147,11 +147,22 @@ navigation and themes; the desktop workspace host opens actual instance pages in
 independent windows and retains the existing page registry and cleanup contracts.
 Module views must not recreate window chrome or duplicate the shared details layout.
 
-SSH exposes configuration editing only in its Content toolbar. The shared wizard
+SSH exposes configuration editing in its shared workspace caption, followed by Tools and Agent. The shared wizard
 permits provider changes within the saved type: SSH permits route changes on the separate
 method-selection page and retains common target fields. Types independently declare
 their save-location step. Editing preserves the instance ID, protected configuration storage and current
 connection; a verified save applies when the user explicitly reconnects.
+
+SSH's primary body switches between terminal, SFTP files and loopback forwarding.
+Its compact monitoring notification samples Linux through separate read-only exec
+channels; detailed monitoring occupies a collapsible bottom region. The same
+verified transport supplies these channels without injecting terminal input.
+The shared `WorkspaceSplitView` owns native resizable columns and preserves both
+content instances while hiding a pane. SSH and database workspaces use it for
+Agent; closing or resizing the pane preserves conversation, draft and width.
+SSH uses a separate bounded `SshAgentConversation`, with explicitly attached
+terminal selections and confirmed command actions. Reconnection invalidates old
+suggestions and transport-bound tasks. See [SSH](ssh.md) for lifecycle and limits.
 
 `WorkspaceTools` is a shared filtered popup with observable `WorkspaceTool`
 entries. Modules provide stable IDs, localized titles/groups, icons and existing

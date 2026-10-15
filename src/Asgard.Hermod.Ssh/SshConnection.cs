@@ -3,8 +3,8 @@ using Tmds.Ssh;
 namespace Asgard.Hermod.Ssh;
 
 /// <summary>拥有一次 SDK 连接、PTY 和可选代理桥；不拥有 UI 终端缓冲区。</summary>
-internal sealed class SshConnection(SshClient client, RemoteProcess shell, SshProxyBridge? bridge,
-    IReadOnlyList<TrustedHostKey> hostKeys) : ISshConnection
+internal sealed partial class SshConnection(SshClient client, RemoteProcess shell, SshProxyBridge? bridge,
+    IReadOnlyList<TrustedHostKey> hostKeys) : ISshWorkspaceConnection
 {
     private int _disposed;
     /// <inheritdoc />

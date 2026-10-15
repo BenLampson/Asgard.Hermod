@@ -3891,4 +3891,86 @@
   <data name="PostgreSqlRemoveFilter" xml:space="preserve">
     <value>移除筛选</value>
   </data>
+  <data name="WorkspacePaneResize" xml:space="preserve"><value>调整侧边分屏宽度</value></data>
+  <data name="SshWorkspaceUnavailable" xml:space="preserve"><value>当前 SSH 连接不可用，请重新连接后重试。</value></data>
+  <data name="SshWorkspaceSections" xml:space="preserve"><value>SSH 工作区功能</value></data>
+  <data name="SshTerminalPage" xml:space="preserve"><value>终端</value></data>
+  <data name="SshFilesTitle" xml:space="preserve"><value>文件</value></data>
+  <data name="SshFilesUpload" xml:space="preserve"><value>上传</value></data>
+  <data name="SshFilesDownload" xml:space="preserve"><value>下载</value></data>
+  <data name="SshFilesNewFolder" xml:space="preserve"><value>新建文件夹</value></data>
+  <data name="SshFilesRename" xml:space="preserve"><value>重命名</value></data>
+  <data name="SshFilesDelete" xml:space="preserve"><value>删除</value></data>
+  <data name="SshFilesDeleteHint" xml:space="preserve"><value>删除选中的远程文件或空目录？此操作无法撤销。</value></data>
+  <data name="SshFilesUp" xml:space="preserve"><value>上级</value></data>
+  <data name="SshFilesRefresh" xml:space="preserve"><value>刷新</value></data>
+  <data name="SshFilesPath" xml:space="preserve"><value>远程目录路径</value></data>
+  <data name="SshFilesFilter" xml:space="preserve"><value>筛选当前目录内的文件</value></data>
+  <data name="SshFilesName" xml:space="preserve"><value>名称</value></data>
+  <data name="SshFilesDirectory" xml:space="preserve"><value>文件夹</value></data>
+  <data name="SshFilesSize" xml:space="preserve"><value>大小（字节）</value></data>
+  <data name="SshFilesPermissions" xml:space="preserve"><value>权限</value></data>
+  <data name="SshFilesModified" xml:space="preserve"><value>修改时间</value></data>
+  <data name="SshFilesTransfers" xml:space="preserve"><value>传输任务</value></data>
+  <data name="SshFilesFailed" xml:space="preserve"><value>文件操作失败，请检查权限、路径以及目标是否已经存在。</value></data>
+  <data name="SshFilesTooMany" xml:space="preserve"><value>此目录包含过多条目，请打开范围更小的目录。</value></data>
+  <data name="SshFileNameInvalid" xml:space="preserve"><value>请输入一个有效的文件或目录名称，不要包含路径分隔符或控制字符。</value></data>
+  <data name="SshTransferBytes" xml:space="preserve"><value>已传输 {0:N0} 字节</value></data>
+  <data name="SshTransferRunning" xml:space="preserve"><value>传输中</value></data>
+  <data name="SshTransferCompleted" xml:space="preserve"><value>已完成</value></data>
+  <data name="SshTransferCanceled" xml:space="preserve"><value>已取消</value></data>
+  <data name="SshTransferFailed" xml:space="preserve"><value>失败</value></data>
+  <data name="SshMonitorTitle" xml:space="preserve"><value>服务器监测</value></data>
+  <data name="SshMonitorSampling" xml:space="preserve"><value>采样中…</value></data>
+  <data name="SshMonitorUnavailable" xml:space="preserve"><value>监测暂不可用，需要 Linux /proc 和相应读取权限。</value></data>
+  <data name="SshMonitorSummary" xml:space="preserve"><value>CPU {0}    内存 {1}    磁盘 {2}    网络 {3}</value></data>
+  <data name="SshMonitorPercent" xml:space="preserve"><value>{0:N1}%</value></data>
+  <data name="SshMonitorCapacity" xml:space="preserve"><value>{0:N1} / {1:N1} GB</value></data>
+  <data name="SshMonitorNetworkRate" xml:space="preserve"><value>↑ {0:N1} KB/s   ↓ {1:N1} KB/s</value></data>
+  <data name="SshMonitorCpuValue" xml:space="preserve"><value>CPU  {0}</value></data>
+  <data name="SshMonitorMemoryValue" xml:space="preserve"><value>内存  {0}</value></data>
+  <data name="SshMonitorDiskValue" xml:space="preserve"><value>根磁盘  {0}</value></data>
+  <data name="SshMonitorProcesses" xml:space="preserve"><value>进程</value></data>
+  <data name="SshMonitorDocker" xml:space="preserve"><value>Docker</value></data>
+  <data name="SshMonitorNetwork" xml:space="preserve"><value>网络</value></data>
+  <data name="SshMonitorDisks" xml:space="preserve"><value>磁盘</value></data>
+  <data name="SshAgentTitle" xml:space="preserve"><value>Agent</value></data>
+  <data name="SshAgentYou" xml:space="preserve"><value>你</value></data>
+  <data name="SshAgentHide" xml:space="preserve"><value>收起 Agent，保留对话和草稿</value></data>
+  <data name="SshAgentToggle" xml:space="preserve"><value>打开或收起 Agent 分屏</value></data>
+  <data name="SshAgentNewConversation" xml:space="preserve"><value>新对话</value></data>
+  <data name="SshAgentAttachSelection" xml:space="preserve"><value>附加终端选区</value></data>
+  <data name="SshAgentIncludeSelection" xml:space="preserve"><value>本次请求包含附加的选区</value></data>
+  <data name="SshAgentContext" xml:space="preserve"><value>主机：{0} · 附加输出：{1:N0} 个字符</value></data>
+  <data name="SshAgentSuggestion" xml:space="preserve"><value>建议的 shell 命令</value></data>
+  <data name="SshAgentInsert" xml:space="preserve"><value>填入终端</value></data>
+  <data name="SshAgentExecute" xml:space="preserve"><value>执行命令</value></data>
+  <data name="SshAgentExecuteTitle" xml:space="preserve"><value>确认远程命令</value></data>
+  <data name="SshAgentExecuteHint" xml:space="preserve"><value>在 {0} 上执行以下命令？请核对完整命令和影响后继续。</value></data>
+  <data name="SshAgentCommandResult" xml:space="preserve"><value>退出码：{0}
+{1}</value></data>
+  <data name="SshAgentCommandFailed" xml:space="preserve"><value>命令未能完成，请检查连接和服务器权限。</value></data>
+  <data name="SshOutputTruncated" xml:space="preserve"><value>输出已达到显示上限，超出部分已截断。</value></data>
+  <data name="SshAgentCanceled" xml:space="preserve"><value>请求已取消，对话和草稿已保留。</value></data>
+  <data name="SshAgentThinking" xml:space="preserve"><value>处理中…</value></data>
+  <data name="SshAgentPrompt" xml:space="preserve"><value>询问当前服务器，或描述要完成的任务</value></data>
+  <data name="SshAgentSend" xml:space="preserve"><value>发送</value></data>
+  <data name="SshAgentStop" xml:space="preserve"><value>停止</value></data>
+  <data name="SshAgentSendHint" xml:space="preserve"><value>Enter 发送 · Shift+Enter 换行</value></data>
+  <data name="SshForwardTitle" xml:space="preserve"><value>端口转发</value></data>
+  <data name="SshForwardHint" xml:space="preserve"><value>通过当前 SSH 连接转发本机回环端口。关闭或断开工作区后，转发随之停止。</value></data>
+  <data name="SshForwardLocalPort" xml:space="preserve"><value>本机端口</value></data>
+  <data name="SshForwardHost" xml:space="preserve"><value>远端主机</value></data>
+  <data name="SshForwardRemotePort" xml:space="preserve"><value>远端端口</value></data>
+  <data name="SshForwardStart" xml:space="preserve"><value>启动转发</value></data>
+  <data name="SshForwardInvalid" xml:space="preserve"><value>请输入有效主机以及 1 到 65535 之间的端口。</value></data>
+  <data name="SshForwardFailed" xml:space="preserve"><value>无法启动端口转发，请检查本机端口占用和服务器转发策略。</value></data>
+  <data name="SshForwardEndpoints" xml:space="preserve"><value>127.0.0.1:{0} → {1}:{2}</value></data>
+  <data name="SshActionConfirm" xml:space="preserve"><value>确认</value></data>
+  <data name="SshMonitorOverview" xml:space="preserve"><value>概览</value></data>
+  <data name="SshMonitorCpu" xml:space="preserve"><value>CPU</value></data>
+  <data name="SshMonitorMemory" xml:space="preserve"><value>内存</value></data>
+  <data name="SshMonitorRecent" xml:space="preserve"><value>最近 2 分钟</value></data>
+  <data name="SshMonitorRefreshHint" xml:space="preserve"><value>每 5 秒执行一次只读采样。</value></data>
+  <data name="SshMonitorNoData" xml:space="preserve"><value>不可用</value></data>
 </root>

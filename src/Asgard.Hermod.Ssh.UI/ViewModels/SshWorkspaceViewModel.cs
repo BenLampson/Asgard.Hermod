@@ -32,7 +32,7 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
 
     /// <summary>页面只在首次激活或明确重连时建立连接。</summary>
     public SshWorkspaceViewModel(InstanceItemViewModel instance, IInstanceConfigurationService configurations,
-        ISshConnectionFactory connections, IInstanceEditor editor, ISshWorkspaceDialogs dialogs)
+        ISshConnectionFactory connections, IInstanceEditor editor, ISshWorkspaceDialogs dialogs, Asgard.Hermod.Agent.IAgentClient? agentClient = null)
         : base("ssh:" + Guid.NewGuid().ToString("N"), instance.Name, "terminal", instance.Id)
     {
         Name = instance.Name; _configurations = configurations; _connections = connections; _editor = editor; _dialogs = dialogs;
@@ -48,7 +48,7 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
         _clock.Stop();
         _saveFeedbackTimer = new DispatcherTimer(TimeSpan.FromSeconds(5), DispatcherPriority.Background,
             (_, _) => ClearSaveFeedback(), _dispatcher);
-        _saveFeedbackTimer.Stop();
+        _saveFeedbackTimer.Stop(); InitializeWorkspace(agentClient);
     }
 
     /// <summary>当前实例显示名。</summary>
@@ -161,6 +161,7 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
             nameof(Tone), nameof(RemoteIdentity), nameof(HostEndpoint), nameof(UserName), nameof(ConnectingTitle), nameof(Error), nameof(ErrorCode),
             nameof(EndedMessage), nameof(HostKeys), nameof(RouteDescription), nameof(RouteLabel), nameof(Elapsed), nameof(GridSize) }) OnPropertyChanged(name);
         ReconnectCommand.NotifyCanExecuteChanged(); DisconnectCommand.NotifyCanExecuteChanged(); CancelConnectionCommand.NotifyCanExecuteChanged();
+        AddForwardCommand?.NotifyCanExecuteChanged();
         EditConnectionCommand.NotifyCanExecuteChanged(); NewSessionCommand.NotifyCanExecuteChanged(); ToggleDetailsCommand.NotifyCanExecuteChanged();
     }
 }

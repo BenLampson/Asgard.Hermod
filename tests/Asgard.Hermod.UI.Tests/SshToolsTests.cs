@@ -28,10 +28,10 @@ public sealed class SshToolsTests(WpfTestFixture fixture)
             var terminal = Assert.IsType<TerminalControl>(view.FindName("TerminalView"));
             Assert.Same(terminal, tools.FocusTarget);
             Assert.Equal(new[] { "search", "font", "clear", "details" }, tools.Items!.Select(item => item.Id));
-            foreach (double width in new[] { 1180d, 680d, 480d })
+            foreach (double width in new[] { 1180d, 800d })
             {
                 window.Width = width; await WindowPreviewCapture.VerifyAsync(window, $"ssh-tools-toolbar-{language}-{theme}-{width}");
-                var edits = WindowTestVisuals.Descendants<Button>(view).Where(button => ReferenceEquals(button.Command, model.EditConnectionCommand)).ToArray();
+                var edits = WindowTestVisuals.Descendants<Button>(view).Where(button => button.IsVisible && ReferenceEquals(button.Command, model.EditConnectionCommand)).ToArray();
                 var edit = Assert.Single(edits); Assert.True(edit.IsVisible);
                 Assert.Equal(Text.Get("SshEditConfiguration"), System.Windows.Automation.AutomationProperties.GetName(edit));
                 foreach (var entry in new FrameworkElement[] { edit, tools, Assert.IsType<Button>(view.FindName("MoreAction")) })

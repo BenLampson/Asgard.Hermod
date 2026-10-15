@@ -48,20 +48,60 @@ Network attempts are disposed before asking for verification, so the network
 timeout does not limit the user's verification time. Cancellation closes the
 pending verification dialog and does not save trust.
 
-## Terminal workspace
+## SSH workspace
 
-The workspace uses the same terminal control and VT engine as local terminals.
-The toolbar provides received-output search, copy, paste, connection details and
-additional actions. Details dock on wide windows and overlay the terminal on
-narrow windows. Multiline paste requires confirmation. Search, font sizing and
-clearing the display operate locally.
+The independent window retains Hermod's shared 72-pixel caption and 28-pixel
+status bar. Its caption exposes Edit configuration, Tools and Agent. There is
+no duplicate asset navigation. Terminal, Files and Port forwarding use the
+same verified connection and keep their content alive when switching sections.
+Both English and Simplified Chinese and the shared light/dark themes apply to
+all sections. Search, copy, paste, details and local font/display tools remain
+available. Multiline terminal paste still requires confirmation.
 
-Switching tabs preserves the connection. New session creates an independent
-outer tab. Closing an active session asks for confirmation; cancel keeps it
-alive. Disconnect and remote exit retain read-only output. Reconnect rereads the
-saved configuration and replaces the buffer only after successful connection;
-it never replays old input. Failed connection feedback uses localized safe
-errors instead of SDK messages or credentials.
+Agent opens as a right-hand `WorkspaceSplitView`, with a mouse- and
+keyboard-adjustable divider. It starts hidden. Closing the pane keeps the
+conversation, draft and pane width; replies never reopen it or steal terminal
+focus. Each workspace has an independent bounded conversation using the user's
+configured model client. Host identity is public context; terminal text is sent
+only when the user attaches a selection and opts to include it (up to 8 KiB of
+characters). Passwords, keys, connection options and automatic terminal history
+are never included. Explicit shell code blocks expose Insert and Run actions.
+Insertion does not add a return. Running requires confirmation showing the
+current host and full command; it uses a separate exec channel, bounded to
+64 KiB and two minutes, and shows its output in the conversation. Reconnecting
+invalidates old suggestions and the request history while preserving visible
+messages and drafts.
+
+Files use SFTP channels on the existing verified transport, without shell
+interpolation. Browsing is nonrecursive and bounded to 10,000 entries. Names
+are filtered locally; folder navigation also supports Enter. Upload, download,
+new folder, rename and confirmed file/empty-folder deletion are available.
+Uploads stage a unique remote temporary file before publishing and do not
+overwrite existing targets. Downloads stage locally and replace the selected
+destination only after successful completion. Cancellation preserves existing
+destination files. Recent transfer results are bounded to 100 tasks; disconnect
+and window disposal cancel ongoing operations. Deletion is never recursive.
+
+A compact monitoring row reads Linux `/proc` through an independent exec channel
+every five seconds with an eight-second timeout. It reports CPU, memory, the root
+disk and aggregate non-loopback network throughput. Initial CPU/network rates
+remain unavailable until a second sample; resets never create negative rates.
+Missing `/proc`, permissions or unsupported systems show a localized unavailable
+state. A collapsible bottom panel provides a two-minute sample history and
+on-demand, read-only process, Docker, interface and mount details. Missing Docker
+or `ip` support does not prevent terminal use. These features require no remote
+Hermod daemon or additional authentication.
+
+Port forwarding listens only on `127.0.0.1` and reuses the same verified SSH
+client. Each forward has an explicit stop action. Disconnect, reconnect and
+workspace disposal release all forwarding handles. The application does not
+expose listening ports on external interfaces.
+
+New session continues to open an independent workspace window. Closing an active
+session asks for confirmation; cancel keeps it alive. Disconnect and remote exit
+retain read-only terminal output. Reconnect rereads the saved configuration and
+replaces the buffer only after successful connection; it never replays old input.
+All SDK and configuration failures use safe localized errors.
 
 The portable protocol project uses Tmds.Ssh 0.26.0 (MIT). Its transitive API
 publishing analyzer is excluded precisely in `Directory.Build.targets`, leaving
@@ -75,7 +115,8 @@ Run the normal Release build, formatting check and xUnit v3 solution tests.
 `SshLayoutTests` can export local previews with `HERMOD_UI_PREVIEW_DIR`; preview
 images are ignored and should not be committed.
 
-The network tests require a dedicated local OpenSSH fixture. Configure
+The network tests, including `SshLiveWorkspaceTests` for SFTP, exec, monitoring
+and local forwarding, require a dedicated local OpenSSH fixture. Configure
 `HERMOD_TEST_SSH_PORT`, `HERMOD_TEST_SSH_JUMP_PORT` and `HERMOD_TEST_SSH_KEY`.
 The target is always `127.0.0.1`, with fixture user `tester`, password
 `hermod-test-only`, and encrypted test-key passphrase `test-key-passphrase`.
