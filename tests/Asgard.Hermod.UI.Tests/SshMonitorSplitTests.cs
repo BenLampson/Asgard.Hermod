@@ -36,6 +36,9 @@ public sealed class SshMonitorSplitTests(WpfTestFixture fixture)
             await WindowPreviewCapture.VerifyAsync(window, $"ssh-monitor-split-{language}-{theme}");
             Assert.True(panel.IsVisible); Assert.InRange(panel.ActualHeight, 400, 580);
             Assert.True(terminal.ActualHeight >= 80); Assert.True(terminal.ActualHeight < fullHeight - 300);
+            var monitorRow = Assert.IsType<RowDefinition>(view.FindName("MonitorRow"));
+            monitorRow.Height = new GridLength(360);
+            await WindowTestVisuals.UpdateLayoutAsync(window);
             window.Height = 540; window.Width = 900;
             await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.True(terminal.ActualHeight >= 80);
@@ -45,6 +48,9 @@ public sealed class SshMonitorSplitTests(WpfTestFixture fixture)
             window.Height = 1000;
             await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.Equal(fullHeight, terminal.ActualHeight, 1);
+            model.IsMonitorOpen = true;
+            await WindowTestVisuals.UpdateLayoutAsync(window);
+            Assert.Equal(360, panel.ActualHeight, 1);
         }
         finally { window.Close(); themes.SetTheme(UiTheme.Light); CultureInfo.CurrentUICulture = previous; CultureInfo.DefaultThreadCurrentUICulture = previousDefault; }
     });

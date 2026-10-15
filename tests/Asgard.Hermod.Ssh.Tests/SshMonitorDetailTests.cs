@@ -76,4 +76,17 @@ public sealed class SshMonitorDetailTests
     [Fact]
     public void DetailListsAreBounded() => Assert.Equal(SshMonitorDetailReader.MaximumItems,
         SshMonitorDetailReader.ParseProcesses(string.Join('\n', Enumerable.Repeat("1 root 0 0 1 S init", 600)), 1).Count);
+
+    /// <summary>其他接口的增长不能掩盖某个接口的计数重置。</summary>
+    [Fact]
+    public void OneResetInterfaceInvalidatesAggregateEvenWhenOtherCountersGrow()
+    {
+        var monitor = new SshHostMonitor();
+        monitor.Parse(SshWorkspaceProtocolTests.Sample("100 0 100 800", 1000, 2000)
+            .Replace("__LOAD__", "eth1: 1000 0 0 0 0 0 0 0 1000 0\n__LOAD__", StringComparison.Ordinal), 0);
+        var next = monitor.Parse(SshWorkspaceProtocolTests.Sample("120 0 120 860", 100, 200)
+            .Replace("__LOAD__", "eth1: 900000 0 0 0 0 0 0 0 900000 0\n__LOAD__", StringComparison.Ordinal), Stopwatch.Frequency);
+        Assert.Null(next.SentPerSecond); Assert.Null(next.ReceivedPerSecond);
+        Assert.Null(next.Interfaces[0].SentPerSecond); Assert.Equal(899000, next.Interfaces[1].SentPerSecond);
+    }
 }

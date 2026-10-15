@@ -14,6 +14,7 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     public SshWorkspaceView()
     {
         InitializeComponent();
+        InitializeMonitorResizeTracking();
         SessionTools.FocusTarget = TerminalView;
         DataContextChanged += OnModelChanged;
         Loaded += OnLoaded;
@@ -155,6 +156,7 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     public void Dispose()
     {
         if (_disposed) return; _disposed = true;
+        StopMonitorResizeTracking();
         if (_model is not null) { _model.Assistant.InsertRequested -= OnAgentInsert; _model.PropertyChanged -= OnWorkspacePropertyChanged; }
         SessionTools.Close(false);
         if (SessionTools.ContextMenu is { } toolsMenu) { toolsMenu.IsOpen = false; toolsMenu.Items.Clear(); }
