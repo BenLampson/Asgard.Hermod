@@ -34,6 +34,9 @@ public partial class MainWindow : HermodWindow
         WindowCloseBehavior.SetHideToTray(this, tray?.IsAvailable == true);
         model.Sidebar.AddInstanceCommand.ExecutionFailed += OnCommandFailed;
         model.Workspace.CloseTabCommand.ExecutionFailed += OnCommandFailed;
+        model.SetLightThemeCommand.ExecutionFailed += OnCommandFailed;
+        model.SetDarkThemeCommand.ExecutionFailed += OnCommandFailed;
+        model.ToggleThemeCommand.ExecutionFailed += OnCommandFailed;
         Closing += OnWindowClosing;
         PreviewKeyDown += (_, args) =>
         {
@@ -221,6 +224,9 @@ public partial class MainWindow : HermodWindow
         if (_closePreferences is not null) _closePreferences.Changed -= OnClosePreferencesChanged;
         _model.Sidebar.AddInstanceCommand.ExecutionFailed -= OnCommandFailed;
         _model.Workspace.CloseTabCommand.ExecutionFailed -= OnCommandFailed;
+        _model.SetLightThemeCommand.ExecutionFailed -= OnCommandFailed;
+        _model.SetDarkThemeCommand.ExecutionFailed -= OnCommandFailed;
+        _model.ToggleThemeCommand.ExecutionFailed -= OnCommandFailed;
         ShellView.Dispose(); _workWindows?.Dispose();
         if (_tray is not null)
         {

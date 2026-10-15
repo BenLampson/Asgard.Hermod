@@ -60,6 +60,8 @@ public partial class App : Application
             var languageStore = provider.GetRequiredService<ILanguagePreferenceStore>();
             Text.Initialize(languageStore.Load(), systemCulture);
             Text.SetApplicationCulture(Text.Culture);
+            // 先恢复主题，再构造外壳、窗口和通知入口，避免重启后显示默认浅色。
+            provider.GetRequiredService<IThemeService>();
             // 临时文件维护失败不阻断登录或工作区；设置页可重新扫描并给出安全提示。
             try { await provider.GetRequiredService<ITemporaryFileStorage>().CleanupAsync(expiredOnly: true); }
             catch (Exception) { }

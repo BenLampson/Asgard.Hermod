@@ -46,9 +46,13 @@ columns:
 | `value` | TEXT, required | Serialized setting value. |
 | `update_time` | TEXT, required | UTC update timestamp, written by the consuming service. |
 
-This table stores user-level application settings. Startup initializes the
-storage infrastructure; instance profiles and UI preferences still need their
-own persistence integration.
+This table stores user-level application settings. The shared
+`IThemePreferenceStore` contract saves the selected theme immediately under
+`ui.theme`, using the stable values `light` and `dark`. Startup restores it before
+constructing the shell, windows or tray icon. Missing or unknown values retain
+the default light theme. Theme choices stay local to this device and do not
+require a schema migration. A failed save keeps the current theme and displays
+a localized error.
 
 Initialization acquires a SQLite write lock before checking the version. Schema
 changes and the version update share one transaction. Failed migrations roll

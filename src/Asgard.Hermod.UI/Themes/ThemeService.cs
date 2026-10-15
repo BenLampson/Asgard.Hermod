@@ -7,15 +7,17 @@ public sealed class ThemeService : IThemeService
 {
     private readonly ResourceDictionary _resources;
     private readonly Dispatcher _dispatcher;
+    private readonly IThemePreferenceStore? _preferences;
     private ResourceDictionary _themeDictionary;
 
     /// <summary>
-    /// 使用应用已经装配的主题；没有颜色字典时初始化为明亮主题。
+    /// 在创建视图前恢复保存的主题；独立预览未装配存储时沿用现有颜色字典。
     /// </summary>
-    public ThemeService(ResourceDictionary resources)
+    public ThemeService(ResourceDictionary resources, IThemePreferenceStore? preferences = null)
     {
         ArgumentNullException.ThrowIfNull(resources);
         _resources = resources;
+        _preferences = preferences;
         _dispatcher = Application.Current?.Dispatcher ?? Dispatcher.CurrentDispatcher;
         _dispatcher.VerifyAccess();
 
@@ -30,6 +32,10 @@ public sealed class ThemeService : IThemeService
         {
             resources.MergedDictionaries.Insert(0, _themeDictionary);
         }
+
+        // 启动恢复只读取偏好，不能把默认明亮主题写回覆盖用户选择。
+        if (_preferences?.Load() is { } savedTheme && savedTheme != Theme)
+            ApplyTheme(savedTheme, CreateDictionary(savedTheme));
     }
 
     /// <inheritdoc />
@@ -54,6 +60,15 @@ public sealed class ThemeService : IThemeService
 
         // 替换而非追加，避免切换次数增加后产生资源覆盖和字典泄漏。
         var dictionary = CreateDictionary(theme);
+        // 保存失败时保持原主题，由命令边界显示安全文案，避免产生虚假的已保存状态。
+        try { _preferences?.Save(theme); }
+        catch (Exception) { throw Text.Exception("CannotSaveThemePreference"); }
+        ApplyTheme(theme, dictionary);
+    }
+
+    /// <summary>首次恢复和运行时切换共用资源替换逻辑，恢复时不回写偏好。</summary>
+    private void ApplyTheme(UiTheme theme, ResourceDictionary dictionary)
+    {
         var index = _resources.MergedDictionaries.IndexOf(_themeDictionary);
         if (index >= 0)
         {

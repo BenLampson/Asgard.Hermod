@@ -3561,4 +3561,5 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="HostingTencentCloud" xml:space="preserve"><value>Tencent Cloud</value></data>
   <data name="HostingVolcengine" xml:space="preserve"><value>Volcengine</value></data>
   <data name="HostingAws" xml:space="preserve"><value>AWS</value></data>
+  <data name="CannotSaveThemePreference" xml:space="preserve"><value>Cannot save the theme preference. The theme has not changed. Try again.</value></data>
 </root>

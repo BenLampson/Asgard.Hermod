@@ -8,7 +8,7 @@ namespace Asgard.Hermod.UI.Tests;
 
 /// <summary>启动真实发行宿主，隔离 SQLite 与文件缓存，通过 UIA 和目标 HWND 完成端到端验收。</summary>
 [Collection(WpfTestCollection.Name)]
-public sealed class ApplicationProcessTests
+public sealed partial class ApplicationProcessTests
 {
     /// <summary>真实宿主打开终端，隐藏唤回，拒绝第二份数据库初始化，取消退出后继续运行并正常重启。</summary>
     [Fact]

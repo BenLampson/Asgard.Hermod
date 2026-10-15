@@ -46,9 +46,9 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
         }, _ => IsSignedIn);
         if (accounts is not null) accounts.AccountChanged += OnAccountChanged;
         ToggleSidebarCommand = new RelayCommand(_ => IsSidebarExpanded = !IsSidebarExpanded);
-        SetLightThemeCommand = new RelayCommand(_ => _themes.SetTheme(UiTheme.Light));
-        SetDarkThemeCommand = new RelayCommand(_ => _themes.SetTheme(UiTheme.Dark));
-        ToggleThemeCommand = new RelayCommand(_ => _themes.SetTheme(IsDarkTheme ? UiTheme.Light : UiTheme.Dark));
+        SetLightThemeCommand = new AsyncRelayCommand(_ => { _themes.SetTheme(UiTheme.Light); return Task.CompletedTask; });
+        SetDarkThemeCommand = new AsyncRelayCommand(_ => { _themes.SetTheme(UiTheme.Dark); return Task.CompletedTask; });
+        ToggleThemeCommand = new AsyncRelayCommand(_ => { _themes.SetTheme(IsDarkTheme ? UiTheme.Light : UiTheme.Dark); return Task.CompletedTask; });
         OpenLocalTerminalCommand = new RelayCommand(_ => Workspace.OpenLocalTerminal());
         OpenGlobalSearchResultCommand = new RelayCommand(value =>
         {
@@ -141,11 +141,11 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     /// <summary>切换侧栏状态。</summary>
     public RelayCommand ToggleSidebarCommand { get; }
     /// <summary>选择亮色主题。</summary>
-    public RelayCommand SetLightThemeCommand { get; }
+    public AsyncRelayCommand SetLightThemeCommand { get; }
     /// <summary>选择暗色主题。</summary>
-    public RelayCommand SetDarkThemeCommand { get; }
+    public AsyncRelayCommand SetDarkThemeCommand { get; }
     /// <summary>收起侧栏中的单按钮主题切换。</summary>
-    public RelayCommand ToggleThemeCommand { get; }
+    public AsyncRelayCommand ToggleThemeCommand { get; }
     /// <summary>打开新的本地终端。</summary>
     public RelayCommand OpenLocalTerminalCommand { get; }
     /// <summary>打开系统设置，共用账号菜单和标题栏入口。</summary>

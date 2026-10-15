@@ -1,4 +1,4 @@
-namespace Asgard.Hermod.UI.Themes;
+namespace Asgard.Hermod.Abstractions.Models;
 
 /// <summary>
 /// 界面可选择的明暗主题。
