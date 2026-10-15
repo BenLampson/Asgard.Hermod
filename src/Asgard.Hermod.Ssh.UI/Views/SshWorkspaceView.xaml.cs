@@ -17,6 +17,7 @@ public partial class SshWorkspaceView : UserControl, IDisposable
         SessionTools.FocusTarget = TerminalView;
         DataContextChanged += OnModelChanged;
         Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
         PreviewKeyDown += OnKeyDown;
         TerminalView.ScreenUpdated += OnTerminalUpdated;
     }
@@ -30,8 +31,30 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     /// <summary>内容宿主与外壳都可触发初始化，模型保证只连接一次。</summary>
     private async void OnLoaded(object sender, RoutedEventArgs args)
     {
+        if (Window.GetWindow(this) is { } window)
+        {
+            window.Activated -= OnOwnerActivated;
+            window.Activated += OnOwnerActivated;
+        }
         if (_model is not null) await _model.InitializeAsync();
-        if (!_disposed) { UpdateLayoutMode(); TerminalView.Focus(); }
+        if (!_disposed) { UpdateLayoutMode(); FocusTerminal(); }
+    }
+    /// <summary>窗口首次激活晚于 SSH 页面加载时重新建立终端键盘焦点。</summary>
+    private void OnOwnerActivated(object? sender, EventArgs args) => FocusTerminal();
+    /// <summary>页面卸载时解除窗口事件，避免缓存页面抢占其他页面焦点。</summary>
+    private void OnUnloaded(object sender, RoutedEventArgs args)
+    {
+        if (Window.GetWindow(this) is { } window)
+            window.Activated -= OnOwnerActivated;
+    }
+    /// <summary>等待窗口输入队列稳定后聚焦终端，确保数字键和输入法进入终端上下文。</summary>
+    private void FocusTerminal()
+    {
+        Dispatcher.BeginInvoke(DispatcherPriority.Input, new Action(() =>
+        {
+            if (!_disposed && IsVisible && TerminalView.Session is not null)
+                TerminalView.Focus();
+        }));
     }
     /// <summary>窄窗口把次要动作收进更多；详情布局由公共控件负责。</summary>
     private void OnViewportSizeChanged(object sender, SizeChangedEventArgs args) => UpdateLayoutMode();
@@ -132,6 +155,8 @@ public partial class SshWorkspaceView : UserControl, IDisposable
         if (SessionTools.ContextMenu is { } toolsMenu) { toolsMenu.IsOpen = false; toolsMenu.Items.Clear(); }
         if (MoreAction.ContextMenu is { } menu) { menu.IsOpen = false; menu.Items.Clear(); }
         TerminalView.ScreenUpdated -= OnTerminalUpdated;
-        TerminalView.Dispose(); DataContextChanged -= OnModelChanged; Loaded -= OnLoaded; PreviewKeyDown -= OnKeyDown;
+        TerminalView.Dispose(); DataContextChanged -= OnModelChanged; Loaded -= OnLoaded; Unloaded -= OnUnloaded; PreviewKeyDown -= OnKeyDown;
+        if (Window.GetWindow(this) is { } window)
+            window.Activated -= OnOwnerActivated;
     }
 }
