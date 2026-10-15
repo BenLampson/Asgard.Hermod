@@ -35,7 +35,36 @@ public sealed class MySqlInteractionLayoutHeadlessTests(WpfTestFixture fixture)
             await query.ExecuteScopeAsync("ignored selection", 0, true); Assert.Equal(query.Sql, server.ExecutedSql.Last().Sql);
             await using var table = new MySqlTabViewModel("users", "app", MySqlObjectKind.Table, server, TestMySql.Connection, dialogs);
             await table.ReadAsync(); var tableView = new MySqlTabView { DataContext = table }; var tableRoot = Root(tableView); Layout(tableRoot, width - 280);
-            Assert.Equal(Visibility.Visible, ((Grid)tableView.FindName("FilterToolbar")).Visibility);
+            var filter = (Grid)tableView.FindName("FilterToolbar");
+            var showFilter = (Button)tableView.FindName("ShowFilter");
+            Assert.Equal(Visibility.Collapsed, filter.Visibility);
+            Assert.False(((TextBox)tableView.FindName("FilterInput")).IsVisible);
+            Assert.Equal(Visibility.Visible, showFilter.Visibility);
+            int reads = server.PageReads.Count;
+            table.ShowFilterCommand.Execute(null); Layout(tableRoot, width - 280);
+            Assert.Equal(reads, server.PageReads.Count);
+            Assert.Equal(Visibility.Visible, filter.Visibility);
+            Assert.Equal(Visibility.Collapsed, showFilter.Visibility);
+            table.FilterText = "id >= 1";
+            await table.ApplyFilterCommand.ExecuteAsync();
+            table.Section = "structure"; Layout(tableRoot, width - 280);
+            Assert.Equal(Visibility.Collapsed, filter.Visibility);
+            table.Section = "data"; Layout(tableRoot, width - 280);
+            Assert.Equal(Visibility.Visible, filter.Visibility);
+            Capture(tableRoot, $"mysql-filter-{language}-{theme}-{width}");
+            foreach (double tableWidth in new[] { 520d, 920d, 1300d })
+            {
+                Layout(tableRoot, tableWidth);
+                foreach (var button in WindowTestVisuals.Descendants<Button>(tableView).Where(button => button.IsVisible))
+                {
+                    var origin = button.TranslatePoint(new(), tableRoot);
+                    Assert.InRange(origin.X, 0, tableRoot.ActualWidth - button.ActualWidth + 0.1);
+                }
+            }
+            await table.ClearFilterCommand.ExecuteAsync(); Layout(tableRoot, width - 280);
+            Assert.Equal("", server.PageReads.Last().Filter);
+            Assert.Equal(Visibility.Collapsed, filter.Visibility);
+            Assert.Equal(Visibility.Visible, showFilter.Visibility);
             Assert.Equal(Visibility.Collapsed, ((StackPanel)tableView.FindName("PageButtons")).Visibility);
             var size = (ComboBox)tableView.FindName("PageSizeSelector"); Assert.Equal(200, size.SelectedItem);
             Assert.Equal(Visibility.Visible, size.Visibility);
