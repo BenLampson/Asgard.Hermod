@@ -12,6 +12,8 @@ public partial class AgentPanel : UserControl
     public static readonly DependencyProperty MessageTemplateProperty = DependencyProperty.Register(nameof(MessageTemplate), typeof(DataTemplate), typeof(AgentPanel));
     /// <summary>模块上下文选项插槽。</summary>
     public static readonly DependencyProperty ContextContentProperty = DependencyProperty.Register(nameof(ContextContent), typeof(object), typeof(AgentPanel));
+    /// <summary>输入区底部的模块选项，例如 SQL 的手动和自动执行模式。</summary>
+    public static readonly DependencyProperty ComposerOptionsProperty = DependencyProperty.Register(nameof(ComposerOptions), typeof(object), typeof(AgentPanel));
     /// <summary>双向草稿，隐藏面板时不会清空。</summary>
     public static readonly DependencyProperty PromptProperty = DependencyProperty.Register(nameof(Prompt), typeof(string), typeof(AgentPanel), new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
     /// <summary>模块提供的本地化输入提示。</summary>
@@ -51,6 +53,8 @@ public partial class AgentPanel : UserControl
     public DataTemplate? MessageTemplate { get => (DataTemplate?)GetValue(MessageTemplateProperty); set => SetValue(MessageTemplateProperty, value); }
     /// <summary>上下文插槽内容。</summary>
     public object? ContextContent { get => GetValue(ContextContentProperty); set => SetValue(ContextContentProperty, value); }
+    /// <summary>输入区底部的模块选项。</summary>
+    public object? ComposerOptions { get => GetValue(ComposerOptionsProperty); set => SetValue(ComposerOptionsProperty, value); }
     /// <summary>双向输入草稿。</summary>
     public string Prompt { get => (string)GetValue(PromptProperty); set => SetValue(PromptProperty, value); }
     /// <summary>输入提示与无障碍名称。</summary>

@@ -2,7 +2,7 @@ using System.Text.Json;
 
 namespace Asgard.Hermod.Agent;
 
-/// <summary>只处理 Chat Completions 的工具协议，工具权限由 SSH 会话另行验证。</summary>
+/// <summary>只处理 Chat Completions 的工具协议，工具权限由 SQL 或 SSH 工作区另行验证。</summary>
 internal static class AgentChatProtocol
 {
     /// <summary>文本请求不会注册工具；空工具列表用于预算耗尽后的最终分析。</summary>

@@ -3589,7 +3589,7 @@
   <data name="MySqlAssistantClear" xml:space="preserve"><value>清空对话</value></data>
   <data name="MySqlAssistantYou" xml:space="preserve"><value>你</value></data>
   <data name="MySqlAssistantContext" xml:space="preserve"><value>上下文：{0} · {1}</value></data>
-  <data name="MySqlAssistantPrivacy" xml:space="preserve"><value>请在系统设置 → AI 助手中配置模型。发送消息会将有限的结构元数据和所选上下文传给你的模型服务。建议 SQL 需经你确认后才在本页签的 MySQL 会话中执行。</value></data>
+  <data name="MySqlAssistantPrivacy" xml:space="preserve"><value>请在系统设置 → AI 助手中配置模型。发送消息会将有限的结构元数据和所选上下文传给你的模型服务。自动模式会执行只读查询并发送结果样本供分析，修改类 SQL 仍需确认。</value></data>
   <data name="MySqlAssistantSuggestion" xml:space="preserve"><value>建议 SQL</value></data>
   <data name="MySqlAssistantInsert" xml:space="preserve"><value>插入编辑器</value></data>
   <data name="MySqlAssistantExecute" xml:space="preserve"><value>确认并执行</value></data>
@@ -3846,7 +3846,7 @@
   <data name="PostgreSqlAssistantClear" xml:space="preserve"><value>清空对话</value></data>
   <data name="PostgreSqlAssistantYou" xml:space="preserve"><value>你</value></data>
   <data name="PostgreSqlAssistantContext" xml:space="preserve"><value>上下文：{0} · {1}</value></data>
-  <data name="PostgreSqlAssistantPrivacy" xml:space="preserve"><value>请在系统设置 → AI 助手中配置模型。发送消息会将有限的结构元数据和所选上下文传给你的模型服务。建议 SQL 需经你确认后才在本页签的 PostgreSQL 会话中执行。</value></data>
+  <data name="PostgreSqlAssistantPrivacy" xml:space="preserve"><value>请在系统设置 → AI 助手中配置模型。发送消息会将有限的结构元数据和所选上下文传给你的模型服务。自动模式会执行只读查询并发送结果样本供分析，修改类 SQL 仍需确认。</value></data>
   <data name="PostgreSqlAssistantSuggestion" xml:space="preserve"><value>建议 SQL</value></data>
   <data name="PostgreSqlAssistantInsert" xml:space="preserve"><value>插入编辑器</value></data>
   <data name="PostgreSqlAssistantExecute" xml:space="preserve"><value>确认并执行</value></data>
@@ -4206,4 +4206,23 @@ Session：{2}
   <data name="AgentSend" xml:space="preserve"><value>发送</value></data>
   <data name="AgentStop" xml:space="preserve"><value>停止</value></data>
   <data name="AgentSendHint" xml:space="preserve"><value>Enter 或 Ctrl+Enter 发送 · Shift+Enter 换行</value></data>
+  <data name="SqlAgentManual" xml:space="preserve"><value>手动执行</value></data>
+  <data name="SqlAgentAutomatic" xml:space="preserve"><value>自动执行</value></data>
+  <data name="SqlAgentExecutionMode" xml:space="preserve"><value>SQL 执行模式</value></data>
+  <data name="SqlAgentModeHint" xml:space="preserve"><value>手动模式将建议加入查询分析器；自动模式执行只读查询并分析有界结果。修改数据或表结构仍需确认。</value></data>
+  <data name="SqlAgentReadOnlyRequired" xml:space="preserve"><value>自动模式仅接受单条只读查询。修改、事务控制、带注释或不支持的 SQL 请使用手动模式。</value></data>
+  <data name="SqlAgentReadOnlyUnavailable" xml:space="preserve"><value>独立只读查询会话不可用。</value></data>
+  <data name="SqlAgentQueryStep" xml:space="preserve"><value>自动 SQL 查询</value></data>
+  <data name="SqlAgentQueryRunning" xml:space="preserve"><value>正在执行只读查询…</value></data>
+  <data name="SqlAgentQueryCompleted" xml:space="preserve"><value>查询已完成，已将有界结果样本返回 Agent 分析。</value></data>
+  <data name="SqlAgentQueryStopped" xml:space="preserve"><value>查询已停止，不会自动重试。</value></data>
+  <data name="SqlAgentQueryFailed" xml:space="preserve"><value>查询未能完成，结果不确定；请检查连接后再重试。</value></data>
+  <data name="SqlAgentDraftRetained" xml:space="preserve"><value>已保留现有草稿，本次查询未执行。</value></data>
+  <data name="SqlAgentStepQuery" xml:space="preserve"><value>数据库：{0}
+{1}</value></data>
+  <data name="SqlAgentStepResult" xml:space="preserve"><value>数据库：{0}
+{1}
+
+结果样本：
+{2}</value></data>
 </root>

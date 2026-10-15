@@ -27,12 +27,18 @@ internal sealed class AgentPanelTestModel : ObservableObject
     public bool IncludeSql { get; set => SetProperty(ref field, value); } = true;
     /// <summary>结果样本必须由用户选择。</summary>
     public bool IncludeResults { get; set => SetProperty(ref field, value); }
+    /// <summary>SQL 输入区底部的稳定模式值。</summary>
+    public string ExecutionMode { get; set => SetProperty(ref field, value); } = "manual";
+    /// <summary>按测试显式文化构造模式名称。</summary>
+    public IReadOnlyList<InstanceFieldChoice> ExecutionModes { get; } = [new("manual", Asgard.Hermod.Abstractions.Localization.Text.Get("SqlAgentManual")), new("automatic", Asgard.Hermod.Abstractions.Localization.Text.Get("SqlAgentAutomatic"))];
+    /// <summary>任务期间不可更换模式。</summary>
+    public bool CanChangeExecutionMode => !IsBusy;
     /// <summary>默认未授权结果样本。</summary>
     public bool CanShareResults => false;
     /// <summary>SSH 选区上下文选项。</summary>
     public bool IncludeOutput { get; set => SetProperty(ref field, value); }
     /// <summary>任务状态变化同步命令可用性。</summary>
-    public bool IsBusy { get; set { if (SetProperty(ref field, value)) { SendCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged(); } } }
+    public bool IsBusy { get; set { if (SetProperty(ref field, value)) { SendCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged(); OnPropertyChanged(nameof(CanChangeExecutionMode)); } } }
     /// <summary>安全错误占位。</summary>
     public string Error => "";
     /// <summary>任务进度原文。</summary>

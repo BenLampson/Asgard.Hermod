@@ -14,6 +14,8 @@ internal sealed class TestMySql : IMySqlSessionFactory
     internal List<(string Database, string Table, int Offset, int Size, string Filter)> PageReads { get; } = [];
     internal Func<int, int, string, MySqlResult>? PageResult;
     internal List<(string Sql, string Database)> ExecutedSql { get; } = [];
+    internal List<(string Sql, string Database)> ReadOnlyQueries { get; } = [];
+    internal Exception? ReadOnlyError { get; set; }
     internal MySqlTable Table { get; } = new("app", "users", Columns, "InnoDB");
     internal Dictionary<string, object?> Values { get; } = new() { ["id"] = 1, ["name"] = "Alice", ["profile"] = "{\"ok\":true}", ["payload"] = new byte[] { 0, 255 } };
     internal int Writes, Executions, Opens, Disposals;
@@ -61,6 +63,13 @@ internal sealed class TestMySql : IMySqlSessionFactory
         {
             server.ExecutedSql.Add((sql, database)); server.Executions++; if (server.BlockedQuery is { } blocked) await blocked.Task.WaitAsync(token);
             return new([server.Result()], [new(1, 0, true)], null, TimeSpan.FromMilliseconds(2), State);
+        }
+        public async Task<MySqlExecution> ExecuteReadOnlyAsync(string sql, string database, CancellationToken token = default)
+        {
+            Asgard.Hermod.Abstractions.Models.ReadOnlySqlQuery.Validate(sql);
+            server.ReadOnlyQueries.Add((sql, database));
+            if (server.ReadOnlyError is { } error) throw error;
+            return await ExecuteAsync(sql, database, token);
         }
         public Task<MySqlResult> ReadTableAsync(string database, string table, int offset, CancellationToken token = default) => ReadTableAsync(database, table, offset, 200, "", token);
         public Task<MySqlResult> ReadTableAsync(string database, string table, int offset, int pageSize, string filter, CancellationToken token = default)

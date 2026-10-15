@@ -16,7 +16,7 @@
    </StackPanel>
   </controls:AgentPanel.ContextContent>
   <controls:AgentPanel.MessageTemplate><DataTemplate>
-   <controls:AgentMessageView Role="{Binding Role}" Body="{Binding Content}" IsUser="{Binding IsUser}">
+   <controls:AgentMessageView Role="{Binding Role}" Body="{Binding Content}" IsUser="{Binding IsUser}" IsTool="{Binding IsTool}" Status="{Binding Status}">
     <controls:AgentMessageView.ActionsContent>
      <ItemsControl ItemsSource="{Binding SqlBlocks}"><ItemsControl.ItemTemplate><DataTemplate>
       <controls:AgentCodeSuggestion Code="{Binding Sql}" Caption="{loc:Loc MySqlAssistantSuggestion}"
@@ -27,5 +27,6 @@
     </controls:AgentMessageView.ActionsContent>
    </controls:AgentMessageView>
   </DataTemplate></controls:AgentPanel.MessageTemplate>
+  <controls:AgentPanel.ComposerOptions><controls:SegmentedSelector ItemsSource="{Binding ExecutionModes}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding ExecutionMode, Mode=TwoWay}" IsEnabled="{Binding CanChangeExecutionMode}" MaxWidth="200" HorizontalAlignment="Left" ToolTip="{loc:Loc SqlAgentModeHint}" AutomationProperties.Name="{loc:Loc SqlAgentExecutionMode}" /></controls:AgentPanel.ComposerOptions>
  </controls:AgentPanel>
 </UserControl>

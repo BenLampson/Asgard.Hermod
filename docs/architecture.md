@@ -167,6 +167,17 @@ Ctrl+Enter sends; Shift+Enter inserts a newline). Modules provide context slots,
 message bindings and their existing commands. SQL scope, result sharing,
 confirmation and execution, and SSH selection, diagnostics and connection
 generation checks remain in their module view models.
+SQL adds a Manual/Automatic selector in the shared composer's options slot.
+Manual remains the default and retains insertion and explicit execution
+confirmation. Automatic enables at most four read-only query tool calls per
+task, feeding bounded result samples back into the model. Only the explicitly
+selected database in the current session scope is eligible. Each query uses a
+fresh connection and a server-enforced read-only transaction, with no commit
+and no effect on an existing editor transaction. Results appear as read-only
+grids and tool records; cancellation, target changes and unknown outcomes stop
+the task. Writes and DDL remain fenced suggestions requiring user confirmation.
+Automated tools reject transaction control, executable comments, multiple
+statements and file operations; unsupported SQL stays on the manual path.
 SSH uses a separate bounded `SshAgentConversation`, with explicitly attached
 terminal selections, fixed automatic diagnostics and confirmed command actions.
 The Agent module owns the bounded function-tool loop and diagnostic templates;

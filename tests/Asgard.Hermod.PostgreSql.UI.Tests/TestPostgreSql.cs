@@ -14,6 +14,8 @@ internal sealed class TestPostgreSql : IPostgreSqlSessionFactory
     internal List<(string Database, string Table, int Offset, int Size, string Filter)> PageReads { get; } = [];
     internal Func<int, int, string, PostgreSqlResult>? PageResult { get; set; }
     internal List<(string Sql, string Database)> ExecutedSql { get; } = [];
+    internal List<(string Sql, string Database)> ReadOnlyQueries { get; } = [];
+    internal Exception? ReadOnlyError { get; set; }
     internal List<(string Database, string Schema, string Table)> SchemaReads { get; } = [];
     internal List<string> ExplainedSql { get; } = [];
     internal PostgreSqlTable Table { get; } = new("app", "users", Columns, "r");
@@ -67,6 +69,13 @@ internal sealed class TestPostgreSql : IPostgreSqlSessionFactory
         {
             server.ExecutedSql.Add((sql, database)); server.Executions++; if (server.BlockedQuery is { } blocked) await blocked.Task.WaitAsync(token);
             return new([server.Result()], [new(1, 0, true)], null, TimeSpan.FromMilliseconds(2), State);
+        }
+        public async Task<PostgreSqlExecution> ExecuteReadOnlyAsync(string sql, string database, CancellationToken token = default)
+        {
+            Asgard.Hermod.Abstractions.Models.ReadOnlySqlQuery.Validate(sql);
+            server.ReadOnlyQueries.Add((sql, database));
+            if (server.ReadOnlyError is { } error) throw error;
+            return await ExecuteAsync(sql, database, token);
         }
         public Task<PostgreSqlResult> ReadTableAsync(string database, string table, int offset, CancellationToken token = default) => ReadTableAsync(database, table, offset, 200, "", token);
         public Task<PostgreSqlResult> ReadTableAsync(string database, string schema, string table, int offset, CancellationToken token = default) => ReadTableAsync(database, schema, table, offset, 200, "", token);

@@ -93,6 +93,23 @@ public sealed class LiveMySqlTests
         await session.RollbackAsync(TestContext.Current.CancellationToken);
     }
 
+    /// <summary>只读事务由真实服务器约束，即使以 WITH 包装写入也不能修改测试表。</summary>
+    [Fact(Skip = "Set HERMOD_MYSQL_TEST_PORT for isolated read-only query checks.", SkipUnless = nameof(Enabled))]
+    public async Task AutomaticSessionUsesServerReadOnlyTransaction()
+    {
+        await using var fixture = await Fixture.CreateAsync();
+        await using (var query = await fixture.OpenAsync())
+        {
+            var result = await query.ExecuteReadOnlyAsync("SELECT id,name FROM users", fixture.Database, TestContext.Current.CancellationToken);
+            Assert.Null(result.Failure); Assert.NotEmpty(result.Results); Assert.Null(result.Results[0].EditableTable);
+        }
+        await using (var writer = await fixture.OpenAsync())
+            await Assert.ThrowsAsync<MySqlFailure>(() => writer.ExecuteReadOnlyAsync("WITH c AS (SELECT 1) UPDATE users SET name='changed'", fixture.Database, TestContext.Current.CancellationToken));
+        await using var verify = await fixture.OpenAsync();
+        var rows = await verify.ExecuteAsync("SELECT name FROM users WHERE id=1", fixture.Database, TestContext.Current.CancellationToken);
+        Assert.Equal("one", rows.Results[0].Rows[0][0]);
+    }
+
     private sealed class Fixture : IAsyncDisposable
     {
         public string Database { get; } = "hermod_test_" + Guid.NewGuid().ToString("N");

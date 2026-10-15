@@ -95,6 +95,24 @@ public sealed class LivePostgreSqlTests
         Assert.Equal("POSTGRESQL_WRITER_REQUIRED", failure.Code); await writer.RollbackAsync(Token);
     }
 
+    /// <summary>只读事务由真实服务器约束，数据修改 CTE 不得绕过自动查询边界。</summary>
+    [Fact(Skip = "Set HERMOD_POSTGRESQL_TEST_PORT for isolated read-only query checks.", SkipUnless = nameof(Enabled))]
+    public async Task AutomaticSessionUsesServerReadOnlyTransaction()
+    {
+        await using var fixture = await Fixture.CreateAsync();
+        string table = PostgreSqlSql.Quote(fixture.Schema) + ".users";
+        await using (var query = await fixture.OpenAsync())
+        {
+            var result = await query.ExecuteReadOnlyAsync("SELECT id,name FROM " + table, "postgres", Token);
+            Assert.Null(result.Failure); Assert.NotEmpty(result.Results); Assert.Null(result.Results[0].EditableTable);
+        }
+        await using (var writer = await fixture.OpenAsync())
+            await Assert.ThrowsAsync<PostgreSqlFailure>(() => writer.ExecuteReadOnlyAsync("WITH changed AS (UPDATE " + table + " SET name='changed' RETURNING *) SELECT * FROM changed", "postgres", Token));
+        await using var verify = await fixture.OpenAsync();
+        var rows = await verify.ExecuteAsync("SELECT name FROM " + table + " WHERE id=1", "postgres", Token);
+        Assert.Equal("name1", rows.Results[0].Rows[0][0]);
+    }
+
     private sealed class Fixture : IAsyncDisposable
     {
         public string Schema { get; } = "hermod_" + Guid.NewGuid().ToString("N");

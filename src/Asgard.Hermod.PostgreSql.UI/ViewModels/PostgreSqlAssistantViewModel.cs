@@ -3,14 +3,14 @@ using Asgard.Hermod.Agent;
 namespace Asgard.Hermod.PostgreSql.UI.ViewModels;
 
 /// <summary>每个页签的内存对话与 SQL 建议；查询仍由原页签的会话和草稿保护负责。</summary>
-public sealed class PostgreSqlAssistantViewModel : ObservableObject, IDisposable
+public sealed partial class PostgreSqlAssistantViewModel : ObservableObject, IDisposable
 {
     private readonly PostgreSqlTabViewModel _tab;
     private readonly AgentConversation? _conversation;
     private CancellationTokenSource? _pending;
     private bool _disposed;
 
-    /// <summary>绑定原有页签，不创建第二个数据库连接。</summary>
+    /// <summary>绑定原有页签；手动执行复用原会话，自动查询由页签创建独立只读会话。</summary>
     public PostgreSqlAssistantViewModel(PostgreSqlTabViewModel tab, IAgentClient? client, Action? hide = null)
     {
         HideCommand = new RelayCommand(_ => hide?.Invoke());
@@ -56,6 +56,7 @@ public sealed class PostgreSqlAssistantViewModel : ObservableObject, IDisposable
     private async Task SendAsync()
     {
         if (IsBusy || _disposed) return;
+        if (IsAutomaticExecution) { await SendAutomaticAsync(); return; }
         if (_conversation is null) { Error = Text.Get("AgentConfigurationRequired"); return; }
         string prompt = Prompt;
         using var pending = new CancellationTokenSource(); _pending = pending; IsBusy = true; Error = ""; Refresh();
@@ -83,6 +84,7 @@ public sealed class PostgreSqlAssistantViewModel : ObservableObject, IDisposable
     }
     private void Refresh()
     {
+        OnPropertyChanged(nameof(CanChangeExecutionMode));
         OnPropertyChanged(nameof(ContextLabel)); OnPropertyChanged(nameof(CanShareResults)); SendCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged();
         InsertCommand.NotifyCanExecuteChanged(); ExecuteCommand.NotifyCanExecuteChanged(); ClearCommand.NotifyCanExecuteChanged();
     }

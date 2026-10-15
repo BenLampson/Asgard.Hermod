@@ -41,7 +41,13 @@
                         <DockPanel Grid.Row="1" Margin="0,8,0,0">
                             <Button x:Name="SendAction" DockPanel.Dock="Right" Command="{Binding SendCommand, ElementName=AgentRoot}" Style="{StaticResource PrimaryButton}" ToolTip="{loc:Loc AgentSend}" AutomationProperties.Name="{loc:Loc AgentSend}" Width="34" Height="32" Padding="0"><controls:IconView Kind="arrow-right" Width="15" Height="15" RenderTransformOrigin="0.5,0.5"><controls:IconView.RenderTransform><RotateTransform Angle="-90" /></controls:IconView.RenderTransform></controls:IconView></Button>
                             <Button DockPanel.Dock="Right" Content="{loc:Loc AgentStop}" Command="{Binding CancelCommand, ElementName=AgentRoot}" Margin="0,0,8,0" Visibility="{Binding IsBusy, ElementName=AgentRoot, Converter={StaticResource Visible}}" />
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center"><controls:IconView Kind="sparkles" Width="14" Height="14" Margin="0,0,7,0" Foreground="{DynamicResource TextMutedBrush}" /><TextBlock Text="{loc:Loc AgentPanelTitle}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" /></StackPanel>
+                            <Grid MinHeight="36">
+                                <ContentControl Content="{Binding ComposerOptions, ElementName=AgentRoot}" VerticalAlignment="Center" />
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding ComposerOptions, ElementName=AgentRoot}" Value="{x:Null}"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></StackPanel.Style>
+                                    <controls:IconView Kind="sparkles" Width="14" Height="14" Margin="0,0,7,0" Foreground="{DynamicResource TextMutedBrush}" /><TextBlock Text="{loc:Loc AgentPanelTitle}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
+                                </StackPanel>
+                            </Grid>
                         </DockPanel>
                     </Grid>
                 </Border>

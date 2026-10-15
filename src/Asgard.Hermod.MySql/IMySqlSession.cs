@@ -25,6 +25,8 @@ public interface IMySqlSession : IAsyncDisposable
     Task<MySqlTable> DescribeAsync(string database, string table, CancellationToken token = default);
     /// <summary>执行用户 SQL 并保留已完成结果；此会话之后不可用于网格保存。</summary>
     Task<MySqlExecution> ExecuteAsync(string sql, string database, CancellationToken token = default);
+    /// <summary>仅供独立的新会话：在服务器只读事务内执行一条查询，结束后回滚，不借用用户事务。</summary>
+    Task<MySqlExecution> ExecuteReadOnlyAsync(string sql, string database, CancellationToken token = default) => throw Text.Exception("SqlAgentReadOnlyUnavailable");
     /// <summary>读取有界表页，视图和不具备编辑资格的对象只读。</summary>
     Task<MySqlResult> ReadTableAsync(string database, string table, int offset, CancellationToken token = default);
     /// <summary>读取真实表分页；筛选只支持受限参数化条件，不执行任意 SQL。</summary>

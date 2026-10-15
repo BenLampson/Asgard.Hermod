@@ -3589,7 +3589,7 @@ Hiding to the notification area is temporarily unavailable. To exit Hermod, use 
   <data name="MySqlAssistantClear" xml:space="preserve"><value>Clear chat</value></data>
   <data name="MySqlAssistantYou" xml:space="preserve"><value>You</value></data>
   <data name="MySqlAssistantContext" xml:space="preserve"><value>Context: {0} · {1}</value></data>
-  <data name="MySqlAssistantPrivacy" xml:space="preserve"><value>Configure AI in System settings → AI assistant. Sending shares bounded schema metadata and selected context with your model service. Suggestions run only after your confirmation in this tab's MySQL session.</value></data>
+  <data name="MySqlAssistantPrivacy" xml:space="preserve"><value>Configure AI in System settings → AI assistant. Sending shares bounded schema metadata and selected context with your model service. Automatic mode runs read-only queries and shares result samples for analysis. Modifications require confirmation.</value></data>
   <data name="MySqlAssistantSuggestion" xml:space="preserve"><value>Suggested SQL</value></data>
   <data name="MySqlAssistantInsert" xml:space="preserve"><value>Insert into editor</value></data>
   <data name="MySqlAssistantExecute" xml:space="preserve"><value>Review and run</value></data>
@@ -3846,7 +3846,7 @@ Hiding to the notification area is temporarily unavailable. To exit Hermod, use 
   <data name="PostgreSqlAssistantClear" xml:space="preserve"><value>Clear chat</value></data>
   <data name="PostgreSqlAssistantYou" xml:space="preserve"><value>You</value></data>
   <data name="PostgreSqlAssistantContext" xml:space="preserve"><value>Context: {0} · {1}</value></data>
-  <data name="PostgreSqlAssistantPrivacy" xml:space="preserve"><value>Configure AI in System settings → AI assistant. Sending shares bounded schema metadata and selected context with your model service. Suggestions run only after your confirmation in this tab&apos;s PostgreSQL session.</value></data>
+  <data name="PostgreSqlAssistantPrivacy" xml:space="preserve"><value>Configure AI in System settings → AI assistant. Sending shares bounded schema metadata and selected context with your model service. Automatic mode runs read-only queries and shares result samples for analysis. Modifications require confirmation.</value></data>
   <data name="PostgreSqlAssistantSuggestion" xml:space="preserve"><value>Suggested SQL</value></data>
   <data name="PostgreSqlAssistantInsert" xml:space="preserve"><value>Insert into editor</value></data>
   <data name="PostgreSqlAssistantExecute" xml:space="preserve"><value>Review and run</value></data>
@@ -4206,4 +4206,23 @@ Exit code: {1}
   <data name="AgentSend" xml:space="preserve"><value>Send</value></data>
   <data name="AgentStop" xml:space="preserve"><value>Stop</value></data>
   <data name="AgentSendHint" xml:space="preserve"><value>Enter or Ctrl+Enter to send · Shift+Enter for a new line</value></data>
+  <data name="SqlAgentManual" xml:space="preserve"><value>Manual</value></data>
+  <data name="SqlAgentAutomatic" xml:space="preserve"><value>Automatic</value></data>
+  <data name="SqlAgentExecutionMode" xml:space="preserve"><value>SQL execution mode</value></data>
+  <data name="SqlAgentModeHint" xml:space="preserve"><value>Manual mode adds suggestions to the query editor. Automatic mode runs read-only queries and analyzes bounded results. Modifications still require confirmation.</value></data>
+  <data name="SqlAgentReadOnlyRequired" xml:space="preserve"><value>Automatic mode only accepts one read-only query. Use manual mode for modifications, transaction control, comments or unsupported SQL.</value></data>
+  <data name="SqlAgentReadOnlyUnavailable" xml:space="preserve"><value>A dedicated read-only query session is not available.</value></data>
+  <data name="SqlAgentQueryStep" xml:space="preserve"><value>Automatic SQL query</value></data>
+  <data name="SqlAgentQueryRunning" xml:space="preserve"><value>Running the read-only query…</value></data>
+  <data name="SqlAgentQueryCompleted" xml:space="preserve"><value>The query completed. A bounded result sample was returned to Agent for analysis.</value></data>
+  <data name="SqlAgentQueryStopped" xml:space="preserve"><value>The query stopped. No automatic retry will be made.</value></data>
+  <data name="SqlAgentQueryFailed" xml:space="preserve"><value>The query could not be completed. Its outcome is uncertain; check the connection before trying again.</value></data>
+  <data name="SqlAgentDraftRetained" xml:space="preserve"><value>The query was not executed because the existing draft was retained.</value></data>
+  <data name="SqlAgentStepQuery" xml:space="preserve"><value>Database: {0}
+{1}</value></data>
+  <data name="SqlAgentStepResult" xml:space="preserve"><value>Database: {0}
+{1}
+
+Result sample:
+{2}</value></data>
 </root>
