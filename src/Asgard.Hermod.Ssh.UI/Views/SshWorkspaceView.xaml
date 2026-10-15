@@ -17,6 +17,7 @@
    <controls:WorkspaceHeader.ActionsContent><StackPanel x:Name="ToolbarActions" Orientation="Horizontal" VerticalAlignment="Center" SizeChanged="OnToolbarActionsSizeChanged">
     <Button x:Name="EditAction" Command="{Binding EditConnectionCommand}" Style="{StaticResource StandardButton}" ToolTip="{loc:Loc SshEditConfiguration}" AutomationProperties.Name="{loc:Loc SshEditConfiguration}" Margin="0,0,8,0"><StackPanel Orientation="Horizontal"><controls:IconView Kind="settings-2" Width="15" Height="15" /><TextBlock Text="{loc:Loc SshEditConfiguration}" Margin="7,0,0,0" /></StackPanel></Button>
     <controls:WorkspaceTools x:Name="SessionTools" Margin="0,0,8,0" />
+    <Button x:Name="MonitorAction" Command="{Binding ToggleMonitorCommand}" ToolTip="{loc:Loc SshMonitorTitle}" AutomationProperties.Name="{loc:Loc SshMonitorTitle}" Margin="0,0,8,0"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource StandardButton}"><Style.Triggers><DataTrigger Binding="{Binding IsMonitorOpen}" Value="True"><Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" /><Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" /><Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" /></DataTrigger></Style.Triggers></Style></Button.Style><StackPanel Orientation="Horizontal"><controls:IconView Kind="activity" Width="15" Height="15" /><TextBlock x:Name="MonitorActionLabel" Text="{loc:Loc SshMonitorTitle}" Margin="7,0,0,0" /></StackPanel></Button>
     <Button x:Name="AgentAction" Command="{Binding ToggleAgentCommand}" ToolTip="{loc:Loc SshAgentToggle}" AutomationProperties.Name="{loc:Loc SshAgentToggle}"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource StandardButton}"><Style.Triggers><DataTrigger Binding="{Binding IsAgentOpen}" Value="True"><Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" /><Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" /><Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" /></DataTrigger></Style.Triggers></Style></Button.Style><StackPanel Orientation="Horizontal"><controls:IconView Kind="sparkles" Width="15" Height="15" /><TextBlock Text="{loc:Loc SshAgentTitle}" Margin="7,0,0,0" /></StackPanel></Button>
    </StackPanel></controls:WorkspaceHeader.ActionsContent>
   </controls:WorkspaceHeader></controls:WorkspacePageLayout.Toolbar>
@@ -25,10 +26,6 @@
    <Border Visibility="{Binding HasSaveFeedback, Converter={StaticResource Visible}}" Background="{DynamicResource SuccessWeakBrush}" Padding="18,8">
     <TextBlock Text="{loc:Loc SshConfigurationSaved}" Foreground="{DynamicResource SuccessBrush}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
    </Border>
-   <Border Background="{DynamicResource AppBackgroundBrush}" MinHeight="44" Padding="16,4" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,0,0,1"><DockPanel>
-    <Button DockPanel.Dock="Right" Command="{Binding ToggleMonitorCommand}" Content="{loc:Loc SshMonitorTitle}" Margin="12,0,0,0" />
-    <TextBlock Text="{Binding Monitor.Summary}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" ToolTip="{Binding Monitor.Summary}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
-   </DockPanel></Border>
    </StackPanel>
   </controls:WorkspacePageLayout.Notification>
   <controls:WorkspacePageLayout.Details>
@@ -69,7 +66,7 @@
   <controls:WorkspaceSplitView x:Name="AgentSplit" IsPaneOpen="{Binding IsAgentOpen}">
    <controls:WorkspaceSplitView.PaneContent><views:SshAssistantView x:Name="AssistantPanel" DataContext="{Binding DataContext.Assistant, ElementName=SshWorkspaceRoot}" CloseRequested="OnCloseAgent" AttachSelectionRequested="OnAttachAgentSelection" /></controls:WorkspaceSplitView.PaneContent>
    <controls:WorkspaceSplitView.MainContent>
-    <Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+    <Grid x:Name="SshBodyGrid" SizeChanged="OnMonitorViewportChanged"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /><RowDefinition x:Name="MonitorRow" Height="0" /></Grid.RowDefinitions>
      <Border MinHeight="44" Padding="12,4" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,0,0,1"><DockPanel>
       <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
        <Button Command="{Binding NewSessionCommand}" Style="{StaticResource IconButton}" ToolTip="{loc:Loc SshNewSession}" AutomationProperties.Name="{loc:Loc SshNewSession}"><controls:IconView Kind="plus" Width="15" Height="15" /></Button>
@@ -107,7 +104,8 @@
        <ItemsControl ItemsSource="{Binding Forwards}"><ItemsControl.ItemTemplate><DataTemplate><DockPanel Margin="0,8"><Button DockPanel.Dock="Right" Content="{loc:Loc SshAgentStop}" Command="{Binding DataContext.StopForwardCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" /><TextBlock Text="{Binding Label}" VerticalAlignment="Center" /></DockPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
       </StackPanel></ScrollViewer>
      </Grid>
-     <Border x:Name="MonitorDetails" Grid.Row="2" Visibility="{Binding IsMonitorOpen, Converter={StaticResource Visible}}" Height="240"><views:SshMonitorView DataContext="{Binding Monitor}" CloseRequested="OnCloseMonitor" /></Border>
+     <GridSplitter x:Name="MonitorSplitter" Grid.Row="2" Visibility="{Binding IsMonitorOpen, Converter={StaticResource Visible}}" Height="8" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" KeyboardIncrement="16" ShowsPreview="True" Background="{DynamicResource LineSoftBrush}" AutomationProperties.Name="{loc:Loc WorkspacePaneResize}" DragCompleted="OnMonitorResizeCompleted" />
+     <Border x:Name="MonitorDetails" Grid.Row="3" Visibility="{Binding IsMonitorOpen, Converter={StaticResource Visible}}"><views:SshMonitorView DataContext="{Binding Monitor}" CloseRequested="OnCloseMonitor" /></Border>
     </Grid>
    </controls:WorkspaceSplitView.MainContent>
   </controls:WorkspaceSplitView>

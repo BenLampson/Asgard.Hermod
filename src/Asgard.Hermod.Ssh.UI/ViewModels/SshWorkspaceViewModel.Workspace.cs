@@ -8,7 +8,7 @@ public sealed partial class SshWorkspaceViewModel
 {
     /// <summary>默认收起的 Agent，显隐不影响实例状态。</summary>
     public bool IsAgentOpen { get; set => SetProperty(ref field, value); }
-    /// <summary>监测摘要常驻，详情按需展开。</summary>
+    /// <summary>从标题栏显式打开监测，收起时不占终端高度。</summary>
     public bool IsMonitorOpen { get; set => SetProperty(ref field, value); }
     /// <summary>功能区的稳定 ID。</summary>
     public string ActiveSection { get; set { if (SetProperty(ref field, value)) { OnPropertyChanged(nameof(IsTerminalSection)); OnPropertyChanged(nameof(IsFilesSection)); OnPropertyChanged(nameof(IsForwardSection)); } } } = "terminal";

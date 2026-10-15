@@ -24,9 +24,9 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     /// <summary>读取当前协议模型；详情显隐直接绑定公共布局，不订阅后重画布局。</summary>
     private void OnModelChanged(object sender, DependencyPropertyChangedEventArgs args)
     {
-        if (_model is not null) _model.Assistant.InsertRequested -= OnAgentInsert;
+        if (_model is not null) { _model.Assistant.InsertRequested -= OnAgentInsert; _model.PropertyChanged -= OnWorkspacePropertyChanged; }
         _model = args.NewValue as SshWorkspaceViewModel;
-        if (_model is not null) _model.Assistant.InsertRequested += OnAgentInsert;
+        if (_model is not null) { _model.Assistant.InsertRequested += OnAgentInsert; _model.PropertyChanged += OnWorkspacePropertyChanged; }
         ConfigureTools();
         UpdateLayoutMode();
     }
@@ -66,7 +66,8 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     private void UpdateLayoutMode()
     {
         if (WorkspaceLayout is null) return;
-        if (MonitorDetails is not null) MonitorDetails.Height = Math.Clamp(ActualHeight * 0.32, 150, 240);
+        UpdateMonitorLayout();
+        if (MonitorActionLabel is not null) MonitorActionLabel.Visibility = ActualWidth >= 1000 ? Visibility.Visible : Visibility.Collapsed;
         bool wide = ActualWidth >= 1000;
         CopyAction.Visibility = PasteAction.Visibility = wide ? Visibility.Visible : Visibility.Collapsed;
         SearchAction.Visibility = DetailsAction.Visibility = ActualWidth >= 600 ? Visibility.Visible : Visibility.Collapsed;
@@ -154,7 +155,7 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     public void Dispose()
     {
         if (_disposed) return; _disposed = true;
-        if (_model is not null) _model.Assistant.InsertRequested -= OnAgentInsert;
+        if (_model is not null) { _model.Assistant.InsertRequested -= OnAgentInsert; _model.PropertyChanged -= OnWorkspacePropertyChanged; }
         SessionTools.Close(false);
         if (SessionTools.ContextMenu is { } toolsMenu) { toolsMenu.IsOpen = false; toolsMenu.Items.Clear(); }
         if (MoreAction.ContextMenu is { } menu) { menu.IsOpen = false; menu.Items.Clear(); }
