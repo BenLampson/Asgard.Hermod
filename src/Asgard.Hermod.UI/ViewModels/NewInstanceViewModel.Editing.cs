@@ -35,10 +35,10 @@ public sealed partial class NewInstanceViewModel
     public string WindowTitle => IsEditing ? Text.Get("EditInstance") : Text.Get("AddInstance2");
     /// <summary>向导侧栏标题与实际提交操作一致。</summary>
     public string WizardHeading => IsEditing ? Text.Get("EditInstance") : Text.Get("AddInstance");
-    /// <summary>编辑现有实例只修改连接参数，类型与服务商不可变。</summary>
+    /// <summary>编辑现有实例保持顶层类型不变。</summary>
     public bool IsTypeSelectionEditable => IsInformationEditable && !IsEditing;
-    /// <summary>只有声明可切换连接路径的类型能在编辑时改服务商。</summary>
-    public bool IsProviderSelectionEditable => IsInformationEditable && (!IsEditing || SelectedType?.AllowProviderChangeOnEdit == true);
+    /// <summary>编辑允许选择同一类型下的服务商，切换后必须重新测试。</summary>
+    public bool IsProviderSelectionEditable => IsInformationEditable;
     /// <summary>类型决定编辑时的保存范围提示页是否需要显示。</summary>
     private bool OmitEditSaveLocation => IsEditing && SelectedType?.OmitSaveLocationOnEdit == true;
     /// <summary>末步编号来自当前流程，不要求公共向导固定五步。</summary>

@@ -91,8 +91,7 @@ public sealed partial class NewInstanceViewModel
     /// <summary>步骤说明匹配当前操作，具体测试范围由服务商描述。</summary>
     public string StepDescription => CurrentStep switch
     {
-        1 => IsEditing && !IsProviderSelectionEditable ? Text.Get("TheTypeAndProviderOfThisInstanceAreFixed")
-            : Text.Get(SelectedType?.ProviderSelectionDescriptionResourceKey ?? "ChooseProviderForInstanceType"),
+        1 => Text.Get(SelectedType?.ProviderSelectionDescriptionResourceKey ?? "ChooseProviderForInstanceType"),
         2 => Text.Format("EnterTheInstanceNameAndConnectionInformationFor", ProviderName),
         3 => Text.Get("VerifyConnectionInformationAndAccessPermissions"),
         4 when !SkipsSaveLocation => Text.Get("SyncSaveAutomaticHint"),

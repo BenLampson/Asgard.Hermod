@@ -67,7 +67,10 @@ Instance creation begins with the independent `InstanceTypePicker`, which lays
 out registered types in two columns. This entrance has no steps or total count.
 Selecting a type opens its connection flow; returning from the first flow step
 clears the previous connection fields, name and test result before showing the
-type entrance again. Editing retains the saved type and provider.
+type entrance again. Editing retains the saved type and permits selecting another
+registered provider within that type. Switching providers invalidates the connection
+test and uses the selected provider's fields. Cloud credentials are cleared; types
+may explicitly retain common fields when changing connection methods.
 
 `InstanceWizard` is a shared presentation container with a caller-supplied title,
 description, step collection and content. It does not prescribe five steps or
@@ -135,9 +138,9 @@ independent windows and retains the existing page registry and cleanup contracts
 Module views must not recreate window chrome or duplicate the shared details layout.
 
 SSH exposes configuration editing only in its Content toolbar. The shared wizard
-uses type-declared edit capabilities: SSH permits route changes on the separate
-method-selection page, while other types retain their existing provider lock
-and save-location step. Editing preserves the instance ID, encrypted credentials and current
+permits provider changes within the saved type: SSH permits route changes on the separate
+method-selection page and retains common target fields. Types independently declare
+their save-location step. Editing preserves the instance ID, protected configuration storage and current
 connection; a verified save applies when the user explicitly reconnects.
 
 `WorkspaceTools` is a shared filtered popup with observable `WorkspaceTool`

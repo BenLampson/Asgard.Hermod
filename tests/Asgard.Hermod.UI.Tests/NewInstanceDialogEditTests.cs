@@ -35,7 +35,7 @@ public sealed class NewInstanceDialogEditTests(WpfTestFixture fixture)
             {
                 Assert.Equal("编辑实例", dialog.Title);
                 Assert.False(Assert.IsAssignableFrom<ListBox>(WindowTestVisuals.Named(dialog, "TypeList")).IsEnabled);
-                Assert.False(Assert.IsType<ListBox>(WindowTestVisuals.Named(dialog, "ProviderList")).IsEnabled);
+                Assert.True(Assert.IsType<ListBox>(WindowTestVisuals.Named(dialog, "ProviderList")).IsEnabled);
                 model.NextCommand.Execute(null);
                 await WindowTestVisuals.UpdateLayoutAsync(dialog);
                 Assert.Equal("Existing modal OSS", Assert.IsType<TextBox>(WindowTestVisuals.Named(dialog, "NameInput")).Text);

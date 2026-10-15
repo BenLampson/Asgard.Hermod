@@ -486,8 +486,8 @@
   <data xml:space="preserve" name="EditTag">
     <value>编辑标签</value>
   </data>
-  <data xml:space="preserve" name="EditingCannotChangeTheInstanceTypeOrProviderCreateAnInstanceOfTheRequiredTypeInstead">
-    <value>编辑实例不能更改实例类型或服务商，请新增对应类型的实例。</value>
+  <data xml:space="preserve" name="EditingCannotChangeTheInstanceTypeCreateAnInstanceOfTheRequiredTypeInstead">
+    <value>编辑实例不能更改实例类型，请新增对应类型的实例。</value>
   </data>
   <data xml:space="preserve" name="English">
     <value>English</value>
@@ -1379,9 +1379,6 @@
   </data>
   <data xml:space="preserve" name="TheTextExceedsThe256KBPreviewLimitDownloadAndViewItLocally">
     <value>文本超过 256KB 预览上限，请下载后在本地查看。</value>
-  </data>
-  <data xml:space="preserve" name="TheTypeAndProviderOfThisInstanceAreFixed">
-    <value>当前实例的类型与服务商已固定。</value>
   </data>
   <data xml:space="preserve" name="TheUpdatedConnectionInformationWillBeUsedAfterSaving">
     <value>保存后将使用更新后的连接信息。</value>

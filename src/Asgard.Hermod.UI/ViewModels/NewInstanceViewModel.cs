@@ -100,7 +100,8 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
             if (SetProperty(ref field, value))
             {
                 // 同一类型允许切换连接路径时保留共同字段；跨类型和不同云服务商不继承凭据。
-                var retained = IsEditing || SelectedType?.AllowProviderChangeOnEdit == true ? Fields.ToDictionary(item => item.Key, item => (item.Value, item.Definition.Kind)) : null;
+                var retained = SelectedType?.PreserveFieldsOnProviderChange == true
+                    ? Fields.ToDictionary(item => item.Key, item => (item.Value, item.Definition.Kind)) : null;
                 ReplaceFields(value);
                 if (retained is not null)
                     foreach (var item in Fields)

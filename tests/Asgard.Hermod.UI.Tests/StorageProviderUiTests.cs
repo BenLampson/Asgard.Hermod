@@ -15,6 +15,67 @@ namespace Asgard.Hermod.UI.Tests;
 [Collection(WpfTestCollection.Name)]
 public sealed class StorageProviderUiTests(WpfTestFixture fixture)
 {
+    /// <summary>编辑时提供商列表可操作，双语和两种主题下切换品牌会显示对应的新表单。</summary>
+    [Theory]
+    [InlineData("en", UiTheme.Light)]
+    [InlineData("en", UiTheme.Dark)]
+    [InlineData("zh-Hans", UiTheme.Light)]
+    [InlineData("zh-Hans", UiTheme.Dark)]
+    public Task EditWizard_ChangesProviderAndRendersItsFields(string language, UiTheme theme) => fixture.RunAsync(async () =>
+    {
+        var previous = CultureInfo.CurrentUICulture;
+        var themes = new ThemeService(Application.Current.Resources);
+        themes.SetTheme(theme);
+        CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(language);
+        using var services = new ServiceCollection().AddHermodCore().AddAliyunOss().AddVolcengineTos().BuildServiceProvider();
+        var configurations = new NewInstanceWizardTestConfigurationService();
+        var existing = new InstanceSummary("provider-edit", "Storage instance", "Storage instance", "cloud", [],
+            IsLocal: true, TypeId: "storage", ProviderId: "aliyun-oss");
+        using var model = new NewInstanceViewModel(services.GetRequiredService<IInstanceProviderRegistry>(), configurations, existing, new()
+        {
+            TypeId = "storage",
+            ProviderId = "aliyun-oss",
+            Parameters = new Dictionary<string, string> { ["accessKeyId"] = "OriginalTestKey", ["accessKeySecret"] = "original-secret" },
+        });
+        var dialog = new NewInstanceWindow(model);
+        try
+        {
+            WindowPreviewCapture.Show(dialog);
+            await WindowPreviewCapture.VerifyAsync(dialog, $"provider-edit-{language}-{theme}");
+            Assert.Equal(Text.Get("EditInstance"), dialog.Title);
+            var providers = Assert.IsType<ListBox>(WindowTestVisuals.Named(dialog, "ProviderList"));
+            Assert.True(providers.IsEnabled);
+            Assert.False(Assert.IsAssignableFrom<Control>(WindowTestVisuals.Named(dialog, "TypeList")).IsEnabled);
+            var selected = model.Providers.Single(provider => provider.Id == "volcengine-tos");
+            var card = Assert.Single(WindowTestVisuals.Descendants<SelectionCard>(providers), item => ReferenceEquals(item.DataContext, selected));
+            Assert.True(card.Focus());
+            card.IsChecked = true;
+            Assert.Same(selected, model.SelectedProvider);
+            model.NextCommand.Execute(null);
+            await WindowTestVisuals.UpdateLayoutAsync(dialog);
+            Assert.Equal(selected.Fields.Select(field => field.Key), model.Fields.Select(field => field.Key));
+            Assert.Empty(NewInstanceWizardTests.GetField(model, "accessKeySecret").Value);
+            Assert.Contains(WindowTestVisuals.Descendants<TextBox>(dialog),
+                item => item.IsVisible && item.DataContext is InstanceConfigurationFieldViewModel { Key: "region" });
+            var name = Assert.IsType<TextBox>(WindowTestVisuals.Named(dialog, "NameInput"));
+            Assert.Equal(existing.Name, name.Text);
+            Assert.True(name.Focus());
+            Assert.True(name.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)));
+            await WindowPreviewCapture.VerifyAsync(dialog, $"provider-edit-fields-{language}-{theme}");
+            dialog.Width = 1000;
+            dialog.Height = 720;
+            await WindowPreviewCapture.VerifyAsync(dialog, $"provider-edit-expanded-{language}-{theme}");
+            Assert.False(model.CanCreate);
+            Assert.Empty(configurations.Updates);
+        }
+        finally
+        {
+            dialog.Close();
+            CultureInfo.CurrentUICulture = previous;
+            themes.SetTheme(UiTheme.Light);
+        }
+    });
+
     /// <summary>所有提供商使用同一向导，最后的配置字段可滚动访问，不裁切底部动作。</summary>
     [Theory]
     [InlineData("en", UiTheme.Light)]

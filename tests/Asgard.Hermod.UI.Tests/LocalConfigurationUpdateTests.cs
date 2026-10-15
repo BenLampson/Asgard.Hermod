@@ -1,3 +1,5 @@
+using Asgard.Hermod.Abstractions.Localization;
+using Asgard.Hermod.Providers.VolcengineTos;
 
 namespace Asgard.Hermod.UI.Tests;
 
@@ -71,32 +73,94 @@ public sealed class LocalConfigurationUpdateTests
         Assert.Equal(stored.ProtectedParameters, repository.GetInstance(original.Id, TestContext.Current.CancellationToken)!.ProtectedParameters);
     }
 
-    /// <summary>编辑只允许改名称和连接参数，不能把同一实例切换成另一类型或服务商。</summary>
+    /// <summary>编辑可以切换提供商，但持久化边界仍拒绝更改实例类型。</summary>
     [Fact]
-    public async Task UpdateAsync_RejectsChangingInstanceTypeOrProvider()
+    public async Task UpdateAsync_RejectsChangingInstanceType()
     {
         using var environment = new LocalStorageTestEnvironment();
         var registration = new ServiceCollection().AddHermodCore().AddWindowsSecretProtection().AddObjectStorage().AddAliyunOss().AddLocalStorage(environment.CreateConfiguration());
-        registration.AddSingleton<IInstanceProvider>(new FakeStorageProvider("other-provider"));
         registration.AddSingleton<IInstanceProvider>(new FakeInstanceProvider(new("docker-provider", "Docker", "Docker", "container",
             new("docker", "Docker", "连接容器服务", "container"), [])));
         using var services = registration.BuildServiceProvider();
         services.GetRequiredService<LocalDatabaseInitializer>().Initialize();
         var configuration = services.GetRequiredService<IInstanceConfigurationService>();
         InstanceSummary original = await configuration.CreateAsync(CreateDraft("Original", "secret", []), TestContext.Current.CancellationToken);
-        foreach ((string type, string provider) in new[] { ("storage", "other-provider"), ("docker", "docker-provider") })
-        {
-            await Assert.ThrowsAsync<InvalidOperationException>(() => configuration.UpdateAsync(original.Id,
-                new InstanceConfigurationDraft
-                {
-                    Name = "Changed type",
-                    Connection = new InstanceConnectionOptions { TypeId = type, ProviderId = provider, Parameters = new Dictionary<string, string>() },
-                }, TestContext.Current.CancellationToken));
-        }
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(() => configuration.UpdateAsync(original.Id,
+            new InstanceConfigurationDraft
+            {
+                Name = "Changed type",
+                Connection = new InstanceConnectionOptions { TypeId = "docker", ProviderId = "docker-provider", Parameters = new Dictionary<string, string>() },
+            }, TestContext.Current.CancellationToken));
+        Assert.Equal(Text.Get("EditingCannotChangeTheInstanceTypeCreateAnInstanceOfTheRequiredTypeInstead"), Text.Error(error));
         InstanceSummary unchanged = Assert.Single(configuration.GetInstances());
         Assert.Equal(original.TypeId, unchanged.TypeId);
         Assert.Equal(original.ProviderId, unchanged.ProviderId);
         Assert.Equal("Original", unchanged.Name);
+    }
+
+    /// <summary>真实存储提供商切换保留原记录与标签，重启后使用新提供商及其加密参数。</summary>
+    [Fact]
+    public async Task UpdateAsync_ChangesStorageProviderAndPreservesIdentityAcrossRestart()
+    {
+        using var environment = new LocalStorageTestEnvironment();
+        ServiceProvider CreateServices() => new ServiceCollection().AddHermodCore().AddWindowsSecretProtection()
+            .AddObjectStorage().AddAliyunOss().AddVolcengineTos().AddLocalStorage(environment.CreateConfiguration()).BuildServiceProvider();
+        StoredInstanceConfiguration original;
+        using (var services = CreateServices())
+        {
+            services.GetRequiredService<LocalDatabaseInitializer>().Initialize();
+            var configurations = services.GetRequiredService<IInstanceConfigurationService>();
+            var summary = await configurations.CreateAsync(CreateDraft("Original", "old-provider-secret",
+                ["builtin.environment.staging"]), TestContext.Current.CancellationToken);
+            var repository = services.GetRequiredService<ILocalConfigurationRepository>();
+            original = repository.GetInstance(summary.Id, TestContext.Current.CancellationToken)!;
+            var connection = new InstanceConnectionOptions
+            {
+                TypeId = "storage",
+                ProviderId = "volcengine-tos",
+                Parameters = new Dictionary<string, string>
+                {
+                    ["accessKeyId"] = "VolcengineTestKey",
+                    ["accessKeySecret"] = "new-provider-secret",
+                    ["region"] = "cn-beijing",
+                },
+            };
+            var updated = await configurations.UpdateAsync(summary.Id, new() { Name = "Corrected provider", Connection = connection },
+                TestContext.Current.CancellationToken);
+            Assert.Equal(summary.Id, updated.Id);
+            Assert.Equal("storage", updated.TypeId);
+            Assert.Equal("volcengine-tos", updated.ProviderId);
+            Assert.Equal(summary.Tags, updated.Tags);
+            var stored = repository.GetInstance(summary.Id, TestContext.Current.CancellationToken)!;
+            Assert.Equal(original.CreatedAt, stored.CreatedAt);
+            Assert.Equal(original.TagIds, stored.TagIds);
+            Assert.NotEqual(original.ProtectedParameters, stored.ProtectedParameters);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => configurations.UpdateAsync(summary.Id, new()
+            {
+                Name = "Invalid provider configuration",
+                Connection = new() { TypeId = connection.TypeId, ProviderId = connection.ProviderId, Parameters = new Dictionary<string, string>() },
+            }, TestContext.Current.CancellationToken));
+            await Assert.ThrowsAsync<InvalidOperationException>(() => configurations.UpdateAsync(summary.Id, new()
+            {
+                Name = "Unknown provider",
+                Connection = new() { TypeId = connection.TypeId, ProviderId = "unregistered-provider", Parameters = connection.Parameters },
+            }, TestContext.Current.CancellationToken));
+            Assert.Equal(stored.ProtectedParameters, repository.GetInstance(summary.Id, TestContext.Current.CancellationToken)!.ProtectedParameters);
+        }
+        using var restarted = CreateServices();
+        restarted.GetRequiredService<LocalDatabaseInitializer>().Initialize();
+        var restored = restarted.GetRequiredService<IInstanceConfigurationService>();
+        var instance = Assert.Single(restored.GetInstances());
+        Assert.Equal(original.Id, instance.Id);
+        Assert.Equal("Corrected provider", instance.Name);
+        Assert.Equal("volcengine-tos", instance.ProviderId);
+        Assert.Equal(["Environment/Staging"], instance.Tags);
+        var saved = await restored.GetConnectionAsync(instance.Id, TestContext.Current.CancellationToken);
+        Assert.NotNull(saved);
+        Assert.Equal("volcengine-tos", saved.ProviderId);
+        Assert.Equal("new-provider-secret", saved.Parameters["accessKeySecret"]);
+        Assert.Equal("cn-beijing", saved.Parameters["region"]);
     }
 
     /// <summary>采用虚构有效字段，所有测试都不访问云服务。</summary>

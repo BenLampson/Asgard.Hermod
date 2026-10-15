@@ -13,7 +13,7 @@ public static class SshProfile
             ProviderSelectionTitleResourceKey = "SshConnectionMethod",
             ProviderSelectionDescriptionResourceKey = "SshChooseMethodDescription",
             ProviderLabelResourceKey = "SshConnectionMethod",
-            AllowProviderChangeOnEdit = true,
+            PreserveFieldsOnProviderChange = true,
             OmitSaveLocationOnEdit = true,
             DefaultProviderId = SshIds.Direct,
             OmitSaveLocation = true,

@@ -486,8 +486,8 @@
   <data xml:space="preserve" name="EditTag">
     <value>Edit tag</value>
   </data>
-  <data xml:space="preserve" name="EditingCannotChangeTheInstanceTypeOrProviderCreateAnInstanceOfTheRequiredTypeInstead">
-    <value>Editing cannot change the instance type or provider. Create an instance of the required type instead.</value>
+  <data xml:space="preserve" name="EditingCannotChangeTheInstanceTypeCreateAnInstanceOfTheRequiredTypeInstead">
+    <value>Editing cannot change the instance type. Create an instance of the required type instead.</value>
   </data>
   <data xml:space="preserve" name="English">
     <value>English</value>
@@ -1379,9 +1379,6 @@
   </data>
   <data xml:space="preserve" name="TheTextExceedsThe256KBPreviewLimitDownloadAndViewItLocally">
     <value>The text exceeds the 256 KB preview limit. Download and view it locally.</value>
-  </data>
-  <data xml:space="preserve" name="TheTypeAndProviderOfThisInstanceAreFixed">
-    <value>The type and provider of this instance are fixed.</value>
   </data>
   <data xml:space="preserve" name="TheUpdatedConnectionInformationWillBeUsedAfterSaving">
     <value>The updated connection information will be used after saving.</value>

@@ -3,15 +3,14 @@ namespace Asgard.Hermod.UI.Tests;
 /// <summary>编辑复用向导，但必须重新测试并更新原实例，取消不产生持久化写入。</summary>
 public sealed class NewInstanceWizardEditTests
 {
-    /// <summary>预填配置不等于连接已验证，编辑现有实例不能更换顶层类型或服务商。</summary>
+    /// <summary>预填配置不等于连接已验证，编辑只锁定顶层类型并拒绝该类型之外的服务商。</summary>
     [Fact]
     public async Task EditMode_PrefillsAndLocksIdentityWithoutTrustingSavedConnection()
     {
         var oss = new NewInstanceWizardTestProvider();
-        var alternate = new NewInstanceWizardTestProvider("alternate", "另一服务商");
         var docker = new NewInstanceWizardTestDockerProvider();
         var configurations = new NewInstanceWizardTestConfigurationService();
-        using var model = new NewInstanceViewModel(new NewInstanceWizardTestRegistry(oss, alternate, docker),
+        using var model = new NewInstanceViewModel(new NewInstanceWizardTestRegistry(oss, docker),
             configurations, ExistingInstance(), ExistingConnection());
         Assert.True(model.IsEditing);
         Assert.Equal("编辑实例", model.WindowTitle);
@@ -21,8 +20,10 @@ public sealed class NewInstanceWizardEditTests
         Assert.Equal("storage", model.SelectedType?.Id);
         Assert.Same(oss.Descriptor, model.SelectedProvider);
         Assert.False(model.IsTypeSelectionEditable);
+        Assert.True(model.IsProviderSelectionEditable);
         model.SelectedType = model.Types.Single(type => type.Id == "docker");
-        model.SelectedProvider = alternate.Descriptor;
+        model.SelectedProvider = docker.Descriptor;
+        model.SelectedProvider = new NewInstanceWizardTestProvider("unregistered").Descriptor;
         model.SelectedType = null;
         model.SelectedProvider = null;
         Assert.Equal("storage", model.SelectedType?.Id);
@@ -38,6 +39,50 @@ public sealed class NewInstanceWizardEditTests
         Assert.Equal(3, model.CurrentStep);
         Assert.Equal(0, configurations.CallCount);
         Assert.Equal(0, configurations.UpdateCallCount);
+    }
+
+    /// <summary>切换云服务商会清空旧配置并作废测试，新测试通过后只更新原实例。</summary>
+    [Fact]
+    public async Task EditMode_ProviderChangeClearsCredentialsAndRequiresNewTestBeforeUpdatingOriginal()
+    {
+        var original = new NewInstanceWizardTestProvider();
+        var selected = new NewInstanceWizardTestProvider("volcengine-tos", "Volcengine TOS");
+        var configurations = new NewInstanceWizardTestConfigurationService();
+        using var model = new NewInstanceViewModel(new NewInstanceWizardTestRegistry(original, selected),
+            configurations, ExistingInstance(), ExistingConnection());
+        await ReachConfirmationAsync(model);
+        var previousFields = model.Fields.ToArray();
+        while (!model.IsProviderStep) model.PreviousCommand.Execute(null);
+
+        model.SelectedProvider = selected.Descriptor;
+
+        Assert.Equal("storage", model.SelectedType?.Id);
+        Assert.Equal("Existing OSS", model.Name);
+        Assert.Same(selected.Descriptor, model.SelectedProvider);
+        Assert.All(previousFields, item => Assert.Empty(item.Value));
+        Assert.All(model.Fields, item => Assert.Empty(item.Value));
+        Assert.False(model.HasSuccessfulConnectionTest);
+        Assert.False(model.CanCreate);
+        await model.SubmitCommand.ExecuteAsync();
+        Assert.Empty(configurations.Updates);
+        Field(model, "accessKeyId").Value = "VolcengineTestKey";
+        Field(model, "accessKeySecret").Value = "new-provider-secret";
+        await ReachConfirmationAsync(model);
+        Assert.Equal(1, original.CallCount);
+        Assert.Equal(1, selected.CallCount);
+        Assert.Equal("volcengine-tos", selected.LastConnection?.ProviderId);
+        Assert.Equal("new-provider-secret", selected.LastConnection?.Parameters["accessKeySecret"]);
+
+        await model.SubmitCommand.ExecuteAsync();
+
+        var update = Assert.Single(configurations.Updates);
+        Assert.Equal("existing-instance", update.InstanceId);
+        Assert.Equal("storage", update.Draft.Connection.TypeId);
+        Assert.Equal("volcengine-tos", update.Draft.Connection.ProviderId);
+        Assert.Equal("new-provider-secret", update.Draft.Connection.Parameters["accessKeySecret"]);
+        Assert.Equal(0, configurations.CallCount);
+        Assert.Equal("existing-instance", model.CreatedInstance?.Id);
+        Assert.Equal("volcengine-tos", model.CreatedInstance?.ProviderId);
     }
 
     /// <summary>取消预填向导不会创建或更新配置，关闭结果与添加模式一致。</summary>

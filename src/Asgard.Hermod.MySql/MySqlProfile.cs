@@ -15,7 +15,7 @@ public static class MySqlProfile
             ProviderSelectionTitleResourceKey = "MySqlConnectionMethod",
             ProviderSelectionDescriptionResourceKey = "MySqlConnectionMethodHint",
             ProviderLabelResourceKey = "MySqlConnectionMethod",
-            AllowProviderChangeOnEdit = true,
+            PreserveFieldsOnProviderChange = true,
         }, Fields(route))
     { ConnectionTestDescription = Text.Get("MySqlTestHint") };
 

@@ -5,6 +5,11 @@ a generic S3-compatible connector. All use the same object browser, search,
 preview, transfer and deletion workflows. Each connector is registered by the
 application and can be used independently of SQLite and WPF.
 
+Editing keeps the instance type fixed and allows switching its storage provider.
+The selected provider determines the connection fields, endpoint and signing protocol.
+Switching clears the previous provider's connection fields and requires a successful
+new connection test before saving. The instance ID, creation time and tags are retained.
+
 ## Connection fields
 
 | Provider | Endpoint | Default region | Notes |

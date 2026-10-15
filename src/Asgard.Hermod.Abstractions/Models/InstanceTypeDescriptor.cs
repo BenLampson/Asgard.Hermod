@@ -9,8 +9,8 @@ public sealed record InstanceTypeDescriptor(string Id, string Name, string Descr
     public string ProviderSelectionDescriptionResourceKey { get; init; } = "ChooseProviderForInstanceType";
     /// <summary>首步列表标签对应的共享资源键。</summary>
     public string ProviderLabelResourceKey { get; init; } = "Provider";
-    /// <summary>类型明确声明同一实例是否允许切换连接路径，默认仍锁定服务商。</summary>
-    public bool AllowProviderChangeOnEdit { get; init; }
+    /// <summary>同一类型切换连接方式时是否沿用共同字段；不同云服务商默认清空配置，避免误用凭据。</summary>
+    public bool PreserveFieldsOnProviderChange { get; init; }
     /// <summary>编辑流程可省略保存范围提示页，确认页仍展示实际保存位置。</summary>
     public bool OmitSaveLocationOnEdit { get; init; }
     /// <summary>首步默认选项必须使用注册表中的稳定标识，仍需用户点击下一步进入表单。</summary>
