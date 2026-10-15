@@ -128,6 +128,13 @@
         </Setter>
     </Style>
 
+    <!-- 组合输入区与只读建议由外层容器绘制边框，内部保留字体、选区和滚动行为。 -->
+    <Style x:Key="AgentTextBox" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+        <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TextBox">
+            <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+        </ControlTemplate></Setter.Value></Setter>
+    </Style>
+
     <Style x:Key="PanelBorder" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource LineBrush}" />

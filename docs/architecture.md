@@ -160,6 +160,13 @@ verified transport supplies these channels without injecting terminal input.
 The shared `WorkspaceSplitView` owns native resizable columns and preserves both
 content instances while hiding a pane. SSH and database workspaces use it for
 Agent; closing or resizing the pane preserves conversation, draft and width.
+SSH, MySQL and PostgreSQL compose the same `AgentPanel`, `AgentMessageView`
+and `AgentCodeSuggestion` controls. The shared panel owns the header, message
+scrolling, composer, user-message colors and keyboard behavior (Enter or
+Ctrl+Enter sends; Shift+Enter inserts a newline). Modules provide context slots,
+message bindings and their existing commands. SQL scope, result sharing,
+confirmation and execution, and SSH selection, diagnostics and connection
+generation checks remain in their module view models.
 SSH uses a separate bounded `SshAgentConversation`, with explicitly attached
 terminal selections, fixed automatic diagnostics and confirmed command actions.
 The Agent module owns the bounded function-tool loop and diagnostic templates;

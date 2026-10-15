@@ -1,39 +1,17 @@
-using System.Collections.Specialized;
-using Asgard.Hermod.Ssh.UI.ViewModels;
-
 namespace Asgard.Hermod.Ssh.UI.Views;
 
-/// <summary>消息到达只滚动对话，不打开分屏或抢占终端焦点。</summary>
+/// <summary>SSH 只提供终端上下文与业务动作，共享面板负责消息、输入和滚动。</summary>
 public partial class SshAssistantView : UserControl
 {
-    private SshAssistantViewModel? _observed;
     /// <summary>要求宿主隐藏分屏，不关闭或清空对话。</summary>
     public event EventHandler? CloseRequested;
     /// <summary>用户明确附加终端选区。</summary>
     public event EventHandler? AttachSelectionRequested;
-    /// <summary>加载主题化助手布局。</summary>
-    public SshAssistantView()
-    {
-        InitializeComponent();
-        Loaded += (_, _) => ObserveMessages();
-        Unloaded += (_, _) => { if (_observed is not null) _observed.Messages.CollectionChanged -= OnMessagesChanged; _observed = null; };
-        DataContextChanged += (_, _) => { if (IsLoaded) ObserveMessages(); };
-    }
-    private void ObserveMessages()
-    {
-        if (_observed is not null) _observed.Messages.CollectionChanged -= OnMessagesChanged;
-        _observed = DataContext as SshAssistantViewModel;
-        if (_observed is not null) _observed.Messages.CollectionChanged += OnMessagesChanged;
-    }
-    private void OnMessagesChanged(object? sender, NotifyCollectionChangedEventArgs args)
-    {
-        if (IsVisible) Dispatcher.BeginInvoke(() => { if (IsVisible) ConversationScroll.ScrollToEnd(); });
-    }
-    private void OnClose(object sender, RoutedEventArgs args) => CloseRequested?.Invoke(this, EventArgs.Empty);
+    /// <summary>加载共享聊天面板与 SSH 专用插槽。</summary>
+    public SshAssistantView() => InitializeComponent();
+
+    /// <summary>转发共享面板的收起请求。</summary>
+    private void OnClose(object? sender, EventArgs args) => CloseRequested?.Invoke(this, EventArgs.Empty);
+    /// <summary>转发用户明确附加选区的操作。</summary>
     private void OnAttachSelection(object sender, RoutedEventArgs args) => AttachSelectionRequested?.Invoke(this, EventArgs.Empty);
-    private void OnPromptKeyDown(object sender, KeyEventArgs args)
-    {
-        if (args.Key != Key.Enter || Keyboard.Modifiers != ModifierKeys.None || !PromptEditor.IsKeyboardFocusWithin) return;
-        if (DataContext is SshAssistantViewModel model && model.SendCommand.CanExecute(null)) { model.SendCommand.Execute(null); args.Handled = true; }
-    }
 }

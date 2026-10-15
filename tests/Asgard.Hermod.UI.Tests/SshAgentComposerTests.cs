@@ -31,12 +31,14 @@ public sealed class SshAgentComposerTests(WpfTestFixture fixture)
         model.Messages.Add(tool);
         model.Messages.Add(reply);
         var view = new SshAssistantView { DataContext = model };
+        System.Windows.Input.InputMethod.SetIsInputMethodEnabled(view, false);
         try
         {
             await LayoutAsync(view, 420);
-            var composer = Assert.IsType<Border>(view.FindName("Composer"));
-            var prompt = Assert.IsType<TextBox>(view.FindName("PromptEditor"));
-            var placeholder = Assert.IsType<TextBlock>(view.FindName("PromptPlaceholder"));
+            var panel = Assert.IsType<AgentPanel>(view.FindName("ChatPanel"));
+            var composer = Assert.IsType<Border>(panel.FindName("Composer"));
+            var prompt = Assert.IsType<TextBox>(panel.FindName("PromptEditor"));
+            var placeholder = Assert.IsType<TextBlock>(panel.FindName("PromptPlaceholder"));
             Assert.Equal(Text.Get("SshAgentPrompt"), placeholder.Text);
             Assert.Equal(Visibility.Visible, placeholder.Visibility);
             Assert.Equal(prompt.FontSize, placeholder.FontSize);
@@ -73,7 +75,7 @@ public sealed class SshAgentComposerTests(WpfTestFixture fixture)
             Assert.Equal(model.Prompt, prompt.Text);
             Assert.InRange(prompt.ActualHeight, 48, 100);
             Assert.True(content.ScrollableHeight > 0);
-            var send = Assert.IsType<Button>(view.FindName("SendAction"));
+            var send = Assert.IsType<Button>(panel.FindName("SendAction"));
             Assert.True(send.TranslatePoint(new Point(send.ActualWidth, send.ActualHeight), composer).X <= composer.ActualWidth);
             Capture(view, $"ssh-composer-draft-{language}-{theme}");
 

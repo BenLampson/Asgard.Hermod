@@ -4200,4 +4200,10 @@ Exit code: {1}
   <data name="SshLogReadCanceled" xml:space="preserve"><value>Reading canceled. The last successful snapshot is retained.</value></data>
   <data name="SshLogDisconnected" xml:space="preserve"><value>SSH disconnected. The last snapshot remains available for reading and analysis; open logs again after reconnecting to refresh.</value></data>
   <data name="SshLogLocalFailed" xml:space="preserve"><value>The local log operation could not be completed. Try again or choose another destination.</value></data>
+  <data name="AgentPanelTitle" xml:space="preserve"><value>Agent</value></data>
+  <data name="AgentNewConversation" xml:space="preserve"><value>New conversation</value></data>
+  <data name="AgentHide" xml:space="preserve"><value>Hide Agent and keep the conversation and draft</value></data>
+  <data name="AgentSend" xml:space="preserve"><value>Send</value></data>
+  <data name="AgentStop" xml:space="preserve"><value>Stop</value></data>
+  <data name="AgentSendHint" xml:space="preserve"><value>Enter or Ctrl+Enter to send · Shift+Enter for a new line</value></data>
 </root>

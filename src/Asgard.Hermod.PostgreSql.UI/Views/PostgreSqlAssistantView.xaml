@@ -1,36 +1,31 @@
 <UserControl x:Class="Asgard.Hermod.PostgreSql.UI.Views.PostgreSqlAssistantView"
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
  xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI"
- xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI" PreviewKeyDown="OnKeyDown">
- <UserControl.Resources><BooleanToVisibilityConverter x:Key="Visible" /></UserControl.Resources>
- <Border Padding="14" Background="{DynamicResource SurfaceBrush}">
-  <Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-   <DockPanel Margin="0,0,0,8"><Button x:Name="HideAgentButton" DockPanel.Dock="Right" Command="{Binding HideCommand}" Style="{StaticResource IconButton}" ToolTip="{loc:Loc DatabaseSessionHideAgent}" AutomationProperties.Name="{loc:Loc DatabaseSessionHideAgent}" Margin="8,0,0,0"><controls:IconView Kind="x" Width="16" Height="16" /></Button><Button DockPanel.Dock="Right" Content="{loc:Loc PostgreSqlAssistantClear}" Command="{Binding ClearCommand}" /><TextBlock Text="{loc:Loc PostgreSqlAssistantTitle}" FontWeight="SemiBold" FontSize="16" VerticalAlignment="Center" /></DockPanel>
-   <StackPanel Grid.Row="1" Margin="0,0,0,10"><TextBlock Text="{Binding ContextLabel}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" FontSize="12" /><TextBlock Text="{loc:Loc PostgreSqlAssistantPrivacy}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="0,6,0,0" /></StackPanel>
-   <ScrollViewer x:Name="ConversationScroll" Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-    <ItemsControl ItemsSource="{Binding Messages}">
-     <ItemsControl.ItemTemplate><DataTemplate>
-      <Border Padding="10" Margin="0,0,0,12" CornerRadius="8" Background="{DynamicResource AppBackgroundBrush}">
-       <StackPanel><TextBlock Text="{Binding Role}" FontWeight="SemiBold" Margin="0,0,0,8" /><controls:MarkdownView Source="{Binding Content}" IsMarkdownEnabled="{Binding IsAssistant}" />
-        <ItemsControl ItemsSource="{Binding SqlBlocks}"><ItemsControl.ItemTemplate><DataTemplate><StackPanel Margin="0,10,0,0">
-         <TextBox Text="{Binding Sql, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" FontFamily="{DynamicResource MonoFont}" TextWrapping="Wrap" MaxHeight="220" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="{loc:Loc PostgreSqlAssistantSuggestion}" />
-         <WrapPanel Margin="0,6,0,0"><Button Content="{loc:Loc PostgreSqlAssistantInsert}" Command="{Binding DataContext.InsertCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Margin="0,0,6,6" /><Button Content="{loc:Loc PostgreSqlAssistantExecute}" Command="{Binding DataContext.ExecuteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Margin="0,0,0,6" /></WrapPanel>
-        </StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
-       </StackPanel>
-      </Border>
-     </DataTemplate></ItemsControl.ItemTemplate>
-    </ItemsControl>
-   </ScrollViewer>
-   <StackPanel Grid.Row="3" Margin="0,8,0,8">
-    <TextBlock Text="{Binding Error}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
-    <TextBlock Text="{loc:Loc PostgreSqlAssistantThinking}" Visibility="{Binding IsBusy, Converter={StaticResource Visible}}" Foreground="{DynamicResource TextMutedBrush}" Margin="0,5,0,0" />
-    <CheckBox Content="{loc:Loc PostgreSqlAssistantIncludeSql}" IsChecked="{Binding IncludeSql}" Margin="0,8,0,6" />
-    <CheckBox Content="{loc:Loc PostgreSqlAssistantIncludeResults}" IsChecked="{Binding IncludeResults}" IsEnabled="{Binding CanShareResults}" ToolTip="{loc:Loc DatabaseSessionResultScopeHint}" />
+ xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI">
+ <controls:AgentPanel x:Name="ChatPanel" Messages="{Binding Messages}" Prompt="{Binding Prompt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MaxPromptLength="8000"
+  Placeholder="{loc:Loc PostgreSqlAssistantPrompt}" SendCommand="{Binding SendCommand}" CancelCommand="{Binding CancelCommand}"
+  ClearCommand="{Binding ClearCommand}" HideCommand="{Binding HideCommand}" IsBusy="{Binding IsBusy}" Error="{Binding Error}" Status="{loc:Loc PostgreSqlAssistantThinking}">
+  <controls:AgentPanel.ContextContent>
+   <StackPanel>
+    <TextBlock Text="{Binding ContextLabel}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
+    <WrapPanel Margin="0,7,0,0">
+     <CheckBox Content="{loc:Loc PostgreSqlAssistantIncludeSql}" IsChecked="{Binding IncludeSql}" Margin="0,0,12,7" />
+     <CheckBox Content="{loc:Loc PostgreSqlAssistantIncludeResults}" IsChecked="{Binding IncludeResults}" IsEnabled="{Binding CanShareResults}" ToolTip="{loc:Loc DatabaseSessionResultScopeHint}" Margin="0,0,0,7" />
+    </WrapPanel>
+    <TextBlock Text="{loc:Loc PostgreSqlAssistantPrivacy}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" />
    </StackPanel>
-   <Grid Grid.Row="4"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-    <TextBox x:Name="PromptEditor" Text="{Binding Prompt, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="80" MaxHeight="150" MaxLength="8000" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="{loc:Loc PostgreSqlAssistantPrompt}" ToolTip="{loc:Loc PostgreSqlAssistantPrompt}" />
-    <DockPanel Grid.Row="1" Margin="0,8,0,0"><Button DockPanel.Dock="Right" Content="{loc:Loc PostgreSqlAssistantSend}" Command="{Binding SendCommand}" Style="{StaticResource PrimaryButton}" /><Button DockPanel.Dock="Right" Content="{loc:Loc PostgreSqlAssistantCancel}" Command="{Binding CancelCommand}" Margin="0,0,8,0" /><TextBlock Text="{loc:Loc PostgreSqlAssistantSendHint}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" VerticalAlignment="Center" /></DockPanel>
-   </Grid>
-  </Grid>
- </Border>
+  </controls:AgentPanel.ContextContent>
+  <controls:AgentPanel.MessageTemplate><DataTemplate>
+   <controls:AgentMessageView Role="{Binding Role}" Body="{Binding Content}" IsUser="{Binding IsUser}">
+    <controls:AgentMessageView.ActionsContent>
+     <ItemsControl ItemsSource="{Binding SqlBlocks}"><ItemsControl.ItemTemplate><DataTemplate>
+      <controls:AgentCodeSuggestion Code="{Binding Sql}" Caption="{loc:Loc PostgreSqlAssistantSuggestion}"
+       InsertText="{loc:Loc PostgreSqlAssistantInsert}" ExecuteText="{loc:Loc PostgreSqlAssistantExecute}" CommandParameter="{Binding}"
+       InsertCommand="{Binding DataContext.InsertCommand, RelativeSource={RelativeSource AncestorType=controls:AgentPanel}}"
+       ExecuteCommand="{Binding DataContext.ExecuteCommand, RelativeSource={RelativeSource AncestorType=controls:AgentPanel}}" />
+     </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+    </controls:AgentMessageView.ActionsContent>
+   </controls:AgentMessageView>
+  </DataTemplate></controls:AgentPanel.MessageTemplate>
+ </controls:AgentPanel>
 </UserControl>

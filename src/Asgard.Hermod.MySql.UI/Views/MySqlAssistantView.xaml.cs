@@ -1,17 +1,8 @@
-using Asgard.Hermod.MySql.UI.ViewModels;
-
 namespace Asgard.Hermod.MySql.UI.Views;
 
-/// <summary>侧边输入使用标准键盘导航，Ctrl+Enter 仅发送助手消息。</summary>
+/// <summary>数据库模块只提供上下文和 SQL 动作，共享面板负责对话展示与输入交互。</summary>
 public partial class MySqlAssistantView : UserControl
 {
-    /// <summary>初始化可复制消息与原有 SQL 编辑器的动作入口。</summary>
+    /// <summary>加载共享聊天面板，保留原有页签、会话和业务命令绑定。</summary>
     public MySqlAssistantView() => InitializeComponent();
-
-    private async void OnKeyDown(object sender, KeyEventArgs args)
-    {
-        if (args.Key != Key.Enter || Keyboard.Modifiers != ModifierKeys.Control || DataContext is not MySqlAssistantViewModel model) return;
-        args.Handled = true;
-        if (model.SendCommand.CanExecute(null)) { await model.SendCommand.ExecuteAsync(); ConversationScroll.ScrollToEnd(); }
-    }
 }

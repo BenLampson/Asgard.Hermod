@@ -4200,4 +4200,10 @@ Session：{2}
   <data name="SshLogReadCanceled" xml:space="preserve"><value>已取消读取，保留上一次成功的日志快照。</value></data>
   <data name="SshLogDisconnected" xml:space="preserve"><value>SSH 已断开，仍可阅读和分析上一次快照；重连后请重新打开日志以刷新。</value></data>
   <data name="SshLogLocalFailed" xml:space="preserve"><value>本地日志操作未能完成，请重试或选择其他保存位置。</value></data>
+  <data name="AgentPanelTitle" xml:space="preserve"><value>Agent</value></data>
+  <data name="AgentNewConversation" xml:space="preserve"><value>新建对话</value></data>
+  <data name="AgentHide" xml:space="preserve"><value>收起 Agent，保留对话和草稿</value></data>
+  <data name="AgentSend" xml:space="preserve"><value>发送</value></data>
+  <data name="AgentStop" xml:space="preserve"><value>停止</value></data>
+  <data name="AgentSendHint" xml:space="preserve"><value>Enter 或 Ctrl+Enter 发送 · Shift+Enter 换行</value></data>
 </root>

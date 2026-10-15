@@ -193,7 +193,7 @@ public sealed class SessionScopeTests(WpfTestFixture fixture)
             split.ColumnDefinitions[2].Width = new GridLength(480); await WindowTestVisuals.UpdateLayoutAsync(window);
             split.Children.OfType<GridSplitter>().Single().RaiseEvent(new System.Windows.Controls.Primitives.DragCompletedEventArgs(0, 0, false) { RoutedEvent = System.Windows.Controls.Primitives.Thumb.DragCompletedEvent });
             Assert.InRange(page.AssistantWidth, 479, 481);
-            Assert.IsType<Button>(assistantView.FindName("HideAgentButton")).Command!.Execute(null);
+            Assert.IsType<Button>(Assert.IsType<AgentPanel>(assistantView.FindName("ChatPanel")).FindName("HideAgentButton")).Command!.Execute(null);
             await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.False(split.IsPaneOpen); Assert.False(assistantView.IsVisible);
             Assert.Equal(0, split.ColumnDefinitions[2].ActualWidth);

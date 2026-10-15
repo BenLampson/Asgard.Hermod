@@ -41,8 +41,9 @@ public sealed class SshTroubleshootingLayoutTests(WpfTestFixture fixture)
             var sending = model.Assistant.SendCommand.ExecuteAsync();
             await WindowPreviewCapture.VerifyAsync(window, $"ssh-troubleshooting-running-{language}-{theme}");
             var assistant = Assert.IsType<SshAssistantView>(view.FindName("AssistantPanel"));
-            Assert.Equal(50, Assert.IsType<Border>(Assert.IsType<DockPanel>(assistant.FindName("AgentHeader")).Parent).ActualHeight);
-            var composer = Assert.IsType<Border>(assistant.FindName("Composer")); var send = Assert.IsType<Button>(assistant.FindName("SendAction"));
+            var panel = Assert.IsType<AgentPanel>(assistant.FindName("ChatPanel"));
+            Assert.Equal(50, Assert.IsType<Border>(Assert.IsType<DockPanel>(panel.FindName("AgentHeader")).Parent).ActualHeight);
+            var composer = Assert.IsType<Border>(panel.FindName("Composer")); var send = Assert.IsType<Button>(panel.FindName("SendAction"));
             Assert.True(composer.ActualHeight >= 110); Assert.False(send.IsEnabled); Assert.True(model.Assistant.CancelCommand.CanExecute(null));
             result.SetResult(new("nginx.service - nginx web server\nActive: inactive (dead)", 3, false)); await sending;
             await WindowPreviewCapture.VerifyAsync(window, $"ssh-troubleshooting-result-{language}-{theme}");
@@ -53,9 +54,9 @@ public sealed class SshTroubleshootingLayoutTests(WpfTestFixture fixture)
             approval.SetResult(false); await executing;
             window.Width = 800; window.Height = 600;
             await WindowPreviewCapture.VerifyAsync(window, $"ssh-troubleshooting-narrow-{language}-{theme}");
-            var scroll = Assert.IsType<ScrollViewer>(assistant.FindName("ConversationScroll")); Assert.True(scroll.ActualHeight >= 100);
+            var scroll = Assert.IsType<ScrollViewer>(panel.FindName("ConversationScroll")); Assert.True(scroll.ActualHeight >= 100);
             var origin = send.TranslatePoint(new Point(), composer); Assert.True(origin.X >= 0); Assert.True(origin.X + send.ActualWidth <= composer.ActualWidth);
-            var prompt = Assert.IsType<TextBox>(assistant.FindName("PromptEditor"));
+            var prompt = Assert.IsType<TextBox>(panel.FindName("PromptEditor"));
             window.Activate();
             await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.True(prompt.Focus());

@@ -140,11 +140,12 @@ public sealed class MySqlAssistantTests(WpfTestFixture fixture)
             var view = new MySqlAssistantView { DataContext = assistant }; var root = Root(view); Layout(root, width, 760);
             await WpfTestFixture.DrainDispatcherAsync(); Layout(root, width, 760);
             var buttons = Descendants<Button>(root).ToArray();
-            Assert.Contains(buttons, button => Equals(button.Content, Text.Get("MySqlAssistantSend")) && ReferenceEquals(button.Command, assistant.SendCommand));
+            Assert.Contains(buttons, button => System.Windows.Automation.AutomationProperties.GetName(button) == Text.Get("AgentSend") && ReferenceEquals(button.Command, assistant.SendCommand));
             Assert.Contains(buttons, button => Equals(button.Content, Text.Get("MySqlAssistantInsert")) && ReferenceEquals(button.Command, assistant.InsertCommand));
             Assert.Contains(buttons, button => Equals(button.Content, Text.Get("MySqlAssistantExecute")) && ReferenceEquals(button.Command, assistant.ExecuteCommand));
-            var prompt = (TextBox)view.FindName("PromptEditor");
-            Assert.True(prompt.ActualWidth > 200); Assert.True(prompt.ActualHeight >= 80);
+            var panel = Assert.IsType<AgentPanel>(view.FindName("ChatPanel"));
+            var prompt = Assert.IsType<TextBox>(panel.FindName("PromptEditor"));
+            Assert.True(prompt.ActualWidth > 200); Assert.True(prompt.ActualHeight >= 48);
             Assert.True(prompt.TranslatePoint(new(), root).Y + prompt.ActualHeight <= root.ActualHeight + 1);
             Assert.Empty(bindings.Messages); Assert.Null(Window.GetWindow(root)); Assert.Null(PresentationSource.FromVisual(root));
         }
