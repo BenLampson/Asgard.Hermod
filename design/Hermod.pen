@@ -14619,6 +14619,43 @@
                 },
                 {
                   "type": "frame",
+                  "id": "jcQYh",
+                  "name": "打开方式导航项",
+                  "width": "fill_container",
+                  "height": 38,
+                  "fill": "#00000000",
+                  "cornerRadius": 6,
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "a2EPbv",
+                      "name": "打开方式导航图标",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "folder-open",
+                      "library": "lucide",
+                      "fill": "$muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hk4Ni",
+                      "name": "打开方式导航名称",
+                      "fill": "$body",
+                      "content": "打开方式",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
                   "id": "KjVBE",
                   "name": "账户导航项",
                   "width": "fill_container",
@@ -41003,7 +41040,8 @@
       "id": "h1r5l",
       "x": 2712,
       "y": 2461,
-      "name": "01 / component/Home · 欢迎与实例概览",
+      "name": "01 / component/Home · 实例概览与欢迎",
+      "context": "首页固定顺序：实例概览、工作区介绍与快捷操作、最近打开。开源说明迁移到设置 / 关于。",
       "reusable": true,
       "width": 1120,
       "height": 782,
@@ -41012,204 +41050,6 @@
       "gap": 16,
       "padding": 24,
       "children": [
-        {
-          "type": "frame",
-          "id": "D1LGIb",
-          "name": "品牌介绍与快捷操作",
-          "width": "fill_container",
-          "height": 184,
-          "fill": "$surface",
-          "cornerRadius": 10,
-          "stroke": "$line",
-          "strokeWidth": 1,
-          "gap": 24,
-          "padding": 24,
-          "alignItems": "center",
-          "children": [
-            {
-              "type": "frame",
-              "id": "fdg20",
-              "name": "软件介绍",
-              "width": "fill_container",
-              "layout": "vertical",
-              "gap": 8,
-              "children": [
-                {
-                  "type": "text",
-                  "id": "c7fh6",
-                  "name": "品牌引导",
-                  "fill": "$accent-ink",
-                  "content": "你的 ASGARD 工作区",
-                  "fontFamily": "Inter",
-                  "fontSize": 10,
-                  "fontWeight": "600"
-                },
-                {
-                  "type": "frame",
-                  "id": "MEEIr",
-                  "name": "产品名称与版本",
-                  "gap": 12,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "m9e3Iq",
-                      "name": "产品名称",
-                      "fill": "$ink",
-                      "content": "Asgard Hermod",
-                      "fontFamily": "Inter",
-                      "fontSize": 28,
-                      "fontWeight": "700"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "KkEMu",
-                      "name": "版本标记",
-                      "fill": "$app-bg",
-                      "cornerRadius": 4,
-                      "padding": [
-                        4,
-                        8
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "o3Dkpa",
-                          "name": "当前版本",
-                          "fill": "$muted",
-                          "content": "v0.1.0",
-                          "fontFamily": "Inter",
-                          "fontSize": 10,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "text",
-                  "id": "lu1hp",
-                  "name": "产品标语",
-                  "fill": "$body",
-                  "content": "服务与资源，尽在一个工作区。",
-                  "fontFamily": "Inter",
-                  "fontSize": 15,
-                  "fontWeight": "normal"
-                },
-                {
-                  "type": "text",
-                  "id": "z7NWr5",
-                  "name": "软件介绍正文",
-                  "fill": "$muted",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "面向 Asgard 生态的开源 Windows 管理终端。在同一个工作区管理实例连接、浏览对象存储，并使用本地终端。",
-                  "lineHeight": 1.6,
-                  "fontFamily": "Inter",
-                  "fontSize": 11,
-                  "fontWeight": "normal"
-                },
-                {
-                  "type": "frame",
-                  "id": "geCSi",
-                  "name": "首页快捷操作",
-                  "gap": 10,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "uTDoB",
-                      "name": "添加实例按钮",
-                      "height": 32,
-                      "fill": "$action-fill",
-                      "cornerRadius": 6,
-                      "stroke": "$action-fill",
-                      "strokeWidth": 1,
-                      "gap": 7,
-                      "padding": [
-                        0,
-                        14
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "icon",
-                          "id": "vu62m",
-                          "name": "添加实例图标",
-                          "width": 14,
-                          "height": 14,
-                          "icon": "plus",
-                          "library": "lucide",
-                          "fill": "$ink-inv"
-                        },
-                        {
-                          "type": "text",
-                          "id": "oZ8Mu",
-                          "name": "添加实例文字",
-                          "fill": "$ink-inv",
-                          "content": "添加实例",
-                          "fontFamily": "Inter",
-                          "fontSize": 11,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "CTuM9",
-                      "name": "本地终端按钮",
-                      "height": 32,
-                      "fill": "$surface",
-                      "cornerRadius": 6,
-                      "stroke": "$line",
-                      "strokeWidth": 1,
-                      "gap": 7,
-                      "padding": [
-                        0,
-                        14
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "icon",
-                          "id": "lSBmr",
-                          "name": "本地终端图标",
-                          "width": 14,
-                          "height": 14,
-                          "icon": "terminal",
-                          "library": "lucide",
-                          "fill": "$body"
-                        },
-                        {
-                          "type": "text",
-                          "id": "iweQo",
-                          "name": "本地终端文字",
-                          "fill": "$body",
-                          "content": "本地终端",
-                          "fontFamily": "Inter",
-                          "fontSize": 11,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "rectangle",
-              "id": "UxnFx",
-              "name": "Hermod 大品牌图标",
-              "fill": {
-                "type": "image",
-                "enabled": true,
-                "url": "../src/Asgard.Hermod.UI/Assets/Brand/hermod.png",
-                "mode": "contain"
-              },
-              "width": 136,
-              "height": 136
-            }
-          ]
-        },
         {
           "type": "frame",
           "id": "YjgTV",
@@ -41487,6 +41327,204 @@
         },
         {
           "type": "frame",
+          "id": "D1LGIb",
+          "name": "品牌介绍与快捷操作",
+          "width": "fill_container",
+          "height": 184,
+          "fill": "$surface",
+          "cornerRadius": 10,
+          "stroke": "$line",
+          "strokeWidth": 1,
+          "gap": 24,
+          "padding": 24,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "fdg20",
+              "name": "软件介绍",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "c7fh6",
+                  "name": "品牌引导",
+                  "fill": "$accent-ink",
+                  "content": "你的 ASGARD 工作区",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "MEEIr",
+                  "name": "产品名称与版本",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "m9e3Iq",
+                      "name": "产品名称",
+                      "fill": "$ink",
+                      "content": "Asgard Hermod",
+                      "fontFamily": "Inter",
+                      "fontSize": 28,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "KkEMu",
+                      "name": "版本标记",
+                      "fill": "$app-bg",
+                      "cornerRadius": 4,
+                      "padding": [
+                        4,
+                        8
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "o3Dkpa",
+                          "name": "当前版本",
+                          "fill": "$muted",
+                          "content": "v0.1.0",
+                          "fontFamily": "Inter",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "lu1hp",
+                  "name": "产品标语",
+                  "fill": "$body",
+                  "content": "服务与资源，尽在一个工作区。",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "z7NWr5",
+                  "name": "软件介绍正文",
+                  "fill": "$muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "面向 Asgard 生态的开源 Windows 管理终端。在同一个工作区管理实例连接、浏览对象存储，并使用本地终端。",
+                  "lineHeight": 1.6,
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "geCSi",
+                  "name": "首页快捷操作",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "uTDoB",
+                      "name": "添加实例按钮",
+                      "height": 32,
+                      "fill": "$action-fill",
+                      "cornerRadius": 6,
+                      "stroke": "$action-fill",
+                      "strokeWidth": 1,
+                      "gap": 7,
+                      "padding": [
+                        0,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "vu62m",
+                          "name": "添加实例图标",
+                          "width": 14,
+                          "height": 14,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "$ink-inv"
+                        },
+                        {
+                          "type": "text",
+                          "id": "oZ8Mu",
+                          "name": "添加实例文字",
+                          "fill": "$ink-inv",
+                          "content": "添加实例",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "CTuM9",
+                      "name": "本地终端按钮",
+                      "height": 32,
+                      "fill": "$surface",
+                      "cornerRadius": 6,
+                      "stroke": "$line",
+                      "strokeWidth": 1,
+                      "gap": 7,
+                      "padding": [
+                        0,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "lSBmr",
+                          "name": "本地终端图标",
+                          "width": 14,
+                          "height": 14,
+                          "icon": "terminal",
+                          "library": "lucide",
+                          "fill": "$body"
+                        },
+                        {
+                          "type": "text",
+                          "id": "iweQo",
+                          "name": "本地终端文字",
+                          "fill": "$body",
+                          "content": "本地终端",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "UxnFx",
+              "name": "Hermod 大品牌图标",
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "../src/Asgard.Hermod.UI/Assets/Brand/hermod.png",
+                "mode": "contain"
+              },
+              "width": 136,
+              "height": 136
+            }
+          ]
+        },
+        {
+          "type": "frame",
           "id": "bQisy",
           "name": "最近打开",
           "width": "fill_container",
@@ -41522,263 +41560,66 @@
                   "id": "wKIbm",
                   "name": "最近打开说明",
                   "fill": "$muted",
-                  "content": "此设备上最近打开的实例",
-                  "fontFamily": "Inter",
-                  "fontSize": 11,
-                  "fontWeight": "normal"
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "YqBMi",
-              "name": "Production OSS最近访问",
-              "width": "fill_container",
-              "height": 46,
-              "gap": 12,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "ebpWe",
-                  "name": "Production OSS类型标记",
-                  "width": 36,
-                  "height": 36,
-                  "fill": "$accent-weak",
-                  "cornerRadius": 8,
-                  "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "icon",
-                      "id": "L1dUAv",
-                      "name": "Production OSS类型图标",
-                      "width": 17,
-                      "height": 17,
-                      "icon": "cloud",
-                      "library": "lucide",
-                      "fill": "$accent-ink"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "GaVWn",
-                  "name": "Production OSS实例信息",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 4,
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "KSKgA",
-                      "name": "Production OSS实例名",
-                      "fill": "$ink",
-                      "content": "Production OSS",
-                      "fontFamily": "Inter",
-                      "fontSize": 12,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "Hi6kO",
-                      "name": "Production OSS辅助信息",
-                      "fill": "$muted",
-                      "content": "aliyun-oss · 生产环境",
-                      "fontFamily": "Inter",
-                      "fontSize": 10,
-                      "fontWeight": "normal"
-                    }
-                  ]
-                },
-                {
-                  "type": "text",
-                  "id": "qvT2o",
-                  "name": "Production OSS上次打开时间",
-                  "fill": "$muted",
-                  "content": "今天 14:32",
-                  "fontFamily": "Inter",
-                  "fontSize": 11,
-                  "fontWeight": "normal"
-                },
-                {
-                  "type": "icon",
-                  "id": "i1Xxoh",
-                  "name": "Production OSS返回箭头",
-                  "width": 16,
-                  "height": 16,
-                  "icon": "arrow-right",
-                  "library": "lucide",
-                  "fill": "$muted"
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "Xurj2",
-              "name": "Heimdall最近访问",
-              "width": "fill_container",
-              "height": 46,
-              "gap": 12,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "x6mjeu",
-                  "name": "Heimdall类型标记",
-                  "width": 36,
-                  "height": 36,
-                  "fill": "$accent-weak",
-                  "cornerRadius": 8,
-                  "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "icon",
-                      "id": "nFiMJ",
-                      "name": "Heimdall类型图标",
-                      "width": 17,
-                      "height": 17,
-                      "icon": "server",
-                      "library": "lucide",
-                      "fill": "$accent-ink"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "z1AX2V",
-                  "name": "Heimdall实例信息",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 4,
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "JE9r1",
-                      "name": "Heimdall实例名",
-                      "fill": "$ink",
-                      "content": "Heimdall",
-                      "fontFamily": "Inter",
-                      "fontSize": 12,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "W1cZc",
-                      "name": "Heimdall辅助信息",
-                      "fill": "$muted",
-                      "content": "Heimdall-01 · 生产环境",
-                      "fontFamily": "Inter",
-                      "fontSize": 10,
-                      "fontWeight": "normal"
-                    }
-                  ]
-                },
-                {
-                  "type": "text",
-                  "id": "BBvpH",
-                  "name": "Heimdall上次打开时间",
-                  "fill": "$muted",
-                  "content": "昨天 18:06",
-                  "fontFamily": "Inter",
-                  "fontSize": 11,
-                  "fontWeight": "normal"
-                },
-                {
-                  "type": "icon",
-                  "id": "R1vG2",
-                  "name": "Heimdall返回箭头",
-                  "width": 16,
-                  "height": 16,
-                  "icon": "arrow-right",
-                  "library": "lucide",
-                  "fill": "$muted"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "frame",
-          "id": "SEILt",
-          "name": "开源项目与作者",
-          "width": "fill_container",
-          "height": 112,
-          "fill": "$surface",
-          "cornerRadius": 10,
-          "stroke": "$line",
-          "strokeWidth": 1,
-          "layout": "vertical",
-          "gap": 9,
-          "padding": 18,
-          "children": [
-            {
-              "type": "frame",
-              "id": "WmaTZ",
-              "name": "开源说明",
-              "width": "fill_container",
-              "justifyContent": "space_between",
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "text",
-                  "id": "rIjYT",
-                  "name": "开源标题",
-                  "fill": "$ink",
-                  "content": "开放源码，共同打磨",
-                  "fontFamily": "Inter",
-                  "fontSize": 16,
-                  "fontWeight": "600"
-                },
-                {
-                  "type": "text",
-                  "id": "sSbv1",
-                  "name": "作者与许可",
-                  "fill": "$muted",
-                  "content": "作者 · BenLampson     开源协议 · Apache 2.0",
-                  "fontFamily": "Inter",
-                  "fontSize": 11,
-                  "fontWeight": "normal"
-                }
-              ]
-            },
-            {
-              "type": "text",
-              "id": "cRNlX",
-              "name": "参与项目说明",
-              "fill": "$muted",
-              "content": "在 GitHub 查看源码、反馈问题，或参与 Hermod 的开发。",
-              "fontFamily": "Inter",
-              "fontSize": 11,
-              "fontWeight": "normal"
-            },
-            {
-              "type": "frame",
-              "id": "zzs3P",
-              "name": "GitHub 仓库入口",
-              "gap": 8,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "icon",
-                  "id": "l8GHLx",
-                  "name": "打开 GitHub",
-                  "width": 15,
-                  "height": 15,
-                  "icon": "external-link",
-                  "library": "lucide",
-                  "fill": "$accent-ink"
-                },
-                {
-                  "type": "text",
-                  "id": "Iqwas",
-                  "name": "GitHub 地址",
-                  "fill": "$accent-ink",
-                  "content": "https://github.com/BenLampson/Asgard.Hermod",
+                  "content": "回到此设备上最近打开的六个实例。",
                   "fontFamily": "Inter",
                   "fontSize": 12,
-                  "fontWeight": "600"
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "z7NTh",
+              "name": "无最近记录引导",
+              "width": "fill_container",
+              "height": 110,
+              "fill": "$app-bg",
+              "cornerRadius": 8,
+              "gap": 14,
+              "padding": 18,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "OhRum",
+                  "name": "最近记录为空",
+                  "width": 24,
+                  "height": 24,
+                  "icon": "folder-open",
+                  "library": "lucide",
+                  "fill": "$muted"
+                },
+                {
+                  "type": "frame",
+                  "id": "BngBo",
+                  "name": "首次访问引导",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "OvXQY",
+                      "name": "空记录标题",
+                      "fill": "$ink",
+                      "content": "从这里开始下一次工作",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "u2HWj4",
+                      "name": "空记录说明",
+                      "fill": "$muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "从侧栏打开实例，或启动本地终端，下次就能在这里快速返回。",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
                 }
               ]
             }
@@ -46131,6 +45972,7 @@
       "x": 1244,
       "y": 15042,
       "name": "05 / 图片预览 · 02 点击后直接预览与详情加宽 · Light",
+      "context": "缩略图保留在对象详情中。右上角打开图标直接调用本机看图软件，复用已下载的原始文件；不创建图片放大窗口。未外部打开的预览缓存随对象切换或详情关闭清理，外部打开成功则保护到应用会话结束。",
       "theme": {
         "mode": "light"
       },
@@ -46278,7 +46120,7 @@
                     {
                       "type": "frame",
                       "id": "w1gkE4",
-                      "name": "预览状态及放大工具",
+                      "name": "预览状态及看图软件入口",
                       "width": "fill_container",
                       "gap": 8,
                       "alignItems": "center",
@@ -46313,10 +46155,11 @@
                         {
                           "type": "icon",
                           "id": "Ur2V8",
-                          "name": "放大预览",
+                          "name": "用看图软件打开",
+                          "context": "复用本次预览已下载的本地原始图片，调用本机打开方式或 Windows 图片关联；不再次下载，不创建 Hermod 图片窗口。",
                           "width": 16,
                           "height": 16,
-                          "icon": "maximize-2",
+                          "icon": "external-link",
                           "library": "lucide",
                           "fill": "$muted"
                         }
@@ -47928,6 +47771,7 @@
       "x": 60,
       "y": 15946,
       "name": "05 / 强行预览 · 04 图片预览成功 · Light",
+      "context": "缩略图保留在对象详情中。右上角打开图标直接调用本机看图软件，复用已下载的原始文件；不创建图片放大窗口。未外部打开的预览缓存随对象切换或详情关闭清理，外部打开成功则保护到应用会话结束。",
       "theme": {
         "mode": "light"
       },
@@ -48075,7 +47919,7 @@
                     {
                       "type": "frame",
                       "id": "FRCbn",
-                      "name": "预览状态及放大工具",
+                      "name": "预览状态及看图软件入口",
                       "width": "fill_container",
                       "gap": 8,
                       "alignItems": "center",
@@ -48110,10 +47954,11 @@
                         {
                           "type": "icon",
                           "id": "XG60L",
-                          "name": "放大预览",
+                          "name": "用看图软件打开",
+                          "context": "复用本次预览已下载的本地原始图片，调用本机打开方式或 Windows 图片关联；不再次下载，不创建 Hermod 图片窗口。",
                           "width": 16,
                           "height": 16,
-                          "icon": "maximize-2",
+                          "icon": "external-link",
                           "library": "lucide",
                           "fill": "$muted"
                         }
@@ -51146,7 +50991,7 @@
           "y": 106,
           "name": "SSH 阅读顺序",
           "fill": "#53657D",
-          "content": "选择 SSH → 连接方式 → 连接信息 → 测试连接 → 保存位置 → 确认添加",
+          "content": "选择 SSH 类型 → 连接方式 → 连接信息 → 测试连接 → 确认添加",
           "fontFamily": "Inter",
           "fontSize": 22,
           "fontWeight": "normal"
@@ -51279,8 +51124,8 @@
       "id": "m6C8gG",
       "x": 6396,
       "y": 19442,
-      "name": "08 / SSH · 高级路由 · 展开内容状态",
-      "context": "连接信息页中的高级路由展开状态，非单独步骤。",
+      "name": "08 / SSH · 02 · 连接方式 / 独立选择页",
+      "context": "先选择直接连接、SSH 跳板机或代理，再点击下一步进入独立连接信息页；此页不展示名称、主机或认证输入框。",
       "theme": {
         "mode": "light"
       },
@@ -51326,7 +51171,8 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "$accent-weak"
+                  "fill": "$accent-weak",
+                  "enabled": true
                 },
                 "i3PkJc/YJv81": {
                   "fill": "$action-fill"
@@ -51337,13 +51183,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接信息",
+                  "content": "连接方式",
                   "fill": "$accent-ink",
                   "fontWeight": "600",
                   "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/cpyB6": {
                   "fill": "$line-soft"
@@ -51354,13 +51201,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "测试连接",
+                  "content": "连接信息",
                   "fill": "$muted",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/WHoye": {
                   "fill": "$line-soft"
@@ -51371,14 +51219,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "确认添加",
+                  "content": "测试连接",
                   "fill": "$muted",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
                   "fill": "#00000000",
-                  "enabled": false
+                  "enabled": true
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -51389,7 +51237,7 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/WH63g": {
-                  "content": "保存位置",
+                  "content": "确认添加",
                   "fill": "$muted",
                   "fontWeight": "normal"
                 },
@@ -51707,7 +51555,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 1 / 3 步"
+                  "content": "第 1 / 4 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -51806,41 +51654,44 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "$accent-weak"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$action-fill"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/V4Dvj": {
-                  "content": "1",
-                  "fill": "$ink-inv",
+                  "content": "✓",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接信息",
-                  "fill": "$accent-ink",
+                  "content": "连接方式",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
-                  "fill": "#00000000"
+                  "fill": "$accent-weak",
+                  "enabled": true
                 },
                 "i3PkJc/cpyB6": {
-                  "fill": "$line-soft"
+                  "fill": "$action-fill"
                 },
                 "i3PkJc/U9mCq": {
                   "content": "2",
-                  "fill": "$muted",
+                  "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "测试连接",
-                  "fill": "$muted",
+                  "content": "连接信息",
+                  "fill": "$accent-ink",
                   "fontWeight": "600",
                   "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/WHoye": {
                   "fill": "$line-soft"
@@ -51851,14 +51702,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "确认添加",
+                  "content": "测试连接",
                   "fill": "$muted",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
                   "fill": "#00000000",
-                  "enabled": false
+                  "enabled": true
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -51869,7 +51720,7 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/WH63g": {
-                  "content": "保存位置",
+                  "content": "确认添加",
                   "fill": "$muted",
                   "fontWeight": "normal"
                 },
@@ -51909,7 +51760,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 1 / 3 步"
+                  "content": "第 2 / 4 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -52008,41 +51859,44 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "$accent-weak"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$action-fill"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/V4Dvj": {
-                  "content": "1",
-                  "fill": "$ink-inv",
+                  "content": "✓",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接信息",
-                  "fill": "$accent-ink",
+                  "content": "连接方式",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
-                  "fill": "#00000000"
+                  "fill": "$accent-weak",
+                  "enabled": true
                 },
                 "i3PkJc/cpyB6": {
-                  "fill": "$line-soft"
+                  "fill": "$action-fill"
                 },
                 "i3PkJc/U9mCq": {
                   "content": "2",
-                  "fill": "$muted",
+                  "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "测试连接",
-                  "fill": "$muted",
+                  "content": "连接信息",
+                  "fill": "$accent-ink",
                   "fontWeight": "600",
                   "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/WHoye": {
                   "fill": "$line-soft"
@@ -52053,14 +51907,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "确认添加",
+                  "content": "测试连接",
                   "fill": "$muted",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
                   "fill": "#00000000",
-                  "enabled": false
+                  "enabled": true
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -52071,7 +51925,7 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/WH63g": {
-                  "content": "保存位置",
+                  "content": "确认添加",
                   "fill": "$muted",
                   "fontWeight": "normal"
                 },
@@ -52702,7 +52556,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 1 / 3 步"
+                  "content": "第 2 / 4 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -52801,41 +52655,44 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "$accent-weak"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$action-fill"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/V4Dvj": {
-                  "content": "1",
-                  "fill": "$ink-inv",
+                  "content": "✓",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接信息",
-                  "fill": "$accent-ink",
+                  "content": "连接方式",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
-                  "fill": "#00000000"
+                  "fill": "$accent-weak",
+                  "enabled": true
                 },
                 "i3PkJc/cpyB6": {
-                  "fill": "$line-soft"
+                  "fill": "$action-fill"
                 },
                 "i3PkJc/U9mCq": {
                   "content": "2",
-                  "fill": "$muted",
+                  "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "测试连接",
-                  "fill": "$muted",
+                  "content": "连接信息",
+                  "fill": "$accent-ink",
                   "fontWeight": "600",
                   "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/WHoye": {
                   "fill": "$line-soft"
@@ -52846,14 +52703,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "确认添加",
+                  "content": "测试连接",
                   "fill": "$muted",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
                   "fill": "#00000000",
-                  "enabled": false
+                  "enabled": true
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -52864,7 +52721,7 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/WH63g": {
-                  "content": "保存位置",
+                  "content": "确认添加",
                   "fill": "$muted",
                   "fontWeight": "normal"
                 },
@@ -53514,7 +53371,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 1 / 3 步"
+                  "content": "第 2 / 4 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -53613,41 +53470,44 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "$accent-weak"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$action-fill"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/V4Dvj": {
-                  "content": "1",
-                  "fill": "$ink-inv",
+                  "content": "✓",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接信息",
-                  "fill": "$accent-ink",
+                  "content": "连接方式",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
-                  "fill": "#00000000"
+                  "fill": "$accent-weak",
+                  "enabled": true
                 },
                 "i3PkJc/cpyB6": {
-                  "fill": "$line-soft"
+                  "fill": "$action-fill"
                 },
                 "i3PkJc/U9mCq": {
                   "content": "2",
-                  "fill": "$muted",
+                  "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "测试连接",
-                  "fill": "$muted",
+                  "content": "连接信息",
+                  "fill": "$accent-ink",
                   "fontWeight": "600",
                   "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/WHoye": {
                   "fill": "$line-soft"
@@ -53658,14 +53518,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "确认添加",
+                  "content": "测试连接",
                   "fill": "$muted",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
                   "fill": "#00000000",
-                  "enabled": false
+                  "enabled": true
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -53676,7 +53536,7 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/WH63g": {
-                  "content": "保存位置",
+                  "content": "确认添加",
                   "fill": "$muted",
                   "fontWeight": "normal"
                 },
@@ -54253,7 +54113,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 1 / 3 步"
+                  "content": "第 2 / 4 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -54352,41 +54212,44 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "$accent-weak"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$action-fill"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/V4Dvj": {
-                  "content": "1",
-                  "fill": "$ink-inv",
+                  "content": "✓",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接信息",
-                  "fill": "$accent-ink",
+                  "content": "连接方式",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
-                  "fill": "#00000000"
+                  "fill": "$accent-weak",
+                  "enabled": true
                 },
                 "i3PkJc/cpyB6": {
-                  "fill": "$line-soft"
+                  "fill": "$action-fill"
                 },
                 "i3PkJc/U9mCq": {
                   "content": "2",
-                  "fill": "$muted",
+                  "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "测试连接",
-                  "fill": "$muted",
+                  "content": "连接信息",
+                  "fill": "$accent-ink",
                   "fontWeight": "600",
                   "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/WHoye": {
                   "fill": "$line-soft"
@@ -54397,14 +54260,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "确认添加",
+                  "content": "测试连接",
                   "fill": "$muted",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
                   "fill": "#00000000",
-                  "enabled": false
+                  "enabled": true
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -54415,7 +54278,7 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/WH63g": {
-                  "content": "保存位置",
+                  "content": "确认添加",
                   "fill": "$muted",
                   "fontWeight": "normal"
                 },
@@ -54953,7 +54816,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 1 / 3 步"
+                  "content": "第 2 / 4 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -55052,59 +54915,62 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$line-soft"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/V4Dvj": {
                   "content": "✓",
-                  "fill": "$muted",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接信息",
-                  "fill": "$muted",
+                  "content": "连接方式",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
-                  "fill": "$accent-weak"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/cpyB6": {
-                  "fill": "$action-fill"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/U9mCq": {
-                  "content": "2",
-                  "fill": "$ink-inv",
+                  "content": "✓",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "测试连接",
-                  "fill": "$accent-ink",
+                  "content": "连接信息",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
-                  "fill": "#00000000"
+                  "fill": "$accent-weak",
+                  "enabled": true
                 },
                 "i3PkJc/WHoye": {
-                  "fill": "$line-soft"
+                  "fill": "$action-fill"
                 },
                 "i3PkJc/ixO40": {
                   "content": "3",
-                  "fill": "$muted",
+                  "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "确认添加",
-                  "fill": "$muted",
+                  "content": "测试连接",
+                  "fill": "$accent-ink",
                   "fontWeight": "600",
                   "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
                   "fill": "#00000000",
-                  "enabled": false
+                  "enabled": true
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -55115,7 +54981,7 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/WH63g": {
-                  "content": "保存位置",
+                  "content": "确认添加",
                   "fill": "$muted",
                   "fontWeight": "normal"
                 },
@@ -55557,7 +55423,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 2 / 3 步"
+                  "content": "第 3 / 4 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -55656,59 +55522,62 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$line-soft"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/V4Dvj": {
                   "content": "✓",
-                  "fill": "$muted",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接信息",
-                  "fill": "$muted",
+                  "content": "连接方式",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
-                  "fill": "$accent-weak"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/cpyB6": {
-                  "fill": "$action-fill"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/U9mCq": {
-                  "content": "2",
-                  "fill": "$ink-inv",
+                  "content": "✓",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "测试连接",
-                  "fill": "$accent-ink",
+                  "content": "连接信息",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
-                  "fill": "#00000000"
+                  "fill": "$accent-weak",
+                  "enabled": true
                 },
                 "i3PkJc/WHoye": {
-                  "fill": "$line-soft"
+                  "fill": "$action-fill"
                 },
                 "i3PkJc/ixO40": {
                   "content": "3",
-                  "fill": "$muted",
+                  "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "确认添加",
-                  "fill": "$muted",
+                  "content": "测试连接",
+                  "fill": "$accent-ink",
                   "fontWeight": "600",
                   "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
                   "fill": "#00000000",
-                  "enabled": false
+                  "enabled": true
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -55719,7 +55588,7 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/WH63g": {
-                  "content": "保存位置",
+                  "content": "确认添加",
                   "fill": "$muted",
                   "fontWeight": "normal"
                 },
@@ -56081,7 +55950,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 2 / 3 步"
+                  "content": "第 3 / 4 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -56181,59 +56050,62 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$line-soft"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/V4Dvj": {
                   "content": "✓",
-                  "fill": "$muted",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接信息",
-                  "fill": "$muted",
+                  "content": "连接方式",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/cpyB6": {
-                  "fill": "$line-soft"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/U9mCq": {
                   "content": "✓",
-                  "fill": "$muted",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "测试连接",
-                  "fill": "$muted",
+                  "content": "连接信息",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
-                  "fill": "$accent-weak"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/WHoye": {
-                  "fill": "$action-fill"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/ixO40": {
-                  "content": "3",
-                  "fill": "$ink-inv",
+                  "content": "✓",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "确认添加",
-                  "fill": "$accent-ink",
+                  "content": "测试连接",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
                   "fill": "$accent-weak",
-                  "enabled": false
+                  "enabled": true
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$action-fill"
@@ -56244,7 +56116,7 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/WH63g": {
-                  "content": "保存位置",
+                  "content": "确认添加",
                   "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
@@ -56566,7 +56438,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 3 / 3 步"
+                  "content": "第 4 / 4 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -56665,75 +56537,78 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$line-soft"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/V4Dvj": {
                   "content": "✓",
-                  "fill": "$muted",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接信息",
-                  "fill": "$muted",
+                  "content": "连接方式",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/cpyB6": {
-                  "fill": "$line-soft"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/U9mCq": {
                   "content": "✓",
-                  "fill": "$muted",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "测试连接",
-                  "fill": "$muted",
+                  "content": "连接信息",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
-                  "fill": "$accent-weak"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/WHoye": {
-                  "fill": "$action-fill"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/ixO40": {
-                  "content": "3",
-                  "fill": "$ink-inv",
+                  "content": "✓",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "确认添加",
-                  "fill": "$accent-ink",
+                  "content": "测试连接",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
-                  "fill": "#00000000",
-                  "enabled": false
+                  "fill": "$accent-weak",
+                  "enabled": true
                 },
                 "i3PkJc/zbsXl": {
-                  "fill": "$green-weak"
+                  "fill": "$action-fill"
                 },
                 "i3PkJc/OkB9F": {
-                  "content": "✓",
-                  "fill": "$green",
+                  "content": "4",
+                  "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
                 "i3PkJc/WH63g": {
-                  "content": "保存位置",
-                  "fill": "$muted",
-                  "fontWeight": "normal"
+                  "content": "确认添加",
+                  "fill": "$accent-ink",
+                  "fontWeight": "600"
                 },
                 "i3PkJc/v1WT4A": {
-                  "fill": "$accent-weak",
+                  "fill": "#00000000",
                   "enabled": false
                 },
                 "i3PkJc/dh17s": {
@@ -57213,7 +57088,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 3 / 3 步"
+                  "content": "第 4 / 4 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -57312,59 +57187,62 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$line-soft"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/V4Dvj": {
                   "content": "✓",
-                  "fill": "$muted",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接信息",
-                  "fill": "$muted",
+                  "content": "连接方式",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
-                  "fill": "$accent-weak"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/cpyB6": {
-                  "fill": "$action-fill"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/U9mCq": {
-                  "content": "2",
-                  "fill": "$ink-inv",
+                  "content": "✓",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "测试连接",
-                  "fill": "$accent-ink",
+                  "content": "连接信息",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
-                  "fill": "#00000000"
+                  "fill": "$accent-weak",
+                  "enabled": true
                 },
                 "i3PkJc/WHoye": {
-                  "fill": "$line-soft"
+                  "fill": "$action-fill"
                 },
                 "i3PkJc/ixO40": {
                   "content": "3",
-                  "fill": "$muted",
+                  "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "确认添加",
-                  "fill": "$muted",
+                  "content": "测试连接",
+                  "fill": "$accent-ink",
                   "fontWeight": "600",
                   "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
                   "fill": "#00000000",
-                  "enabled": false
+                  "enabled": true
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -57375,7 +57253,7 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/WH63g": {
-                  "content": "保存位置",
+                  "content": "确认添加",
                   "fill": "$muted",
                   "fontWeight": "normal"
                 },
@@ -57735,7 +57613,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 2 / 3 步"
+                  "content": "第 3 / 4 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -57834,41 +57712,44 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "$accent-weak"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$action-fill"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/V4Dvj": {
-                  "content": "1",
-                  "fill": "$ink-inv",
+                  "content": "✓",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接信息",
-                  "fill": "$accent-ink",
+                  "content": "连接方式",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
-                  "fill": "#00000000"
+                  "fill": "$accent-weak",
+                  "enabled": true
                 },
                 "i3PkJc/cpyB6": {
-                  "fill": "$line-soft"
+                  "fill": "$action-fill"
                 },
                 "i3PkJc/U9mCq": {
                   "content": "2",
-                  "fill": "$muted",
+                  "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "测试连接",
-                  "fill": "$muted",
+                  "content": "连接信息",
+                  "fill": "$accent-ink",
                   "fontWeight": "600",
                   "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/WHoye": {
                   "fill": "$line-soft"
@@ -57879,14 +57760,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "确认添加",
+                  "content": "测试连接",
                   "fill": "$muted",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
                   "fill": "#00000000",
-                  "enabled": false
+                  "enabled": true
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -57897,7 +57778,7 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/WH63g": {
-                  "content": "保存位置",
+                  "content": "确认添加",
                   "fill": "$muted",
                   "fontWeight": "normal"
                 },
@@ -58495,7 +58376,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 1 / 3 步"
+                  "content": "第 2 / 4 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -58594,59 +58475,62 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$line-soft"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/V4Dvj": {
                   "content": "✓",
-                  "fill": "$muted",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接信息",
-                  "fill": "$muted",
+                  "content": "连接方式",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
-                  "fill": "$accent-weak"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/cpyB6": {
-                  "fill": "$action-fill"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/U9mCq": {
-                  "content": "2",
-                  "fill": "$ink-inv",
+                  "content": "✓",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "测试连接",
-                  "fill": "$accent-ink",
+                  "content": "连接信息",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
-                  "fill": "#00000000"
+                  "fill": "$accent-weak",
+                  "enabled": true
                 },
                 "i3PkJc/WHoye": {
-                  "fill": "$line-soft"
+                  "fill": "$action-fill"
                 },
                 "i3PkJc/ixO40": {
                   "content": "3",
-                  "fill": "$muted",
+                  "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "确认添加",
-                  "fill": "$muted",
+                  "content": "测试连接",
+                  "fill": "$accent-ink",
                   "fontWeight": "600",
                   "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
                   "fill": "#00000000",
-                  "enabled": false
+                  "enabled": true
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -58657,7 +58541,7 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/WH63g": {
-                  "content": "保存位置",
+                  "content": "确认添加",
                   "fill": "$muted",
                   "fontWeight": "normal"
                 },
@@ -59014,7 +58898,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 2 / 3 步"
+                  "content": "第 3 / 4 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -59113,41 +58997,44 @@
                   "content": "Remote terminal"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "$accent-weak"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$action-fill"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/V4Dvj": {
-                  "content": "1",
-                  "fill": "$ink-inv",
+                  "content": "✓",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "Connection information",
-                  "fill": "$accent-ink",
+                  "content": "Connection method",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
-                  "fill": "#00000000"
+                  "fill": "$accent-weak",
+                  "enabled": true
                 },
                 "i3PkJc/cpyB6": {
-                  "fill": "$line-soft"
+                  "fill": "$action-fill"
                 },
                 "i3PkJc/U9mCq": {
                   "content": "2",
-                  "fill": "$muted",
+                  "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "Test connection",
-                  "fill": "$muted",
+                  "content": "Connection information",
+                  "fill": "$accent-ink",
                   "fontWeight": "600",
                   "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/WHoye": {
                   "fill": "$line-soft"
@@ -59158,14 +59045,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "Confirm",
+                  "content": "Test connection",
                   "fill": "$muted",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
                   "fill": "#00000000",
-                  "enabled": false
+                  "enabled": true
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -59176,7 +59063,7 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/WH63g": {
-                  "content": "Save location",
+                  "content": "Confirm addition",
                   "fill": "$muted",
                   "fontWeight": "normal"
                 },
@@ -59730,7 +59617,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "Step 1 of 3"
+                  "content": "Step 2 / 4"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -59985,7 +59872,7 @@
               "fill": "$muted",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "默认直连进入信息页，复杂路由按需展开；连接信息→测试→确认共三步。保存范围由当前账户自动决定，确认页显示真实位置。路由和认证变化要求重新测试；保存失败保留输入，成功只新增一次。",
+              "content": "先在独立页面选择直连、SSH 跳板机或代理，点击下一步填写连接信息。连接方式→连接信息→测试→确认共四步。保存范围由当前账户自动决定，确认页显示真实位置。更改连接方式返回首步，保留共同目标字段并要求重新测试；保存失败保留输入，成功只新增一次。",
               "lineHeight": 1.5,
               "fontFamily": "Inter",
               "fontSize": 12,
@@ -60100,7 +59987,7 @@
       "x": 5440,
       "y": 18632,
       "name": "08 / component/SSH Instance · 连接流程",
-      "context": "SSH 添加与编辑为三步：连接信息、测试连接、确认。默认直连，路由选择在信息页按需展开。自动保存范围只在确认页显示。公共容器由步骤集合驱动。",
+      "context": "SSH 添加与编辑均分四步：连接方式、连接信息、测试连接、确认。连接方式独立选卡，点击下一步才显示表单；信息页不嵌入方式选择。自动保存范围仅在确认页显示。",
       "reusable": true,
       "clip": true,
       "width": 912,
@@ -60133,7 +60020,8 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "$accent-weak"
+                  "fill": "$accent-weak",
+                  "enabled": true
                 },
                 "i3PkJc/YJv81": {
                   "fill": "$action-fill"
@@ -60144,13 +60032,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接信息",
+                  "content": "连接方式",
                   "fill": "$accent-ink",
                   "fontWeight": "600",
                   "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/cpyB6": {
                   "fill": "$line-soft"
@@ -60161,13 +60050,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "测试连接",
+                  "content": "连接信息",
                   "fill": "$muted",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/WHoye": {
                   "fill": "$line-soft"
@@ -60178,14 +60068,14 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "确认添加",
+                  "content": "测试连接",
                   "fill": "$muted",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
                   "fill": "#00000000",
-                  "enabled": false
+                  "enabled": true
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -60196,7 +60086,7 @@
                   "fontWeight": "600"
                 },
                 "i3PkJc/WH63g": {
-                  "content": "保存位置",
+                  "content": "确认添加",
                   "fill": "$muted",
                   "fontWeight": "normal"
                 },
@@ -60231,11 +60121,8 @@
                     {
                       "type": "frame",
                       "id": "EBv2J",
-                      "x": 28,
-                      "y": 28,
                       "name": "页面标题",
-                      "enabled": false,
-                      "width": "fill_container(680)",
+                      "width": "fill_container",
                       "layout": "vertical",
                       "gap": 7,
                       "children": [
@@ -60267,11 +60154,8 @@
                     {
                       "type": "frame",
                       "id": "O0AEy",
-                      "x": 28,
-                      "y": 98,
                       "name": "直接连接",
-                      "enabled": false,
-                      "width": "fill_container(680)",
+                      "width": "fill_container",
                       "fill": "$accent-weak",
                       "cornerRadius": 6,
                       "stroke": "$accent",
@@ -60338,11 +60222,8 @@
                     {
                       "type": "frame",
                       "id": "l8vpTd",
-                      "x": 28,
-                      "y": 188,
                       "name": "SSH 跳板机",
-                      "enabled": false,
-                      "width": "fill_container(680)",
+                      "width": "fill_container",
                       "fill": "$surface",
                       "cornerRadius": 6,
                       "stroke": "$line",
@@ -60409,11 +60290,8 @@
                     {
                       "type": "frame",
                       "id": "XQwF6",
-                      "x": 28,
-                      "y": 278,
                       "name": "代理连接",
-                      "enabled": false,
-                      "width": "fill_container(680)",
+                      "width": "fill_container",
                       "fill": "$surface",
                       "cornerRadius": 6,
                       "stroke": "$line",
@@ -60480,11 +60358,8 @@
                     {
                       "type": "frame",
                       "id": "fCUhT",
-                      "x": 28,
-                      "y": 368,
                       "name": "认证提示",
-                      "enabled": false,
-                      "width": "fill_container(680)",
+                      "width": "fill_container",
                       "fill": "$accent-weak",
                       "cornerRadius": 6,
                       "gap": 12,
@@ -60522,7 +60397,8 @@
                       "ref": "Gi3EU",
                       "name": "SSH 信息正文 · 默认直连",
                       "width": 600,
-                      "height": 550
+                      "height": 550,
+                      "enabled": false
                     }
                   ]
                 }
@@ -60537,7 +60413,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 1 / 3 步"
+                  "content": "第 1 / 4 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -87289,7 +87165,7 @@
           "type": "frame",
           "id": "arfgC",
           "name": "连接路径摘要",
-          "context": "默认直连摘要；展开后可选择直连、SSH跳板或代理。切换保留公共目标字段，并使旧测试失效。",
+          "context": "只读展示当前连接方式。更改连接方式按钮返回独立第一步，切换路径保留共同目标字段并作废旧测试。",
           "width": "fill_container",
           "height": 34,
           "fill": "$app-bg",
@@ -87328,7 +87204,7 @@
               "id": "ViOL5",
               "name": "更换路径",
               "fill": "$accent",
-              "content": "更改",
+              "content": "更改连接方式",
               "fontFamily": "Inter",
               "fontSize": 11,
               "fontWeight": "600"
@@ -87336,7 +87212,10 @@
             {
               "type": "icon",
               "id": "XqcD1",
+              "x": 660,
+              "y": 10,
               "name": "展开连接方式",
+              "enabled": false,
               "width": 14,
               "height": 14,
               "icon": "chevron-down",
@@ -146411,6 +146290,77 @@
           "descendants": {
             "vr8IS/C3lvQ": {
               "content": "编辑实例"
+            },
+            "tPoaK/i3PkJc/swYqB": {
+              "enabled": true,
+              "fill": "#00000000"
+            },
+            "tPoaK/i3PkJc/YJv81": {
+              "fill": "$accent-weak"
+            },
+            "tPoaK/i3PkJc/V4Dvj": {
+              "content": "✓",
+              "fill": "$accent-ink"
+            },
+            "tPoaK/i3PkJc/heFqU": {
+              "content": "连接方式",
+              "fill": "$body",
+              "fontWeight": "normal"
+            },
+            "tPoaK/i3PkJc/gjF5X": {
+              "enabled": true,
+              "fill": "$accent-weak"
+            },
+            "tPoaK/i3PkJc/cpyB6": {
+              "fill": "$action-fill"
+            },
+            "tPoaK/i3PkJc/U9mCq": {
+              "content": "2",
+              "fill": "$ink-inv"
+            },
+            "tPoaK/i3PkJc/Lfxov": {
+              "content": "连接信息",
+              "fill": "$accent-ink",
+              "fontWeight": "600"
+            },
+            "tPoaK/i3PkJc/Qj1VJ": {
+              "enabled": true,
+              "fill": "#00000000"
+            },
+            "tPoaK/i3PkJc/WHoye": {
+              "fill": "$line-soft"
+            },
+            "tPoaK/i3PkJc/ixO40": {
+              "content": "3",
+              "fill": "$muted"
+            },
+            "tPoaK/i3PkJc/R4G0x4": {
+              "content": "测试连接",
+              "fill": "$muted",
+              "fontWeight": "normal"
+            },
+            "tPoaK/i3PkJc/HzS6E": {
+              "enabled": true,
+              "fill": "#00000000"
+            },
+            "tPoaK/i3PkJc/zbsXl": {
+              "fill": "$line-soft"
+            },
+            "tPoaK/i3PkJc/OkB9F": {
+              "content": "4",
+              "fill": "$muted"
+            },
+            "tPoaK/i3PkJc/WH63g": {
+              "content": "确认修改",
+              "fill": "$muted",
+              "fontWeight": "normal"
+            },
+            "tPoaK/i3PkJc/v1WT4A": {
+              "enabled": false,
+              "fill": "#00000000"
+            },
+            "MR6Lk/QnqPf": {
+              "content": "第 2 / 4 步"
             }
           }
         }
@@ -146467,59 +146417,62 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$line-soft"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/V4Dvj": {
                   "content": "✓",
-                  "fill": "$muted",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接信息",
-                  "fill": "$muted",
+                  "content": "连接方式",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
-                  "fill": "$accent-weak"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/cpyB6": {
-                  "fill": "$action-fill"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/U9mCq": {
-                  "content": "2",
-                  "fill": "$ink-inv",
+                  "content": "✓",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "测试连接",
-                  "fill": "$accent-ink",
+                  "content": "连接信息",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
-                  "fill": "#00000000"
+                  "fill": "$accent-weak",
+                  "enabled": true
                 },
                 "i3PkJc/WHoye": {
-                  "fill": "$line-soft"
+                  "fill": "$action-fill"
                 },
                 "i3PkJc/ixO40": {
                   "content": "3",
-                  "fill": "$muted",
+                  "fill": "$ink-inv",
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "确认添加",
-                  "fill": "$muted",
+                  "content": "测试连接",
+                  "fill": "$accent-ink",
                   "fontWeight": "600",
                   "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
                   "fill": "#00000000",
-                  "enabled": false
+                  "enabled": true
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$line-soft"
@@ -146974,7 +146927,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 2 / 3 步"
+                  "content": "第 3 / 4 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -147420,59 +147373,62 @@
                   "content": "远程终端"
                 },
                 "i3PkJc/swYqB": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/YJv81": {
-                  "fill": "$line-soft"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/V4Dvj": {
                   "content": "✓",
-                  "fill": "$muted",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/heFqU": {
-                  "content": "连接信息",
-                  "fill": "$muted",
+                  "content": "连接方式",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/gjF5X": {
-                  "fill": "#00000000"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/cpyB6": {
-                  "fill": "$line-soft"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/U9mCq": {
                   "content": "✓",
-                  "fill": "$muted",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/Lfxov": {
-                  "content": "测试连接",
-                  "fill": "$muted",
-                  "fontWeight": "600",
+                  "content": "连接信息",
+                  "fill": "$body",
+                  "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/Qj1VJ": {
-                  "fill": "$accent-weak"
+                  "fill": "#00000000",
+                  "enabled": true
                 },
                 "i3PkJc/WHoye": {
-                  "fill": "$action-fill"
+                  "fill": "$accent-weak"
                 },
                 "i3PkJc/ixO40": {
-                  "content": "3",
-                  "fill": "$ink-inv",
+                  "content": "✓",
+                  "fill": "$accent-ink",
                   "fontWeight": "600"
                 },
                 "i3PkJc/R4G0x4": {
-                  "content": "确认添加",
-                  "fill": "$accent-ink",
+                  "content": "测试连接",
+                  "fill": "$body",
                   "fontWeight": "normal",
                   "fontSize": 13
                 },
                 "i3PkJc/HzS6E": {
                   "fill": "$accent-weak",
-                  "enabled": false
+                  "enabled": true
                 },
                 "i3PkJc/zbsXl": {
                   "fill": "$action-fill"
@@ -147815,7 +147771,7 @@
               "height": 56,
               "descendants": {
                 "QnqPf": {
-                  "content": "第 3 / 3 步"
+                  "content": "第 4 / 4 步"
                 },
                 "F68oH": {
                   "fill": "$surface",
@@ -238362,7 +238318,8 @@
       "id": "jVHRf",
       "x": 11664,
       "y": 2461,
-      "name": "01 / component/Home · 最近实例优先",
+      "name": "01 / component/Home · 实例概览与最近访问",
+      "context": "首页固定顺序：实例概览、工作区介绍与快捷操作、最近六个实例。宽窗口三列两行；开源说明见设置 / 关于。",
       "reusable": true,
       "width": 1120,
       "height": 782,
@@ -238371,418 +238328,6 @@
       "gap": 16,
       "padding": 24,
       "children": [
-        {
-          "type": "frame",
-          "id": "bXDbF",
-          "name": "最近打开",
-          "width": "fill_container",
-          "height": 184,
-          "fill": "$surface",
-          "cornerRadius": 10,
-          "stroke": "$line",
-          "strokeWidth": 1,
-          "layout": "vertical",
-          "gap": 12,
-          "padding": 18,
-          "children": [
-            {
-              "type": "frame",
-              "id": "fGbNf",
-              "name": "最近打开标题区域",
-              "width": "fill_container",
-              "justifyContent": "space_between",
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "text",
-                  "id": "roIDC",
-                  "name": "最近打开标题",
-                  "fill": "$ink",
-                  "content": "最近打开",
-                  "fontFamily": "Inter",
-                  "fontSize": 16,
-                  "fontWeight": "600"
-                },
-                {
-                  "type": "text",
-                  "id": "FnKg5",
-                  "name": "最近打开说明",
-                  "fill": "$muted",
-                  "content": "此设备上最近打开的实例",
-                  "fontFamily": "Inter",
-                  "fontSize": 11,
-                  "fontWeight": "normal"
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "Yo1Ed",
-              "name": "Production OSS最近访问",
-              "width": "fill_container",
-              "height": 46,
-              "gap": 12,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "p733sQ",
-                  "name": "Production OSS类型标记",
-                  "width": 36,
-                  "height": 36,
-                  "fill": "$accent-weak",
-                  "cornerRadius": 8,
-                  "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "icon",
-                      "id": "zNw5j",
-                      "name": "Production OSS类型图标",
-                      "width": 17,
-                      "height": 17,
-                      "icon": "cloud",
-                      "library": "lucide",
-                      "fill": "$accent-ink"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "YJpTR",
-                  "name": "Production OSS实例信息",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 4,
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "XMN2d",
-                      "name": "Production OSS实例名",
-                      "fill": "$ink",
-                      "content": "Production OSS",
-                      "fontFamily": "Inter",
-                      "fontSize": 12,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "zUrXF",
-                      "name": "Production OSS辅助信息",
-                      "fill": "$muted",
-                      "content": "aliyun-oss · 生产环境",
-                      "fontFamily": "Inter",
-                      "fontSize": 10,
-                      "fontWeight": "normal"
-                    }
-                  ]
-                },
-                {
-                  "type": "text",
-                  "id": "B21C8",
-                  "name": "Production OSS上次打开时间",
-                  "fill": "$muted",
-                  "content": "今天 14:32",
-                  "fontFamily": "Inter",
-                  "fontSize": 11,
-                  "fontWeight": "normal"
-                },
-                {
-                  "type": "icon",
-                  "id": "RtmuH",
-                  "name": "Production OSS返回箭头",
-                  "width": 16,
-                  "height": 16,
-                  "icon": "arrow-right",
-                  "library": "lucide",
-                  "fill": "$muted"
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "l2T8G",
-              "name": "Heimdall最近访问",
-              "width": "fill_container",
-              "height": 46,
-              "gap": 12,
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "ycV3w",
-                  "name": "Heimdall类型标记",
-                  "width": 36,
-                  "height": 36,
-                  "fill": "$accent-weak",
-                  "cornerRadius": 8,
-                  "justifyContent": "center",
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "icon",
-                      "id": "E7TEI",
-                      "name": "Heimdall类型图标",
-                      "width": 17,
-                      "height": 17,
-                      "icon": "server",
-                      "library": "lucide",
-                      "fill": "$accent-ink"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "ZwWgf",
-                  "name": "Heimdall实例信息",
-                  "width": "fill_container",
-                  "layout": "vertical",
-                  "gap": 4,
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "scCWv",
-                      "name": "Heimdall实例名",
-                      "fill": "$ink",
-                      "content": "Heimdall",
-                      "fontFamily": "Inter",
-                      "fontSize": 12,
-                      "fontWeight": "600"
-                    },
-                    {
-                      "type": "text",
-                      "id": "C861hw",
-                      "name": "Heimdall辅助信息",
-                      "fill": "$muted",
-                      "content": "Heimdall-01 · 生产环境",
-                      "fontFamily": "Inter",
-                      "fontSize": 10,
-                      "fontWeight": "normal"
-                    }
-                  ]
-                },
-                {
-                  "type": "text",
-                  "id": "PwgAZ",
-                  "name": "Heimdall上次打开时间",
-                  "fill": "$muted",
-                  "content": "昨天 18:06",
-                  "fontFamily": "Inter",
-                  "fontSize": 11,
-                  "fontWeight": "normal"
-                },
-                {
-                  "type": "icon",
-                  "id": "pHiTW",
-                  "name": "Heimdall返回箭头",
-                  "width": 16,
-                  "height": 16,
-                  "icon": "arrow-right",
-                  "library": "lucide",
-                  "fill": "$muted"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "frame",
-          "id": "A46Rg",
-          "name": "品牌介绍与快捷操作",
-          "width": "fill_container",
-          "height": 150,
-          "fill": "$surface",
-          "cornerRadius": 10,
-          "stroke": "$line",
-          "strokeWidth": 1,
-          "gap": 24,
-          "padding": 24,
-          "alignItems": "center",
-          "children": [
-            {
-              "type": "frame",
-              "id": "EIt9T",
-              "name": "软件介绍",
-              "width": "fill_container",
-              "layout": "vertical",
-              "gap": 8,
-              "children": [
-                {
-                  "type": "text",
-                  "id": "bXMHN",
-                  "name": "品牌引导",
-                  "fill": "$accent-ink",
-                  "content": "你的 ASGARD 工作区",
-                  "fontFamily": "Inter",
-                  "fontSize": 10,
-                  "fontWeight": "600"
-                },
-                {
-                  "type": "frame",
-                  "id": "rICSD",
-                  "name": "产品名称与版本",
-                  "gap": 12,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "ZbCwQ",
-                      "name": "产品名称",
-                      "fill": "$ink",
-                      "content": "Asgard Hermod",
-                      "fontFamily": "Inter",
-                      "fontSize": 28,
-                      "fontWeight": "700"
-                    },
-                    {
-                      "type": "frame",
-                      "id": "hUXPr",
-                      "name": "版本标记",
-                      "fill": "$app-bg",
-                      "cornerRadius": 4,
-                      "padding": [
-                        4,
-                        8
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "R2vLl",
-                          "name": "当前版本",
-                          "fill": "$muted",
-                          "content": "v0.1.0",
-                          "fontFamily": "Inter",
-                          "fontSize": 10,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "text",
-                  "id": "ySm4M",
-                  "name": "产品标语",
-                  "fill": "$body",
-                  "content": "服务与资源，尽在一个工作区。",
-                  "fontFamily": "Inter",
-                  "fontSize": 15,
-                  "fontWeight": "normal"
-                },
-                {
-                  "type": "text",
-                  "id": "xbR21",
-                  "name": "软件介绍正文",
-                  "fill": "$muted",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "面向 Asgard 生态的开源 Windows 管理终端。在同一个工作区管理实例连接、浏览对象存储，并使用本地终端。",
-                  "lineHeight": 1.6,
-                  "fontFamily": "Inter",
-                  "fontSize": 11,
-                  "fontWeight": "normal"
-                },
-                {
-                  "type": "frame",
-                  "id": "OmvxE",
-                  "name": "首页快捷操作",
-                  "gap": 10,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "RzNek",
-                      "name": "添加实例按钮",
-                      "height": 32,
-                      "fill": "$action-fill",
-                      "cornerRadius": 6,
-                      "stroke": "$action-fill",
-                      "strokeWidth": 1,
-                      "gap": 7,
-                      "padding": [
-                        0,
-                        14
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "icon",
-                          "id": "bzOxi",
-                          "name": "添加实例图标",
-                          "width": 14,
-                          "height": 14,
-                          "icon": "plus",
-                          "library": "lucide",
-                          "fill": "$ink-inv"
-                        },
-                        {
-                          "type": "text",
-                          "id": "adQVL",
-                          "name": "添加实例文字",
-                          "fill": "$ink-inv",
-                          "content": "添加实例",
-                          "fontFamily": "Inter",
-                          "fontSize": 11,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "vSgbx",
-                      "name": "本地终端按钮",
-                      "height": 32,
-                      "fill": "$surface",
-                      "cornerRadius": 6,
-                      "stroke": "$line",
-                      "strokeWidth": 1,
-                      "gap": 7,
-                      "padding": [
-                        0,
-                        14
-                      ],
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "icon",
-                          "id": "b4JbB",
-                          "name": "本地终端图标",
-                          "width": 14,
-                          "height": 14,
-                          "icon": "terminal",
-                          "library": "lucide",
-                          "fill": "$body"
-                        },
-                        {
-                          "type": "text",
-                          "id": "fazMh",
-                          "name": "本地终端文字",
-                          "fill": "$body",
-                          "content": "本地终端",
-                          "fontFamily": "Inter",
-                          "fontSize": 11,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "rectangle",
-              "id": "S3fTtU",
-              "name": "Hermod 大品牌图标",
-              "fill": {
-                "type": "image",
-                "enabled": true,
-                "url": "../src/Asgard.Hermod.UI/Assets/Brand/hermod.png",
-                "mode": "contain"
-              },
-              "width": 136,
-              "height": 136
-            }
-          ]
-        },
         {
           "type": "frame",
           "id": "A5UvY",
@@ -239060,91 +238605,1032 @@
         },
         {
           "type": "frame",
-          "id": "usXSh",
-          "name": "开源项目与作者",
-          "context": "已有访问记录时默认收起；点击可展开项目及作者信息。",
+          "id": "A46Rg",
+          "name": "品牌介绍与快捷操作",
           "width": "fill_container",
-          "height": 56,
+          "height": 184,
+          "fill": "$surface",
+          "cornerRadius": 10,
+          "stroke": "$line",
+          "strokeWidth": 1,
+          "gap": 24,
+          "padding": 24,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "EIt9T",
+              "name": "软件介绍",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "bXMHN",
+                  "name": "品牌引导",
+                  "fill": "$accent-ink",
+                  "content": "你的 ASGARD 工作区",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "rICSD",
+                  "name": "产品名称与版本",
+                  "gap": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ZbCwQ",
+                      "name": "产品名称",
+                      "fill": "$ink",
+                      "content": "Asgard Hermod",
+                      "fontFamily": "Inter",
+                      "fontSize": 28,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "hUXPr",
+                      "name": "版本标记",
+                      "fill": "$app-bg",
+                      "cornerRadius": 4,
+                      "padding": [
+                        4,
+                        8
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "R2vLl",
+                          "name": "当前版本",
+                          "fill": "$muted",
+                          "content": "v0.1.0",
+                          "fontFamily": "Inter",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "ySm4M",
+                  "name": "产品标语",
+                  "fill": "$body",
+                  "content": "服务与资源，尽在一个工作区。",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "xbR21",
+                  "name": "软件介绍正文",
+                  "fill": "$muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "面向 Asgard 生态的开源 Windows 管理终端。在同一个工作区管理实例连接、浏览对象存储，并使用本地终端。",
+                  "lineHeight": 1.6,
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "OmvxE",
+                  "name": "首页快捷操作",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "RzNek",
+                      "name": "添加实例按钮",
+                      "height": 32,
+                      "fill": "$action-fill",
+                      "cornerRadius": 6,
+                      "stroke": "$action-fill",
+                      "strokeWidth": 1,
+                      "gap": 7,
+                      "padding": [
+                        0,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "bzOxi",
+                          "name": "添加实例图标",
+                          "width": 14,
+                          "height": 14,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "$ink-inv"
+                        },
+                        {
+                          "type": "text",
+                          "id": "adQVL",
+                          "name": "添加实例文字",
+                          "fill": "$ink-inv",
+                          "content": "添加实例",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "vSgbx",
+                      "name": "本地终端按钮",
+                      "height": 32,
+                      "fill": "$surface",
+                      "cornerRadius": 6,
+                      "stroke": "$line",
+                      "strokeWidth": 1,
+                      "gap": 7,
+                      "padding": [
+                        0,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "b4JbB",
+                          "name": "本地终端图标",
+                          "width": 14,
+                          "height": 14,
+                          "icon": "terminal",
+                          "library": "lucide",
+                          "fill": "$body"
+                        },
+                        {
+                          "type": "text",
+                          "id": "fazMh",
+                          "name": "本地终端文字",
+                          "fill": "$body",
+                          "content": "本地终端",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "S3fTtU",
+              "name": "Hermod 大品牌图标",
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "../src/Asgard.Hermod.UI/Assets/Brand/hermod.png",
+                "mode": "contain"
+              },
+              "width": 136,
+              "height": 136
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "bXDbF",
+          "name": "最近打开",
+          "context": "最近六个仍存在的实例，宽窗口三列两行；可用宽度不足 744px 时降为两列，不足 492px 时降为一列。没有假占位记录。整张卡片可点并支持键盘。打开时间位于底部，悬停显示完整本地日期。",
+          "width": "fill_container",
+          "height": 296,
           "fill": "$surface",
           "cornerRadius": 10,
           "stroke": "$line",
           "strokeWidth": 1,
           "layout": "vertical",
-          "gap": 9,
+          "gap": 12,
           "padding": 18,
           "children": [
             {
               "type": "frame",
-              "id": "r6059C",
-              "name": "开源说明",
+              "id": "fGbNf",
+              "name": "最近打开标题区域",
               "width": "fill_container",
               "justifyContent": "space_between",
               "alignItems": "center",
               "children": [
                 {
                   "type": "text",
-                  "id": "GXIe3",
-                  "name": "开源标题",
+                  "id": "roIDC",
+                  "name": "最近打开标题",
                   "fill": "$ink",
-                  "content": "开放源码，共同打磨",
+                  "content": "最近打开",
                   "fontFamily": "Inter",
                   "fontSize": 16,
                   "fontWeight": "600"
                 },
                 {
                   "type": "text",
-                  "id": "yZbpd",
-                  "name": "作者与许可",
+                  "id": "FnKg5",
+                  "name": "最近打开说明",
                   "fill": "$muted",
-                  "content": "作者 · BenLampson     开源协议 · Apache 2.0",
+                  "content": "回到此设备上最近打开的六个实例。",
                   "fontFamily": "Inter",
-                  "fontSize": 11,
+                  "fontSize": 12,
                   "fontWeight": "normal"
                 }
               ]
             },
             {
-              "type": "text",
-              "id": "oUnTc",
-              "x": 18,
-              "y": 46,
-              "name": "参与项目说明",
-              "enabled": false,
-              "fill": "$muted",
-              "content": "在 GitHub 查看源码、反馈问题，或参与 Hermod 的开发。",
-              "fontFamily": "Inter",
-              "fontSize": 11,
-              "fontWeight": "normal"
-            },
-            {
               "type": "frame",
-              "id": "L1uvxc",
-              "x": 18,
-              "y": 68,
-              "name": "GitHub 仓库入口",
-              "enabled": false,
-              "gap": 8,
-              "alignItems": "center",
+              "id": "zGItJ",
+              "name": "01 / component/Recent Instances Grid · 六张卡片两行",
+              "reusable": true,
+              "width": "fill_container",
+              "height": 236,
+              "layout": "vertical",
+              "gap": 12,
               "children": [
                 {
-                  "type": "icon",
-                  "id": "q5UF3e",
-                  "name": "打开 GitHub",
-                  "width": 15,
-                  "height": 15,
-                  "icon": "external-link",
-                  "library": "lucide",
-                  "fill": "$accent-ink"
+                  "type": "frame",
+                  "id": "GocIE",
+                  "name": "最近卡片第 1 行",
+                  "width": "fill_container",
+                  "height": 112,
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "W0tmbv",
+                      "name": "公司99服务器 · 最近实例卡片",
+                      "width": "fill_container",
+                      "height": 112,
+                      "fill": "$app-bg",
+                      "cornerRadius": 8,
+                      "stroke": "$line-soft",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 16,
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "HOyVH",
+                          "name": "实例身份",
+                          "width": "fill_container",
+                          "height": 40,
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "Yd45Z",
+                              "name": "实例类型图标",
+                              "width": 40,
+                              "height": 40,
+                              "fill": "$accent-weak",
+                              "cornerRadius": 8,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "id": "ylsS8",
+                                  "name": "MySQL 类型",
+                                  "width": 20,
+                                  "height": 20,
+                                  "icon": "database",
+                                  "library": "lucide",
+                                  "fill": "$accent-ink"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "C1Ju88",
+                              "name": "实例名称与类型",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 5,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "GY5x4",
+                                  "name": "实例名称",
+                                  "fill": "$ink",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "公司99服务器",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 14,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "aMQsh",
+                                  "name": "实例类型说明",
+                                  "fill": "$muted",
+                                  "content": "MySQL",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "U1h8yQ",
+                          "name": "打开时间与返回提示",
+                          "width": "fill_container",
+                          "height": 16,
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "s1Lyrr",
+                              "name": "打开时间图标",
+                              "width": 12,
+                              "height": 12,
+                              "icon": "clock-3",
+                              "library": "lucide",
+                              "fill": "$muted"
+                            },
+                            {
+                              "type": "text",
+                              "id": "k902WG",
+                              "name": "上次打开时间 · 悬停完整日期",
+                              "fill": "$muted",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "今天 16:38",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "icon",
+                              "id": "NBw0c",
+                              "name": "打开实例",
+                              "width": 16,
+                              "height": 16,
+                              "icon": "arrow-right",
+                              "library": "lucide",
+                              "fill": "$muted"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "nBceC",
+                      "name": "开发缓存 · 最近实例卡片",
+                      "width": "fill_container",
+                      "height": 112,
+                      "fill": "$app-bg",
+                      "cornerRadius": 8,
+                      "stroke": "$line-soft",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 16,
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "j1BfgG",
+                          "name": "实例身份",
+                          "width": "fill_container",
+                          "height": 40,
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "M13vs",
+                              "name": "实例类型图标",
+                              "width": 40,
+                              "height": 40,
+                              "fill": "$accent-weak",
+                              "cornerRadius": 8,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "id": "ACqW4",
+                                  "name": "Redis 类型",
+                                  "width": 20,
+                                  "height": 20,
+                                  "icon": "layers",
+                                  "library": "lucide",
+                                  "fill": "$accent-ink"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "o311T",
+                              "name": "实例名称与类型",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 5,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "hmlCD",
+                                  "name": "实例名称",
+                                  "fill": "$ink",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "开发缓存",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 14,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "ol4im",
+                                  "name": "实例类型说明",
+                                  "fill": "$muted",
+                                  "content": "Redis",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "f0t6P",
+                          "name": "打开时间与返回提示",
+                          "width": "fill_container",
+                          "height": 16,
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "nyE2K",
+                              "name": "打开时间图标",
+                              "width": 12,
+                              "height": 12,
+                              "icon": "clock-3",
+                              "library": "lucide",
+                              "fill": "$muted"
+                            },
+                            {
+                              "type": "text",
+                              "id": "f0TRHJ",
+                              "name": "上次打开时间 · 悬停完整日期",
+                              "fill": "$muted",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "今天 16:30",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "icon",
+                              "id": "d2hasl",
+                              "name": "打开实例",
+                              "width": 16,
+                              "height": 16,
+                              "icon": "arrow-right",
+                              "library": "lucide",
+                              "fill": "$muted"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "AoZxB",
+                      "name": "本地测试 · 最近实例卡片",
+                      "width": "fill_container",
+                      "height": 112,
+                      "fill": "$app-bg",
+                      "cornerRadius": 8,
+                      "stroke": "$line-soft",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 16,
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "WAI6y",
+                          "name": "实例身份",
+                          "width": "fill_container",
+                          "height": 40,
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "splnF",
+                              "name": "实例类型图标",
+                              "width": 40,
+                              "height": 40,
+                              "fill": "$accent-weak",
+                              "cornerRadius": 8,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "id": "vxNen",
+                                  "name": "MySQL 类型",
+                                  "width": 20,
+                                  "height": 20,
+                                  "icon": "database",
+                                  "library": "lucide",
+                                  "fill": "$accent-ink"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "CqhJX",
+                              "name": "实例名称与类型",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 5,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "yJOZ9",
+                                  "name": "实例名称",
+                                  "fill": "$ink",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "本地测试",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 14,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "WnjV7",
+                                  "name": "实例类型说明",
+                                  "fill": "$muted",
+                                  "content": "MySQL",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "w2xlud",
+                          "name": "打开时间与返回提示",
+                          "width": "fill_container",
+                          "height": 16,
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "zAUQQ",
+                              "name": "打开时间图标",
+                              "width": 12,
+                              "height": 12,
+                              "icon": "clock-3",
+                              "library": "lucide",
+                              "fill": "$muted"
+                            },
+                            {
+                              "type": "text",
+                              "id": "kXftG",
+                              "name": "上次打开时间 · 悬停完整日期",
+                              "fill": "$muted",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "今天 16:29",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "icon",
+                              "id": "l4C3i2",
+                              "name": "打开实例",
+                              "width": 16,
+                              "height": 16,
+                              "icon": "arrow-right",
+                              "library": "lucide",
+                              "fill": "$muted"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
                 },
                 {
-                  "type": "text",
-                  "id": "j4v8r",
-                  "name": "GitHub 地址",
-                  "fill": "$accent-ink",
-                  "content": "https://github.com/BenLampson/Asgard.Hermod",
-                  "fontFamily": "Inter",
-                  "fontSize": 12,
-                  "fontWeight": "600"
+                  "type": "frame",
+                  "id": "bU4gl",
+                  "name": "最近卡片第 2 行",
+                  "width": "fill_container",
+                  "height": 112,
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Itt5Z",
+                      "name": "腾讯南京对象存储 · 最近实例卡片",
+                      "width": "fill_container",
+                      "height": 112,
+                      "fill": "$app-bg",
+                      "cornerRadius": 8,
+                      "stroke": "$line-soft",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 16,
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Ts5b1",
+                          "name": "实例身份",
+                          "width": "fill_container",
+                          "height": 40,
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "sejC4",
+                              "name": "实例类型图标",
+                              "width": 40,
+                              "height": 40,
+                              "fill": "$accent-weak",
+                              "cornerRadius": 8,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "id": "rxl3V",
+                                  "name": "存储 类型",
+                                  "width": 20,
+                                  "height": 20,
+                                  "icon": "box",
+                                  "library": "lucide",
+                                  "fill": "$accent-ink"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "CCTwh",
+                              "name": "实例名称与类型",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 5,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "lnPBp",
+                                  "name": "实例名称",
+                                  "fill": "$ink",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "腾讯南京对象存储",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 14,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "Y8J4vX",
+                                  "name": "实例类型说明",
+                                  "fill": "$muted",
+                                  "content": "存储",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "I0yVe",
+                          "name": "打开时间与返回提示",
+                          "width": "fill_container",
+                          "height": 16,
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "MiEaR",
+                              "name": "打开时间图标",
+                              "width": 12,
+                              "height": 12,
+                              "icon": "clock-3",
+                              "library": "lucide",
+                              "fill": "$muted"
+                            },
+                            {
+                              "type": "text",
+                              "id": "ai0qF",
+                              "name": "上次打开时间 · 悬停完整日期",
+                              "fill": "$muted",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "昨天 17:31",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "icon",
+                              "id": "i7qrFG",
+                              "name": "打开实例",
+                              "width": 16,
+                              "height": 16,
+                              "icon": "arrow-right",
+                              "library": "lucide",
+                              "fill": "$muted"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "XqLi7",
+                      "name": "火山测试机器 · 最近实例卡片",
+                      "width": "fill_container",
+                      "height": 112,
+                      "fill": "$app-bg",
+                      "cornerRadius": 8,
+                      "stroke": "$line-soft",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 16,
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "yLGc7",
+                          "name": "实例身份",
+                          "width": "fill_container",
+                          "height": 40,
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "Se7Oh",
+                              "name": "实例类型图标",
+                              "width": 40,
+                              "height": 40,
+                              "fill": "$accent-weak",
+                              "cornerRadius": 8,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "id": "p9zu0t",
+                                  "name": "SSH 类型",
+                                  "width": 20,
+                                  "height": 20,
+                                  "icon": "terminal",
+                                  "library": "lucide",
+                                  "fill": "$accent-ink"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "B6ywR5",
+                              "name": "实例名称与类型",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 5,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "wfb4X",
+                                  "name": "实例名称",
+                                  "fill": "$ink",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "火山测试机器",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 14,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "tyubB",
+                                  "name": "实例类型说明",
+                                  "fill": "$muted",
+                                  "content": "SSH",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "JmmH6",
+                          "name": "打开时间与返回提示",
+                          "width": "fill_container",
+                          "height": 16,
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "bypJN",
+                              "name": "打开时间图标",
+                              "width": 12,
+                              "height": 12,
+                              "icon": "clock-3",
+                              "library": "lucide",
+                              "fill": "$muted"
+                            },
+                            {
+                              "type": "text",
+                              "id": "bMfx8",
+                              "name": "上次打开时间 · 悬停完整日期",
+                              "fill": "$muted",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "昨天 17:20",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "icon",
+                              "id": "tk58n",
+                              "name": "打开实例",
+                              "width": 16,
+                              "height": 16,
+                              "icon": "arrow-right",
+                              "library": "lucide",
+                              "fill": "$muted"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ULekZ",
+                      "name": "阿里云归档 · 最近实例卡片",
+                      "width": "fill_container",
+                      "height": 112,
+                      "fill": "$app-bg",
+                      "cornerRadius": 8,
+                      "stroke": "$line-soft",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 16,
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "MJ89z",
+                          "name": "实例身份",
+                          "width": "fill_container",
+                          "height": 40,
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "ZPTpf",
+                              "name": "实例类型图标",
+                              "width": 40,
+                              "height": 40,
+                              "fill": "$accent-weak",
+                              "cornerRadius": 8,
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "id": "NZgXh",
+                                  "name": "存储 类型",
+                                  "width": 20,
+                                  "height": 20,
+                                  "icon": "box",
+                                  "library": "lucide",
+                                  "fill": "$accent-ink"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "j40UO4",
+                              "name": "实例名称与类型",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 5,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "qYQil",
+                                  "name": "实例名称",
+                                  "fill": "$ink",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "阿里云归档",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 14,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "D24BiC",
+                                  "name": "实例类型说明",
+                                  "fill": "$muted",
+                                  "content": "存储",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "ETvZS",
+                          "name": "打开时间与返回提示",
+                          "width": "fill_container",
+                          "height": 16,
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "u4kDvd",
+                              "name": "打开时间图标",
+                              "width": 12,
+                              "height": 12,
+                              "icon": "clock-3",
+                              "library": "lucide",
+                              "fill": "$muted"
+                            },
+                            {
+                              "type": "text",
+                              "id": "p889Hp",
+                              "name": "上次打开时间 · 悬停完整日期",
+                              "fill": "$muted",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "昨天 16:52",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "icon",
+                              "id": "OG16U",
+                              "name": "打开实例",
+                              "width": 16,
+                              "height": 16,
+                              "icon": "arrow-right",
+                              "library": "lucide",
+                              "fill": "$muted"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
             }
@@ -241037,6 +241523,728 @@
                           "fill": "$ink-inv"
                         }
                       }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "r4UB07",
+      "x": 5460,
+      "y": 14562,
+      "name": "06 / 系统设置 · 关于 · Light",
+      "context": "关于页完整展示版本、作者、开源协议与固定 GitHub 仓库地址；内容变窄时换行并纵向滚动，不折叠。",
+      "theme": {
+        "mode": "light"
+      },
+      "clip": true,
+      "width": 1100,
+      "height": 740,
+      "fill": "$surface",
+      "cornerRadius": 8,
+      "stroke": "$win-border",
+      "strokeWidth": 1,
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "pvab1",
+          "name": "系统设置窗口标题栏",
+          "width": "fill_container",
+          "height": 36,
+          "fill": "$win",
+          "stroke": "$line",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "gap": 8,
+          "padding": [
+            0,
+            12
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon",
+              "id": "c2xNUA",
+              "name": "Child window icon",
+              "width": 14,
+              "height": 14,
+              "icon": "settings",
+              "library": "lucide",
+              "fill": "$muted"
+            },
+            {
+              "type": "text",
+              "id": "Py1gX",
+              "name": "Child window title",
+              "fill": "$ink",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "系统设置",
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "600"
+            },
+            {
+              "type": "icon",
+              "id": "R3YFh6",
+              "name": "Minimize child window",
+              "width": 14,
+              "height": 14,
+              "icon": "minus",
+              "library": "lucide",
+              "fill": "$muted"
+            },
+            {
+              "type": "icon",
+              "id": "oqdE0",
+              "name": "Close child window",
+              "width": 14,
+              "height": 14,
+              "icon": "x",
+              "library": "lucide",
+              "fill": "$muted"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "lDTlp",
+          "name": "设置导航与关于内容",
+          "width": "fill_container",
+          "height": "fill_container",
+          "children": [
+            {
+              "id": "fZToU",
+              "type": "ref",
+              "ref": "cafAy",
+              "name": "关于页分类导航",
+              "width": 224,
+              "height": "fill_container",
+              "descendants": {
+                "M0sPbW": {
+                  "fill": "#00000000"
+                },
+                "CrRim": {
+                  "fill": "$muted"
+                },
+                "up8jA": {
+                  "fill": "$body",
+                  "fontWeight": "normal"
+                },
+                "lMBtD": {
+                  "fill": "$accent-weak"
+                },
+                "mCazc": {
+                  "fill": "$accent"
+                },
+                "yOmTO": {
+                  "fill": "$accent-ink",
+                  "fontWeight": "600"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "xYz1h",
+              "name": "关于内容 · 居中最大宽度 680",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 24,
+              "padding": [
+                32,
+                98
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "CpsZi",
+                  "name": "关于页标题",
+                  "fill": "$ink",
+                  "content": "关于",
+                  "fontFamily": "Inter",
+                  "fontSize": 24,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "WGqOz",
+                  "name": "关于信息卡片",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "c6vs5",
+                      "name": "产品信息",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "cornerRadius": 10,
+                      "stroke": "$line",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 24,
+                      "padding": 24,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Q0YCW",
+                          "name": "产品标志与版本",
+                          "width": "fill_container",
+                          "height": 72,
+                          "gap": 20,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "qNdAU",
+                              "name": "Hermod 品牌标志",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "../src/Asgard.Hermod.UI/Assets/Brand/hermod.png",
+                                "mode": "contain"
+                              },
+                              "width": 72,
+                              "height": 72
+                            },
+                            {
+                              "type": "frame",
+                              "id": "ri1x6",
+                              "name": "产品名称与版本",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "X3uoc",
+                                  "name": "产品名称",
+                                  "fill": "$ink",
+                                  "content": "Asgard Hermod",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 24,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "rpa6m",
+                                  "name": "软件版本",
+                                  "fill": "$muted",
+                                  "content": "v0.1.0",
+                                  "fontFamily": "JetBrains Mono",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "VPnEp",
+                          "name": "产品简介",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 8,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "TeZpk",
+                              "name": "产品标语",
+                              "fill": "$ink",
+                              "content": "服务与资源，尽在一个工作区。",
+                              "fontFamily": "Inter",
+                              "fontSize": 15,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "NwNIO",
+                              "name": "产品说明",
+                              "fill": "$muted",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "面向 Asgard 生态的开源 Windows 管理终端。在同一个工作区管理实例连接、浏览对象存储，并使用本地终端。",
+                              "lineHeight": 1.54,
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "E0YDzE",
+                      "name": "开源项目与作者",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "cornerRadius": 10,
+                      "stroke": "$line",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 24,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "s3QNjS",
+                          "name": "开源信息标题",
+                          "fill": "$ink",
+                          "content": "开放源码，共同打磨",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "liuEw",
+                          "name": "开源说明",
+                          "fill": "$muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "在 GitHub 查看源码、反馈问题，或参与 Hermod 的开发。",
+                          "lineHeight": 1.54,
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Xzh2L",
+                          "name": "作者与许可",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 8,
+                          "padding": [
+                            8,
+                            0
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "XdibP",
+                              "name": "项目作者",
+                              "fill": "$ink",
+                              "content": "作者 · BenLampson",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "WtFY9",
+                              "name": "开源许可",
+                              "fill": "$ink",
+                              "content": "开源协议 · Apache 2.0",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "xxCoT",
+                          "type": "ref",
+                          "ref": "Q2r8z",
+                          "name": "打开固定 GitHub 仓库",
+                          "height": 32,
+                          "fill": "$action-fill",
+                          "descendants": {
+                            "u5fFux": {
+                              "enabled": false
+                            },
+                            "NpJY2": {
+                              "content": "在 GitHub 打开 Hermod 项目",
+                              "fill": "$ink-inv",
+                              "fontSize": 12
+                            }
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "id": "DZccm",
+                          "name": "可复制项目地址",
+                          "fill": "$body",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "https://github.com/BenLampson/Asgard.Hermod",
+                          "fontFamily": "JetBrains Mono",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "HkeYm",
+      "x": 6640,
+      "y": 14562,
+      "name": "06 / 系统设置 · 关于 · Dark",
+      "context": "关于页完整展示版本、作者、开源协议与固定 GitHub 仓库地址；内容变窄时换行并纵向滚动，不折叠。",
+      "theme": {
+        "mode": "dark"
+      },
+      "clip": true,
+      "width": 1100,
+      "height": 740,
+      "fill": "$surface",
+      "cornerRadius": 8,
+      "stroke": "$win-border",
+      "strokeWidth": 1,
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "jlQJi",
+          "name": "系统设置窗口标题栏",
+          "width": "fill_container",
+          "height": 36,
+          "fill": "$win",
+          "stroke": "$line",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "gap": 8,
+          "padding": [
+            0,
+            12
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon",
+              "id": "OcjtJ",
+              "name": "Child window icon",
+              "width": 14,
+              "height": 14,
+              "icon": "settings",
+              "library": "lucide",
+              "fill": "$muted"
+            },
+            {
+              "type": "text",
+              "id": "zLki8",
+              "name": "Child window title",
+              "fill": "$ink",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "系统设置",
+              "fontFamily": "Inter",
+              "fontSize": 12,
+              "fontWeight": "600"
+            },
+            {
+              "type": "icon",
+              "id": "pDYAr",
+              "name": "Minimize child window",
+              "width": 14,
+              "height": 14,
+              "icon": "minus",
+              "library": "lucide",
+              "fill": "$muted"
+            },
+            {
+              "type": "icon",
+              "id": "sRyl8",
+              "name": "Close child window",
+              "width": 14,
+              "height": 14,
+              "icon": "x",
+              "library": "lucide",
+              "fill": "$muted"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "lC8YM",
+          "name": "设置导航与关于内容",
+          "width": "fill_container",
+          "height": "fill_container",
+          "children": [
+            {
+              "id": "meXtb",
+              "type": "ref",
+              "ref": "cafAy",
+              "name": "关于页分类导航",
+              "width": 224,
+              "height": "fill_container",
+              "descendants": {
+                "M0sPbW": {
+                  "fill": "#00000000"
+                },
+                "CrRim": {
+                  "fill": "$muted"
+                },
+                "up8jA": {
+                  "fill": "$body",
+                  "fontWeight": "normal"
+                },
+                "lMBtD": {
+                  "fill": "$accent-weak"
+                },
+                "mCazc": {
+                  "fill": "$accent"
+                },
+                "yOmTO": {
+                  "fill": "$accent-ink",
+                  "fontWeight": "600"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "r2lrU3",
+              "name": "关于内容 · 居中最大宽度 680",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 24,
+              "padding": [
+                32,
+                98
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "TdQYv",
+                  "name": "关于页标题",
+                  "fill": "$ink",
+                  "content": "关于",
+                  "fontFamily": "Inter",
+                  "fontSize": 24,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "C2kJfD",
+                  "name": "关于信息卡片",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "EjRE9",
+                      "name": "产品信息",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "cornerRadius": 10,
+                      "stroke": "$line",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 24,
+                      "padding": 24,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "vgkwo",
+                          "name": "产品标志与版本",
+                          "width": "fill_container",
+                          "height": 72,
+                          "gap": 20,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "rUrD8",
+                              "name": "Hermod 品牌标志",
+                              "fill": {
+                                "type": "image",
+                                "enabled": true,
+                                "url": "../src/Asgard.Hermod.UI/Assets/Brand/hermod-dark.png",
+                                "mode": "contain"
+                              },
+                              "width": 72,
+                              "height": 72
+                            },
+                            {
+                              "type": "frame",
+                              "id": "McRqZ",
+                              "name": "产品名称与版本",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "NCshl",
+                                  "name": "产品名称",
+                                  "fill": "$ink",
+                                  "content": "Asgard Hermod",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 24,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "X99o5f",
+                                  "name": "软件版本",
+                                  "fill": "$muted",
+                                  "content": "v0.1.0",
+                                  "fontFamily": "JetBrains Mono",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "mr14E",
+                          "name": "产品简介",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 8,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "i3wEWP",
+                              "name": "产品标语",
+                              "fill": "$ink",
+                              "content": "服务与资源，尽在一个工作区。",
+                              "fontFamily": "Inter",
+                              "fontSize": 15,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "umgNn",
+                              "name": "产品说明",
+                              "fill": "$muted",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "面向 Asgard 生态的开源 Windows 管理终端。在同一个工作区管理实例连接、浏览对象存储，并使用本地终端。",
+                              "lineHeight": 1.54,
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "LnJj8",
+                      "name": "开源项目与作者",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "cornerRadius": 10,
+                      "stroke": "$line",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 24,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "aWZLi",
+                          "name": "开源信息标题",
+                          "fill": "$ink",
+                          "content": "开放源码，共同打磨",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Dl7v0",
+                          "name": "开源说明",
+                          "fill": "$muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "在 GitHub 查看源码、反馈问题，或参与 Hermod 的开发。",
+                          "lineHeight": 1.54,
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "WRHty",
+                          "name": "作者与许可",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 8,
+                          "padding": [
+                            8,
+                            0
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "XXTbT",
+                              "name": "项目作者",
+                              "fill": "$ink",
+                              "content": "作者 · BenLampson",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "gK4Wg",
+                              "name": "开源许可",
+                              "fill": "$ink",
+                              "content": "开源协议 · Apache 2.0",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "shdJj",
+                          "type": "ref",
+                          "ref": "Q2r8z",
+                          "name": "打开固定 GitHub 仓库",
+                          "height": 32,
+                          "fill": "$action-fill",
+                          "descendants": {
+                            "u5fFux": {
+                              "enabled": false
+                            },
+                            "NpJY2": {
+                              "content": "在 GitHub 打开 Hermod 项目",
+                              "fill": "$ink-inv",
+                              "fontSize": 12
+                            }
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "id": "ZkfVp",
+                          "name": "可复制项目地址",
+                          "fill": "$body",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "https://github.com/BenLampson/Asgard.Hermod",
+                          "fontFamily": "JetBrains Mono",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
                     }
                   ]
                 }
