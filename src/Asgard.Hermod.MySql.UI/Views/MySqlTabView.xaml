@@ -33,16 +33,21 @@
     <Button Content="{loc:Loc MySqlCancelQuery}" Command="{Binding CancelCommand}" Margin="0,0,8,6" />
     <Button Content="{loc:Loc MySqlSaveQuery}" Command="{Binding SaveDocumentCommand}" Margin="0,0,0,6" />
    </WrapPanel>
-   <DockPanel x:Name="ObjectToolbar" Margin="0,0,0,10"><Button DockPanel.Dock="Right" Content="{loc:Loc MySqlRefresh}" Command="{Binding RefreshCommand}" />
+   <Grid x:Name="ObjectToolbar" Margin="0,0,0,10"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+    <StackPanel Grid.Column="1" Orientation="Horizontal">
+     <Button x:Name="ShowFilter" Content="{loc:Loc MySqlShowFilter}" Command="{Binding ShowFilterCommand}" Margin="0,0,8,0"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Visibility" Value="{Binding ShowTableControls, Converter={StaticResource Visible}}" /><Style.Triggers><DataTrigger Binding="{Binding IsFilterOpen}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></Button.Style></Button>
+     <Button x:Name="RefreshTable" Content="{loc:Loc MySqlRefresh}" Command="{Binding RefreshCommand}" />
+    </StackPanel>
     <controls:SectionSelector BorderThickness="0" ItemContainerStyle="{StaticResource WorkspaceSectionItem}" ItemsSource="{Binding Sections}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding Section, Mode=TwoWay}" />
-    <DockPanel.Style><Style TargetType="DockPanel"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding IsQuery}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger><DataTrigger Binding="{Binding IsMetadataOnly}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></DockPanel.Style>
-   </DockPanel>
-   <Grid x:Name="FilterToolbar" Visibility="{Binding ShowTableControls, Converter={StaticResource Visible}}" Margin="0,0,0,10"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-    <Grid><TextBox Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" MaxLength="2048" Height="32" MinHeight="32" FontFamily="{DynamicResource MonoFont}" FontSize="12" ToolTip="{loc:Loc MySqlWhereHint}" AutomationProperties.Name="{loc:Loc MySqlWhereCondition}" />
+    <Grid.Style><Style TargetType="Grid"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding IsQuery}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger><DataTrigger Binding="{Binding IsMetadataOnly}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></Grid.Style>
+   </Grid>
+   <Grid x:Name="FilterToolbar" Margin="0,0,0,10"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+    <Grid.Style><Style TargetType="Grid"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><MultiDataTrigger><MultiDataTrigger.Conditions><Condition Binding="{Binding ShowTableControls}" Value="True" /><Condition Binding="{Binding IsFilterOpen}" Value="True" /></MultiDataTrigger.Conditions><Setter Property="Visibility" Value="Visible" /></MultiDataTrigger></Style.Triggers></Style></Grid.Style>
+    <Grid><TextBox x:Name="FilterInput" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" MaxLength="2048" Height="32" MinHeight="32" FontFamily="{DynamicResource MonoFont}" FontSize="12" ToolTip="{loc:Loc MySqlWhereHint}" AutomationProperties.Name="{loc:Loc MySqlWhereCondition}" />
      <TextBlock Text="{loc:Loc MySqlWhereCondition}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="11,0" IsHitTestVisible="False"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding FilterText}" Value=""><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
     </Grid>
     <Button Grid.Column="1" Content="{loc:Loc MySqlApplyFilter}" Command="{Binding ApplyFilterCommand}" Margin="8,0" ToolTip="{loc:Loc MySqlWhereHint}" />
-    <Button Grid.Column="2" Content="{loc:Loc MySqlClearFilter}" Command="{Binding ClearFilterCommand}" />
+    <Button Grid.Column="2" Content="{loc:Loc MySqlRemoveFilter}" Command="{Binding ClearFilterCommand}" />
    </Grid>
   </StackPanel>
   <Border x:Name="InlineError" Grid.Row="1" Background="{DynamicResource DangerWeakBrush}" Padding="12,9" Margin="0,0,0,10" CornerRadius="5">

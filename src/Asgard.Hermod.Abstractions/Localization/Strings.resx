@@ -3525,6 +3525,12 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="MySqlWhereCondition" xml:space="preserve">
     <value>Temporary WHERE condition</value>
   </data>
+  <data name="MySqlShowFilter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="MySqlRemoveFilter" xml:space="preserve">
+    <value>Remove filter</value>
+  </data>
   <data name="MySqlWhereHint" xml:space="preserve">
     <value>Applies only to this table tab. Example: id &gt;= 10 AND name LIKE 'A%'. Supports comparisons, LIKE, IN, IS NULL, AND/OR and parentheses; statements and functions are not supported.</value>
   </data>

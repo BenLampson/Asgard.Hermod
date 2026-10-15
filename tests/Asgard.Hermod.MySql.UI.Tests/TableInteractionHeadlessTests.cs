@@ -24,7 +24,14 @@ public sealed class TableInteractionHeadlessTests(WpfTestFixture fixture)
         await table.ApplyFilterCommand.ExecuteAsync(); Assert.Equal(0, table.Offset); Assert.Equal("id >= 1", server.PageReads.Last().Filter);
         Assert.Equal("id >= 1", table.AppliedFilter); Assert.False(table.HasDataDraft);
         await table.ChangePageSizeAsync(100); Assert.Equal(100, server.PageReads.Last().Size); Assert.Equal("id >= 1", server.PageReads.Last().Filter);
+        Assert.True(table.IsFilterOpen);
+        grid = table.SelectedResult!; row = grid.Rows[0]; await table.PrepareCellAsync(grid, row, row.Cells[1]); row.Cells[1].Apply("keep filter");
+        dialogs.Choice = MySqlDraftChoice.Cancel; reads = server.PageReads.Count;
+        await table.ClearFilterCommand.ExecuteAsync();
+        Assert.Equal(reads, server.PageReads.Count); Assert.True(table.IsFilterOpen); Assert.Equal("id >= 1", table.AppliedFilter);
+        dialogs.Choice = MySqlDraftChoice.Discard;
         await table.ClearFilterCommand.ExecuteAsync(); Assert.Equal("", server.PageReads.Last().Filter);
+        Assert.False(table.IsFilterOpen);
         table.FilterText = "id=1; DELETE FROM users"; reads = server.PageReads.Count; await table.ApplyFilterCommand.ExecuteAsync();
         Assert.Equal(reads, server.PageReads.Count); Assert.True(table.HasError); Assert.Equal("", table.AppliedFilter);
         server.PageResult = (_, _, _) => server.Result(); await table.RefreshCommand.ExecuteAsync(); Assert.False(table.ShowPageNavigation);

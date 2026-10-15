@@ -206,6 +206,8 @@ shell and independent workspace windows, retaining the same page, session and dr
 The main title bar theme toggle uses the shell's application-wide theme service.
 
 MySQL table and view tabs keep an independent page size and temporary WHERE condition.
+The condition editor is hidden initially and opens through Filter. Remove filter
+clears the condition through the existing draft confirmation and hides the editor.
 Sizes 50/100/200/500 reach the protocol reader; one look-ahead row determines HasMore.
 Filters accept catalog column comparisons, LIKE, IN, IS NULL, AND/OR, NOT and parentheses.
 Every value is parameterized, identifiers are quoted, and statements, subqueries and

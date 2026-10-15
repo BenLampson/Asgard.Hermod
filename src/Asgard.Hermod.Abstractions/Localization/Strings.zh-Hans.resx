@@ -3525,6 +3525,12 @@
   <data name="MySqlWhereCondition" xml:space="preserve">
     <value>临时 WHERE 条件</value>
   </data>
+  <data name="MySqlShowFilter" xml:space="preserve">
+    <value>筛选</value>
+  </data>
+  <data name="MySqlRemoveFilter" xml:space="preserve">
+    <value>移除筛选</value>
+  </data>
   <data name="MySqlWhereHint" xml:space="preserve">
     <value>仅对当前表页签生效。例如：id &gt;= 10 AND name LIKE 'A%'。支持字段比较、LIKE、IN、IS NULL、AND/OR 和括号；不支持完整语句和函数。</value>
   </data>
