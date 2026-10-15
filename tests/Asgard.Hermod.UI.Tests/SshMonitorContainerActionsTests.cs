@@ -70,6 +70,7 @@ public sealed class SshMonitorContainerActionsTests(WpfTestFixture fixture)
             await LayoutAsync(surface, 900);
             var empty = Assert.IsType<Border>(monitor.FindName("MonitorEmptyState"));
             var emptyBar = WindowTestVisuals.Named(monitor, "ContainerActionBar");
+            AssertBelow(WindowTestVisuals.Named(monitor, "ContainerFilters"), empty, monitor);
             AssertBelow(empty, emptyBar, monitor);
             Capture(surface, $"docker-bottom-empty-{language}-{theme}");
             monitor.DataContext = null;

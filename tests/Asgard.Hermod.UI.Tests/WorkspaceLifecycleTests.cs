@@ -133,23 +133,22 @@ public sealed class WorkspaceLifecycleTests
         });
     });
 
-    /// <summary>启动失败仍保留可重试页面，重试成功后清除错误。</summary>
+    /// <summary>首次启动失败回到首页并反馈安全错误，重新打开成功后清除反馈。</summary>
     [Fact]
-    public Task StartupFailure_CanRetryAndClearsError() => _fixture.RunAsync(async () =>
+    public Task StartupFailure_IsReportedAndReopeningClearsError() => _fixture.RunAsync(async () =>
     {
         await using var environment = new ShellTestEnvironment();
         environment.Factory.NextFailure = new IOException("启动测试失败");
         environment.Shell.Workspace.OpenInstance(environment.Local);
-        var page = Assert.IsType<TerminalWorkspaceViewModel>(environment.Shell.Workspace.SelectedTab);
-
-        Assert.Null(page.Session);
-        Assert.Equal(Text.Get("FailedToStart"), page.Status);
-        Assert.Equal(Text.Get("CannotStartTheTerminalCheckTheShellAndAccessPermissionsThenTryAgain"), page.Error);
-        Assert.True(page.RetryCommand.CanExecute(null));
+        Assert.Same(environment.Shell.Workspace.Home, environment.Shell.Workspace.SelectedTab);
+        Assert.Single(environment.Shell.Workspace.Tabs);
+        Assert.Contains(Text.Get("CannotStartTheTerminalCheckTheShellAndAccessPermissionsThenTryAgain"), environment.Shell.Workspace.OpenError, StringComparison.Ordinal);
         Assert.Empty(environment.Factory.Sessions);
 
-        await page.RetryCommand.ExecuteAsync();
+        environment.Shell.Workspace.OpenInstance(environment.Local);
+        var page = Assert.IsType<TerminalWorkspaceViewModel>(environment.Shell.Workspace.SelectedTab);
 
+        Assert.Empty(environment.Shell.Workspace.OpenError);
         Assert.Null(page.RetryCommand.LastException);
         Assert.Null(page.Error);
         Assert.True(page.IsRunning);

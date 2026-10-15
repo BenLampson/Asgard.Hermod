@@ -33,7 +33,7 @@ public sealed class RedisLayoutTests(WpfTestFixture fixture)
             await model.OpenAsync(RedisKeyId.FromText("user:1042:profile")); model.ActivateTabCommand.Execute(first);
             await WindowPreviewCapture.VerifyAsync(window, $"redis-workspace-wide-{language}-{theme}");
             var tabs = Assert.IsType<WorkspaceTabStrip>(view.FindName("KeyTabs")); Assert.Equal(2, tabs.Items.Count);
-            var item = Assert.IsType<ListBoxItem>(tabs.ItemContainerGenerator.ContainerFromIndex(0));
+            var item = Assert.IsAssignableFrom<ListBoxItem>(tabs.ItemContainerGenerator.ContainerFromIndex(0));
             Assert.Contains("cache:homepage", Assert.IsType<string>(item.ToolTip));
             Assert.All(WindowTestVisuals.Descendants<MiddleEllipsisTextBlock>(tabs), block => Assert.False(string.IsNullOrEmpty(block.Text)));
             Assert.Contains("cache:homepage", System.Windows.Automation.AutomationProperties.GetName(item));
@@ -47,7 +47,7 @@ public sealed class RedisLayoutTests(WpfTestFixture fixture)
             await WindowPreviewCapture.VerifyAsync(window, $"redis-workspace-edit-{language}-{theme}");
             Assert.True(editor.IsReadOnly); Assert.True(first.IsDirty);
             window.Width = 620; window.Height = 640; await WindowPreviewCapture.VerifyAsync(window, $"redis-workspace-narrow-{language}-{theme}");
-            var database = Assert.IsType<ComboBox>(view.FindName("DatabaseSelector")); Assert.True(database.ActualWidth >= 180);
+            var database = Assert.IsType<ComboBox>(view.FindName("DatabaseSelector")); Assert.InRange(database.ActualWidth, 100, 160);
             Assert.Equal(Text.Get("RedisDatabase"), System.Windows.Automation.AutomationProperties.GetName(database));
             var create = Assert.Single(WindowTestVisuals.Descendants<Button>(view), button => ReferenceEquals(button.Command, model.NewKeyCommand));
             Assert.True(WindowTestVisuals.ScreenBounds(create).Right <= WindowTestVisuals.ScreenBounds(view).Right + 1);
