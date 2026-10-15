@@ -24,6 +24,12 @@ public sealed class SshAgentComposerTests(WpfTestFixture fixture)
         Text.Initialize(language, CultureInfo.InvariantCulture);
         themes.SetTheme(theme);
         using var model = new SshAssistantViewModel(null, () => null, () => "host", new SshTroubleshootingWorkspaceTests.Dialogs());
+        var user = new SshAssistantMessage("Check server resources", true, 0);
+        var reply = new SshAssistantMessage("Review the output\n```bash\nuname -a\n```", false, 0);
+        var tool = new SshAssistantMessage("uname -a\nLinux host", false, 0, false, "SshAgentDiagnosticStep", true);
+        model.Messages.Add(user);
+        model.Messages.Add(tool);
+        model.Messages.Add(reply);
         var view = new SshAssistantView { DataContext = model };
         try
         {
@@ -36,6 +42,20 @@ public sealed class SshAgentComposerTests(WpfTestFixture fixture)
             Assert.Equal(prompt.FontSize, placeholder.FontSize);
             Assert.Equal(new Thickness(0), prompt.Padding);
             Assert.DoesNotContain(WindowTestVisuals.Descendants<Border>(prompt), border => border.BorderThickness != new Thickness(0));
+            var bubbles = WindowTestVisuals.Descendants<Border>(view).Where(border => border.Name == "MessageBubble").ToArray();
+            Assert.Equal(3, bubbles.Length);
+            var userBubble = Assert.Single(bubbles, border => ReferenceEquals(border.DataContext, user));
+            var toolBubble = Assert.Single(bubbles, border => ReferenceEquals(border.DataContext, tool));
+            Assert.Equal(((SolidColorBrush)Application.Current.FindResource("AccentWeakBrush")).Color, Assert.IsType<SolidColorBrush>(userBubble.Background).Color);
+            Assert.NotEqual(Assert.IsType<SolidColorBrush>(userBubble.Background).Color, Assert.IsType<SolidColorBrush>(toolBubble.Background).Color);
+            foreach (var body in WindowTestVisuals.Descendants<TextBox>(view).Where(editor => editor.IsReadOnly))
+            {
+                Assert.True(body.Focusable);
+                Assert.DoesNotContain(WindowTestVisuals.Descendants<Border>(body), border => border.BorderThickness != new Thickness(0));
+                Assert.Null(body.Template.FindName("FocusRing", body));
+                Assert.Equal(new Thickness(0), body.Padding);
+                Assert.Equal(Colors.Transparent, Assert.IsType<SolidColorBrush>(body.Background).Color);
+            }
             var content = Assert.IsType<ScrollViewer>(prompt.Template.FindName("PART_ContentHost", prompt));
             Assert.Equal(prompt.TranslatePoint(new Point(), composer), placeholder.TranslatePoint(new Point(), composer));
             var origin = prompt.TranslatePoint(new Point(), composer);
@@ -59,6 +79,8 @@ public sealed class SshAgentComposerTests(WpfTestFixture fixture)
 
             model.Prompt = "";
             await LayoutAsync(view, 420);
+            await LayoutAsync(view, 420);
+            Assert.Empty(prompt.Text);
             Assert.Equal(Visibility.Visible, placeholder.Visibility);
         }
         finally

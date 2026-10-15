@@ -31,9 +31,9 @@
    </Border>
    <ScrollViewer x:Name="ConversationScroll" Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="18,14,18,0">
     <ItemsControl ItemsSource="{Binding Messages}"><ItemsControl.ItemTemplate><DataTemplate>
-     <Border CornerRadius="6" Margin="0,0,0,16"><Border.Style><Style TargetType="Border">
+     <Border x:Name="MessageBubble" CornerRadius="6" Margin="0,0,0,16"><Border.Style><Style TargetType="Border">
       <Setter Property="Padding" Value="0" /><Setter Property="Background" Value="Transparent" />
-      <Style.Triggers><DataTrigger Binding="{Binding IsUser}" Value="True"><Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}" /><Setter Property="Padding" Value="12" /></DataTrigger>
+      <Style.Triggers><DataTrigger Binding="{Binding IsUser}" Value="True"><Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" /><Setter Property="Padding" Value="12" /></DataTrigger>
        <DataTrigger Binding="{Binding IsTool}" Value="True"><Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}" /><Setter Property="BorderBrush" Value="{DynamicResource LineBrush}" /><Setter Property="BorderThickness" Value="1" /><Setter Property="Padding" Value="12" /></DataTrigger></Style.Triggers>
      </Style></Border.Style><StackPanel>
       <TextBlock Text="{Binding Role}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource AccentTextBrush}" Margin="0,0,0,8" />

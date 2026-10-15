@@ -56,7 +56,14 @@ public sealed class SshTroubleshootingLayoutTests(WpfTestFixture fixture)
             var scroll = Assert.IsType<ScrollViewer>(assistant.FindName("ConversationScroll")); Assert.True(scroll.ActualHeight >= 100);
             var origin = send.TranslatePoint(new Point(), composer); Assert.True(origin.X >= 0); Assert.True(origin.X + send.ActualWidth <= composer.ActualWidth);
             var prompt = Assert.IsType<TextBox>(assistant.FindName("PromptEditor")); Assert.True(prompt.Focus());
+            await WindowTestVisuals.UpdateLayoutAsync(window);
+            Assert.Equal(((SolidColorBrush)Application.Current.FindResource("AccentBrush")).Color, Assert.IsType<SolidColorBrush>(composer.BorderBrush).Color);
+            Assert.Equal(new Thickness(1), composer.BorderThickness);
+            Assert.Null(prompt.Template.FindName("FocusRing", prompt));
+            await WindowPreviewCapture.VerifyAsync(window, $"ssh-troubleshooting-focused-{language}-{theme}");
             Assert.True(prompt.MoveFocus(new System.Windows.Input.TraversalRequest(System.Windows.Input.FocusNavigationDirection.Next)));
+            await WindowTestVisuals.UpdateLayoutAsync(window);
+            Assert.Equal(((SolidColorBrush)Application.Current.FindResource("LineBrush")).Color, Assert.IsType<SolidColorBrush>(composer.BorderBrush).Color);
             Assert.True(window.IsKeyboardFocusWithin);
         }
         finally { approval.TrySetResult(false); result.TrySetResult(new("", 0, false)); window.Close(); themes.SetTheme(UiTheme.Light); CultureInfo.CurrentUICulture = old; CultureInfo.DefaultThreadCurrentUICulture = oldDefault; }
