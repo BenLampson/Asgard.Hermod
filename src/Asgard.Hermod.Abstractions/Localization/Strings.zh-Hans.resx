@@ -4056,4 +4056,119 @@ Session：{2}
   <data name="SshAgentToolSupportRequired" xml:space="preserve"><value>模型服务拒绝了排障请求，请检查所配置的模型和端点是否支持 Chat Completions 函数工具。</value></data>
   <data name="SshAgentNotExecuted" xml:space="preserve"><value>操作已取消，未执行命令。</value></data>
   <data name="SshAgentIncludeSelectionShort" xml:space="preserve"><value>包含选区</value></data>
+  <data name="SshMonitorAllInterfaces" xml:space="preserve"><value>全部接口</value></data>
+  <data name="SshMonitorRootDisk" xml:space="preserve"><value>根分区</value></data>
+  <data name="SshMonitorDiskCapacity" xml:space="preserve"><value>已用 {0} / 总量 {1}</value></data>
+  <data name="SshMonitorCores" xml:space="preserve"><value>{0} 个逻辑核心</value></data>
+  <data name="SshMonitorMemoryHint" xml:space="preserve"><value>已用 {0:N1}% · 可用 {1}</value></data>
+  <data name="SshMonitorRate" xml:space="preserve"><value>{0}/s</value></data>
+  <data name="SshMonitorTraffic" xml:space="preserve"><value>↑ {0}   ↓ {1}</value></data>
+  <data name="SshMonitorSentValue" xml:space="preserve"><value>↑ {0}</value></data>
+  <data name="SshMonitorReceivedValue" xml:space="preserve"><value>↓ {0}</value></data>
+  <data name="SshMonitorUpdated" xml:space="preserve"><value>更新于 {0:HH:mm:ss}</value></data>
+  <data name="SshMonitorPause" xml:space="preserve"><value>暂停</value></data>
+  <data name="SshMonitorResume" xml:space="preserve"><value>继续采样</value></data>
+  <data name="SshMonitorCollapse" xml:space="preserve"><value>收起</value></data>
+  <data name="SshMonitorPaused" xml:space="preserve"><value>已暂停</value></data>
+  <data name="SshMonitorPausedHint" xml:space="preserve"><value>监测已暂停，当前显示上次结果；SSH 终端仍可正常使用。</value></data>
+  <data name="SshMonitorDetailUnavailable" xml:space="preserve"><value>暂时无法读取详情，保留上次成功结果；请检查连接和读取权限。</value></data>
+  <data name="SshMonitorLoading" xml:space="preserve"><value>正在读取监测详情…</value></data>
+  <data name="SshMonitorReadOnly" xml:space="preserve"><value>只读监测 · 最近 2 分钟</value></data>
+  <data name="SshMonitorNoMatches" xml:space="preserve"><value>没有匹配项</value></data>
+  <data name="SshMonitorNoMatchesHint" xml:space="preserve"><value>没有记录符合当前搜索或筛选条件，清除筛选后可查看全部记录。</value></data>
+  <data name="SshMonitorEmpty" xml:space="preserve"><value>暂无记录</value></data>
+  <data name="SshMonitorEmptyHint" xml:space="preserve"><value>读取已完成，未返回监测记录。</value></data>
+  <data name="SshMonitorClearSearch" xml:space="preserve"><value>清除筛选</value></data>
+  <data name="SshMonitorDockerMissing" xml:space="preserve"><value>未检测到 Docker</value></data>
+  <data name="SshMonitorDockerDenied" xml:space="preserve"><value>当前用户无权读取容器</value></data>
+  <data name="SshMonitorDockerEmptyHint" xml:space="preserve"><value>Docker 可用，当前视图中没有容器。</value></data>
+  <data name="SshMonitorProcessCount" xml:space="preserve"><value>进程总数</value></data>
+  <data name="SshMonitorCurrentHost" xml:space="preserve"><value>当前主机</value></data>
+  <data name="SshMonitorRunning" xml:space="preserve"><value>运行中</value></data>
+  <data name="SshMonitorSleeping" xml:space="preserve"><value>等待中</value></data>
+  <data name="SshMonitorStopped" xml:space="preserve"><value>已停止</value></data>
+  <data name="SshMonitorZombie" xml:space="preserve"><value>僵尸进程</value></data>
+  <data name="SshMonitorExited" xml:space="preserve"><value>已退出</value></data>
+  <data name="SshMonitorCreated" xml:space="preserve"><value>已创建</value></data>
+  <data name="SshMonitorRestarting" xml:space="preserve"><value>重启中</value></data>
+  <data name="SshMonitorHealthy" xml:space="preserve"><value>健康</value></data>
+  <data name="SshMonitorUnhealthy" xml:space="preserve"><value>健康异常</value></data>
+  <data name="SshMonitorStarting" xml:space="preserve"><value>检查启动中</value></data>
+  <data name="SshMonitorNotConfigured" xml:space="preserve"><value>未配置</value></data>
+  <data name="SshMonitorNoPorts" xml:space="preserve"><value>无发布端口</value></data>
+  <data name="SshMonitorContainerCount" xml:space="preserve"><value>全部容器</value></data>
+  <data name="SshMonitorResultCount" xml:space="preserve"><value>显示 {0} 项，共 {1} 项</value></data>
+  <data name="SshMonitorLimit" xml:space="preserve"><value>已达到读取上限：500 项。</value></data>
+  <data name="SshMonitorProcessCpuHint" xml:space="preserve"><value>进程 CPU 为 ps 生命周期平均值，已按主机逻辑核心数归一。</value></data>
+  <data name="SshMonitorProcessSearch" xml:space="preserve"><value>搜索进程名称、PID 或用户</value></data>
+  <data name="SshMonitorContainerSearch" xml:space="preserve"><value>搜索容器名称或镜像</value></data>
+  <data name="SshMonitorMountSearch" xml:space="preserve"><value>搜索挂载点或设备</value></data>
+  <data name="SshMonitorPid" xml:space="preserve"><value>PID</value></data>
+  <data name="SshMonitorProcessName" xml:space="preserve"><value>进程名称</value></data>
+  <data name="SshMonitorUser" xml:space="preserve"><value>用户</value></data>
+  <data name="SshMonitorState" xml:space="preserve"><value>状态</value></data>
+  <data name="SshMonitorMemoryUsage" xml:space="preserve"><value>内存占比</value></data>
+  <data name="SshMonitorResident" xml:space="preserve"><value>物理内存</value></data>
+  <data name="SshMonitorContainerName" xml:space="preserve"><value>容器名称</value></data>
+  <data name="SshMonitorImage" xml:space="preserve"><value>镜像</value></data>
+  <data name="SshMonitorHealth" xml:space="preserve"><value>健康检查</value></data>
+  <data name="SshMonitorPorts" xml:space="preserve"><value>端口映射</value></data>
+  <data name="SshMonitorAllStates" xml:space="preserve"><value>全部状态</value></data>
+  <data name="SshMonitorInterface" xml:space="preserve"><value>接口</value></data>
+  <data name="SshMonitorInterfaceCount" xml:space="preserve"><value>接口数量</value></data>
+  <data name="SshMonitorAddress" xml:space="preserve"><value>IPv4 地址</value></data>
+  <data name="SshMonitorSent" xml:space="preserve"><value>上行</value></data>
+  <data name="SshMonitorReceived" xml:space="preserve"><value>下行</value></data>
+  <data name="SshMonitorTotalSent" xml:space="preserve"><value>累计发送</value></data>
+  <data name="SshMonitorTotalReceived" xml:space="preserve"><value>累计接收</value></data>
+  <data name="SshMonitorMtu" xml:space="preserve"><value>MTU</value></data>
+  <data name="SshMonitorLinkUp" xml:space="preserve"><value>已连接</value></data>
+  <data name="SshMonitorLinkDown" xml:space="preserve"><value>未连接</value></data>
+  <data name="SshMonitorExcludesLoopback" xml:space="preserve"><value>不包含回环接口</value></data>
+  <data name="SshMonitorRateHint" xml:space="preserve"><value>计数增量 / 实际采样间隔</value></data>
+  <data name="SshMonitorNetworkCountersHint" xml:space="preserve"><value>累计量自接口启动起计算；缺少 ip 工具不影响流量采样。</value></data>
+  <data name="SshMonitorCpuTrend" xml:space="preserve"><value>CPU 使用率</value></data>
+  <data name="SshMonitorMemoryTrend" xml:space="preserve"><value>内存使用率</value></data>
+  <data name="SshMonitorNetworkTrend" xml:space="preserve"><value>网络速率</value></data>
+  <data name="SshMonitorSentLegend" xml:space="preserve"><value>↑ 上行 · 实线</value></data>
+  <data name="SshMonitorReceivedLegend" xml:space="preserve"><value>↓ 下行 · 虚线</value></data>
+  <data name="SshMonitorWaitingChart" xml:space="preserve"><value>等待采样…</value></data>
+  <data name="SshMonitorPointTooltip" xml:space="preserve"><value>{0:HH:mm:ss}
+{1}</value></data>
+  <data name="SshMonitorTrafficTooltip" xml:space="preserve"><value>{0:HH:mm:ss}
+↑ 上行：{1}
+↓ 下行：{2}</value></data>
+  <data name="SshMonitorPersistentCount" xml:space="preserve"><value>持久分区</value></data>
+  <data name="SshMonitorPersistentHint" xml:space="preserve"><value>仅统计去重后的块设备</value></data>
+  <data name="SshMonitorPersistentAvailable" xml:space="preserve"><value>持久分区可用</value></data>
+  <data name="SshMonitorHighUsage" xml:space="preserve"><value>使用率超过 85%</value></data>
+  <data name="SshMonitorHighUsageHint" xml:space="preserve"><value>持久文件系统</value></data>
+  <data name="SshMonitorDiskSort" xml:space="preserve"><value>默认按使用率降序</value></data>
+  <data name="SshMonitorMount" xml:space="preserve"><value>挂载点</value></data>
+  <data name="SshMonitorDevice" xml:space="preserve"><value>设备</value></data>
+  <data name="SshMonitorFileSystem" xml:space="preserve"><value>文件系统</value></data>
+  <data name="SshMonitorTotal" xml:space="preserve"><value>总容量</value></data>
+  <data name="SshMonitorUsed" xml:space="preserve"><value>已用</value></data>
+  <data name="SshMonitorAvailable" xml:space="preserve"><value>可用</value></data>
+  <data name="SshMonitorUsage" xml:space="preserve"><value>使用率</value></data>
+  <data name="SshMonitorMemoryFileSystemHint" xml:space="preserve"><value>tmpfs 使用内存，不计入持久分区容量汇总。</value></data>
+  <data name="SshMonitorMountWarning" xml:space="preserve"><value>{0} 已使用 {1:N1}%，剩余可用空间 {2}。</value></data>
+  <data name="SshMonitorLogs" xml:space="preserve"><value>日志</value></data>
+  <data name="SshMonitorLogTitle" xml:space="preserve"><value>{0} · 日志</value></data>
+  <data name="SshMonitorLogScope" xml:space="preserve"><value>最近 100 行 · 只读</value></data>
+  <data name="SshMonitorCloseLogs" xml:space="preserve"><value>关闭日志</value></data>
+  <data name="SshMonitorCopyLogs" xml:space="preserve"><value>复制已显示日志</value></data>
+  <data name="SshMonitorLogLoading" xml:space="preserve"><value>正在读取容器日志…</value></data>
+  <data name="SshMonitorLogLoaded" xml:space="preserve"><value>已读取最近 100 行，输出未截断。</value></data>
+  <data name="SshMonitorLogTruncated" xml:space="preserve"><value>日志已达到输出大小上限，内容已截断。</value></data>
+  <data name="SshMonitorLogEmpty" xml:space="preserve"><value>容器没有返回日志内容。</value></data>
+  <data name="SshMonitorLogFailed" xml:space="preserve"><value>暂时无法读取容器日志，请检查容器状态和读取权限。</value></data>
+  <data name="SshMonitorSelectContainer" xml:space="preserve"><value>请选择容器</value></data>
+  <data name="SshMonitorSelectedContainer" xml:space="preserve"><value>容器 ID {0}</value></data>
+  <data name="SshMonitorContainerActions" xml:space="preserve"><value>选中容器操作</value></data>
+  <data name="SshMonitorViewLogs" xml:space="preserve"><value>查看日志</value></data>
+  <data name="SshMonitorViewDetails" xml:space="preserve"><value>查看详情</value></data>
+  <data name="SshMonitorContainerDetailsTitle" xml:space="preserve"><value>{0} · 详情</value></data>
+  <data name="SshMonitorCloseDetails" xml:space="preserve"><value>关闭详情</value></data>
+  <data name="SshMonitorContainerId" xml:space="preserve"><value>容器 ID</value></data>
 </root>

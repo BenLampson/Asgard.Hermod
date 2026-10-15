@@ -1,4 +1,4 @@
 namespace Asgard.Hermod.Ssh.UI.ViewModels;
 
-/// <summary>最近两分钟真实采样的图表高度，缺失 CPU 差分用零高度表示不绘制。</summary>
-public sealed record SshMonitorSample(double CpuHeight, double MemoryHeight);
+/// <summary>采样保留真实时间与未知值，绘图不能将缺失数据补成零。</summary>
+public sealed record SshMonitorSample(DateTimeOffset Timestamp, double? Cpu, double? Memory, double? Sent, double? Received, IReadOnlyList<SshNetworkSnapshot> Interfaces);

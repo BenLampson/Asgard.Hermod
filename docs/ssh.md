@@ -51,7 +51,7 @@ pending verification dialog and does not save trust.
 ## SSH workspace
 
 The independent window retains Hermod's shared 72-pixel caption and 28-pixel
-status bar. Its caption exposes Edit configuration, Tools and Agent. There is
+status bar. Its caption exposes Edit configuration, Tools, Monitoring and Agent. There is
 no duplicate asset navigation. Terminal, Files and Port forwarding use the
 same verified connection and keep their content alive when switching sections.
 Both English and Simplified Chinese and the shared light/dark themes apply to
@@ -116,15 +116,46 @@ destination only after successful completion. Cancellation preserves existing
 destination files. Recent transfer results are bounded to 100 tasks; disconnect
 and window disposal cancel ongoing operations. Deletion is never recursive.
 
-A compact monitoring row reads Linux `/proc` through an independent exec channel
-every five seconds with an eight-second timeout. It reports CPU, memory, the root
-disk and aggregate non-loopback network throughput. Initial CPU/network rates
-remain unavailable until a second sample; resets never create negative rates.
-Missing `/proc`, permissions or unsupported systems show a localized unavailable
-state. A collapsible bottom panel provides a two-minute sample history and
-on-demand, read-only process, Docker, interface and mount details. Missing Docker
-or `ip` support does not prevent terminal use. These features require no remote
-Hermod daemon or additional authentication.
+Monitoring opens from the caption; there is no permanent summary row. The bottom
+pane supports mouse and keyboard resizing, remembers its requested height while
+collapsed, and reserves terminal input space in small windows. Overview, Processes,
+Docker, Network and Disks have dedicated views with English/Chinese resources and
+shared light/dark themes. Existing SSH and Agent content remains alive.
+
+A serial, read-only exec channel samples Linux `/proc` every five seconds with
+a ten-second deadline. CPU and per-interface network rates use counter deltas;
+the first sample, reset counters and newly discovered interfaces have no rate.
+The overview charts CPU, memory and aggregate non-loopback traffic against actual
+timestamps over two minutes. Percent charts use a fixed 0–100 scale; traffic uses
+a shared automatic scale, distinct solid/dashed curves and exact hover values.
+Failed samples add gaps and preserve the last successful snapshot with its update
+time. Pause affects monitoring only; explicit refresh remains available.
+
+Processes use structured PID, name, user, state, CPU, memory percentage and resident
+bytes. CPU is the `ps` lifetime average normalized by logical processor count,
+which is explained in the view. Process arguments are never requested. Docker
+includes stopped containers and separates runtime state from health checks.
+Container logs use only a validated full hexadecimal ID from the current list,
+read the latest 100 lines, and show truncation independently. Closing the log pane
+preserves selection and filters. Logs remain untranslated process output; failed
+reads never expose raw stderr. Missing Docker, insufficient access, empty results
+and search misses have separate localized states.
+
+Network exposes interface selection, per-interface rates, IPv4 addresses, MTU and
+cumulative counters. Missing `ip` leaves counter sampling available. Disks display
+mount points, devices, filesystem types and byte capacities with numerical sorting
+and usage bars; over 85% has a textual warning. Persistent totals deduplicate block
+devices and exclude tmpfs. Detail lists are bounded to 500 rows, support local
+search and numerical column sorting, and retain previous rows on read failure.
+No remote Hermod daemon or additional authentication is required.
+
+The Docker table contains data columns only. Selecting a row updates the bottom
+action bar; View logs and View details operate on that selection. The bar stays
+available when a narrow window replaces the list with the drawer. Details show
+the collected name, full container ID, image, state, health and port mappings
+without an additional remote request. Filtering out the selection or removing a
+container clears its actions; selecting another container closes the old log
+drawer so its output cannot be mistaken for the new selection.
 
 Port forwarding listens only on `127.0.0.1` and reuses the same verified SSH
 client. Each forward has an explicit stop action. Disconnect, reconnect and

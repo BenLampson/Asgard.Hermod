@@ -64,7 +64,8 @@ public sealed class SshHostMonitor
             double seconds = (timestamp - old.Timestamp) / (double)Stopwatch.Frequency;
             // 接口增删同样使汇总基线失效，不能把新网卡的累计计数误认为瞬时流量。
             bool sameInterfaces = interfaces.Select(n => n.Name).Order().SequenceEqual(_interfaces.Select(n => n.Name).Order());
-            if (sameInterfaces && seconds > 0 && rx >= old.Rx && tx >= old.Tx) { received = (rx - old.Rx) / seconds; sent = (tx - old.Tx) / seconds; }
+            bool countersValid = interfaces.All(current => _interfaces.FirstOrDefault(n => n.Name == current.Name) is { } previous && current.SentBytes >= previous.SentBytes && current.ReceivedBytes >= previous.ReceivedBytes);
+            if (sameInterfaces && countersValid && seconds > 0 && rx >= old.Rx && tx >= old.Tx) { received = (rx - old.Rx) / seconds; sent = (tx - old.Tx) / seconds; }
             interfaces = interfaces.Select(current =>
             {
                 var previous = _interfaces.FirstOrDefault(n => n.Name == current.Name);

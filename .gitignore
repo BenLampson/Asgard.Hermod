@@ -48,6 +48,7 @@ ScaffoldingReadMe.txt
 .env
 .playwright-cli/
 output/playwright/
+output/ssh-monitor-preview/
 
 # Design screenshots and rendered exports are local review artifacts.
 /design/previews/

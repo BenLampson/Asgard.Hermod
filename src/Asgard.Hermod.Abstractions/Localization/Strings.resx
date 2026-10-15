@@ -4056,4 +4056,119 @@ Exit code: {1}
   <data name="SshAgentToolSupportRequired" xml:space="preserve"><value>The model service rejected the troubleshooting request. Check that the configured model and endpoint support Chat Completions function tools.</value></data>
   <data name="SshAgentNotExecuted" xml:space="preserve"><value>The action was canceled before execution.</value></data>
   <data name="SshAgentIncludeSelectionShort" xml:space="preserve"><value>Include selection</value></data>
+  <data name="SshMonitorAllInterfaces" xml:space="preserve"><value>All interfaces</value></data>
+  <data name="SshMonitorRootDisk" xml:space="preserve"><value>Root filesystem</value></data>
+  <data name="SshMonitorDiskCapacity" xml:space="preserve"><value>{0} used / {1} total</value></data>
+  <data name="SshMonitorCores" xml:space="preserve"><value>{0} logical processors</value></data>
+  <data name="SshMonitorMemoryHint" xml:space="preserve"><value>{0:N1}% used · {1} available</value></data>
+  <data name="SshMonitorRate" xml:space="preserve"><value>{0}/s</value></data>
+  <data name="SshMonitorTraffic" xml:space="preserve"><value>↑ {0}   ↓ {1}</value></data>
+  <data name="SshMonitorSentValue" xml:space="preserve"><value>↑ {0}</value></data>
+  <data name="SshMonitorReceivedValue" xml:space="preserve"><value>↓ {0}</value></data>
+  <data name="SshMonitorUpdated" xml:space="preserve"><value>Updated {0:HH:mm:ss}</value></data>
+  <data name="SshMonitorPause" xml:space="preserve"><value>Pause</value></data>
+  <data name="SshMonitorResume" xml:space="preserve"><value>Resume</value></data>
+  <data name="SshMonitorCollapse" xml:space="preserve"><value>Collapse</value></data>
+  <data name="SshMonitorPaused" xml:space="preserve"><value>Paused</value></data>
+  <data name="SshMonitorPausedHint" xml:space="preserve"><value>Monitoring is paused. Existing data remains visible; the SSH terminal continues working.</value></data>
+  <data name="SshMonitorDetailUnavailable" xml:space="preserve"><value>Details could not be read. The last successful result remains visible; check the connection and read permissions.</value></data>
+  <data name="SshMonitorLoading" xml:space="preserve"><value>Reading monitoring details…</value></data>
+  <data name="SshMonitorReadOnly" xml:space="preserve"><value>Read-only monitoring · last 2 minutes</value></data>
+  <data name="SshMonitorNoMatches" xml:space="preserve"><value>No matching records</value></data>
+  <data name="SshMonitorNoMatchesHint" xml:space="preserve"><value>No records match the current search or filter. Clear the filter to show all records.</value></data>
+  <data name="SshMonitorEmpty" xml:space="preserve"><value>No records</value></data>
+  <data name="SshMonitorEmptyHint" xml:space="preserve"><value>The command completed, but no monitoring records were returned.</value></data>
+  <data name="SshMonitorClearSearch" xml:space="preserve"><value>Clear filters</value></data>
+  <data name="SshMonitorDockerMissing" xml:space="preserve"><value>Docker is not installed</value></data>
+  <data name="SshMonitorDockerDenied" xml:space="preserve"><value>Container access denied</value></data>
+  <data name="SshMonitorDockerEmptyHint" xml:space="preserve"><value>Docker is available, but no containers match the current view.</value></data>
+  <data name="SshMonitorProcessCount" xml:space="preserve"><value>Processes</value></data>
+  <data name="SshMonitorCurrentHost" xml:space="preserve"><value>Current host</value></data>
+  <data name="SshMonitorRunning" xml:space="preserve"><value>Running</value></data>
+  <data name="SshMonitorSleeping" xml:space="preserve"><value>Waiting</value></data>
+  <data name="SshMonitorStopped" xml:space="preserve"><value>Stopped</value></data>
+  <data name="SshMonitorZombie" xml:space="preserve"><value>Zombie</value></data>
+  <data name="SshMonitorExited" xml:space="preserve"><value>Exited</value></data>
+  <data name="SshMonitorCreated" xml:space="preserve"><value>Created</value></data>
+  <data name="SshMonitorRestarting" xml:space="preserve"><value>Restarting</value></data>
+  <data name="SshMonitorHealthy" xml:space="preserve"><value>Healthy</value></data>
+  <data name="SshMonitorUnhealthy" xml:space="preserve"><value>Unhealthy</value></data>
+  <data name="SshMonitorStarting" xml:space="preserve"><value>Starting</value></data>
+  <data name="SshMonitorNotConfigured" xml:space="preserve"><value>Not configured</value></data>
+  <data name="SshMonitorNoPorts" xml:space="preserve"><value>No published ports</value></data>
+  <data name="SshMonitorContainerCount" xml:space="preserve"><value>Containers</value></data>
+  <data name="SshMonitorResultCount" xml:space="preserve"><value>Showing {0} of {1} records</value></data>
+  <data name="SshMonitorLimit" xml:space="preserve"><value>Read limit reached: 500 records.</value></data>
+  <data name="SshMonitorProcessCpuHint" xml:space="preserve"><value>CPU is the ps lifetime average, normalized across the host&apos;s logical processors.</value></data>
+  <data name="SshMonitorProcessSearch" xml:space="preserve"><value>Search process, PID or user</value></data>
+  <data name="SshMonitorContainerSearch" xml:space="preserve"><value>Search container or image</value></data>
+  <data name="SshMonitorMountSearch" xml:space="preserve"><value>Search mount or device</value></data>
+  <data name="SshMonitorPid" xml:space="preserve"><value>PID</value></data>
+  <data name="SshMonitorProcessName" xml:space="preserve"><value>Process name</value></data>
+  <data name="SshMonitorUser" xml:space="preserve"><value>User</value></data>
+  <data name="SshMonitorState" xml:space="preserve"><value>State</value></data>
+  <data name="SshMonitorMemoryUsage" xml:space="preserve"><value>Memory usage</value></data>
+  <data name="SshMonitorResident" xml:space="preserve"><value>Resident memory</value></data>
+  <data name="SshMonitorContainerName" xml:space="preserve"><value>Container name</value></data>
+  <data name="SshMonitorImage" xml:space="preserve"><value>Image</value></data>
+  <data name="SshMonitorHealth" xml:space="preserve"><value>Health check</value></data>
+  <data name="SshMonitorPorts" xml:space="preserve"><value>Published ports</value></data>
+  <data name="SshMonitorAllStates" xml:space="preserve"><value>All states</value></data>
+  <data name="SshMonitorInterface" xml:space="preserve"><value>Interface</value></data>
+  <data name="SshMonitorInterfaceCount" xml:space="preserve"><value>Interfaces</value></data>
+  <data name="SshMonitorAddress" xml:space="preserve"><value>IPv4 address</value></data>
+  <data name="SshMonitorSent" xml:space="preserve"><value>Upload</value></data>
+  <data name="SshMonitorReceived" xml:space="preserve"><value>Download</value></data>
+  <data name="SshMonitorTotalSent" xml:space="preserve"><value>Total sent</value></data>
+  <data name="SshMonitorTotalReceived" xml:space="preserve"><value>Total received</value></data>
+  <data name="SshMonitorMtu" xml:space="preserve"><value>MTU</value></data>
+  <data name="SshMonitorLinkUp" xml:space="preserve"><value>Connected</value></data>
+  <data name="SshMonitorLinkDown" xml:space="preserve"><value>Down</value></data>
+  <data name="SshMonitorExcludesLoopback" xml:space="preserve"><value>Excludes loopback interfaces</value></data>
+  <data name="SshMonitorRateHint" xml:space="preserve"><value>Counter change / actual sample interval</value></data>
+  <data name="SshMonitorNetworkCountersHint" xml:space="preserve"><value>Totals are since the interface started; missing ip tools do not prevent counter sampling.</value></data>
+  <data name="SshMonitorCpuTrend" xml:space="preserve"><value>CPU usage</value></data>
+  <data name="SshMonitorMemoryTrend" xml:space="preserve"><value>Memory usage</value></data>
+  <data name="SshMonitorNetworkTrend" xml:space="preserve"><value>Network throughput</value></data>
+  <data name="SshMonitorSentLegend" xml:space="preserve"><value>↑ Upload · solid</value></data>
+  <data name="SshMonitorReceivedLegend" xml:space="preserve"><value>↓ Download · dashed</value></data>
+  <data name="SshMonitorWaitingChart" xml:space="preserve"><value>Waiting for samples…</value></data>
+  <data name="SshMonitorPointTooltip" xml:space="preserve"><value>{0:HH:mm:ss}
+{1}</value></data>
+  <data name="SshMonitorTrafficTooltip" xml:space="preserve"><value>{0:HH:mm:ss}
+↑ Upload: {1}
+↓ Download: {2}</value></data>
+  <data name="SshMonitorPersistentCount" xml:space="preserve"><value>Persistent filesystems</value></data>
+  <data name="SshMonitorPersistentHint" xml:space="preserve"><value>Unique block devices only</value></data>
+  <data name="SshMonitorPersistentAvailable" xml:space="preserve"><value>Persistent space available</value></data>
+  <data name="SshMonitorHighUsage" xml:space="preserve"><value>Usage above 85%</value></data>
+  <data name="SshMonitorHighUsageHint" xml:space="preserve"><value>Persistent filesystems</value></data>
+  <data name="SshMonitorDiskSort" xml:space="preserve"><value>Default sort: usage, descending</value></data>
+  <data name="SshMonitorMount" xml:space="preserve"><value>Mount point</value></data>
+  <data name="SshMonitorDevice" xml:space="preserve"><value>Device</value></data>
+  <data name="SshMonitorFileSystem" xml:space="preserve"><value>Filesystem</value></data>
+  <data name="SshMonitorTotal" xml:space="preserve"><value>Total capacity</value></data>
+  <data name="SshMonitorUsed" xml:space="preserve"><value>Used</value></data>
+  <data name="SshMonitorAvailable" xml:space="preserve"><value>Available</value></data>
+  <data name="SshMonitorUsage" xml:space="preserve"><value>Usage</value></data>
+  <data name="SshMonitorMemoryFileSystemHint" xml:space="preserve"><value>tmpfs uses memory and is excluded from persistent capacity totals.</value></data>
+  <data name="SshMonitorMountWarning" xml:space="preserve"><value>{0} is {1:N1}% full, with {2} available.</value></data>
+  <data name="SshMonitorLogs" xml:space="preserve"><value>Logs</value></data>
+  <data name="SshMonitorLogTitle" xml:space="preserve"><value>{0} · logs</value></data>
+  <data name="SshMonitorLogScope" xml:space="preserve"><value>Latest 100 lines · read only</value></data>
+  <data name="SshMonitorCloseLogs" xml:space="preserve"><value>Close logs</value></data>
+  <data name="SshMonitorCopyLogs" xml:space="preserve"><value>Copy displayed logs</value></data>
+  <data name="SshMonitorLogLoading" xml:space="preserve"><value>Reading container logs…</value></data>
+  <data name="SshMonitorLogLoaded" xml:space="preserve"><value>Latest 100 lines read. Output was not truncated.</value></data>
+  <data name="SshMonitorLogTruncated" xml:space="preserve"><value>Output reached the size limit and was truncated.</value></data>
+  <data name="SshMonitorLogEmpty" xml:space="preserve"><value>No log output was returned.</value></data>
+  <data name="SshMonitorLogFailed" xml:space="preserve"><value>Container logs could not be read. Check the container and read permissions.</value></data>
+  <data name="SshMonitorSelectContainer" xml:space="preserve"><value>Select a container</value></data>
+  <data name="SshMonitorSelectedContainer" xml:space="preserve"><value>Container ID {0}</value></data>
+  <data name="SshMonitorContainerActions" xml:space="preserve"><value>Selected container actions</value></data>
+  <data name="SshMonitorViewLogs" xml:space="preserve"><value>View logs</value></data>
+  <data name="SshMonitorViewDetails" xml:space="preserve"><value>View details</value></data>
+  <data name="SshMonitorContainerDetailsTitle" xml:space="preserve"><value>{0} · details</value></data>
+  <data name="SshMonitorCloseDetails" xml:space="preserve"><value>Close details</value></data>
+  <data name="SshMonitorContainerId" xml:space="preserve"><value>Container ID</value></data>
 </root>
