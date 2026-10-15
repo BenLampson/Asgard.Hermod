@@ -13,7 +13,7 @@
   <Setter Property="ItemsPanel"><Setter.Value><ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate></Setter.Value></Setter>
   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="controls:WorkspaceTabStrip">
    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-    <ScrollViewer Focusable="False" IsTabStop="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" CanContentScroll="True"><ItemsPresenter /></ScrollViewer>
+    <ScrollViewer x:Name="PART_ScrollViewer" Focusable="False" IsTabStop="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" CanContentScroll="False"><ItemsPresenter /></ScrollViewer>
    </Border>
   </ControlTemplate></Setter.Value></Setter>
   <Setter Property="ItemContainerStyle" Value="{StaticResource WorkspaceTabItem}" />

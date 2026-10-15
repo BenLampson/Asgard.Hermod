@@ -25,6 +25,22 @@ public class WorkspaceTabStrip : ListBox
     {
         SizeChanged += (_, _) => UpdateHeaderWidth();
     }
+    /// <summary>在内部视口处理普通滚轮前，将 Shift 滚轮转换为水平像素滚动。</summary>
+    protected override void OnPreviewMouseWheel(MouseWheelEventArgs args)
+    {
+        base.OnPreviewMouseWheel(args);
+        HandleMouseWheel(args, Keyboard.Modifiers);
+    }
+    /// <summary>只滚动本控件的模板视口，不改变活动页签或键盘焦点。</summary>
+    internal void HandleMouseWheel(MouseWheelEventArgs args, ModifierKeys modifiers)
+    {
+        if (args.Handled || modifiers != ModifierKeys.Shift || args.Delta == 0
+            || Template?.FindName("PART_ScrollViewer", this) is not ScrollViewer viewer
+            || viewer.ScrollableWidth <= 0) return;
+        double next = Math.Clamp(viewer.HorizontalOffset - args.Delta / 120d * 48, 0, viewer.ScrollableWidth);
+        viewer.ScrollToHorizontalOffset(next);
+        args.Handled = true;
+    }
     /// <summary>关闭命中页签而非活动项，仍经过业务的草稿、事务和运行中查询预检。</summary>
     protected override void OnPreviewMouseDown(MouseButtonEventArgs args)
     {
