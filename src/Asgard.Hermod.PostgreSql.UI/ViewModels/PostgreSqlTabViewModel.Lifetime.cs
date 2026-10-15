@@ -21,6 +21,7 @@ public sealed partial class PostgreSqlTabViewModel
     /// <summary>解除旧物理会话，已有文稿、分页、草稿与未知写入状态原样保留。</summary>
     public async Task DisconnectSessionAsync()
     {
+        _assistantContextIdentity = new();
         SetConnectionAvailability(false);
         await StopCompletionAsync();
         var previous = _session; _session = null;
@@ -28,11 +29,11 @@ public sealed partial class PostgreSqlTabViewModel
         _executed = false;
     }
     /// <summary>新连接配置只供下一次显式读取或执行，不自动重放 SQL。</summary>
-    public void RebindConnection(InstanceConnectionOptions options) { _options = options; SetConnectionAvailability(true); }
+    public void RebindConnection(InstanceConnectionOptions options) { _options = options; var endpoint = PostgreSqlSessionOptions.Parse(options); Endpoint = Text.Format("PostgreSqlEndpoint", endpoint.Host, endpoint.Port); SetConnectionAvailability(true); }
     /// <summary>光标语句定位尊重 PostgreSQL 美元引号和注释，不改变完整文稿。</summary>
     public async Task ExecuteScopeAsync(string selection, int caret, bool all)
     {
-        if (IsBusy || !IsQuery || CommitInputRequested?.Invoke() == false || !await ResolveDataDraftAsync()) return;
+        if (!CanRun || CommitInputRequested?.Invoke() == false || !await ResolveDataDraftAsync()) return;
         string snapshot = Sql;
         await RunAsync(async token =>
         {
@@ -53,19 +54,19 @@ public sealed partial class PostgreSqlTabViewModel
     /// <summary>确认草稿和事务后释放旧连接，下一次显式执行连接目标数据库。</summary>
     public async Task ChangeDatabaseAsync(string database)
     {
-        if (IsBusy || !IsQuery || !ConnectionAvailable || Database == database || !await ResolveDataDraftAsync()) return;
         if (string.IsNullOrWhiteSpace(database)) { Error = Text.Get("PostgreSqlDatabaseRequired"); Refresh(); return; }
-        if (_session is not null && _executed && _session.State.InTransaction != false && !await _dialogs.ConfirmEndSessionAsync()) return;
-        await RunAsync(async token =>
+        if (IsBusy || IsManagingScope || !IsQuery || !ConnectionAvailable || Database == database) return;
+        if (Scope is not null && !Scope.Contains(database)) { Error = Text.Get("DatabaseSessionTargetOutsideScope"); Refresh(); return; }
+        var plan = await PrepareReconnectAsync();
+        if (plan is null || _disposed || IsBusy || Scope is not null && !Scope.Contains(database)) return;
+        IsManagingScope = true;
+        try
         {
-            await StopCompletionAsync();
-            if (_session is not null)
-            {
-                if (_executed && _session.State.InTransaction != false) await _session.RollbackAsync(token);
-                await _session.DisposeAsync(); _session = null;
-            }
-            _executed = false; Database = database;
-        });
+            await plan.CommitAsync(); await DisconnectSessionAsync();
+            Database = database; Scope?.SelectExecutionTarget(database); RebindConnection(_options);
+        }
+        catch (Exception error) { Error = Text.Error(error, "PostgreSqlCommandFailed"); }
+        finally { IsManagingScope = false; Refresh(); }
     }
     /// <summary>每个会话使用该页签的实际数据库，禁止跨库协议伪装。</summary>
     private InstanceConnectionOptions ConnectionForDatabase() => PostgreSqlWorkspaceViewModel.WithDatabase(_options, Database);
@@ -136,7 +137,7 @@ public sealed partial class PostgreSqlTabViewModel
     /// <summary>取消或等待未完成工作后释放会话资源。</summary>
     public async ValueTask DisposeAsync()
     {
-        if (_disposed) return; _disposed = true; _lifetime.Cancel(); _pending?.Cancel();
+        if (_disposed) return; if (Scope is not null) Scope.PropertyChanged -= OnScopeChanged; _disposed = true; _lifetime.Cancel(); _pending?.Cancel();
         await StopCompletionAsync();
         if (_completion is not null) await _completion.Task;
         foreach (var grid in Results) grid.DraftChanged -= DraftChanged;

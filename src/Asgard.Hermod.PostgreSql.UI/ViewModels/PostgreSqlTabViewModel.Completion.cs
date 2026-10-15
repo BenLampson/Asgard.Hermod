@@ -25,7 +25,7 @@ public sealed partial class PostgreSqlTabViewModel : ICodeCompletionProvider
                 int first = start - 1; while (first > 0 && IsIdentifier(request.Text[first - 1])) first--;
                 qualifier = request.Text[first..(start - 1)].Trim('"').Replace("\"\"", "\"", StringComparison.Ordinal);
             }
-            if (ConnectionAvailable && !IsBusy)
+            if (ConnectionAvailable && !IsBusy && !IsManagingScope && (Scope is null || Scope.Contains(Database)))
             {
                 try
                 {

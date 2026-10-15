@@ -11,21 +11,27 @@ public sealed class PostgreSqlAssistantViewModel : ObservableObject, IDisposable
     private bool _disposed;
 
     /// <summary>绑定原有页签，不创建第二个数据库连接。</summary>
-    public PostgreSqlAssistantViewModel(PostgreSqlTabViewModel tab, IAgentClient? client)
+    public PostgreSqlAssistantViewModel(PostgreSqlTabViewModel tab, IAgentClient? client, Action? hide = null)
     {
+        HideCommand = new RelayCommand(_ => hide?.Invoke());
         _tab = tab; _conversation = client is null ? null : new(client);
-        SendCommand = new AsyncRelayCommand(_ => SendAsync(), _ => !IsBusy && !_disposed && !_tab.IsBusy && _tab.ConnectionAvailable && !string.IsNullOrWhiteSpace(Prompt));
+        SendCommand = new AsyncRelayCommand(_ => SendAsync(), _ => !IsBusy && !_disposed && !_tab.IsBusy && !_tab.IsManagingScope && _tab.ConnectionAvailable && !string.IsNullOrWhiteSpace(Prompt));
         CancelCommand = new RelayCommand(_ => _pending?.Cancel(), _ => IsBusy);
         InsertCommand = new RelayCommand(sql => { if (sql is PostgreSqlAssistantSql suggestion) _tab.InsertAssistantSql(suggestion.Sql); }, _ => !_disposed && _tab.IsQuery && !_tab.IsBusy);
         ExecuteCommand = new AsyncRelayCommand(sql => sql is PostgreSqlAssistantSql suggestion ? _tab.ExecuteAssistantSqlAsync(suggestion) : Task.CompletedTask, _ => !_disposed && _tab.CanRun && !IsBusy);
-        ClearCommand = new RelayCommand(_ => { _conversation?.Clear(); Messages.Clear(); Error = ""; }, _ => !IsBusy);
+        ClearCommand = new AsyncRelayCommand(async _ => { if (await _tab.ConfirmRemovalAsync("DatabaseSessionClearAi")) { _conversation?.Clear(); Messages.Clear(); Error = ""; } }, _ => !IsBusy);
         _tab.PropertyChanged += OnTabChanged;
     }
+
+    /// <summary>只收起分屏，不清除对话或输入，也不取消正在进行的请求。</summary>
+    public RelayCommand HideCommand { get; }
 
     /// <summary>内存中的当前页签对话，关闭后清除。</summary>
     public ObservableCollection<PostgreSqlAssistantMessage> Messages { get; } = [];
     /// <summary>上下文显示真实数据库名。</summary>
-    public string ContextLabel => Text.Format("PostgreSqlAssistantContext", _tab.DatabaseContext, _tab.Name);
+    public string ContextLabel => Text.Format("DatabaseSessionAiContext", _tab.Name, string.Join(", ", _tab.Scope?.Databases.Select(item => item.Name) ?? [_tab.DatabaseContext]));
+    /// <summary>范围变化后不发送旧范围结果。</summary>
+    public bool CanShareResults => _tab.CanShareResults;
     /// <summary>用户发送的问题。</summary>
     public string Prompt { get; set { if (SetProperty(ref field, value)) SendCommand?.NotifyCanExecuteChanged(); } } = "";
     /// <summary>用户可排除编辑器原文。</summary>
@@ -45,7 +51,7 @@ public sealed class PostgreSqlAssistantViewModel : ObservableObject, IDisposable
     /// <summary>确认后复用原会话执行建议，结果显示在原结果区。</summary>
     public AsyncRelayCommand ExecuteCommand { get; }
     /// <summary>清除本页签的内存对话。</summary>
-    public RelayCommand ClearCommand { get; }
+    public AsyncRelayCommand ClearCommand { get; }
 
     private async Task SendAsync()
     {
@@ -55,13 +61,15 @@ public sealed class PostgreSqlAssistantViewModel : ObservableObject, IDisposable
         using var pending = new CancellationTokenSource(); _pending = pending; IsBusy = true; Error = ""; Refresh();
         try
         {
+            long revision = _tab.ScopeRevision;
             var context = await _tab.ReadAssistantContextAsync(IncludeSql, IncludeResults, pending.Token);
+            if (revision != _tab.ScopeRevision) throw Text.Exception("PostgreSqlAssistantContextChanged");
             var sessionIdentity = _tab.AssistantSessionIdentity;
             var reply = await _conversation.SendAsync(prompt, context, pending.Token);
             if (_disposed) return;
+            if (revision != _tab.ScopeRevision) throw Text.Exception("PostgreSqlAssistantContextChanged");
             Messages.Add(new(prompt, true)); Messages.Add(new(reply.Content, false,
-                reply.SqlBlocks.Select(sql => new PostgreSqlAssistantSql(sql, context.Database, sessionIdentity)).ToArray()));
-            while (Messages.Count > 24) Messages.RemoveAt(0);
+                reply.SqlBlocks.Select(sql => new PostgreSqlAssistantSql(sql, context.Database, sessionIdentity, revision)).ToArray()));
             if (Prompt == prompt) Prompt = "";
         }
         catch (OperationCanceledException) { if (!_disposed) Error = Text.Get("PostgreSqlAssistantCancelled"); }
@@ -71,11 +79,11 @@ public sealed class PostgreSqlAssistantViewModel : ObservableObject, IDisposable
 
     private void OnTabChanged(object? sender, PropertyChangedEventArgs args)
     {
-        if (args.PropertyName is nameof(PostgreSqlTabViewModel.Database) or nameof(PostgreSqlTabViewModel.IsBusy) or nameof(PostgreSqlTabViewModel.CanRun) or nameof(PostgreSqlTabViewModel.ConnectionAvailable)) Refresh();
+        if (args.PropertyName is nameof(PostgreSqlTabViewModel.Database) or nameof(PostgreSqlTabViewModel.IsBusy) or nameof(PostgreSqlTabViewModel.CanRun) or nameof(PostgreSqlTabViewModel.ConnectionAvailable) or nameof(PostgreSqlTabViewModel.ScopeRevision) or nameof(PostgreSqlTabViewModel.CanShareResults)) Refresh();
     }
     private void Refresh()
     {
-        OnPropertyChanged(nameof(ContextLabel)); SendCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged();
+        OnPropertyChanged(nameof(ContextLabel)); OnPropertyChanged(nameof(CanShareResults)); SendCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged();
         InsertCommand.NotifyCanExecuteChanged(); ExecuteCommand.NotifyCanExecuteChanged(); ClearCommand.NotifyCanExecuteChanged();
     }
     /// <inheritdoc />

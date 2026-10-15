@@ -1,0 +1,164 @@
+using Asgard.Hermod.UI.Models;
+
+namespace Asgard.Hermod.PostgreSql.UI.ViewModels;
+
+public sealed partial class PostgreSqlWorkspaceViewModel
+{
+    /// <summary>目录检索不改变用户的勾选。</summary>
+    public string CatalogSearch { get; set { if (SetProperty(ref field, value)) OnPropertyChanged(nameof(CatalogItems)); } } = "";
+    /// <summary>只过滤显示，不代替用户选择。</summary>
+    public IReadOnlyList<DatabaseChoiceViewModel> CatalogItems => DatabaseChoices.Where(item => item.Name.Contains(CatalogSearch, StringComparison.OrdinalIgnoreCase)).ToArray();
+    /// <summary>唯一数据库计入直接使用，多库只统计用户的明确勾选。</summary>
+    public string CatalogSelectionSummary => Text.Format("DatabaseSessionSelectedCount", DatabaseChoices.Count(item => HasSingleCatalogDatabase || item.IsSelected));
+    /// <summary>真实数据库名称保持原文，便于核对即将打开的范围。</summary>
+    public string CatalogSelectionNames => string.Join(Environment.NewLine, DatabaseChoices.Where(item => HasSingleCatalogDatabase || item.IsSelected).Select(item => item.Name));
+    private IReadOnlyList<DatabaseIdentity> InitialDatabases { get; }
+    /// <summary>实例目录与编辑 Session 使用不同内容布局。</summary>
+    public bool IsCatalog => !IsDatabaseFocused;
+    /// <summary>当前窗口的独立脚本 Session。</summary>
+    public ObservableCollection<PostgreSqlTabViewModel> Sessions { get; } = [];
+    /// <summary>对象视图始终回溯到所属脚本 Session。</summary>
+    public PostgreSqlTabViewModel? ActiveSession { get => ActiveTab is { IsQuery: true } ? ActiveTab : ActiveTab?.SessionOwner; set { if (value is not null && Sessions.Contains(value) && value != ActiveTab) ActiveTab = value; } }
+    /// <summary>只呈现当前 Session 的脚本和对象视图。</summary>
+    public IReadOnlyList<PostgreSqlTabViewModel> ActiveDocuments => ActiveSession?.Documents ?? (IReadOnlyList<PostgreSqlTabViewModel>)Array.Empty<PostgreSqlTabViewModel>();
+    /// <summary>左侧只展示当前 Session 纳入的数据库。</summary>
+    public IReadOnlyList<PostgreSqlTreeNode> SessionTreeItems => Tree?.Root.Children.Where(node => ActiveSession?.Scope?.Contains(node.Object.Name) == true).ToArray() ?? [];
+    /// <summary>目录的明确选择；唯一数据库直接使用。</summary>
+    public ObservableCollection<DatabaseChoiceViewModel> DatabaseChoices { get; } = [];
+    /// <summary>只有一个已知库且目录已完整加载时省去选择。</summary>
+    public bool HasSingleCatalogDatabase => DatabaseChoices.Count == 1 && Tree?.Root.HasMore == false;
+    /// <summary>多库目录等待用户选择。</summary>
+    public bool HasMultipleCatalogDatabases => !HasSingleCatalogDatabase;
+    /// <summary>串行保护范围确认，防止迟到弹窗作用于新的 Session。</summary>
+    public bool IsManagingDatabases { get; private set; }
+    /// <summary>在当前实例建立包含所选数据库的编辑 Session。</summary>
+    public AsyncRelayCommand OpenSessionCommand { get; private set; } = null!;
+    /// <summary>用户主动全选目录中的已加载数据库。</summary>
+    public AsyncRelayCommand SelectAllDatabasesCommand { get; private set; } = null!;
+    /// <summary>同实例追加数据库，保留已有执行目标。</summary>
+    public AsyncRelayCommand AddSessionDatabaseCommand { get; private set; } = null!;
+    /// <summary>最后一个数据库不可移除。</summary>
+    public AsyncRelayCommand RemoveSessionDatabaseCommand { get; private set; } = null!;
+    /// <summary>在所属脚本 Session 查看执行历史，不聚合其他 Session。</summary>
+    public RelayCommand ShowSessionHistoryCommand { get; private set; } = null!;
+    /// <summary>返回当前对象所属的脚本。</summary>
+    public RelayCommand ReturnToScriptCommand { get; private set; } = null!;
+    private void InitializeSessionCommands()
+    {
+        ShowSessionHistoryCommand = new RelayCommand(_ => { if (ActiveSession is { } session) { ActiveTab = session; session.IsHistoryOpen = !session.IsHistoryOpen; } }, _ => ActiveSession is not null);
+        ReturnToScriptCommand = new RelayCommand(_ => ActiveTab = ActiveSession, _ => ActiveSession is not null && ActiveTab != ActiveSession);
+        OpenSessionCommand = new AsyncRelayCommand(_ => OpenSelectedSessionAsync(), _ => IsConnected && !IsManagingDatabases && (HasSingleCatalogDatabase || DatabaseChoices.Any(item => item.IsSelected)));
+        SelectAllDatabasesCommand = new AsyncRelayCommand(async _ => { if (await LoadDatabaseCatalogAsync()) foreach (var item in DatabaseChoices) item.IsSelected = true; }, _ => IsConnected && !IsManagingDatabases);
+        AddSessionDatabaseCommand = new AsyncRelayCommand(_ => AddSessionDatabasesAsync(), _ => IsConnected && !IsManagingDatabases && ActiveSession is { IsBusy: false, IsManagingScope: false });
+        RemoveSessionDatabaseCommand = new AsyncRelayCommand(item => RemoveSessionDatabaseAsync(item as DatabaseIdentity), item => IsConnected && !IsManagingDatabases && ActiveSession is { IsBusy: false, IsManagingScope: false, Scope.CanRemoveDatabase: true } && item is DatabaseIdentity);
+    }
+    /// <summary>用户全选或打开范围选择器时读完数据库分页，避免把第一页误当成唯一候选。</summary>
+    private async Task<bool> LoadDatabaseCatalogAsync()
+    {
+        if (Tree is null || !IsConnected) return false;
+        while (Tree.Root.HasMore && !IsClosed && IsConnected)
+        {
+            int offset = Tree.Root.Offset;
+            await Tree.LoadAsync(Tree.Root);
+            if (Tree.Root.Offset == offset)
+            {
+                Error = Text.Get("DatabaseSessionCatalogIncomplete"); Refresh(); return false;
+            }
+        }
+        RefreshCatalog(); return !Tree.Root.HasMore && !IsClosed && IsConnected;
+    }
+    private void RefreshCatalog()
+    {
+        if (Tree is null) return;
+        var names = Tree.Root.Children.Where(node => node.Object.Kind == PostgreSqlObjectKind.Database && !node.IsPlaceholder).Select(node => node.Object.Name).ToArray();
+        foreach (var stale in DatabaseChoices.Where(item => !names.Contains(item.Name, StringComparer.Ordinal)).ToArray()) DatabaseChoices.Remove(stale);
+        foreach (string name in names.Where(name => DatabaseChoices.All(item => item.Name != name)))
+        {
+            var item = new DatabaseChoiceViewModel(new(InstanceId!, name));
+            item.PropertyChanged += (_, _) => { RefreshCatalogSelection(); }; DatabaseChoices.Add(item);
+        }
+        OnPropertyChanged(nameof(CatalogItems)); OnPropertyChanged(nameof(HasSingleCatalogDatabase)); OnPropertyChanged(nameof(HasMultipleCatalogDatabases)); RefreshCatalogSelection();
+    }
+    private void RefreshCatalogSelection()
+    {
+        OnPropertyChanged(nameof(CatalogSelectionSummary)); OnPropertyChanged(nameof(CatalogSelectionNames));
+        OpenSessionCommand.NotifyCanExecuteChanged(); NewQueryCommand.NotifyCanExecuteChanged();
+    }
+    private void RefreshSessionNavigation()
+    {
+        if (Tree is not null && ActiveSession?.Scope is { } scope)
+            foreach (var database in scope.Databases.Where(item => Tree.Root.Children.All(node => node.Object.Name != item.Name)))
+                Tree.Root.Children.Add(new(new(PostgreSqlObjectKind.Database, database.Name, database.Name), Tree) { Parent = Tree.Root });
+        foreach (string name in new[] { nameof(ActiveSession), nameof(ActiveDocuments), nameof(SessionTreeItems) }) OnPropertyChanged(name);
+        ToggleAssistantCommand?.NotifyCanExecuteChanged(); ShowSessionHistoryCommand.NotifyCanExecuteChanged(); ReturnToScriptCommand.NotifyCanExecuteChanged();
+        AddSessionDatabaseCommand.NotifyCanExecuteChanged(); RemoveSessionDatabaseCommand.NotifyCanExecuteChanged();
+    }
+    private Task OpenSelectedSessionAsync()
+    {
+        var selected = DatabaseChoices.Where(item => HasSingleCatalogDatabase || item.IsSelected).Select(item => item.Identity).ToArray();
+        if (selected.Length > 0)
+        {
+            string context = "postgresql.session:" + Guid.NewGuid().ToString("N");
+            RequestWorkspace(context, () => new PostgreSqlWorkspaceViewModel(_instance, _configurations, _sessionFactory, _editor, _dialogs, null, _agentClient, selected, context));
+        }
+        return Task.CompletedTask;
+    }
+    private async Task StartSessionAsync()
+    {
+        if (IsCatalog) { await OpenSelectedSessionAsync(); return; }
+        if (!await LoadDatabaseCatalogAsync()) return;
+        var candidates = DatabaseChoices.Select(item => item.Identity).ToArray();
+        var selected = candidates.Length == 1 && Tree?.Root.HasMore == false ? candidates
+            : await _dialogs.SelectSessionDatabasesAsync(_instance.Name, Endpoint, Text.Format("DatabaseSessionName", _queryNumber + 1), candidates, []);
+        if (selected is { Count: > 0 }) CreateSession(selected);
+    }
+    private PostgreSqlTabViewModel? CreateSession(IReadOnlyList<DatabaseIdentity> databases)
+    {
+        if (_options is null || databases.Count == 0) return null;
+        var scope = new DatabaseSessionScope(InstanceId!, Text.Format("DatabaseSessionName", ++_queryNumber), databases);
+        var tab = CreateTab(scope.SessionName, scope.ExecutionTarget, PostgreSqlObjectKind.Root);
+        tab.InitializeScope(scope); tab.PropertyChanged += (_, args) => { if (args.PropertyName is nameof(tab.ScopeRevision) or nameof(tab.IsBusy)) RefreshSessionNavigation(); };
+        tab.Documents.Add(tab); Sessions.Add(tab); Tabs.Add(tab); ActiveTab = tab; return tab;
+    }
+    private async Task AddSessionDatabasesAsync()
+    {
+        var tab = ActiveSession;
+        if (tab?.Scope is not { } scope || IsManagingDatabases) return;
+        IsManagingDatabases = true; tab.IsManagingScope = true; RefreshSessionNavigation();
+        try
+        {
+            if (!await LoadDatabaseCatalogAsync()) return;
+            var selected = await _dialogs.SelectSessionDatabasesAsync(_instance.Name, Endpoint, tab.Name,
+                DatabaseChoices.Select(item => item.Identity).ToArray(), scope.Databases.ToArray());
+            if (selected is { Count: > 0 } && Sessions.Contains(tab) && !IsClosed) scope.Add(selected);
+        }
+        catch (Exception error) { Error = Text.Error(error, "PostgreSqlCommandFailed"); }
+        finally { IsManagingDatabases = false; tab.IsManagingScope = false; RefreshSessionNavigation(); Refresh(); }
+    }
+    /// <summary>确认和全部草稿、事务保护完成后才提交范围；取消保留原状。</summary>
+    public async Task RemoveSessionDatabaseAsync(DatabaseIdentity? database)
+    {
+        var tab = ActiveSession;
+        if (database is null || tab?.Scope is not { } scope || tab.IsBusy || tab.IsManagingScope || database.InstanceId != scope.InstanceId || IsManagingDatabases) return;
+        var request = scope.PrepareRemoval(database.Name); if (request is null) return;
+        IsManagingDatabases = true; tab.IsManagingScope = true; RefreshSessionNavigation();
+        try
+        {
+            var decision = await _dialogs.ConfirmDatabaseRemovalAsync(_instance.Name, Endpoint, request);
+            if (decision is null || scope.ReplacementFor(request, decision) is null || !Sessions.Contains(tab)) return;
+            var objects = Tabs.Where(item => item.SessionOwner == tab && item.Database == database.Name).ToArray();
+            var plans = new List<WorkspaceClosePlan>();
+            foreach (var item in objects) { var plan = await item.PrepareCloseAsync(); if (plan is null) return; plans.Add(plan); }
+            bool changeTarget = request.Database == request.ExecutionTarget;
+            if (changeTarget) { var plan = await tab.PrepareReconnectAsync(); if (plan is null) return; plans.Add(plan); }
+            if (!scope.Matches(request) || IsClosed) return;
+            foreach (var plan in plans) await plan.CommitAsync();
+            if (changeTarget) { await tab.DisconnectSessionAsync(); tab.RebindConnection(_options!); }
+            if (objects.Contains(ActiveTab)) ActiveTab = tab;
+            foreach (var item in objects) { item.PropertyChanged -= OnTabChanged; Tabs.Remove(item); tab.Documents.Remove(item); await item.DisposeAsync(); }
+            tab.CommitScopeRemoval(request, decision);
+        }
+        catch (Exception error) { Error = Text.Error(error, "PostgreSqlCommandFailed"); }
+        finally { IsManagingDatabases = false; tab.IsManagingScope = false; RefreshSessionNavigation(); Refresh(); }
+    }
+}

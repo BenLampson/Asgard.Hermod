@@ -24,7 +24,7 @@ public sealed class DatabaseWorkspaceTests(WpfTestFixture fixture)
         {
             WindowPreviewCapture.Show(window); await WindowTestVisuals.UpdateLayoutAsync(window);
             var tree = Assert.IsType<WorkspaceTreeView>(view.FindName("ObjectTree"));
-            Assert.Same(model.NavigationRoot!.Children, tree.ItemsSource);
+            Assert.Equal(model.SessionTreeItems, Assert.IsAssignableFrom<IEnumerable<MySqlTreeNode>>(tree.ItemsSource));
             var panel = Assert.IsType<Border>(view.FindName("TreePanel")); Assert.True(panel.IsVisible);
             Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(panel), label => label.Text == "app");
             var host = Assert.IsType<ContentControl>(view.FindName("TabHost")); double before = host.ActualWidth;
@@ -45,7 +45,7 @@ public sealed class DatabaseWorkspaceTests(WpfTestFixture fixture)
         await browser.InitializeAsync(TestContext.Current.CancellationToken);
         WorkspacePageRequestEventArgs? request = null; browser.WorkspaceRequested += (_, value) => request = value;
         await browser.OpenAsync(browser.Tree!.Root.Children[0]);
-        Assert.Equal("mysql.database:app", request!.ContextId);
+        Assert.StartsWith("mysql.session:", request!.ContextId);
         await using var focused = Assert.IsType<MySqlWorkspaceViewModel>(request.CreatePage());
         await focused.InitializeAsync(TestContext.Current.CancellationToken);
         Assert.Equal(2, server.Opens); Assert.Equal("app", focused.FocusedDatabase);
@@ -56,7 +56,7 @@ public sealed class DatabaseWorkspaceTests(WpfTestFixture fixture)
         Assert.False(await focused.RequestCloseAsync()); Assert.Equal("SELECT pending", query.Sql);
         await browser.DisposeAsync(); Assert.True(focused.IsConnected); Assert.Contains(query, focused.Tabs);
         focused.UpdateInstanceMetadata(Configuration.Instance with { Name = "Renamed" });
-        Assert.Equal(Text.Format("MySqlDatabaseWorkspaceTitle", "app", "Renamed"), focused.Header);
+        Assert.Equal(Text.Format("DatabaseSessionWorkspaceTitle", "Renamed"), focused.Header);
     });
 
     /// <summary>跨库文稿与切换执行上下文不改变窗口的固定数据库或其他文稿。</summary>
@@ -67,8 +67,8 @@ public sealed class DatabaseWorkspaceTests(WpfTestFixture fixture)
         await using var focused = new MySqlWorkspaceViewModel(new(Configuration.Instance), configuration, new TestMySql(), configuration, new TestMySqlDialogs(), "app");
         await focused.InitializeAsync(TestContext.Current.CancellationToken);
         var first = focused.ActiveTab!; await first.ChangeDatabaseAsync("reporting");
-        var second = focused.NewQuery()!; Assert.Equal("app", second.Database); Assert.Equal("reporting", first.Database);
-        focused.NewCrossDatabaseQueryCommand.Execute(null); Assert.Equal("", focused.ActiveTab!.Database);
+        var second = focused.NewQuery()!; Assert.Equal("app", second.Database); Assert.Equal("app", first.Database);
+        await focused.NewQueryCommand.ExecuteAsync(); Assert.Equal("app", focused.ActiveTab!.Database);
         Assert.Equal("app", focused.FocusedDatabase); Assert.Equal("app", focused.NavigationRoot!.Object.Name);
         WorkspacePageRequestEventArgs? request = null; focused.WorkspaceRequested += (_, value) => request = value;
         focused.BrowseDatabasesCommand.Execute(null); Assert.NotNull(request); Assert.Null(request.ContextId);

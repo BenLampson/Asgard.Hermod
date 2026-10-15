@@ -12,7 +12,7 @@ public sealed partial class MySqlTabViewModel : ICodeCompletionProvider
         await _metadataCompletionGate.WaitAsync(linked.Token);
         try
         {
-            if (ConnectionAvailable && !IsBusy)
+            if (ConnectionAvailable && !IsBusy && !IsManagingScope && (Scope is null || Scope.Contains(Database)))
             {
                 try
                 {
@@ -43,6 +43,7 @@ public sealed partial class MySqlTabViewModel : ICodeCompletionProvider
     }
     private async Task LoadAsync(IMySqlSession session, MySqlObject parent, int maximumPages, CancellationToken token)
     {
+        if (Scope is not null && !Scope.Contains(parent.Database)) return;
         string key = parent.Kind + "\0" + parent.Database + "\0" + parent.ParentName;
         if (_completionMetadata.ContainsKey(key) || IsBusy) return;
         var items = new List<MySqlObject>();

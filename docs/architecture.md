@@ -220,7 +220,7 @@ The main title bar theme toggle uses the shell's application-wide theme service.
 
 MySQL table and view tabs keep an independent page size and temporary WHERE condition.
 The condition editor is hidden initially and opens through Filter. Remove filter
-clears the condition through the existing draft confirmation and hides the editor.
+confirms removal first, then respects existing draft decisions and hides the editor.
 Sizes 50/100/200/500 reach the protocol reader; one look-ahead row determines HasMore.
 Filters accept catalog column comparisons, LIKE, IN, IS NULL, AND/OR, NOT and parentheses.
 Every value is parameterized, identifiers are quoted, and statements, subqueries and
@@ -449,3 +449,20 @@ hidden. Selecting a tab changes its font weight and background without moving or
 resizing any tab, icon or label. Main-window pages do not calculate tab widths.
 Regression tests compare every tab's actual bounds across selections, languages,
 themes, layout DPI values and wide/narrow main-window layouts.
+
+## Database script Session scope
+
+PostgreSQL and MySQL share `DatabaseSessionScope`, database selection and removal
+confirmations in the presentation module. `DatabaseIdentity` pairs the stable
+instance ID with the original database name. Scope additions are validated as a
+batch; a foreign instance rejects the entire operation. Existing scopes cannot
+become empty. Removal confirmations carry immutable revision snapshots and are
+revalidated after asynchronous draft and transaction guards.
+
+A script Session owns its object documents, SQL execution history and AI conversation.
+Scope is distinct from the physical connection's execution target. Unique candidates
+are fixed; ambiguous choices are left to the user. Tree navigation and adding scope
+never silently switch the target. PostgreSQL still opens one physical database per
+connection and does not emulate cross-database SQL. Model metadata uses bounded,
+same-instance reads; scope revision changes invalidate execution suggestions and
+exclude old-scope conversation from subsequent model requests.

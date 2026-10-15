@@ -3891,6 +3891,65 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="PostgreSqlRemoveFilter" xml:space="preserve">
     <value>Remove filter</value>
   </data>
+  <data name="DatabaseSessionRequiresDatabase" xml:space="preserve"><value>A Session must contain at least one database.</value></data>
+  <data name="DatabaseSessionInstanceMismatch" xml:space="preserve"><value>A Session cannot contain databases from another instance.</value></data>
+  <data name="DatabaseSessionTargetOutsideScope" xml:space="preserve"><value>Choose an execution target within this Session.</value></data>
+  <data name="DatabaseSessionName" xml:space="preserve"><value>Session {0}</value></data>
+  <data name="DatabaseSessionAddTitle" xml:space="preserve"><value>Add databases to {0}</value></data>
+  <data name="DatabaseSessionInstance" xml:space="preserve"><value>Current instance: {0} · {1} (fixed)</value></data>
+  <data name="DatabaseSessionAddHint" xml:space="preserve"><value>Add databases from this instance to the current Session. This expands AI metadata access. The execution target stays unchanged.</value></data>
+  <data name="DatabaseSessionSearch" xml:space="preserve"><value>Search databases…</value></data>
+  <data name="DatabaseSessionSelectAll" xml:space="preserve"><value>Select all</value></data>
+  <data name="DatabaseSessionAdd" xml:space="preserve"><value>+ Add databases</value></data>
+  <data name="DatabaseSessionAlreadyIncluded" xml:space="preserve"><value>{0} · Already in Session</value></data>
+  <data name="DatabaseSessionRemoveTitle" xml:space="preserve"><value>Remove database from Session</value></data>
+  <data name="DatabaseSessionRemovalFacts" xml:space="preserve"><value>Instance: {0} · {1}
+Session: {2}
+Database to remove: {3}</value></data>
+  <data name="DatabaseSessionRemoveHint" xml:space="preserve"><value>This removes the database from this Session and closes its object views. AI will no longer access its metadata. The database on the server is not deleted. Cancel keeps the current scope and target.</value></data>
+  <data name="DatabaseSessionConfirmRemove" xml:space="preserve"><value>Confirm removal</value></data>
+  <data name="DatabaseSessionReplacementHint" xml:space="preserve"><value>The current execution target will be removed. The following database will be used if there is only one remaining; otherwise choose a replacement before confirming.</value></data>
+  <data name="DatabaseSessionExecutionTarget" xml:space="preserve"><value>Execution target</value></data>
+  <data name="DatabaseSessionConfirm" xml:space="preserve"><value>Confirm</value></data>
+  <data name="DatabaseSessionActionFacts" xml:space="preserve"><value>Instance: {0}
+Session or object: {1}
+Action: {2}
+This removes the corresponding local content or view. Continue? Cancel keeps it unchanged.</value></data>
+  <data name="DatabaseSessionClose" xml:space="preserve"><value>Close Session and its object views</value></data>
+  <data name="DatabaseSessionCloseObject" xml:space="preserve"><value>Close object view</value></data>
+  <data name="DatabaseSessionClearAi" xml:space="preserve"><value>Clear this Session’s AI conversation</value></data>
+  <data name="DatabaseSessionDiscardRows" xml:space="preserve"><value>Discard pending data edits</value></data>
+  <data name="DatabaseSessionCatalog" xml:space="preserve"><value>Database catalog</value></data>
+  <data name="DatabaseSessionScope" xml:space="preserve"><value>Scope</value></data>
+  <data name="DatabaseSessionDatabases" xml:space="preserve"><value>Session databases</value></data>
+  <data name="DatabaseSessionCatalogHint" xml:space="preserve"><value>Open a script Session using databases from this instance. With one database, use it directly; with several, choose the databases or select all.</value></data>
+  <data name="DatabaseSessionOpen" xml:space="preserve"><value>Open Session</value></data>
+  <data name="DatabaseSessionRulesHint" xml:space="preserve"><value>A Session belongs to one instance and retains at least one database. AI can access only its included databases. Choose an execution target when there are several. Each Session keeps its own execution history.</value></data>
+  <data name="DatabaseSessionAiContext" xml:space="preserve"><value>{0} · AI database scope: {1}</value></data>
+  <data name="DatabaseSessionRemoveFilter" xml:space="preserve"><value>Remove the current filter</value></data>
+  <data name="DatabaseSessionChooseTarget" xml:space="preserve"><value>Choose execution database</value></data>
+  <data name="DatabaseSessionNew" xml:space="preserve"><value>New Session</value></data>
+  <data name="DatabaseSessionScript" xml:space="preserve"><value>SQL script</value></data>
+  <data name="DatabaseSessionReturnScript" xml:space="preserve"><value>Return to script</value></data>
+  <data name="DatabaseSessionHistory" xml:space="preserve"><value>Session history</value></data>
+  <data name="DatabaseSessionWorkspaceTitle" xml:space="preserve"><value>Database Sessions · {0}</value></data>
+  <data name="DatabaseSessionActionContext" xml:space="preserve"><value>{0} · Databases: {1}</value></data>
+  <data name="DatabaseSessionReviewSql" xml:space="preserve"><value>Review AI SQL before execution</value></data>
+  <data name="DatabaseSessionReviewFacts" xml:space="preserve"><value>Instance: {0} · {1}
+Session: {2}
+Execution database: {3}
+Review the full SQL below. Execution starts only after confirmation.</value></data>
+  <data name="DatabaseSessionReviewExecute" xml:space="preserve"><value>Confirm and execute</value></data>
+  <data name="DatabaseEngineMySql" xml:space="preserve"><value>MySQL</value></data>
+  <data name="DatabaseEnginePostgreSql" xml:space="preserve"><value>PostgreSQL</value></data>
+  <data name="DatabaseSessionResultScopeHint" xml:space="preserve"><value>Only loaded results from the current Session scope can be shared. After changing scope or target, explicitly run SQL again to produce a new sample.</value></data>
+  <data name="DatabaseSessionCatalogIncomplete" xml:space="preserve"><value>The database catalog could not be fully loaded. Retry before selecting all or changing Session scope.</value></data>
+  <data name="DatabaseSessionEditConfiguration" xml:space="preserve"><value>Edit configuration</value></data>
+  <data name="DatabaseSessionAgent" xml:space="preserve"><value>Agent</value></data>
+  <data name="DatabaseSessionAgentHint" xml:space="preserve"><value>Open the current Session’s Agent. It can access only databases included in this Session.</value></data>
+  <data name="DatabaseSessionSelectedCount" xml:space="preserve"><value>{0} databases to open</value></data>
+  <data name="DatabaseSessionRefreshCatalog" xml:space="preserve"><value>Refresh databases</value></data>
+  <data name="DatabaseSessionObjectActionContext" xml:space="preserve"><value>{0} · Object: {1}</value></data>
   <data name="WorkspacePaneResize" xml:space="preserve"><value>Resize the side pane</value></data>
   <data name="SshWorkspaceUnavailable" xml:space="preserve"><value>This SSH connection is unavailable. Reconnect and try again.</value></data>
   <data name="SshWorkspaceSections" xml:space="preserve"><value>SSH workspace sections</value></data>
@@ -3967,6 +4026,9 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="SshForwardFailed" xml:space="preserve"><value>The port forward could not start. Check the port availability and server forwarding policy.</value></data>
   <data name="SshForwardEndpoints" xml:space="preserve"><value>127.0.0.1:{0} → {1}:{2}</value></data>
   <data name="SshActionConfirm" xml:space="preserve"><value>Confirm</value></data>
+  <data name="DatabaseSessionHideTree" xml:space="preserve"><value>Hide database explorer</value></data>
+  <data name="DatabaseSessionShowTree" xml:space="preserve"><value>Show database explorer</value></data>
+  <data name="DatabaseSessionHideAgent" xml:space="preserve"><value>Hide Agent and keep the conversation and draft</value></data>
   <data name="SshMonitorOverview" xml:space="preserve"><value>Overview</value></data>
   <data name="SshMonitorCpu" xml:space="preserve"><value>CPU</value></data>
   <data name="SshMonitorMemory" xml:space="preserve"><value>Memory</value></data>

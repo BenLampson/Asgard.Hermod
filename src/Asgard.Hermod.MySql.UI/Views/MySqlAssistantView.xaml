@@ -5,7 +5,7 @@
  <UserControl.Resources><BooleanToVisibilityConverter x:Key="Visible" /></UserControl.Resources>
  <Border Padding="14" Background="{DynamicResource SurfaceBrush}">
   <Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-   <DockPanel Margin="0,0,0,8"><Button DockPanel.Dock="Right" Content="{loc:Loc MySqlAssistantClear}" Command="{Binding ClearCommand}" /><TextBlock Text="{loc:Loc MySqlAssistantTitle}" FontWeight="SemiBold" FontSize="16" VerticalAlignment="Center" /></DockPanel>
+   <DockPanel Margin="0,0,0,8"><Button x:Name="HideAgentButton" DockPanel.Dock="Right" Command="{Binding HideCommand}" Style="{StaticResource IconButton}" ToolTip="{loc:Loc DatabaseSessionHideAgent}" AutomationProperties.Name="{loc:Loc DatabaseSessionHideAgent}" Margin="8,0,0,0"><controls:IconView Kind="x" Width="16" Height="16" /></Button><Button DockPanel.Dock="Right" Content="{loc:Loc MySqlAssistantClear}" Command="{Binding ClearCommand}" /><TextBlock Text="{loc:Loc MySqlAssistantTitle}" FontWeight="SemiBold" FontSize="16" VerticalAlignment="Center" /></DockPanel>
    <StackPanel Grid.Row="1" Margin="0,0,0,10"><TextBlock Text="{Binding ContextLabel}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" FontSize="12" /><TextBlock Text="{loc:Loc MySqlAssistantPrivacy}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="0,6,0,0" /></StackPanel>
    <ScrollViewer x:Name="ConversationScroll" Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
     <ItemsControl ItemsSource="{Binding Messages}">
@@ -25,7 +25,7 @@
     <TextBlock Text="{Binding Error}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
     <TextBlock Text="{loc:Loc MySqlAssistantThinking}" Visibility="{Binding IsBusy, Converter={StaticResource Visible}}" Foreground="{DynamicResource TextMutedBrush}" Margin="0,5,0,0" />
     <CheckBox Content="{loc:Loc MySqlAssistantIncludeSql}" IsChecked="{Binding IncludeSql}" Margin="0,8,0,6" />
-    <CheckBox Content="{loc:Loc MySqlAssistantIncludeResults}" IsChecked="{Binding IncludeResults}" ToolTip="{loc:Loc MySqlAssistantResultsHint}" />
+    <CheckBox Content="{loc:Loc MySqlAssistantIncludeResults}" IsChecked="{Binding IncludeResults}" IsEnabled="{Binding CanShareResults}" ToolTip="{loc:Loc DatabaseSessionResultScopeHint}" />
    </StackPanel>
    <Grid Grid.Row="4"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
     <TextBox x:Name="PromptEditor" Text="{Binding Prompt, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="80" MaxHeight="150" MaxLength="8000" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="{loc:Loc MySqlAssistantPrompt}" ToolTip="{loc:Loc MySqlAssistantPrompt}" />

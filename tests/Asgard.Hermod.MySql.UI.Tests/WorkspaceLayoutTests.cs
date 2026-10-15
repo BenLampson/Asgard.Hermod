@@ -16,7 +16,7 @@ public sealed class WorkspaceLayoutTests(WpfTestFixture fixture)
         using var trace = new WpfBindingTrace(); var culture = CultureInfo.CurrentUICulture; var defaultCulture = CultureInfo.DefaultThreadCurrentUICulture;
         Text.Initialize(language, CultureInfo.InvariantCulture); Text.SetApplicationCulture(Text.Culture); var themes = new ThemeService(Application.Current.Resources); themes.SetTheme(theme);
         var server = new TestMySql(); var configurations = new Configurations();
-        await using var model = new MySqlWorkspaceViewModel(new(new("mysql-test", "MySQL", "MySQL", "database", [], TypeId: MySqlIds.Type, ProviderId: MySqlIds.Direct)), configurations, server, configurations, new TestMySqlDialogs());
+        await using var model = new MySqlWorkspaceViewModel(new(new("mysql-test", "MySQL", "MySQL", "database", [], TypeId: MySqlIds.Type, ProviderId: MySqlIds.Direct)), configurations, server, configurations, new TestMySqlDialogs(), "app");
         var view = new MySqlWorkspaceView { DataContext = model }; var window = new HermodWindow { Width = 1200, Height = 800, Title = "MySQL", Content = view };
         try
         {

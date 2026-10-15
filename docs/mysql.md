@@ -71,22 +71,35 @@ close, edit-connection and retry actions. Connection errors do not occupy the
 page notification row. The body keeps its size and pauses interaction while the
 overlay is open. Cancellation disposes late sessions instead of activating them.
 
-## Focused database workspaces
+## Database catalog and script Sessions
 
-Click a database row (or press Enter) to open its own window. The window title
-identifies the instance and database, and the object tree starts at that database.
-Repeated opening focuses the existing window; query documents, transactions and
-close guards remain independent. The object tree can be collapsed at any width.
-The caption offers a new query, a cross-database query and the SQL assistant.
-Cross-database documents begin without a default database and use qualified
-`database.table` names on the same server. Browse databases returns to the instance
-catalog without closing the focused window.
+The instance window is a database catalog, without an implicit query document.
+One fully loaded database can be used directly. With multiple databases, users
+choose the scope or explicitly select all, then open a script Session workspace.
+Every Session is fixed to one instance, has independent SQL, execution history,
+results, transaction state and AI conversation, and retains at least one database.
+Object views belong to their script Session; Return to script preserves their drafts.
+
+Scope chips show included databases. Add databases lists only the current instance,
+keeps included rows read-only and preserves the execution target. One eligible
+candidate is used directly; multiple candidates start unselected. Removing a chip
+always confirms the exact instance, Session, database and effects. It closes that
+Session's object views for the database and revokes its AI metadata access without
+deleting the server database. The last chip cannot be removed. When removing the
+execution target, one replacement is fixed; multiple replacements require an
+explicit choice before confirmation. Cancel preserves scope, target and content.
+
+The SQL execution target is separate from scope. A unique target is fixed; multiple
+targets start unselected and execution remains disabled until the user chooses.
+Tree selection never changes it. Adding a database does not switch it. Database
+switches retain draft and transaction guards and open a fresh physical connection.
+Browse databases returns to the catalog without closing existing Sessions.
 
 ## Completion and execution plans
 
 The shared editor suggests SQL keywords, current-database tables and views, and
 fields loaded on demand for basic FROM/JOIN aliases. Explicit database qualifiers
-can request other databases on the same instance. Ctrl+Space opens suggestions;
+can request only included databases in the same Session. Ctrl+Space opens suggestions;
 Up/Down selects, Tab/Enter inserts, and Escape closes the popup. Inserting a
 suggestion replaces the current token or selection and preserves native undo.
 Metadata failures fall back to keyword suggestions without exposing SDK errors.
@@ -110,8 +123,13 @@ files, and must be re-entered after restarting Hermod. Requests go directly to t
 configured service. HTTPS is required except for loopback HTTP model services;
 redirects and automatic retries are disabled.
 
-Each MySQL tab keeps its own assistant conversation. Sending a question reads
-bounded metadata through that tab's existing physical session and includes editor
+Each script Session keeps its own assistant conversation, also used by its object
+views. The caption Agent action opens a resizable split pane. Its X only hides it,
+preserving the conversation, input draft and last width; the same action restores it.
+The database explorer can also be collapsed and restored without changing its
+expanded branches, selected object, Session scope or execution target.
+Sending a question reads bounded metadata only from its included databases
+using same-instance metadata connections, without choosing an execution target, and includes editor
 SQL only when selected. Result data is excluded by default; the explicit sharing
 checkbox includes at most 20 loaded rows, 16 columns and 8 KiB. The panel explains
 this before sending. No connection credentials or connection options enter the
@@ -121,8 +139,9 @@ sensitive content before sending them to their chosen model service.
 Generated SQL can be inserted at the editor's caret/selection without execution.
 Review and run shows the complete SQL and target database before using the same
 query execution path and session, including existing draft and transaction guards.
-If the database or physical connection changes, an old suggestion cannot run
-directly. Cancelling a model request keeps the input draft, and closing a tab
+Scope, execution target or physical connection changes invalidate old execution
+suggestions. Future model requests exclude conversation from earlier scope revisions;
+visible conversation history stays available until explicitly cleared or closed. Cancelling a model request keeps the input draft, and closing a tab
 cancels its request and clears its conversation. Neither conversations nor result
 samples are persisted or synchronized by Hermod.
 

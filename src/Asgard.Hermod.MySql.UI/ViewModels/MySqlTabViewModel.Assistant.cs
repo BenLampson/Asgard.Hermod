@@ -9,17 +9,20 @@ public sealed partial class MySqlTabViewModel
     /// <summary>视图通过原生编辑器插入文本，保留光标、选区和撤销历史。</summary>
     public Action<string>? InsertSqlRequested { get; set; }
     /// <summary>上下文读取后记录原会话；重连或切库后旧建议不能直接执行。</summary>
-    internal object? AssistantSessionIdentity => _session;
+    private object _assistantContextIdentity = new();
+    internal object AssistantSessionIdentity => _assistantContextIdentity;
 
     /// <summary>确认完整 SQL 与目标，复用当前查询执行和草稿保护。</summary>
     public async Task ExecuteAssistantSqlAsync(MySqlAssistantSql suggestion)
     {
         ArgumentNullException.ThrowIfNull(suggestion);
         if (!CanRun || _disposed) return;
-        bool Matches() => suggestion.Database == Database && ReferenceEquals(suggestion.SessionIdentity, _session);
+        bool Matches() => suggestion.ScopeRevision == ScopeRevision && suggestion.Database == Database && ReferenceEquals(suggestion.SessionIdentity, AssistantSessionIdentity);
         if (!Matches()) { Error = Text.Get("MySqlAssistantContextChanged"); Refresh(); return; }
-        if (!await _dialogs.ConfirmAssistantSqlAsync(suggestion.Sql, Database) || !Matches() || _disposed || !CanRun) return;
-        await ExecuteAsync(suggestion.Sql);
+        if (!await _dialogs.ConfirmAssistantSqlAsync(suggestion.Sql, Database, Instance?.Name ?? "", Name, Endpoint) || !Matches() || _disposed || !CanRun) return;
+        if (CommitInputRequested?.Invoke() == false || !await ResolveDataDraftAsync()) return;
+        if (!Matches() || !CanRun) { Error = Text.Get("MySqlAssistantContextChanged"); Refresh(); return; }
+        await RunAsync(token => Matches() ? ExecuteCoreAsync(suggestion.Sql, token) : Task.CompletedTask);
     }
 
     /// <summary>用户主动应用生成的 SQL，不触发执行或替换整份文稿。</summary>
@@ -33,23 +36,26 @@ public sealed partial class MySqlTabViewModel
     /// <summary>在现有页签会话中串行读取有限元数据；结果只在明确选择后加入上下文。</summary>
     public async Task<AgentSqlContext> ReadAssistantContextAsync(bool includeSql, bool includeResults, CancellationToken cancellationToken)
     {
-        if (IsBusy || !ConnectionAvailable || _disposed) throw Text.Exception("MySqlAssistantSessionBusy");
+        if (IsBusy || IsManagingScope || !ConnectionAvailable || _disposed) throw Text.Exception("MySqlAssistantSessionBusy");
         AgentSqlContext? context = null;
         await RunAsync(async token =>
         {
             using var linked = CancellationTokenSource.CreateLinkedTokenSource(token, cancellationToken);
-            var session = await SessionAsync(linked.Token);
             var schema = new StringBuilder();
-            if (Database.Length > 0)
+            foreach (string database in Scope?.Databases.Select(item => item.Name) ?? (Database.Length > 0 ? new[] { Database } : []))
             {
+                if (schema.Length >= 16000) break;
+                var values = new Dictionary<string, string>(_options.Parameters, StringComparer.Ordinal) { ["database"] = database };
+                await using var session = Scope is null ? null : await _factory.OpenAsync(new InstanceConnectionOptions { TypeId = _options.TypeId, ProviderId = _options.ProviderId, Parameters = values }, linked.Token);
+                var metadata = session ?? await SessionAsync(linked.Token);
                 foreach (var kind in new[] { MySqlObjectKind.Tables, MySqlObjectKind.Views })
                 {
-                    var page = await session.ListAsync(new(kind, "", Database), 0, linked.Token);
+                    var page = await metadata.ListAsync(new(kind, "", database), 0, linked.Token);
                     foreach (var item in page.Items.Take(80)) schema.AppendLine(MySqlSql.Quote(item.Database) + "." + MySqlSql.Quote(item.Name));
                     // 只加载文稿提及的少量表字段，不扫描整库。
                     foreach (var item in page.Items.Where(item => item.Name == Name || Sql.Contains(item.Name, StringComparison.OrdinalIgnoreCase)).Take(4))
                     {
-                        var columns = await session.ListAsync(new(MySqlObjectKind.Columns, "", Database, item.Name), 0, linked.Token);
+                        var columns = await metadata.ListAsync(new(MySqlObjectKind.Columns, "", database, item.Name), 0, linked.Token);
                         foreach (var column in columns.Items.Take(80))
                             schema.AppendLine(MySqlSql.Quote(item.Name) + "." + MySqlSql.Quote(column.Name) + " " + column.Detail);
                     }
@@ -57,7 +63,7 @@ public sealed partial class MySqlTabViewModel
             }
             string schemaText = schema.ToString();
             context = new(Database, schemaText[..Math.Min(schemaText.Length, 16000)], includeSql ? Sql[..Math.Min(Sql.Length, 16000)] : "",
-                includeResults ? AssistantResultSample() : "");
+                includeResults && CanShareResults ? AssistantResultSample() : "", ScopeId: Id + ":" + ScopeRevision, Databases: Scope?.Databases.Select(item => item.Name).ToArray());
         });
         cancellationToken.ThrowIfCancellationRequested();
         return context ?? throw Text.Exception("MySqlAssistantContextFailed");

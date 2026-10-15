@@ -11,7 +11,7 @@ public sealed class PostgreSqlWorkspaceTests(WpfTestFixture fixture)
     public Task ObjectTabs_DistinguishSameNamesInDifferentSchemas() => fixture.RunOffscreenAsync(async () =>
     {
         var server = new TestPostgreSql(); var configs = new Configurations();
-        await using var page = new PostgreSqlWorkspaceViewModel(new(Configurations.Instance), configs, server, configs, new TestPostgreSqlDialogs());
+        await using var page = new PostgreSqlWorkspaceViewModel(new(Configurations.Instance), configs, server, configs, new TestPostgreSqlDialogs(), "app");
         await page.InitializeAsync(TestContext.Current.CancellationToken);
         await page.OpenObjectAsync(new(PostgreSqlObjectKind.Table, "users", "app", Schema: "public"));
         var first = page.ActiveTab;
@@ -28,7 +28,7 @@ public sealed class PostgreSqlWorkspaceTests(WpfTestFixture fixture)
         var server = new TestPostgreSql(); var configs = new Configurations();
         await using var page = new PostgreSqlWorkspaceViewModel(new(Configurations.Instance), configs, server, configs, new TestPostgreSqlDialogs(), focusedDatabase: "reporting");
         await page.InitializeAsync(TestContext.Current.CancellationToken);
-        Assert.Equal("postgresql.database:reporting", page.WorkspaceContextId);
+        Assert.StartsWith("postgresql.session:", page.WorkspaceContextId);
         Assert.Equal("reporting", server.OpenedOptions[0].Parameters["database"]);
         Assert.Equal("reporting", page.ActiveTab!.Database);
         Assert.All(page.NavigationRoot!.Children, node => Assert.Equal(PostgreSqlObjectKind.Schema, node.Object.Kind));

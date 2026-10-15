@@ -19,7 +19,7 @@ public sealed class MetadataStateTests(WpfTestFixture fixture)
             var instance = new InstanceItemViewModel(new("mysql", "Database", "Database", "database", [], TypeId: MySqlIds.Type)
             { TagIds = ["builtin.environment.production"] });
             var server = new TestMySql(); var configurations = new Configurations(); var dialogs = new TestMySqlDialogs();
-            await using var workspace = new MySqlWorkspaceViewModel(instance, configurations, server, configurations, dialogs);
+            await using var workspace = new MySqlWorkspaceViewModel(instance, configurations, server, configurations, dialogs, "app");
             await workspace.InitializeAsync(TestContext.Current.CancellationToken);
             var query = workspace.ActiveTab!; query.Sql = "SELECT * FROM users"; await query.ExecuteAsync(query.Sql);
             var grid = query.SelectedResult!; var row = grid.Rows[0];
@@ -38,7 +38,7 @@ public sealed class MetadataStateTests(WpfTestFixture fixture)
                 return Task.CompletedTask;
             };
             await table.OpenFieldAsync(table.SelectedResult!, table.SelectedResult!.Rows[0], table.SelectedResult.Rows[0].Cells[2]);
-            Assert.Equal(pageId, workspace.Id); Assert.Equal(instance.Name, workspace.Header);
+            Assert.Equal(pageId, workspace.Id); Assert.Equal(Text.Format("DatabaseSessionWorkspaceTitle", instance.Name), workspace.Header);
             Assert.Same(query, workspace.Tabs[0]); Assert.Same(table, workspace.ActiveTab); Assert.Same(grid, query.SelectedResult);
             Assert.Equal("SELECT * FROM users WHERE id = 1", query.Sql); Assert.True(query.IsDocumentDirty); Assert.True(query.HasDataDraft);
             Assert.Equal("unsaved row", row.Cells[1].Value); Assert.Equal("app", query.Database); Assert.Equal("app", table.Database);

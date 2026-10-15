@@ -19,42 +19,43 @@ public sealed partial class PostgreSqlWorkspaceViewModel : WorkspacePageViewMode
     private InstanceConnectionOptions? _options;
     private Task? _initializeTask;
     private int _queryNumber;
+    private readonly string? _sessionContextId;
     /// <summary>创建模块状态和依赖；真实连接或写入由显式操作启动。</summary>
     public PostgreSqlWorkspaceViewModel(InstanceItemViewModel instance, IInstanceConfigurationService configurations, IPostgreSqlSessionFactory factory,
-        IInstanceEditor editor, IPostgreSqlWorkspaceDialogs dialogs, string? focusedDatabase = null, IAgentClient? agentClient = null) : base("postgresql:" + Guid.NewGuid().ToString("N"), instance.Name, "database", instance.Id)
+        IInstanceEditor editor, IPostgreSqlWorkspaceDialogs dialogs, string? focusedDatabase = null, IAgentClient? agentClient = null, IReadOnlyList<DatabaseIdentity>? initialDatabases = null, string? sessionContextId = null) : base("postgresql:" + Guid.NewGuid().ToString("N"), instance.Name, "database", instance.Id)
     {
         _instance = instance; _configurations = configurations; _factory = new ConnectionAwarePostgreSqlSessionFactory(factory, OnConnectionLost); _editor = editor; _dialogs = dialogs;
-        _sessionFactory = factory; _agentClient = agentClient; FocusedDatabase = focusedDatabase ?? ""; UpdateInstanceMetadata(instance.Summary);
-        NewQueryCommand = new RelayCommand(_ => NewQuery(), _ => IsConnected && !IsConnecting);
+        _sessionFactory = factory; _agentClient = agentClient; InitialDatabases = initialDatabases ?? (string.IsNullOrWhiteSpace(focusedDatabase) ? [] : [new(instance.Id, focusedDatabase)]); FocusedDatabase = InitialDatabases.FirstOrDefault()?.Name ?? ""; _sessionContextId = IsDatabaseFocused ? sessionContextId ?? "postgresql.session:" + Id : null; UpdateInstanceMetadata(instance.Summary);
+        NewQueryCommand = new AsyncRelayCommand(_ => StartSessionAsync(), _ => IsConnected && !IsConnecting && !IsManagingDatabases && (!IsCatalog || HasSingleCatalogDatabase || DatabaseChoices.Any(item => item.IsSelected)));
         BrowseDatabasesCommand = new RelayCommand(_ => RequestWorkspace(null, () => CreateWorkspace(null)));
         CloseTabCommand = new AsyncRelayCommand(tab => CloseTabAsync(tab as PostgreSqlTabViewModel));
         RefreshTreeCommand = new AsyncRelayCommand(_ => RefreshTreeAsync(), _ => IsConnected && Tree is not null && !IsConnecting);
         ReconnectCommand = new AsyncRelayCommand(_ => ReconnectAsync(), _ => !IsConnecting);
         EditConnectionCommand = new AsyncRelayCommand(_ => EditConnectionAsync(), _ => !IsConnecting);
-        OpenQueryCommand = new AsyncRelayCommand(_ => OpenQueryAsync(), _ => IsConnected && !IsConnecting);
+        OpenQueryCommand = new AsyncRelayCommand(_ => OpenQueryAsync(), _ => IsDatabaseFocused && IsConnected && !IsConnecting);
         ExportCommand = new AsyncRelayCommand(_ => ActiveTab?.ExportAsync() ?? Task.CompletedTask, _ => ActiveTab?.HasResult == true && !ActiveTab.IsBusy);
-        Tools = [new("query.new", Text.Get("PostgreSqlNewQuery"), "file-code", NewQueryCommand), new("query.open", Text.Get("PostgreSqlOpenQuery"), "file", OpenQueryCommand),
+        Tools = [new("query.new", Text.Get("DatabaseSessionNew"), "file-code", NewQueryCommand), new("query.open", Text.Get("PostgreSqlOpenQuery"), "file", OpenQueryCommand),
             new("result.export", Text.Get("PostgreSqlExportLoaded"), "download", ExportCommand), new("tree.refresh", Text.Get("PostgreSqlRefreshBranch"), "refresh-cw", RefreshTreeCommand),
             new("connection.reconnect", Text.Get("PostgreSqlReconnect"), "refresh-cw", ReconnectCommand),
             new("database.browse", Text.Get("PostgreSqlBrowseDatabases"), "database", BrowseDatabasesCommand)];
         Tabs.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasTabs));
-        InitializeAssistant(agentClient);
+        InitializeSessionCommands(); InitializeAssistant(agentClient);
     }
     /// <summary>对象原始名称或已本地化的文稿标题。</summary>
     public string Name => Header;
     /// <summary>公共环境徽标直接绑定稳定实例元数据。</summary>
     public InstanceItemViewModel Instance => _instance;
-    /// <summary>聚焦窗口固定的数据库；空串表示实例浏览窗口。</summary>
+    /// <summary>初始数据库仅用于首次加载；实际范围分别保存在各个脚本 Session。</summary>
     public string FocusedDatabase { get; }
     /// <summary>聚焦状态不跟随查询页签的独立执行上下文变化。</summary>
     public bool IsDatabaseFocused => FocusedDatabase.Length > 0;
     /// <inheritdoc />
-    public override string? WorkspaceContextId => IsDatabaseFocused ? "postgresql.database:" + FocusedDatabase : null;
-    /// <summary>窗口标题保留实例与数据库，重命名实例时不丢失数据库身份。</summary>
+    public override string? WorkspaceContextId => IsDatabaseFocused ? _sessionContextId : null;
+    /// <summary>窗口标题保留固定实例身份，重命名不重建任何 Session。</summary>
     public override void UpdateInstanceMetadata(InstanceSummary instance)
     {
         if (InstanceId != instance.Id) return;
-        Header = IsDatabaseFocused ? Text.Format("PostgreSqlDatabaseWorkspaceTitle", FocusedDatabase, instance.Name) : instance.Name;
+        Header = IsDatabaseFocused ? Text.Format("DatabaseSessionWorkspaceTitle", instance.Name) : instance.Name;
         OnPropertyChanged(nameof(Name));
     }
     /// <summary>不含凭据的公开端点。</summary>
@@ -80,9 +81,9 @@ public sealed partial class PostgreSqlWorkspaceViewModel : WorkspacePageViewMode
     /// <summary>聚焦窗口直接呈现该库的对象分组，避免重复的实例和数据库层级。</summary>
     public PostgreSqlTreeNode? NavigationRoot { get; private set; }
     /// <summary>对象导航标题包含当前固定数据库名。</summary>
-    public string NavigationTitle => IsDatabaseFocused ? FocusedDatabase : Text.Get("PostgreSqlDatabaseObjects");
+    public string NavigationTitle => Text.Get(IsDatabaseFocused ? "DatabaseSessionDatabases" : "DatabaseSessionCatalog");
     /// <summary>窗口次标题优先标明固定数据库，端点仍保留在提示中。</summary>
-    public string WorkspaceSubtitle => IsDatabaseFocused ? FocusedDatabase : Endpoint;
+    public string WorkspaceSubtitle => Endpoint;
     /// <summary>当前操作的树分支，不改变查询数据库上下文。</summary>
     public PostgreSqlTreeNode? SelectedNode { get; set; }
     /// <summary>只对已加载对象进行层级过滤。</summary>
@@ -99,13 +100,13 @@ public sealed partial class PostgreSqlWorkspaceViewModel : WorkspacePageViewMode
             if (field?.CommitInputRequested?.Invoke() == false) { OnPropertyChanged(); return; }
             if (field is not null) field.IsActive = false;
             field = value; if (value is not null) value.IsActive = true;
-            OnPropertyChanged(); ExportCommand.NotifyCanExecuteChanged(); OnActiveTabChanged();
+            OnPropertyChanged(); ExportCommand.NotifyCanExecuteChanged(); OnActiveTabChanged(); RefreshSessionNavigation();
         }
     }
     /// <summary>公共工具面板中的稳定入口。</summary>
     public IReadOnlyList<WorkspaceTool> Tools { get; }
     /// <summary>协调公共控件的操作命令，启用条件由当前状态决定。</summary>
-    public RelayCommand NewQueryCommand { get; }
+    public AsyncRelayCommand NewQueryCommand { get; }
     /// <summary>激活实例的数据库浏览入口，不关闭当前查询或草稿。</summary>
     public RelayCommand BrowseDatabasesCommand { get; }
     /// <summary>协调公共控件的操作命令，启用条件由当前状态决定。</summary>
@@ -137,6 +138,8 @@ public sealed partial class PostgreSqlWorkspaceViewModel : WorkspacePageViewMode
             if (IsClosed || linked.IsCancellationRequested) { await session.DisposeAsync(); return; }
             _metadata = session; Endpoint = Text.Format("PostgreSqlEndpoint", session.Options.Host, session.Options.Port);
             Tree = new(session, _lifetime.Token); OnPropertyChanged(nameof(Tree)); await Tree.LoadAsync(Tree.Root).WaitAsync(linked.Token);
+            Tree.Root.Children.CollectionChanged += (_, _) => RefreshCatalog();
+            Tree.Root.PropertyChanged += (_, args) => { if (args.PropertyName == nameof(Tree.Root.HasMore)) RefreshCatalog(); };
             NavigationRoot = Tree.Root;
             if (IsDatabaseFocused)
             {
@@ -152,7 +155,8 @@ public sealed partial class PostgreSqlWorkspaceViewModel : WorkspacePageViewMode
             linked.Token.ThrowIfCancellationRequested();
             if (!session.IsConnected) throw Text.Exception("PostgreSqlConnectionFailed");
             HasConnectedOnce = true;
-            if (Tabs.Count == 0) NewQuery();
+            if (Tabs.Count == 0 && IsDatabaseFocused) CreateSession(InitialDatabases);
+            RefreshCatalog(); RefreshSessionNavigation();
         }
         catch (OperationCanceledException) when (linked.IsCancellationRequested)
         { Tree?.Dispose(); Tree = null; if (_metadata is not null) await _metadata.DisposeAsync(); _metadata = null; }
@@ -168,30 +172,22 @@ public sealed partial class PostgreSqlWorkspaceViewModel : WorkspacePageViewMode
     public PostgreSqlTabViewModel? NewQuery(string? database = null)
     {
         if (_options is null || !IsConnected || IsClosed) return null;
-        var tab = CreateTab(Text.Format("PostgreSqlQueryTitle", ++_queryNumber), database ?? SelectedDatabase(), PostgreSqlObjectKind.Root);
-        Tabs.Add(tab); ActiveTab = tab; return tab;
-    }
-    private string SelectedDatabase()
-    {
-        for (var node = SelectedNode; node is not null; node = node.Parent)
-        {
-            if (node.Object.Database.Length > 0) return node.Object.Database;
-            if (node.Object.Kind == PostgreSqlObjectKind.Database) return node.Object.Name;
-        }
-        return IsDatabaseFocused ? FocusedDatabase : ActiveTab?.Database is { Length: > 0 } active ? active : _metadata?.Options.Database ?? "";
+        if (database is not null) return DatabaseChoices.Any(item => item.Name == database) ? CreateSession([new(InstanceId!, database)]) : null;
+        var scope = ActiveSession?.Scope?.Databases.ToArray() ?? InitialDatabases.ToArray();
+        if (scope.Length == 0) return null;
+        return CreateSession(scope);
     }
     private PostgreSqlTabViewModel CreateTab(string name, string database, PostgreSqlObjectKind kind, string schema = "public")
     {
-        var tab = new PostgreSqlTabViewModel(name, database, kind, _factory, _options!, _dialogs, _lifetime.Token, _instance, schema)
-        { Databases = Tree?.Root.Children.Where(node => !node.IsPlaceholder).Select(node => node.Object.Name).ToArray() ?? [] };
-        tab.PropertyChanged += OnTabChanged; return tab;
+        var tab = new PostgreSqlTabViewModel(name, database, kind, _factory, _options!, _dialogs, _lifetime.Token, _instance, schema);
+        tab.Endpoint = Endpoint; tab.PropertyChanged += OnTabChanged; return tab;
     }
     /// <summary>创建独立连接，不使用池化或自动重试。</summary>
     public async Task OpenAsync(PostgreSqlTreeNode node)
     {
         if (_options is null || !IsConnected || IsClosed || node.IsPlaceholder) return;
         var item = node.Object;
-        if (item.Kind is PostgreSqlObjectKind.Database) { OpenDatabase(item.Name); return; }
+        if (item.Kind is PostgreSqlObjectKind.Database) { if (IsCatalog) OpenDatabase(item.Name); else node.IsExpanded = true; return; }
         if (item.Kind is PostgreSqlObjectKind.Schema) { node.IsExpanded = true; return; }
         bool structure = false;
         while (node.Object.Kind is not (PostgreSqlObjectKind.Table or PostgreSqlObjectKind.View or PostgreSqlObjectKind.Procedure or PostgreSqlObjectKind.Function or PostgreSqlObjectKind.Event))
@@ -204,36 +200,43 @@ public sealed partial class PostgreSqlWorkspaceViewModel : WorkspacePageViewMode
     /// <summary>按对象身份去重或激活页签。</summary>
     public async Task OpenObjectAsync(PostgreSqlObject item, bool structure = false)
     {
-        if (_options is null || !IsConnected || IsClosed) return;
-        var tab = Tabs.FirstOrDefault(tab => tab.Kind == item.Kind && tab.Database == item.Database && tab.Schema == item.Schema && tab.Name == item.Name);
-        if (tab is null) { tab = CreateTab(item.Name, item.Database, item.Kind, item.Schema); Tabs.Add(tab); ActiveTab = tab; await tab.ReadAsync(); }
+        if (_options is null || !IsConnected || IsClosed || ActiveSession?.Scope?.Contains(item.Database) != true || IsManagingDatabases) return;
+        var owner = ActiveSession;
+        var tab = Tabs.FirstOrDefault(tab => tab.SessionOwner == owner && tab.Kind == item.Kind && tab.Database == item.Database && tab.Schema == item.Schema && tab.Name == item.Name);
+        if (tab is null) { tab = CreateTab(item.Name, item.Database, item.Kind, item.Schema); tab.SessionOwner = owner; Tabs.Add(tab); owner!.Documents.Add(tab); RefreshSessionNavigation(); ActiveTab = tab; await tab.ReadAsync(); }
         ActiveTab = tab; if (structure) tab.Section = "structure";
     }
     /// <summary>点击数据库请求一个独立聚焦窗口，重复请求由外壳激活已有窗口。</summary>
     public void OpenDatabase(string database)
     {
-        if (!IsConnected || IsConnecting || IsClosed || string.IsNullOrWhiteSpace(database)) return;
-        RequestWorkspace("postgresql.database:" + database, () => CreateWorkspace(database));
+        if (!IsCatalog || !IsConnected || IsConnecting || IsClosed || string.IsNullOrWhiteSpace(database)) return;
+        string context = "postgresql.session:" + Guid.NewGuid().ToString("N");
+        RequestWorkspace(context, () => new PostgreSqlWorkspaceViewModel(_instance, _configurations, _sessionFactory, _editor, _dialogs, database, _agentClient, sessionContextId: context));
     }
     private PostgreSqlWorkspaceViewModel CreateWorkspace(string? database) => new(_instance, _configurations, _sessionFactory, _editor, _dialogs, database, _agentClient);
     private async Task CloseTabAsync(PostgreSqlTabViewModel? tab)
     {
-        if (tab is null || !Tabs.Contains(tab) || !await tab.RequestCloseAsync()) return;
-        int index = Tabs.IndexOf(tab);
-        // ListBox 删除选中项会同步回写空值，必须在移除前选定相邻页签。
-        if (ReferenceEquals(ActiveTab, tab))
+        if (tab is null || !Tabs.Contains(tab) || IsManagingDatabases) return;
+        if (!await tab.ConfirmRemovalAsync(tab.IsQuery ? "DatabaseSessionClose" : "DatabaseSessionCloseObject")) return;
+        var closing = Tabs.Where(item => item == tab || item.SessionOwner == tab).ToArray();
+        var plans = new List<WorkspaceClosePlan>();
+        foreach (var item in closing) { var plan = await item.PrepareCloseAsync(); if (plan is null) return; plans.Add(plan); }
+        try
         {
-            ActiveTab = Tabs.Count == 1 ? null : Tabs[index + 1 < Tabs.Count ? index + 1 : index - 1];
-            if (ReferenceEquals(ActiveTab, tab)) return;
+            foreach (var plan in plans) await plan.CommitAsync();
+            if (closing.Contains(ActiveTab)) ActiveTab = Tabs.FirstOrDefault(item => !closing.Contains(item));
+            if (closing.Contains(ActiveTab)) return;
+            foreach (var item in closing) { item.PropertyChanged -= OnTabChanged; Tabs.Remove(item); item.SessionOwner?.Documents.Remove(item); Sessions.Remove(item); await item.DisposeAsync(); }
+            RefreshSessionNavigation();
         }
-        tab.PropertyChanged -= OnTabChanged; Tabs.Remove(tab); await tab.DisposeAsync();
+        catch (Exception error) { Error = Text.Error(error, "PostgreSqlCommandFailed"); Refresh(); }
     }
     private async Task RefreshTreeAsync()
     {
         if (Tree is null) return;
         var node = SelectedNode; while (node is not null && !node.CanExpand) node = node.Parent;
         await Tree.RefreshAsync(node ?? NavigationRoot);
-        foreach (var tab in Tabs) tab.Databases = Tree.Root.Children.Where(item => !item.IsPlaceholder).Select(item => item.Object.Name).ToArray();
+        RefreshCatalog(); RefreshSessionNavigation();
         Refresh();
     }
     private async Task ReconnectAsync()
@@ -262,10 +265,16 @@ public sealed partial class PostgreSqlWorkspaceViewModel : WorkspacePageViewMode
     }
     private void OnTabChanged(object? sender, PropertyChangedEventArgs args) { if (args.PropertyName is nameof(PostgreSqlTabViewModel.HasResult) or nameof(PostgreSqlTabViewModel.IsBusy)) ExportCommand.NotifyCanExecuteChanged(); }
     /// <summary>确认正在执行的命令、数据草稿、文稿和事务后才关闭。</summary>
-    public override async Task<bool> RequestCloseAsync() { foreach (var tab in Tabs.ToArray()) if (!await tab.RequestCloseAsync()) return false; return true; }
+    public override async Task<bool> RequestCloseAsync()
+    {
+        var plan = await PrepareCloseAsync(); if (plan is null) return false;
+        try { await plan.CommitAsync(); return true; }
+        catch (Exception error) { Error = Text.Error(error, "PostgreSqlCommandFailed"); Refresh(); return false; }
+    }
     /// <summary>跨窗口退出不提前停止其他查询、丢弃数据草稿或回滚事务。</summary>
     public override async Task<WorkspaceClosePlan?> PrepareCloseAsync()
     {
+        foreach (var session in Sessions.ToArray()) if (!await session.ConfirmRemovalAsync("DatabaseSessionClose")) return null;
         var plans = new List<WorkspaceClosePlan>();
         foreach (var tab in Tabs.ToArray())
         {
@@ -279,7 +288,7 @@ public sealed partial class PostgreSqlWorkspaceViewModel : WorkspacePageViewMode
     {
         ReleaseAssistant(); _lifetime.Cancel(); _factory.Reset(); Connection.Finish(); await StopConnectionWatchAsync(); Tree?.Dispose();
         foreach (var tab in Tabs) { tab.PropertyChanged -= OnTabChanged; await tab.DisposeAsync(); }
-        Tabs.Clear(); if (_metadata is not null) await _metadata.DisposeAsync(); _lifetime.Dispose();
+        Tabs.Clear(); Sessions.Clear(); if (_metadata is not null) await _metadata.DisposeAsync(); _lifetime.Dispose();
     }
     private void Refresh()
     {

@@ -4,6 +4,9 @@ namespace Asgard.Hermod.MySql.Tests;
 
 internal sealed class TestMySql : IMySqlSessionFactory
 {
+    internal int DatabasePageSize = int.MaxValue;
+    internal string[] DatabaseNames = ["app"];
+    internal List<string> MetadataDatabases { get; } = [];
     internal static InstanceConnectionOptions Connection => new() { TypeId = MySqlIds.Type, ProviderId = MySqlIds.Direct, Parameters = new Dictionary<string, string> { ["host"] = "localhost", ["user"] = "test", ["database"] = "app" } };
     internal static readonly MySqlColumn[] Columns = [new(0, "id", "INT", typeof(int), false, "app", "users", "id", true, true),
         new(1, "name", "VARCHAR(100)", typeof(string), true, "app", "users", "name", false, true), new(2, "profile", "JSON", typeof(string), true, "app", "users", "profile", false, true),
@@ -39,16 +42,18 @@ internal sealed class TestMySql : IMySqlSessionFactory
         public Task<string> ReadDefinitionAsync(MySqlObject item, CancellationToken token = default) => Task.FromResult("CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100));");
         public Task<MySqlObjectPage> ListAsync(MySqlObject parent, int offset, CancellationToken token = default)
         {
+            server.MetadataDatabases.Add(parent.Database);
             if (server.ListFailure is { } error) throw error;
             MySqlObject[] items = parent.Kind switch
             {
-                MySqlObjectKind.Root => [new(MySqlObjectKind.Database, "app", "app")],
+                MySqlObjectKind.Root => server.DatabaseNames.Select(name => new MySqlObject(MySqlObjectKind.Database, name, name)).ToArray(),
                 MySqlObjectKind.Database => [new(MySqlObjectKind.Tables, "", "app"), new(MySqlObjectKind.Views, "", "app"), new(MySqlObjectKind.Procedures, "", "app"), new(MySqlObjectKind.Functions, "", "app"), new(MySqlObjectKind.Events, "", "app")],
                 MySqlObjectKind.Tables => [new(MySqlObjectKind.Table, "users", "app")],
                 MySqlObjectKind.Table => [new(MySqlObjectKind.Columns, "", "app", "users"), new(MySqlObjectKind.Indexes, "", "app", "users"), new(MySqlObjectKind.ForeignKeys, "", "app", "users"), new(MySqlObjectKind.Triggers, "", "app", "users")],
                 MySqlObjectKind.Columns => Columns.Select(column => new MySqlObject(MySqlObjectKind.Column, column.Name, "app", "users", column.TypeName)).ToArray(),
                 _ => [],
             };
+            if (parent.Kind == MySqlObjectKind.Root) return Task.FromResult(new MySqlObjectPage(items.Skip(offset).Take(server.DatabasePageSize).ToArray(), (long)offset + server.DatabasePageSize < items.Length));
             return Task.FromResult(new MySqlObjectPage(items, false));
         }
         public Task<MySqlTable> DescribeAsync(string database, string table, CancellationToken token = default) => Task.FromResult(server.Table);
@@ -80,6 +85,15 @@ internal sealed class TestMySql : IMySqlSessionFactory
 
 internal sealed class TestMySqlDialogs : IMySqlWorkspaceDialogs
 {
+    internal bool ActionAllowed = true;
+    internal int RemovalConfirmations, ActionConfirmations;
+    internal Asgard.Hermod.UI.Models.DatabaseRemovalDecision? RemovalDecision;
+    internal IReadOnlyList<DatabaseIdentity>? SelectedDatabases;
+    internal Func<Task<Asgard.Hermod.UI.Models.DatabaseRemovalDecision?>>? RemovalConfirmation { get; set; }
+    public Task<bool> ConfirmSessionActionAsync(string instanceName, string sessionName, string actionKey, string endpoint = "") { ActionConfirmations++; return Task.FromResult(ActionAllowed); }
+    public Task<IReadOnlyList<DatabaseIdentity>?> SelectSessionDatabasesAsync(string instanceName, string endpoint, string sessionName, IReadOnlyList<DatabaseIdentity> candidates, IReadOnlyList<DatabaseIdentity> included) => Task.FromResult(SelectedDatabases);
+    public Task<Asgard.Hermod.UI.Models.DatabaseRemovalDecision?> ConfirmDatabaseRemovalAsync(string instanceName, string endpoint, Asgard.Hermod.UI.Models.DatabaseRemovalRequest request)
+    { RemovalConfirmations++; return RemovalConfirmation?.Invoke() ?? Task.FromResult(RemovalDecision); }
     internal MySqlDraftChoice Choice = MySqlDraftChoice.Cancel;
     internal int Conflicts, Fields;
     internal int AnalyzeConfirmations;

@@ -3891,6 +3891,65 @@
   <data name="PostgreSqlRemoveFilter" xml:space="preserve">
     <value>移除筛选</value>
   </data>
+  <data name="DatabaseSessionRequiresDatabase" xml:space="preserve"><value>Session 至少保留一个数据库。</value></data>
+  <data name="DatabaseSessionInstanceMismatch" xml:space="preserve"><value>Session 不能包含其他实例的数据库。</value></data>
+  <data name="DatabaseSessionTargetOutsideScope" xml:space="preserve"><value>请选择此 Session 范围内的执行数据库。</value></data>
+  <data name="DatabaseSessionName" xml:space="preserve"><value>Session {0}</value></data>
+  <data name="DatabaseSessionAddTitle" xml:space="preserve"><value>添加数据库到 {0}</value></data>
+  <data name="DatabaseSessionInstance" xml:space="preserve"><value>当前实例：{0} · {1}（不可切换）</value></data>
+  <data name="DatabaseSessionAddHint" xml:space="preserve"><value>将当前实例的数据库加入此 Session，扩展 AI 可访问的元数据范围。已有执行目标保持不变。</value></data>
+  <data name="DatabaseSessionSearch" xml:space="preserve"><value>搜索数据库…</value></data>
+  <data name="DatabaseSessionSelectAll" xml:space="preserve"><value>全选</value></data>
+  <data name="DatabaseSessionAdd" xml:space="preserve"><value>＋ 添加数据库</value></data>
+  <data name="DatabaseSessionAlreadyIncluded" xml:space="preserve"><value>{0} · 已在 Session</value></data>
+  <data name="DatabaseSessionRemoveTitle" xml:space="preserve"><value>从 Session 移除数据库</value></data>
+  <data name="DatabaseSessionRemovalFacts" xml:space="preserve"><value>实例：{0} · {1}
+Session：{2}
+将移除的数据库：{3}</value></data>
+  <data name="DatabaseSessionRemoveHint" xml:space="preserve"><value>将从此 Session 移除该数据库并关闭其对象视图，AI 将不再访问它的元数据。不会删除服务器上的数据库。取消将保留原范围和执行目标。</value></data>
+  <data name="DatabaseSessionConfirmRemove" xml:space="preserve"><value>确认移除</value></data>
+  <data name="DatabaseSessionReplacementHint" xml:space="preserve"><value>当前执行目标将被移除。仅剩一个数据库时直接使用；剩余多个时，请先选择替代执行目标再确认。</value></data>
+  <data name="DatabaseSessionExecutionTarget" xml:space="preserve"><value>执行目标</value></data>
+  <data name="DatabaseSessionConfirm" xml:space="preserve"><value>确认</value></data>
+  <data name="DatabaseSessionActionFacts" xml:space="preserve"><value>实例：{0}
+Session 或对象：{1}
+操作：{2}
+将移除对应的本地内容或视图。确认继续？取消则保留原状。</value></data>
+  <data name="DatabaseSessionClose" xml:space="preserve"><value>关闭 Session 及其对象视图</value></data>
+  <data name="DatabaseSessionCloseObject" xml:space="preserve"><value>关闭对象视图</value></data>
+  <data name="DatabaseSessionClearAi" xml:space="preserve"><value>清空此 Session 的 AI 对话</value></data>
+  <data name="DatabaseSessionDiscardRows" xml:space="preserve"><value>放弃未提交的数据编辑</value></data>
+  <data name="DatabaseSessionCatalog" xml:space="preserve"><value>数据库目录</value></data>
+  <data name="DatabaseSessionScope" xml:space="preserve"><value>范围</value></data>
+  <data name="DatabaseSessionDatabases" xml:space="preserve"><value>Session 数据库</value></data>
+  <data name="DatabaseSessionCatalogHint" xml:space="preserve"><value>使用当前实例的数据库打开脚本 Session。只有一个数据库直接使用；多个数据库由你选择，也可以全选。</value></data>
+  <data name="DatabaseSessionOpen" xml:space="preserve"><value>打开 Session</value></data>
+  <data name="DatabaseSessionRulesHint" xml:space="preserve"><value>Session 固定属于一个实例，至少保留一个数据库。AI 仅可访问纳入此 Session 的数据库。执行目标有多个时由你选择。执行历史归属各自 Session。</value></data>
+  <data name="DatabaseSessionAiContext" xml:space="preserve"><value>{0} · AI 数据库范围：{1}</value></data>
+  <data name="DatabaseSessionRemoveFilter" xml:space="preserve"><value>移除当前筛选条件</value></data>
+  <data name="DatabaseSessionChooseTarget" xml:space="preserve"><value>请选择执行数据库</value></data>
+  <data name="DatabaseSessionNew" xml:space="preserve"><value>新建 Session</value></data>
+  <data name="DatabaseSessionScript" xml:space="preserve"><value>SQL 脚本</value></data>
+  <data name="DatabaseSessionReturnScript" xml:space="preserve"><value>返回脚本</value></data>
+  <data name="DatabaseSessionHistory" xml:space="preserve"><value>Session 历史</value></data>
+  <data name="DatabaseSessionWorkspaceTitle" xml:space="preserve"><value>{0} · 数据库 Session</value></data>
+  <data name="DatabaseSessionActionContext" xml:space="preserve"><value>{0} · 数据库：{1}</value></data>
+  <data name="DatabaseSessionReviewSql" xml:space="preserve"><value>执行前审核 AI SQL</value></data>
+  <data name="DatabaseSessionReviewFacts" xml:space="preserve"><value>实例：{0} · {1}
+Session：{2}
+执行数据库：{3}
+请检查以下完整 SQL，确认后才开始执行。</value></data>
+  <data name="DatabaseSessionReviewExecute" xml:space="preserve"><value>确认并执行</value></data>
+  <data name="DatabaseEngineMySql" xml:space="preserve"><value>MySQL</value></data>
+  <data name="DatabaseEnginePostgreSql" xml:space="preserve"><value>PostgreSQL</value></data>
+  <data name="DatabaseSessionResultScopeHint" xml:space="preserve"><value>仅可分享当前 Session 范围下生成的已加载结果。范围或目标变化后，需要你显式执行 SQL 生成新样本。</value></data>
+  <data name="DatabaseSessionCatalogIncomplete" xml:space="preserve"><value>数据库目录未能完整加载，请重试后再全选或调整 Session 范围。</value></data>
+  <data name="DatabaseSessionEditConfiguration" xml:space="preserve"><value>编辑配置</value></data>
+  <data name="DatabaseSessionAgent" xml:space="preserve"><value>Agent</value></data>
+  <data name="DatabaseSessionAgentHint" xml:space="preserve"><value>打开当前 Session 的 Agent，仅可访问此 Session 纳入的数据库。</value></data>
+  <data name="DatabaseSessionSelectedCount" xml:space="preserve"><value>即将打开 {0} 个数据库</value></data>
+  <data name="DatabaseSessionRefreshCatalog" xml:space="preserve"><value>刷新数据库</value></data>
+  <data name="DatabaseSessionObjectActionContext" xml:space="preserve"><value>{0} · 对象：{1}</value></data>
   <data name="WorkspacePaneResize" xml:space="preserve"><value>调整侧边分屏宽度</value></data>
   <data name="SshWorkspaceUnavailable" xml:space="preserve"><value>当前 SSH 连接不可用，请重新连接后重试。</value></data>
   <data name="SshWorkspaceSections" xml:space="preserve"><value>SSH 工作区功能</value></data>
@@ -3967,6 +4026,9 @@
   <data name="SshForwardFailed" xml:space="preserve"><value>无法启动端口转发，请检查本机端口占用和服务器转发策略。</value></data>
   <data name="SshForwardEndpoints" xml:space="preserve"><value>127.0.0.1:{0} → {1}:{2}</value></data>
   <data name="SshActionConfirm" xml:space="preserve"><value>确认</value></data>
+  <data name="DatabaseSessionHideTree" xml:space="preserve"><value>收起数据库树</value></data>
+  <data name="DatabaseSessionShowTree" xml:space="preserve"><value>展开数据库树</value></data>
+  <data name="DatabaseSessionHideAgent" xml:space="preserve"><value>收起 Agent，保留对话和输入草稿</value></data>
   <data name="SshMonitorOverview" xml:space="preserve"><value>概览</value></data>
   <data name="SshMonitorCpu" xml:space="preserve"><value>CPU</value></data>
   <data name="SshMonitorMemory" xml:space="preserve"><value>内存</value></data>

@@ -9,6 +9,19 @@ namespace Asgard.Hermod.PostgreSql.UI.Services;
 /// <summary>公共窗口、原生文件选择和本地 SQL 文件；不自动持久化查询历史。</summary>
 public sealed class WindowsPostgreSqlWorkspaceDialogs(Func<Window?> owner) : IPostgreSqlWorkspaceDialogs
 {
+    /// <inheritdoc />
+    public Task<IReadOnlyList<DatabaseIdentity>?> SelectSessionDatabasesAsync(string instanceName, string endpoint, string sessionName,
+        IReadOnlyList<DatabaseIdentity> candidates, IReadOnlyList<DatabaseIdentity> included) =>
+        Task.FromResult(DatabaseSessionDialogs.Select(owner(), instanceName, endpoint, sessionName, candidates, included));
+    /// <inheritdoc />
+    public Task<Asgard.Hermod.UI.Models.DatabaseRemovalDecision?> ConfirmDatabaseRemovalAsync(string instanceName, string endpoint, Asgard.Hermod.UI.Models.DatabaseRemovalRequest request) =>
+        Task.FromResult(DatabaseSessionDialogs.Remove(owner(), instanceName, endpoint, request));
+    /// <inheritdoc />
+    public Task<bool> ConfirmSessionActionAsync(string instanceName, string sessionName, string actionKey, string endpoint = "") =>
+        Task.FromResult(DatabaseSessionDialogs.Confirm(owner(), instanceName, sessionName, actionKey, endpoint));
+    /// <inheritdoc />
+    public Task<bool> ConfirmAssistantSqlAsync(string sql, string database, string instanceName, string sessionName, string endpoint) =>
+        Task.FromResult(new ConfirmationDialog(Text.Get("DatabaseSessionReviewSql"), Text.Format("DatabaseSessionReviewFacts", instanceName, endpoint, sessionName, database), Text.Get("DatabaseSessionReviewExecute"), preview: sql) { Owner = owner() }.ShowDialog() == true);
     /// <summary>提供保存、放弃和取消三种明确选择。</summary>
     public Task<PostgreSqlDraftChoice> ResolveDraftAsync(string name, bool queryDocument = false)
     {

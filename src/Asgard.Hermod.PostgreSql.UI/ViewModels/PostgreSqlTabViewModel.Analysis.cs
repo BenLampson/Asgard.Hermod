@@ -15,7 +15,7 @@ public sealed partial class PostgreSqlTabViewModel
     /// <summary>服务器返回的执行计划与结果使用相同的有界表格展示。</summary>
     public async Task ExplainScopeAsync(string selection, int caret)
     {
-        if (IsBusy || !IsQuery || CommitInputRequested?.Invoke() == false || !await ResolveDataDraftAsync()) return;
+        if (!CanRun || CommitInputRequested?.Invoke() == false || !await ResolveDataDraftAsync()) return;
         string snapshot = Sql;
         await RunAsync(async token =>
         {

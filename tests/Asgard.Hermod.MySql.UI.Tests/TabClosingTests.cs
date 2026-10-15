@@ -19,7 +19,7 @@ public sealed class TabClosingTests(WpfTestFixture fixture)
         var themes = new ThemeService(Application.Current.Resources); themes.SetTheme(theme);
         var server = new TestMySql(); var configurations = new Configurations();
         await using var model = new MySqlWorkspaceViewModel(new(new("mysql", "Database", "Database", "database", [], TypeId: MySqlIds.Type)),
-            configurations, server, configurations, new TestMySqlDialogs());
+            configurations, server, configurations, new TestMySqlDialogs(), "app");
         await model.InitializeAsync(TestContext.Current.CancellationToken);
         var first = model.ActiveTab!; var second = model.NewQuery()!; var third = model.NewQuery()!;
         var view = new MySqlWorkspaceView { DataContext = model }; var window = new HermodWindow { Content = view, Width = 1120, Height = 780 };

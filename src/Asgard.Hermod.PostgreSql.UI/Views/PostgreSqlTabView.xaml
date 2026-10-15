@@ -5,6 +5,7 @@
  <UserControl.Resources>
   <ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/WorkspaceSelectionStyles.xaml" /></ResourceDictionary.MergedDictionaries>
   <BooleanToVisibilityConverter x:Key="Visible" />
+  <Style x:Key="HistoryItem" TargetType="ListBoxItem"><Setter Property="HorizontalContentAlignment" Value="Stretch" /><Setter Property="VerticalContentAlignment" Value="Center" /></Style>
   <!-- 按设计字体的自然字距排版；普通元数据名称不套用 SQL 等宽字体。 -->
   <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}"><Setter Property="TextOptions.TextFormattingMode" Value="Ideal" /></Style>
   <Style x:Key="StructureHeader" TargetType="DataGridColumnHeader" BasedOn="{StaticResource WorkspaceResultGridHeader}"><Setter Property="FontSize" Value="12" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="Padding" Value="12,0" /><Setter Property="Height" Value="36" /></Style>
@@ -26,7 +27,8 @@
    </Grid>
    <WrapPanel x:Name="QueryToolbar" Visibility="{Binding IsQuery, Converter={StaticResource Visible}}" Margin="0,0,0,4">
     <StackPanel Orientation="Horizontal" Margin="0,0,12,6"><TextBlock Text="{loc:Loc PostgreSqlExecutionDatabase}" FontSize="12" VerticalAlignment="Center" Margin="0,0,8,0" />
-     <ComboBox x:Name="DatabaseSelector" Width="140" Height="32" MinHeight="32" ItemsSource="{Binding Databases}" SelectedItem="{Binding Database, Mode=OneWay}" IsEditable="True" Text="{Binding Database, Mode=OneWay}" SelectionChanged="OnDatabaseChanged" PreviewKeyDown="OnDatabaseKeyDown" AutomationProperties.Name="{loc:Loc PostgreSqlExecutionDatabase}" />
+     <Grid Width="180">     <ComboBox x:Name="DatabaseSelector" Width="180" Height="32" MinHeight="32" Visibility="{Binding HasMultipleDatabases, Converter={StaticResource Visible}}" ItemsSource="{Binding Databases}" SelectedItem="{Binding Database, Mode=OneWay}" IsEditable="False" Text="{Binding Database, Mode=OneWay}" SelectionChanged="OnDatabaseChanged" PreviewKeyDown="OnDatabaseKeyDown" AutomationProperties.Name="{loc:Loc PostgreSqlExecutionDatabase}" /><TextBlock Text="{loc:Loc DatabaseSessionChooseTarget}" Margin="10,0,28,0" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" IsHitTestVisible="False" Foreground="{DynamicResource TextMutedBrush}"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding Database}" Value=""><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock></Grid>
+     <TextBlock Text="{Binding Database}" VerticalAlignment="Center" FontWeight="SemiBold" Visibility="{Binding HasSingleDatabase, Converter={StaticResource Visible}}" />
     </StackPanel>
     <Button x:Name="RunCurrent" Content="{loc:Loc PostgreSqlRunCurrentButton}" IsEnabled="{Binding CanRun}" Style="{StaticResource PrimaryButton}" Click="OnRun" ToolTip="{loc:Loc PostgreSqlRunCurrentHint}" AutomationProperties.Name="{loc:Loc PostgreSqlRunCurrentHint}" Margin="0,0,8,6" />
     <Button x:Name="RunAll" Content="{loc:Loc PostgreSqlRunAllButton}" IsEnabled="{Binding CanRun}" Click="OnRunAll" ToolTip="{loc:Loc PostgreSqlRunAllHint}" AutomationProperties.Name="{loc:Loc PostgreSqlRunAllHint}" Margin="0,0,8,6" />
@@ -65,9 +67,9 @@
      <TextBlock Grid.Row="1" Text="{loc:Loc PostgreSqlNoResults}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding HasResult}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
     </Grid>
     <Expander Grid.Row="3" Header="{loc:Loc PostgreSqlMessages}" Visibility="{Binding HasMessage, Converter={StaticResource Visible}}" Margin="0,8,0,0"><TextBox Text="{Binding Message, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" MaxHeight="100" VerticalScrollBarVisibility="Auto" FontFamily="{DynamicResource MonoFont}" /></Expander>
-    <Expander Grid.Row="4" Header="{loc:Loc PostgreSqlExecutionTrace}" Visibility="{Binding HasExecutionTraces, Converter={StaticResource Visible}}" Margin="0,6,0,0" ToolTip="{loc:Loc PostgreSqlExecutionTraceHint}">
+    <Expander Grid.Row="4" IsExpanded="{Binding IsHistoryOpen, Mode=TwoWay}" Header="{loc:Loc PostgreSqlExecutionTrace}" Visibility="{Binding IsQuery, Converter={StaticResource Visible}}" Margin="0,6,0,0" ToolTip="{loc:Loc PostgreSqlExecutionTraceHint}">
      <Grid Height="180" Margin="0,6,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="2*" /><ColumnDefinition Width="3*" /></Grid.ColumnDefinitions>
-      <ListBox ItemsSource="{Binding ExecutionTraces}" SelectedItem="{Binding SelectedTrace, Mode=TwoWay}" DisplayMemberPath="Summary" ScrollViewer.HorizontalScrollBarVisibility="Auto" AutomationProperties.Name="{loc:Loc PostgreSqlExecutionTrace}" />
+      <ListBox ItemContainerStyle="{StaticResource HistoryItem}" ItemsSource="{Binding ExecutionTraces}" SelectedItem="{Binding SelectedTrace, Mode=TwoWay}" DisplayMemberPath="Summary" ScrollViewer.HorizontalScrollBarVisibility="Auto" AutomationProperties.Name="{loc:Loc PostgreSqlExecutionTrace}" />
       <Grid Grid.Column="1" Margin="8,0,0,0"><Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition Height="*" /></Grid.RowDefinitions>
        <controls:CodeEditor Text="{Binding SelectedTrace.Sql, Mode=OneWay}" IsReadOnly="True" AutomationProperties.Name="{loc:Loc PostgreSqlTraceSql}" />
        <controls:CodeEditor Grid.Row="1" Text="{Binding SelectedTrace.Detail, Mode=OneWay}" IsReadOnly="True" Margin="0,4,0,0" AutomationProperties.Name="{loc:Loc PostgreSqlTraceDetails}" />

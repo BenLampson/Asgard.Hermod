@@ -14,7 +14,7 @@ public sealed class ConnectionFeedbackTests(WpfTestFixture fixture)
     public Task QueryOpenFailure_DoesNotShowAnInlineConnectionError() => fixture.RunAsync(async () =>
     {
         var server = new TestMySql(); var configs = new Configurations();
-        await using var model = new MySqlWorkspaceViewModel(new(new("mysql-test", "MySQL", "MySQL", "database", [], TypeId: MySqlIds.Type, ProviderId: MySqlIds.Direct)), configs, server, configs, new TestMySqlDialogs());
+        await using var model = new MySqlWorkspaceViewModel(new(new("mysql-test", "MySQL", "MySQL", "database", [], TypeId: MySqlIds.Type, ProviderId: MySqlIds.Direct)), configs, server, configs, new TestMySqlDialogs(), "app");
         await model.InitializeAsync(); var tab = Assert.Single(model.Tabs); tab.Sql = "SELECT 1";
         var view = new MySqlWorkspaceView { DataContext = model }; var window = new HermodWindow { Content = view, Width = 1000, Height = 720 };
         try
@@ -35,7 +35,7 @@ public sealed class ConnectionFeedbackTests(WpfTestFixture fixture)
     public Task QuerySessionDisconnect_PreservesDocumentAndDoesNotRepeatPopup() => fixture.RunAsync(async () =>
     {
         var server = new TestMySql(); var configs = new Configurations();
-        await using var model = new MySqlWorkspaceViewModel(new(new("mysql-test", "MySQL", "MySQL", "database", [], TypeId: MySqlIds.Type, ProviderId: MySqlIds.Direct)), configs, server, configs, new TestMySqlDialogs());
+        await using var model = new MySqlWorkspaceViewModel(new(new("mysql-test", "MySQL", "MySQL", "database", [], TypeId: MySqlIds.Type, ProviderId: MySqlIds.Direct)), configs, server, configs, new TestMySqlDialogs(), "app");
         await model.InitializeAsync(); var tab = Assert.Single(model.Tabs); tab.Sql = "SELECT 'retained draft';";
         await tab.ExecuteAsync(tab.Sql); var querySession = server.Sessions.Last();
         await Task.Run(querySession.Disconnect); await WpfTestFixture.DrainDispatcherAsync();
@@ -52,7 +52,7 @@ public sealed class ConnectionFeedbackTests(WpfTestFixture fixture)
     {
         Text.SetApplicationCulture(CultureInfo.GetCultureInfo(language)); var themes = new ThemeService(Application.Current.Resources); themes.SetTheme(theme);
         var server = new TestMySql { BlockedOpen = new(TaskCreationOptions.RunContinuationsAsynchronously) }; var configs = new Configurations();
-        await using var model = new MySqlWorkspaceViewModel(new(new("mysql-test", "MySQL", "MySQL", "database", [], TypeId: MySqlIds.Type, ProviderId: MySqlIds.Direct)), configs, server, configs, new TestMySqlDialogs());
+        await using var model = new MySqlWorkspaceViewModel(new(new("mysql-test", "MySQL", "MySQL", "database", [], TypeId: MySqlIds.Type, ProviderId: MySqlIds.Direct)), configs, server, configs, new TestMySqlDialogs(), "app");
         var view = new MySqlWorkspaceView { DataContext = model }; var window = new HermodWindow { Width = 1100, Height = 760, Content = view };
         try
         {

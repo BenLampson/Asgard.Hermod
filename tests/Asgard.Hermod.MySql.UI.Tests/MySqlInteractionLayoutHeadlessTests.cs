@@ -77,7 +77,7 @@ public sealed class MySqlInteractionLayoutHeadlessTests(WpfTestFixture fixture)
     public Task MiddleClick_ClosesPointedTabThroughExistingDraftPreflight() => fixture.RunOffscreenAsync(async () =>
     {
         var server = new TestMySql(); var dialogs = new TestMySqlDialogs(); var configs = new Configurations();
-        await using var page = new MySqlWorkspaceViewModel(new(Configurations.Instance), configs, server, configs, dialogs);
+        await using var page = new MySqlWorkspaceViewModel(new(Configurations.Instance), configs, server, configs, dialogs, "app");
         await page.InitializeAsync(); var first = page.ActiveTab!; var second = page.NewQuery()!;
         first.Sql = "unsaved";
         var tabs = new Asgard.Hermod.UI.Controls.WorkspaceTabStrip { ItemsSource = page.Tabs, SelectedItem = second, CloseCommand = page.CloseTabCommand };

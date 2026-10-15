@@ -127,6 +127,13 @@ internal static partial class IconCatalog
         ["panel-left"] = Create(
             "M 5,3 H 19 A 2,2 0 0 1 21,5 V 19 A 2,2 0 0 1 19,21 H 5 A 2,2 0 0 1 3,19 V 5 A 2,2 0 0 1 5,3 Z",
             "M9 3v18"),
+        // 在已有侧栏轮廓上添加方向提示，区分收起与展开操作。
+        ["panel-left-close"] = Create(
+            "M5 3H19A2 2 0 0 1 21 5V19A2 2 0 0 1 19 21H5A2 2 0 0 1 3 19V5A2 2 0 0 1 5 3Z",
+            "M9 3v18", "m16 9-3 3 3 3"),
+        ["panel-left-open"] = Create(
+            "M5 3H19A2 2 0 0 1 21 5V19A2 2 0 0 1 19 21H5A2 2 0 0 1 3 19V5A2 2 0 0 1 5 3Z",
+            "M9 3v18", "m13 9 3 3-3 3"),
         ["play"] = Create(
             "M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"),
         ["plus"] = Create(

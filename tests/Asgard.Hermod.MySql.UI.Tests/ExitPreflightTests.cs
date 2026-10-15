@@ -13,7 +13,7 @@ public sealed class ExitPreflightTests(WpfTestFixture fixture)
         var server = new TestMySql { InTransaction = true };
         var configurations = new Configurations();
         await using var first = new MySqlWorkspaceViewModel(new(new("one", "Database", "Database", "database", [], TypeId: MySqlIds.Type)),
-            configurations, server, configurations, new TestMySqlDialogs { Choice = MySqlDraftChoice.Discard });
+            configurations, server, configurations, new TestMySqlDialogs { Choice = MySqlDraftChoice.Discard }, "app");
         await first.InitializeAsync(TestContext.Current.CancellationToken);
         var tab = first.ActiveTab!; await tab.ExecuteAsync("SELECT * FROM users");
         var grid = tab.SelectedResult!; var row = grid.Rows[0];

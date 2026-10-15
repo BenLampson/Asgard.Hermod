@@ -22,7 +22,7 @@ public partial class MySqlWorkspaceView : UserControl
     private void OnModelChanged(object? sender, PropertyChangedEventArgs args) { if (args.PropertyName == nameof(MySqlWorkspaceViewModel.ActiveTab)) ShowTab(); }
     private void ShowTab()
     {
-        // Details 在关闭时不属于可视树，直接赋值避免脱离树的隐式 DataContext 绑定失败。
+        // 分屏收起时保留同一助手视图与会话，只更新当前 Session 的绑定。
         AssistantPanel.DataContext = _model?.Assistant;
         if (_model is null) return;
         foreach (var stale in _views.Keys.Where(tab => !_model.Tabs.Contains(tab)).ToArray()) _views.Remove(stale);
@@ -47,7 +47,7 @@ public partial class MySqlWorkspaceView : UserControl
             if (source is ButtonBase) return;
             if (source is not TreeViewItem item) continue;
             if (item.DataContext is MySqlTreeNode { Object.Kind: MySqlObjectKind.Database } node && ReferenceEquals(_model.SelectedNode, node))
-            { _model.OpenDatabase(node.Object.Name); args.Handled = true; }
+            { if (_model.IsCatalog) _model.OpenDatabase(node.Object.Name); else node.IsExpanded = !node.IsExpanded; args.Handled = true; }
             return;
         }
     }
@@ -66,7 +66,7 @@ public partial class MySqlWorkspaceView : UserControl
     private void Layout()
     {
         bool docked = !_compact && _treeVisible;
-        DrawerButton.Visibility = Visibility.Visible;
+        DrawerButton.Visibility = docked || _compact && _drawer ? Visibility.Collapsed : Visibility.Visible;
         TreeColumn.MinWidth = docked ? 200 : 0; TreeColumn.Width = new(docked ? Math.Max(200, _treeWidth) : 0); SplitterColumn.Width = new(docked ? 6 : 0);
         Splitter.Visibility = docked ? Visibility.Visible : Visibility.Collapsed;
         TreePanel.Visibility = docked || _compact && _drawer ? Visibility.Visible : Visibility.Collapsed;

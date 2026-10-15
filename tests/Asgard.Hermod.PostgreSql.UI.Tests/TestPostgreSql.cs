@@ -4,6 +4,9 @@ namespace Asgard.Hermod.PostgreSql.Tests;
 
 internal sealed class TestPostgreSql : IPostgreSqlSessionFactory
 {
+    internal int DatabasePageSize = int.MaxValue;
+    internal string[] DatabaseNames = ["app"];
+    internal List<string> MetadataDatabases { get; } = [];
     internal static InstanceConnectionOptions Connection => new() { TypeId = PostgreSqlIds.Type, ProviderId = PostgreSqlIds.Direct, Parameters = new Dictionary<string, string> { ["host"] = "localhost", ["user"] = "test", ["database"] = "app" } };
     internal static readonly PostgreSqlColumn[] Columns = [new(0, "id", "INT", typeof(int), false, "app", "users", "id", true, true),
         new(1, "name", "VARCHAR(100)", typeof(string), true, "app", "users", "name", false, true), new(2, "profile", "JSON", typeof(string), true, "app", "users", "profile", false, true),
@@ -41,10 +44,11 @@ internal sealed class TestPostgreSql : IPostgreSqlSessionFactory
         public Task<string> ReadDefinitionAsync(PostgreSqlObject item, CancellationToken token = default) => Task.FromResult("CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100));");
         public Task<PostgreSqlObjectPage> ListAsync(PostgreSqlObject parent, int offset, CancellationToken token = default)
         {
+            server.MetadataDatabases.Add(parent.Database);
             if (server.ListFailure is { } error) throw error;
             PostgreSqlObject[] items = parent.Kind switch
             {
-                PostgreSqlObjectKind.Root => [new(PostgreSqlObjectKind.Database, "app", "app"), new(PostgreSqlObjectKind.Database, "reporting", "reporting")],
+                PostgreSqlObjectKind.Root => server.DatabaseNames.Select(name => new PostgreSqlObject(PostgreSqlObjectKind.Database, name, name)).ToArray(),
                 PostgreSqlObjectKind.Database => [new(PostgreSqlObjectKind.Schema, "public", CurrentDatabase, Schema: "public"), new(PostgreSqlObjectKind.Schema, "sales", CurrentDatabase, Schema: "sales")],
                 PostgreSqlObjectKind.Schema => [new(PostgreSqlObjectKind.Tables, "", CurrentDatabase, Schema: parent.Schema), new(PostgreSqlObjectKind.Views, "", CurrentDatabase, Schema: parent.Schema)],
                 PostgreSqlObjectKind.Tables => [new(PostgreSqlObjectKind.Table, "users", CurrentDatabase, Schema: parent.Schema)],
@@ -52,6 +56,7 @@ internal sealed class TestPostgreSql : IPostgreSqlSessionFactory
                 PostgreSqlObjectKind.Columns => Columns.Select(column => new PostgreSqlObject(PostgreSqlObjectKind.Column, column.Name, CurrentDatabase, "users", column.TypeName, parent.Schema)).ToArray(),
                 _ => [],
             };
+            if (parent.Kind == PostgreSqlObjectKind.Root) return Task.FromResult(new PostgreSqlObjectPage(items.Skip(offset).Take(server.DatabasePageSize).ToArray(), (long)offset + server.DatabasePageSize < items.Length));
             return Task.FromResult(new PostgreSqlObjectPage(items, false));
         }
         public Task<PostgreSqlTable> DescribeAsync(string database, string table, CancellationToken token = default) => Task.FromResult(server.Table);
@@ -89,6 +94,15 @@ internal sealed class TestPostgreSql : IPostgreSqlSessionFactory
 
 internal sealed class TestPostgreSqlDialogs : IPostgreSqlWorkspaceDialogs
 {
+    internal bool ActionAllowed = true;
+    internal int RemovalConfirmations, ActionConfirmations;
+    internal Asgard.Hermod.UI.Models.DatabaseRemovalDecision? RemovalDecision;
+    internal IReadOnlyList<DatabaseIdentity>? SelectedDatabases;
+    internal Func<Task<Asgard.Hermod.UI.Models.DatabaseRemovalDecision?>>? RemovalConfirmation { get; set; }
+    public Task<bool> ConfirmSessionActionAsync(string instanceName, string sessionName, string actionKey, string endpoint = "") { ActionConfirmations++; return Task.FromResult(ActionAllowed); }
+    public Task<IReadOnlyList<DatabaseIdentity>?> SelectSessionDatabasesAsync(string instanceName, string endpoint, string sessionName, IReadOnlyList<DatabaseIdentity> candidates, IReadOnlyList<DatabaseIdentity> included) => Task.FromResult(SelectedDatabases);
+    public Task<Asgard.Hermod.UI.Models.DatabaseRemovalDecision?> ConfirmDatabaseRemovalAsync(string instanceName, string endpoint, Asgard.Hermod.UI.Models.DatabaseRemovalRequest request)
+    { RemovalConfirmations++; return RemovalConfirmation?.Invoke() ?? Task.FromResult(RemovalDecision); }
     internal PostgreSqlDraftChoice Choice = PostgreSqlDraftChoice.Cancel;
     internal int Conflicts, Fields;
     internal Func<PostgreSqlFieldEditorViewModel, Task>? FieldOpened { get; set; }

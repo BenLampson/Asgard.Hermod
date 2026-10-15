@@ -11,7 +11,7 @@ public sealed class TableInteractionHeadlessTests(WpfTestFixture fixture)
     {
         var server = new TestMySql(); var dialogs = new TestMySqlDialogs(); var configs = new Configurations();
         server.PageResult = (offset, _, _) => server.Result() with { HasMore = offset == 0 };
-        await using var page = new MySqlWorkspaceViewModel(new(Configurations.Instance), configs, server, configs, dialogs);
+        await using var page = new MySqlWorkspaceViewModel(new(Configurations.Instance), configs, server, configs, dialogs, "app");
         await page.InitializeAsync(); await page.OpenObjectAsync(new(MySqlObjectKind.Table, "users", "app")); var table = page.ActiveTab!;
         Assert.True(table.HasNextPage); Assert.False(table.HasPreviousPage);
         await table.ChangePageSizeAsync(50); Assert.Equal(50, server.PageReads.Last().Size);
@@ -39,15 +39,15 @@ public sealed class TableInteractionHeadlessTests(WpfTestFixture fixture)
     });
 
     [Fact]
-    public Task NewQuery_UsesSelectedSchemaThenActiveContextAndKeepsOlderDocuments() => fixture.RunOffscreenAsync(async () =>
+    public Task NewQuery_UsesSessionScopeAndIgnoresTreeSelection() => fixture.RunOffscreenAsync(async () =>
     {
         var server = new TestMySql(); var configs = new Configurations();
-        await using var page = new MySqlWorkspaceViewModel(new(Configurations.Instance), configs, server, configs, new TestMySqlDialogs());
+        await using var page = new MySqlWorkspaceViewModel(new(Configurations.Instance), configs, server, configs, new TestMySqlDialogs(), "app");
         await page.InitializeAsync(); var original = page.ActiveTab!; await original.ChangeDatabaseAsync("active-context");
         var schema = Assert.Single(page.Tree!.Root.Children); page.SelectedNode = schema;
-        var selected = page.NewQuery()!; Assert.Equal("app", selected.Database); Assert.Equal("active-context", original.Database);
+        var selected = page.NewQuery()!; Assert.Equal("app", selected.Database); Assert.Equal("app", original.Database);
         page.SelectedNode = null; await selected.ChangeDatabaseAsync("manual-context");
-        var next = page.NewQuery()!; Assert.Equal("manual-context", next.Database);
+        var next = page.NewQuery()!; Assert.Equal("app", next.Database);
         Assert.False(next.ShowTableControls); await next.ChangePageSizeAsync(50); Assert.Equal(200, next.PageSize);
         Assert.Empty(server.PageReads);
     });

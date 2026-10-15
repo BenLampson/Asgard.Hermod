@@ -78,7 +78,7 @@ public sealed class PostgreSqlInteractionLayoutHeadlessTests(WpfTestFixture fixt
     public Task MiddleClick_ClosesPointedTabThroughExistingDraftPreflight() => fixture.RunOffscreenAsync(async () =>
     {
         var server = new TestPostgreSql(); var dialogs = new TestPostgreSqlDialogs(); var configs = new Configurations();
-        await using var page = new PostgreSqlWorkspaceViewModel(new(Configurations.Instance), configs, server, configs, dialogs);
+        await using var page = new PostgreSqlWorkspaceViewModel(new(Configurations.Instance), configs, server, configs, dialogs, "app");
         await page.InitializeAsync(); var first = page.ActiveTab!; var second = page.NewQuery()!;
         first.Sql = "unsaved";
         var tabs = new Asgard.Hermod.UI.Controls.WorkspaceTabStrip { ItemsSource = page.Tabs, SelectedItem = second, CloseCommand = page.CloseTabCommand };

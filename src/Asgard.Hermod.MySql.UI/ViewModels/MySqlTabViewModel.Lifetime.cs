@@ -21,6 +21,7 @@ public sealed partial class MySqlTabViewModel
     /// <summary>解除旧物理会话，已有文稿、分页、草稿与未知写入状态原样保留。</summary>
     public async Task DisconnectSessionAsync()
     {
+        _assistantContextIdentity = new();
         SetConnectionAvailability(false);
         await _sessionOpenGate.WaitAsync();
         try { var previous = _session; _session = null; if (previous is not null) await previous.DisposeAsync(); }
@@ -29,11 +30,11 @@ public sealed partial class MySqlTabViewModel
         _executed = false;
     }
     /// <summary>新连接配置只供下一次显式读取或执行，不自动重放 SQL。</summary>
-    public void RebindConnection(InstanceConnectionOptions options) { _options = options; SetConnectionAvailability(true); }
+    public void RebindConnection(InstanceConnectionOptions options) { _options = options; var endpoint = MySqlSessionOptions.Parse(options); Endpoint = Text.Format("MySqlEndpoint", endpoint.Host, endpoint.Port); SetConnectionAvailability(true); }
     /// <summary>光标语句定位使用服务器模式，不改变用户完整文稿。</summary>
     public async Task ExecuteScopeAsync(string selection, int caret, bool all)
     {
-        if (IsBusy || !IsQuery || CommitInputRequested?.Invoke() == false || !await ResolveDataDraftAsync()) return;
+        if (!CanRun || CommitInputRequested?.Invoke() == false || !await ResolveDataDraftAsync()) return;
         string snapshot = Sql;
         await RunAsync(async token =>
         {
@@ -54,13 +55,18 @@ public sealed partial class MySqlTabViewModel
     /// <summary>确认草稿和事务后变更此查询的数据库上下文。</summary>
     public async Task ChangeDatabaseAsync(string database)
     {
-        if (IsBusy || !IsQuery || Database == database || !await ResolveDataDraftAsync()) return;
-        if (_session is not null && _executed && _session.State.InTransaction != false)
+        if (IsBusy || IsManagingScope || !IsQuery || !ConnectionAvailable || Database == database) return;
+        if (Scope is not null && !Scope.Contains(database)) { Error = Text.Get("DatabaseSessionTargetOutsideScope"); Refresh(); return; }
+        var plan = await PrepareReconnectAsync();
+        if (plan is null || _disposed || IsBusy || Scope is not null && !Scope.Contains(database)) return;
+        IsManagingScope = true;
+        try
         {
-            if (!await _dialogs.ConfirmEndSessionAsync()) return;
-            try { await _session.RollbackAsync(_lifetime.Token); } catch (Exception error) { Error = Text.Error(error, "MySqlCommandFailed"); Refresh(); return; }
+            await plan.CommitAsync(); await DisconnectSessionAsync();
+            Database = database; Scope?.SelectExecutionTarget(database); RebindConnection(_options);
         }
-        Database = database; _completionMetadata.Clear(); Refresh();
+        catch (Exception error) { Error = Text.Error(error, "MySqlCommandFailed"); }
+        finally { IsManagingScope = false; Refresh(); }
     }
     /// <summary>只保存 SQL 文件，失败时保留文稿。</summary>
     public async Task SaveDocumentAsync()
@@ -129,7 +135,7 @@ public sealed partial class MySqlTabViewModel
     /// <summary>取消或等待未完成工作后释放会话资源。</summary>
     public async ValueTask DisposeAsync()
     {
-        if (_disposed) return; _disposed = true; _lifetime.Cancel(); _pending?.Cancel();
+        if (_disposed) return; if (Scope is not null) Scope.PropertyChanged -= OnScopeChanged; _disposed = true; _lifetime.Cancel(); _pending?.Cancel();
         if (_completion is not null) await _completion.Task;
         foreach (var grid in Results) grid.DraftChanged -= DraftChanged;
         CommitInputRequested = null;

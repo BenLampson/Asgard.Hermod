@@ -9,16 +9,17 @@ public sealed partial class PostgreSqlTabViewModel
     /// <summary>视图通过原生编辑器插入文本，保留光标、选区和撤销历史。</summary>
     public Action<string>? InsertSqlRequested { get; set; }
     /// <summary>建议绑定原物理会话，重连和切库会使旧建议的执行资格失效。</summary>
-    internal object? AssistantSessionIdentity => _session;
+    private object _assistantContextIdentity = new();
+    internal object AssistantSessionIdentity => _assistantContextIdentity;
 
     /// <summary>确认完整 SQL 和实际目标，并在草稿确认后再次验证原会话。</summary>
     public async Task ExecuteAssistantSqlAsync(PostgreSqlAssistantSql suggestion)
     {
         ArgumentNullException.ThrowIfNull(suggestion);
         if (!CanRun || _disposed) return;
-        bool Matches() => suggestion.Database == Database && ReferenceEquals(suggestion.SessionIdentity, _session);
+        bool Matches() => suggestion.ScopeRevision == ScopeRevision && suggestion.Database == Database && ReferenceEquals(suggestion.SessionIdentity, AssistantSessionIdentity);
         if (!Matches()) { Error = Text.Get("PostgreSqlAssistantContextChanged"); Refresh(); return; }
-        if (!await _dialogs.ConfirmAssistantSqlAsync(suggestion.Sql, Database) || !Matches() || _disposed || !CanRun) return;
+        if (!await _dialogs.ConfirmAssistantSqlAsync(suggestion.Sql, Database, Instance?.Name ?? "", Name, Endpoint) || !Matches() || _disposed || !CanRun) return;
         if (CommitInputRequested?.Invoke() == false || !await ResolveDataDraftAsync()) return;
         if (!Matches()) { Error = Text.Get("PostgreSqlAssistantContextChanged"); Refresh(); return; }
         await RunAsync(token => Matches() ? ExecuteCoreAsync(suggestion.Sql, token) : Task.CompletedTask);
@@ -35,25 +36,28 @@ public sealed partial class PostgreSqlTabViewModel
     /// <summary>在现有页签会话中串行读取有限元数据；结果只在明确选择后加入上下文。</summary>
     public async Task<AgentSqlContext> ReadAssistantContextAsync(bool includeSql, bool includeResults, CancellationToken cancellationToken)
     {
-        if (IsBusy || !ConnectionAvailable || _disposed) throw Text.Exception("PostgreSqlAssistantSessionBusy");
+        if (IsBusy || IsManagingScope || !ConnectionAvailable || _disposed) throw Text.Exception("PostgreSqlAssistantSessionBusy");
         AgentSqlContext? context = null;
         await RunAsync(async token =>
         {
             using var linked = CancellationTokenSource.CreateLinkedTokenSource(token, cancellationToken);
-            var session = await SessionAsync(linked.Token);
             var schema = new StringBuilder();
-            if (Database.Length > 0)
+            foreach (string database in Scope?.Databases.Select(item => item.Name) ?? (Database.Length > 0 ? new[] { Database } : []))
             {
-                var schemas = await session.ListAsync(new(PostgreSqlObjectKind.Database, Database, Database), 0, linked.Token);
+                if (schema.Length >= 16000) break;
+                var values = new Dictionary<string, string>(_options.Parameters, StringComparer.Ordinal) { ["database"] = database };
+                await using var session = Scope is null ? null : await _factory.OpenAsync(new InstanceConnectionOptions { TypeId = _options.TypeId, ProviderId = _options.ProviderId, Parameters = values }, linked.Token);
+                var metadata = session ?? await SessionAsync(linked.Token);
+                var schemas = await metadata.ListAsync(new(PostgreSqlObjectKind.Database, database, database), 0, linked.Token);
                 foreach (var scope in schemas.Items.Where(item => item.Kind == PostgreSqlObjectKind.Schema).Take(8))
                     foreach (var kind in new[] { PostgreSqlObjectKind.Tables, PostgreSqlObjectKind.Views })
                     {
-                        var page = await session.ListAsync(new(kind, "", Database, Schema: scope.Name), 0, linked.Token);
-                        foreach (var item in page.Items.Take(80)) schema.AppendLine(PostgreSqlSql.Quote(item.Schema) + "." + PostgreSqlSql.Quote(item.Name));
+                        var page = await metadata.ListAsync(new(kind, "", database, Schema: scope.Name), 0, linked.Token);
+                        foreach (var item in page.Items.Take(80)) schema.AppendLine(PostgreSqlSql.Quote(database) + "." + PostgreSqlSql.Quote(item.Schema) + "." + PostgreSqlSql.Quote(item.Name));
                         // 只加载文稿提及的少量表字段，不扫描整库。
                         foreach (var item in page.Items.Where(item => item.Name == Name || Sql.Contains(item.Name, StringComparison.OrdinalIgnoreCase)).Take(4))
                         {
-                            var columns = await session.ListAsync(new(PostgreSqlObjectKind.Columns, "", Database, item.Name, Schema: scope.Name), 0, linked.Token);
+                            var columns = await metadata.ListAsync(new(PostgreSqlObjectKind.Columns, "", database, item.Name, Schema: scope.Name), 0, linked.Token);
                             foreach (var column in columns.Items.Take(80))
                                 schema.AppendLine(PostgreSqlSql.Quote(scope.Name) + "." + PostgreSqlSql.Quote(item.Name) + "." + PostgreSqlSql.Quote(column.Name) + " " + column.Detail);
                         }
@@ -61,7 +65,7 @@ public sealed partial class PostgreSqlTabViewModel
             }
             string schemaText = schema.ToString();
             context = new(Database, schemaText[..Math.Min(schemaText.Length, 16000)], includeSql ? Sql[..Math.Min(Sql.Length, 16000)] : "",
-                includeResults ? AssistantResultSample() : "", Dialect: "PostgreSQL");
+                includeResults && CanShareResults ? AssistantResultSample() : "", Dialect: "PostgreSQL", ScopeId: Id + ":" + ScopeRevision, Databases: Scope?.Databases.Select(item => item.Name).ToArray());
         });
         cancellationToken.ThrowIfCancellationRequested();
         return context ?? throw Text.Exception("PostgreSqlAssistantContextFailed");

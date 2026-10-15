@@ -34,7 +34,7 @@ public sealed partial class PostgreSqlTabViewModel : ObservableObject, IAsyncDis
         CancelCommand = new RelayCommand(_ => _pending?.Cancel(), _ => IsBusy);
         SaveDocumentCommand = new AsyncRelayCommand(_ => SaveDocumentAsync(), _ => IsQuery && !IsBusy);
         SaveChangesCommand = new AsyncRelayCommand(_ => SaveChangesAsync(), _ => ConnectionAvailable && !IsBusy && HasDataDraft && !OutcomeUnknown);
-        RevertCommand = new RelayCommand(_ => { foreach (var grid in Results) grid.Revert(); }, _ => ConnectionAvailable && !IsBusy && HasDataDraft && !OutcomeUnknown);
+        RevertCommand = new AsyncRelayCommand(async _ => { if (await ConfirmRemovalAsync("DatabaseSessionDiscardRows")) foreach (var grid in Results) grid.Revert(); }, _ => ConnectionAvailable && !IsBusy && HasDataDraft && !OutcomeUnknown);
         VerifyCommand = new AsyncRelayCommand(_ => VerifyAsync(), _ => ConnectionAvailable && !IsBusy && OutcomeUnknown);
         PreviousCommand = new AsyncRelayCommand(_ => PageAsync(-PageSize), _ => ConnectionAvailable && !IsBusy && HasPreviousPage);
         NextCommand = new AsyncRelayCommand(_ => PageAsync(PageSize), _ => ConnectionAvailable && !IsBusy && HasNextPage);
@@ -75,7 +75,7 @@ public sealed partial class PostgreSqlTabViewModel : ObservableObject, IAsyncDis
     /// <summary>连接或命令正在执行，禁止重复操作。</summary>
     public bool IsBusy { get; private set; }
     /// <summary>当前允许启动新的 SQL 执行。</summary>
-    public bool CanRun => ConnectionAvailable && IsQuery && !IsBusy;
+    public bool CanRun => ConnectionAvailable && IsQuery && !IsBusy && !IsManagingScope && (Scope is null || Scope.Contains(Database));
     /// <summary>实例掉线后只允许本地文稿、复制和关闭，不新建或发送协议命令。</summary>
     public bool ConnectionAvailable { get; private set; } = true;
     /// <summary>保持文稿、结果和数据草稿，仅刷新远程操作启用条件。</summary>
@@ -104,7 +104,7 @@ public sealed partial class PostgreSqlTabViewModel : ObservableObject, IAsyncDis
     /// <summary>每个语句和结果集独立保留的网格。</summary>
     public ObservableCollection<PostgreSqlGridViewModel> Results { get; } = [];
     /// <summary>活动结果集，切换保留列宽和滚动。</summary>
-    public PostgreSqlGridViewModel? SelectedResult { get; set { if (SetProperty(ref field, value)) { OnPropertyChanged(nameof(EditHint)); OnPropertyChanged(nameof(HasResult)); OnPropertyChanged(nameof(HasDataRows)); OnPropertyChanged(nameof(CanEditRows)); } } }
+    public PostgreSqlGridViewModel? SelectedResult { get; set { if (SetProperty(ref field, value)) { OnPropertyChanged(nameof(EditHint)); OnPropertyChanged(nameof(HasResult)); OnPropertyChanged(nameof(CanShareResults)); OnPropertyChanged(nameof(HasDataRows)); OnPropertyChanged(nameof(CanEditRows)); } } }
     /// <summary>当前是否有结果可展示。</summary>
     public bool HasResult => SelectedResult is not null;
     /// <summary>当前结果实际包含数据行，区别于尚未查询和已查询的空结果。</summary>
@@ -130,7 +130,7 @@ public sealed partial class PostgreSqlTabViewModel : ObservableObject, IAsyncDis
     /// <summary>协调公共控件的操作命令，启用条件由当前状态决定。</summary>
     public AsyncRelayCommand SaveChangesCommand { get; }
     /// <summary>协调公共控件的操作命令，启用条件由当前状态决定。</summary>
-    public RelayCommand RevertCommand { get; }
+    public AsyncRelayCommand RevertCommand { get; }
     /// <summary>协调公共控件的操作命令，启用条件由当前状态决定。</summary>
     public AsyncRelayCommand VerifyCommand { get; }
     /// <summary>协调公共控件的操作命令，启用条件由当前状态决定。</summary>
@@ -150,6 +150,7 @@ public sealed partial class PostgreSqlTabViewModel : ObservableObject, IAsyncDis
     }
     private async Task<IPostgreSqlSession> SessionAsync(CancellationToken token)
     {
+        if (Scope is not null && (!Scope.Contains(Database) || IsManagingScope)) throw Text.Exception("DatabaseSessionTargetOutsideScope");
         if (!ConnectionAvailable || _disposed) throw Text.Exception("PostgreSqlConnectionFailed");
         await _sessionGate.WaitAsync(token);
         try
@@ -161,7 +162,7 @@ public sealed partial class PostgreSqlTabViewModel : ObservableObject, IAsyncDis
                 // 提供方可能在取消后才完成连接；迟到连接不能覆盖关闭或重连状态。
                 if (_disposed || !ConnectionAvailable || token.IsCancellationRequested)
                 { await opened.DisposeAsync(); token.ThrowIfCancellationRequested(); throw Text.Exception("PostgreSqlConnectionFailed"); }
-                _session = opened;
+                _session = opened; _assistantContextIdentity = new();
             }
             if (!_session.IsConnected) throw new PostgreSqlFailure("PostgreSqlConnectionFailed", "POSTGRESQL_CONNECTION");
             return _session;
@@ -195,7 +196,9 @@ public sealed partial class PostgreSqlTabViewModel : ObservableObject, IAsyncDis
     /// <summary>串行执行 SQL，保留已完成的结果和安全失败状态。</summary>
     public async Task ExecuteAsync(string sql)
     {
-        if (IsBusy || !IsQuery || sql.Length == 0 || CommitInputRequested?.Invoke() == false || !await ResolveDataDraftAsync()) return;
+        string target = Database; long revision = ScopeRevision;
+        if (!CanRun || sql.Length == 0 || CommitInputRequested?.Invoke() == false || !await ResolveDataDraftAsync()) return;
+        if (target != Database || revision != ScopeRevision || !CanRun) return;
         await RunAsync(token => ExecuteCoreAsync(sql, token));
     }
     private async Task ExecuteCoreAsync(string sql, CancellationToken token)
@@ -203,7 +206,7 @@ public sealed partial class PostgreSqlTabViewModel : ObservableObject, IAsyncDis
         if (sql.Length == 0) return;
         var session = await SessionAsync(token); _executed = true;
         var execution = await ExecuteTrackedAsync(session, sql, false, token);
-        Database = session.CurrentDatabase;
+        if (Scope is null) Database = session.CurrentDatabase;
         SetResults(execution.Results);
         Error = execution.Failure is null ? "" : Text.Error(execution.Failure, "PostgreSqlCommandFailed");
         Message = string.Join(Environment.NewLine, execution.Outcomes.Select(outcome => Text.Format(outcome.Succeeded ? "PostgreSqlStatementSucceeded" : "PostgreSqlStatementStopped", outcome.Statement, Math.Max(0, outcome.AffectedRows))));
@@ -211,6 +214,7 @@ public sealed partial class PostgreSqlTabViewModel : ObservableObject, IAsyncDis
     }
     private void SetResults(IEnumerable<PostgreSqlResult> results)
     {
+        _resultScopeRevision = ScopeRevision;
         foreach (var grid in Results) grid.DraftChanged -= DraftChanged; Results.Clear();
         foreach (var result in results) { var grid = new PostgreSqlGridViewModel(result); grid.DraftChanged += DraftChanged; Results.Add(grid); }
         SelectedResult = Results.FirstOrDefault(); DraftChanged();

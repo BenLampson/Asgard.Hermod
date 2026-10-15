@@ -43,6 +43,7 @@ public sealed partial class MySqlTabViewModel
     }
     private async Task ApplyFilterAsync(bool clear)
     {
+        if (clear && AppliedFilter.Length > 0 && !await ConfirmRemovalAsync("DatabaseSessionRemoveFilter")) return;
         if (!ConnectionAvailable || !ShowTableControls || IsBusy || CommitInputRequested?.Invoke() == false) return;
         string candidate = clear ? "" : FilterText.Trim();
         try

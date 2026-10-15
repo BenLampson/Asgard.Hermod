@@ -13,7 +13,11 @@ system trust or a custom CA and optional client certificate can be configured.
 Database and SSH credentials use the existing encrypted configuration storage.
 Hosting brands remain display metadata and do not alter the connection route.
 
-Opening a database creates a focused workspace. Databases contain schemas, and
+The instance catalog opens script Session workspaces using explicitly included
+databases of the same instance. One eligible database is used directly; multiple
+databases require selection, with an explicit Select all action. A Session retains
+at least one database. Scope changes and removal confirmations follow the shared
+[Session rules](mysql.md#database-catalog-and-script-sessions). Databases contain schemas, and
 schemas contain tables, views, routines and their metadata. Object identity
 includes database, schema, kind and original name. Filtering searches loaded
 objects without scanning the server. Opening a table by name is available when
@@ -55,8 +59,14 @@ unconfirmed dispatched write blocks retries until reconnect-and-verify resolves
 the outcome. SQL NULL, empty text and binary bytes remain distinct.
 
 The optional side assistant shares the separate Agent module and local system
-settings with MySQL. It receives PostgreSQL dialect and the active editor's
-context. Suggested SQL can be inserted into the editor or explicitly executed
+settings with MySQL. The caption Agent action restores a resizable split pane;
+its X hides it while retaining conversation, draft and width. The database explorer
+can be collapsed and restored while retaining expanded branches and selection.
+Conversations belong to script Sessions, including their
+object views. It receives PostgreSQL dialect and bounded metadata only for databases
+in the current Session, along with explicitly selected editor SQL and result samples.
+Changing scope invalidates earlier execution suggestions and stops forwarding old
+scope conversation to the model; visible history is retained until confirmed clearing. Suggested SQL can be inserted into the editor or explicitly executed
 through the active query session. API keys are held only in process memory.
 
 ## Verification
