@@ -24,14 +24,14 @@ public sealed class WorkspaceTabHintTests(WpfTestFixture fixture)
         try
         {
             WindowPreviewCapture.Show(window); await WindowTestVisuals.UpdateLayoutAsync(window);
-            var first = Assert.IsType<ListBoxItem>(strip.ItemContainerGenerator.ContainerFromItem(tabs[0]));
+            var first = Assert.IsType<WorkspaceTabStripItem>(strip.ItemContainerGenerator.ContainerFromItem(tabs[0]));
             Assert.Equal(tabs[0].Header, first.ToolTip); Assert.Equal(tabs[0].Header, AutomationProperties.GetName(first));
             Assert.False(ToolTipService.GetShowsToolTipOnKeyboardFocus(first));
             Assert.InRange(ToolTipService.GetShowDuration(first), 1000, 5000);
             first.IsSelected = true; Assert.True(first.Focus()); await WindowTestVisuals.UpdateLayoutAsync(window);
             await Task.Delay(750, TestContext.Current.CancellationToken);
             Assert.True(first.IsKeyboardFocusWithin); AssertNoOpenTitleHint(first);
-            var second = Assert.IsType<ListBoxItem>(strip.ItemContainerGenerator.ContainerFromItem(tabs[1]));
+            var second = Assert.IsType<WorkspaceTabStripItem>(strip.ItemContainerGenerator.ContainerFromItem(tabs[1]));
             second.IsSelected = true; Assert.True(second.Focus()); await WindowTestVisuals.UpdateLayoutAsync(window);
             AssertNoOpenTitleHint(first); AssertNoOpenTitleHint(second);
             tabs.RemoveAt(1); await WindowTestVisuals.UpdateLayoutAsync(window);

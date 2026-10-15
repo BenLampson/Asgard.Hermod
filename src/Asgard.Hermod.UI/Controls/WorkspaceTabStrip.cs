@@ -25,6 +25,8 @@ public class WorkspaceTabStrip : ListBox
     {
         SizeChanged += (_, _) => UpdateHeaderWidth();
     }
+    /// <summary>Session 文档集合切换会回收容器，使用本地对齐值保护脱离树的过渡状态。</summary>
+    protected override DependencyObject GetContainerForItemOverride() => new WorkspaceTabStripItem();
     /// <summary>在内部视口处理普通滚轮前，将 Shift 滚轮转换为水平像素滚动。</summary>
     protected override void OnPreviewMouseWheel(MouseWheelEventArgs args)
     {

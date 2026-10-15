@@ -37,7 +37,7 @@ public sealed class WorkspaceEditorControlTests(WpfTestFixture fixture)
         try
         {
             WindowPreviewCapture.Show(window); await WindowTestVisuals.UpdateLayoutAsync(window);
-            var item = Assert.IsType<ListBoxItem>(strip.ItemContainerGenerator.ContainerFromIndex(0));
+            var item = Assert.IsType<WorkspaceTabStripItem>(strip.ItemContainerGenerator.ContainerFromIndex(0));
             Assert.Equal(choices[0].Name, item.ToolTip); Assert.Equal(choices[0].Name, System.Windows.Automation.AutomationProperties.GetName(item));
             Assert.Equal("two", section.SelectedValue); Assert.Equal(33, section.ActualHeight);
             Assert.True(trace.Messages.Count == 0, string.Join(Environment.NewLine, trace.Messages.Distinct()));
