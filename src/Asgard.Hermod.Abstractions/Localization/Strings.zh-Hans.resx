@@ -3639,4 +3639,246 @@
   <data name="MySqlTraceSql" xml:space="preserve"><value>执行的 SQL 快照</value></data>
   <data name="MySqlTraceDetails" xml:space="preserve"><value>执行计划或安全错误详情</value></data>
   <data name="MySqlAssistantContextChanged" xml:space="preserve"><value>生成建议后数据库或连接已变化。请重新提问，或将 SQL 插入编辑器并检查执行目标。</value></data>
+  <data name="PostgreSqlTypeHint" xml:space="preserve"><value>浏览数据库和表、执行 SQL 并编辑已验证的数据行。</value></data>
+  <data name="PostgreSqlDirect" xml:space="preserve"><value>直连 TCP</value></data>
+  <data name="PostgreSqlSsh" xml:space="preserve"><value>SSH 隧道</value></data>
+  <data name="PostgreSqlDirectHint" xml:space="preserve"><value>通过 TCP 连接单个 PostgreSQL 服务器。</value></data>
+  <data name="PostgreSqlSshHint" xml:space="preserve"><value>复用 SSH 认证和主机验证，转发数据库连接。</value></data>
+  <data name="PostgreSqlConnectionMethod" xml:space="preserve"><value>连接方式</value></data>
+  <data name="PostgreSqlConnectionMethodHint" xml:space="preserve"><value>选择直连 TCP 或 SSH 隧道。数据库凭据与 SSH 凭据独立。</value></data>
+  <data name="PostgreSqlHost" xml:space="preserve"><value>数据库主机</value></data>
+  <data name="PostgreSqlDefaultDatabase" xml:space="preserve"><value>默认数据库（可选）</value></data>
+  <data name="PostgreSqlDefaultDatabaseHint" xml:space="preserve"><value>留空时连接 postgres 数据库。打开其他数据库会建立独立会话。</value></data>
+  <data name="PostgreSqlTlsMode" xml:space="preserve"><value>TLS 模式</value></data>
+  <data name="PostgreSqlVerifyFull" xml:space="preserve"><value>验证证书和主机名</value></data>
+  <data name="PostgreSqlTlsRequired" xml:space="preserve"><value>要求加密，不验证服务器身份</value></data>
+  <data name="PostgreSqlTlsDisabled" xml:space="preserve"><value>禁用 TLS（明文）</value></data>
+  <data name="PostgreSqlTlsWarning" xml:space="preserve"><value>此模式不验证服务器身份。禁用 TLS 还会以明文传输数据库数据。</value></data>
+  <data name="PostgreSqlClientPfx" xml:space="preserve"><value>客户端证书（PFX）</value></data>
+  <data name="PostgreSqlCommandTimeout" xml:space="preserve"><value>命令超时（秒）</value></data>
+  <data name="PostgreSqlTestHint" xml:space="preserve"><value>验证连接路径、TLS、认证及可选默认数据库，不修改业务数据。</value></data>
+  <data name="PostgreSqlTestPassed" xml:space="preserve"><value>连接验证通过。对象浏览和编辑仍受数据库权限限制。</value></data>
+  <data name="PostgreSqlNetworkVerified" xml:space="preserve"><value>网络路径已验证</value></data>
+  <data name="PostgreSqlTlsVerified" xml:space="preserve"><value>TLS 已建立</value></data>
+  <data name="PostgreSqlPlaintextConnection" xml:space="preserve"><value>明文连接已建立</value></data>
+  <data name="PostgreSqlAuthenticationVerified" xml:space="preserve"><value>数据库认证已验证</value></data>
+  <data name="PostgreSqlDatabaseVerified" xml:space="preserve"><value>可选数据库及查询访问已验证</value></data>
+  <data name="PostgreSqlConfigurationInvalid" xml:space="preserve"><value>PostgreSQL 连接配置无效。</value></data>
+  <data name="PostgreSqlConnectionFailed" xml:space="preserve"><value>无法连接 PostgreSQL，请检查连接设置和网络。</value></data>
+  <data name="PostgreSqlConnectionTimeout" xml:space="preserve"><value>PostgreSQL 连接超时。</value></data>
+  <data name="PostgreSqlSshFailed" xml:space="preserve"><value>无法建立 SSH 隧道，请检查 SSH 认证和主机信任。</value></data>
+  <data name="PostgreSqlTlsFailed" xml:space="preserve"><value>TLS 验证失败，请检查数据库主机名和可信证书链。</value></data>
+  <data name="PostgreSqlCertificateInvalid" xml:space="preserve"><value>客户端证书或可信 CA 文件无效。</value></data>
+  <data name="PostgreSqlPermissionDenied" xml:space="preserve"><value>数据库拒绝了此操作，请检查账号权限。</value></data>
+  <data name="PostgreSqlAuthenticationFailed" xml:space="preserve"><value>数据库认证失败，请检查用户名和密码。</value></data>
+  <data name="PostgreSqlDatabaseUnavailable" xml:space="preserve"><value>数据库不存在或无法访问。</value></data>
+  <data name="PostgreSqlStatementRejected" xml:space="preserve"><value>服务器拒绝了语句（PostgreSQL 错误 {0}）。</value></data>
+  <data name="PostgreSqlQueryCancelled" xml:space="preserve"><value>执行已停止或取消。此前执行的写入可能已经生效，取消不会回滚这些写入。</value></data>
+  <data name="PostgreSqlCommandFailed" xml:space="preserve"><value>PostgreSQL 操作失败，请检查连接和数据库权限。</value></data>
+  <data name="PostgreSqlSaveOutcomeUnknown" xml:space="preserve"><value>保存结果未知，草稿已保留。重新连接并核对受影响的数据行后，再决定是否重试。</value></data>
+  <data name="PostgreSqlSqlIncomplete" xml:space="preserve"><value>SQL 包含未闭合的引号或块注释。</value></data>
+  <data name="PostgreSqlNullNotAllowed" xml:space="preserve"><value>此字段不允许 SQL NULL。</value></data>
+  <data name="PostgreSqlJsonInvalid" xml:space="preserve"><value>第 {0} 行附近的 JSON 无效，输入已保留。</value></data>
+  <data name="PostgreSqlFieldInvalid" xml:space="preserve"><value>此值不符合字段类型。</value></data>
+  <data name="PostgreSqlReadOnlyResult" xml:space="preserve"><value>编辑需要已验证的普通表、完整主键和 UPDATE 权限。SQL 查询结果和视图保持只读。</value></data>
+  <data name="PostgreSqlEditConflict" xml:space="preserve"><value>服务器上的数据行已变化或不存在，草稿已保留。</value></data>
+  <data name="PostgreSqlRowUnavailable" xml:space="preserve"><value>原始数据行已不存在。</value></data>
+  <data name="PostgreSqlRowTooLarge" xml:space="preserve"><value>此行超过编辑大小限制，仅可预览。</value></data>
+  <data name="PostgreSqlEditTransactionActive" xml:space="preserve"><value>请先结束当前事务，再提交表格更改。</value></data>
+  <data name="PostgreSqlPreviewStopped" xml:space="preserve"><value>已达到预览上限（1,000 行或 10 MiB），执行已停止，后续结果或语句未执行。此前已执行的写入不会回滚。</value></data>
+  <data name="PostgreSqlConnectionDetails" xml:space="preserve"><value>连接信息</value></data>
+  <data name="PostgreSqlSecurity" xml:space="preserve"><value>安全设置</value></data>
+  <data name="PostgreSqlAdvanced" xml:space="preserve"><value>高级设置</value></data>
+  <data name="PostgreSqlReady" xml:space="preserve"><value>就绪</value></data>
+  <data name="PostgreSqlDatabaseObjects" xml:space="preserve"><value>数据库对象</value></data>
+  <data name="PostgreSqlRoot" xml:space="preserve"><value>数据库</value></data>
+  <data name="PostgreSqlDatabase" xml:space="preserve"><value>数据库</value></data>
+  <data name="PostgreSqlTables" xml:space="preserve"><value>表</value></data>
+  <data name="PostgreSqlViews" xml:space="preserve"><value>视图</value></data>
+  <data name="PostgreSqlProcedures" xml:space="preserve"><value>存储过程</value></data>
+  <data name="PostgreSqlFunctions" xml:space="preserve"><value>函数</value></data>
+  <data name="PostgreSqlEvents" xml:space="preserve"><value>事件</value></data>
+  <data name="PostgreSqlColumns" xml:space="preserve"><value>字段</value></data>
+  <data name="PostgreSqlIndexes" xml:space="preserve"><value>索引</value></data>
+  <data name="PostgreSqlForeignKeys" xml:space="preserve"><value>外键</value></data>
+  <data name="PostgreSqlTriggers" xml:space="preserve"><value>触发器</value></data>
+  <data name="PostgreSqlParameters" xml:space="preserve"><value>参数</value></data>
+  <data name="PostgreSqlParameter" xml:space="preserve"><value>参数</value></data>
+  <data name="PostgreSqlNotLoaded" xml:space="preserve"><value>尚未加载</value></data>
+  <data name="PostgreSqlLoading" xml:space="preserve"><value>正在加载…</value></data>
+  <data name="PostgreSqlEmptyBranch" xml:space="preserve"><value>此分支没有对象。</value></data>
+  <data name="PostgreSqlLoadMore" xml:space="preserve"><value>加载更多 / 重试</value></data>
+  <data name="PostgreSqlData" xml:space="preserve"><value>数据</value></data>
+  <data name="PostgreSqlStructure" xml:space="preserve"><value>结构</value></data>
+  <data name="PostgreSqlObjectName" xml:space="preserve"><value>对象名称</value></data>
+  <data name="PostgreSqlObjectDetails" xml:space="preserve"><value>类型 / 详情</value></data>
+  <data name="PostgreSqlObjectDefinition" xml:space="preserve"><value>对象定义</value></data>
+  <data name="PostgreSqlResultTab" xml:space="preserve"><value>语句 {0} · 结果 {1}</value></data>
+  <data name="PostgreSqlLoadedRows" xml:space="preserve"><value>已加载 {0} 行 · {1} 列</value></data>
+  <data name="PostgreSqlPreviewRows" xml:space="preserve"><value>不完整预览：{0} 行 · {1} 列</value></data>
+  <data name="PostgreSqlBinaryValue" xml:space="preserve"><value>[BINARY · {0} 字节]</value></data>
+  <data name="PostgreSqlObjectTitle" xml:space="preserve"><value>{0}.{1}.{2}</value></data>
+  <data name="PostgreSqlQueryTitle" xml:space="preserve"><value>查询 {0}</value></data>
+  <data name="PostgreSqlNewQuery" xml:space="preserve"><value>新建查询</value></data>
+  <data name="PostgreSqlConnecting" xml:space="preserve"><value>正在连接…</value></data>
+  <data name="PostgreSqlConnected" xml:space="preserve"><value>已连接</value></data>
+  <data name="PostgreSqlDisconnected" xml:space="preserve"><value>已断开</value></data>
+  <data name="PostgreSqlEndpoint" xml:space="preserve"><value>{0}:{1}</value></data>
+  <data name="PostgreSqlReconnect" xml:space="preserve"><value>重新连接</value></data>
+  <data name="PostgreSqlEditConnection" xml:space="preserve"><value>编辑连接</value></data>
+  <data name="PostgreSqlReconnectToApply" xml:space="preserve"><value>连接设置已保存，请手动重新连接以应用。</value></data>
+  <data name="PostgreSqlCloseTab" xml:space="preserve"><value>关闭页签</value></data>
+  <data name="PostgreSqlRefresh" xml:space="preserve"><value>刷新</value></data>
+  <data name="PostgreSqlRefreshBranch" xml:space="preserve"><value>刷新所选分支</value></data>
+  <data name="PostgreSqlSearchLoaded" xml:space="preserve"><value>筛选已加载对象…</value></data>
+  <data name="PostgreSqlSearchLoadedHint" xml:space="preserve"><value>仅搜索已加载对象并保留祖先层级。展开分支以加载更多对象。</value></data>
+  <data name="PostgreSqlOpenKnownObject" xml:space="preserve"><value>按名称打开表</value></data>
+  <data name="PostgreSqlOpenObject" xml:space="preserve"><value>打开</value></data>
+  <data name="PostgreSqlSqlEditor" xml:space="preserve"><value>SQL 编辑器</value></data>
+  <data name="PostgreSqlQueryResults" xml:space="preserve"><value>查询结果</value></data>
+  <data name="PostgreSqlExecutionDatabase" xml:space="preserve"><value>执行数据库</value></data>
+  <data name="PostgreSqlRun" xml:space="preserve"><value>执行</value></data>
+  <data name="PostgreSqlRunHint" xml:space="preserve"><value>Ctrl+Enter 执行选中 SQL 或当前语句，Ctrl+Shift+Enter 执行全部语句。</value></data>
+  <data name="PostgreSqlExecutionScope" xml:space="preserve"><value>执行范围</value></data>
+  <data name="PostgreSqlRunCurrent" xml:space="preserve"><value>执行选中内容 / 当前语句</value></data>
+  <data name="PostgreSqlRunAll" xml:space="preserve"><value>执行全部语句</value></data>
+  <data name="PostgreSqlCancelQuery" xml:space="preserve"><value>取消执行</value></data>
+  <data name="PostgreSqlSaveQuery" xml:space="preserve"><value>保存 SQL 文件</value></data>
+  <data name="PostgreSqlOpenQuery" xml:space="preserve"><value>打开 SQL 文件</value></data>
+  <data name="PostgreSqlSqlFileFilter" xml:space="preserve"><value>SQL 文件 (*.sql)|*.sql|所有文件 (*.*)|*.*</value></data>
+  <data name="PostgreSqlCsvFileFilter" xml:space="preserve"><value>CSV 文件 (*.csv)|*.csv</value></data>
+  <data name="PostgreSqlFileFailed" xml:space="preserve"><value>文件操作失败，请检查路径和权限。查询内容已保留。</value></data>
+  <data name="PostgreSqlFileTooLarge" xml:space="preserve"><value>SQL 文件超过 10 MiB 上限。</value></data>
+  <data name="PostgreSqlExportLoaded" xml:space="preserve"><value>导出已加载行</value></data>
+  <data name="PostgreSqlNoResults" xml:space="preserve"><value>执行 SQL 或打开表以查看结果。</value></data>
+  <data name="PostgreSqlNoRows" xml:space="preserve"><value>暂无数据。</value></data>
+  <data name="PostgreSqlMessages" xml:space="preserve"><value>执行消息</value></data>
+  <data name="PostgreSqlStatementSucceeded" xml:space="preserve"><value>语句 {0} 执行完成，影响 {1} 行。</value></data>
+  <data name="PostgreSqlStatementStopped" xml:space="preserve"><value>语句 {0} 已停止。此前的语句可能已经生效。</value></data>
+  <data name="PostgreSqlExecutionStatus" xml:space="preserve"><value>{0} 条语句 · {1:N0} 毫秒</value></data>
+  <data name="PostgreSqlPageStatus" xml:space="preserve"><value>第 {0}–{1} 行（分页视图）</value></data>
+  <data name="PostgreSqlPrevious" xml:space="preserve"><value>上一页</value></data>
+  <data name="PostgreSqlNext" xml:space="preserve"><value>下一页</value></data>
+  <data name="PostgreSqlOn" xml:space="preserve"><value>开启</value></data>
+  <data name="PostgreSqlOff" xml:space="preserve"><value>关闭</value></data>
+  <data name="PostgreSqlUnknown" xml:space="preserve"><value>未知</value></data>
+  <data name="PostgreSqlTransactionActive" xml:space="preserve"><value>活动中</value></data>
+  <data name="PostgreSqlTransactionNone" xml:space="preserve"><value>无</value></data>
+  <data name="PostgreSqlSessionStatus" xml:space="preserve"><value>自动提交：{0} · 事务：{1}</value></data>
+  <data name="PostgreSqlPendingChanges" xml:space="preserve"><value>{0} 个字段待保存</value></data>
+  <data name="PostgreSqlInlineEditHint" xml:space="preserve"><value>双击或 F2 编辑，展开单元格可打开字段窗口。表格保存使用独立事务。</value></data>
+  <data name="PostgreSqlOpenField" xml:space="preserve"><value>打开字段窗口（Alt+Enter）</value></data>
+  <data name="PostgreSqlRevertCell" xml:space="preserve"><value>还原此单元格</value></data>
+  <data name="PostgreSqlFieldValue" xml:space="preserve"><value>字段值</value></data>
+  <data name="PostgreSqlSaveChanges" xml:space="preserve"><value>保存更改</value></data>
+  <data name="PostgreSqlRevertChanges" xml:space="preserve"><value>还原更改</value></data>
+  <data name="PostgreSqlOtherResultDraft" xml:space="preserve"><value>请先保存或还原其他结果集中的草稿，再编辑此结果集。</value></data>
+  <data name="PostgreSqlChangesSaved" xml:space="preserve"><value>更改已成功提交。</value></data>
+  <data name="PostgreSqlSaveConfirmedReloadFailed" xml:space="preserve"><value>保存已提交，但无法读取更新后的数据行。继续编辑前请核对数据行，不要重复提交此草稿。</value></data>
+  <data name="PostgreSqlVerifyRows" xml:space="preserve"><value>重新连接并核对数据行</value></data>
+  <data name="PostgreSqlVerifySaved" xml:space="preserve"><value>服务器数据行与提交的更改一致，草稿已清除。</value></data>
+  <data name="PostgreSqlVerifyUnchanged" xml:space="preserve"><value>服务器数据行与原始基线一致，草稿已保留；如需重试，请手动保存。</value></data>
+  <data name="PostgreSqlVerifyConflict" xml:space="preserve"><value>数据行与原始基线及提交值均不一致，请保留草稿并处理差异。</value></data>
+  <data name="PostgreSqlEditField" xml:space="preserve"><value>编辑字段</value></data>
+  <data name="PostgreSqlViewField" xml:space="preserve"><value>查看字段</value></data>
+  <data name="PostgreSqlApplyToGrid" xml:space="preserve"><value>应用到表格</value></data>
+  <data name="PostgreSqlSetNull" xml:space="preserve"><value>设为 SQL NULL</value></data>
+  <data name="PostgreSqlFieldContext" xml:space="preserve"><value>{0}.{1} · {2} · 行主键：{3}</value></data>
+  <data name="PostgreSqlFieldApplyHelp" xml:space="preserve"><value>应用只更新本地表格草稿中的此字段。点击“保存更改”才提交到数据库。</value></data>
+  <data name="PostgreSqlDiscardField" xml:space="preserve"><value>放弃字段输入？</value></data>
+  <data name="PostgreSqlDiscardFieldHint" xml:space="preserve"><value>字段窗口中有尚未应用的输入，是否放弃并关闭？</value></data>
+  <data name="PostgreSqlUnsavedChanges" xml:space="preserve"><value>未保存的更改</value></data>
+  <data name="PostgreSqlQueryCloseHint" xml:space="preserve"><value>关闭前是否保存 SQL 文稿“{0}”？保存不会执行 SQL。</value></data>
+  <data name="PostgreSqlGridCloseHint" xml:space="preserve"><value>“{0}”中的表格有未保存更改。可保存、放弃草稿或取消。放弃草稿不会撤销此前已提交的写入。</value></data>
+  <data name="PostgreSqlDiscard" xml:space="preserve"><value>放弃草稿</value></data>
+  <data name="PostgreSqlStopAndClose" xml:space="preserve"><value>停止执行并关闭</value></data>
+  <data name="PostgreSqlEndTransaction" xml:space="preserve"><value>结束当前会话事务</value></data>
+  <data name="PostgreSqlEndTransactionHint" xml:space="preserve"><value>事务仍在进行或状态未知。是否发送 ROLLBACK 后继续？已提交的写入无法通过此操作撤销。</value></data>
+  <data name="PostgreSqlRollbackAndContinue" xml:space="preserve"><value>回滚并继续</value></data>
+  <data name="PostgreSqlConflictTitle" xml:space="preserve"><value>处理数据行冲突</value></data>
+  <data name="PostgreSqlOriginal" xml:space="preserve"><value>原始基线</value></data>
+  <data name="PostgreSqlServerValue" xml:space="preserve"><value>服务器当前值</value></data>
+  <data name="PostgreSqlYourDraft" xml:space="preserve"><value>当前草稿</value></data>
+  <data name="PostgreSqlKeepDraft" xml:space="preserve"><value>保留草稿</value></data>
+  <data name="PostgreSqlDedicatedWriterRequired" xml:space="preserve"><value>表格更改需要专用的新会话，与 SQL 执行及其事务独立。</value></data>
+  <data name="PostgreSqlFieldTooLarge" xml:space="preserve"><value>字段值超过 10 MiB 编辑上限，输入已保留。</value></data>
+  <data name="PostgreSqlFieldOperationTarget" xml:space="preserve"><value>实例：{0} · 环境：{1}
+{2}</value></data>
+  <data name="PostgreSqlResultRow" xml:space="preserve"><value>结果第 {0} 行</value></data>
+  <data name="PostgreSqlNoOpenTabs" xml:space="preserve"><value>尚未打开表或查询</value></data>
+  <data name="PostgreSqlNoOpenTabsHint" xml:space="preserve"><value>从左侧对象树选择一张表，或新建查询继续操作。</value></data>
+  <data name="PostgreSqlNoDatabaseSelected" xml:space="preserve"><value>未选择数据库</value></data>
+  <data name="PostgreSqlDatabaseSchema" xml:space="preserve"><value>数据库 / 架构</value></data>
+  <data name="PostgreSqlNoStructureItems" xml:space="preserve"><value>当前分区没有对象。</value></data>
+  <data name="PostgreSqlFilterInvalid" xml:space="preserve"><value>请输入受支持的 WHERE 条件：字段比较、LIKE、IN、IS NULL、AND/OR 和括号。不支持完整语句和函数。</value></data>
+  <data name="PostgreSqlWhereCondition" xml:space="preserve"><value>临时 WHERE 条件</value></data>
+  <data name="PostgreSqlWhereHint" xml:space="preserve"><value>仅对当前表页签生效。例如：id &gt;= 10 AND name LIKE &apos;A%&apos;。支持字段比较、LIKE、IN、IS NULL、AND/OR 和括号；不支持完整语句和函数。</value></data>
+  <data name="PostgreSqlApplyFilter" xml:space="preserve"><value>应用</value></data>
+  <data name="PostgreSqlClearFilter" xml:space="preserve"><value>清除</value></data>
+  <data name="PostgreSqlRowsPerPage" xml:space="preserve"><value>每页行数</value></data>
+  <data name="PostgreSqlRowsPerPageHint" xml:space="preserve"><value>每个表数据页最多读取 {0} 行。</value></data>
+  <data name="PostgreSqlRunCurrentButton" xml:space="preserve"><value>执行当前/选中</value></data>
+  <data name="PostgreSqlRunAllButton" xml:space="preserve"><value>执行全部</value></data>
+  <data name="PostgreSqlRunCurrentHint" xml:space="preserve"><value>执行选中的 SQL；未选中时执行光标所在语句（Ctrl+Enter）。</value></data>
+  <data name="PostgreSqlRunAllHint" xml:space="preserve"><value>执行当前文稿中的全部语句（Ctrl+Shift+Enter）。</value></data>
+  <data name="PostgreSqlExplainSingleStatement" xml:space="preserve"><value>请选择一条语句查看执行计划。</value></data>
+  <data name="PostgreSqlSchemas" xml:space="preserve"><value>架构</value></data>
+  <data name="PostgreSqlSchema" xml:space="preserve"><value>架构</value></data>
+  <data name="MainPostgreSql" xml:space="preserve"><value>PostgreSQL</value></data>
+  <data name="PostgreSqlDatabaseReconnectRequired" xml:space="preserve"><value>切换数据库需要建立新连接。</value></data>
+  <data name="PostgreSqlDatabaseRequired" xml:space="preserve"><value>请输入要打开的数据库名称。</value></data>
+  <data name="PostgreSqlExplain" xml:space="preserve"><value>执行计划</value></data>
+  <data name="PostgreSqlType" xml:space="preserve"><value>PostgreSQL</value></data>
+  <data name="PostgreSqlExplainHint" xml:space="preserve"><value>查看选中或当前语句的 JSON 估算计划，不运行 ANALYZE。</value></data>
+  <data name="PostgreSqlObjectContext" xml:space="preserve"><value>{0} / {1}</value></data>
+  <data name="PostgreSqlExplainComplete" xml:space="preserve"><value>已生成估算执行计划。</value></data>
+  <data name="PostgreSqlModeChanged" xml:space="preserve"><value>字符串转义设置已改变。请使用新的会话设置单独执行剩余语句。</value></data>
+  <data name="PostgreSqlCompletionObject" xml:space="preserve"><value>{0}.{1}</value></data>
+  <data name="PostgreSqlAssistantTitle" xml:space="preserve"><value>SQL 助手</value></data>
+  <data name="PostgreSqlAssistantToggle" xml:space="preserve"><value>SQL 助手</value></data>
+  <data name="PostgreSqlAssistantClear" xml:space="preserve"><value>清空对话</value></data>
+  <data name="PostgreSqlAssistantYou" xml:space="preserve"><value>你</value></data>
+  <data name="PostgreSqlAssistantContext" xml:space="preserve"><value>上下文：{0} · {1}</value></data>
+  <data name="PostgreSqlAssistantPrivacy" xml:space="preserve"><value>请在系统设置 → AI 助手中配置模型。发送消息会将有限的结构元数据和所选上下文传给你的模型服务。建议 SQL 需经你确认后才在本页签的 PostgreSQL 会话中执行。</value></data>
+  <data name="PostgreSqlAssistantSuggestion" xml:space="preserve"><value>建议 SQL</value></data>
+  <data name="PostgreSqlAssistantInsert" xml:space="preserve"><value>插入编辑器</value></data>
+  <data name="PostgreSqlAssistantExecute" xml:space="preserve"><value>确认并执行</value></data>
+  <data name="PostgreSqlAssistantExecuteTitle" xml:space="preserve"><value>执行助手 SQL</value></data>
+  <data name="PostgreSqlAssistantExecuteHint" xml:space="preserve"><value>请检查下方 SQL，确认后将在数据库 {0} 中执行。</value></data>
+  <data name="PostgreSqlAssistantIncludeSql" xml:space="preserve"><value>附带编辑器 SQL</value></data>
+  <data name="PostgreSqlAssistantIncludeResults" xml:space="preserve"><value>分享结果样本</value></data>
+  <data name="PostgreSqlAssistantResultsHint" xml:space="preserve"><value>向模型服务发送最多 20 行、16 列已加载结果。启用前请检查结果是否包含敏感数据。</value></data>
+  <data name="PostgreSqlAssistantThinking" xml:space="preserve"><value>正在准备上下文或等待模型回复…</value></data>
+  <data name="PostgreSqlAssistantPrompt" xml:space="preserve"><value>询问当前数据库，或描述你需要的 SQL。</value></data>
+  <data name="PostgreSqlAssistantSend" xml:space="preserve"><value>发送</value></data>
+  <data name="PostgreSqlAssistantCancel" xml:space="preserve"><value>取消</value></data>
+  <data name="PostgreSqlAssistantSendHint" xml:space="preserve"><value>Ctrl+Enter 发送</value></data>
+  <data name="PostgreSqlAssistantCancelled" xml:space="preserve"><value>助手请求已取消，问题草稿已保留。</value></data>
+  <data name="PostgreSqlAssistantSessionBusy" xml:space="preserve"><value>请等待本页签的数据库操作完成后再询问助手。</value></data>
+  <data name="PostgreSqlAssistantContextFailed" xml:space="preserve"><value>无法读取数据库上下文，请检查连接后重试。</value></data>
+  <data name="PostgreSqlDatabaseWorkspaceTitle" xml:space="preserve"><value>{0} — {1}</value></data>
+  <data name="PostgreSqlNewCrossDatabaseQuery" xml:space="preserve"><value>新建跨库查询</value></data>
+  <data name="PostgreSqlBrowseDatabases" xml:space="preserve"><value>浏览数据库</value></data>
+  <data name="PostgreSqlCrossDatabaseQueryHint" xml:space="preserve"><value>使用 database.table 格式的完整表名查询当前实例中的多个数据库。</value></data>
+  <data name="PostgreSqlCompletionKeyword" xml:space="preserve"><value>关键字</value></data>
+  <data name="PostgreSqlCompletionHint" xml:space="preserve"><value>SQL 自动补全：Ctrl+Space 打开建议，Tab 或 Enter 接受，Escape 关闭。</value></data>
+  <data name="PostgreSqlAnalyze" xml:space="preserve"><value>实际分析</value></data>
+  <data name="PostgreSqlAnalyzeHint" xml:space="preserve"><value>确认后使用 EXPLAIN ANALYZE 实际运行选中或当前的 SELECT 查询。</value></data>
+  <data name="PostgreSqlAnalyzeConfirm" xml:space="preserve"><value>运行并分析</value></data>
+  <data name="PostgreSqlAnalyzeConfirmHint" xml:space="preserve"><value>EXPLAIN ANALYZE 会在当前数据库会话中实际运行此 SELECT。查询可能消耗较多资源，函数也可能产生副作用，取消无法撤销这些影响。是否继续？需要支持 EXPLAIN ANALYZE 的 PostgreSQL 8.0.18 或更高版本。</value></data>
+  <data name="PostgreSqlPlanSingleStatement" xml:space="preserve"><value>请选择一条 SQL 或将光标放在其中。执行计划不接受多条语句。</value></data>
+  <data name="PostgreSqlPlanUnsupportedStatement" xml:space="preserve"><value>此处无法分析该语句。请使用不含可执行注释的 SELECT、WITH、INSERT、UPDATE、DELETE 或 REPLACE。</value></data>
+  <data name="PostgreSqlAnalyzeSelectOnly" xml:space="preserve"><value>实际分析仅接受一条不含文件输出、变量赋值或加锁子句的 SELECT。</value></data>
+  <data name="PostgreSqlExplainResultHint" xml:space="preserve"><value>服务器返回的预估计划。此操作未请求实际运行查询，可在结果表格中检查表访问方式、索引、预估行数与 Extra。</value></data>
+  <data name="PostgreSqlAnalyzeResultHint" xml:space="preserve"><value>服务器返回的实际执行计划，支持时包含迭代器耗时、行数与循环次数。此 SELECT 已在本会话中执行。</value></data>
+  <data name="PostgreSqlExecutionTrace" xml:space="preserve"><value>执行追踪</value></data>
+  <data name="PostgreSqlExecutionTraceHint" xml:space="preserve"><value>保留本页签最近 50 次查询和计划。SQL 与计划仅存于内存，关闭页签后清除。</value></data>
+  <data name="PostgreSqlTraceQuery" xml:space="preserve"><value>查询</value></data>
+  <data name="PostgreSqlTraceSucceeded" xml:space="preserve"><value>成功</value></data>
+  <data name="PostgreSqlTraceFailed" xml:space="preserve"><value>已停止或失败</value></data>
+  <data name="PostgreSqlTraceSummary" xml:space="preserve"><value>{0} · {1} · {2:N1} 毫秒 · {3} 行 · {4}</value></data>
+  <data name="PostgreSqlTraceSql" xml:space="preserve"><value>执行的 SQL 快照</value></data>
+  <data name="PostgreSqlTraceDetails" xml:space="preserve"><value>执行计划或安全错误详情</value></data>
+  <data name="PostgreSqlAssistantContextChanged" xml:space="preserve"><value>生成建议后数据库或连接已变化。请重新提问，或将 SQL 插入编辑器并检查执行目标。</value></data>
+  <data name="PostgreSqlTableDefinitionPreview" xml:space="preserve"><value>列与约束定义预览；不包含存储选项、独立索引和权限。</value></data>
 </root>

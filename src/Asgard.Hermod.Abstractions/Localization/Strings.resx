@@ -3639,4 +3639,246 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="MySqlTraceSql" xml:space="preserve"><value>Executed SQL snapshot</value></data>
   <data name="MySqlTraceDetails" xml:space="preserve"><value>Execution plan or safe error details</value></data>
   <data name="MySqlAssistantContextChanged" xml:space="preserve"><value>The database or connection changed after this suggestion was generated. Ask again, or insert the SQL into the editor and review its target.</value></data>
+  <data name="PostgreSqlTypeHint" xml:space="preserve"><value>Browse databases and tables, run SQL, and edit verified rows.</value></data>
+  <data name="PostgreSqlDirect" xml:space="preserve"><value>Direct TCP connection</value></data>
+  <data name="PostgreSqlSsh" xml:space="preserve"><value>SSH tunnel</value></data>
+  <data name="PostgreSqlDirectHint" xml:space="preserve"><value>Connect to a single PostgreSQL server over TCP.</value></data>
+  <data name="PostgreSqlSshHint" xml:space="preserve"><value>Reuse SSH authentication and host verification to forward the database connection.</value></data>
+  <data name="PostgreSqlConnectionMethod" xml:space="preserve"><value>Connection method</value></data>
+  <data name="PostgreSqlConnectionMethodHint" xml:space="preserve"><value>Choose direct TCP or an SSH tunnel. Database credentials are separate from SSH credentials.</value></data>
+  <data name="PostgreSqlHost" xml:space="preserve"><value>Database host</value></data>
+  <data name="PostgreSqlDefaultDatabase" xml:space="preserve"><value>Default database (optional)</value></data>
+  <data name="PostgreSqlDefaultDatabaseHint" xml:space="preserve"><value>Leave empty to connect to postgres. Opening another database creates a separate session.</value></data>
+  <data name="PostgreSqlTlsMode" xml:space="preserve"><value>TLS mode</value></data>
+  <data name="PostgreSqlVerifyFull" xml:space="preserve"><value>Verify certificate and hostname</value></data>
+  <data name="PostgreSqlTlsRequired" xml:space="preserve"><value>Require encryption without identity verification</value></data>
+  <data name="PostgreSqlTlsDisabled" xml:space="preserve"><value>Disable TLS (unencrypted)</value></data>
+  <data name="PostgreSqlTlsWarning" xml:space="preserve"><value>This mode does not verify the server identity. Disabled TLS also sends database traffic without encryption.</value></data>
+  <data name="PostgreSqlClientPfx" xml:space="preserve"><value>Client certificate (PFX)</value></data>
+  <data name="PostgreSqlCommandTimeout" xml:space="preserve"><value>Command timeout (seconds)</value></data>
+  <data name="PostgreSqlTestHint" xml:space="preserve"><value>Verify the route, TLS, authentication, and optional default database without changing business data.</value></data>
+  <data name="PostgreSqlTestPassed" xml:space="preserve"><value>Connection verified. Object browsing and editing still depend on database permissions.</value></data>
+  <data name="PostgreSqlNetworkVerified" xml:space="preserve"><value>Network route verified</value></data>
+  <data name="PostgreSqlTlsVerified" xml:space="preserve"><value>TLS established</value></data>
+  <data name="PostgreSqlPlaintextConnection" xml:space="preserve"><value>Unencrypted connection established</value></data>
+  <data name="PostgreSqlAuthenticationVerified" xml:space="preserve"><value>Database authentication verified</value></data>
+  <data name="PostgreSqlDatabaseVerified" xml:space="preserve"><value>Optional database and query access verified</value></data>
+  <data name="PostgreSqlConfigurationInvalid" xml:space="preserve"><value>The PostgreSQL connection configuration is invalid.</value></data>
+  <data name="PostgreSqlConnectionFailed" xml:space="preserve"><value>Unable to connect to PostgreSQL. Check the connection settings and network.</value></data>
+  <data name="PostgreSqlConnectionTimeout" xml:space="preserve"><value>The PostgreSQL connection timed out.</value></data>
+  <data name="PostgreSqlSshFailed" xml:space="preserve"><value>The SSH tunnel could not be established. Check SSH authentication and host trust.</value></data>
+  <data name="PostgreSqlTlsFailed" xml:space="preserve"><value>TLS verification failed. Check the database hostname and trusted certificate chain.</value></data>
+  <data name="PostgreSqlCertificateInvalid" xml:space="preserve"><value>The client certificate or trusted CA file is invalid.</value></data>
+  <data name="PostgreSqlPermissionDenied" xml:space="preserve"><value>The database denied this operation. Check your account permissions.</value></data>
+  <data name="PostgreSqlAuthenticationFailed" xml:space="preserve"><value>Database authentication failed. Check your username and password.</value></data>
+  <data name="PostgreSqlDatabaseUnavailable" xml:space="preserve"><value>The database does not exist or cannot be accessed.</value></data>
+  <data name="PostgreSqlStatementRejected" xml:space="preserve"><value>The server rejected the statement (PostgreSQL error {0}).</value></data>
+  <data name="PostgreSqlQueryCancelled" xml:space="preserve"><value>Execution stopped or was cancelled. Previously executed writes may still have taken effect; cancellation does not roll them back.</value></data>
+  <data name="PostgreSqlCommandFailed" xml:space="preserve"><value>The PostgreSQL operation failed. Check the connection and database permissions.</value></data>
+  <data name="PostgreSqlSaveOutcomeUnknown" xml:space="preserve"><value>The save outcome is unknown. Your draft is retained. Verify the affected rows after reconnecting before trying again.</value></data>
+  <data name="PostgreSqlSqlIncomplete" xml:space="preserve"><value>SQL contains an unclosed quote or block comment.</value></data>
+  <data name="PostgreSqlNullNotAllowed" xml:space="preserve"><value>This field does not allow SQL NULL.</value></data>
+  <data name="PostgreSqlJsonInvalid" xml:space="preserve"><value>Invalid JSON near line {0}. Your input is retained.</value></data>
+  <data name="PostgreSqlFieldInvalid" xml:space="preserve"><value>The value is not valid for this field type.</value></data>
+  <data name="PostgreSqlReadOnlyResult" xml:space="preserve"><value>Editing requires a verified base table, a complete primary key, and UPDATE permission. SQL query results and views are read-only.</value></data>
+  <data name="PostgreSqlEditConflict" xml:space="preserve"><value>The row changed on the server or no longer exists. Your draft has been retained.</value></data>
+  <data name="PostgreSqlRowUnavailable" xml:space="preserve"><value>The original row is no longer available.</value></data>
+  <data name="PostgreSqlRowTooLarge" xml:space="preserve"><value>This row exceeds the edit limit and can only be previewed.</value></data>
+  <data name="PostgreSqlEditTransactionActive" xml:space="preserve"><value>Finish the current transaction before submitting grid changes.</value></data>
+  <data name="PostgreSqlPreviewStopped" xml:space="preserve"><value>The preview limit was reached (1,000 rows or 10 MiB). Execution was stopped; later results or statements were not executed. Writes already executed are not rolled back.</value></data>
+  <data name="PostgreSqlConnectionDetails" xml:space="preserve"><value>Connection details</value></data>
+  <data name="PostgreSqlSecurity" xml:space="preserve"><value>Security</value></data>
+  <data name="PostgreSqlAdvanced" xml:space="preserve"><value>Advanced</value></data>
+  <data name="PostgreSqlReady" xml:space="preserve"><value>Ready</value></data>
+  <data name="PostgreSqlDatabaseObjects" xml:space="preserve"><value>Database objects</value></data>
+  <data name="PostgreSqlRoot" xml:space="preserve"><value>Databases</value></data>
+  <data name="PostgreSqlDatabase" xml:space="preserve"><value>Database</value></data>
+  <data name="PostgreSqlTables" xml:space="preserve"><value>Tables</value></data>
+  <data name="PostgreSqlViews" xml:space="preserve"><value>Views</value></data>
+  <data name="PostgreSqlProcedures" xml:space="preserve"><value>Procedures</value></data>
+  <data name="PostgreSqlFunctions" xml:space="preserve"><value>Functions</value></data>
+  <data name="PostgreSqlEvents" xml:space="preserve"><value>Events</value></data>
+  <data name="PostgreSqlColumns" xml:space="preserve"><value>Columns</value></data>
+  <data name="PostgreSqlIndexes" xml:space="preserve"><value>Indexes</value></data>
+  <data name="PostgreSqlForeignKeys" xml:space="preserve"><value>Foreign keys</value></data>
+  <data name="PostgreSqlTriggers" xml:space="preserve"><value>Triggers</value></data>
+  <data name="PostgreSqlParameters" xml:space="preserve"><value>Parameters</value></data>
+  <data name="PostgreSqlParameter" xml:space="preserve"><value>Parameter</value></data>
+  <data name="PostgreSqlNotLoaded" xml:space="preserve"><value>Not loaded</value></data>
+  <data name="PostgreSqlLoading" xml:space="preserve"><value>Loading…</value></data>
+  <data name="PostgreSqlEmptyBranch" xml:space="preserve"><value>No objects in this branch.</value></data>
+  <data name="PostgreSqlLoadMore" xml:space="preserve"><value>Load more / retry</value></data>
+  <data name="PostgreSqlData" xml:space="preserve"><value>Data</value></data>
+  <data name="PostgreSqlStructure" xml:space="preserve"><value>Structure</value></data>
+  <data name="PostgreSqlObjectName" xml:space="preserve"><value>Object name</value></data>
+  <data name="PostgreSqlObjectDetails" xml:space="preserve"><value>Type / details</value></data>
+  <data name="PostgreSqlObjectDefinition" xml:space="preserve"><value>Object definition</value></data>
+  <data name="PostgreSqlResultTab" xml:space="preserve"><value>Statement {0} · Result {1}</value></data>
+  <data name="PostgreSqlLoadedRows" xml:space="preserve"><value>{0} rows · {1} columns loaded</value></data>
+  <data name="PostgreSqlPreviewRows" xml:space="preserve"><value>Incomplete preview: {0} rows · {1} columns</value></data>
+  <data name="PostgreSqlBinaryValue" xml:space="preserve"><value>[BINARY · {0} bytes]</value></data>
+  <data name="PostgreSqlObjectTitle" xml:space="preserve"><value>{0}.{1}.{2}</value></data>
+  <data name="PostgreSqlQueryTitle" xml:space="preserve"><value>Query {0}</value></data>
+  <data name="PostgreSqlNewQuery" xml:space="preserve"><value>New query</value></data>
+  <data name="PostgreSqlConnecting" xml:space="preserve"><value>Connecting…</value></data>
+  <data name="PostgreSqlConnected" xml:space="preserve"><value>Connected</value></data>
+  <data name="PostgreSqlDisconnected" xml:space="preserve"><value>Disconnected</value></data>
+  <data name="PostgreSqlEndpoint" xml:space="preserve"><value>{0}:{1}</value></data>
+  <data name="PostgreSqlReconnect" xml:space="preserve"><value>Reconnect</value></data>
+  <data name="PostgreSqlEditConnection" xml:space="preserve"><value>Edit connection</value></data>
+  <data name="PostgreSqlReconnectToApply" xml:space="preserve"><value>Connection settings saved. Reconnect explicitly to apply them.</value></data>
+  <data name="PostgreSqlCloseTab" xml:space="preserve"><value>Close tab</value></data>
+  <data name="PostgreSqlRefresh" xml:space="preserve"><value>Refresh</value></data>
+  <data name="PostgreSqlRefreshBranch" xml:space="preserve"><value>Refresh selected branch</value></data>
+  <data name="PostgreSqlSearchLoaded" xml:space="preserve"><value>Filter loaded objects…</value></data>
+  <data name="PostgreSqlSearchLoadedHint" xml:space="preserve"><value>Search only includes loaded objects and preserves their ancestors. Expand a branch to load more.</value></data>
+  <data name="PostgreSqlOpenKnownObject" xml:space="preserve"><value>Open table by name</value></data>
+  <data name="PostgreSqlOpenObject" xml:space="preserve"><value>Open</value></data>
+  <data name="PostgreSqlSqlEditor" xml:space="preserve"><value>SQL editor</value></data>
+  <data name="PostgreSqlQueryResults" xml:space="preserve"><value>Query results</value></data>
+  <data name="PostgreSqlExecutionDatabase" xml:space="preserve"><value>Database</value></data>
+  <data name="PostgreSqlRun" xml:space="preserve"><value>Run</value></data>
+  <data name="PostgreSqlRunHint" xml:space="preserve"><value>Ctrl+Enter runs selected SQL or the current statement. Ctrl+Shift+Enter runs all statements.</value></data>
+  <data name="PostgreSqlExecutionScope" xml:space="preserve"><value>Execution scope</value></data>
+  <data name="PostgreSqlRunCurrent" xml:space="preserve"><value>Run selection / current statement</value></data>
+  <data name="PostgreSqlRunAll" xml:space="preserve"><value>Run all statements</value></data>
+  <data name="PostgreSqlCancelQuery" xml:space="preserve"><value>Cancel query</value></data>
+  <data name="PostgreSqlSaveQuery" xml:space="preserve"><value>Save SQL file</value></data>
+  <data name="PostgreSqlOpenQuery" xml:space="preserve"><value>Open SQL file</value></data>
+  <data name="PostgreSqlSqlFileFilter" xml:space="preserve"><value>SQL files (*.sql)|*.sql|All files (*.*)|*.*</value></data>
+  <data name="PostgreSqlCsvFileFilter" xml:space="preserve"><value>CSV files (*.csv)|*.csv</value></data>
+  <data name="PostgreSqlFileFailed" xml:space="preserve"><value>The file operation failed. Check the destination and permissions. Your query is retained.</value></data>
+  <data name="PostgreSqlFileTooLarge" xml:space="preserve"><value>The SQL file exceeds the 10 MiB limit.</value></data>
+  <data name="PostgreSqlExportLoaded" xml:space="preserve"><value>Export loaded rows</value></data>
+  <data name="PostgreSqlNoResults" xml:space="preserve"><value>Run SQL or open a table to view results.</value></data>
+  <data name="PostgreSqlNoRows" xml:space="preserve"><value>No rows to display.</value></data>
+  <data name="PostgreSqlMessages" xml:space="preserve"><value>Execution messages</value></data>
+  <data name="PostgreSqlStatementSucceeded" xml:space="preserve"><value>Statement {0} completed; {1} rows affected.</value></data>
+  <data name="PostgreSqlStatementStopped" xml:space="preserve"><value>Statement {0} stopped. Earlier statements may have taken effect.</value></data>
+  <data name="PostgreSqlExecutionStatus" xml:space="preserve"><value>{0} statements · {1:N0} ms</value></data>
+  <data name="PostgreSqlPageStatus" xml:space="preserve"><value>Rows {0}–{1} (paged view)</value></data>
+  <data name="PostgreSqlPrevious" xml:space="preserve"><value>Previous</value></data>
+  <data name="PostgreSqlNext" xml:space="preserve"><value>Next</value></data>
+  <data name="PostgreSqlOn" xml:space="preserve"><value>On</value></data>
+  <data name="PostgreSqlOff" xml:space="preserve"><value>Off</value></data>
+  <data name="PostgreSqlUnknown" xml:space="preserve"><value>Unknown</value></data>
+  <data name="PostgreSqlTransactionActive" xml:space="preserve"><value>Active</value></data>
+  <data name="PostgreSqlTransactionNone" xml:space="preserve"><value>None</value></data>
+  <data name="PostgreSqlSessionStatus" xml:space="preserve"><value>Autocommit: {0} · Transaction: {1}</value></data>
+  <data name="PostgreSqlPendingChanges" xml:space="preserve"><value>{0} pending field changes</value></data>
+  <data name="PostgreSqlInlineEditHint" xml:space="preserve"><value>Double-click or F2 to edit; expand a cell to open the field window. Grid saves use a separate transaction.</value></data>
+  <data name="PostgreSqlOpenField" xml:space="preserve"><value>Open field window (Alt+Enter)</value></data>
+  <data name="PostgreSqlRevertCell" xml:space="preserve"><value>Revert this cell</value></data>
+  <data name="PostgreSqlFieldValue" xml:space="preserve"><value>Field value</value></data>
+  <data name="PostgreSqlSaveChanges" xml:space="preserve"><value>Save changes</value></data>
+  <data name="PostgreSqlRevertChanges" xml:space="preserve"><value>Revert changes</value></data>
+  <data name="PostgreSqlOtherResultDraft" xml:space="preserve"><value>Save or revert the draft in the other result set before editing this one.</value></data>
+  <data name="PostgreSqlChangesSaved" xml:space="preserve"><value>Changes committed successfully.</value></data>
+  <data name="PostgreSqlSaveConfirmedReloadFailed" xml:space="preserve"><value>The save was committed, but the refreshed row could not be read. Verify rows before editing again; do not resubmit this draft.</value></data>
+  <data name="PostgreSqlVerifyRows" xml:space="preserve"><value>Reconnect and verify rows</value></data>
+  <data name="PostgreSqlVerifySaved" xml:space="preserve"><value>The server rows match the submitted changes. The draft is now cleared.</value></data>
+  <data name="PostgreSqlVerifyUnchanged" xml:space="preserve"><value>The server rows match the original baseline. The draft is retained; save explicitly to retry.</value></data>
+  <data name="PostgreSqlVerifyConflict" xml:space="preserve"><value>The rows differ from both the original baseline and the submitted values. Keep the draft and resolve the differences.</value></data>
+  <data name="PostgreSqlEditField" xml:space="preserve"><value>Edit field</value></data>
+  <data name="PostgreSqlViewField" xml:space="preserve"><value>View field</value></data>
+  <data name="PostgreSqlApplyToGrid" xml:space="preserve"><value>Apply to grid</value></data>
+  <data name="PostgreSqlSetNull" xml:space="preserve"><value>Set SQL NULL</value></data>
+  <data name="PostgreSqlFieldContext" xml:space="preserve"><value>{0}.{1} · {2} · Row key: {3}</value></data>
+  <data name="PostgreSqlFieldApplyHelp" xml:space="preserve"><value>Applying updates only this field in the local grid draft. Use Save changes to commit it to the database.</value></data>
+  <data name="PostgreSqlDiscardField" xml:space="preserve"><value>Discard field input?</value></data>
+  <data name="PostgreSqlDiscardFieldHint" xml:space="preserve"><value>The field window has unapplied input. Discard it and close the window?</value></data>
+  <data name="PostgreSqlUnsavedChanges" xml:space="preserve"><value>Unsaved changes</value></data>
+  <data name="PostgreSqlQueryCloseHint" xml:space="preserve"><value>Save the SQL document “{0}” before closing? Saving does not execute SQL.</value></data>
+  <data name="PostgreSqlGridCloseHint" xml:space="preserve"><value>The grid in “{0}” contains unsaved changes. Save them, discard the draft, or cancel. Discarding a draft does not undo previously submitted writes.</value></data>
+  <data name="PostgreSqlDiscard" xml:space="preserve"><value>Discard draft</value></data>
+  <data name="PostgreSqlStopAndClose" xml:space="preserve"><value>Stop execution and close</value></data>
+  <data name="PostgreSqlEndTransaction" xml:space="preserve"><value>End current session transaction</value></data>
+  <data name="PostgreSqlEndTransactionHint" xml:space="preserve"><value>A transaction is active or its state is unknown. Send ROLLBACK before continuing? Previously committed writes cannot be undone this way.</value></data>
+  <data name="PostgreSqlRollbackAndContinue" xml:space="preserve"><value>Roll back and continue</value></data>
+  <data name="PostgreSqlConflictTitle" xml:space="preserve"><value>Resolve row conflict</value></data>
+  <data name="PostgreSqlOriginal" xml:space="preserve"><value>Original baseline</value></data>
+  <data name="PostgreSqlServerValue" xml:space="preserve"><value>Current server value</value></data>
+  <data name="PostgreSqlYourDraft" xml:space="preserve"><value>Your draft</value></data>
+  <data name="PostgreSqlKeepDraft" xml:space="preserve"><value>Keep draft</value></data>
+  <data name="PostgreSqlDedicatedWriterRequired" xml:space="preserve"><value>Grid changes require a new dedicated session, separate from SQL execution and its transactions.</value></data>
+  <data name="PostgreSqlFieldTooLarge" xml:space="preserve"><value>The field value exceeds the 10 MiB edit limit. Your input is retained.</value></data>
+  <data name="PostgreSqlFieldOperationTarget" xml:space="preserve"><value>Instance: {0} · Environment: {1}
+{2}</value></data>
+  <data name="PostgreSqlResultRow" xml:space="preserve"><value>Result row {0}</value></data>
+  <data name="PostgreSqlNoOpenTabs" xml:space="preserve"><value>No tabs open</value></data>
+  <data name="PostgreSqlNoOpenTabsHint" xml:space="preserve"><value>Select a table from the object tree or create a query to continue.</value></data>
+  <data name="PostgreSqlNoDatabaseSelected" xml:space="preserve"><value>No database selected</value></data>
+  <data name="PostgreSqlDatabaseSchema" xml:space="preserve"><value>Database / schema</value></data>
+  <data name="PostgreSqlNoStructureItems" xml:space="preserve"><value>No objects in this section.</value></data>
+  <data name="PostgreSqlFilterInvalid" xml:space="preserve"><value>Enter a supported WHERE condition using column comparisons, LIKE, IN, IS NULL, AND/OR and parentheses. Statements and functions are not supported.</value></data>
+  <data name="PostgreSqlWhereCondition" xml:space="preserve"><value>Temporary WHERE condition</value></data>
+  <data name="PostgreSqlWhereHint" xml:space="preserve"><value>Applies only to this table tab. Example: id &gt;= 10 AND name LIKE &apos;A%&apos;. Supports comparisons, LIKE, IN, IS NULL, AND/OR and parentheses; statements and functions are not supported.</value></data>
+  <data name="PostgreSqlApplyFilter" xml:space="preserve"><value>Apply</value></data>
+  <data name="PostgreSqlClearFilter" xml:space="preserve"><value>Clear</value></data>
+  <data name="PostgreSqlRowsPerPage" xml:space="preserve"><value>Rows per page</value></data>
+  <data name="PostgreSqlRowsPerPageHint" xml:space="preserve"><value>Read up to {0} rows per table page.</value></data>
+  <data name="PostgreSqlRunCurrentButton" xml:space="preserve"><value>Run current / selection</value></data>
+  <data name="PostgreSqlRunAllButton" xml:space="preserve"><value>Run all</value></data>
+  <data name="PostgreSqlRunCurrentHint" xml:space="preserve"><value>Run selected SQL, or the statement at the caret (Ctrl+Enter).</value></data>
+  <data name="PostgreSqlRunAllHint" xml:space="preserve"><value>Run every statement in this document (Ctrl+Shift+Enter).</value></data>
+  <data name="PostgreSqlExplainSingleStatement" xml:space="preserve"><value>Select one statement to explain.</value></data>
+  <data name="PostgreSqlSchemas" xml:space="preserve"><value>Schemas</value></data>
+  <data name="PostgreSqlSchema" xml:space="preserve"><value>Schema</value></data>
+  <data name="MainPostgreSql" xml:space="preserve"><value>PostgreSQL</value></data>
+  <data name="PostgreSqlDatabaseReconnectRequired" xml:space="preserve"><value>Changing databases requires a new connection.</value></data>
+  <data name="PostgreSqlDatabaseRequired" xml:space="preserve"><value>Enter the database name to open.</value></data>
+  <data name="PostgreSqlExplain" xml:space="preserve"><value>Execution plan</value></data>
+  <data name="PostgreSqlType" xml:space="preserve"><value>PostgreSQL</value></data>
+  <data name="PostgreSqlExplainHint" xml:space="preserve"><value>Show the estimated JSON plan for the selection or current statement, without ANALYZE.</value></data>
+  <data name="PostgreSqlObjectContext" xml:space="preserve"><value>{0} / {1}</value></data>
+  <data name="PostgreSqlExplainComplete" xml:space="preserve"><value>Estimated execution plan generated.</value></data>
+  <data name="PostgreSqlModeChanged" xml:space="preserve"><value>String escaping changed. Run the remaining statements separately using the new session setting.</value></data>
+  <data name="PostgreSqlCompletionObject" xml:space="preserve"><value>{0}.{1}</value></data>
+  <data name="PostgreSqlAssistantTitle" xml:space="preserve"><value>SQL assistant</value></data>
+  <data name="PostgreSqlAssistantToggle" xml:space="preserve"><value>SQL assistant</value></data>
+  <data name="PostgreSqlAssistantClear" xml:space="preserve"><value>Clear chat</value></data>
+  <data name="PostgreSqlAssistantYou" xml:space="preserve"><value>You</value></data>
+  <data name="PostgreSqlAssistantContext" xml:space="preserve"><value>Context: {0} · {1}</value></data>
+  <data name="PostgreSqlAssistantPrivacy" xml:space="preserve"><value>Configure AI in System settings → AI assistant. Sending shares bounded schema metadata and selected context with your model service. Suggestions run only after your confirmation in this tab&apos;s PostgreSQL session.</value></data>
+  <data name="PostgreSqlAssistantSuggestion" xml:space="preserve"><value>Suggested SQL</value></data>
+  <data name="PostgreSqlAssistantInsert" xml:space="preserve"><value>Insert into editor</value></data>
+  <data name="PostgreSqlAssistantExecute" xml:space="preserve"><value>Review and run</value></data>
+  <data name="PostgreSqlAssistantExecuteTitle" xml:space="preserve"><value>Run assistant SQL</value></data>
+  <data name="PostgreSqlAssistantExecuteHint" xml:space="preserve"><value>Review the SQL below before running it in database {0}.</value></data>
+  <data name="PostgreSqlAssistantIncludeSql" xml:space="preserve"><value>Include editor SQL</value></data>
+  <data name="PostgreSqlAssistantIncludeResults" xml:space="preserve"><value>Share a result sample</value></data>
+  <data name="PostgreSqlAssistantResultsHint" xml:space="preserve"><value>Send at most 20 loaded rows and 16 columns to your model service. Review the result for sensitive data before enabling this.</value></data>
+  <data name="PostgreSqlAssistantThinking" xml:space="preserve"><value>Preparing context or waiting for the model…</value></data>
+  <data name="PostgreSqlAssistantPrompt" xml:space="preserve"><value>Ask about this database or describe the SQL you need.</value></data>
+  <data name="PostgreSqlAssistantSend" xml:space="preserve"><value>Send</value></data>
+  <data name="PostgreSqlAssistantCancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="PostgreSqlAssistantSendHint" xml:space="preserve"><value>Ctrl+Enter to send</value></data>
+  <data name="PostgreSqlAssistantCancelled" xml:space="preserve"><value>The assistant request was cancelled. Your question is still available.</value></data>
+  <data name="PostgreSqlAssistantSessionBusy" xml:space="preserve"><value>Wait for this tab&apos;s database operation to finish before asking the assistant.</value></data>
+  <data name="PostgreSqlAssistantContextFailed" xml:space="preserve"><value>Cannot read the database context. Check the connection and try again.</value></data>
+  <data name="PostgreSqlDatabaseWorkspaceTitle" xml:space="preserve"><value>{0} — {1}</value></data>
+  <data name="PostgreSqlNewCrossDatabaseQuery" xml:space="preserve"><value>New cross-database query</value></data>
+  <data name="PostgreSqlBrowseDatabases" xml:space="preserve"><value>Browse databases</value></data>
+  <data name="PostgreSqlCrossDatabaseQueryHint" xml:space="preserve"><value>Use database.table names to query multiple databases on this instance.</value></data>
+  <data name="PostgreSqlCompletionKeyword" xml:space="preserve"><value>Keyword</value></data>
+  <data name="PostgreSqlCompletionHint" xml:space="preserve"><value>SQL completion: Ctrl+Space opens suggestions; Tab or Enter accepts; Escape closes.</value></data>
+  <data name="PostgreSqlAnalyze" xml:space="preserve"><value>Analyze</value></data>
+  <data name="PostgreSqlAnalyzeHint" xml:space="preserve"><value>Run the selected or current SELECT with EXPLAIN ANALYZE after confirmation.</value></data>
+  <data name="PostgreSqlAnalyzeConfirm" xml:space="preserve"><value>Run and analyze</value></data>
+  <data name="PostgreSqlAnalyzeConfirmHint" xml:space="preserve"><value>EXPLAIN ANALYZE actually runs this SELECT in the current database session. It can be expensive, and functions may have side effects. Cancellation does not undo those effects. Continue? Requires PostgreSQL 8.0.18 or later with EXPLAIN ANALYZE support.</value></data>
+  <data name="PostgreSqlPlanSingleStatement" xml:space="preserve"><value>Select one SQL statement or place the caret inside it. Execution plans do not accept batches.</value></data>
+  <data name="PostgreSqlPlanUnsupportedStatement" xml:space="preserve"><value>This statement cannot be explained here. Use SELECT, WITH, INSERT, UPDATE, DELETE, or REPLACE without executable comments.</value></data>
+  <data name="PostgreSqlAnalyzeSelectOnly" xml:space="preserve"><value>Actual analysis only accepts a single SELECT without file output, variable assignments, or locking clauses.</value></data>
+  <data name="PostgreSqlExplainResultHint" xml:space="preserve"><value>Estimated plan returned by the server. This action did not request actual query execution. Inspect table access, keys, estimated rows, and Extra in the result grid.</value></data>
+  <data name="PostgreSqlAnalyzeResultHint" xml:space="preserve"><value>Actual execution plan returned by the server, including iterator timing, rows, and loops where supported. The SELECT was executed in this session.</value></data>
+  <data name="PostgreSqlExecutionTrace" xml:space="preserve"><value>Execution trace</value></data>
+  <data name="PostgreSqlExecutionTraceHint" xml:space="preserve"><value>The most recent 50 queries and plans in this tab. SQL and plans remain in memory and are cleared when the tab closes.</value></data>
+  <data name="PostgreSqlTraceQuery" xml:space="preserve"><value>Query</value></data>
+  <data name="PostgreSqlTraceSucceeded" xml:space="preserve"><value>Succeeded</value></data>
+  <data name="PostgreSqlTraceFailed" xml:space="preserve"><value>Stopped or failed</value></data>
+  <data name="PostgreSqlTraceSummary" xml:space="preserve"><value>{0} · {1} · {2:N1} ms · {3} rows · {4}</value></data>
+  <data name="PostgreSqlTraceSql" xml:space="preserve"><value>Executed SQL snapshot</value></data>
+  <data name="PostgreSqlTraceDetails" xml:space="preserve"><value>Execution plan or safe error details</value></data>
+  <data name="PostgreSqlAssistantContextChanged" xml:space="preserve"><value>The database or connection changed after this suggestion was generated. Ask again, or insert the SQL into the editor and review its target.</value></data>
+  <data name="PostgreSqlTableDefinitionPreview" xml:space="preserve"><value>Column and constraint definition preview; storage options, standalone indexes and privileges are not included.</value></data>
 </root>

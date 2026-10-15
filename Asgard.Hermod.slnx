@@ -22,6 +22,9 @@
     <Project Path="src/Asgard.Hermod.Redis/Asgard.Hermod.Redis.csproj" />
     <Project Path="src/Asgard.Hermod.Redis.UI/Asgard.Hermod.Redis.UI.csproj" />
   </Folder>
+  <Folder Name="/src/PostgreSQL/">
+    <Project Path="src/Asgard.Hermod.PostgreSql/Asgard.Hermod.PostgreSql.csproj" />
+  </Folder>
   <Folder Name="/src/SSH/">
     <Project Path="src/Asgard.Hermod.Ssh/Asgard.Hermod.Ssh.csproj" />
     <Project Path="src/Asgard.Hermod.Ssh.UI/Asgard.Hermod.Ssh.UI.csproj" />
@@ -53,6 +56,7 @@
     <Project Path="tests/Asgard.Hermod.Agent.Tests/Asgard.Hermod.Agent.Tests.csproj" />
     <Project Path="tests/Asgard.Hermod.MySql.Tests/Asgard.Hermod.MySql.Tests.csproj" />
     <Project Path="tests/Asgard.Hermod.MySql.UI.Tests/Asgard.Hermod.MySql.UI.Tests.csproj" />
+    <Project Path="tests/Asgard.Hermod.PostgreSql.Tests/Asgard.Hermod.PostgreSql.Tests.csproj" />
     <Project Path="tests/Asgard.Hermod.Redis.Tests/Asgard.Hermod.Redis.Tests.csproj" />
     <Project Path="tests/Asgard.Hermod.Redis.UI.Tests/Asgard.Hermod.Redis.UI.Tests.csproj" />
     <Project Path="tests/Asgard.Hermod.Ssh.Tests/Asgard.Hermod.Ssh.Tests.csproj" />
