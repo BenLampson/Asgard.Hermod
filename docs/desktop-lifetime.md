@@ -5,7 +5,10 @@ user login session. Ownership is acquired before DI registration, SQLite, provid
 descriptors or views. A dedicated thread holds the scoped kernel mutex throughout
 cleanup. A second launch grants foreground permission, sends a fixed activation
 request through a current-user named pipe, and exits without loading configuration
-or initializing storage. The listener additionally verifies the impersonated user
+or initializing storage. The existing instance restores its window and shows a
+localized information notice that Hermod is already running. Repeated requests
+reuse the current notice; an active business modal keeps its inputs and receives
+the notice only after it closes. The listener additionally verifies the impersonated user
 SID and client process session. Startup requests are retained until the main window
 is ready. A launch during committed exit waits for ownership to be released.
 
@@ -38,7 +41,7 @@ connections and work windows alive. Normal minimization retains the taskbar entr
 The first hide immediately persists `ui.tray.hideHintShown` and requests one system
 balloon. Suppressed Windows notifications do not cause repeat balloons.
 
-The native tray uses one stable GUID, version-four callbacks and Windows notification
+The native tray uses one deterministic GUID per executable path, version-four callbacks and Windows notification
 area theme icons. Left click, double click and keyboard activation show/restore the
 main window. The menu has only show/hide and exit actions, with visible localized
 labels and a separator, with no heading or initially selected item. Actual mouse
@@ -48,7 +51,13 @@ Its arrow follows the actual `Shell_NotifyIconGetRect` rectangle, native window 
 and monitor work area. Explicit tray hide/exit actions bypass the close question.
 `TaskbarCreated` and periodic health checks restore the same GUID after Explorer
 rebuilds its notification area. Registration failure restores the main window and
-taskbar entry and gives a safe localized message; it cannot silently execute hiding.
+taskbar entry and gives a localized warning headed "Notification area icon unavailable",
+explaining that the application remains usable; it cannot silently execute hiding.
+The GUID includes the executable path because Windows binds notification identities
+to that path. This also avoids the legacy GUID previously claimed by a test host.
+Native tests always pass isolated random GUIDs and target their own message HWND;
+they never register, delete or restore the production identity. No Windows notification
+registry settings are cleared or edited by the application.
 
 Exit first confirms the impact of open/closing work sessions. Existing modal dialogs
 or single-window close preflight are recalled instead of starting duplicate checks.
@@ -74,7 +83,7 @@ These tests create real windows and can activate them even when screenshots use
 transparent windows. Run desktop suites only after the user explicitly confirms
 the desktop is available; stop them immediately when the user resumes computer use.
 The native and full-host tests skip if a user Hermod process is already running, to
-avoid sharing its production tray GUID. Do not run these suites concurrently with
+avoid interfering with its desktop interaction. Do not run these suites concurrently with
 manual Hermod acceptance or another copy of the native suite.
 
 ```powershell
@@ -106,7 +115,11 @@ Focused xUnit v3 cases:
   states in both languages and themes. They restore the pointer before closing the
   menu and require explicit user authorization plus
   `HERMOD_RUN_DESKTOP_POINTER_TESTS=1`. Native/UIA suites run serially.
-- `WindowsTrayIconTests`: real GUID registration and rectangle retrieval, deletion
+- `MessageDialogPresentationTests`, `RepeatedLaunchNoticeTests`, `TrayIconIdentityTests`:
+  offscreen bilingual warning/information content, repeated activation coalescing,
+  preservation of active modal inputs, suppression during exit and deterministic
+  path-specific identities, without creating a desktop window or registering an icon.
+- `WindowsTrayIconTests`: isolated test GUID registration and rectangle retrieval, deletion
   and `TaskbarCreated` restoration of the test icon, removal on disposal, localized
   light/dark menus, Escape, and placement at 100/150/200% scale with negative coordinates.
 - `MainWindowTrayTests`: actual navigation into work windows, main hide/restore,

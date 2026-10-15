@@ -3319,7 +3319,8 @@
     <value>Hermod 仍在运行。可通过通知区域图标显示主窗体或退出。独立工作窗口将继续运行。</value>
   </data>
   <data name="TrayUnavailable" xml:space="preserve">
-    <value>通知区域不可用。Hermod 将保留主窗体及其任务栏入口。关闭主窗体将退出 Hermod。</value>
+    <value>Hermod 仍在运行，主窗口和任务栏入口会保留，其他功能可继续使用。
+暂不支持隐藏到托盘；如需退出，请通过主窗口的关闭操作退出 Hermod。</value>
   </data>
   <data name="ExitHermodImpact" xml:space="preserve">
     <value>Hermod 有 {0} 个打开或正在关闭的工作会话。退出将关闭所有工作窗口、断开会话并停止后台任务。是否继续？</value>
@@ -4056,6 +4057,9 @@ Session：{2}
   <data name="SshAgentToolSupportRequired" xml:space="preserve"><value>模型服务拒绝了排障请求，请检查所配置的模型和端点是否支持 Chat Completions 函数工具。</value></data>
   <data name="SshAgentNotExecuted" xml:space="preserve"><value>操作已取消，未执行命令。</value></data>
   <data name="SshAgentIncludeSelectionShort" xml:space="preserve"><value>包含选区</value></data>
+  <data name="TrayUnavailableTitle" xml:space="preserve"><value>托盘图标暂不可用</value></data>
+  <data name="HermodAlreadyRunningTitle" xml:space="preserve"><value>Hermod 已在运行</value></data>
+  <data name="HermodAlreadyRunningMessage" xml:space="preserve"><value>已唤回现有的 Hermod 窗口，无需重复启动。</value></data>
   <data name="SshMonitorAllInterfaces" xml:space="preserve"><value>全部接口</value></data>
   <data name="SshMonitorRootDisk" xml:space="preserve"><value>根分区</value></data>
   <data name="SshMonitorDiskCapacity" xml:space="preserve"><value>已用 {0} / 总量 {1}</value></data>

@@ -11,6 +11,7 @@ public partial class MainWindow : HermodWindow
     private readonly ITrayPreferenceStore? _preferences;
     private readonly Func<Task>? _finishExit;
     private readonly Func<int, Task<bool>>? _confirmExit;
+    private readonly RepeatedLaunchNotice _repeatedLaunch;
     private bool _closing;
     private bool _closeApproved;
     private bool _hintShown;
@@ -30,6 +31,7 @@ public partial class MainWindow : HermodWindow
         _model = model; _workWindows = workWindows; _tray = tray; _preferences = preferences;
         _finishExit = finishExit; _confirmExit = confirmExit;
         InitializeComponent(); DataContext = model;
+        _repeatedLaunch = new(this, ActivateMain, () => !IsExitCommitted && !_sessionEnding);
         InitializeClosePreferences(closePreferences);
         WindowCloseBehavior.SetHideToTray(this, tray?.IsAvailable == true);
         model.Sidebar.AddInstanceCommand.ExecutionFailed += OnCommandFailed;
@@ -71,6 +73,9 @@ public partial class MainWindow : HermodWindow
         WindowActivation.Show(this);
     }
 
+    /// <summary>IPC 已在启动早期完成单实例检查；由原窗口提示并唤回，不初始化第二份服务。</summary>
+    public void NotifyAlreadyRunning() => _repeatedLaunch.Notify();
+
     /// <summary>只有可用托盘才隐藏，立即记录一次性提示；不触碰工作区和后台服务。</summary>
     public void HideToTray()
     {
@@ -98,7 +103,7 @@ public partial class MainWindow : HermodWindow
         ActivateMain(); _menu?.Close();
         if (_trayFailureReported) return;
         _trayFailureReported = true;
-        new MessageDialog(Text.Get("Hermod"), Text.Get("TrayUnavailable")) { Owner = this }.ShowDialog();
+        var notice = MessageDialog.ForTrayUnavailable(); notice.Owner = this; notice.ShowDialog();
     }
 
     /// <summary>菜单仅作用于主窗体；定位失败也不能把用户留在不可访问状态。</summary>

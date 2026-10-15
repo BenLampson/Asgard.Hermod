@@ -59,6 +59,10 @@ public sealed partial class ApplicationProcessTests
                 await duplicate.WaitForExitAsync(TestContext.Current.CancellationToken).WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
                 Assert.Equal(0, duplicate.ExitCode); Assert.False(File.Exists(duplicateDatabase));
             }
+            await InvokeReadyAsync(primary.Id, () => Windows(primary.Id).FirstOrDefault(window => window.Current.Name == "Hermod is already running")?
+                .FindFirst(TreeScope.Descendants, new AndCondition(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button),
+                    new PropertyCondition(AutomationElement.NameProperty, "OK"))));
+            await UntilAsync(() => !Windows(primary.Id).Any(window => window.Current.Name == "Hermod is already running"));
             await UntilAsync(() => IsWindowVisible(main)); Assert.True(IsWindowVisible(workHandle));
             PostMessage(main, 0x0010, 0, 0);
             await ChooseMainCloseAsync(primary.Id, "Hide main window to notification area", remember: true);

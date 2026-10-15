@@ -16,7 +16,7 @@ public sealed class WindowsTrayIconTests(WpfTestFixture fixture)
     public Task RealIcon_RegistersQueriesRectangleAndRecovers() => fixture.RunAsync(async () =>
     {
         Assert.SkipWhen(System.Diagnostics.Process.GetProcessesByName("Asgard.Hermod").Length > 0, "避免与用户正在运行的 Hermod 共用托盘 GUID。");
-        using var tray = new WindowsTrayIcon();
+        Guid testIconId = Guid.NewGuid(); using var tray = new WindowsTrayIcon(testIconId);
         Assert.True(tray.IsAvailable);
         Assert.True(tray.TryGetBounds(out var bounds));
         Assert.True(bounds.Width > 0 && bounds.Height > 0);
@@ -25,14 +25,14 @@ public sealed class WindowsTrayIconTests(WpfTestFixture fixture)
         {
             Size = Marshal.SizeOf<TrayNotifyData>(),
             Flags = 0x20,
-            Guid = new Guid("5db3d722-11c6-498d-969a-5fcc8ecad204"),
+            Guid = testIconId,
             Tip = "",
             Info = "",
             InfoTitle = ""
         };
         Assert.True(TrayNativeMethods.Notify(2, ref id));
         Assert.False(tray.TryGetBounds(out _));
-        nint handle = FindWindow(null, "Hermod.Tray");
+        nint handle = tray.WindowHandle;
         Assert.NotEqual(0, handle);
         SendMessage(handle, TrayNativeMethods.RegisterWindowMessage("TaskbarCreated"), 0, 0);
         await WpfTestFixture.DrainDispatcherAsync();
@@ -53,7 +53,7 @@ public sealed class WindowsTrayIconTests(WpfTestFixture fixture)
         Assert.SkipWhen(System.Diagnostics.Process.GetProcessesByName("Asgard.Hermod").Length > 0, "避免与用户正在运行的 Hermod 共用托盘 GUID。");
         Text.SetApplicationCulture(CultureInfo.GetCultureInfo(language));
         var themes = new ThemeService(Application.Current.Resources); themes.SetTheme(theme);
-        using var tray = new WindowsTrayIcon();
+        Guid testIconId = Guid.NewGuid(); using var tray = new WindowsTrayIcon(testIconId);
         Assert.True(tray.TryGetBounds(out var bounds));
         var menu = new TrayMenuWindow(true, () => { }, () => { });
         try
@@ -93,8 +93,6 @@ public sealed class WindowsTrayIconTests(WpfTestFixture fixture)
         Assert.True(TrayMenuPlacement.Calculate(new Rect(-1000, -24, 24, 24), work, new Size(268, 122), scale).ArrowOnTop);
     }
 
-    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-    private static extern nint FindWindow(string? className, string name);
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     private static extern nint SendMessage(nint handle, int message, nint wParam, nint lParam);
 }

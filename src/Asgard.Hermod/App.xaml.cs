@@ -91,9 +91,11 @@ public partial class App : Application
             window.ExitCommitted += _instance.BeginExit;
             MainWindow = window;
             window.Show();
-            _instance.SetActivationHandler(() => Dispatcher.BeginInvoke(() => window.ActivateMain()));
+            _instance.SetActivationHandler(() => Dispatcher.BeginInvoke(() => window.NotifyAlreadyRunning()));
             if (tray is null)
-                new MessageDialog(Text.Get("Hermod"), Text.Get("TrayUnavailable")) { Owner = window }.ShowDialog();
+            {
+                var notice = MessageDialog.ForTrayUnavailable(); notice.Owner = window; notice.ShowDialog();
+            }
         }
         catch (Exception exception)
         {

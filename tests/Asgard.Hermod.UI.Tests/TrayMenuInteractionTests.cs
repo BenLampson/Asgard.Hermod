@@ -26,7 +26,7 @@ public sealed class TrayMenuInteractionTests(WpfTestFixture fixture)
             "物理指针集成测试仅在用户明确允许桌面验收并设置 HERMOD_RUN_DESKTOP_POINTER_TESTS=1 时运行。");
         Assert.SkipWhen(System.Diagnostics.Process.GetProcessesByName("Asgard.Hermod").Length > 0, "避免共用用户的托盘图标。");
         Text.SetApplicationCulture(CultureInfo.GetCultureInfo(language)); var themes = new ThemeService(Application.Current.Resources); themes.SetTheme(theme);
-        using var tray = new WindowsTrayIcon(); Assert.True(tray.TryGetBounds(out var icon));
+        using var tray = new WindowsTrayIcon(Guid.NewGuid()); Assert.True(tray.TryGetBounds(out var icon));
         int toggleCalls = 0, exitCalls = 0;
         CursorPoint original = default; if (physicalPointer) Assert.True(GetCursorPos(out original));
         var menu = new TrayMenuWindow(true, () => toggleCalls++, () => exitCalls++);

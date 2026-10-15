@@ -3319,7 +3319,8 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
     <value>Hermod is still running. Use its notification area icon to show the main window or exit. Your work windows continue running.</value>
   </data>
   <data name="TrayUnavailable" xml:space="preserve">
-    <value>The notification area is unavailable. Hermod will keep the main window and its taskbar entry accessible. Closing the main window will exit Hermod.</value>
+    <value>Hermod is still running, and its main window and taskbar entry remain available.
+Hiding to the notification area is temporarily unavailable. To exit Hermod, use the main window close action.</value>
   </data>
   <data name="ExitHermodImpact" xml:space="preserve">
     <value>Hermod has {0} open or closing work sessions. Exiting will close all work windows, disconnect sessions, and stop background tasks. Continue?</value>
@@ -4056,6 +4057,9 @@ Exit code: {1}
   <data name="SshAgentToolSupportRequired" xml:space="preserve"><value>The model service rejected the troubleshooting request. Check that the configured model and endpoint support Chat Completions function tools.</value></data>
   <data name="SshAgentNotExecuted" xml:space="preserve"><value>The action was canceled before execution.</value></data>
   <data name="SshAgentIncludeSelectionShort" xml:space="preserve"><value>Include selection</value></data>
+  <data name="TrayUnavailableTitle" xml:space="preserve"><value>Notification area icon unavailable</value></data>
+  <data name="HermodAlreadyRunningTitle" xml:space="preserve"><value>Hermod is already running</value></data>
+  <data name="HermodAlreadyRunningMessage" xml:space="preserve"><value>The existing Hermod window has been brought to the front. There is no need to start another instance.</value></data>
   <data name="SshMonitorAllInterfaces" xml:space="preserve"><value>All interfaces</value></data>
   <data name="SshMonitorRootDisk" xml:space="preserve"><value>Root filesystem</value></data>
   <data name="SshMonitorDiskCapacity" xml:space="preserve"><value>{0} used / {1} total</value></data>

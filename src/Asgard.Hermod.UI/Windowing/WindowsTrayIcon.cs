@@ -9,7 +9,7 @@ namespace Asgard.Hermod.UI.Windowing;
 /// <summary>唯一 GUID 通知图标，响应 Explorer 重建并检查失效，主题来自 Windows 通知区域。</summary>
 public sealed class WindowsTrayIcon : ITrayIcon
 {
-    private static readonly Guid IconId = new("5db3d722-11c6-498d-969a-5fcc8ecad204");
+    private readonly Guid _iconId;
     private const int Callback = 0x8001;
     private const uint NotifyMessage = 0x01, NotifyIcon = 0x02, NotifyTip = 0x04, NotifyInfo = 0x10, NotifyGuid = 0x20, ShowTip = 0x80;
     private const uint StandardFlags = NotifyMessage | NotifyIcon | NotifyTip | NotifyGuid | ShowTip;
@@ -21,8 +21,12 @@ public sealed class WindowsTrayIcon : ITrayIcon
     private bool _disposed;
 
     /// <summary>仅主进程在语言初始化及窗口就绪后创建此服务。</summary>
-    public WindowsTrayIcon()
+    public WindowsTrayIcon() : this(TrayIconIdentity.ForExecutable(Environment.ProcessPath!)) { }
+
+    /// <summary>原生测试显式传入隔离 GUID，不能占用正式应用的注册身份。</summary>
+    internal WindowsTrayIcon(Guid iconId)
     {
+        _iconId = iconId;
         _source = new HwndSource(new HwndSourceParameters("Hermod.Tray") { Width = 0, Height = 0, WindowStyle = unchecked((int)0x80000000) });
         _source.AddHook(OnMessage);
         _data = new TrayNotifyData
@@ -32,7 +36,7 @@ public sealed class WindowsTrayIcon : ITrayIcon
             Id = 1,
             Flags = StandardFlags,
             Callback = Callback,
-            Guid = IconId,
+            Guid = _iconId,
             Tip = Text.Get("AsgardHermod"),
             Info = "",
             InfoTitle = ""
@@ -42,6 +46,9 @@ public sealed class WindowsTrayIcon : ITrayIcon
         _health = new DispatcherTimer(TimeSpan.FromSeconds(3), DispatcherPriority.Background, (_, _) => CheckHealth(), _source.Dispatcher);
         _health.Start();
     }
+
+    /// <summary>仅供原生测试定向自身窗口，不能通过全局窗口名称查找用户实例。</summary>
+    internal nint WindowHandle => _source.Handle;
 
     /// <inheritdoc />
     public bool IsAvailable { get; private set; }
@@ -112,7 +119,7 @@ public sealed class WindowsTrayIcon : ITrayIcon
     /// <inheritdoc />
     public bool TryGetBounds(out Rect rectangle)
     {
-        var id = new TrayIconIdentifier { Size = Marshal.SizeOf<TrayIconIdentifier>(), Window = _source.Handle, Id = 1, Guid = IconId };
+        var id = new TrayIconIdentifier { Size = Marshal.SizeOf<TrayIconIdentifier>(), Window = _source.Handle, Id = 1, Guid = _iconId };
         rectangle = default;
         if (!IsAvailable || TrayNativeMethods.GetRect(ref id, out var bounds) != 0) return false;
         rectangle = new Rect(bounds.Left, bounds.Top, bounds.Right - bounds.Left, bounds.Bottom - bounds.Top);
