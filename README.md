@@ -84,7 +84,9 @@ src/Asgard.Hermod.Providers.AwsS3/      AWS S3 profile and registration
 src/Asgard.Hermod.Providers.TencentCos/ Tencent COS profile and registration
 src/Asgard.Hermod.Providers.VolcengineTos/ Volcengine TOS profile and registration
 src/Asgard.Hermod.Providers.Minio/      MinIO profile and registration
-design/Hermod.pen                     Single design source, with shared components and separate capability regions
+design/Hermod-NewVersion.pen          Main application design
+design/DBWindow.pen                   Database workspace design
+design/SSHWindow.pen                  SSH workspace design
 tests/                  Terminal behavior and Windows integration tests
 ```
 

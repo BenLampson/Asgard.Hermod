@@ -1,14 +1,17 @@
 # Design source
 
-`Hermod.pen` is the single editable Pencil source. Keep related screens in the
-numbered regions and save edits to this file instead of creating alternate `.pen`
+Editable Pencil sources are split by responsibility: `Hermod-NewVersion.pen` for
+the main application, `DBWindow.pen` for database workspaces, and `SSHWindow.pen`
+for SSH workspaces. Keep related screens in the relevant source and save edits
+directly there. Do not merge these sources into one file or create temporary `.pen`
 copies. Screenshots, previews, and rendered exports are local review artifacts;
 Git ignores image files under `design/`, including `previews/` and `exports/`.
 Attach screenshots to pull requests instead of committing them. Runtime brand
 and provider assets remain under `src/Asgard.Hermod.UI/Assets/`; the brand export
 script is versioned separately.
 
-The canvas directory groups the designs into these regions:
+The numbered regions below describe the original canvas organization; use the
+corresponding workspace source for ongoing database and SSH design work:
 
 1. Design system and reusable components
 2. Home and application shell

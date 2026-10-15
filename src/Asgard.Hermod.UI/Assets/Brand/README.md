@@ -1,6 +1,7 @@
 # Hermod application icons
 
-Selected concept: **01 — Winged Helm**, from `design/Hermod.pen`.
+Selected concept: **01 — Winged Helm**, from the main application design, now
+maintained in `design/Hermod-NewVersion.pen`.
 Every shipped icon has a transparent background; only the helmet and crest are drawn.
 
 | Asset | Purpose | Primary / accent |
