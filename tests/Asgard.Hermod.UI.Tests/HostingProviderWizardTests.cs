@@ -7,6 +7,7 @@ public sealed class HostingProviderWizardTests
     [Theory]
     [InlineData("ssh")]
     [InlineData("mysql")]
+    [InlineData("postgresql")]
     [InlineData("redis")]
     public async Task ConfirmedConnection_ChangesBrandWithoutInvalidatingTest(string type)
     {

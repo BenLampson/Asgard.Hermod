@@ -38,6 +38,11 @@ browsing, independent SQL documents and editable table/result grids. Long text,
 JSON, SQL NULL and binary fields can be edited in a resizable field window.
 See the [MySQL guide](docs/mysql.md) for permissions, transactions and limits.
 
+PostgreSQL offers the same query workspace with database/schema navigation,
+independent query sessions, SQL completion, estimated execution plans and table
+editing. See the [PostgreSQL guide](docs/postgresql.md) for connection and query
+behavior.
+
 - Windows with support for .NET 10 desktop applications.
 - .NET 10 SDK (the SDK policy is defined in `global.json`).
 - Optional: a Visual Studio installation supporting .NET 10 with the .NET desktop development workload.

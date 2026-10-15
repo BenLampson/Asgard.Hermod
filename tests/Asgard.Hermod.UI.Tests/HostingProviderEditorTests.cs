@@ -6,7 +6,7 @@ using Text = Asgard.Hermod.Abstractions.Localization.Text;
 
 namespace Asgard.Hermod.UI.Tests;
 
-/// <summary>通过标题铅笔使用的真实服务验证 SSH、MySQL、Redis 品牌编辑和取消路径。</summary>
+/// <summary>通过标题铅笔使用的真实服务验证 SSH、MySQL、PostgreSQL、Redis 品牌编辑和取消路径。</summary>
 [Collection(WpfTestCollection.Name)]
 public sealed class HostingProviderEditorTests(WpfTestFixture fixture)
 {
@@ -17,6 +17,8 @@ public sealed class HostingProviderEditorTests(WpfTestFixture fixture)
     [InlineData("ssh", "zh-Hans", UiTheme.Light)]
     [InlineData("mysql", "en", UiTheme.Dark)]
     [InlineData("mysql", "zh-Hans", UiTheme.Light)]
+    [InlineData("postgresql", "en", UiTheme.Dark)]
+    [InlineData("postgresql", "zh-Hans", UiTheme.Light)]
     [InlineData("redis", "en", UiTheme.Light)]
     [InlineData("redis", "zh-Hans", UiTheme.Dark)]
     public Task TitleEditor_ChangesHostingBrandWithoutEditingConnection(string type, string language, UiTheme theme) => fixture.RunAsync(async () =>

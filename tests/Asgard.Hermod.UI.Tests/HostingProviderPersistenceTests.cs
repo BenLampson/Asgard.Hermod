@@ -9,6 +9,7 @@ public sealed class HostingProviderPersistenceTests
     [Theory]
     [InlineData("ssh")]
     [InlineData("mysql")]
+    [InlineData("postgresql")]
     [InlineData("redis")]
     public async Task BrandEdit_PreservesConnectionAndSurvivesRestartAndRestore(string type)
     {

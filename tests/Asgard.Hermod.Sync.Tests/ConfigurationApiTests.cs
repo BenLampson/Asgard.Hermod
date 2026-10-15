@@ -8,6 +8,7 @@ public sealed class ConfigurationApiTests
     [Theory]
     [InlineData("ssh")]
     [InlineData("mysql")]
+    [InlineData("postgresql")]
     [InlineData("redis")]
     public async Task HostingBrand_RoundTripsThroughExistingConfigurationApi(string type)
     {

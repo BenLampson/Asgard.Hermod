@@ -64,6 +64,7 @@ public sealed class ConnectionMethodWorkflowTests
     [Theory]
     [InlineData("ssh")]
     [InlineData("mysql")]
+    [InlineData("postgresql")]
     [InlineData("redis")]
     [InlineData("storage")]
     public void EveryType_SeparatesProviderChoiceAndInformation(string type)
@@ -72,6 +73,7 @@ public sealed class ConnectionMethodWorkflowTests
         {
             "ssh" => SshProfile.Descriptor(SshIds.Direct).Type,
             "mysql" => Asgard.Hermod.MySql.MySqlProfile.Descriptor(Asgard.Hermod.MySql.MySqlIds.Direct).Type,
+            "postgresql" => Asgard.Hermod.PostgreSql.PostgreSqlProfile.Descriptor(Asgard.Hermod.PostgreSql.PostgreSqlIds.Direct).Type,
             "redis" => Asgard.Hermod.Redis.RedisProfile.Descriptor(Asgard.Hermod.Redis.RedisIds.Standalone).Type,
             _ => new NewInstanceWizardTestProvider().Descriptor.Type,
         };

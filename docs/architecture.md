@@ -1,7 +1,7 @@
 # Module architecture
 
 Hermod is a Windows management terminal built with C# 14, .NET 10 and WPF.
-SSH, MySQL and Redis have independent hosting-brand metadata. Their provider IDs
+SSH, MySQL, PostgreSQL and Redis have independent hosting-brand metadata. Their provider IDs
 continue to identify connection methods or topology; changing a brand never changes
 protocol settings, credentials or active sessions. The title pencil edits the name,
 hosting provider and tags together. The creation wizard offers the same brand choice
@@ -33,6 +33,8 @@ storage and owns application startup and shutdown.
 | `Asgard.Hermod.Redis.UI` | Redis connection forms, lazy key trees, per-key tabs and value editors | Shared UI, Redis protocol module |
 | `Asgard.Hermod.MySql` | Verified MySQL connections, object metadata, bounded SQL results and transactional row updates | Shared contracts, SSH forwarding contract, MySqlConnector |
 | `Asgard.Hermod.MySql.UI` | Connection forms, lazy object trees, SQL tabs, inline editing and field windows | Shared UI, MySQL protocol module |
+| `Asgard.Hermod.PostgreSql` | PostgreSQL connections, database/schema metadata, bounded SQL results, estimated plans and transactional table updates | Shared contracts, SSH forwarding contract, Npgsql |
+| `Asgard.Hermod.PostgreSql.UI` | PostgreSQL connection forms, focused database workspaces, SQL tabs and field editing | Shared UI, PostgreSQL protocol module, Agent module |
 | `Asgard.Hermod.ObjectStorage.Abstractions` | Object storage models, service and client contracts | Shared contracts |
 | `Asgard.Hermod.ObjectStorage` | Resource client factory, connection probe, transfers, previews and deletion policies | Object storage contracts, DI abstractions |
 | `Asgard.Hermod.ObjectStorage.UI` | Object browser, feature dialogs, view models and page template | Shared UI, object storage contracts, DI abstractions |
@@ -55,7 +57,7 @@ Both editors preserve the same two-way binding and maximum length. Hiding the
 password, hiding or closing the window, and reapplying the template clear the
 plain-text editor; its undo history is disabled. Visibility is never persisted.
 
-The main window uses fixed Overview, All instances, MySQL, Redis, SSH and object
+The main window uses fixed Overview, All instances, MySQL, PostgreSQL, Redis, SSH and object
 storage navigation above a configuration table. Type icons, safe connection
 addresses, provider identities and tags have separate columns. Tooltips and
 accessibility labels preserve names at narrow sizes. The creation wizard uses one outer scroll viewer for its body; type and
@@ -239,12 +241,14 @@ services.AddS3Connector<S3CompatibleStorageProvider>();
 services.AddSsh();
 services.AddRedis();
 services.AddMySql();
+services.AddPostgreSql();
 services.AddSingleton<ITerminalSessionFactory, LocalTerminalSessionFactory>();
 services.AddHermodUi(() => MainWindow, Resources);
 services.AddObjectStorageUi(() => MainWindow);
 services.AddSshUi(() => MainWindow);
 services.AddRedisUi(() => MainWindow);
 services.AddMySqlUi(() => MainWindow);
+services.AddPostgreSqlUi(() => MainWindow);
 ```
 
 `AddLocalStorage` registers SQLite and local configuration/tag services. The host
@@ -271,7 +275,7 @@ Startup validates the service container, initializes the database off the UI
 thread, applies the saved language preference and opens the main window. Windows
 display language is the default; unsupported languages fall back to English.
 Each launch opens Overview and does not restore previous work windows.
-Overview shows four type counts and a six-row recent-access table. All instances
+Overview shows five type counts and a six-row recent-access table. All instances
 and type pages use the same configuration catalog, search, tag and provider
 filters, sorting and pagination. Selection does not open a connection; double-click,
 Enter or the row menu opens or activates its independent work window.

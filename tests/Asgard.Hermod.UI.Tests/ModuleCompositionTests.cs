@@ -1,8 +1,10 @@
+using Asgard.Hermod.PostgreSql;
 using Asgard.Hermod.Providers.AwsS3;
 using Asgard.Hermod.Providers.Minio;
 using Asgard.Hermod.Providers.S3;
 using Asgard.Hermod.Providers.TencentCos;
 using Asgard.Hermod.Providers.VolcengineTos;
+using Asgard.Hermod.Ssh;
 
 namespace Asgard.Hermod.UI.Tests;
 
@@ -85,6 +87,24 @@ public sealed class ModuleCompositionTests
         Assert.Null(services.GetService<IObjectStorageService>());
     }
 
+    /// <summary>PostgreSQL 协议可独立重复装配，直接连接和 SSH 路由各注册一次。</summary>
+    [Fact]
+    public void PostgreSql_RegistersIndependentlyAndOnce()
+    {
+        using var services = new ServiceCollection().AddSingleton<ISshTcpStreamFactory>(new UnusedSshTcpStreamFactory())
+            .AddPostgreSql().AddPostgreSql().BuildServiceProvider(
+            new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true });
+
+        var providers = services.GetServices<IInstanceProvider>().ToArray();
+        Assert.Equal(2, providers.Length);
+        Assert.All(providers, provider => Assert.IsType<PostgreSqlInstanceProvider>(provider));
+        Assert.Equal(new[] { PostgreSqlIds.Direct, PostgreSqlIds.Ssh }, providers.Select(provider => provider.Descriptor.Id));
+        Assert.IsType<PostgreSqlSessionFactory>(Assert.Single(services.GetServices<IPostgreSqlSessionFactory>()));
+        Assert.Null(services.GetService<ILocalConfigurationRepository>());
+        Assert.Null(services.GetService<IInstanceConfigurationService>());
+        Assert.Null(services.GetService<IInstancePageProvider>());
+    }
+
     /// <summary>业务及契约程序集不得反向引用宿主、WPF 或服务商实现。</summary>
     [Theory]
     [InlineData(typeof(InstanceSummary))]
@@ -92,11 +112,13 @@ public sealed class ModuleCompositionTests
     [InlineData(typeof(LocalDatabaseInitializer))]
     [InlineData(typeof(IObjectStorageClient))]
     [InlineData(typeof(LocalObjectStorageService))]
+    [InlineData(typeof(PostgreSqlSessionFactory))]
     public void PortableModules_DoNotReferenceHostPresentationOrCloudSdk(Type moduleType)
     {
         string[] references = moduleType.Assembly.GetReferencedAssemblies().Select(name => name.Name!).ToArray();
 
         Assert.DoesNotContain(references, name => name == "Asgard.Hermod" ||
+            name.EndsWith(".UI", StringComparison.Ordinal) ||
             name.StartsWith("Asgard.Hermod.UI", StringComparison.Ordinal) ||
             name.StartsWith("Asgard.Hermod.ObjectStorage.UI", StringComparison.Ordinal) ||
             name.StartsWith("Asgard.Hermod.Providers.", StringComparison.Ordinal) ||
@@ -116,5 +138,12 @@ public sealed class ModuleCompositionTests
             name.StartsWith("Asgard.Hermod.Persistence", StringComparison.Ordinal) ||
             name.StartsWith("Asgard.Hermod.Providers", StringComparison.Ordinal) ||
             name.StartsWith("AlibabaCloud", StringComparison.Ordinal) || name.StartsWith("AWSSDK", StringComparison.Ordinal));
+    }
+
+    /// <summary>装配不应提前建立网络连接，SSH 通道由宿主提供。</summary>
+    private sealed class UnusedSshTcpStreamFactory : ISshTcpStreamFactory
+    {
+        public Task<Stream> OpenAsync(InstanceConnectionOptions options, string host, int port, CancellationToken cancellationToken = default) =>
+            throw new InvalidOperationException("Module composition must not open connections.");
     }
 }

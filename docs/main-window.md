@@ -2,7 +2,7 @@
 
 The main window follows the approved Overview and instance-table design. It starts
 at 1360 × 860 logical pixels when the monitor permits. Overview, All instances,
-MySQL, Redis, SSH and object storage are fixed navigation entries. Overview shows
+MySQL, PostgreSQL, Redis, SSH and object storage are fixed navigation entries. Overview shows
 actual type counts and the six most recent local accesses. Configuration tables
 combine name/address search, tag filters, provider selection and recent/name
 sorting. Pagination fits the available height, with at most nine rows per page.
