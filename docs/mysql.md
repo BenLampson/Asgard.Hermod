@@ -71,6 +71,61 @@ close, edit-connection and retry actions. Connection errors do not occupy the
 page notification row. The body keeps its size and pauses interaction while the
 overlay is open. Cancellation disposes late sessions instead of activating them.
 
+## Focused database workspaces
+
+Click a database row (or press Enter) to open its own window. The window title
+identifies the instance and database, and the object tree starts at that database.
+Repeated opening focuses the existing window; query documents, transactions and
+close guards remain independent. The object tree can be collapsed at any width.
+The caption offers a new query, a cross-database query and the SQL assistant.
+Cross-database documents begin without a default database and use qualified
+`database.table` names on the same server. Browse databases returns to the instance
+catalog without closing the focused window.
+
+## Completion and execution plans
+
+The shared editor suggests SQL keywords, current-database tables and views, and
+fields loaded on demand for basic FROM/JOIN aliases. Explicit database qualifiers
+can request other databases on the same instance. Ctrl+Space opens suggestions;
+Up/Down selects, Tab/Enter inserts, and Escape closes the popup. Inserting a
+suggestion replaces the current token or selection and preserves native undo.
+Metadata failures fall back to keyword suggestions without exposing SDK errors.
+
+Explain uses the selection or caret statement and displays the server's EXPLAIN
+result in the existing result grid. Analyze requires explicit confirmation, only
+accepts a single SELECT without file output, variable assignments or locking
+clauses, and requires MySQL 8.0.18+ with EXPLAIN ANALYZE support. It actually executes
+the SELECT in this tab's physical session; functions may have side effects.
+The execution trace keeps the latest 50 query/plan attempts, elapsed time, SQL
+snapshots and plan or safe error details. Traces remain in memory until tab close.
+
+## SQL assistant and local model settings
+
+Configure an OpenAI-compatible model service in System settings → AI assistant.
+The independent `Asgard.Hermod.Agent` project handles model requests and bounded
+conversation history; it has no database execution capability. The service URL
+and model name are stored only in local SQLite settings and do not synchronize.
+API keys are held in process memory only, never written to SQLite or configuration
+files, and must be re-entered after restarting Hermod. Requests go directly to the
+configured service. HTTPS is required except for loopback HTTP model services;
+redirects and automatic retries are disabled.
+
+Each MySQL tab keeps its own assistant conversation. Sending a question reads
+bounded metadata through that tab's existing physical session and includes editor
+SQL only when selected. Result data is excluded by default; the explicit sharing
+checkbox includes at most 20 loaded rows, 16 columns and 8 KiB. The panel explains
+this before sending. No connection credentials or connection options enter the
+model context. Users should review editor SQL and shared result samples for
+sensitive content before sending them to their chosen model service.
+
+Generated SQL can be inserted at the editor's caret/selection without execution.
+Review and run shows the complete SQL and target database before using the same
+query execution path and session, including existing draft and transaction guards.
+If the database or physical connection changes, an old suggestion cannot run
+directly. Cancelling a model request keeps the input draft, and closing a tab
+cancels its request and clears its conversation. Neither conversations nor result
+samples are persisted or synchronized by Hermod.
+
 ## Editing
 
 Double-click or F2 edits short values inline. Enter/Tab accepts the local draft;

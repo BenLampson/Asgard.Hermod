@@ -22,8 +22,10 @@ public sealed partial class MySqlTabViewModel
     public async Task DisconnectSessionAsync()
     {
         SetConnectionAvailability(false);
-        var previous = _session; _session = null;
-        if (previous is not null) await previous.DisposeAsync();
+        await _sessionOpenGate.WaitAsync();
+        try { var previous = _session; _session = null; if (previous is not null) await previous.DisposeAsync(); }
+        finally { _sessionOpenGate.Release(); }
+        _completionMetadata.Clear();
         _executed = false;
     }
     /// <summary>新连接配置只供下一次显式读取或执行，不自动重放 SQL。</summary>
@@ -58,7 +60,7 @@ public sealed partial class MySqlTabViewModel
             if (!await _dialogs.ConfirmEndSessionAsync()) return;
             try { await _session.RollbackAsync(_lifetime.Token); } catch (Exception error) { Error = Text.Error(error, "MySqlCommandFailed"); Refresh(); return; }
         }
-        Database = database; Refresh();
+        Database = database; _completionMetadata.Clear(); Refresh();
     }
     /// <summary>只保存 SQL 文件，失败时保留文稿。</summary>
     public async Task SaveDocumentAsync()
@@ -131,6 +133,9 @@ public sealed partial class MySqlTabViewModel
         if (_completion is not null) await _completion.Task;
         foreach (var grid in Results) grid.DraftChanged -= DraftChanged;
         CommitInputRequested = null;
-        if (_session is not null) await _session.DisposeAsync(); _lifetime.Dispose();
+        await _sessionOpenGate.WaitAsync();
+        try { if (_session is not null) await _session.DisposeAsync(); }
+        finally { _sessionOpenGate.Release(); }
+        InsertSqlRequested = null; ExecutionTraces.Clear(); SelectedTrace = null; _completionMetadata.Clear(); _lifetime.Dispose();
     }
 }

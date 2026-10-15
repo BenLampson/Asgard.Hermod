@@ -1,3 +1,4 @@
+using Asgard.Hermod.Agent;
 using Asgard.Hermod.MySql.UI.Services;
 using Asgard.Hermod.UI.Models;
 
@@ -9,6 +10,8 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
     private readonly InstanceItemViewModel _instance;
     private readonly IInstanceConfigurationService _configurations;
     private readonly ConnectionAwareMySqlSessionFactory _factory;
+    private readonly IMySqlSessionFactory _sessionFactory;
+    private readonly IAgentClient? _agentClient;
     private readonly IInstanceEditor _editor;
     private readonly IMySqlWorkspaceDialogs _dialogs;
     private readonly CancellationTokenSource _lifetime = new();
@@ -18,10 +21,13 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
     private int _queryNumber;
     /// <summary>创建模块状态和依赖；真实连接或写入由显式操作启动。</summary>
     public MySqlWorkspaceViewModel(InstanceItemViewModel instance, IInstanceConfigurationService configurations, IMySqlSessionFactory factory,
-        IInstanceEditor editor, IMySqlWorkspaceDialogs dialogs) : base("mysql:" + Guid.NewGuid().ToString("N"), instance.Name, "database", instance.Id)
+        IInstanceEditor editor, IMySqlWorkspaceDialogs dialogs, string? focusedDatabase = null, IAgentClient? agentClient = null) : base("mysql:" + Guid.NewGuid().ToString("N"), instance.Name, "database", instance.Id)
     {
         _instance = instance; _configurations = configurations; _factory = new ConnectionAwareMySqlSessionFactory(factory, OnConnectionLost); _editor = editor; _dialogs = dialogs;
+        _sessionFactory = factory; _agentClient = agentClient; FocusedDatabase = focusedDatabase ?? ""; UpdateInstanceMetadata(instance.Summary);
         NewQueryCommand = new RelayCommand(_ => NewQuery(), _ => IsConnected && !IsConnecting);
+        NewCrossDatabaseQueryCommand = new RelayCommand(_ => NewQuery(""), _ => IsConnected && !IsConnecting);
+        BrowseDatabasesCommand = new RelayCommand(_ => RequestWorkspace(null, () => CreateWorkspace(null)));
         CloseTabCommand = new AsyncRelayCommand(tab => CloseTabAsync(tab as MySqlTabViewModel));
         RefreshTreeCommand = new AsyncRelayCommand(_ => RefreshTreeAsync(), _ => IsConnected && Tree is not null && !IsConnecting);
         ReconnectCommand = new AsyncRelayCommand(_ => ReconnectAsync(), _ => !IsConnecting);
@@ -30,13 +36,29 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
         ExportCommand = new AsyncRelayCommand(_ => ActiveTab?.ExportAsync() ?? Task.CompletedTask, _ => ActiveTab?.HasResult == true && !ActiveTab.IsBusy);
         Tools = [new("query.new", Text.Get("MySqlNewQuery"), "file-code", NewQueryCommand), new("query.open", Text.Get("MySqlOpenQuery"), "file", OpenQueryCommand),
             new("result.export", Text.Get("MySqlExportLoaded"), "download", ExportCommand), new("tree.refresh", Text.Get("MySqlRefreshBranch"), "refresh-cw", RefreshTreeCommand),
-            new("connection.reconnect", Text.Get("MySqlReconnect"), "refresh-cw", ReconnectCommand)];
+            new("connection.reconnect", Text.Get("MySqlReconnect"), "refresh-cw", ReconnectCommand),
+            new("query.crossDatabase", Text.Get("MySqlNewCrossDatabaseQuery"), "file-code", NewCrossDatabaseQueryCommand),
+            new("database.browse", Text.Get("MySqlBrowseDatabases"), "database", BrowseDatabasesCommand)];
         Tabs.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasTabs));
+        InitializeAssistant(agentClient);
     }
     /// <summary>对象原始名称或已本地化的文稿标题。</summary>
     public string Name => Header;
     /// <summary>公共环境徽标直接绑定稳定实例元数据。</summary>
     public InstanceItemViewModel Instance => _instance;
+    /// <summary>聚焦窗口固定的数据库；空串表示实例浏览窗口。</summary>
+    public string FocusedDatabase { get; }
+    /// <summary>聚焦状态不跟随查询页签的独立执行上下文变化。</summary>
+    public bool IsDatabaseFocused => FocusedDatabase.Length > 0;
+    /// <inheritdoc />
+    public override string? WorkspaceContextId => IsDatabaseFocused ? "mysql.database:" + FocusedDatabase : null;
+    /// <summary>窗口标题保留实例与数据库，重命名实例时不丢失数据库身份。</summary>
+    public override void UpdateInstanceMetadata(InstanceSummary instance)
+    {
+        if (InstanceId != instance.Id) return;
+        Header = IsDatabaseFocused ? Text.Format("MySqlDatabaseWorkspaceTitle", FocusedDatabase, instance.Name) : instance.Name;
+        OnPropertyChanged(nameof(Name));
+    }
     /// <summary>不含凭据的公开端点。</summary>
     public string Endpoint { get; private set; } = "";
     /// <summary>实例连接初始化状态。</summary>
@@ -57,6 +79,12 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
     public bool HasError => Error.Length > 0;
     /// <summary>此实例的分支懒加载对象树。</summary>
     public MySqlObjectTree? Tree { get; private set; }
+    /// <summary>聚焦窗口直接呈现该库的对象分组，避免重复的实例和数据库层级。</summary>
+    public MySqlTreeNode? NavigationRoot { get; private set; }
+    /// <summary>对象导航标题包含当前固定数据库名。</summary>
+    public string NavigationTitle => IsDatabaseFocused ? FocusedDatabase : Text.Get("MySqlDatabaseObjects");
+    /// <summary>窗口次标题优先标明固定数据库，端点仍保留在提示中。</summary>
+    public string WorkspaceSubtitle => IsDatabaseFocused ? FocusedDatabase : Endpoint;
     /// <summary>当前操作的树分支，不改变查询数据库上下文。</summary>
     public MySqlTreeNode? SelectedNode { get; set; }
     /// <summary>只对已加载对象进行层级过滤。</summary>
@@ -73,13 +101,17 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
             if (field?.CommitInputRequested?.Invoke() == false) { OnPropertyChanged(); return; }
             if (field is not null) field.IsActive = false;
             field = value; if (value is not null) value.IsActive = true;
-            OnPropertyChanged(); ExportCommand.NotifyCanExecuteChanged();
+            OnPropertyChanged(); ExportCommand.NotifyCanExecuteChanged(); OnActiveTabChanged();
         }
     }
     /// <summary>公共工具面板中的稳定入口。</summary>
     public IReadOnlyList<WorkspaceTool> Tools { get; }
     /// <summary>协调公共控件的操作命令，启用条件由当前状态决定。</summary>
     public RelayCommand NewQueryCommand { get; }
+    /// <summary>创建允许使用全限定表名的独立跨库 SQL 文稿。</summary>
+    public RelayCommand NewCrossDatabaseQueryCommand { get; }
+    /// <summary>激活实例的数据库浏览入口，不关闭当前查询或草稿。</summary>
+    public RelayCommand BrowseDatabasesCommand { get; }
     /// <summary>协调公共控件的操作命令，启用条件由当前状态决定。</summary>
     public AsyncRelayCommand CloseTabCommand { get; }
     /// <summary>协调公共控件的操作命令，启用条件由当前状态决定。</summary>
@@ -102,12 +134,24 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
         try
         {
             _factory.Reset(); await StopConnectionWatchAsync(); _connectionLost = false;
-            Tree?.Dispose(); Tree = null; if (_metadata is not null) await _metadata.DisposeAsync(); _metadata = null;
+            Tree?.Dispose(); Tree = null; NavigationRoot = null; SelectedNode = null; if (_metadata is not null) await _metadata.DisposeAsync(); _metadata = null;
             _options = await _configurations.GetConnectionAsync(InstanceId!, linked.Token) ?? throw Text.Exception("MySqlConfigurationInvalid");
             var session = await _factory.OpenAsync(_options, linked.Token);
             if (IsClosed || linked.IsCancellationRequested) { await session.DisposeAsync(); return; }
             _metadata = session; Endpoint = Text.Format("MySqlEndpoint", session.Options.Host, session.Options.Port);
             Tree = new(session, _lifetime.Token); OnPropertyChanged(nameof(Tree)); await Tree.LoadAsync(Tree.Root).WaitAsync(linked.Token);
+            NavigationRoot = Tree.Root;
+            if (IsDatabaseFocused)
+            {
+                NavigationRoot = Tree.Root.Children.FirstOrDefault(node => node.Object.Kind == MySqlObjectKind.Database && node.Object.Name == FocusedDatabase);
+                // 数据库列表可能因权限或分页缺少目标；已知名称仍可按权限直接打开。
+                if (NavigationRoot is null)
+                {
+                    NavigationRoot = new(new(MySqlObjectKind.Database, FocusedDatabase, FocusedDatabase), Tree) { Parent = Tree.Root };
+                    Tree.Root.Children.Add(NavigationRoot);
+                }
+                await Tree.LoadAsync(NavigationRoot).WaitAsync(linked.Token);
+            }
             linked.Token.ThrowIfCancellationRequested();
             if (!session.IsConnected) throw Text.Exception("MySqlConnectionFailed");
             HasConnectedOnce = true;
@@ -137,7 +181,7 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
             if (node.Object.Database.Length > 0) return node.Object.Database;
             if (node.Object.Kind == MySqlObjectKind.Database) return node.Object.Name;
         }
-        return ActiveTab?.Database is { Length: > 0 } active ? active : _metadata?.Options.Database ?? "";
+        return IsDatabaseFocused ? FocusedDatabase : ActiveTab?.Database is { Length: > 0 } active ? active : _metadata?.Options.Database ?? "";
     }
     private MySqlTabViewModel CreateTab(string name, string database, MySqlObjectKind kind)
     {
@@ -150,7 +194,7 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
     {
         if (_options is null || !IsConnected || IsClosed || node.IsPlaceholder) return;
         var item = node.Object;
-        if (item.Kind is MySqlObjectKind.Database) { node.IsExpanded = true; return; }
+        if (item.Kind is MySqlObjectKind.Database) { OpenDatabase(item.Name); return; }
         bool structure = false;
         while (node.Object.Kind is not (MySqlObjectKind.Table or MySqlObjectKind.View or MySqlObjectKind.Procedure or MySqlObjectKind.Function or MySqlObjectKind.Event))
         {
@@ -167,6 +211,13 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
         if (tab is null) { tab = CreateTab(item.Name, item.Database, item.Kind); Tabs.Add(tab); ActiveTab = tab; await tab.ReadAsync(); }
         ActiveTab = tab; if (structure) tab.Section = "structure";
     }
+    /// <summary>点击数据库请求一个独立聚焦窗口，重复请求由外壳激活已有窗口。</summary>
+    public void OpenDatabase(string database)
+    {
+        if (!IsConnected || IsConnecting || IsClosed || string.IsNullOrWhiteSpace(database)) return;
+        RequestWorkspace("mysql.database:" + database, () => CreateWorkspace(database));
+    }
+    private MySqlWorkspaceViewModel CreateWorkspace(string? database) => new(_instance, _configurations, _sessionFactory, _editor, _dialogs, database, _agentClient);
     private async Task CloseTabAsync(MySqlTabViewModel? tab)
     {
         if (tab is null || !Tabs.Contains(tab) || !await tab.RequestCloseAsync()) return;
@@ -183,7 +234,7 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
     {
         if (Tree is null) return;
         var node = SelectedNode; while (node is not null && !node.CanExpand) node = node.Parent;
-        await Tree.RefreshAsync(node);
+        await Tree.RefreshAsync(node ?? NavigationRoot);
         foreach (var tab in Tabs) tab.Databases = Tree.Root.Children.Where(item => !item.IsPlaceholder).Select(item => item.Object.Name).ToArray();
         Refresh();
     }
@@ -202,7 +253,7 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
     {
         try
         {
-            if (await _editor.EditAsync(InstanceId!) is { } updated) { _instance.UpdateSnapshot(updated); Header = updated.Name; OnPropertyChanged(nameof(Name)); Error = Text.Get("MySqlReconnectToApply"); Refresh(); }
+            if (await _editor.EditAsync(InstanceId!) is { } updated) { _instance.UpdateSnapshot(updated); UpdateInstanceMetadata(updated); Error = Text.Get("MySqlReconnectToApply"); Refresh(); }
         }
         catch (Exception error) { Error = Text.Error(error, "MySqlConfigurationInvalid"); Refresh(); }
     }
@@ -228,13 +279,16 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
     }
     protected override async ValueTask ReleaseAsync()
     {
-        _lifetime.Cancel(); _factory.Reset(); Connection.Finish(); await StopConnectionWatchAsync(); Tree?.Dispose();
+        ReleaseAssistant(); _lifetime.Cancel(); _factory.Reset(); Connection.Finish(); await StopConnectionWatchAsync(); Tree?.Dispose();
         foreach (var tab in Tabs) { tab.PropertyChanged -= OnTabChanged; await tab.DisposeAsync(); }
         Tabs.Clear(); if (_metadata is not null) await _metadata.DisposeAsync(); _lifetime.Dispose();
     }
     private void Refresh()
     {
-        foreach (string property in new[] { nameof(Endpoint), nameof(IsConnecting), nameof(IsConnected), nameof(Status), nameof(ConnectionTone), nameof(Error), nameof(HasError), nameof(Tree) }) OnPropertyChanged(property);
-        NewQueryCommand.NotifyCanExecuteChanged(); OpenQueryCommand.NotifyCanExecuteChanged(); RefreshTreeCommand.NotifyCanExecuteChanged(); ReconnectCommand.NotifyCanExecuteChanged(); EditConnectionCommand.NotifyCanExecuteChanged();
+        foreach (string property in new[] { nameof(Endpoint), nameof(WorkspaceSubtitle), nameof(IsConnecting), nameof(IsConnected), nameof(Status), nameof(ConnectionTone), nameof(Error), nameof(HasError), nameof(Tree), nameof(NavigationRoot) }) OnPropertyChanged(property);
+        NewQueryCommand.NotifyCanExecuteChanged(); NewCrossDatabaseQueryCommand.NotifyCanExecuteChanged(); OpenQueryCommand.NotifyCanExecuteChanged(); RefreshTreeCommand.NotifyCanExecuteChanged(); ReconnectCommand.NotifyCanExecuteChanged(); EditConnectionCommand.NotifyCanExecuteChanged();
     }
+    partial void InitializeAssistant(IAgentClient? client);
+    partial void ReleaseAssistant();
+    partial void OnActiveTabChanged();
 }

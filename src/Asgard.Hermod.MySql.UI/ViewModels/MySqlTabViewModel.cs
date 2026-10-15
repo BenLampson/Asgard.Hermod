@@ -11,6 +11,7 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
     private readonly CancellationTokenSource _lifetime;
     private CancellationTokenSource? _pending;
     private IMySqlSession? _session;
+    private readonly SemaphoreSlim _sessionOpenGate = new(1, 1);
     private TaskCompletionSource? _completion;
     private string _savedSql = "";
     private string? _path;
@@ -147,10 +148,23 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
     }
     private async Task<IMySqlSession> SessionAsync(CancellationToken token)
     {
-        if (!ConnectionAvailable || _disposed) throw Text.Exception("MySqlConnectionFailed");
-        if (_session is null) _session = await _factory.OpenAsync(_options, token);
-        if (!_session.IsConnected) throw new MySqlFailure("MySqlConnectionFailed", "MYSQL_CONNECTION");
-        return _session;
+        await _sessionOpenGate.WaitAsync(token);
+        try
+        {
+            if (!ConnectionAvailable || _disposed) throw Text.Exception("MySqlConnectionFailed");
+            if (_session is null)
+            {
+                // 新页签的数据库上下文覆盖连接模板；空上下文不能继承保存配置的默认库。
+                var parameters = new Dictionary<string, string>(_options.Parameters, StringComparer.OrdinalIgnoreCase) { ["database"] = Database };
+                var options = new InstanceConnectionOptions { TypeId = _options.TypeId, ProviderId = _options.ProviderId, Parameters = parameters };
+                var session = await _factory.OpenAsync(options, token);
+                if (_disposed || !ConnectionAvailable || token.IsCancellationRequested) { await session.DisposeAsync(); token.ThrowIfCancellationRequested(); throw Text.Exception("MySqlConnectionFailed"); }
+                _session = session;
+            }
+            if (!_session.IsConnected) throw new MySqlFailure("MySqlConnectionFailed", "MYSQL_CONNECTION");
+            return _session;
+        }
+        finally { _sessionOpenGate.Release(); }
     }
     /// <summary>确认待保存输入后读取对象页。</summary>
     public async Task ReadAsync()
@@ -185,8 +199,9 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
     private async Task ExecuteCoreAsync(string sql, CancellationToken token)
     {
         if (sql.Length == 0) return;
-        var session = await SessionAsync(token); _executed = true;
-        var execution = await session.ExecuteAsync(sql, Database, token);
+        var session = await SessionAsync(token);
+        var execution = await ExecuteTrackedAsync(session, sql, "query", token);
+        _completionMetadata.Clear();
         Database = session.CurrentDatabase;
         SetResults(execution.Results);
         Error = execution.Failure is null ? "" : Text.Error(execution.Failure, "MySqlCommandFailed");

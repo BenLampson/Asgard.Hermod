@@ -1,3 +1,5 @@
+using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 using Asgard.Hermod.MySql.UI.ViewModels;
 
 namespace Asgard.Hermod.MySql.UI.Views;
@@ -8,6 +10,7 @@ public partial class MySqlWorkspaceView : UserControl
     private readonly Dictionary<MySqlTabViewModel, MySqlTabView> _views = [];
     private MySqlWorkspaceViewModel? _model;
     private bool _compact, _drawer;
+    private bool _treeVisible = true;
     private double _treeWidth = 240;
     /// <summary>创建模块状态和依赖；真实连接或写入由显式操作启动。</summary>
     public MySqlWorkspaceView()
@@ -19,6 +22,8 @@ public partial class MySqlWorkspaceView : UserControl
     private void OnModelChanged(object? sender, PropertyChangedEventArgs args) { if (args.PropertyName == nameof(MySqlWorkspaceViewModel.ActiveTab)) ShowTab(); }
     private void ShowTab()
     {
+        // Details 在关闭时不属于可视树，直接赋值避免脱离树的隐式 DataContext 绑定失败。
+        AssistantPanel.DataContext = _model?.Assistant;
         if (_model is null) return;
         foreach (var stale in _views.Keys.Where(tab => !_model.Tabs.Contains(tab)).ToArray()) _views.Remove(stale);
         if (_model.ActiveTab is not { } tab) { TabHost.Content = null; return; }
@@ -29,28 +34,50 @@ public partial class MySqlWorkspaceView : UserControl
     {
         if (_model is null || args.NewValue is not MySqlTreeNode node) return;
         if (TabHost.Content is MySqlTabView current && !current.CommitInput()) return;
-        _model.SelectedNode = node; await _model.OpenAsync(node);
+        _model.SelectedNode = node;
+        if (node.Object.Kind != MySqlObjectKind.Database) await _model.OpenAsync(node);
         if (_compact && node.Object.Kind is MySqlObjectKind.Table or MySqlObjectKind.View or MySqlObjectKind.Procedure or MySqlObjectKind.Function or MySqlObjectKind.Event) { _drawer = false; Layout(); }
+    }
+    /// <summary>鼠标再次点击已选数据库仍可唤回窗口；展开按钮和键盘方向键只负责导航。</summary>
+    private void OnObjectClick(object sender, MouseButtonEventArgs args)
+    {
+        if (_model is null || _model.Connection.IsOpen) return;
+        for (var source = args.OriginalSource as DependencyObject; source is not null; source = source is Visual ? VisualTreeHelper.GetParent(source) : LogicalTreeHelper.GetParent(source))
+        {
+            if (source is ButtonBase) return;
+            if (source is not TreeViewItem item) continue;
+            if (item.DataContext is MySqlTreeNode { Object.Kind: MySqlObjectKind.Database } node && ReferenceEquals(_model.SelectedNode, node))
+            { _model.OpenDatabase(node.Object.Name); args.Handled = true; }
+            return;
+        }
     }
     private void OnTabChanged(object sender, SelectionChangedEventArgs args) => ShowTab();
     private void OnBodySizeChanged(object sender, SizeChangedEventArgs args)
     {
-        bool compact = args.NewSize.Width < 760; if (!_compact && compact) _treeWidth = TreeColumn.ActualWidth;
+        bool compact = args.NewSize.Width < 760; if (!_compact && compact && _treeVisible) _treeWidth = TreeColumn.ActualWidth;
         _compact = compact; Layout();
     }
-    private void OnDrawer(object sender, RoutedEventArgs args) { _drawer = !_drawer; Layout(); }
+    private void OnDrawer(object sender, RoutedEventArgs args)
+    {
+        if (_compact) _drawer = !_drawer;
+        else { if (_treeVisible) _treeWidth = TreeColumn.ActualWidth; _treeVisible = !_treeVisible; }
+        Layout();
+    }
     private void Layout()
     {
-        DrawerButton.Visibility = _compact ? Visibility.Visible : Visibility.Collapsed;
-        TreeColumn.MinWidth = _compact ? 0 : 200; TreeColumn.Width = new(_compact ? 0 : Math.Max(200, _treeWidth)); SplitterColumn.Width = new(_compact ? 0 : 6);
-        Splitter.Visibility = _compact ? Visibility.Collapsed : Visibility.Visible;
-        TreePanel.Visibility = !_compact || _drawer ? Visibility.Visible : Visibility.Collapsed;
+        bool docked = !_compact && _treeVisible;
+        DrawerButton.Visibility = Visibility.Visible;
+        TreeColumn.MinWidth = docked ? 200 : 0; TreeColumn.Width = new(docked ? Math.Max(200, _treeWidth) : 0); SplitterColumn.Width = new(docked ? 6 : 0);
+        Splitter.Visibility = docked ? Visibility.Visible : Visibility.Collapsed;
+        TreePanel.Visibility = docked || _compact && _drawer ? Visibility.Visible : Visibility.Collapsed;
         Grid.SetColumnSpan(TreePanel, _compact ? 3 : 1); TreePanel.Width = _compact ? Math.Min(300, Math.Max(200, Body.ActualWidth - 40)) : double.NaN;
         TreePanel.HorizontalAlignment = _compact ? HorizontalAlignment.Left : HorizontalAlignment.Stretch; Panel.SetZIndex(TreePanel, _compact ? 10 : 0);
     }
     private async void OnKeyDown(object sender, KeyEventArgs args)
     {
         if (_model is null || _model.Connection.IsOpen) return;
+        if (args.Key == Key.Enter && ObjectTree.IsKeyboardFocusWithin && _model.SelectedNode is { Object.Kind: MySqlObjectKind.Database } database)
+        { args.Handled = true; await _model.OpenAsync(database); return; }
         if (args.Key == Key.Escape && _drawer) { _drawer = false; Layout(); args.Handled = true; return; }
         if ((Keyboard.Modifiers & ModifierKeys.Control) == 0) return;
         if (args.Key == Key.W) { if (TabHost.Content is MySqlTabView current && !current.CommitInput()) return; args.Handled = true; await _model.CloseTabCommand.ExecuteAsync(_model.ActiveTab); }

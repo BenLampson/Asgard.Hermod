@@ -28,6 +28,10 @@ public sealed class WindowsMySqlWorkspaceDialogs(Func<Window?> owner) : IMySqlWo
     public Task<bool> ConfirmStopAsync() => Task.FromResult(new ConfirmationDialog(Text.Get("MySqlStopAndClose"), Text.Get("MySqlQueryCancelled"), Text.Get("MySqlStopAndClose")) { Owner = owner() }.ShowDialog() == true);
     /// <summary>确认事务状态和显式回滚。</summary>
     public Task<bool> ConfirmEndSessionAsync() => Task.FromResult(new ConfirmationDialog(Text.Get("MySqlEndTransaction"), Text.Get("MySqlEndTransactionHint"), Text.Get("MySqlRollbackAndContinue")) { Owner = owner() }.ShowDialog() == true);
+    /// <summary>明确提示实际执行及函数副作用，只有确认后才发送分析命令。</summary>
+    public Task<bool> ConfirmAnalyzeAsync() => Task.FromResult(new ConfirmationDialog(Text.Get("MySqlAnalyze"), Text.Get("MySqlAnalyzeConfirmHint"), Text.Get("MySqlAnalyzeConfirm")) { Owner = owner() }.ShowDialog() == true);
+    /// <summary>模型建议没有自动执行权限，展示完整 SQL 后才允许发送。</summary>
+    public Task<bool> ConfirmAssistantSqlAsync(string sql, string database) => Task.FromResult(new ConfirmationDialog(Text.Get("MySqlAssistantExecuteTitle"), Text.Format("MySqlAssistantExecuteHint", database), Text.Get("MySqlAssistantExecute"), preview: sql) { Owner = owner() }.ShowDialog() == true);
     /// <summary>保存完整 SQL 文稿，失败不截断原文件。</summary>
     public async Task<string?> SaveQueryAsync(string sql, string? path, CancellationToken token)
     {

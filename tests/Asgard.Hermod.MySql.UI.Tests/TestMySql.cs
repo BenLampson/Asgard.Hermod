@@ -23,8 +23,9 @@ internal sealed class TestMySql : IMySqlSessionFactory
     internal TaskCompletionSource? BlockedOpen;
     internal Exception? OpenError;
     internal List<Session> Sessions { get; } = [];
+    internal List<InstanceConnectionOptions> OpenedOptions { get; } = [];
     public async Task<IMySqlSession> OpenAsync(InstanceConnectionOptions options, CancellationToken cancellationToken = default)
-    { Opens++; if (BlockedOpen is { } blocked) await blocked.Task; if (OpenError is { } error) throw error; var session = new Session(this); Sessions.Add(session); return session; }
+    { Opens++; OpenedOptions.Add(options); if (BlockedOpen is { } blocked) await blocked.Task; if (OpenError is { } error) throw error; var session = new Session(this); Sessions.Add(session); return session; }
     internal MySqlResult Result() => ResultOverride ?? new(1, 1, Columns, [Columns.Select(column => MySqlValues.Clone(Values[column.Name])).ToArray()], EditableTable: Table);
     internal sealed class Session(TestMySql server) : IMySqlSession
     {
@@ -81,10 +82,16 @@ internal sealed class TestMySqlDialogs : IMySqlWorkspaceDialogs
 {
     internal MySqlDraftChoice Choice = MySqlDraftChoice.Cancel;
     internal int Conflicts, Fields;
+    internal int AnalyzeConfirmations;
+    internal bool AnalyzeAllowed;
+    internal bool AssistantSqlAllowed;
+    internal List<(string Sql, string Database)> AssistantSqlConfirmations { get; } = [];
     internal Func<MySqlFieldEditorViewModel, Task>? FieldOpened;
     public Task<MySqlDraftChoice> ResolveDraftAsync(string name, bool queryDocument = false) => Task.FromResult(Choice);
     public Task<bool> ConfirmStopAsync() => Task.FromResult(true);
     public Task<bool> ConfirmEndSessionAsync() => Task.FromResult(true);
+    public Task<bool> ConfirmAnalyzeAsync() { AnalyzeConfirmations++; return Task.FromResult(AnalyzeAllowed); }
+    public Task<bool> ConfirmAssistantSqlAsync(string sql, string database) { AssistantSqlConfirmations.Add((sql, database)); return Task.FromResult(AssistantSqlAllowed); }
     public Task<string?> SaveQueryAsync(string sql, string? path, CancellationToken token) => Task.FromResult<string?>("query.sql");
     public Task<string?> OpenQueryAsync(CancellationToken token) => Task.FromResult<string?>(null);
     public Task<string?> ExportAsync(MySqlGridViewModel grid, CancellationToken token) => Task.FromResult<string?>(null);

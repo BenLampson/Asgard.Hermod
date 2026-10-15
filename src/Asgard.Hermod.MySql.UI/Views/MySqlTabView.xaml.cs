@@ -11,12 +11,12 @@ public partial class MySqlTabView : UserControl
     public MySqlTabView()
     {
         InitializeComponent(); DataContextChanged += (_, _) => Attach(); Loaded += (_, _) => Attach();
-        Unloaded += (_, _) => { if (_model is not null) _model.PropertyChanged -= OnChanged; _model = null; };
+        Unloaded += (_, _) => { if (_model is not null) { _model.PropertyChanged -= OnChanged; _model.InsertSqlRequested = null; } _model = null; };
     }
     private void Attach()
     {
-        if (_model is not null) _model.PropertyChanged -= OnChanged;
-        _model = DataContext as MySqlTabViewModel; if (_model is not null) { _model.PropertyChanged += OnChanged; _model.CommitInputRequested = CommitInput; }
+        if (_model is not null) { _model.PropertyChanged -= OnChanged; _model.InsertSqlRequested = null; }
+        _model = DataContext as MySqlTabViewModel; if (_model is not null) { _model.PropertyChanged += OnChanged; _model.CommitInputRequested = CommitInput; _model.InsertSqlRequested = SqlEditor.InsertText; }
         ShowResult();
     }
     private void OnChanged(object? sender, PropertyChangedEventArgs args)
@@ -53,6 +53,10 @@ public partial class MySqlTabView : UserControl
     }
     private async void OnRun(object sender, RoutedEventArgs args) => await RunAsync(false);
     private async void OnRunAll(object sender, RoutedEventArgs args) => await RunAsync(true);
+    private async void OnExplain(object sender, RoutedEventArgs args)
+    { if (_model is not null && CommitInput()) await _model.ExplainScopeAsync(SqlEditor.SelectedText, SqlEditor.CaretIndex, false); }
+    private async void OnAnalyze(object sender, RoutedEventArgs args)
+    { if (_model is not null && CommitInput()) await _model.ExplainScopeAsync(SqlEditor.SelectedText, SqlEditor.CaretIndex, true); }
     private async void OnPageSizeChanged(object sender, SelectionChangedEventArgs args)
     {
         if (!IsLoaded || _model is null || PageSizeSelector.SelectedItem is not int size || size == _model.PageSize) return;
