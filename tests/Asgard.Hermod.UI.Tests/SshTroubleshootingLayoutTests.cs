@@ -55,8 +55,12 @@ public sealed class SshTroubleshootingLayoutTests(WpfTestFixture fixture)
             await WindowPreviewCapture.VerifyAsync(window, $"ssh-troubleshooting-narrow-{language}-{theme}");
             var scroll = Assert.IsType<ScrollViewer>(assistant.FindName("ConversationScroll")); Assert.True(scroll.ActualHeight >= 100);
             var origin = send.TranslatePoint(new Point(), composer); Assert.True(origin.X >= 0); Assert.True(origin.X + send.ActualWidth <= composer.ActualWidth);
-            var prompt = Assert.IsType<TextBox>(assistant.FindName("PromptEditor")); Assert.True(prompt.Focus());
+            var prompt = Assert.IsType<TextBox>(assistant.FindName("PromptEditor"));
+            window.Activate();
             await WindowTestVisuals.UpdateLayoutAsync(window);
+            Assert.True(prompt.Focus());
+            await WindowTestVisuals.UpdateLayoutAsync(window);
+            Assert.True(prompt.IsKeyboardFocusWithin, WindowInteractionNativeMethods.DescribeFocus(window, prompt));
             Assert.Equal(((SolidColorBrush)Application.Current.FindResource("AccentBrush")).Color, Assert.IsType<SolidColorBrush>(composer.BorderBrush).Color);
             Assert.Equal(new Thickness(1), composer.BorderThickness);
             Assert.Null(prompt.Template.FindName("FocusRing", prompt));
