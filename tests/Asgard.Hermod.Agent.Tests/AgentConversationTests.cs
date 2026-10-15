@@ -12,6 +12,18 @@ public sealed class AgentConversationTests
         var configuration = new AgentConfiguration(); configuration.Update("https://models.example/v1", "model", "private-key"); return configuration;
     }
 
+    /// <summary>范围变化后不把旧范围的模型答复再次发送；界面历史由调用方保留。</summary>
+    [Fact]
+    public async Task ScopeBoundary_ExcludesEarlierDatabaseConversation()
+    {
+        using var handler = new AgentHttpHandler(); using var http = new HttpClient(handler);
+        var conversation = new AgentConversation(new OpenAiCompatibleAgentClient(http, Configuration()));
+        await conversation.SendAsync("old-scope-question", new("app", "old-schema", "", ScopeId: "session:1", Databases: ["app", "reports"]), TestContext.Current.CancellationToken);
+        await conversation.SendAsync("new-scope-question", new("app", "new-schema", "", ScopeId: "session:2", Databases: ["app"]), TestContext.Current.CancellationToken);
+        Assert.DoesNotContain("old-scope-question", handler.Bodies[1]); Assert.DoesNotContain("old-schema", handler.Bodies[1]);
+        Assert.Contains("new-scope-question", handler.Bodies[1]); Assert.Contains("databases", handler.Bodies[1]);
+    }
+
     [Fact]
     public async Task Conversation_BoundsCompleteTurnsAndDoesNotRetainOldContext()
     {
