@@ -97,6 +97,13 @@ public sealed partial class TerminalControl : Control, IDisposable
         control._fontConfigured = false;
         control.ConfigureRenderer();
         control.ResizeToBounds();
+        // SSH 连接完成时会在布局尚未稳定前替换会话；下一轮布局再次同步真实 PTY 尺寸。
+        if (control._session is { IsDisposed: false } session)
+            control.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
+            {
+                if (!control._disposed && ReferenceEquals(control._session, session))
+                    control.ResizeToBounds();
+            }));
         control.InvalidateVisual();
     }
 
