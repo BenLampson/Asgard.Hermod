@@ -26,7 +26,7 @@ public abstract class WorkspacePageViewModel : ObservableObject, IAsyncDisposabl
     /// <summary>页签标题；首页只展示图标。</summary>
     public string Header { get => _header; protected set => SetProperty(ref _header, value); }
     /// <summary>只刷新实例显示名称，保留页面身份、连接、内部页签和草稿。</summary>
-    public void UpdateInstanceMetadata(InstanceSummary instance)
+    public virtual void UpdateInstanceMetadata(InstanceSummary instance)
     {
         if (InstanceId == instance.Id) Header = instance.Name;
     }
@@ -34,6 +34,8 @@ public abstract class WorkspacePageViewModel : ObservableObject, IAsyncDisposabl
     public string Icon { get; }
     /// <summary>关联实例标识。</summary>
     public string? InstanceId { get; }
+    /// <summary>同一实例内的稳定工作上下文；空值表示实例入口。</summary>
+    public virtual string? WorkspaceContextId => null;
     /// <summary>是否允许用户关闭页签。</summary>
     public bool CanClose { get; }
     /// <summary>展示异常状态圆点。</summary>
@@ -64,6 +66,11 @@ public abstract class WorkspacePageViewModel : ObservableObject, IAsyncDisposabl
     public event EventHandler? NewSessionRequested;
     /// <summary>不创建嵌套页签，也不让功能页面访问外壳集合。</summary>
     protected void RequestNewSession() => NewSessionRequested?.Invoke(this, EventArgs.Empty);
+    /// <summary>模块可打开自己的聚焦工作上下文，外壳负责去重、激活和清理。</summary>
+    public event EventHandler<WorkspacePageRequestEventArgs>? WorkspaceRequested;
+    /// <summary>页面工厂不会在目标窗口已经存在时执行。</summary>
+    protected void RequestWorkspace(string? contextId, Func<WorkspacePageViewModel> createPage) =>
+        WorkspaceRequested?.Invoke(this, new(contextId, createPage));
 
     /// <summary>幂等关闭；该入口由 UI 线程调用以保证解绑顺序。</summary>
     public Task CloseAsync()

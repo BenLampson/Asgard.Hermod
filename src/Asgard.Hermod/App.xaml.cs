@@ -1,3 +1,5 @@
+using Asgard.Hermod.Agent;
+
 namespace Asgard.Hermod;
 
 /// <summary>
@@ -24,6 +26,7 @@ public partial class App : Application
             if (_instance is null) { Shutdown(); return; }
             var services = new ServiceCollection();
             services.AddHermodCore();
+            services.AddHermodAgent();
             // 进程验收可隔离文件缓存；默认仍使用现有用户级目录。
             if (Environment.GetEnvironmentVariable("HERMOD_TEMPORARY_DIRECTORY") is { Length: > 0 } temporaryDirectory)
                 services.AddSingleton<ITemporaryFileStorage>(_ => new LocalTemporaryFileStorage(temporaryDirectory));
@@ -60,6 +63,14 @@ public partial class App : Application
             var languageStore = provider.GetRequiredService<ILanguagePreferenceStore>();
             Text.Initialize(languageStore.Load(), systemCulture);
             Text.SetApplicationCulture(Text.Culture);
+            // AI 只恢复非敏感本机配置，API Key 每次启动均为空。
+            try
+            {
+                var agentPreferences = provider.GetRequiredService<IAgentPreferenceStore>().Load();
+                if (agentPreferences.Endpoint.Length > 0 && agentPreferences.Model.Length > 0)
+                    provider.GetRequiredService<AgentConfiguration>().Update(agentPreferences.Endpoint, agentPreferences.Model, "");
+            }
+            catch (Exception) { /* 配置不可用不阻止启动，可在系统设置重新配置。 */ }
             // 先恢复主题，再构造外壳、窗口和通知入口，避免重启后显示默认浅色。
             provider.GetRequiredService<IThemeService>();
             // 临时文件维护失败不阻断登录或工作区；设置页可重新扫描并给出安全提示。

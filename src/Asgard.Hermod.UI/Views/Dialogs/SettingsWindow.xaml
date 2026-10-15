@@ -46,6 +46,10 @@
                                         <Setter Property="Padding" Value="12,0" />
                                         <Style.Triggers>
                                             <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions><Condition Binding="{Binding Id}" Value="agent" /><Condition Binding="{Binding DataContext.IsAgentSelected, RelativeSource={RelativeSource AncestorType=Window}}" Value="True" /></MultiDataTrigger.Conditions>
+                                                <Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" /><Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
+                                            </MultiDataTrigger>
+                                            <MultiDataTrigger>
                                                 <MultiDataTrigger.Conditions>
                                                     <Condition Binding="{Binding Id}" Value="account" />
                                                     <Condition Binding="{Binding DataContext.IsAccountSelected, RelativeSource={RelativeSource AncestorType=Window}}" Value="True" />
@@ -144,6 +148,8 @@
             Visibility="{Binding DataContext.IsFileOpeningSelected, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource SettingsBooleanVisibility}}" />
         <dialogs:StorageSettingsView Grid.Column="1" DataContext="{Binding Storage}"
             Visibility="{Binding DataContext.IsStorageSelected, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource SettingsBooleanVisibility}}" />
+        <dialogs:AgentSettingsView Grid.Column="1" DataContext="{Binding AgentSettings}"
+            Visibility="{Binding DataContext.IsAgentSelected, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource SettingsBooleanVisibility}}" />
         <dialogs:AboutSettingsView x:Name="AboutContent" Grid.Column="1" DataContext="{Binding About}" Visibility="{Binding DataContext.IsAboutSelected, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource SettingsBooleanVisibility}}" />
     </Grid>
 </controls:HermodDialog>

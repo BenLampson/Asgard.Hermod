@@ -3562,6 +3562,47 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="HostingVolcengine" xml:space="preserve"><value>Volcengine</value></data>
   <data name="HostingAws" xml:space="preserve"><value>AWS</value></data>
   <data name="CannotSaveThemePreference" xml:space="preserve"><value>Cannot save the theme preference. The theme has not changed. Try again.</value></data>
+
+  <data name="AgentSettingsTitle" xml:space="preserve"><value>AI assistant</value></data>
+  <data name="AgentSettingsPrivacy" xml:space="preserve"><value>Model settings are local to this device and are not synchronized. Requests go directly to your configured model service. Hermod does not store your API key: it stays in memory for this run and is cleared when Hermod exits.</value></data>
+  <data name="AgentEndpoint" xml:space="preserve"><value>Model service URL</value></data>
+  <data name="AgentEndpointHint" xml:space="preserve"><value>Enter an OpenAI-compatible base URL (for example https://your-service.example/v1) or its full chat/completions URL. Local HTTP services must use a loopback address.</value></data>
+  <data name="AgentModel" xml:space="preserve"><value>Model name</value></data>
+  <data name="AgentApiKey" xml:space="preserve"><value>API key for this run</value></data>
+  <data name="AgentKeyHint" xml:space="preserve"><value>Leave blank to retain the current key for the same service. Changing the service URL clears the previous key. Enter the key again after restarting Hermod if your service requires one.</value></data>
+  <data name="AgentApplySettings" xml:space="preserve"><value>Apply local settings</value></data>
+  <data name="AgentClearKey" xml:space="preserve"><value>Clear API key</value></data>
+  <data name="AgentKeyCleared" xml:space="preserve"><value>The API key was cleared from this run.</value></data>
+  <data name="AgentKeyNotSet" xml:space="preserve"><value>No API key is configured.</value></data>
+  <data name="AgentKeyInMemory" xml:space="preserve"><value>An API key is held in memory for this run.</value></data>
+  <data name="AgentSettingsSaved" xml:space="preserve"><value>Local model settings were saved. The API key is held only in memory.</value></data>
+  <data name="AgentSettingsSaveFailed" xml:space="preserve"><value>Cannot save model settings. Try again.</value></data>
+  <data name="MySqlAssistantTitle" xml:space="preserve"><value>SQL assistant</value></data>
+  <data name="MySqlAssistantToggle" xml:space="preserve"><value>SQL assistant</value></data>
+  <data name="MySqlAssistantClear" xml:space="preserve"><value>Clear chat</value></data>
+  <data name="MySqlAssistantYou" xml:space="preserve"><value>You</value></data>
+  <data name="MySqlAssistantContext" xml:space="preserve"><value>Context: {0} · {1}</value></data>
+  <data name="MySqlAssistantPrivacy" xml:space="preserve"><value>Configure AI in System settings → AI assistant. Sending shares bounded schema metadata and selected context with your model service. Suggestions run only after your confirmation in this tab's MySQL session.</value></data>
+  <data name="MySqlAssistantSuggestion" xml:space="preserve"><value>Suggested SQL</value></data>
+  <data name="MySqlAssistantInsert" xml:space="preserve"><value>Insert into editor</value></data>
+  <data name="MySqlAssistantExecute" xml:space="preserve"><value>Review and run</value></data>
+  <data name="MySqlAssistantExecuteTitle" xml:space="preserve"><value>Run assistant SQL</value></data>
+  <data name="MySqlAssistantExecuteHint" xml:space="preserve"><value>Run the SQL below in database {0} using this tab's session? Review it carefully: writes, functions and transaction commands can change data and session state.</value></data>
+  <data name="MySqlAssistantIncludeSql" xml:space="preserve"><value>Include editor SQL</value></data>
+  <data name="MySqlAssistantIncludeResults" xml:space="preserve"><value>Share a result sample</value></data>
+  <data name="MySqlAssistantResultsHint" xml:space="preserve"><value>Send at most 20 loaded rows and 16 columns to your model service. Review the result for sensitive data before enabling this.</value></data>
+  <data name="MySqlAssistantThinking" xml:space="preserve"><value>Preparing context or waiting for the model…</value></data>
+  <data name="MySqlAssistantPrompt" xml:space="preserve"><value>Ask about this database or describe the SQL you need.</value></data>
+  <data name="MySqlAssistantSend" xml:space="preserve"><value>Send</value></data>
+  <data name="MySqlAssistantCancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="MySqlAssistantSendHint" xml:space="preserve"><value>Ctrl+Enter to send</value></data>
+  <data name="MySqlAssistantCancelled" xml:space="preserve"><value>The assistant request was cancelled. Your question is still available.</value></data>
+  <data name="MySqlAssistantSessionBusy" xml:space="preserve"><value>Wait for this tab's database operation to finish before asking the assistant.</value></data>
+  <data name="MySqlAssistantContextFailed" xml:space="preserve"><value>Cannot read the database context. Check the connection and try again.</value></data>
+  <data name="MySqlDatabaseWorkspaceTitle" xml:space="preserve"><value>{0} — {1}</value></data>
+  <data name="MySqlNewCrossDatabaseQuery" xml:space="preserve"><value>New cross-database query</value></data>
+  <data name="MySqlBrowseDatabases" xml:space="preserve"><value>Browse databases</value></data>
+  <data name="MySqlCrossDatabaseQueryHint" xml:space="preserve"><value>Use database.table names to query multiple databases on this instance.</value></data>
   <data name="AgentConfigurationRequired" xml:space="preserve"><value>Configure a valid model endpoint and model in settings.</value></data>
   <data name="AgentInvalidEndpoint" xml:space="preserve"><value>Use an HTTPS endpoint, or HTTP on localhost, without embedded credentials or query parameters.</value></data>
   <data name="AgentInvalidModel" xml:space="preserve"><value>Enter a valid model name.</value></data>
@@ -3575,4 +3616,27 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="AgentTimedOut" xml:space="preserve"><value>The model request timed out. Try again.</value></data>
   <data name="AgentInvalidResponse" xml:space="preserve"><value>The model service returned an incomplete or unsupported response.</value></data>
   <data name="AgentUnsupportedDialect" xml:space="preserve"><value>The assistant does not support this SQL dialect.</value></data>
+  <data name="CodeCompletionSuggestions" xml:space="preserve"><value>Code completion suggestions</value></data>
+  <data name="MySqlCompletionKeyword" xml:space="preserve"><value>Keyword</value></data>
+  <data name="MySqlCompletionHint" xml:space="preserve"><value>SQL completion: Ctrl+Space opens suggestions; Tab or Enter accepts; Escape closes.</value></data>
+  <data name="MySqlExplain" xml:space="preserve"><value>Explain</value></data>
+  <data name="MySqlAnalyze" xml:space="preserve"><value>Analyze</value></data>
+  <data name="MySqlExplainHint" xml:space="preserve"><value>Show the estimated execution plan for the selection or current statement.</value></data>
+  <data name="MySqlAnalyzeHint" xml:space="preserve"><value>Run the selected or current SELECT with EXPLAIN ANALYZE after confirmation.</value></data>
+  <data name="MySqlAnalyzeConfirm" xml:space="preserve"><value>Run and analyze</value></data>
+  <data name="MySqlAnalyzeConfirmHint" xml:space="preserve"><value>EXPLAIN ANALYZE actually runs this SELECT in the current database session. It can be expensive, and functions may have side effects. Cancellation does not undo those effects. Continue? Requires MySQL 8.0.18 or later with EXPLAIN ANALYZE support.</value></data>
+  <data name="MySqlPlanSingleStatement" xml:space="preserve"><value>Select one SQL statement or place the caret inside it. Execution plans do not accept batches or custom DELIMITER statements.</value></data>
+  <data name="MySqlPlanUnsupportedStatement" xml:space="preserve"><value>This statement cannot be explained here. Use SELECT, WITH, INSERT, UPDATE, DELETE, or REPLACE without executable comments.</value></data>
+  <data name="MySqlAnalyzeSelectOnly" xml:space="preserve"><value>Actual analysis only accepts a single SELECT without file output, variable assignments, or locking clauses.</value></data>
+  <data name="MySqlExplainResultHint" xml:space="preserve"><value>Estimated plan returned by the server. This action did not request actual query execution. Inspect table access, keys, estimated rows, and Extra in the result grid.</value></data>
+  <data name="MySqlAnalyzeResultHint" xml:space="preserve"><value>Actual execution plan returned by the server, including iterator timing, rows, and loops where supported. The SELECT was executed in this session.</value></data>
+  <data name="MySqlExecutionTrace" xml:space="preserve"><value>Execution trace</value></data>
+  <data name="MySqlExecutionTraceHint" xml:space="preserve"><value>The most recent 50 queries and plans in this tab. SQL and plans remain in memory and are cleared when the tab closes.</value></data>
+  <data name="MySqlTraceQuery" xml:space="preserve"><value>Query</value></data>
+  <data name="MySqlTraceSucceeded" xml:space="preserve"><value>Succeeded</value></data>
+  <data name="MySqlTraceFailed" xml:space="preserve"><value>Stopped or failed</value></data>
+  <data name="MySqlTraceSummary" xml:space="preserve"><value>{0} · {1} · {2:N1} ms · {3} rows · {4}</value></data>
+  <data name="MySqlTraceSql" xml:space="preserve"><value>Executed SQL snapshot</value></data>
+  <data name="MySqlTraceDetails" xml:space="preserve"><value>Execution plan or safe error details</value></data>
+  <data name="MySqlAssistantContextChanged" xml:space="preserve"><value>The database or connection changed after this suggestion was generated. Ask again, or insert the SQL into the editor and review its target.</value></data>
 </root>

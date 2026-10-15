@@ -32,7 +32,7 @@ public sealed partial class WorkspaceViewModel
         if (failure is null || page.HasConnectedOnce || page.IsClosed || !Tabs.Contains(page)) return;
         if (ReferenceEquals(SelectedTab, page)) SelectedTab = Home;
         Tabs.Remove(page); _instances.Remove(page); _initializations.Remove(page);
-        page.NewSessionRequested -= OnNewSessionRequested; page.CloseRequested -= OnPageCloseRequested;
+        page.NewSessionRequested -= OnNewSessionRequested; page.WorkspaceRequested -= OnWorkspaceRequested; page.CloseRequested -= OnPageCloseRequested;
         Task closing = page.CloseAsync(); _closingPages.Add(closing);
         try { await closing; }
         catch (Exception error) { if (failure.Length == 0) failure = Text.Error(error); }

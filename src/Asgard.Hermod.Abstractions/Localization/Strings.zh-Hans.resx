@@ -3562,6 +3562,47 @@
   <data name="HostingVolcengine" xml:space="preserve"><value>火山引擎</value></data>
   <data name="HostingAws" xml:space="preserve"><value>AWS</value></data>
   <data name="CannotSaveThemePreference" xml:space="preserve"><value>无法保存主题偏好，主题尚未更改。请重试。</value></data>
+
+  <data name="AgentSettingsTitle" xml:space="preserve"><value>AI 助手</value></data>
+  <data name="AgentSettingsPrivacy" xml:space="preserve"><value>模型配置仅在本机使用，不参与同步。请求直接发送至你配置的模型服务。Hermod 不存储 API Key：密钥仅保存在本次运行的内存中，退出后清除。</value></data>
+  <data name="AgentEndpoint" xml:space="preserve"><value>模型服务地址</value></data>
+  <data name="AgentEndpointHint" xml:space="preserve"><value>填写兼容 OpenAI 协议的服务地址（例如 https://your-service.example/v1）或完整 chat/completions 地址。本机 HTTP 服务需使用回环地址。</value></data>
+  <data name="AgentModel" xml:space="preserve"><value>模型名称</value></data>
+  <data name="AgentApiKey" xml:space="preserve"><value>本次运行的 API Key</value></data>
+  <data name="AgentKeyHint" xml:space="preserve"><value>留空将保留同一服务的现有密钥；更换服务地址会清除旧密钥。如果服务需要密钥，重启 Hermod 后需重新填写。</value></data>
+  <data name="AgentApplySettings" xml:space="preserve"><value>应用本地设置</value></data>
+  <data name="AgentClearKey" xml:space="preserve"><value>清除 API Key</value></data>
+  <data name="AgentKeyCleared" xml:space="preserve"><value>已清除本次运行的 API Key。</value></data>
+  <data name="AgentKeyNotSet" xml:space="preserve"><value>尚未配置 API Key。</value></data>
+  <data name="AgentKeyInMemory" xml:space="preserve"><value>API Key 仅保存在本次运行的内存中。</value></data>
+  <data name="AgentSettingsSaved" xml:space="preserve"><value>本地模型配置已保存。API Key 仅保存在内存中。</value></data>
+  <data name="AgentSettingsSaveFailed" xml:space="preserve"><value>无法保存模型设置，请重试。</value></data>
+  <data name="MySqlAssistantTitle" xml:space="preserve"><value>SQL 助手</value></data>
+  <data name="MySqlAssistantToggle" xml:space="preserve"><value>SQL 助手</value></data>
+  <data name="MySqlAssistantClear" xml:space="preserve"><value>清空对话</value></data>
+  <data name="MySqlAssistantYou" xml:space="preserve"><value>你</value></data>
+  <data name="MySqlAssistantContext" xml:space="preserve"><value>上下文：{0} · {1}</value></data>
+  <data name="MySqlAssistantPrivacy" xml:space="preserve"><value>请在系统设置 → AI 助手中配置模型。发送消息会将有限的结构元数据和所选上下文传给你的模型服务。建议 SQL 需经你确认后才在本页签的 MySQL 会话中执行。</value></data>
+  <data name="MySqlAssistantSuggestion" xml:space="preserve"><value>建议 SQL</value></data>
+  <data name="MySqlAssistantInsert" xml:space="preserve"><value>插入编辑器</value></data>
+  <data name="MySqlAssistantExecute" xml:space="preserve"><value>确认并执行</value></data>
+  <data name="MySqlAssistantExecuteTitle" xml:space="preserve"><value>执行助手 SQL</value></data>
+  <data name="MySqlAssistantExecuteHint" xml:space="preserve"><value>是否使用本页签会话在数据库 {0} 执行下方 SQL？请检查语句：写入、函数及事务命令可能更改数据和会话状态。</value></data>
+  <data name="MySqlAssistantIncludeSql" xml:space="preserve"><value>附带编辑器 SQL</value></data>
+  <data name="MySqlAssistantIncludeResults" xml:space="preserve"><value>分享结果样本</value></data>
+  <data name="MySqlAssistantResultsHint" xml:space="preserve"><value>向模型服务发送最多 20 行、16 列已加载结果。启用前请检查结果是否包含敏感数据。</value></data>
+  <data name="MySqlAssistantThinking" xml:space="preserve"><value>正在准备上下文或等待模型回复…</value></data>
+  <data name="MySqlAssistantPrompt" xml:space="preserve"><value>询问当前数据库，或描述你需要的 SQL。</value></data>
+  <data name="MySqlAssistantSend" xml:space="preserve"><value>发送</value></data>
+  <data name="MySqlAssistantCancel" xml:space="preserve"><value>取消</value></data>
+  <data name="MySqlAssistantSendHint" xml:space="preserve"><value>Ctrl+Enter 发送</value></data>
+  <data name="MySqlAssistantCancelled" xml:space="preserve"><value>助手请求已取消，问题草稿已保留。</value></data>
+  <data name="MySqlAssistantSessionBusy" xml:space="preserve"><value>请等待本页签的数据库操作完成后再询问助手。</value></data>
+  <data name="MySqlAssistantContextFailed" xml:space="preserve"><value>无法读取数据库上下文，请检查连接后重试。</value></data>
+  <data name="MySqlDatabaseWorkspaceTitle" xml:space="preserve"><value>{0} — {1}</value></data>
+  <data name="MySqlNewCrossDatabaseQuery" xml:space="preserve"><value>新建跨库查询</value></data>
+  <data name="MySqlBrowseDatabases" xml:space="preserve"><value>浏览数据库</value></data>
+  <data name="MySqlCrossDatabaseQueryHint" xml:space="preserve"><value>使用 database.table 格式的完整表名查询当前实例中的多个数据库。</value></data>
   <data name="AgentConfigurationRequired" xml:space="preserve"><value>请在设置中配置有效的模型地址和模型名称。</value></data>
   <data name="AgentInvalidEndpoint" xml:space="preserve"><value>请使用 HTTPS 地址或本机 HTTP 地址，且不要在地址中包含凭据或查询参数。</value></data>
   <data name="AgentInvalidModel" xml:space="preserve"><value>请输入有效的模型名称。</value></data>
@@ -3575,4 +3616,27 @@
   <data name="AgentTimedOut" xml:space="preserve"><value>模型请求超时，请重试。</value></data>
   <data name="AgentInvalidResponse" xml:space="preserve"><value>模型服务返回了不完整或不受支持的回复。</value></data>
   <data name="AgentUnsupportedDialect" xml:space="preserve"><value>助手暂不支持此 SQL 方言。</value></data>
+  <data name="CodeCompletionSuggestions" xml:space="preserve"><value>代码自动补全建议</value></data>
+  <data name="MySqlCompletionKeyword" xml:space="preserve"><value>关键字</value></data>
+  <data name="MySqlCompletionHint" xml:space="preserve"><value>SQL 自动补全：Ctrl+Space 打开建议，Tab 或 Enter 接受，Escape 关闭。</value></data>
+  <data name="MySqlExplain" xml:space="preserve"><value>执行计划</value></data>
+  <data name="MySqlAnalyze" xml:space="preserve"><value>实际分析</value></data>
+  <data name="MySqlExplainHint" xml:space="preserve"><value>查看选中 SQL 或当前语句的预估执行计划。</value></data>
+  <data name="MySqlAnalyzeHint" xml:space="preserve"><value>确认后使用 EXPLAIN ANALYZE 实际运行选中或当前的 SELECT 查询。</value></data>
+  <data name="MySqlAnalyzeConfirm" xml:space="preserve"><value>运行并分析</value></data>
+  <data name="MySqlAnalyzeConfirmHint" xml:space="preserve"><value>EXPLAIN ANALYZE 会在当前数据库会话中实际运行此 SELECT。查询可能消耗较多资源，函数也可能产生副作用，取消无法撤销这些影响。是否继续？需要支持 EXPLAIN ANALYZE 的 MySQL 8.0.18 或更高版本。</value></data>
+  <data name="MySqlPlanSingleStatement" xml:space="preserve"><value>请选择一条 SQL 或将光标放在其中。执行计划不接受批量语句或自定义 DELIMITER 语句。</value></data>
+  <data name="MySqlPlanUnsupportedStatement" xml:space="preserve"><value>此处无法分析该语句。请使用不含可执行注释的 SELECT、WITH、INSERT、UPDATE、DELETE 或 REPLACE。</value></data>
+  <data name="MySqlAnalyzeSelectOnly" xml:space="preserve"><value>实际分析仅接受一条不含文件输出、变量赋值或加锁子句的 SELECT。</value></data>
+  <data name="MySqlExplainResultHint" xml:space="preserve"><value>服务器返回的预估计划。此操作未请求实际运行查询，可在结果表格中检查表访问方式、索引、预估行数与 Extra。</value></data>
+  <data name="MySqlAnalyzeResultHint" xml:space="preserve"><value>服务器返回的实际执行计划，支持时包含迭代器耗时、行数与循环次数。此 SELECT 已在本会话中执行。</value></data>
+  <data name="MySqlExecutionTrace" xml:space="preserve"><value>执行追踪</value></data>
+  <data name="MySqlExecutionTraceHint" xml:space="preserve"><value>保留本页签最近 50 次查询和计划。SQL 与计划仅存于内存，关闭页签后清除。</value></data>
+  <data name="MySqlTraceQuery" xml:space="preserve"><value>查询</value></data>
+  <data name="MySqlTraceSucceeded" xml:space="preserve"><value>成功</value></data>
+  <data name="MySqlTraceFailed" xml:space="preserve"><value>已停止或失败</value></data>
+  <data name="MySqlTraceSummary" xml:space="preserve"><value>{0} · {1} · {2:N1} 毫秒 · {3} 行 · {4}</value></data>
+  <data name="MySqlTraceSql" xml:space="preserve"><value>执行的 SQL 快照</value></data>
+  <data name="MySqlTraceDetails" xml:space="preserve"><value>执行计划或安全错误详情</value></data>
+  <data name="MySqlAssistantContextChanged" xml:space="preserve"><value>生成建议后数据库或连接已变化。请重新提问，或将 SQL 插入编辑器并检查执行目标。</value></data>
 </root>

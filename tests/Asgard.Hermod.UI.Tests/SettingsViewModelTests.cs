@@ -9,7 +9,7 @@ public sealed class SettingsViewModelTests
     {
         var service = new TagManagementTestService();
         using var model = new SettingsViewModel(service, new TagDialogTestService());
-        Assert.Equal(new[] { "general", "appearance", "tags", "storage", "file-opening", "account", "shortcuts", "about" },
+        Assert.Equal(new[] { "general", "appearance", "agent", "tags", "storage", "file-opening", "account", "shortcuts", "about" },
             model.Categories.Select(category => category.Id));
         Assert.Equal(new[] { "tags", "about" }, model.Categories.Where(category => category.IsAvailable).Select(category => category.Id));
         model.SelectCategoryCommand.Execute(model.Categories[0]);

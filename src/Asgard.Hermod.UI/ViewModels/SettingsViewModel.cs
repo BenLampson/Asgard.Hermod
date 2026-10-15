@@ -20,13 +20,15 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
     public SettingsViewModel(ITagManagementService tags, ITagDialogService dialogs,
         ILanguagePreferenceStore? languageStore = null, IFileOpenRuleStore? fileRules = null,
         ITemporaryFileStorage? temporaryFiles = null, IStorageSettingsDialogs? storageDialogs = null,
-        IAccountService? accounts = null, Func<Task>? openAccount = null, IMainWindowClosePreferenceStore? closePreferences = null)
+        IAccountService? accounts = null, Func<Task>? openAccount = null, IMainWindowClosePreferenceStore? closePreferences = null,
+        Agent.AgentConfiguration? agentConfiguration = null, IAgentPreferenceStore? agentPreferences = null)
     {
         ArgumentNullException.ThrowIfNull(tags);
         ArgumentNullException.ThrowIfNull(dialogs);
         Tags = new TagManagementViewModel(tags, dialogs);
         _languageStore = languageStore;
         CloseSettings = closePreferences is null ? null : new(closePreferences);
+        AgentSettings = agentConfiguration is not null && agentPreferences is not null ? new(agentConfiguration, agentPreferences) : null;
         _accounts = accounts;
         OpenAccountCommand = new AsyncRelayCommand(_ => openAccount?.Invoke() ?? Task.CompletedTask,
             _ => !_disposed && accounts is not null && openAccount is not null);
@@ -37,6 +39,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         [
             new("general", Text.Get("General"), "sliders-horizontal", languageStore is not null || closePreferences is not null),
             new("appearance", Text.Get("Appearance"), "palette", false),
+            new("agent", Text.Get("AgentSettingsTitle"), "sparkles", AgentSettings is not null),
             new("tags", Text.Get("TagManagement"), "tags", true),
             new("storage", Text.Get("Storage"), "hard-drive", Storage is not null),
             new("file-opening", Text.Get("FileOpening"), "folder-open", fileRules is not null),
@@ -68,6 +71,10 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
     public IReadOnlyList<SettingsCategoryViewModel> Categories { get; }
     /// <summary>本机关闭询问和默认动作，保存后立即作用于主窗体。</summary>
     public MainWindowCloseSettingsViewModel? CloseSettings { get; }
+    /// <summary>本机模型配置，与账号及实例同步独立。</summary>
+    public AgentSettingsViewModel? AgentSettings { get; }
+    /// <summary>AI 设置使用稳定导航标识。</summary>
+    public bool IsAgentSelected => SelectedCategory.Id == "agent";
 
     /// <summary>系统选项和语言原名组成稳定选择列表，新增语种无需修改设置视图。</summary>
     public IReadOnlyList<Asgard.Hermod.Abstractions.Localization.LanguageOption> Languages { get; }
@@ -132,6 +139,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         {
             if (!SetProperty(ref _selectedCategory, value)) return;
             OnPropertyChanged(nameof(IsGeneralSelected));
+            OnPropertyChanged(nameof(IsAgentSelected));
             OnPropertyChanged(nameof(IsTagsSelected));
             OnPropertyChanged(nameof(IsFileOpeningSelected));
             OnPropertyChanged(nameof(IsStorageSelected));
@@ -157,7 +165,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         _disposed = true;
         if (_accounts is not null) _accounts.AccountChanged -= OnAccountChanged;
         OpenAccountCommand.NotifyCanExecuteChanged();
-        Tags.Dispose(); Storage?.Dispose();
+        Tags.Dispose(); Storage?.Dispose(); AgentSettings?.Dispose();
     }
 
     /// <summary>后台账号通知切回设置窗口线程，关闭后的排队通知不再更新绑定。</summary>

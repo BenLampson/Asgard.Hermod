@@ -13,11 +13,14 @@ public sealed class SettingsEditorService : ISettingsEditor
     private readonly IAccountService? _accounts;
     private readonly IAccountEditor? _accountEditor;
     private readonly IMainWindowClosePreferenceStore? _closePreferences;
+    private readonly Agent.AgentConfiguration? _agentConfiguration;
+    private readonly IAgentPreferenceStore? _agentPreferences;
 
     /// <summary>延迟获取应用主窗口，让设置窗口及其子窗体形成正确的模态层级。</summary>
     public SettingsEditorService(Func<Window?> getOwner, ITagManagementService tags, ILanguagePreferenceStore languages,
         IFileOpenRuleStore? fileRules = null, ITemporaryFileStorage? temporaryFiles = null,
-        IAccountService? accounts = null, IAccountEditor? accountEditor = null, IMainWindowClosePreferenceStore? closePreferences = null)
+        IAccountService? accounts = null, IAccountEditor? accountEditor = null, IMainWindowClosePreferenceStore? closePreferences = null,
+        Agent.AgentConfiguration? agentConfiguration = null, IAgentPreferenceStore? agentPreferences = null)
     {
         ArgumentNullException.ThrowIfNull(getOwner);
         ArgumentNullException.ThrowIfNull(tags);
@@ -30,6 +33,7 @@ public sealed class SettingsEditorService : ISettingsEditor
         _accounts = accounts;
         _accountEditor = accountEditor;
         _closePreferences = closePreferences;
+        _agentConfiguration = agentConfiguration; _agentPreferences = agentPreferences;
     }
 
     /// <inheritdoc />
@@ -42,7 +46,7 @@ public sealed class SettingsEditorService : ISettingsEditor
         var dialogs = new WindowsTagDialogService(() => window ?? _getOwner(), _tags);
         var storageDialogs = new WindowsStorageSettingsDialogs(() => window ?? _getOwner());
         using var model = new SettingsViewModel(_tags, dialogs, _languages, _fileRules, _temporaryFiles, storageDialogs,
-            _accounts, _accountEditor is null ? null : () => _accountEditor.OpenAsync(window), _closePreferences);
+            _accounts, _accountEditor is null ? null : () => _accountEditor.OpenAsync(window), _closePreferences, _agentConfiguration, _agentPreferences);
         await model.InitializeAsync();
         model.SelectCategoryCommand.Execute(model.Categories.First(item => item.Id == category));
         window = new SettingsWindow(model) { Owner = _getOwner() };

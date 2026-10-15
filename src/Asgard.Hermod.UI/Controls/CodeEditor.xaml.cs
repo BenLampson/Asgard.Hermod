@@ -21,9 +21,17 @@ public partial class CodeEditor : UserControl
     public int CaretIndex => Input.CaretIndex;
     /// <summary>公共输入控件保持原生选择和键盘焦点。</summary>
     public void FocusInput() => Input.Focus();
+    /// <summary>替换当前选区或插入光标处，沿用原生撤销历史；不执行插入的代码。</summary>
+    public void InsertText(string text)
+    {
+        if (IsReadOnly) return;
+        CloseCompletion(); _applyingCompletion = true;
+        try { int start = Input.SelectionStart; Input.SelectedText = text; Input.CaretIndex = start + text.Length; Input.Focus(); }
+        finally { _applyingCompletion = false; }
+    }
     /// <summary>只渲染可视行的行号，避免大值创建完整行号集合。</summary>
-    public CodeEditor() { InitializeComponent(); Loaded += (_, _) => UpdateNumbers(); }
-    private void OnTextChanged(object sender, TextChangedEventArgs args) => UpdateNumbers();
+    public CodeEditor() { InitializeComponent(); Loaded += (_, _) => UpdateNumbers(); Unloaded += (_, _) => CloseCompletion(); Input.LostKeyboardFocus += (_, _) => CloseCompletion(); Input.PreviewMouseLeftButtonDown += (_, _) => CloseCompletion(); }
+    private void OnTextChanged(object sender, TextChangedEventArgs args) { UpdateNumbers(); OnCompletionTextChanged(); }
     private void OnScrollChanged(object sender, ScrollChangedEventArgs args) => UpdateNumbers();
     private void OnInputSizeChanged(object sender, SizeChangedEventArgs args) => UpdateNumbers();
     private void UpdateNumbers()

@@ -109,7 +109,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IAsyncDisposa
         ArgumentNullException.ThrowIfNull(instance);
         if (IsExitPending) return;
         ObjectDisposedException.ThrowIf(_disposeStarted, this);
-        WorkspacePageViewModel? page = Tabs.FirstOrDefault(tab => tab.InstanceId == instance.Id && !tab.IsClosed);
+        WorkspacePageViewModel? page = Tabs.FirstOrDefault(tab => tab.InstanceId == instance.Id && tab.WorkspaceContextId is null && !tab.IsClosed);
         if (page is null)
         {
             page = instance.IsLocal ? CreateTerminalPage(instance) : CreateServicePage(instance);
@@ -148,6 +148,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IAsyncDisposa
         Tabs.Remove(page);
         _initializations.Remove(page);
         page.NewSessionRequested -= OnNewSessionRequested;
+        page.WorkspaceRequested -= OnWorkspaceRequested;
         page.CloseRequested -= OnPageCloseRequested;
         _instances.Remove(page);
         Task closing = page.CloseAsync();
@@ -169,6 +170,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IAsyncDisposa
     {
         _instances[page] = instance;
         page.NewSessionRequested += OnNewSessionRequested;
+        page.WorkspaceRequested += OnWorkspaceRequested;
         page.CloseRequested += OnPageCloseRequested;
     }
     /// <summary>新会话复用实例配置，但创建独立页面和连接。</summary>
@@ -178,6 +180,18 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IAsyncDisposa
         var page = CreateServicePage(instance); RegisterSessionPage(page, instance);
         Tabs.Add(page); SelectedTab = page; Home.RecordOpened(instance);
         ActivatePage(page);
+    }
+
+    /// <summary>聚焦窗口复用统一注册与初始化入口，不与实例浏览窗口共享连接寿命。</summary>
+    private void OnWorkspaceRequested(object? sender, WorkspacePageRequestEventArgs args)
+    {
+        if (IsExitPending || _disposeStarted || sender is not WorkspacePageViewModel original || !_instances.TryGetValue(original, out var instance)) return;
+        var page = Tabs.FirstOrDefault(candidate => !candidate.IsClosed && candidate.InstanceId == instance.Id && candidate.WorkspaceContextId == args.ContextId);
+        if (page is null)
+        {
+            page = args.CreatePage(); RegisterSessionPage(page, instance); Tabs.Add(page);
+        }
+        SelectedTab = page; Home.RecordOpened(instance); ActivatePage(page);
     }
 
     /// <summary>用户退出应用前逐页确认，取消任一页面时保持所有会话和草稿。</summary>
@@ -200,7 +214,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IAsyncDisposa
     private async Task CloseAllAsync()
     {
         SelectedTab = null;
-        foreach (var page in Tabs) { page.NewSessionRequested -= OnNewSessionRequested; page.CloseRequested -= OnPageCloseRequested; }
+        foreach (var page in Tabs) { page.NewSessionRequested -= OnNewSessionRequested; page.WorkspaceRequested -= OnWorkspaceRequested; page.CloseRequested -= OnPageCloseRequested; }
         _instances.Clear();
         Task[] initializing = _initializations.Values.ToArray(); _initializations.Clear();
         Task[] closing = Tabs.Select(page => page.CloseAsync()).Concat(_closingPages).ToArray();
