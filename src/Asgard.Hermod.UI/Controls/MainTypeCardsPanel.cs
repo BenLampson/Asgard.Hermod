@@ -1,10 +1,10 @@
 namespace Asgard.Hermod.UI.Controls;
 
-/// <summary>四个等宽入口之间固定十四像素，首尾严格对齐正文边界。</summary>
+/// <summary>按实际类型数量排列等宽入口，固定十四像素间距并对齐正文边界。</summary>
 public sealed class MainTypeCardsPanel : Panel
 {
     private const double Gap = 14;
-    /// <summary>从可用空间扣除三段间距再等分，不通过末项 Margin 改变卡片宽度。</summary>
+    /// <summary>从可用空间扣除入口间距再等分，不通过末项 Margin 改变卡片宽度。</summary>
     protected override Size MeasureOverride(Size availableSize)
     {
         double width = double.IsFinite(availableSize.Width) ? availableSize.Width : 1000;

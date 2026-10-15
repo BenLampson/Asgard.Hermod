@@ -3857,9 +3857,7 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="PostgreSqlAssistantSessionBusy" xml:space="preserve"><value>Wait for this tab&apos;s database operation to finish before asking the assistant.</value></data>
   <data name="PostgreSqlAssistantContextFailed" xml:space="preserve"><value>Cannot read the database context. Check the connection and try again.</value></data>
   <data name="PostgreSqlDatabaseWorkspaceTitle" xml:space="preserve"><value>{0} — {1}</value></data>
-  <data name="PostgreSqlNewCrossDatabaseQuery" xml:space="preserve"><value>New cross-database query</value></data>
   <data name="PostgreSqlBrowseDatabases" xml:space="preserve"><value>Browse databases</value></data>
-  <data name="PostgreSqlCrossDatabaseQueryHint" xml:space="preserve"><value>Use database.table names to query multiple databases on this instance.</value></data>
   <data name="PostgreSqlCompletionKeyword" xml:space="preserve"><value>Keyword</value></data>
   <data name="PostgreSqlCompletionHint" xml:space="preserve"><value>SQL completion: Ctrl+Space opens suggestions; Tab or Enter accepts; Escape closes.</value></data>
   <data name="PostgreSqlAnalyze" xml:space="preserve"><value>Analyze</value></data>

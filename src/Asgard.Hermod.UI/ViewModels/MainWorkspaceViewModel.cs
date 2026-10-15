@@ -19,6 +19,7 @@ public sealed class MainWorkspaceViewModel : ObservableObject, IDisposable
         _catalog = catalog; _workspace = workspace; _editor = editor;
         Navigation = [new("overview", Text.Get("MainOverview"), "house"), new("all", Text.Get("MainAllInstances"), "list"),
             new("mysql", Text.Get("MainMySql"), "database", Text.Get("MainDatabaseConnections")),
+            new("postgresql", Text.Get("MainPostgreSql"), "database", Text.Get("MainDatabaseConnections")),
             new("redis", Text.Get("MainRedis"), "layers", Text.Get("MainCacheConnections")),
             new("ssh", Text.Get("MainSsh"), "terminal", Text.Get("MainServerConnections")),
             new("storage", Text.Get("MainStorage"), "box", Text.Get("MainStorageConnections"))];
@@ -41,9 +42,9 @@ public sealed class MainWorkspaceViewModel : ObservableObject, IDisposable
         Refresh();
     }
 
-    /// <summary>六个固定页签顺序与设计稿一致。</summary>
+    /// <summary>主窗体导航按稳定类型标识提供数据库和其他模块入口。</summary>
     public IReadOnlyList<MainNavigationItem> Navigation { get; }
-    /// <summary>概览四种类型入口。</summary>
+    /// <summary>概览中的实例类型入口。</summary>
     public IEnumerable<MainNavigationItem> Types => Navigation.Skip(2);
     /// <summary>切换只改变主窗体视图，不建立连接。</summary>
     public MainNavigationItem SelectedNavigation

@@ -56,7 +56,7 @@ public sealed class MainShellDesignTests(WpfTestFixture fixture)
             var rowsView = Assert.IsType<ListBox>(WindowTestVisuals.Named(window, "InstanceRows"));
             var scroll = WindowTestVisuals.Descendants<ScrollViewer>(rowsView).Single();
             Assert.True(scroll.ScrollableHeight == 0, $"Overview scroll: extent={scroll.ExtentHeight}; viewport={scroll.ViewportHeight}; height={rowsView.ActualHeight}");
-            Assert.Equal(6, shell.Main.Rows.Count); Assert.Equal(6, shell.Main.Navigation.Count);
+            Assert.Equal(6, shell.Main.Rows.Count); Assert.Equal(7, shell.Main.Navigation.Count);
             shell.Main.SelectedNavigation = shell.Main.Navigation[1];
             await WindowPreviewCapture.VerifyAsync(window, $"main-all-{language}-{theme}");
             var firstPage = shell.Main.Rows.Select(row => row.Instance.Id).ToArray();

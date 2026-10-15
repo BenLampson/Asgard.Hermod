@@ -3857,9 +3857,7 @@
   <data name="PostgreSqlAssistantSessionBusy" xml:space="preserve"><value>请等待本页签的数据库操作完成后再询问助手。</value></data>
   <data name="PostgreSqlAssistantContextFailed" xml:space="preserve"><value>无法读取数据库上下文，请检查连接后重试。</value></data>
   <data name="PostgreSqlDatabaseWorkspaceTitle" xml:space="preserve"><value>{0} — {1}</value></data>
-  <data name="PostgreSqlNewCrossDatabaseQuery" xml:space="preserve"><value>新建跨库查询</value></data>
   <data name="PostgreSqlBrowseDatabases" xml:space="preserve"><value>浏览数据库</value></data>
-  <data name="PostgreSqlCrossDatabaseQueryHint" xml:space="preserve"><value>使用 database.table 格式的完整表名查询当前实例中的多个数据库。</value></data>
   <data name="PostgreSqlCompletionKeyword" xml:space="preserve"><value>关键字</value></data>
   <data name="PostgreSqlCompletionHint" xml:space="preserve"><value>SQL 自动补全：Ctrl+Space 打开建议，Tab 或 Enter 接受，Escape 关闭。</value></data>
   <data name="PostgreSqlAnalyze" xml:space="preserve"><value>实际分析</value></data>

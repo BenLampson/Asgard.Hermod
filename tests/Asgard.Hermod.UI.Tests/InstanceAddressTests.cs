@@ -5,6 +5,10 @@ public sealed class InstanceAddressTests
 {
     [Theory]
     [InlineData("mysql", "host", "db.internal", "db.internal:3306")]
+    [InlineData("postgresql", "host", "pg.internal", "pg.internal:5432")]
+    [InlineData("postgresql", "host", "[::1]", "[::1]:5432")]
+    [InlineData("postgresql", "host", "user:password@pg.internal", "")]
+    [InlineData("postgresql", "host", "host;Password=secret", "")]
     [InlineData("ssh", "host", "10.0.0.1", "10.0.0.1:22")]
     [InlineData("redis", "host", "[::1]", "[::1]:6379")]
     [InlineData("mysql", "host", "user:password@db.internal", "")]

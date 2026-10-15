@@ -28,13 +28,19 @@ public static class InstanceAddress
             }
             return string.Join(", ", addresses);
         }
-        if (typeId is not ("mysql" or "redis" or "ssh")) return "";
+        if (typeId is not ("mysql" or "postgresql" or "redis" or "ssh")) return "";
         string host = parameters.GetValueOrDefault("host")?.Trim() ?? "";
         if (host.Length == 0 || host.Any(character => char.IsControl(character) || char.IsWhiteSpace(character)
             || character is '@' or '/' or '\\' or '?' or '#' or ';' or '=')) return "";
         if (Uri.CheckHostName(host.Trim('[', ']')) == UriHostNameType.Unknown) return "";
         if (host.Contains(':') && !host.StartsWith('[')) host = "[" + host + "]";
-        string portText = parameters.GetValueOrDefault("port") ?? (typeId == "mysql" ? "3306" : typeId == "redis" ? "6379" : "22");
+        string portText = parameters.GetValueOrDefault("port") ?? typeId switch
+        {
+            "mysql" => "3306",
+            "postgresql" => "5432",
+            "redis" => "6379",
+            _ => "22",
+        };
         return int.TryParse(portText, NumberStyles.None, CultureInfo.InvariantCulture, out int port) && port is > 0 and <= 65535
             ? host + ":" + port.ToString(CultureInfo.InvariantCulture) : "";
     }

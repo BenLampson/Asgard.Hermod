@@ -9,6 +9,8 @@ global using Asgard.Hermod.MySql.UI;
 global using Asgard.Hermod.ObjectStorage;
 global using Asgard.Hermod.ObjectStorage.UI;
 global using Asgard.Hermod.Persistence.Sqlite;
+global using Asgard.Hermod.PostgreSql;
+global using Asgard.Hermod.PostgreSql.UI;
 global using Asgard.Hermod.Providers.AliyunOss;
 global using Asgard.Hermod.Providers.AwsS3;
 global using Asgard.Hermod.Providers.Minio;

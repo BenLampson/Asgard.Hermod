@@ -17,7 +17,7 @@ public static class InstanceHostingProviders
     ];
 
     /// <summary>这些类型的连接器表示连接方式或拓扑，托管品牌使用独立元数据。</summary>
-    public static bool Supports(string typeId) => typeId is "ssh" or "mysql" or "redis";
+    public static bool Supports(string typeId) => typeId is "ssh" or "mysql" or "postgresql" or "redis";
 
     /// <summary>保存只接受已注册的稳定品牌标识，不接受翻译后的名称。</summary>
     public static bool IsValid(string? id) => id is "" or "aliyun" or "tencent" or "volcengine" or "aws";

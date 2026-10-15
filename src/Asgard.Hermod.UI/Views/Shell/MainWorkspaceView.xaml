@@ -42,15 +42,15 @@
     </StackPanel>
    </Grid>
    <Grid Grid.Row="1" Margin="{Binding SectionMargin}">
-    <ItemsControl x:Name="TypeCards" ItemsSource="{Binding Types}" Visibility="{Binding OverviewVisibility}" AlternationCount="4">
+    <ItemsControl x:Name="TypeCards" ItemsSource="{Binding Types}" Visibility="{Binding OverviewVisibility}">
      <ItemsControl.ItemsPanel><ItemsPanelTemplate><controls:MainTypeCardsPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
      <ItemsControl.ItemTemplate><DataTemplate>
       <Button Height="94" Padding="18" HorizontalContentAlignment="Stretch" Command="{Binding DataContext.SelectNavigationCommand, RelativeSource={RelativeSource AncestorType=shell:MainWorkspaceView}}" CommandParameter="{Binding}" AutomationProperties.Name="{Binding Title}">
        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="40" /><ColumnDefinition Width="*" /><ColumnDefinition Width="24" /></Grid.ColumnDefinitions>
         <Border Background="{DynamicResource AccentWeakBrush}" CornerRadius="8" Width="40" Height="40"><controls:IconView Kind="{Binding Icon}" Width="20" Height="20" Style="{StaticResource TypeGlyph}" /></Border>
         <Grid Grid.Column="1" Margin="14,0,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition Height="*" /></Grid.RowDefinitions>
-         <TextBlock Text="{Binding Title}" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" /><TextBlock Grid.Column="1" Text="{Binding Count}" FontSize="24" FontWeight="SemiBold" />
-         <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Description}" FontSize="11" FontWeight="Normal" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Bottom" />
+         <TextBlock Text="{Binding Title}" ToolTip="{Binding Title}" TextTrimming="CharacterEllipsis" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" /><TextBlock Grid.Column="1" Text="{Binding Count}" FontSize="24" FontWeight="SemiBold" />
+         <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Description}" ToolTip="{Binding Description}" TextTrimming="CharacterEllipsis" FontSize="11" FontWeight="Normal" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Bottom" />
         </Grid>
         <controls:IconView Grid.Column="2" Kind="chevron-right" Width="14" Height="14" HorizontalAlignment="Right" Foreground="{DynamicResource TextFaintBrush}" />
        </Grid>

@@ -46,12 +46,14 @@ public partial class App : Application
             services.AddSsh();
             services.AddRedis();
             services.AddMySql();
+            services.AddPostgreSql();
             services.AddSingleton<ITerminalSessionFactory, LocalTerminalSessionFactory>();
             services.AddHermodUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow, Resources);
             services.AddObjectStorageUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow);
             services.AddSshUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow);
             services.AddRedisUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow);
             services.AddMySqlUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow);
+            services.AddPostgreSqlUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow);
             var provider = services.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,
