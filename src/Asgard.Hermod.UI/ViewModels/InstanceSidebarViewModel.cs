@@ -47,7 +47,8 @@ public sealed class InstanceSidebarViewModel : ObservableObject, IDisposable
         SelectTagCommand = new RelayCommand(value => SelectedTag = value as string);
         ClearTagCommand = new RelayCommand(_ => SelectedTag = null);
         OpenLocalTerminalCommand = new RelayCommand(_ => openLocalTerminal());
-        AddInstanceCommand = new AsyncRelayCommand(_ => AddInstanceAsync());
+        // 创建向导通过 ShowDialog 阻断后方操作，入口无需切换为禁用配色。
+        AddInstanceCommand = new AsyncRelayCommand(_ => AddInstanceAsync(), disableWhileRunning: false);
         AddInstanceCommand.ExecutionFailed += OnAddInstanceFailed;
         RenameInstanceCommand = new AsyncRelayCommand(value => EditMetadataAsync(value, false), CanEditMetadata);
         EditInstanceTagsCommand = new AsyncRelayCommand(value => EditMetadataAsync(value, true), CanEditMetadata);
