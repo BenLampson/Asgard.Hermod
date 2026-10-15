@@ -2,7 +2,15 @@
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
  xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI"
  xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI" PreviewKeyDown="OnPromptKeyDown">
- <UserControl.Resources><BooleanToVisibilityConverter x:Key="Visible" /></UserControl.Resources>
+ <UserControl.Resources>
+  <BooleanToVisibilityConverter x:Key="Visible" />
+  <!-- 对话正文和组合输入框由外层容器绘制边框，保留共享字体、选区和滚动行为。 -->
+  <Style x:Key="AgentTextBox" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TextBox">
+    <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+ </UserControl.Resources>
  <Border Background="{DynamicResource SurfaceBrush}">
   <Grid><Grid.RowDefinitions><RowDefinition Height="50" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
    <Border BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,0,0,1" Padding="18,0">
@@ -29,12 +37,12 @@
        <DataTrigger Binding="{Binding IsTool}" Value="True"><Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}" /><Setter Property="BorderBrush" Value="{DynamicResource LineBrush}" /><Setter Property="BorderThickness" Value="1" /><Setter Property="Padding" Value="12" /></DataTrigger></Style.Triggers>
      </Style></Border.Style><StackPanel>
       <TextBlock Text="{Binding Role}" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource AccentTextBrush}" Margin="0,0,0,8" />
-      <TextBox Text="{Binding Content, Mode=OneWay}" IsReadOnly="True" MinHeight="0" AcceptsReturn="True" TextWrapping="Wrap" BorderThickness="0" Background="Transparent" Padding="0" FontSize="13" MaxHeight="260" VerticalScrollBarVisibility="Auto" />
+      <TextBox Style="{StaticResource AgentTextBox}" Text="{Binding Content, Mode=OneWay}" IsReadOnly="True" MinHeight="0" AcceptsReturn="True" TextWrapping="Wrap" BorderThickness="0" Background="Transparent" Padding="0" FontSize="13" MaxHeight="260" VerticalScrollBarVisibility="Auto" />
       <TextBlock Text="{Binding Status}" Visibility="{Binding IsTool, Converter={StaticResource Visible}}" FontSize="11" Margin="0,8,0,0" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" AutomationProperties.LiveSetting="Polite" />
       <ItemsControl ItemsSource="{Binding Commands}"><ItemsControl.ItemTemplate><DataTemplate>
        <Border Margin="0,10,0,0" Padding="12" Background="{DynamicResource AppBackgroundBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1" CornerRadius="6"><StackPanel>
         <TextBlock Text="{loc:Loc SshAgentSuggestion}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,10" />
-        <TextBox Text="{Binding Command, Mode=OneWay}" FontFamily="{DynamicResource MonoFont}" FontSize="12" IsReadOnly="True" MinHeight="0" AcceptsReturn="True" TextWrapping="Wrap" BorderThickness="0" Background="Transparent" Padding="0" MaxHeight="180" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="{loc:Loc SshAgentSuggestion}" />
+        <TextBox Style="{StaticResource AgentTextBox}" Text="{Binding Command, Mode=OneWay}" FontFamily="{DynamicResource MonoFont}" FontSize="12" IsReadOnly="True" MinHeight="0" AcceptsReturn="True" TextWrapping="Wrap" BorderThickness="0" Background="Transparent" Padding="0" MaxHeight="180" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="{loc:Loc SshAgentSuggestion}" />
         <WrapPanel Margin="0,12,0,0"><Button Content="{loc:Loc SshAgentInsert}" Command="{Binding DataContext.InsertCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Margin="0,0,8,4" /><Button Content="{loc:Loc SshAgentExecute}" Command="{Binding DataContext.ExecuteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Margin="0,0,0,4" /></WrapPanel>
        </StackPanel></Border>
       </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
@@ -43,11 +51,16 @@
    </ScrollViewer>
    <StackPanel Grid.Row="3" Margin="18,8,18,8"><TextBlock Text="{Binding Error}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" /><TextBlock Text="{Binding Status}" Visibility="{Binding IsBusy, Converter={StaticResource Visible}}" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" /></StackPanel>
    <StackPanel Grid.Row="4" Margin="14,0,14,14">
-    <Border x:Name="Composer" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1" CornerRadius="8" Padding="12">
+    <Border x:Name="Composer" BorderThickness="1" CornerRadius="8" Padding="12">
+     <Border.Style><Style TargetType="Border">
+      <Setter Property="BorderBrush" Value="{DynamicResource LineBrush}" />
+      <!-- 聚焦整块输入区，描边宽度保持不变，避免双框和正文跳动。 -->
+      <Style.Triggers><DataTrigger Binding="{Binding IsKeyboardFocusWithin, ElementName=PromptEditor}" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" /></DataTrigger></Style.Triggers>
+     </Style></Border.Style>
      <Grid><Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
       <Grid MinHeight="48">
-       <TextBox x:Name="PromptEditor" Text="{Binding Prompt, UpdateSourceTrigger=PropertyChanged}" MinHeight="48" MaxHeight="100" AcceptsReturn="True" TextWrapping="Wrap" MaxLength="16000" VerticalScrollBarVisibility="Auto" BorderThickness="0" Background="Transparent" Padding="0" AutomationProperties.Name="{loc:Loc SshAgentPrompt}" />
-       <TextBlock Text="{loc:Loc SshAgentPrompt}" IsHitTestVisible="False" Foreground="{DynamicResource TextMutedBrush}" FontSize="12" TextWrapping="Wrap"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding Prompt}" Value=""><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+       <TextBox x:Name="PromptEditor" Style="{StaticResource AgentTextBox}" Text="{Binding Prompt, UpdateSourceTrigger=PropertyChanged}" MinHeight="48" MaxHeight="100" AcceptsReturn="True" TextWrapping="Wrap" MaxLength="16000" VerticalScrollBarVisibility="Auto" BorderThickness="0" Background="Transparent" Padding="0" AutomationProperties.Name="{loc:Loc SshAgentPrompt}" />
+       <TextBlock x:Name="PromptPlaceholder" Text="{loc:Loc SshAgentPrompt}" IsHitTestVisible="False" Foreground="{DynamicResource TextMutedBrush}" FontSize="{Binding FontSize, ElementName=PromptEditor}" TextWrapping="Wrap"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding Text, ElementName=PromptEditor}" Value=""><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
       </Grid>
       <DockPanel Grid.Row="1" Margin="0,8,0,0">
        <Button x:Name="SendAction" DockPanel.Dock="Right" Command="{Binding SendCommand}" Style="{StaticResource PrimaryButton}" ToolTip="{loc:Loc SshAgentSend}" AutomationProperties.Name="{loc:Loc SshAgentSend}" Width="34" Height="32" Padding="0"><controls:IconView Kind="arrow-right" Width="15" Height="15" RenderTransformOrigin="0.5,0.5"><controls:IconView.RenderTransform><RotateTransform Angle="-90" /></controls:IconView.RenderTransform></controls:IconView></Button>
