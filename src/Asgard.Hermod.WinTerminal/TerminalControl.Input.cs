@@ -14,7 +14,10 @@ public sealed partial class TerminalControl
         _isComposing = args.TextComposition.AutoComplete == TextCompositionAutoComplete.Off;
         // 普通字符会自动开始并结束组合；真正的候选组合属于新的输入，不沿用上一数字的去重。
         if (args.TextComposition.AutoComplete == TextCompositionAutoComplete.Off)
+        {
             _pendingNumericText = null;
+            if (_numericKeyStroke is { } stroke) stroke.IsCandidate = true;
+        }
     }
 
     /// <summary>输入上下文结束后清除候选保护和数字去重，避免影响新焦点或新会话。</summary>
@@ -22,6 +25,8 @@ public sealed partial class TerminalControl
     {
         _isComposing = false;
         _pendingNumericText = null;
+        _numericKeyStroke = null;
+        _inputGeneration++;
     }
 
     /// <summary>将方向键、控制键和 Alt 组合编码为终端输入。</summary>
@@ -34,15 +39,22 @@ public sealed partial class TerminalControl
             return;
         Key key = args.Key == Key.System ? args.SystemKey
             : args.Key == Key.ImeProcessed ? args.ImeProcessedKey : args.Key;
+        var numericStroke = _numericKeyStroke is { } current && ReferenceEquals(current.Args, args) ? current : null;
+        // TSF 可以先同步提交数字再路由按键；该提交已经发送，不能再走按键兜底。
+        if (numericStroke is { HasCommittedText: true } or { IsCandidate: true })
+            return;
         if (_isComposing)
         {
             // Enter、箭头和数字都属于输入法候选操作；取消组合不把 Escape 转发给 Shell。
             if (key == Key.Escape) _isComposing = false;
             return;
         }
-        // ImeProcessed 表示输入法已认领此键；即使组合开始通知稍晚，也不能抢先编码候选键。
+        // 先让输入法完成处理；没有候选和文本提交的数字在流水线结束后补发。
         if (args.Key == Key.ImeProcessed)
+        {
+            if (numericStroke is not null) ScheduleNumericFallback(numericStroke);
             return;
+        }
         var modifiers = Keyboard.Modifiers;
         bool control = modifiers.HasFlag(ModifierKeys.Control);
         bool shift = modifiers.HasFlag(ModifierKeys.Shift);
@@ -120,6 +132,11 @@ public sealed partial class TerminalControl
         base.OnPreviewKeyUp(args);
         Key key = args.Key == Key.System ? args.SystemKey
             : args.Key == Key.ImeProcessed ? args.ImeProcessedKey : args.Key;
+        if (_numericKeyStroke is { } stroke && key == stroke.Key)
+        {
+            CompleteNumericFallback(stroke);
+            stroke.IsReleased = true;
+        }
         if (key == _pendingNumericKey)
             _pendingNumericText = null;
     }
@@ -129,6 +146,7 @@ public sealed partial class TerminalControl
     {
         base.OnPreviewTextInput(args);
         _isComposing = false;
+        if (!string.IsNullOrEmpty(args.Text) && _numericKeyStroke is { } stroke) stroke.HasCommittedText = true;
         string? pendingNumericText = _pendingNumericText;
         _pendingNumericText = null;
         if (args.Handled || _disposed || _session is not { IsDisposed: false } || string.IsNullOrEmpty(args.Text))
@@ -208,9 +226,11 @@ public sealed partial class TerminalControl
         base.OnIsKeyboardFocusWithinChanged(args);
         if (!IsKeyboardFocusWithin)
         {
+            DetachKeyboardInput();
             ResetInputState();
             if (ContextMenu?.IsOpen != true) ClearSelection();
         }
+        else AttachKeyboardInput();
         if (!IsReadOnly && _session is { IsDisposed: false } session)
         {
             lock (session.Buffer.SyncRoot)

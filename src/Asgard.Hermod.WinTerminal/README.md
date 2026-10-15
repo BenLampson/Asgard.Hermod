@@ -91,13 +91,23 @@ selection; otherwise it reaches the shell. `Ctrl+Shift+C` always copies.
 `Ctrl+V` pastes, `Ctrl+Shift+A` selects all, and `Ctrl+wheel` changes font size.
 Shift bypasses application mouse reporting for local selection.
 
+Selection uses one foreground/background pair across default, ANSI-colored and
+inverse cells, including text decorations. Colored directory and executable names
+therefore remain inside a continuous highlight. Clearing the selection restores
+the original colors without modifying output or copied text; concealed text stays hidden.
+
 Number-row and numeric-keypad digits use the current Windows keyboard layout at
 the key event boundary, so they work even when an input method does not commit a
 normal text event. If the same keystroke also commits matching text, the control
 consumes that duplicate without sending it again. Each new key-down is independent,
 including repeated digits and key repeat; key release, focus loss, unloading,
-session changes and read-only changes clear the pending input state. Keys claimed
-by the IME remain with the input method even before its composition-start event.
+session changes and read-only changes clear the pending input state. The focused
+control records numeric keystrokes before WPF invokes the input method, because
+TSF can commit text before routing PreviewKeyDown. IME-claimed digits first remain
+with the input method. After that input pass, a digit that neither participates in
+a candidate composition nor commits nonempty text is sent through the fallback.
+Key release or the next keystroke flushes any pending fallback first to preserve input order.
+Focus loss, unloading and disposal detach the global input subscription.
 During candidate composition, digits, Enter and arrow keys stay with the candidate
 chooser; committed Unicode text is sent once. A new candidate composition does not
 inherit suppression from an earlier numeric key. Focus loss or Escape ends the

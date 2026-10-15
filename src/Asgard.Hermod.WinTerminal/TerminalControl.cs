@@ -108,6 +108,7 @@ public sealed partial class TerminalControl : Control, IDisposable
             return;
         ConfigureRenderer();
         ResizeToBounds();
+        AttachKeyboardInput();
         _renderTimer.Start();
         InvalidateVisual();
     }
@@ -115,6 +116,7 @@ public sealed partial class TerminalControl : Control, IDisposable
     /// <summary>移出可视树时暂停计时器，保留会话与字体缓存供再次挂载。</summary>
     private void OnUnloaded(object sender, RoutedEventArgs args)
     {
+        DetachKeyboardInput();
         ResetInputState();
         _renderTimer.Stop();
         _resizeTimer.Stop();
@@ -145,6 +147,7 @@ public sealed partial class TerminalControl : Control, IDisposable
         if (_disposed)
             return;
         _disposed = true;
+        DetachKeyboardInput();
         _renderTimer.Stop();
         _resizeTimer.Stop();
         _renderTimer.Tick -= OnRenderTick;
