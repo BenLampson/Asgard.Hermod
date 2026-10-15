@@ -52,6 +52,22 @@ public sealed class SshMonitorDetailTests
     [InlineData("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;z")]
     public void LogsRejectNonCanonicalIdentifiers(string id) => Assert.ThrowsAny<Exception>(() => SshMonitorDetailReader.ContainerLogCommand(id));
 
+    /// <summary>读取行数来自固定预设，不接受任意选项或无限日志请求。</summary>
+    [Theory]
+    [InlineData(100)]
+    [InlineData(500)]
+    [InlineData(1000)]
+    public void LogRangesUseBoundedInvariantCommands(int lines) => Assert.Equal(
+        "docker logs --tail " + lines.ToString(CultureInfo.InvariantCulture) + " --timestamps " + new string('a', 64),
+        SshMonitorDetailReader.ContainerLogCommand(new string('a', 64), lines));
+
+    /// <summary>未提供的行数不能绕过有界读取。</summary>
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(0)]
+    [InlineData(2000)]
+    public void LogRangesRejectUnlistedValues(int lines) => Assert.ThrowsAny<Exception>(() => SshMonitorDetailReader.ContainerLogCommand(new string('a', 64), lines));
+
     /// <summary>畸形或负数不能成为假的零值。</summary>
     [Theory]
     [InlineData("1 root NaN 1 1 S nginx")]

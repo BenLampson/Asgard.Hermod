@@ -19,10 +19,11 @@ public static class SshMonitorDetailReader
     public const string MountCommand = "LC_ALL=C df -PTk";
 
     /// <summary>容器 ID 必须是完整十六进制 ID；不能传名称、选项、路径或 shell 字符。</summary>
-    public static string ContainerLogCommand(string id)
+    public static string ContainerLogCommand(string id, int tailLines = 100)
     {
         if (id is not { Length: 64 } || id.Any(c => !char.IsAsciiHexDigit(c))) throw Text.Exception("SshMonitorUnavailable");
-        return "docker logs --tail 100 --timestamps " + id;
+        if (tailLines is not (100 or 500 or 1000)) throw Text.Exception("SshMonitorUnavailable");
+        return "docker logs --tail " + tailLines.ToString(CultureInfo.InvariantCulture) + " --timestamps " + id;
     }
 
     /// <summary>读取 ps 的七个固定字段，最后的名称可包含空格。</summary>

@@ -4175,4 +4175,29 @@ Session：{2}
   <data name="SshMonitorContainerDetailsTitle" xml:space="preserve"><value>{0} · 详情</value></data>
   <data name="SshMonitorCloseDetails" xml:space="preserve"><value>关闭详情</value></data>
   <data name="SshMonitorContainerId" xml:space="preserve"><value>容器 ID</value></data>
+  <data name="SshLogOpenWindow" xml:space="preserve"><value>在独立窗口中查看日志并使用 AI 分析</value></data>
+  <data name="SshLogAiTitle" xml:space="preserve"><value>日志分析</value></data>
+  <data name="SshLogAiToggle" xml:space="preserve"><value>展开或收起日志分析</value></data>
+  <data name="SshLogSource" xml:space="preserve"><value>{0} · {1} · {2}</value></data>
+  <data name="SshLogRange" xml:space="preserve"><value>读取范围</value></data>
+  <data name="SshLogTail100" xml:space="preserve"><value>最近 100 行</value></data>
+  <data name="SshLogTail500" xml:space="preserve"><value>最近 500 行</value></data>
+  <data name="SshLogTail1000" xml:space="preserve"><value>最近 1000 行</value></data>
+  <data name="SshLogExport" xml:space="preserve"><value>导出</value></data>
+  <data name="SshLogExportFilter" xml:space="preserve"><value>日志文件 (*.log)|*.log|文本文件 (*.txt)|*.txt</value></data>
+  <data name="SshLogWrap" xml:space="preserve"><value>自动换行</value></data>
+  <data name="SshLogSearchHint" xml:space="preserve"><value>搜索日志 · Ctrl+F · F3 跳转下一处</value></data>
+  <data name="SshLogAiDescription" xml:space="preserve"><value>基于这份日志快照定位异常、分析原因并给出排查建议。仅在你发起分析时发送日志内容。</value></data>
+  <data name="SshLogSelectionOnly" xml:space="preserve"><value>仅分析选中的日志</value></data>
+  <data name="SshLogAnalyze" xml:space="preserve"><value>分析当前日志</value></data>
+  <data name="SshLogAnalyzePrompt" xml:space="preserve"><value>请分析这份日志，引用相关时间和日志行，定位可能的原因并给出下一步排查建议。请区分已有证据与推测。</value></data>
+  <data name="SshLogAsk" xml:space="preserve"><value>针对日志提问 · Ctrl+Enter 发送</value></data>
+  <data name="SshLogSelectedContext" xml:space="preserve"><value>选中的日志：{0:N0} 个字符</value></data>
+  <data name="SshLogSnapshotContext" xml:space="preserve"><value>当前日志快照：{0:N0} 个字符</value></data>
+  <data name="SshLogContextLimited" xml:space="preserve"><value>输入不完整，分析使用可用内容的末尾部分。</value></data>
+  <data name="SshLogReadComplete" xml:space="preserve"><value>已于 {1:T} 读取最近最多 {0} 行，该范围内输出完整。</value></data>
+  <data name="SshLogReadTruncated" xml:space="preserve"><value>已于 {1:T} 请求最近 {0} 行，输出已达到大小上限，内容不完整。</value></data>
+  <data name="SshLogReadCanceled" xml:space="preserve"><value>已取消读取，保留上一次成功的日志快照。</value></data>
+  <data name="SshLogDisconnected" xml:space="preserve"><value>SSH 已断开，仍可阅读和分析上一次快照；重连后请重新打开日志以刷新。</value></data>
+  <data name="SshLogLocalFailed" xml:space="preserve"><value>本地日志操作未能完成，请重试或选择其他保存位置。</value></data>
 </root>

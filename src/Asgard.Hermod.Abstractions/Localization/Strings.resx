@@ -4175,4 +4175,29 @@ Exit code: {1}
   <data name="SshMonitorContainerDetailsTitle" xml:space="preserve"><value>{0} · details</value></data>
   <data name="SshMonitorCloseDetails" xml:space="preserve"><value>Close details</value></data>
   <data name="SshMonitorContainerId" xml:space="preserve"><value>Container ID</value></data>
+  <data name="SshLogOpenWindow" xml:space="preserve"><value>Open logs in a separate window with AI analysis</value></data>
+  <data name="SshLogAiTitle" xml:space="preserve"><value>Log analysis</value></data>
+  <data name="SshLogAiToggle" xml:space="preserve"><value>Show or hide log analysis</value></data>
+  <data name="SshLogSource" xml:space="preserve"><value>{0} · {1} · {2}</value></data>
+  <data name="SshLogRange" xml:space="preserve"><value>Read range</value></data>
+  <data name="SshLogTail100" xml:space="preserve"><value>Last 100 lines</value></data>
+  <data name="SshLogTail500" xml:space="preserve"><value>Last 500 lines</value></data>
+  <data name="SshLogTail1000" xml:space="preserve"><value>Last 1000 lines</value></data>
+  <data name="SshLogExport" xml:space="preserve"><value>Export</value></data>
+  <data name="SshLogExportFilter" xml:space="preserve"><value>Log files (*.log)|*.log|Text files (*.txt)|*.txt</value></data>
+  <data name="SshLogWrap" xml:space="preserve"><value>Wrap lines</value></data>
+  <data name="SshLogSearchHint" xml:space="preserve"><value>Search logs · Ctrl+F · F3 for next match</value></data>
+  <data name="SshLogAiDescription" xml:space="preserve"><value>Analyze this log snapshot for errors, likely causes and next checks. Log text is sent only when you ask for analysis.</value></data>
+  <data name="SshLogSelectionOnly" xml:space="preserve"><value>Analyze selected text only</value></data>
+  <data name="SshLogAnalyze" xml:space="preserve"><value>Analyze current logs</value></data>
+  <data name="SshLogAnalyzePrompt" xml:space="preserve"><value>Analyze these logs. Cite relevant timestamps and lines, identify likely causes and suggest the next checks. Distinguish confirmed evidence from assumptions.</value></data>
+  <data name="SshLogAsk" xml:space="preserve"><value>Ask about these logs · Ctrl+Enter to send</value></data>
+  <data name="SshLogSelectedContext" xml:space="preserve"><value>Selected log text: {0:N0} characters</value></data>
+  <data name="SshLogSnapshotContext" xml:space="preserve"><value>Current log snapshot: {0:N0} characters</value></data>
+  <data name="SshLogContextLimited" xml:space="preserve"><value>The input is incomplete; analysis uses the available tail.</value></data>
+  <data name="SshLogReadComplete" xml:space="preserve"><value>Read up to {0} recent lines at {1:T}. Output is complete for this range.</value></data>
+  <data name="SshLogReadTruncated" xml:space="preserve"><value>Requested {0} recent lines at {1:T}. Output reached its size limit and is incomplete.</value></data>
+  <data name="SshLogReadCanceled" xml:space="preserve"><value>Reading canceled. The last successful snapshot is retained.</value></data>
+  <data name="SshLogDisconnected" xml:space="preserve"><value>SSH disconnected. The last snapshot remains available for reading and analysis; open logs again after reconnecting to refresh.</value></data>
+  <data name="SshLogLocalFailed" xml:space="preserve"><value>The local log operation could not be completed. Try again or choose another destination.</value></data>
 </root>
