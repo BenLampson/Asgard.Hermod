@@ -28,7 +28,8 @@ public sealed class SqliteWorkspaceStore(IFreeSql database, ILocalConfigurationR
                 var parameters = JsonSerializer.Deserialize<Dictionary<string, string>>(plaintext)
                     ?? throw Text.Exception("SyncSnapshotInvalid");
                 return new SyncedInstance(instance.Id, instance.Name, instance.TypeId, instance.ProviderId, parameters,
-                    instance.CreatedAt.ToUniversalTime(), instance.TagIds);
+                    instance.CreatedAt.ToUniversalTime(), instance.TagIds)
+                { HostingProviderId = instance.HostingProviderId };
             }
             finally { CryptographicOperations.ZeroMemory(plaintext); }
         }).ToArray();
@@ -67,7 +68,8 @@ public sealed class SqliteWorkspaceStore(IFreeSql database, ILocalConfigurationR
             try
             {
                 return new StoredInstanceConfiguration(instance.Id, instance.Name, instance.TypeId, instance.ProviderId,
-                protector.Protect(plaintext), instance.CreatedAt, instance.TagIds);
+                protector.Protect(plaintext), instance.CreatedAt, instance.TagIds)
+                { HostingProviderId = instance.HostingProviderId };
             }
             finally { CryptographicOperations.ZeroMemory(plaintext); }
         }).ToArray();
@@ -92,10 +94,10 @@ public sealed class SqliteWorkspaceStore(IFreeSql database, ILocalConfigurationR
         {
             cancellationToken.ThrowIfCancellationRequested();
             Set(command, """
-                INSERT INTO instance_configuration (id, name, type_id, provider_id, protected_parameters, create_time)
-                VALUES (@id, @name, @type, @provider, @parameters, @time);
+                INSERT INTO instance_configuration (id, name, type_id, provider_id, protected_parameters, create_time, hosting_provider_id)
+                VALUES (@id, @name, @type, @provider, @parameters, @time, @hosting);
                 """, ("@id", instance.Id), ("@name", instance.Name), ("@type", instance.TypeId),
-                ("@provider", instance.ProviderId), ("@parameters", instance.ProtectedParameters),
+                ("@provider", instance.ProviderId), ("@parameters", instance.ProtectedParameters), ("@hosting", instance.HostingProviderId),
                 ("@time", instance.CreatedAt.ToString("O", CultureInfo.InvariantCulture)));
             command.ExecuteNonQuery();
             foreach (string tag in instance.TagIds)

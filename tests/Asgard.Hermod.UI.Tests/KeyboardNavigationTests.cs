@@ -39,7 +39,7 @@ public sealed class KeyboardNavigationTests(WpfTestFixture fixture)
         {
             WindowPreviewCapture.Show(owner); await WindowTestVisuals.UpdateLayoutAsync(owner);
             Assert.True(entry.Focus());
-            using var model = new MetadataEditorViewModel("Rename", "Name", "Original", 128, (_, _, _) => Task.CompletedTask);
+            using var model = new MetadataEditorViewModel("Rename", "Name", "Original", 128, (_, _, _, _) => Task.CompletedTask);
             var window = new MetadataEditorWindow(model) { Owner = owner };
             await ModalWindowTestInteraction.ShowAsync(window, () =>
             {

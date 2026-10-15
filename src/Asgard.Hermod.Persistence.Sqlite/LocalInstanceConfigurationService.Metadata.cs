@@ -11,6 +11,8 @@ public sealed partial class LocalInstanceConfigurationService
         string? name = change.Name?.Trim();
         if (name is not null && (name.Length == 0 || name.Length > 128 || name.Any(char.IsControl)))
             throw Text.Exception("InstanceNamesMustContain1128CharactersAndNoControlCharacters");
+        if (change.HostingProviderId is { } hosting && !InstanceHostingProviders.IsValid(hosting))
+            throw Text.Exception("HostingProviderInvalid");
         var normalized = change with { Name = name, TagIds = change.TagIds?.ToArray() };
         return Task.Run(() =>
         {

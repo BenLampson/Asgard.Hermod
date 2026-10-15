@@ -109,7 +109,7 @@
          <controls:IconView Kind="ellipsis" Width="16" Height="16" Foreground="{DynamicResource TextMutedBrush}" />
          <Button.ContextMenu><ContextMenu MinWidth="236" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
           <MenuItem Header="{loc:Loc Open}" Tag="open" Click="OnMenuClick"><MenuItem.Icon><controls:IconView Kind="external-link" Width="16" Height="16" /></MenuItem.Icon></MenuItem>
-          <MenuItem Header="{loc:Loc MainRename}" Tag="rename" Click="OnMenuClick"><MenuItem.Icon><controls:IconView Kind="text-cursor-input" Width="16" Height="16" /></MenuItem.Icon></MenuItem>
+          <MenuItem Header="{loc:Loc EditInstanceDetails}" Tag="rename" Click="OnMenuClick"><MenuItem.Icon><controls:IconView Kind="text-cursor-input" Width="16" Height="16" /></MenuItem.Icon></MenuItem>
           <Separator Margin="6,4" />
           <MenuItem Header="{loc:Loc EditConnection}" Tag="edit" Click="OnMenuClick"><MenuItem.Icon><controls:IconView Kind="pencil" Width="16" Height="16" /></MenuItem.Icon></MenuItem>
          </ContextMenu></Button.ContextMenu>

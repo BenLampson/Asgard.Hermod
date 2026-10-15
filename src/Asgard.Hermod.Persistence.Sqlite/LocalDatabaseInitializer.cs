@@ -4,7 +4,7 @@ namespace Asgard.Hermod.Persistence.Sqlite;
 public sealed class LocalDatabaseInitializer
 {
     /// <summary>当前程序支持的数据库结构版本；新增迁移时递增。</summary>
-    public const int CurrentSchemaVersion = 3;
+    public const int CurrentSchemaVersion = 4;
 
     /// <summary>由服务容器拥有的业务数据库实例。</summary>
     private readonly IFreeSql _database;
@@ -56,8 +56,14 @@ public sealed class LocalDatabaseInitializer
         }
         LocalDatabaseVersionTwoMigration.Validate(command);
         if (version == 2)
+        {
             LocalDatabaseVersionThreeMigration.Apply(command);
+            version = 3;
+        }
         LocalDatabaseVersionThreeMigration.Validate(command);
+        if (version == 3)
+            LocalDatabaseVersionFourMigration.Apply(command);
+        LocalDatabaseVersionFourMigration.Validate(command);
         transaction.Commit();
     }
 }

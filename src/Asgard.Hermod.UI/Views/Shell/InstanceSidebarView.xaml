@@ -194,7 +194,7 @@
                                                     </Style>
                                                 </TextBlock.Style>
                                             </TextBlock>
-                                            <controls:IconView x:Name="InstanceProviderIcon" Grid.Column="3" Kind="{Binding Icon}"
+                                            <controls:IconView x:Name="InstanceProviderIcon" Grid.Column="3" Kind="{Binding ProviderIcon}"
                                                                Width="16" Height="16" Margin="8,0,0,0"
                                                                ToolTip="{Binding ProviderHint}" IsHitTestVisible="True"
                                                                Visibility="{Binding HasProviderIcon, Converter={StaticResource InstanceVisibility}}" />
@@ -268,7 +268,7 @@
                                             </Style>
                                         </controls:IconView.Style>
                                     </controls:IconView>
-                                    <controls:IconView Kind="{Binding Icon}" Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                                    <controls:IconView Kind="{Binding ProviderIcon}" Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Bottom"
                                                        Visibility="{Binding HasProviderIcon, Converter={StaticResource InstanceVisibility}}" />
                                     <controls:IconView Kind="{Binding SyncIcon}" Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Top"
                                                        Style="{StaticResource InstanceSyncIcon}"

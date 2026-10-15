@@ -3552,4 +3552,13 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="MySqlRunAllHint" xml:space="preserve">
     <value>Run every statement in this document (Ctrl+Shift+Enter).</value>
   </data>
+  <data name="EditInstanceDetails" xml:space="preserve"><value>Edit instance details</value></data>
+  <data name="HostingProvider" xml:space="preserve"><value>Provider</value></data>
+  <data name="HostingProviderHint" xml:space="preserve"><value>This identifies the hosting provider. Changing it does not affect your connection.</value></data>
+  <data name="HostingProviderInvalid" xml:space="preserve"><value>Choose a supported hosting provider for this instance.</value></data>
+  <data name="HostingSelfHosted" xml:space="preserve"><value>Self-hosted</value></data>
+  <data name="HostingAlibabaCloud" xml:space="preserve"><value>Alibaba Cloud</value></data>
+  <data name="HostingTencentCloud" xml:space="preserve"><value>Tencent Cloud</value></data>
+  <data name="HostingVolcengine" xml:space="preserve"><value>Volcengine</value></data>
+  <data name="HostingAws" xml:space="preserve"><value>AWS</value></data>
 </root>

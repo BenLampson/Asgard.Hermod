@@ -68,6 +68,9 @@ public sealed partial class LocalInstanceConfigurationService : IInstanceConfigu
         ArgumentNullException.ThrowIfNull(draft.Connection);
         // 类型和服务商必须共同匹配，未知插件不能将数据伪装为可用实例保存。
         IInstanceProvider provider = _providers.GetProvider(draft.Connection.TypeId, draft.Connection.ProviderId);
+        if (draft.HostingProviderId is { } hosting && (!InstanceHostingProviders.Supports(provider.Descriptor.Type.Id)
+            || !InstanceHostingProviders.IsValid(hosting)))
+            throw Text.Exception("HostingProviderInvalid");
         ArgumentNullException.ThrowIfNull(draft.Connection.Parameters);
         if (draft.Connection.Parameters.Count > 100 ||
             draft.Connection.Parameters.Any(pair => string.IsNullOrWhiteSpace(pair.Key) || pair.Key.Length > 128 ||
@@ -107,7 +110,8 @@ public sealed partial class LocalInstanceConfigurationService : IInstanceConfigu
                 var instance = new StoredInstanceConfiguration(existing?.Id ?? Guid.NewGuid().ToString("N"), name,
                     provider.Descriptor.Type.Id, provider.Descriptor.Id, protectedParameters,
                     existing?.CreatedAt ?? DateTime.UtcNow,
-                    existing is not null && !draft.ReplaceTags ? existing.TagIds : requestedTagIds);
+                    existing is not null && !draft.ReplaceTags ? existing.TagIds : requestedTagIds)
+                { HostingProviderId = draft.HostingProviderId ?? existing?.HostingProviderId ?? "" };
                 // 提交前准备所有导航字段；提交后再查询可能把已保存操作误报成失败。
                 _addresses[instance.Id] = (instance.ProtectedParameters, InstanceAddress.Format(instance.TypeId, parameters, instance.ProviderId));
                 InstanceSummary summary = ToSummary(instance, snapshot.Tags);
@@ -169,6 +173,6 @@ public sealed partial class LocalInstanceConfigurationService : IInstanceConfigu
         return new InstanceSummary(instance.Id, instance.Name, instance.Name,
             descriptor?.Icon ?? "database", tags.Where(tag => tagIds.Contains(tag.Id)).Select(tag => tag.Path).ToArray(),
             Endpoint: descriptor?.Name ?? Text.Get("InstanceConnectorNotInstalled"), TypeId: instance.TypeId, ProviderId: instance.ProviderId)
-        { TagIds = instance.TagIds.ToArray() };
+        { TagIds = instance.TagIds.ToArray(), HostingProviderId = instance.HostingProviderId };
     }
 }

@@ -11,6 +11,9 @@ public partial class InstanceConnectionWizardContent : UserControl
     /// <summary>加载服务商、声明式字段、连接测试与安全确认内容。</summary>
     public InstanceConnectionWizardContent() => InitializeComponent();
 
+    /// <summary>宿主先关闭确认页中的品牌下拉，再解释窗口级取消。</summary>
+    internal bool CloseHostingProviderDropDown() => ConfirmationHostingProviderSelector.CloseDropDown();
+
     /// <summary>列表和单选卡使用同一个服务商选择状态。</summary>
     private void OnProviderChecked(object sender, RoutedEventArgs args)
     {

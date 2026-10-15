@@ -22,7 +22,7 @@ public sealed class MetadataEditorTests(WpfTestFixture fixture)
             int saves = 0;
             string? saved = null;
             using var model = new MetadataEditorViewModel(Text.Get("RenameInstance"), Text.Get("InstanceName"), "Original", 128,
-                (name, _, _) =>
+                (name, _, _, _) =>
                 {
                     saves++; if (saves == 1) throw new IOException("Connection string must not be displayed");
                     saved = name; return Task.CompletedTask;
@@ -51,7 +51,7 @@ public sealed class MetadataEditorTests(WpfTestFixture fixture)
     {
         int saves = 0;
         using var model = new MetadataEditorViewModel(Text.Get("EditInstanceTags"), Text.Get("InstanceName"), "Original", 128,
-            (_, _, _) => { saves++; return Task.CompletedTask; }, isTagEditing: true, tags: TagManagementTestData.Create(), selectedIds: ["team"]);
+            (_, _, _, _) => { saves++; return Task.CompletedTask; }, isTagEditing: true, tags: TagManagementTestData.Create(), selectedIds: ["team"]);
         var window = new MetadataEditorWindow(model);
         await ModalWindowTestInteraction.ShowAsync(window, async () =>
         {

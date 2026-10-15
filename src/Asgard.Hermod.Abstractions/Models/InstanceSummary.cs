@@ -6,6 +6,8 @@ public sealed record InstanceSummary(
     IReadOnlyList<string> Tags, bool IsLocal = false, bool HasAlert = false, string Endpoint = "",
     string TypeId = "", string ProviderId = "")
 {
+    /// <summary>SSH 和数据库的托管品牌；不替换连接器 ProviderId。</summary>
+    public string HostingProviderId { get; init; } = "";
     /// <summary>稳定标签标识用于环境辨识；显示路径不能作为环境身份。</summary>
     public IReadOnlyList<string> TagIds { get; init; } = [];
     /// <summary>仅包含主机与端口或无用户信息、路径和查询参数的服务地址；不复用提供商名称。</summary>

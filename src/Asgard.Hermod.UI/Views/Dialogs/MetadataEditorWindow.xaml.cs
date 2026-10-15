@@ -11,7 +11,7 @@ public partial class MetadataEditorWindow : HermodDialog
     public MetadataEditorWindow(MetadataEditorViewModel model)
     {
         _model = model; InitializeComponent(); DataContext = model;
-        if (model.EditNameAndTags) Height = 400;
+        if (model.EditNameAndTags) Height = model.IsHostingProviderEditing ? 500 : 400;
         model.CloseRequested += OnCloseRequested;
         Loaded += (_, _) => { if (model.IsNameEditing) NameInput.Focus(); else (TagSelector.FindName("TagTrigger") as Button)?.Focus(); };
         Closing += (_, args) => { if (model.IsBusy && !model.WasSaved) args.Cancel = true; };
@@ -25,7 +25,7 @@ public partial class MetadataEditorWindow : HermodDialog
     private void OnPreviewKeyDown(object sender, KeyEventArgs args)
     {
         if (args.Key != Key.Escape) return;
-        if (!_model.Tags.CancelPicker()) _model.CancelCommand.Execute(null);
+        if (!HostingProviderSelector.CloseDropDown() && !_model.Tags.CancelPicker()) _model.CancelCommand.Execute(null);
         args.Handled = true;
     }
 }

@@ -25,7 +25,7 @@ public sealed partial class SqliteConfigurationRepository : ILocalConfigurationR
         return InTransaction(false, command =>
         {
             SetCommand(command, """
-                SELECT id, name, type_id, provider_id, protected_parameters, create_time
+                SELECT id, name, type_id, provider_id, protected_parameters, create_time, hosting_provider_id
                 FROM instance_configuration WHERE id = @id;
                 """, ("@id", instanceId));
             StoredInstanceConfiguration? instance;
@@ -48,10 +48,10 @@ public sealed partial class SqliteConfigurationRepository : ILocalConfigurationR
             if (tagIds.Any(id => !knownTags.Contains(id)))
                 throw Text.Exception("TheSelectedTagsNoLongerExistRefreshAndSelectAgain");
             SetCommand(command, """
-                INSERT INTO instance_configuration (id, name, type_id, provider_id, protected_parameters, create_time)
-                VALUES (@id, @name, @type, @provider, @parameters, @created);
+                INSERT INTO instance_configuration (id, name, type_id, provider_id, protected_parameters, create_time, hosting_provider_id)
+                VALUES (@id, @name, @type, @provider, @parameters, @created, @hosting);
                 """, ("@id", instance.Id), ("@name", instance.Name), ("@type", instance.TypeId), ("@provider", instance.ProviderId),
-                ("@parameters", instance.ProtectedParameters),
+                ("@parameters", instance.ProtectedParameters), ("@hosting", instance.HostingProviderId),
                 ("@created", instance.CreatedAt.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture)));
             command.ExecuteNonQuery();
             foreach (string tagId in tagIds)
@@ -82,10 +82,11 @@ public sealed partial class SqliteConfigurationRepository : ILocalConfigurationR
                 throw Text.Exception("TheSelectedTagsNoLongerExistRefreshAndSelectAgain");
             SetCommand(command, """
                 UPDATE instance_configuration
-                SET name = @name, type_id = @type, provider_id = @provider, protected_parameters = @parameters
+                SET name = @name, type_id = @type, provider_id = @provider, protected_parameters = @parameters,
+                    hosting_provider_id = @hosting
                 WHERE id = @id;
                 """, ("@id", instance.Id), ("@name", instance.Name), ("@type", instance.TypeId),
-                ("@provider", instance.ProviderId), ("@parameters", instance.ProtectedParameters));
+                ("@provider", instance.ProviderId), ("@parameters", instance.ProtectedParameters), ("@hosting", instance.HostingProviderId));
             if (command.ExecuteNonQuery() != 1)
                 throw Text.Exception("TheInstanceNoLongerExistsRefreshAndConfigureItAgain");
             if (!replaceTags) return true;
@@ -169,7 +170,7 @@ public sealed partial class SqliteConfigurationRepository : ILocalConfigurationR
         var tags = ReadTags(command);
         var associations = ReadAssociations(command);
         SetCommand(command, """
-            SELECT id, name, type_id, provider_id, protected_parameters, create_time
+            SELECT id, name, type_id, provider_id, protected_parameters, create_time, hosting_provider_id
             FROM instance_configuration ORDER BY create_time, id;
             """);
         var instances = new List<StoredInstanceConfiguration>();
@@ -185,7 +186,8 @@ public sealed partial class SqliteConfigurationRepository : ILocalConfigurationR
     /// <summary>将密文列映射到内部记录，任何导航读取都不会触发解密。</summary>
     private static StoredInstanceConfiguration ReadInstance(DbDataReader reader, IReadOnlyList<string> tagIds) => new(
         reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), (byte[])reader.GetValue(4),
-        DateTime.ParseExact(reader.GetString(5), "O", CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind), tagIds);
+        DateTime.ParseExact(reader.GetString(5), "O", CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind), tagIds)
+    { HostingProviderId = reader.GetString(6) };
 
     /// <summary>只读取标签基础字段，显示路径和关联计数在内存中统一生成。</summary>
     private static IReadOnlyList<StoredTag> ReadTags(DbCommand command)

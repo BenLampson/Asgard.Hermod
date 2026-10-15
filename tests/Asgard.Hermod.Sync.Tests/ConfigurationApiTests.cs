@@ -4,6 +4,33 @@ namespace Asgard.Hermod.Sync.Tests;
 public sealed class ConfigurationApiTests
 {
     private const string Password = "configuration-password";
+    /// <summary>品牌通过原加密信封往返，不更改 SSH 或数据库连接器身份，也无需新增服务端字段。</summary>
+    [Theory]
+    [InlineData("ssh")]
+    [InlineData("mysql")]
+    [InlineData("redis")]
+    public async Task HostingBrand_RoundTripsThroughExistingConfigurationApi(string type)
+    {
+        await using var host = new ApiTestHost(); await host.InitializeAsync(); host.SignIn(host.Token());
+        var codec = new ConfigurationCodec(new ConfigurationTestRegistry());
+        var instance = Snapshot().Instances[0] with { TypeId = type, ProviderId = "transport", HostingProviderId = "aliyun" };
+        var snapshot = new WorkspaceSnapshot(1, [instance], []);
+        var saved = await PutAsync(host, "0", codec.Encode(snapshot, new(1, [], []), new("0", null, [], [], null), Password, "owner"));
+        Assert.DoesNotContain(InstanceHostingProviders.MetadataKey, JsonSerializer.Serialize(saved));
+        var restored = codec.Decode(saved, Password, "owner");
+        Assert.Equal("aliyun", restored.Instances[0].HostingProviderId);
+        Assert.False(restored.Instances[0].Parameters.ContainsKey(InstanceHostingProviders.MetadataKey));
+        var changed = restored with { Instances = [restored.Instances[0] with { HostingProviderId = "volcengine" }] };
+        var updated = await PutAsync(host, saved.Revision, codec.Encode(changed, restored, saved, Password, "owner"));
+        var decoded = codec.Decode(updated, Password, "owner");
+        Assert.Equal("volcengine", decoded.Instances[0].HostingProviderId);
+        Assert.Equal("transport", decoded.Instances[0].ProviderId);
+        Assert.Equal(instance.Parameters, decoded.Instances[0].Parameters);
+        var cleared = decoded with { Instances = [decoded.Instances[0] with { HostingProviderId = "" }] };
+        var reset = await PutAsync(host, updated.Revision, codec.Encode(cleared, decoded, updated, Password, "owner"));
+        Assert.Empty(codec.Decode(reset, Password, "owner").Instances[0].HostingProviderId);
+    }
+
     private static WorkspaceSnapshot Snapshot(string name = "Instance") => new(1,
         [new("one", name, "storage", "provider", new Dictionary<string, string>
         { ["endpoint"] = "https://endpoint.test", ["accessKeyId"] = "private-key-id", ["secret"] = "private-secret", ["unknown"] = "unknown-secret" }, DateTime.UnixEpoch, [])], []);

@@ -55,16 +55,27 @@ public sealed class WorkspaceMerge
         string[] tagIds = b.TagIds.Concat(l.TagIds).Concat(c.TagIds).Distinct().Where(key =>
             l.TagIds.Contains(key) == c.TagIds.Contains(key) ? l.TagIds.Contains(key)
                 : l.TagIds.Contains(key) == b.TagIds.Contains(key) ? c.TagIds.Contains(key) : l.TagIds.Contains(key)).ToArray();
-        // 实例类型和服务商不允许编辑改变，异常元数据交给后续快照验证。
+        // 托管品牌独立合并，不把展示修改变成连接器或凭据变化。
         return l with
         {
             Name = Field(prefix + "name", l.Name, "InstanceName", b.Name, l.Name, c.Name)!,
             TypeId = Field(prefix + "type", l.Name, "TypeProvider", b.TypeId, l.TypeId, c.TypeId)!,
             ProviderId = Field(prefix + "provider", l.Name, "TypeProvider", b.ProviderId, l.ProviderId, c.ProviderId)!,
+            HostingProviderId = MergeHostingProvider(prefix, b, l, c),
             Parameters = parameters,
             TagIds = tagIds,
             CreatedAt = b.CreatedAt,
         };
+    }
+
+    /// <summary>品牌冲突展示本地化名称，不把稳定标识当成用户文案。</summary>
+    private string MergeHostingProvider(string prefix, SyncedInstance b, SyncedInstance l, SyncedInstance c)
+    {
+        if (l.HostingProviderId == c.HostingProviderId) return l.HostingProviderId;
+        if (l.HostingProviderId == b.HostingProviderId) return c.HostingProviderId;
+        if (c.HostingProviderId == b.HostingProviderId) return l.HostingProviderId;
+        return Choose(prefix + "hosting", l.Name, "HostingProvider", l.HostingProviderId, c.HostingProviderId,
+            InstanceHostingProviders.Get(l.HostingProviderId).Name, InstanceHostingProviders.Get(c.HostingProviderId).Name)!;
     }
 
     /// <summary>标签改名、颜色及父级可以独立合并。</summary>

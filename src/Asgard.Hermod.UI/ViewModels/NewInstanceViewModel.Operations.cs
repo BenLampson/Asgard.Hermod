@@ -81,6 +81,7 @@ public sealed partial class NewInstanceViewModel
         var draft = new InstanceConfigurationDraft
         {
             Name = Name.Trim(),
+            HostingProviderId = HasHostingProviderSelection ? HostingProviderId : null,
             Connection = _verifiedConnection ?? BuildConnection(),
             SaveLocation = SaveLocation,
             ExpectedAccount = _initialAccount,

@@ -4,6 +4,8 @@ namespace Asgard.Hermod.Persistence.Sqlite;
 public sealed record StoredInstanceConfiguration(string Id, string Name, string TypeId, string ProviderId,
     byte[] ProtectedParameters, DateTime CreatedAt, IReadOnlyList<string> TagIds)
 {
+    /// <summary>展示用途的托管品牌，与加密连接参数分列保存。</summary>
+    public string HostingProviderId { get; init; } = "";
     /// <summary>诊断文本也不展示密文、名称或第三方配置。</summary>
     public override string ToString() => $"Stored instance ({Id}, connection hidden)";
 }

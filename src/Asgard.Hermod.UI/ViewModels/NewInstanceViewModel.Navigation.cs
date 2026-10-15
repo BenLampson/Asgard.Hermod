@@ -180,7 +180,7 @@ public sealed partial class NewInstanceViewModel
         foreach (string property in new[] { nameof(NameError), nameof(HasTypeSelection), nameof(IsChoosingType),
             nameof(HasProviderSelection), nameof(IsInformationComplete), nameof(HasSuccessfulConnectionTest),
             nameof(CanGoNext), nameof(CanGoPrevious), nameof(CanTest), nameof(CanCreate), nameof(IsInformationEditable),
-            nameof(IsTypeSelectionEditable), nameof(IsProviderSelectionEditable), nameof(WindowTitle), nameof(WizardHeading), nameof(ConfirmationHint),
+            nameof(IsTypeSelectionEditable), nameof(IsProviderSelectionEditable), nameof(HasHostingProviderSelection), nameof(WindowTitle), nameof(WizardHeading), nameof(ConfirmationHint),
             nameof(StepCountText), nameof(ContinueCommand), nameof(ContinueLabel), nameof(HasPreviousStep),
             nameof(IsProviderStep), nameof(ProviderLabel), nameof(IsInformationStep), nameof(IsTestStep), nameof(IsSaveLocationStep),
             nameof(IsConfirmationStep), nameof(ProviderName), nameof(ProviderSummary),

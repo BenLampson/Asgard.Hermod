@@ -19,7 +19,7 @@ public interface ILocalConfigurationRepository
     StoredInstanceConfiguration? GetInstance(string instanceId, CancellationToken cancellationToken = default);
     /// <summary>在同一事务中保存实例与已验证存在的标签关联。</summary>
     void CreateInstance(StoredInstanceConfiguration instance, CancellationToken cancellationToken = default);
-    /// <summary>只原子更新名称、类型和密文参数，保留原实例标识、创建时间与全部标签关联。</summary>
+    /// <summary>原子更新名称、品牌、连接器和密文参数，保留原实例标识、创建时间与全部标签关联。</summary>
     void UpdateInstance(StoredInstanceConfiguration instance, CancellationToken cancellationToken = default);
     /// <summary>显式替换标签时配置与关联同事务提交；未替换时沿用原连接更新语义。</summary>
     void UpdateInstance(StoredInstanceConfiguration instance, bool replaceTags, CancellationToken cancellationToken = default)

@@ -51,9 +51,13 @@ public sealed class InstanceItemViewModel : ObservableObject
     /// <summary>同一类型的所有服务商共用相同类型元数据。</summary>
     private InstanceTypeDescriptor? Type => _registry?.Types.FirstOrDefault(type => type.Id == Summary.TypeId);
     /// <summary>品牌独立呈现；未配置实例及重复的通用图标不占用品牌位置。</summary>
-    public bool HasProviderIcon => Summary.HasConfiguration && Icon != TypeIcon;
+    public bool HasProviderIcon => Summary.HasConfiguration && ProviderIcon != TypeIcon;
+    /// <summary>SSH 和数据库的品牌图标独立于连接方式图标。</summary>
+    public string ProviderIcon => HostingProvider?.Icon ?? Icon;
+    private InstanceHostingProvider? HostingProvider => InstanceHostingProviders.Supports(Summary.TypeId)
+        ? InstanceHostingProviders.Get(Summary.HostingProviderId) : null;
     /// <summary>安全导航快照包含服务商显示名称，不读取连接参数。</summary>
-    public string ProviderName => string.IsNullOrWhiteSpace(Summary.Endpoint) ? Summary.ProviderId : Summary.Endpoint;
+    public string ProviderName => HostingProvider?.Name ?? (string.IsNullOrWhiteSpace(Summary.Endpoint) ? Summary.ProviderId : Summary.Endpoint);
     /// <summary>类型图标的完整本地化提示。</summary>
     public string TypeHint => Text.Format("InstanceTypeHint", TypeName);
     /// <summary>品牌图标的完整本地化提示。</summary>
@@ -105,7 +109,7 @@ public sealed class InstanceItemViewModel : ObservableObject
         Summary = summary;
         foreach (string property in new[] { nameof(Summary), nameof(Name), nameof(DisplayName),
             nameof(Icon), nameof(IsStorage), nameof(Tags), nameof(IsLocal), nameof(HasAlert), nameof(TypeIcon),
-            nameof(TypeName), nameof(HasProviderIcon), nameof(ProviderName), nameof(TypeHint), nameof(ProviderHint),
+            nameof(TypeName), nameof(HasProviderIcon), nameof(ProviderName), nameof(ProviderIcon), nameof(TypeHint), nameof(ProviderHint),
             nameof(HasSyncStatus), nameof(AccessibleName), nameof(EnvironmentLabel), nameof(EnvironmentTone) })
             OnPropertyChanged(property);
     }

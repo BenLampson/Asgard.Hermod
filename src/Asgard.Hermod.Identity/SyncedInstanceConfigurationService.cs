@@ -45,7 +45,7 @@ public sealed class SyncedInstanceConfigurationService(IInstanceConfigurationSer
             if (draft.CheckExpectedAccount && (draft.ExpectedAccount?.SubjectId != accounts.Account?.SubjectId
                 || draft.ExpectedAccount?.TenantId != accounts.Account?.TenantId || draft.ExpectedAccount?.ApplicationId != accounts.Account?.ApplicationId))
                 throw Text.Exception("SyncAccountChanged");
-            var deviceDraft = new InstanceConfigurationDraft { Name = draft.Name, Connection = draft.Connection, TagIds = draft.TagIds, ReplaceTags = draft.ReplaceTags, SaveLocation = InstanceSaveLocation.Local };
+            var deviceDraft = new InstanceConfigurationDraft { Name = draft.Name, Connection = draft.Connection, TagIds = draft.TagIds, ReplaceTags = draft.ReplaceTags, HostingProviderId = draft.HostingProviderId, SaveLocation = InstanceSaveLocation.Local };
             saved = id is null ? await local.CreateAsync(deviceDraft, cancellationToken) : await local.UpdateAsync(id, deviceDraft, cancellationToken);
         }, cancellationToken);
         return saved!;

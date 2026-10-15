@@ -43,7 +43,7 @@ public sealed class MainWorkspaceStateTests(WpfTestFixture fixture)
         foreach (bool save in new[] { false, true })
         {
             using var model = new MetadataEditorViewModel(Text.Get("RenameInstance"), Text.Get("InstanceName"), "Original", 128,
-                (value, ids, _) => { writes++; name = value; tags = ids; return Task.CompletedTask; },
+                (value, ids, _, _) => { writes++; name = value; tags = ids; return Task.CompletedTask; },
                 isTagEditing: true, tags: TagManagementTestData.Create(), selectedIds: ["team"], editNameAndTags: true);
             var window = new MetadataEditorWindow(model);
             await ModalWindowTestInteraction.ShowAsync(window, async () =>

@@ -63,6 +63,13 @@ version-1 baseline to represent a later schema.
 
 ## Service lifetime and verification
 
+Schema version 4 adds `instance_configuration.hosting_provider_id` with an empty
+default for self-hosted instances. The migration leaves connector IDs, encrypted
+connection parameters, creation times and tag associations unchanged. Metadata edits
+write the brand, name and tags atomically without decrypting credentials. Workspace
+export and restore preserve the brand; per-instance cloud sync carries it inside the
+existing encrypted secrets envelope so the wire format and server remain compatible.
+
 The main window stores each instance's last access ID and UTC timestamp
 in `app_setting` under `workspace.recent`, through `IRecentInstanceStore`. Names,
 endpoints and credentials are not copied into this history. The table resolves

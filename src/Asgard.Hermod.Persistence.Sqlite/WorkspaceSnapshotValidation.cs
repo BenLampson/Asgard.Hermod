@@ -39,6 +39,8 @@ internal static class WorkspaceSnapshotValidation
         foreach (var instance in snapshot.Instances)
         {
             if (!ValidId(instance.Id) || !ValidId(instance.TypeId) || !ValidId(instance.ProviderId)
+                || !InstanceHostingProviders.IsValid(instance.HostingProviderId)
+                || instance.HostingProviderId.Length > 0 && !InstanceHostingProviders.Supports(instance.TypeId)
                 || string.IsNullOrWhiteSpace(instance.Name) || instance.Name.Length > 128 || instance.Name.Any(char.IsControl)
                 || instance.Parameters is null || instance.Parameters.Count > 100
                 || instance.Parameters.Any(pair => !ValidId(pair.Key) || pair.Value is null || pair.Value.Length > 65536)

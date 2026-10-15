@@ -80,6 +80,7 @@ public sealed partial class NewInstanceViewModel : ObservableObject, IDisposable
             else if (value?.DefaultProviderId is not null)
                 SelectedProvider = Providers.FirstOrDefault(provider => provider.Id == value.DefaultProviderId);
             Name = "";
+            HostingProviderId = "";
             TagSelection.Reset();
             CurrentStep = 1;
             RebuildSteps();

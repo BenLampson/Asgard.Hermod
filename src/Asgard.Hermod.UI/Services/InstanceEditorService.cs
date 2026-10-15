@@ -71,10 +71,17 @@ public sealed class InstanceEditorService : IInstanceEditor
         var tags = editTags && _tags is not null ? await _tags.GetTagsAsync() : null;
         var selectedIds = editTags ? await _configurations.GetTagIdsAsync(instanceId) : null;
         InstanceSummary? result = null;
-        using var model = new MetadataEditorViewModel(Text.Get(editTags && !editNameAndTags ? "EditInstanceTags" : "RenameInstance"), Text.Get("InstanceName"), existing.Name, 128,
-            async (name, ids, token) => result = await _configurations.UpdateMetadataAsync(instanceId, new()
-            { Name = editTags && !editNameAndTags ? null : name, TagIds = editTags ? ids : null, ExpectedAccount = expectedAccount, CheckExpectedAccount = true }, token),
-            isTagEditing: editTags, tags: tags, selectedIds: selectedIds, editNameAndTags: editNameAndTags);
+        using var model = new MetadataEditorViewModel(Text.Get(editTags && !editNameAndTags ? "EditInstanceTags" : "EditInstanceDetails"), Text.Get("InstanceName"), existing.Name, 128,
+            async (name, ids, hosting, token) => result = await _configurations.UpdateMetadataAsync(instanceId, new()
+            {
+                Name = editTags && !editNameAndTags ? null : name,
+                TagIds = editTags ? ids : null,
+                HostingProviderId = hosting,
+                ExpectedAccount = expectedAccount,
+                CheckExpectedAccount = true
+            }, token),
+            isTagEditing: editTags, tags: tags, selectedIds: selectedIds, editNameAndTags: editNameAndTags,
+            editHostingProvider: editNameAndTags && InstanceHostingProviders.Supports(existing.TypeId), hostingProviderId: existing.HostingProviderId);
         var dialog = new MetadataEditorWindow(model) { Owner = _getOwner() };
         try { return dialog.ShowDialog() == true ? result : null; }
         finally { dialog.Close(); }

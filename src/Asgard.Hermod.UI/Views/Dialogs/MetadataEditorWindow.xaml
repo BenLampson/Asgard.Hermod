@@ -14,6 +14,8 @@
    <controls:FormField Label="{Binding NameLabel}" Error="{Binding NameError}" IsRequired="True" Visibility="{Binding IsNameEditing, Converter={StaticResource Visible}}">
     <TextBox x:Name="NameInput" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" MaxLength="{Binding MaxLength}" IsEnabled="{Binding IsEditable}" AutomationProperties.Name="{Binding NameLabel}" />
    </controls:FormField>
+   <controls:InstanceHostingProviderSelector x:Name="HostingProviderSelector" ProviderId="{Binding HostingProviderId}"
+    IsEnabled="{Binding IsEditable}" Visibility="{Binding IsHostingProviderEditing, Converter={StaticResource Visible}}" Margin="0,12,0,12" />
    <controls:InstanceTagSelector x:Name="TagSelector" Model="{Binding Tags}" Visibility="{Binding IsTagEditing, Converter={StaticResource Visible}}" />
    <TextBlock Text="{Binding Error}" TextWrapping="Wrap" Foreground="{DynamicResource DangerBrush}" Margin="0,12,0,0" AutomationProperties.LiveSetting="Polite" />
   </StackPanel>

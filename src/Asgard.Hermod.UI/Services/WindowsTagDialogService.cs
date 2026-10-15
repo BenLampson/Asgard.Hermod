@@ -23,7 +23,7 @@ public sealed class WindowsTagDialogService : ITagDialogService
         if (tag.IsBuiltIn) return Task.FromResult<ManagedTag?>(null);
         ManagedTag? result = null;
         using var model = new MetadataEditorViewModel(Text.Get("RenameTag"), Text.Get("TagName"), tag.Name, 80,
-            async (name, _, token) => result = await _tags.RenameAsync(tag.Id, name, token), isTagName: true);
+            async (name, _, _, token) => result = await _tags.RenameAsync(tag.Id, name, token), isTagName: true);
         var window = new MetadataEditorWindow(model) { Owner = _owner() };
         try { return Task.FromResult(window.ShowDialog() == true ? result : null); }
         finally { window.Close(); }

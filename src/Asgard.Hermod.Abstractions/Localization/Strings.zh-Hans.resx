@@ -3552,4 +3552,13 @@
   <data name="MySqlRunAllHint" xml:space="preserve">
     <value>执行当前文稿中的全部语句（Ctrl+Shift+Enter）。</value>
   </data>
+  <data name="EditInstanceDetails" xml:space="preserve"><value>编辑实例信息</value></data>
+  <data name="HostingProvider" xml:space="preserve"><value>提供商</value></data>
+  <data name="HostingProviderHint" xml:space="preserve"><value>用于标识托管提供商，修改不会影响当前连接。</value></data>
+  <data name="HostingProviderInvalid" xml:space="preserve"><value>请选择该实例支持的托管提供商。</value></data>
+  <data name="HostingSelfHosted" xml:space="preserve"><value>自部署</value></data>
+  <data name="HostingAlibabaCloud" xml:space="preserve"><value>阿里云</value></data>
+  <data name="HostingTencentCloud" xml:space="preserve"><value>腾讯云</value></data>
+  <data name="HostingVolcengine" xml:space="preserve"><value>火山引擎</value></data>
+  <data name="HostingAws" xml:space="preserve"><value>AWS</value></data>
 </root>

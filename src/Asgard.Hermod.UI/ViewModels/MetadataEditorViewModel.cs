@@ -1,21 +1,24 @@
 namespace Asgard.Hermod.UI.ViewModels;
 
-/// <summary>轻量名称或标签草稿；提交失败保留输入，取消不调用持久化操作。</summary>
+/// <summary>轻量名称、托管品牌与标签草稿；提交失败保留输入，取消不调用持久化操作。</summary>
 public sealed class MetadataEditorViewModel : ObservableObject, IDisposable
 {
-    private readonly Func<string, IReadOnlyList<string>, CancellationToken, Task> _save;
+    private readonly Func<string, IReadOnlyList<string>, string?, CancellationToken, Task> _save;
     private readonly bool _isTagName;
     private readonly CancellationTokenSource _lifetime = new();
     private bool _disposed;
 
     /// <summary>调用方提供持久化动作，公共窗口不接触连接或凭据。</summary>
     public MetadataEditorViewModel(string title, string nameLabel, string name, int maxLength,
-        Func<string, IReadOnlyList<string>, CancellationToken, Task> save, bool isTagName = false,
-        bool isTagEditing = false, IReadOnlyList<ManagedTag>? tags = null, IReadOnlyList<string>? selectedIds = null, bool editNameAndTags = false)
+        Func<string, IReadOnlyList<string>, string?, CancellationToken, Task> save, bool isTagName = false,
+        bool isTagEditing = false, IReadOnlyList<ManagedTag>? tags = null, IReadOnlyList<string>? selectedIds = null, bool editNameAndTags = false,
+        bool editHostingProvider = false, string hostingProviderId = "")
     {
         Title = title; NameLabel = nameLabel; Name = name; MaxLength = maxLength; _save = save; _isTagName = isTagName;
         IsTagEditing = isTagEditing;
         EditNameAndTags = editNameAndTags;
+        IsHostingProviderEditing = editHostingProvider;
+        HostingProviderId = hostingProviderId;
         Tags = new(tags, selectedIds); Tags.SetEditable(isTagEditing); Tags.PropertyChanged += OnTagsChanged;
         SaveCommand = new AsyncRelayCommand(_ => SaveAsync(), _ => CanSave);
         CancelCommand = new RelayCommand(_ => CloseRequested?.Invoke(this, false), _ => !IsBusy);
@@ -29,8 +32,16 @@ public sealed class MetadataEditorViewModel : ObservableObject, IDisposable
     public int MaxLength { get; }
     /// <summary>标签编辑不展示名称输入。</summary>
     public bool IsTagEditing { get; }
-    /// <summary>实例重命名同时编辑名称和标签，在一次事务中提交。</summary>
+    /// <summary>实例信息编辑同时提交名称和标签，可独立增加托管品牌。</summary>
     public bool EditNameAndTags { get; }
+    /// <summary>实例托管品牌与名称、标签在同一事务保存，标签名称窗口不展示。</summary>
+    public bool IsHostingProviderEditing { get; }
+    /// <summary>品牌只影响展示，不需要解密或重新验证连接。</summary>
+    public string HostingProviderId
+    {
+        get;
+        set { if (IsEditable && InstanceHostingProviders.IsValid(value)) SetProperty(ref field, value); }
+    } = "";
     /// <summary>重命名只展示名称。</summary>
     public bool IsNameEditing => !IsTagEditing || EditNameAndTags;
     /// <summary>提交期间冻结输入。</summary>
@@ -68,7 +79,7 @@ public sealed class MetadataEditorViewModel : ObservableObject, IDisposable
         IsBusy = true; Error = ""; Tags.SetEditable(false); Refresh();
         try
         {
-            await _save(Name.Trim(), Tags.SelectedIds, _lifetime.Token);
+            await _save(Name.Trim(), Tags.SelectedIds, IsHostingProviderEditing ? HostingProviderId : null, _lifetime.Token);
             WasSaved = true;
             CloseRequested?.Invoke(this, true);
         }

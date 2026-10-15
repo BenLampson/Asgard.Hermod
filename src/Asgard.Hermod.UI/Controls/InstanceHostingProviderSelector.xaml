@@ -1,0 +1,14 @@
+<UserControl x:Class="Asgard.Hermod.UI.Controls.InstanceHostingProviderSelector"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls" xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization" x:Name="Root">
+ <controls:FormField Label="{loc:Loc HostingProvider}" Hint="{loc:Loc HostingProviderHint}">
+  <ComboBox x:Name="ProviderInput" ItemsSource="{Binding Providers, ElementName=Root}"
+   SelectedValuePath="Id" SelectedValue="{Binding ProviderId, ElementName=Root, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+   AutomationProperties.Name="{loc:Loc HostingProvider}">
+   <ComboBox.ItemTemplate><DataTemplate><StackPanel Orientation="Horizontal">
+    <controls:IconView Kind="{Binding Icon}" Width="18" Height="18" Margin="0,0,8,0" />
+    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+   </StackPanel></DataTemplate></ComboBox.ItemTemplate>
+  </ComboBox>
+ </controls:FormField>
+</UserControl>

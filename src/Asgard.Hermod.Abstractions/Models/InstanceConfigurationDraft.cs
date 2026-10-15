@@ -5,6 +5,8 @@ public sealed class InstanceConfigurationDraft
 {
     /// <summary>实例显示名称。</summary>
     public required string Name { get; init; }
+    /// <summary>独立于连接参数的托管品牌；null 在编辑时保留原值。</summary>
+    public string? HostingProviderId { get; init; }
     /// <summary>服务商专属连接参数。</summary>
     public required InstanceConnectionOptions Connection { get; init; }
     /// <summary>由登录状态决定的保存范围，客户端不能指定任意账户归属。</summary>

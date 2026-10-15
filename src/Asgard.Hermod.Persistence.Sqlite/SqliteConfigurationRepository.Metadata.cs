@@ -14,6 +14,15 @@ public sealed partial class SqliteConfigurationRepository
             SetCommand(command, "UPDATE instance_configuration SET name = @name WHERE id = @id;", ("@name", name), ("@id", instanceId));
             command.ExecuteNonQuery();
         }
+        if (change.HostingProviderId is { } hosting)
+        {
+            var instance = snapshot.Instances.Single(item => item.Id == instanceId);
+            if (!InstanceHostingProviders.Supports(instance.TypeId) || !InstanceHostingProviders.IsValid(hosting))
+                throw Text.Exception("HostingProviderInvalid");
+            SetCommand(command, "UPDATE instance_configuration SET hosting_provider_id = @hosting WHERE id = @id;",
+                ("@hosting", hosting), ("@id", instanceId));
+            command.ExecuteNonQuery();
+        }
         if (change.TagIds is { } ids)
         {
             var requested = ids.Distinct(StringComparer.Ordinal).ToArray();

@@ -161,7 +161,7 @@ public sealed class MainWorkspaceViewModel : ObservableObject, IDisposable
     {
         var rows = AllRows();
         if (SelectedNavigation is not null && SelectedNavigation.Id is not ("all" or "overview")) rows = rows.Where(row => row.Instance.Summary.TypeId == SelectedNavigation.Id);
-        if (SelectedProvider is { Id.Length: > 0 }) rows = rows.Where(row => row.Instance.Summary.ProviderId == SelectedProvider.Id);
+        if (SelectedProvider is { Id.Length: > 0 }) rows = rows.Where(row => row.ProviderFilterId == SelectedProvider.Id);
         var matchingTags = _catalog.Instances.Cast<InstanceItemViewModel>().Select(item => item.Id).ToHashSet();
         rows = rows.Where(row => matchingTags.Contains(row.Instance.Id));
         string query = Query.Trim();
@@ -174,7 +174,7 @@ public sealed class MainWorkspaceViewModel : ObservableObject, IDisposable
         foreach (var type in Types) type.Count = _catalog.AllInstances.Count(item => !item.IsLocal && item.Summary.TypeId == type.Id);
         string provider = SelectedProvider?.Id ?? "";
         Providers.Clear(); Providers.Add(new("", Text.Get("MainAllProviders")));
-        foreach (var group in AllRows().GroupBy(row => row.Instance.Summary.ProviderId).OrderBy(group => group.First().ProviderName))
+        foreach (var group in AllRows().GroupBy(row => row.ProviderFilterId).OrderBy(group => group.First().ProviderName))
             Providers.Add(new(group.Key, group.First().ProviderName));
         SelectedProvider = Providers.FirstOrDefault(option => option.Id == provider) ?? Providers[0];
         RefreshRows(); OnPropertyChanged(nameof(TotalText));

@@ -14,7 +14,9 @@ internal sealed class ConfigurationCodec(IInstanceProviderRegistry registry)
             var parameters = new Dictionary<string, string>(item.Parameters, StringComparer.Ordinal);
             foreach (var pair in secrets.Decrypt(item))
                 if (!parameters.TryAdd(pair.Key, pair.Value)) throw Text.Exception("SyncSnapshotInvalid");
-            return new SyncedInstance(item.Id, item.Name, item.TypeId, item.ProviderId, parameters, item.CreatedAt, item.TagIds);
+            parameters.Remove(InstanceHostingProviders.MetadataKey, out string? hosting);
+            return new SyncedInstance(item.Id, item.Name, item.TypeId, item.ProviderId, parameters, item.CreatedAt, item.TagIds)
+            { HostingProviderId = hosting ?? "" };
         }).ToArray(), cloud.Tags.Select(item => item.Tag).ToArray());
     }
 
@@ -34,6 +36,8 @@ internal sealed class ConfigurationCodec(IInstanceProviderRegistry registry)
                 .Select(field => field.Key).ToHashSet(StringComparer.Ordinal);
             var visible = item.Parameters.Where(pair => publicKeys.Contains(pair.Key)).ToDictionary();
             var hidden = item.Parameters.Where(pair => !publicKeys.Contains(pair.Key)).ToDictionary();
+            if (item.HostingProviderId.Length > 0)
+                hidden[InstanceHostingProviders.MetadataKey] = item.HostingProviderId;
             return new CloudInstanceConfiguration(item.Id, previous?.Version ?? "0", item.Name, item.TypeId, item.ProviderId,
                 visible, secrets.Encrypt(item, hidden), item.CreatedAt, item.TagIds);
         }).ToArray();

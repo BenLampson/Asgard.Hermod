@@ -9,7 +9,7 @@
     <Button x:Name="RenameButton" Grid.Column="1" Width="22" Height="22" Margin="6,0,0,0" CommandParameter="{Binding Instance, ElementName=Root}"
             chrome:WindowChrome.IsHitTestVisibleInChrome="True"
             Command="{Binding (controls:InstanceMetadataScope.RenameCommand), RelativeSource={RelativeSource Self}}"
-            ToolTip="{loc:Loc RenameInstance}" AutomationProperties.Name="{loc:Loc RenameInstance}"
+            ToolTip="{loc:Loc EditInstanceDetails}" AutomationProperties.Name="{loc:Loc EditInstanceDetails}"
             HorizontalContentAlignment="Stretch" Padding="3,2" Background="Transparent" BorderThickness="0">
         <Button.Template><ControlTemplate TargetType="Button">
             <Border x:Name="Hover" Background="{TemplateBinding Background}" BorderBrush="Transparent" BorderThickness="1" CornerRadius="4" Padding="{TemplateBinding Padding}">

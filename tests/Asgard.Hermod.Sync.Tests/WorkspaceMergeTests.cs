@@ -3,6 +3,29 @@ namespace Asgard.Hermod.Sync.Tests;
 /// <summary>三方合并验证不同字段、相同结果、删除和敏感冲突。</summary>
 public sealed class WorkspaceMergeTests
 {
+    /// <summary>品牌与地址可以独立合并；同字段冲突使用本地化品牌预览。</summary>
+    [Fact]
+    public void HostingBrand_MergesIndependentlyAndUsesLocalizedConflictPreviews()
+    {
+        var baseline = Instance with { TypeId = "ssh", HostingProviderId = "aliyun" };
+        var local = baseline with { HostingProviderId = "volcengine" };
+        var cloud = baseline with { Name = "Cloud name" };
+        var merge = new WorkspaceMerge();
+        var result = merge.Merge(new(1, [baseline], []), new(1, [local], []), new(1, [cloud], []));
+        Assert.Empty(merge.Conflicts);
+        Assert.Equal("Cloud name", result.Instances[0].Name);
+        Assert.Equal("volcengine", result.Instances[0].HostingProviderId);
+        cloud = baseline with { HostingProviderId = "tencent" };
+        merge.Merge(new(1, [baseline], []), new(1, [local], []), new(1, [cloud], []));
+        var conflict = Assert.Single(merge.Conflicts);
+        Assert.Equal(InstanceHostingProviders.Get("volcengine").Name, conflict.LocalValue);
+        Assert.Equal(InstanceHostingProviders.Get("tencent").Name, conflict.CloudValue);
+        var resolved = merge.Merge(new(1, [baseline], []), new(1, [local], []), new(1, [cloud], []),
+            new Dictionary<string, bool> { [conflict.Key] = true });
+        Assert.Equal("tencent", resolved.Instances[0].HostingProviderId);
+        Assert.Equal(baseline.ProviderId, resolved.Instances[0].ProviderId);
+    }
+
     private static readonly SyncedInstance Instance = new("one", "Original", "storage", "provider",
         new Dictionary<string, string> { ["endpoint"] = "original", ["secret"] = "credential-original" }, DateTime.UnixEpoch, []);
     /// <summary>两台设备修改不同字段自动组合，参数字典顺序无影响。</summary>

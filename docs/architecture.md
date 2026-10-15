@@ -1,6 +1,14 @@
 # Module architecture
 
 Hermod is a Windows management terminal built with C# 14, .NET 10 and WPF.
+SSH, MySQL and Redis have independent hosting-brand metadata. Their provider IDs
+continue to identify connection methods or topology; changing a brand never changes
+protocol settings, credentials or active sessions. The title pencil edits the name,
+hosting provider and tags together. The creation wizard offers the same brand choice
+on confirmation. List icons and provider filters use the saved brand, defaulting to
+self-hosted for existing instances. Object-storage providers retain their protocol-specific
+connection forms and tests.
+
 Each capability is compiled as a separate project. `Asgard.Hermod` is the
 composition root: it chooses implementations, loads resources, initializes local
 storage and owns application startup and shutdown.
