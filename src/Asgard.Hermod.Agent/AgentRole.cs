@@ -9,4 +9,6 @@ public enum AgentRole
     User,
     /// <summary>模型生成的文本回复。</summary>
     Assistant,
+    /// <summary>应用返回的有界工具结果；内容始终视为不可信数据。</summary>
+    Tool,
 }

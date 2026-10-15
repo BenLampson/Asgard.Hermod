@@ -4035,4 +4035,25 @@ Review the full SQL below. Execution starts only after confirmation.</value></da
   <data name="SshMonitorRecent" xml:space="preserve"><value>Last 2 minutes</value></data>
   <data name="SshMonitorRefreshHint" xml:space="preserve"><value>Read-only sampling every 5 seconds.</value></data>
   <data name="SshMonitorNoData" xml:space="preserve"><value>Unavailable</value></data>
+  <data name="SshAgentAutomationHint" xml:space="preserve"><value>Diagnostics run automatically; changes need confirmation. Results go to the model. Commands start in /.</value></data>
+  <data name="SshAgentAnalyzeResult" xml:space="preserve"><value>Analyze the completed command result, verify its effects with diagnostics if authorized, and explain the next steps.</value></data>
+  <data name="SshAgentInvalidTool" xml:space="preserve"><value>The model requested an unsupported diagnostic or invalid tool arguments. No command was executed.</value></data>
+  <data name="SshAgentDiagnosticStep" xml:space="preserve"><value>Automatic diagnostic</value></data>
+  <data name="SshAgentCommandStep" xml:space="preserve"><value>Command</value></data>
+  <data name="SshAgentAwaitingApproval" xml:space="preserve"><value>Waiting for command confirmation…</value></data>
+  <data name="SshAgentExecuting" xml:space="preserve"><value>Executing command…</value></data>
+  <data name="SshAgentDiagnosing" xml:space="preserve"><value>Running diagnostics…</value></data>
+  <data name="SshAgentActionDenied" xml:space="preserve"><value>Command declined. This task will continue with analysis only.</value></data>
+  <data name="SshAgentOutcomeUnknown" xml:space="preserve"><value>The outcome is uncertain. Further execution has stopped; verify the server state before retrying.</value></data>
+  <data name="SshAgentStepCompleted" xml:space="preserve"><value>Command finished; continuing analysis.</value></data>
+  <data name="SshAgentStepResult" xml:space="preserve"><value>{0}
+
+Exit code: {1}
+{2}</value></data>
+  <data name="SshAgentStepFailure" xml:space="preserve"><value>{0}
+
+{1}</value></data>
+  <data name="SshAgentToolSupportRequired" xml:space="preserve"><value>The model service rejected the troubleshooting request. Check that the configured model and endpoint support Chat Completions function tools.</value></data>
+  <data name="SshAgentNotExecuted" xml:space="preserve"><value>The action was canceled before execution.</value></data>
+  <data name="SshAgentIncludeSelectionShort" xml:space="preserve"><value>Include selection</value></data>
 </root>

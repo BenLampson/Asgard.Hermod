@@ -4035,4 +4035,25 @@ Session：{2}
   <data name="SshMonitorRecent" xml:space="preserve"><value>最近 2 分钟</value></data>
   <data name="SshMonitorRefreshHint" xml:space="preserve"><value>每 5 秒执行一次只读采样。</value></data>
   <data name="SshMonitorNoData" xml:space="preserve"><value>不可用</value></data>
+  <data name="SshAgentAutomationHint" xml:space="preserve"><value>诊断自动执行，修改须确认；结果发送给模型分析。执行目录为 /。</value></data>
+  <data name="SshAgentAnalyzeResult" xml:space="preserve"><value>请分析刚执行的命令结果，必要时使用获授权的诊断验证效果，并说明后续步骤。</value></data>
+  <data name="SshAgentInvalidTool" xml:space="preserve"><value>模型请求了不支持的诊断或无效的工具参数，未执行命令。</value></data>
+  <data name="SshAgentDiagnosticStep" xml:space="preserve"><value>自动诊断</value></data>
+  <data name="SshAgentCommandStep" xml:space="preserve"><value>命令操作</value></data>
+  <data name="SshAgentAwaitingApproval" xml:space="preserve"><value>等待确认命令…</value></data>
+  <data name="SshAgentExecuting" xml:space="preserve"><value>正在执行命令…</value></data>
+  <data name="SshAgentDiagnosing" xml:space="preserve"><value>正在执行诊断…</value></data>
+  <data name="SshAgentActionDenied" xml:space="preserve"><value>已拒绝命令，本轮仅继续分析。</value></data>
+  <data name="SshAgentOutcomeUnknown" xml:space="preserve"><value>执行结果不确定，已停止后续执行；请核实服务器状态后再重试。</value></data>
+  <data name="SshAgentStepCompleted" xml:space="preserve"><value>命令已结束，继续分析结果。</value></data>
+  <data name="SshAgentStepResult" xml:space="preserve"><value>{0}
+
+退出码：{1}
+{2}</value></data>
+  <data name="SshAgentStepFailure" xml:space="preserve"><value>{0}
+
+{1}</value></data>
+  <data name="SshAgentToolSupportRequired" xml:space="preserve"><value>模型服务拒绝了排障请求，请检查所配置的模型和端点是否支持 Chat Completions 函数工具。</value></data>
+  <data name="SshAgentNotExecuted" xml:space="preserve"><value>操作已取消，未执行命令。</value></data>
+  <data name="SshAgentIncludeSelectionShort" xml:space="preserve"><value>包含选区</value></data>
 </root>

@@ -59,18 +59,52 @@ all sections. Search, copy, paste, details and local font/display tools remain
 available. Multiline terminal paste still requires confirmation.
 
 Agent opens as a right-hand `WorkspaceSplitView`, with a mouse- and
-keyboard-adjustable divider. It starts hidden. Closing the pane keeps the
-conversation, draft and pane width; replies never reopen it or steal terminal
-focus. Each workspace has an independent bounded conversation using the user's
-configured model client. Host identity is public context; terminal text is sent
-only when the user attaches a selection and opts to include it (up to 8 KiB of
-characters). Passwords, keys, connection options and automatic terminal history
-are never included. Explicit shell code blocks expose Insert and Run actions.
-Insertion does not add a return. Running requires confirmation showing the
-current host and full command; it uses a separate exec channel, bounded to
-64 KiB and two minutes, and shows its output in the conversation. Reconnecting
-invalidates old suggestions and the request history while preserving visible
-messages and drafts.
+keyboard-adjustable divider and an initial width of 420 pixels. The 50-pixel
+Agent header, separated context area, individual command previews and bottom
+composer follow the SSH design. Closing the pane keeps the conversation, draft,
+width and running task; replies never reopen it or steal terminal focus.
+Each workspace has an independent bounded conversation using the configured
+Chat Completions-compatible model. The model must support function tools for
+automatic troubleshooting. SQL assistants continue to use the text-only path.
+
+Sending a troubleshooting request permits fixed read-only diagnostics: host and
+uptime, disk usage, memory, processes (without command-line arguments), listening
+ports, systemd service status and the latest 100 journal lines, container lists
+and the latest 100 container log lines. Service/container names are validated
+against a restricted identifier grammar. Unknown operations, extra/duplicate
+arguments, shell metacharacters, paths and option-like targets are rejected
+before execution; a model-provided "read-only" label never authorizes shell.
+All other commands, including changes and restarts, require confirmation showing
+the current host and exact execution command. Approval is checked again against
+the connection generation after the dialog closes. Confirmation, execution and
+model requests share one busy state, preventing another task or command from
+entering while approval is pending.
+
+Commands run on an independent noninteractive exec channel, starting in `/`,
+with a two-minute timeout and 64 KiB output limit. They do not inherit the user's
+interactive terminal directory, exports, aliases or privilege state. Results,
+exit codes and truncation flags are returned to the model automatically so it
+can diagnose further and verify approved changes. Only one tool runs at a time,
+with at most eight calls per task and an earlier analysis-only finish when the
+context budget is reached. Declined commands, uncertain execution outcomes and
+failed changes close tool access for the rest of the task. The model may then
+summarize but cannot retry them. Stopping cancels pending work; it does not undo
+changes already applied or guarantee that remote effects have stopped.
+
+Host identity is public context. Terminal history is never scraped: terminal
+text is sent only when the user attaches a selection and opts to include it
+(up to 8 KiB of characters). The Agent context explains that diagnostic/command
+results are sent to the configured model. Saved passwords, private keys and
+connection options are never included. Each tool result is limited to 4,000
+characters for model feedback and explicitly marked if truncated. Raw tool
+outputs are retained only within that task's request chain, not replayed in
+subsequent tasks; later requests retain the user requests and final analyses.
+Tool output is treated as untrusted data and cannot create executable command
+cards. Text-only shell suggestions retain Insert and Run actions: insertion
+does not add a return, and Run requires confirmation before execution and
+returns its result for model analysis. Reconnecting or disconnecting cancels
+old work, invalidates suggestions and clears the internal request history while
+preserving visible messages and drafts.
 
 Files use SFTP channels on the existing verified transport, without shell
 interpolation. Browsing is nonrecursive and bounded to 10,000 entries. Names

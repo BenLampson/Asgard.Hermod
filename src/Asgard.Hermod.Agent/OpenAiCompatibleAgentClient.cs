@@ -5,31 +5,28 @@ using System.Text.Json;
 
 namespace Asgard.Hermod.Agent;
 
-/// <summary>通过 Chat Completions 文本协议请求用户配置的模型，不注册任何工具或数据库连接。</summary>
+/// <summary>通过 Chat Completions 请求用户配置的模型；只有 SSH 排障显式注册工具。</summary>
 public sealed class OpenAiCompatibleAgentClient(HttpClient client, AgentConfiguration configuration) : IAgentClient
 {
     private const int MaximumResponseBytes = 1024 * 1024;
     /// <inheritdoc />
-    public async Task<AgentReply> CompleteAsync(IReadOnlyList<AgentMessage> messages, CancellationToken cancellationToken = default)
+    public Task<AgentReply> CompleteAsync(IReadOnlyList<AgentMessage> messages, CancellationToken cancellationToken = default) => CompleteCoreAsync(messages, null, cancellationToken);
+    /// <inheritdoc />
+    public Task<AgentReply> CompleteWithToolsAsync(IReadOnlyList<AgentMessage> messages, IReadOnlyList<AgentToolDefinition> tools, CancellationToken cancellationToken = default) => CompleteCoreAsync(messages, tools, cancellationToken);
+
+    private async Task<AgentReply> CompleteCoreAsync(IReadOnlyList<AgentMessage> messages, IReadOnlyList<AgentToolDefinition>? tools, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(messages);
         cancellationToken.ThrowIfCancellationRequested();
         var options = configuration.Current;
         var endpoint = options.RequestEndpoint();
-        if (messages.Count is 0 or > 64 || messages.Any(message => message is null || message.Content is null || !Enum.IsDefined(message.Role)) ||
-            messages.Sum(message => (long)message.Content.Length) > 200_000) throw Text.Exception("AgentInputTooLarge");
+        AgentChatProtocol.Validate(messages, tools is not null);
         try
         {
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             timeout.CancelAfter(TimeSpan.FromMinutes(2));
             using var request = new HttpRequestMessage(HttpMethod.Post, endpoint);
-            request.Content = JsonContent.Create(new
-            {
-                model = options.Model,
-                messages = messages.Select(message => new { role = Role(message.Role), content = message.Content }),
-                stream = false,
-                store = false,
-            });
+            request.Content = JsonContent.Create(AgentChatProtocol.Request(options.Model, messages, tools));
             if (options.ApiKey.Length > 0) request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", options.ApiKey);
             request.Headers.Accept.Add(new("application/json"));
             using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, timeout.Token).ConfigureAwait(false);
@@ -37,6 +34,7 @@ public sealed class OpenAiCompatibleAgentClient(HttpClient client, AgentConfigur
             {
                 HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden => "AgentAuthenticationFailed",
                 HttpStatusCode.TooManyRequests => "AgentRateLimited",
+                HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity when tools is { Count: > 0 } => "SshAgentToolSupportRequired",
                 _ => "AgentRequestFailed",
             });
             // 无论 Content-Length 是否可信，都逐块限制读取，避免模型服务耗尽本地内存。
@@ -51,9 +49,9 @@ public sealed class OpenAiCompatibleAgentClient(HttpClient client, AgentConfigur
                 body.Write(buffer, 0, read);
             }
             using var document = JsonDocument.Parse(body.GetBuffer().AsMemory(0, (int)body.Length));
-            string content = ReadContent(document.RootElement);
+            var reply = AgentChatProtocol.ReadReply(document.RootElement, tools);
             cancellationToken.ThrowIfCancellationRequested();
-            return AgentReply.FromContent(content);
+            return reply;
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
         catch (OperationCanceledException) { throw Text.Exception("AgentTimedOut"); }
@@ -63,20 +61,4 @@ public sealed class OpenAiCompatibleAgentClient(HttpClient client, AgentConfigur
         catch (Exception error) when (error.Data["Hermod.ResourceKey"] is not string) { throw Text.Exception("AgentRequestFailed"); }
     }
 
-    private static string Role(AgentRole role) => role switch { AgentRole.System => "system", AgentRole.User => "user", _ => "assistant" };
-
-    private static string ReadContent(JsonElement root)
-    {
-        if (root.ValueKind != JsonValueKind.Object || !root.TryGetProperty("choices", out var choices) || choices.ValueKind != JsonValueKind.Array ||
-            choices.GetArrayLength() == 0 || choices[0].ValueKind != JsonValueKind.Object) throw Text.Exception("AgentInvalidResponse");
-        var first = choices[0];
-        // 截断的代码块不可作为完整建议；工具调用也没有在本模块中获得执行权限。
-        if (!first.TryGetProperty("finish_reason", out var finish) || finish.ValueKind != JsonValueKind.String || finish.GetString() != "stop" ||
-            !first.TryGetProperty("message", out var message) || message.ValueKind != JsonValueKind.Object ||
-            !message.TryGetProperty("content", out var content) || content.ValueKind != JsonValueKind.String)
-            throw Text.Exception("AgentInvalidResponse");
-        string text = content.GetString()!;
-        if (string.IsNullOrWhiteSpace(text) || text.Length > 64_000) throw Text.Exception("AgentInvalidResponse");
-        return text;
-    }
 }

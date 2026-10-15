@@ -16,8 +16,9 @@ public sealed class SshNewWorkspaceTests(WpfTestFixture fixture)
     [Fact]
     public Task HiddenAgentKeepsDraftAndNeverReopensForReply() => fixture.RunOffscreenAsync(async () =>
     {
-        var client = new AgentClient(); var factory = new SshTestFactory(); var dialogs = new SshTestDialogs();
+        var client = new AgentClient(); var factory = new SshTestFactory { Handler = _ => Task.FromResult<ISshConnection>(new SshWorkspaceTestConnection()) }; var dialogs = new SshTestDialogs();
         await using var model = new SshWorkspaceViewModel(new(new("ssh", "SSH", "SSH", "terminal", [], TypeId: SshIds.Type, ProviderId: SshIds.Direct)), new SshTestConfigurationService(), factory, dialogs, dialogs, client);
+        await model.InitializeAsync();
         Assert.False(model.IsAgentOpen); model.ToggleAgentCommand.Execute(null); model.Assistant.Prompt = "diagnose";
         var sending = model.Assistant.SendCommand.ExecuteAsync(); model.Assistant.Prompt = "next draft";
         model.ToggleAgentCommand.Execute(null); client.Completion.SetResult(AgentReply.FromContent("Try this.\n```bash\nuname -a\n```")); await sending;

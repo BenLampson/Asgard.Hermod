@@ -161,7 +161,11 @@ The shared `WorkspaceSplitView` owns native resizable columns and preserves both
 content instances while hiding a pane. SSH and database workspaces use it for
 Agent; closing or resizing the pane preserves conversation, draft and width.
 SSH uses a separate bounded `SshAgentConversation`, with explicitly attached
-terminal selections and confirmed command actions. Reconnection invalidates old
+terminal selections, fixed automatic diagnostics and confirmed command actions.
+The Agent module owns the bounded function-tool loop and diagnostic templates;
+the SSH UI owns approval, connection-generation checks and exec dispatch.
+Results return to the model within the current task, enabling iterative analysis.
+Reconnection invalidates old
 suggestions and transport-bound tasks. See [SSH](ssh.md) for lifecycle and limits.
 
 `WorkspaceTools` is a shared filtered popup with observable `WorkspaceTool`
