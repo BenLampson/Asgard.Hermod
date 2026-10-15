@@ -10,6 +10,10 @@ public sealed partial class PostgreSqlTabViewModel
     public int PageSize { get; private set; } = 200;
     /// <summary>待应用的 WHERE 条件，文字输入不触发读取。</summary>
     public string FilterText { get; set => SetProperty(ref field, value); } = "";
+    /// <summary>仅在用户主动添加筛选后显示条件编辑区；每个页签独立保留。</summary>
+    public bool IsFilterOpen { get; private set => SetProperty(ref field, value); }
+    /// <summary>展开条件编辑区，不自动执行查询。</summary>
+    public RelayCommand ShowFilterCommand { get; private set; } = null!;
     /// <summary>已经生效的完整筛选表达式。</summary>
     public string AppliedFilter => _appliedFilter;
     /// <summary>表和视图的数据区才提供表页控制。</summary>
@@ -26,6 +30,7 @@ public sealed partial class PostgreSqlTabViewModel
     public AsyncRelayCommand ClearFilterCommand { get; private set; } = null!;
     private void InitializePagingCommands()
     {
+        ShowFilterCommand = new RelayCommand(_ => IsFilterOpen = true);
         ApplyFilterCommand = new AsyncRelayCommand(_ => ApplyFilterAsync(false), _ => ConnectionAvailable && ShowTableControls && !IsBusy);
         ClearFilterCommand = new AsyncRelayCommand(_ => ApplyFilterAsync(true), _ => ConnectionAvailable && ShowTableControls && !IsBusy);
     }
@@ -47,7 +52,7 @@ public sealed partial class PostgreSqlTabViewModel
         }
         catch (Exception error) { Error = Text.Error(error, "PostgreSqlFilterInvalid"); Refresh(); return; }
         if (!await ResolveDataDraftAsync()) return;
-        _appliedFilter = candidate; FilterText = candidate; Offset = 0; RefreshPaging(); await ReadAsync();
+        _appliedFilter = candidate; FilterText = candidate; IsFilterOpen = !clear; Offset = 0; RefreshPaging(); await ReadAsync();
     }
     private void RefreshPaging()
     {

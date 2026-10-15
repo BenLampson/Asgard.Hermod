@@ -35,13 +35,43 @@ public sealed class PostgreSqlInteractionLayoutHeadlessTests(WpfTestFixture fixt
             await query.ExecuteScopeAsync("ignored selection", 0, true); Assert.Equal(query.Sql, server.ExecutedSql.Last().Sql);
             await using var table = new PostgreSqlTabViewModel("users", "app", PostgreSqlObjectKind.Table, server, TestPostgreSql.Connection, dialogs);
             await table.ReadAsync(); var tableView = new PostgreSqlTabView { DataContext = table }; var tableRoot = Root(tableView); Layout(tableRoot, width - 280);
-            Assert.Equal(Visibility.Visible, ((Grid)tableView.FindName("FilterToolbar")).Visibility);
+            var filter = (Grid)tableView.FindName("FilterToolbar"); var showFilter = (Button)tableView.FindName("ShowFilter");
+            Assert.Equal(Visibility.Collapsed, filter.Visibility); Assert.Equal(Visibility.Visible, showFilter.Visibility);
+            Assert.False(((TextBox)tableView.FindName("FilterInput")).IsVisible);
+            int reads = server.PageReads.Count;
+            table.ShowFilterCommand.Execute(null); Layout(tableRoot, width - 280);
+            Assert.Equal(reads, server.PageReads.Count); Assert.Equal(Visibility.Visible, filter.Visibility); Assert.Equal(Visibility.Collapsed, showFilter.Visibility);
+            table.FilterText = "id >= 1"; await table.ApplyFilterCommand.ExecuteAsync();
+            Assert.Equal("id >= 1", server.PageReads.Last().Filter);
+            table.Section = "structure"; Layout(tableRoot, width - 280); Assert.Equal(Visibility.Collapsed, filter.Visibility);
+            table.Section = "data"; Layout(tableRoot, width - 280); Assert.Equal(Visibility.Visible, filter.Visibility);
+            await table.ClearFilterCommand.ExecuteAsync(); Layout(tableRoot, width - 280);
+            Assert.Equal("", server.PageReads.Last().Filter); Assert.Equal("", table.FilterText);
+            Assert.Equal(Visibility.Collapsed, filter.Visibility); Assert.Equal(Visibility.Visible, showFilter.Visibility);
             Assert.Equal(Visibility.Collapsed, ((StackPanel)tableView.FindName("PageButtons")).Visibility);
             var size = (ComboBox)tableView.FindName("PageSizeSelector"); Assert.Equal(200, size.SelectedItem);
             Assert.Equal(Visibility.Visible, size.Visibility);
             Capture(tableRoot, $"postgresql-table-{language}-{theme}-{width}");
         }
         finally { Text.SetApplicationCulture(null); }
+    });
+
+    [Fact]
+    public Task RemovingFilter_ConfirmsDraftAndKeepsOtherSchemaTabIndependent() => fixture.RunOffscreenAsync(async () =>
+    {
+        var server = new TestPostgreSql(); var dialogs = new TestPostgreSqlDialogs();
+        await using var table = new PostgreSqlTabViewModel("users", "app", PostgreSqlObjectKind.Table, server, TestPostgreSql.Connection, dialogs, schema: "sales");
+        await using var other = new PostgreSqlTabViewModel("users", "app", PostgreSqlObjectKind.Table, server, TestPostgreSql.Connection, dialogs);
+        await table.ReadAsync(); table.ShowFilterCommand.Execute(null); table.FilterText = "id = 1"; await table.ApplyFilterCommand.ExecuteAsync();
+        var grid = table.SelectedResult!; var row = grid.Rows[0]; Assert.True(await table.PrepareCellAsync(grid, row, row.Cells[1])); row.Cells[1].Apply("draft");
+        int reads = server.PageReads.Count;
+        await table.ClearFilterCommand.ExecuteAsync();
+        Assert.True(table.IsFilterOpen); Assert.Equal("id = 1", table.AppliedFilter); Assert.True(table.HasDataDraft); Assert.Equal(reads, server.PageReads.Count);
+        Assert.False(other.IsFilterOpen); Assert.Empty(other.FilterText); Assert.Empty(other.AppliedFilter);
+        dialogs.Choice = PostgreSqlDraftChoice.Discard; await table.ClearFilterCommand.ExecuteAsync();
+        Assert.False(table.IsFilterOpen); Assert.Empty(table.FilterText); Assert.Empty(table.AppliedFilter); Assert.False(table.HasDataDraft);
+        Assert.Equal(("app", "sales", "users"), server.SchemaReads.Last()); Assert.Equal(0, server.Writes);
+        Assert.False(other.IsFilterOpen); Assert.Empty(other.AppliedFilter);
     });
 
     [Fact]

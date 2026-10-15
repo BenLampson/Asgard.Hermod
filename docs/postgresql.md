@@ -40,7 +40,9 @@ it does not add `ANALYZE`. Plans and query results use the existing result view.
 
 Results preserve duplicate names by column ordinal. Query previews are bounded
 to 1,000 rows or 10 MiB. Table pages use an explicit page size and a parameterized
-filter. Reaching a query preview limit stops the remaining batch. Cancellation
+filter, shown on demand from the table toolbar. Removing a filter respects
+unsaved changes and collapses its editor. Reaching a query preview limit stops
+the remaining batch. Cancellation
 does not undo completed statements; an explicit transaction can be rolled back.
 No connection silently reconnects or replays SQL.
 

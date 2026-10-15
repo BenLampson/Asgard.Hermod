@@ -3885,4 +3885,10 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="PostgreSqlTraceDetails" xml:space="preserve"><value>Execution plan or safe error details</value></data>
   <data name="PostgreSqlAssistantContextChanged" xml:space="preserve"><value>The database or connection changed after this suggestion was generated. Ask again, or insert the SQL into the editor and review its target.</value></data>
   <data name="PostgreSqlTableDefinitionPreview" xml:space="preserve"><value>Column and constraint definition preview; storage options, standalone indexes and privileges are not included.</value></data>
+  <data name="PostgreSqlShowFilter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="PostgreSqlRemoveFilter" xml:space="preserve">
+    <value>Remove filter</value>
+  </data>
 </root>

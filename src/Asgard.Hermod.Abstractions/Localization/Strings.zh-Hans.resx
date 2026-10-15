@@ -3885,4 +3885,10 @@
   <data name="PostgreSqlTraceDetails" xml:space="preserve"><value>执行计划或安全错误详情</value></data>
   <data name="PostgreSqlAssistantContextChanged" xml:space="preserve"><value>生成建议后数据库或连接已变化。请重新提问，或将 SQL 插入编辑器并检查执行目标。</value></data>
   <data name="PostgreSqlTableDefinitionPreview" xml:space="preserve"><value>列与约束定义预览；不包含存储选项、独立索引和权限。</value></data>
+  <data name="PostgreSqlShowFilter" xml:space="preserve">
+    <value>筛选</value>
+  </data>
+  <data name="PostgreSqlRemoveFilter" xml:space="preserve">
+    <value>移除筛选</value>
+  </data>
 </root>
