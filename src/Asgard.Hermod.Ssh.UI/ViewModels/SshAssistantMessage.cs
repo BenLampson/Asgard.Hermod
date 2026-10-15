@@ -18,6 +18,8 @@ public sealed partial class SshAssistantMessage : ObservableObject
     public bool IsUser { get; }
     /// <summary>工具步骤拥有独立边框和状态，不提供插入或重新执行入口。</summary>
     public bool IsTool { get; }
+    /// <summary>只有模型回复解析 Markdown，用户输入和原始工具输出保持字面内容。</summary>
+    public bool IsAssistant => !IsUser && !IsTool;
     /// <summary>角色或工具步骤标题资源。</summary>
     public string Role { get; }
     /// <summary>当前工具步骤的本地化状态。</summary>

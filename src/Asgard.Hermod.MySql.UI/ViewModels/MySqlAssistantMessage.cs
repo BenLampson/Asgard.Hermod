@@ -5,6 +5,8 @@ public sealed class MySqlAssistantMessage(string content, bool fromUser, IReadOn
 {
     /// <summary>模型和用户原文不进行资源翻译。</summary>
     public string Content { get; } = content;
+    /// <summary>通过消息来源决定是否渲染 Markdown，不依赖本地化角色标签。</summary>
+    public bool IsAssistant => !fromUser;
     /// <summary>消息来源使用本地化标题。</summary>
     public string Role => Text.Get(fromUser ? "MySqlAssistantYou" : "MySqlAssistantTitle");
     /// <summary>模型返回的完整 SQL 围栏。</summary>

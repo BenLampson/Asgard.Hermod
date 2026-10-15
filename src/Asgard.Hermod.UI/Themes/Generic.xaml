@@ -10,5 +10,6 @@
         <ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/WorkspacePageLayout.xaml" />
         <ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/WorkspaceTabStrip.xaml" />
         <ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/SectionSelector.xaml" />
+        <ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/MarkdownView.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

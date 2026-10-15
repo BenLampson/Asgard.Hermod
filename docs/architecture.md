@@ -165,6 +165,12 @@ terminal selections, fixed automatic diagnostics and confirmed command actions.
 The Agent module owns the bounded function-tool loop and diagnostic templates;
 the SSH UI owns approval, connection-generation checks and exec dispatch.
 Results return to the model within the current task, enabling iterative analysis.
+Agent replies in SSH, MySQL and PostgreSQL use the shared `MarkdownView`, which
+maps Markdig syntax into selectable native WPF documents. Headings, tables,
+lists, emphasis and code blocks follow the current theme and available width.
+User messages and tool output remain literal text. HTML, image loading and link
+navigation are disabled; rendering never dispatches commands. Shell and SQL
+suggestions retain their separate insertion and confirmation actions.
 Reconnection invalidates old
 suggestions and transport-bound tasks. See [SSH](ssh.md) for lifecycle and limits.
 
