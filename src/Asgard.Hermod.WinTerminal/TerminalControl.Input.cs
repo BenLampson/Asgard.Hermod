@@ -145,11 +145,17 @@ public sealed partial class TerminalControl
     protected override void OnPreviewTextInput(TextCompositionEventArgs args)
     {
         base.OnPreviewTextInput(args);
+    }
+
+    /// <summary>即使输入法已标记隧道事件，也接收最终提交的 Unicode 文本。</summary>
+    private void OnPreviewTextInputRouted(object sender, TextCompositionEventArgs args)
+    {
         _isComposing = false;
         if (!string.IsNullOrEmpty(args.Text) && _numericKeyStroke is { } stroke) stroke.HasCommittedText = true;
         string? pendingNumericText = _pendingNumericText;
         _pendingNumericText = null;
-        if (args.Handled || _disposed || _session is not { IsDisposed: false } || string.IsNullOrEmpty(args.Text))
+        // 输入法或父级可能已经标记隧道事件为 handled；终端仍必须消费提交的 Unicode 文本。
+        if (_disposed || _session is not { IsDisposed: false } || string.IsNullOrEmpty(args.Text))
             return;
         // 只消费同一次数字按键的完整重复文本；中文、全角字符和多字符提交不会被裁剪。
         if (!string.Equals(pendingNumericText, args.Text, StringComparison.Ordinal))

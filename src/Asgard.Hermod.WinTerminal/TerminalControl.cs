@@ -74,6 +74,8 @@ public sealed partial class TerminalControl : Control, IDisposable
         Loaded += OnLoaded;
         Unloaded += OnUnloaded;
         TextCompositionManager.AddPreviewTextInputStartHandler(this, OnCompositionStarted);
+        AddHandler(TextCompositionManager.PreviewTextInputEvent,
+            new TextCompositionEventHandler(OnPreviewTextInputRouted), handledEventsToo: true);
         InitializeClipboardCommands();
     }
 
@@ -155,6 +157,8 @@ public sealed partial class TerminalControl : Control, IDisposable
         Loaded -= OnLoaded;
         Unloaded -= OnUnloaded;
         TextCompositionManager.RemovePreviewTextInputStartHandler(this, OnCompositionStarted);
+        RemoveHandler(TextCompositionManager.PreviewTextInputEvent,
+            new TextCompositionEventHandler(OnPreviewTextInputRouted));
         Session = null;
         _renderer.Dispose();
         ScreenUpdated = null;

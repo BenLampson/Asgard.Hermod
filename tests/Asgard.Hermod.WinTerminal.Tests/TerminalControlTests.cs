@@ -49,6 +49,23 @@ public sealed class TerminalControlTests
         Assert.Equal(string.Empty, session.GetVisibleText().Trim());
     });
 
+    /// <summary>输入法提前处理隧道事件时，已提交的中文仍必须发送到远端。</summary>
+    [Fact]
+    public void HandledTextInput_SendsCommittedUnicodeText() => WpfTestThread.Run(() =>
+    {
+        using var session = new TerminalSession();
+        using var control = new TerminalControl { Session = session };
+        string? sent = null;
+        session.InputReceived += (_, bytes) => sent = Encoding.UTF8.GetString(bytes.Span);
+        var composition = new TextComposition(InputManager.Current, control, "中文输入");
+        control.RaiseEvent(new TextCompositionEventArgs(Keyboard.PrimaryDevice, composition)
+        {
+            RoutedEvent = TextCompositionManager.PreviewTextInputEvent,
+            Handled = true,
+        });
+        Assert.Equal("中文输入", sent);
+    });
+
     /// <summary>导出的选区不会重复包含双列字符的后续单元格。</summary>
     [Fact]
     public void Selection_ExportsChineseWithoutContinuationCells() => WpfTestThread.Run(() =>
