@@ -11,13 +11,41 @@ public partial class TerminalWorkspaceView : UserControl, IDisposable
         InitializeComponent();
         TerminalView.PreviewPaste += OnPreviewPaste;
         Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
     }
 
-    /// <summary>仅在当前没有键盘焦点时激活终端，保留搜索框和页签按钮的焦点。</summary>
+    /// <summary>终端页显示后把键盘焦点交给终端，确保输入法和数字键进入同一输入上下文。</summary>
     private void OnLoaded(object sender, RoutedEventArgs args)
     {
-        if (!_disposed && TerminalView.Session is not null && Keyboard.FocusedElement is null)
-            TerminalView.Focus();
+        if (_disposed || TerminalView.Session is null)
+            return;
+        if (Window.GetWindow(this) is { } window)
+        {
+            window.Activated -= OnOwnerActivated;
+            window.Activated += OnOwnerActivated;
+            if (window.IsActive)
+                FocusTerminal();
+        }
+    }
+
+    /// <summary>窗口首次激活晚于页面加载时重新建立终端键盘焦点。</summary>
+    private void OnOwnerActivated(object? sender, EventArgs args) => FocusTerminal();
+
+    /// <summary>页面卸载时解除宿主窗口事件，避免缓存页继续抢焦点。</summary>
+    private void OnUnloaded(object sender, RoutedEventArgs args)
+    {
+        if (Window.GetWindow(this) is { } window)
+            window.Activated -= OnOwnerActivated;
+    }
+
+    /// <summary>在窗口输入队列稳定后聚焦终端，使输入法上下文和预处理订阅同时建立。</summary>
+    private void FocusTerminal()
+    {
+        Dispatcher.BeginInvoke(DispatcherPriority.Input, new Action(() =>
+        {
+            if (!_disposed && IsVisible && TerminalView.Session is not null)
+                TerminalView.Focus();
+        }));
     }
 
     /// <summary>本地终端与 SSH 复用相同的多行粘贴确认语义。</summary>
@@ -37,6 +65,9 @@ public partial class TerminalWorkspaceView : UserControl, IDisposable
             return;
         _disposed = true;
         Loaded -= OnLoaded;
+        Unloaded -= OnUnloaded;
+        if (Window.GetWindow(this) is { } window)
+            window.Activated -= OnOwnerActivated;
         TerminalView.PreviewPaste -= OnPreviewPaste;
         BindingOperations.ClearBinding(TerminalView, WinTerminal.TerminalControl.SessionProperty);
         TerminalView.Session = null;
