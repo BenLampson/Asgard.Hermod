@@ -49,6 +49,16 @@ public sealed class IconView : Control
     protected override void OnRender(DrawingContext drawingContext)
     {
         base.OnRender(drawingContext);
+        if (Kind == "brand-rabbitmq")
+        {
+            var bounds = RabbitMqBrand.Geometry.Bounds;
+            double brandScale = Math.Min(ActualWidth / bounds.Width, ActualHeight / bounds.Height);
+            if (brandScale <= 0) return;
+            drawingContext.PushTransform(new MatrixTransform(brandScale, 0, 0, brandScale,
+                (ActualWidth - bounds.Width * brandScale) / 2 - bounds.X * brandScale,
+                (ActualHeight - bounds.Height * brandScale) / 2 - bounds.Y * brandScale));
+            drawingContext.DrawGeometry(RabbitMqBrand.Brush, null, RabbitMqBrand.Geometry); drawingContext.Pop(); return;
+        }
         if (ProviderIconCatalog.TryGet(Kind, out var brand))
         {
             double imageScale = Math.Min(ActualWidth / brand.Width, ActualHeight / brand.Height);

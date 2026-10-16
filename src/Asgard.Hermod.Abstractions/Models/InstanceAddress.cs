@@ -28,7 +28,7 @@ public static class InstanceAddress
             }
             return string.Join(", ", addresses);
         }
-        if (typeId is not ("mysql" or "postgresql" or "redis" or "ssh")) return "";
+        if (typeId is not ("mysql" or "postgresql" or "redis" or "ssh" or "rabbitmq")) return "";
         string host = parameters.GetValueOrDefault("host")?.Trim() ?? "";
         if (host.Length == 0 || host.Any(character => char.IsControl(character) || char.IsWhiteSpace(character)
             || character is '@' or '/' or '\\' or '?' or '#' or ';' or '=')) return "";
@@ -39,6 +39,7 @@ public static class InstanceAddress
             "mysql" => "3306",
             "postgresql" => "5432",
             "redis" => "6379",
+            "rabbitmq" => parameters.GetValueOrDefault("scheme") == "http" ? "15672" : "15671",
             _ => "22",
         };
         return int.TryParse(portText, NumberStyles.None, CultureInfo.InvariantCulture, out int port) && port is > 0 and <= 65535

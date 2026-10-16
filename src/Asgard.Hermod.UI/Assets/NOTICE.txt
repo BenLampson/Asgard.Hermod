@@ -62,3 +62,8 @@ The first-connection card circle-alert.svg and its WPF geometry use the same fix
 The answer toolbar rotate-ccw.svg, thumbs-up.svg and thumbs-down.svg use the same fixed Lucide source revision above; geometry is converted directly from those SVG paths.
 
 The database object footer undo-2.svg uses the same fixed Lucide source revision above; geometry is converted directly from its SVG paths.
+
+RabbitMQ navigation geometry conversion: Controls/IconCatalog.RabbitMq.cs (same Lucide revision above).
+RabbitMQ brand geometry: Controls/RabbitMqBrand.cs
+Source: https://www.rabbitmq.com/assets/files/rabbitmq-logo-e91cacd38fcef5219149bc5cfa10b384.svg
+The official orange mark is preserved; RabbitMQ is a trademark of Broadcom.

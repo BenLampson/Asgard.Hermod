@@ -1,0 +1,19 @@
+<UserControl x:Class="Asgard.Hermod.RabbitMq.UI.Views.RabbitMqAssistantView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:c="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI" xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI">
+    <c:AgentPanel ModelSession="{Binding ModelSession}" Messages="{Binding Messages}" Prompt="{Binding Prompt, Mode=TwoWay}" SendCommand="{Binding SendCommand}" CancelCommand="{Binding CancelCommand}" ClearCommand="{Binding ClearCommand}" IsBusy="{Binding IsBusy}" Error="{Binding Error}" IsSourceClosed="{Binding IsSourceClosed}" WelcomeDescription="{loc:Loc RabbitMqAgentWelcome}" Placeholder="{loc:Loc RabbitMqAgentPrompt}" MaxPromptLength="8000">
+        <c:AgentPanel.ContextContent>
+            <StackPanel>
+                <WrapPanel>
+                    <Button Content="{loc:Loc RabbitMqAttachObject}" Click="OnAttachObject" Margin="0,0,8,8" />
+                    <Button Content="{loc:Loc RabbitMqAttachMessage}" Click="OnAttachMessage" Margin="0,0,0,8" />
+                </WrapPanel>
+                <TextBlock Text="{loc:Loc RabbitMqAgentPrivacy}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" />
+                <TextBox Text="{Binding Attachment, Mode=OneWay}" IsReadOnly="True" MaxHeight="120" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="0,8,0,0" />
+            </StackPanel>
+        </c:AgentPanel.ContextContent>
+        <c:AgentPanel.MessageTemplate>
+            <DataTemplate>
+                <c:AgentMessageView Body="{Binding Content}" CopyText="{Binding Content}" IsUser="{Binding IsUser}" />
+            </DataTemplate>
+        </c:AgentPanel.MessageTemplate>
+    </c:AgentPanel>
+</UserControl>

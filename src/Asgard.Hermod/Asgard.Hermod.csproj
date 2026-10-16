@@ -39,5 +39,6 @@
     <ProjectReference Include="..\Asgard.Hermod.Redis.UI\Asgard.Hermod.Redis.UI.csproj" />
     <ProjectReference Include="..\Asgard.Hermod.MySql.UI\Asgard.Hermod.MySql.UI.csproj" />
     <ProjectReference Include="..\Asgard.Hermod.PostgreSql.UI\Asgard.Hermod.PostgreSql.UI.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.RabbitMq.UI\Asgard.Hermod.RabbitMq.UI.csproj" />
   </ItemGroup>
 </Project>

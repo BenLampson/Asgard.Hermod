@@ -19,6 +19,7 @@ public sealed partial class NewInstanceViewModel
     /// <summary>填写页面允许触发校验，其余步骤必须先满足业务条件。</summary>
     public bool CanGoNext => !_disposed && !IsTesting && !IsSaving && (CurrentStep switch
     {
+        0 => IsProductStep && SelectedType is not null,
         1 => HasProviderSelection,
         2 => true,
         3 => HasSuccessfulConnectionTest,
@@ -82,6 +83,7 @@ public sealed partial class NewInstanceViewModel
     /// <summary>步骤标题沿用 Pencil 中文原文。</summary>
     public string StepTitle => CurrentStep switch
     {
+        0 => ProductTitle,
         1 => Text.Get(SelectedType?.ProviderSelectionTitleResourceKey ?? "ChooseProvider"),
         2 => Text.Get("ConnectionInformation"),
         3 => Text.Get("ConnectionTest"),
@@ -91,6 +93,7 @@ public sealed partial class NewInstanceViewModel
     /// <summary>步骤说明匹配当前操作，具体测试范围由服务商描述。</summary>
     public string StepDescription => CurrentStep switch
     {
+        0 => ProductDescription,
         1 => Text.Get(SelectedType?.ProviderSelectionDescriptionResourceKey ?? "ChooseProviderForInstanceType"),
         2 => Text.Format("EnterTheInstanceNameAndConnectionInformationFor", ProviderName),
         3 => Text.Get("VerifyConnectionInformationAndAccessPermissions"),
@@ -104,10 +107,11 @@ public sealed partial class NewInstanceViewModel
         List<InstanceWizardStep> steps = [];
         if (SelectedType is not null)
         {
-            steps.Add(new(1, Text.Get(SelectedType.ProviderSelectionTitleResourceKey)));
-            steps.Add(new(2, Text.Get("ConnectionInformation")));
-            steps.Add(new(3, Text.Get("TestConnection")));
-            if (!SkipsSaveLocation) steps.Add(new(4, Text.Get("SaveLocation")));
+            if (HasProductSelection) steps.Add(new(0, Text.Get("InstanceChooseProduct"), 1));
+            steps.Add(new(1, Text.Get(SelectedType.ProviderSelectionTitleResourceKey), steps.Count + 1));
+            steps.Add(new(2, Text.Get("ConnectionInformation"), steps.Count + 1));
+            steps.Add(new(3, Text.Get("TestConnection"), steps.Count + 1));
+            if (!SkipsSaveLocation) steps.Add(new(4, Text.Get("SaveLocation"), steps.Count + 1));
             steps.Add(new(ConfirmationStep, Text.Get(IsEditing ? "ConfirmChanges" : "InstanceConfirmAddition"), steps.Count + 1));
         }
         Steps = steps;
@@ -120,7 +124,10 @@ public sealed partial class NewInstanceViewModel
         if (!CanGoPrevious)
             return;
         if (CurrentStep == Steps[0].Id)
-            SelectedType = null;
+        {
+            if (SelectedCategory is not null) SelectedCategory = null;
+            else SelectedType = null;
+        }
         else
             SetCurrentStep(Steps.TakeWhile(step => step.Id != CurrentStep).Last().Id);
     }
@@ -178,6 +185,7 @@ public sealed partial class NewInstanceViewModel
         foreach (var step in Steps)
             step.Update(CurrentStep);
         foreach (string property in new[] { nameof(NameError), nameof(HasTypeSelection), nameof(IsChoosingType),
+            nameof(IsProductStep), nameof(SelectedProduct), nameof(Products), nameof(CategoryHeading), nameof(ProductTitle), nameof(ProductDescription),
             nameof(HasProviderSelection), nameof(IsInformationComplete), nameof(HasSuccessfulConnectionTest),
             nameof(CanGoNext), nameof(CanGoPrevious), nameof(CanTest), nameof(CanCreate), nameof(IsInformationEditable),
             nameof(IsTypeSelectionEditable), nameof(IsProviderSelectionEditable), nameof(HasHostingProviderSelection), nameof(WindowTitle), nameof(WizardHeading), nameof(ConfirmationHint),

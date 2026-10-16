@@ -50,6 +50,7 @@
         <TextBlock Text="{Binding StepTitle}" FontSize="24" FontWeight="SemiBold" />
         <TextBlock Text="{Binding StepDescription}" FontSize="13" TextWrapping="Wrap"
                    Foreground="{DynamicResource TextMutedBrush}" Margin="0,16,0,24" />
+        <controls:InstanceTypePicker ItemsSource="{Binding Products}" SelectedItem="{Binding SelectedProduct}" Visibility="{Binding IsProductStep, Converter={StaticResource WizardVisibility}}" AutomationProperties.Name="{loc:Loc InstanceChooseProduct}" />
         <StackPanel x:Name="ProviderSelectionPage" Visibility="{Binding IsProviderStep, Converter={StaticResource WizardVisibility}}">
             <ListBox x:Name="ProviderList" Style="{StaticResource WizardCardList}" ItemsSource="{Binding Providers}" SelectedItem="{Binding SelectedProvider}"
                      IsEnabled="{Binding IsProviderSelectionEditable}"

@@ -1,0 +1,238 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Asgard.Hermod.RabbitMq.UI.Controls" xmlns:c="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI">
+    <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+        <Setter Property="Background" Value="{DynamicResource RabbitMqBackgroundBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource RabbitMqInkBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource RabbitMqLineBrush}" />
+        <Setter Property="MinHeight" Value="30" />
+    </Style>
+    <Style x:Key="RabbitMqButton" TargetType="Button" BasedOn="{StaticResource StandardButton}">
+        <Setter Property="Background" Value="{DynamicResource RabbitMqBackgroundBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource RabbitMqInkBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource RabbitMqLineBrush}" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Padding" Value="14,0" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="Normal" />
+    </Style>
+    <Style x:Key="RabbitMqPrimary" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Padding" Value="14,0" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="Normal" />
+    </Style>
+    <Style x:Key="RabbitMqTableStyle" TargetType="local:RabbitMqTable" BasedOn="{StaticResource {x:Type DataGrid}}">
+        <Setter Property="Background" Value="{DynamicResource RabbitMqBackgroundBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource RabbitMqInkBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource RabbitMqLineBrush}" />
+        <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource RabbitMqLineBrush}" />
+        <Setter Property="FontFamily" Value="{DynamicResource UiFont}" />
+        <Setter Property="RowBackground" Value="{DynamicResource RabbitMqBackgroundBrush}" />
+        <Setter Property="AlternatingRowBackground" Value="{DynamicResource RabbitMqBackgroundBrush}" />
+        <Setter Property="CellStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Padding" Value="12,0" />
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="{DynamicResource RabbitMqInkBrush}" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="DataGridCell">
+                                <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
+                                    <ContentPresenter VerticalAlignment="Center" />
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="RowStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Background" Value="{DynamicResource RabbitMqBackgroundBrush}" />
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource RabbitMqSelectedBrush}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ColumnHeaderStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="{DynamicResource RabbitMqSoftBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource RabbitMqMutedBrush}" />
+                    <Setter Property="FontSize" Value="12" />
+                    <Setter Property="FontWeight" Value="Normal" />
+                    <Setter Property="Padding" Value="12,0" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource RabbitMqLineBrush}" />
+                    <Setter Property="BorderThickness" Value="0,0,0,1" />
+                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="RabbitMqNavigationItem" TargetType="ListBoxItem">
+        <Setter Property="Height" Value="36" />
+        <Setter Property="Padding" Value="12,0" />
+        <Setter Property="Margin" Value="0,0,0,12" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Foreground" Value="{DynamicResource RabbitMqInkBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border x:Name="Row" CornerRadius="4" Background="Transparent" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Row" Property="Background" Value="{DynamicResource RabbitMqSelectedBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource RabbitMqAccentBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource RabbitMqAccentBrush}" />
+                            <Setter TargetName="Row" Property="BorderThickness" Value="1" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <DataTemplate x:Key="RabbitMqMetrics">
+        <Border Height="94" BorderBrush="{DynamicResource RabbitMqLineBrush}" BorderThickness="0,1">
+            <ItemsControl ItemsSource="{Binding Metrics}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="4" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="16,0" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Label}" Foreground="{DynamicResource RabbitMqMutedBrush}" FontSize="12" />
+                            <TextBlock Text="{Binding Value}" FontFamily="{DynamicResource UiFont}" FontWeight="SemiBold" FontSize="26" Margin="0,4" />
+                            <TextBlock Text="{Binding Hint}" FontSize="11" Foreground="{DynamicResource RabbitMqMutedBrush}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Border>
+    </DataTemplate>
+    <Style x:Key="RabbitMqMessageItem" TargetType="ListBoxItem">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{DynamicResource RabbitMqLineBrush}" BorderThickness="0,0,0,1">
+                        <ContentPresenter />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource RabbitMqSelectedBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="TabControl">
+        <Setter Property="Background" Value="{DynamicResource RabbitMqBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource RabbitMqLineBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabControl">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="36" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TabPanel IsItemsHost="True" />
+                        <Border Grid.Row="1" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Background="{TemplateBinding Background}">
+                            <ContentPresenter ContentSource="SelectedContent" />
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="TabItem">
+        <Setter Property="Padding" Value="16,0" />
+        <Setter Property="Foreground" Value="{DynamicResource RabbitMqMutedBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                    <Border x:Name="Tab" Padding="{TemplateBinding Padding}" BorderThickness="0,0,0,2" BorderBrush="Transparent">
+                        <TextBlock Text="{TemplateBinding Header}" Foreground="{TemplateBinding Foreground}" FontSize="12" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource RabbitMqAccentBrush}" />
+                            <Setter TargetName="Tab" Property="BorderBrush" Value="{DynamicResource RabbitMqAccentBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="RabbitMqTabs" TargetType="c:SegmentedSelector">
+        <Setter Property="Height" Value="38" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="c:SegmentedSelector">
+                    <Border BorderBrush="{DynamicResource RabbitMqLineBrush}" BorderThickness="0,0,0,1">
+                        <ItemsPresenter />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Padding" Value="0,0,0,0" />
+                    <Setter Property="Margin" Value="0,0,24,0" />
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                    <Setter Property="Foreground" Value="{DynamicResource RabbitMqMutedBrush}" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Border x:Name="Item" BorderBrush="Transparent" BorderThickness="0,0,0,2">
+                                    <ContentPresenter VerticalAlignment="Center">
+                                        <ContentPresenter.Resources>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontSize" Value="12" />
+                                                <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" />
+                                            </Style>
+                                        </ContentPresenter.Resources>
+                                    </ContentPresenter>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Foreground" Value="{DynamicResource RabbitMqAccentBrush}" />
+                                        <Setter TargetName="Item" Property="BorderBrush" Value="{DynamicResource RabbitMqAccentBrush}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

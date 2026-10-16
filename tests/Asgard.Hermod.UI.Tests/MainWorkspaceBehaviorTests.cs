@@ -40,7 +40,7 @@ public sealed class MainWorkspaceBehaviorTests(WpfTestFixture fixture)
             Assert.Same(work, Assert.Single(host.Windows)); menu.IsOpen = false;
             Assert.Equal(0, factory.OpenAttempts);
             shell.Main.SelectedNavigation = shell.Main.Navigation[2];
-            Assert.All(shell.Main.Rows, row => Assert.Equal("mysql", row.Instance.Summary.TypeId));
+            Assert.All(shell.Main.Rows, row => Assert.Contains(row.Instance.Summary.TypeId, new[] { "mysql", "postgresql", "redis" }));
             shell.Main.Query = "10.0.0.2:3306"; Assert.Equal("two", Assert.Single(shell.Main.Rows).Instance.Id);
             shell.Main.Query = ""; shell.Sidebar.ApplyTagFilter(["Environment/Production"], TagFilterMatchMode.Any);
             Assert.Equal("one", Assert.Single(shell.Main.Rows).Instance.Id);

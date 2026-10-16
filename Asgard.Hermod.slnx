@@ -22,6 +22,10 @@
     <Project Path="src/Asgard.Hermod.Redis/Asgard.Hermod.Redis.csproj" />
     <Project Path="src/Asgard.Hermod.Redis.UI/Asgard.Hermod.Redis.UI.csproj" />
   </Folder>
+  <Folder Name="/src/RabbitMQ/">
+    <Project Path="src/Asgard.Hermod.RabbitMq/Asgard.Hermod.RabbitMq.csproj" />
+    <Project Path="src/Asgard.Hermod.RabbitMq.UI/Asgard.Hermod.RabbitMq.UI.csproj" />
+  </Folder>
   <Folder Name="/src/PostgreSQL/">
     <Project Path="src/Asgard.Hermod.PostgreSql/Asgard.Hermod.PostgreSql.csproj" />
     <Project Path="src/Asgard.Hermod.PostgreSql.UI/Asgard.Hermod.PostgreSql.UI.csproj" />
@@ -54,6 +58,8 @@
     <Project Path="tests/Asgard.Hermod.Sync.Tests/Asgard.Hermod.Sync.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Modules/">
+    <Project Path="tests/Asgard.Hermod.RabbitMq.Tests/Asgard.Hermod.RabbitMq.Tests.csproj" />
+    <Project Path="tests/Asgard.Hermod.RabbitMq.UI.Tests/Asgard.Hermod.RabbitMq.UI.Tests.csproj" />
     <Project Path="tests/Asgard.Hermod.Agent.Tests/Asgard.Hermod.Agent.Tests.csproj" />
     <Project Path="tests/Asgard.Hermod.MySql.Tests/Asgard.Hermod.MySql.Tests.csproj" />
     <Project Path="tests/Asgard.Hermod.MySql.UI.Tests/Asgard.Hermod.MySql.UI.Tests.csproj" />

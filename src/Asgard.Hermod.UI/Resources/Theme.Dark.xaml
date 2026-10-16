@@ -84,4 +84,13 @@
     <SolidColorBrush x:Key="LogSearchBackgroundBrush" Color="#141D29" />
     <Color x:Key="DbMetadataCodeColor">#9CB9EA</Color>
     <Color x:Key="DbMetadataBackgroundColor">#1B2431</Color>
+    <SolidColorBrush x:Key="RabbitMqBackgroundBrush" Color="#161D28" />
+    <SolidColorBrush x:Key="RabbitMqSoftBrush" Color="#1D2634" />
+    <SolidColorBrush x:Key="RabbitMqEditorBrush" Color="#141C29" />
+    <SolidColorBrush x:Key="RabbitMqLineBrush" Color="#303B4E" />
+    <SolidColorBrush x:Key="RabbitMqInkBrush" Color="#E6ECF5" />
+    <SolidColorBrush x:Key="RabbitMqMutedBrush" Color="#A9B7CC" />
+    <SolidColorBrush x:Key="RabbitMqAccentBrush" Color="#86ACFF" />
+    <SolidColorBrush x:Key="RabbitMqSelectedBrush" Color="#253752" />
+    <SolidColorBrush x:Key="RabbitMqSuccessBrush" Color="#70D9B0" />
 </ResourceDictionary>

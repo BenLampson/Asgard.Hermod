@@ -48,6 +48,7 @@ public partial class App : Application
             services.AddRedis();
             services.AddMySql();
             services.AddPostgreSql();
+            services.AddRabbitMq();
             services.AddSingleton<ITerminalSessionFactory, LocalTerminalSessionFactory>();
             services.AddHermodUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow, Resources);
             services.AddObjectStorageUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow);
@@ -55,6 +56,7 @@ public partial class App : Application
             services.AddRedisUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow);
             services.AddMySqlUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow);
             services.AddPostgreSqlUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow);
+            services.AddRabbitMqUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow);
             var provider = services.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateOnBuild = true,

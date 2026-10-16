@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0-windows</TargetFramework><UseWPF>true</UseWPF><OutputType>Exe</OutputType><IsTestProject>true</IsTestProject><IsPackable>false</IsPackable></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../Asgard.Hermod.UI.Tests/WpfBindingTrace.cs" Link="Shared/WpfBindingTrace.cs" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
+    <PackageReference Include="xunit.v3" Version="4.0.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1"><PrivateAssets>all</PrivateAssets></PackageReference>
+    <ProjectReference Include="../../src/Asgard.Hermod.RabbitMq.UI/Asgard.Hermod.RabbitMq.UI.csproj" />
+    <ProjectReference Include="../../src/Asgard.Hermod.Core/Asgard.Hermod.Core.csproj" />
+  </ItemGroup>
+</Project>

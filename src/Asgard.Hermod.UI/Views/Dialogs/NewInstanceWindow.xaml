@@ -48,14 +48,14 @@
             </Grid>
         </controls:DialogActionBar>
     </controls:HermodDialog.FooterContent>
-    <controls:InstanceWizard x:Name="WizardLayout" Heading="{Binding SelectedType.Name}" Description="{Binding SelectedType.Description}"
+    <controls:InstanceWizard x:Name="WizardLayout" Heading="{Binding CategoryHeading}" Description="{Binding SelectedType.Description}"
                              Steps="{Binding Steps}" ShowProgress="{Binding HasTypeSelection}">
         <Grid IsEnabled="{Binding IsInformationEditable}">
             <StackPanel Margin="28" Visibility="{Binding IsChoosingType, Converter={StaticResource WizardVisibility}}">
                 <TextBlock Text="{loc:Loc ChooseInstanceType}" FontSize="24" FontWeight="SemiBold" />
-                <TextBlock Text="{loc:Loc ChooseInstanceTypeDescription}" Margin="0,16,0,24" TextWrapping="Wrap"
+                <TextBlock Text="{loc:Loc ChooseInstanceCategoryDescription}" Margin="0,16,0,24" TextWrapping="Wrap"
                            Foreground="{DynamicResource TextMutedBrush}" />
-                <controls:InstanceTypePicker x:Name="TypeList" ItemsSource="{Binding Types}" SelectedItem="{Binding SelectedType}"
+                <controls:InstanceTypePicker x:Name="TypeList" ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}"
                                              IsEnabled="{Binding IsTypeSelectionEditable}"
                                              AutomationProperties.Name="{loc:Loc InstanceType}" />
             </StackPanel>

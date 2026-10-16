@@ -13,6 +13,7 @@
                 <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.Redis.UI;component/Resources/WorkspacePages.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.MySql.UI;component/Resources/WorkspacePages.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.PostgreSql.UI;component/Resources/WorkspacePages.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.RabbitMq.UI;component/Resources/WorkspacePages.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

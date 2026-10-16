@@ -4653,4 +4653,312 @@ Address: {2}</value></data>
   <data name="ChatToolBoundedResult" xml:space="preserve"><value>Frozen bounded result preview. Values and total text may be truncated.</value></data>
   <data name="ChatToolFrozenPreviewHint" xml:space="preserve"><value>Only the frozen bounded result preview is shown.</value></data>
   <data name="ChatToolSqlCopied" xml:space="preserve"><value>SQL copied</value></data>
+  <data name="RabbitMqProduct" xml:space="preserve"><value>RabbitMQ</value></data>
+  <data name="RabbitMqTypeHint" xml:space="preserve"><value>Manage queues, exchanges, bindings and messages</value></data>
+  <data name="MainDatabase" xml:space="preserve"><value>Databases</value></data>
+  <data name="MainDatabaseProducts" xml:space="preserve"><value>MySQL, PostgreSQL, Redis</value></data>
+  <data name="MainMessageQueue" xml:space="preserve"><value>Message queues (MQ)</value></data>
+  <data name="MainMessageQueueProducts" xml:space="preserve"><value>RabbitMQ and message queue products</value></data>
+  <data name="ChooseInstanceCategoryDescription" xml:space="preserve"><value>Choose a service category, then select a product and configure its connection.</value></data>
+  <data name="InstanceChooseProduct" xml:space="preserve"><value>Choose product</value></data>
+  <data name="DatabaseChooseProduct" xml:space="preserve"><value>Choose a database product</value></data>
+  <data name="DatabaseChooseProductHint" xml:space="preserve"><value>Select a database product, then configure its connection.</value></data>
+  <data name="RabbitMqChooseProduct" xml:space="preserve"><value>Choose an MQ product</value></data>
+  <data name="RabbitMqChooseProductHint" xml:space="preserve"><value>Select a message queue product, then configure its connection.</value></data>
+  <data name="RabbitMqDirect" xml:space="preserve"><value>Direct connection</value></data>
+  <data name="RabbitMqDirectHint" xml:space="preserve"><value>Connect to the RabbitMQ Management HTTP API.</value></data>
+  <data name="RabbitMqSsh" xml:space="preserve"><value>SSH tunnel</value></data>
+  <data name="RabbitMqSshHint" xml:space="preserve"><value>Reach the Management API through a verified SSH host.</value></data>
+  <data name="RabbitMqRoute" xml:space="preserve"><value>Connection method</value></data>
+  <data name="RabbitMqRouteHint" xml:space="preserve"><value>Choose how Hermod reaches the Management API. AMQP ports are not management endpoints.</value></data>
+  <data name="RabbitMqTestHint" xml:space="preserve"><value>Verify the Management API, authentication and visible virtual hosts without changing resources or consuming messages.</value></data>
+  <data name="RabbitMqScheme" xml:space="preserve"><value>Protocol</value></data>
+  <data name="RabbitMqHost" xml:space="preserve"><value>Management host</value></data>
+  <data name="RabbitMqPort" xml:space="preserve"><value>Management port</value></data>
+  <data name="RabbitMqPrefix" xml:space="preserve"><value>API path prefix</value></data>
+  <data name="RabbitMqPrefixHint" xml:space="preserve"><value>Use / normally. For a reverse proxy, enter its prefix without /api.</value></data>
+  <data name="RabbitMqTls" xml:space="preserve"><value>TLS</value></data>
+  <data name="RabbitMqAdvanced" xml:space="preserve"><value>Advanced</value></data>
+  <data name="RabbitMqConnectionDetails" xml:space="preserve"><value>Connection settings</value></data>
+  <data name="RabbitMqPlaintextWarning" xml:space="preserve"><value>HTTP sends the management password and message content without TLS encryption. Use HTTPS on untrusted networks.</value></data>
+  <data name="RabbitMqTestPassed" xml:space="preserve"><value>The Management API is reachable and authentication passed.</value></data>
+  <data name="RabbitMqTestNoVhosts" xml:space="preserve"><value>Authentication passed. No virtual hosts are available for browsing; global administration remains available when authorized.</value></data>
+  <data name="RabbitMqApiVerified" xml:space="preserve"><value>Management API verified</value></data>
+  <data name="RabbitMqAuthenticationVerified" xml:space="preserve"><value>Authentication verified</value></data>
+  <data name="RabbitMqVisibleVhosts" xml:space="preserve"><value>Visible virtual hosts: {0}</value></data>
+  <data name="RabbitMqConfigurationInvalid" xml:space="preserve"><value>The RabbitMQ connection configuration is invalid. Check the endpoint and credentials.</value></data>
+  <data name="RabbitMqPathInvalid" xml:space="preserve"><value>Enter an absolute proxy path without a query, fragment, percent escapes or parent segments.</value></data>
+  <data name="RabbitMqCertificateInvalid" xml:space="preserve"><value>The custom CA certificate could not be loaded. Check the local PEM file.</value></data>
+  <data name="RabbitMqConnectionFailed" xml:space="preserve"><value>The Management API connection failed. Check the network, port, TLS certificate and SSH configuration.</value></data>
+  <data name="RabbitMqDisconnected" xml:space="preserve"><value>Disconnected. Reconnect explicitly to resume remote operations.</value></data>
+  <data name="RabbitMqAuthenticationFailed" xml:space="preserve"><value>Authentication failed. Check the username and password.</value></data>
+  <data name="RabbitMqPermissionDenied" xml:space="preserve"><value>The server denied this operation. Check virtual host permissions and management roles.</value></data>
+  <data name="RabbitMqNotFound" xml:space="preserve"><value>The resource or Management API endpoint was not found. Refresh the list and check the API prefix.</value></data>
+  <data name="RabbitMqRequestRejected" xml:space="preserve"><value>The server rejected the request. Check resource constraints, arguments and current state.</value></data>
+  <data name="RabbitMqRequestFailed" xml:space="preserve"><value>The request failed. Check the connection and server state before trying again.</value></data>
+  <data name="RabbitMqOutcomeUnknown" xml:space="preserve"><value>The operation may have completed, but no reliable result was received. It was not retried. Check the server state before starting a new operation.</value></data>
+  <data name="RabbitMqResponseTooLarge" xml:space="preserve"><value>This response exceeds the safe viewing limit. Narrow the scope or use the RabbitMQ management console.</value></data>
+  <data name="RabbitMqInvalidResponse" xml:space="preserve"><value>The server returned an invalid management response.</value></data>
+  <data name="RabbitMqGetInvalid" xml:space="preserve"><value>Enter a message count from 1 to 100 and select a queue.</value></data>
+  <data name="RabbitMqStreamUnsupported" xml:space="preserve"><value>Stream queues do not support this Management API get or purge operation.</value></data>
+  <data name="RabbitMqNameInvalid" xml:space="preserve"><value>Enter a valid resource name of at most 255 UTF-8 bytes without control characters.</value></data>
+  <data name="RabbitMqReservedName" xml:space="preserve"><value>Names starting with amq. are reserved by RabbitMQ.</value></data>
+  <data name="RabbitMqSystemExchange" xml:space="preserve"><value>The default exchange and built-in exchanges cannot be deleted here.</value></data>
+  <data name="RabbitMqBodyInvalid" xml:space="preserve"><value>The request data is invalid or too large.</value></data>
+  <data name="RabbitMqQueueTypeInvalid" xml:space="preserve"><value>Quorum and stream queues must be durable and must not auto-delete.</value></data>
+  <data name="RabbitMqExchangeTypeInvalid" xml:space="preserve"><value>Choose a supported exchange type.</value></data>
+  <data name="RabbitMqReasonInvalid" xml:space="preserve"><value>The close reason must be at most 256 characters and cannot contain line breaks.</value></data>
+  <data name="RabbitMqBase64Invalid" xml:space="preserve"><value>The payload is not valid Base64.</value></data>
+  <data name="RabbitMqPayloadTooLarge" xml:space="preserve"><value>The message must be valid UTF-8 or Base64 and no larger than 1 MiB.</value></data>
+  <data name="RabbitMqOverview" xml:space="preserve"><value>Overview</value></data>
+  <data name="RabbitMqQueues" xml:space="preserve"><value>Queues</value></data>
+  <data name="RabbitMqExchanges" xml:space="preserve"><value>Exchanges</value></data>
+  <data name="RabbitMqBindings" xml:space="preserve"><value>Bindings</value></data>
+  <data name="RabbitMqConnections" xml:space="preserve"><value>Connections</value></data>
+  <data name="RabbitMqChannels" xml:space="preserve"><value>Channels</value></data>
+  <data name="RabbitMqVhosts" xml:space="preserve"><value>Virtual hosts</value></data>
+  <data name="RabbitMqUsers" xml:space="preserve"><value>Users</value></data>
+  <data name="RabbitMqPermissions" xml:space="preserve"><value>Permissions</value></data>
+  <data name="RabbitMqTopicPermissions" xml:space="preserve"><value>Topic permissions</value></data>
+  <data name="RabbitMqPolicies" xml:space="preserve"><value>Policies</value></data>
+  <data name="RabbitMqNodes" xml:space="preserve"><value>Cluster nodes</value></data>
+  <data name="RabbitMqConsumers" xml:space="preserve"><value>Consumers</value></data>
+  <data name="RabbitMqVhost" xml:space="preserve"><value>Virtual host</value></data>
+  <data name="RabbitMqExplorer" xml:space="preserve"><value>Object explorer</value></data>
+  <data name="RabbitMqVisibleScope" xml:space="preserve"><value>Only resources visible to the current account are shown.</value></data>
+  <data name="RabbitMqName" xml:space="preserve"><value>Name</value></data>
+  <data name="RabbitMqType" xml:space="preserve"><value>Type</value></data>
+  <data name="RabbitMqState" xml:space="preserve"><value>State</value></data>
+  <data name="RabbitMqReady" xml:space="preserve"><value>Ready</value></data>
+  <data name="RabbitMqUnacked" xml:space="preserve"><value>Unacked</value></data>
+  <data name="RabbitMqTotal" xml:space="preserve"><value>Total</value></data>
+  <data name="RabbitMqPublishRate" xml:space="preserve"><value>Publish /s</value></data>
+  <data name="RabbitMqDeliverRate" xml:space="preserve"><value>Deliver /s</value></data>
+  <data name="RabbitMqDurable" xml:space="preserve"><value>Durable</value></data>
+  <data name="RabbitMqAutoDelete" xml:space="preserve"><value>Auto-delete</value></data>
+  <data name="RabbitMqInternal" xml:space="preserve"><value>Internal</value></data>
+  <data name="RabbitMqSource" xml:space="preserve"><value>Source exchange</value></data>
+  <data name="RabbitMqDestination" xml:space="preserve"><value>Destination</value></data>
+  <data name="RabbitMqRoutingKey" xml:space="preserve"><value>Routing key</value></data>
+  <data name="RabbitMqArguments" xml:space="preserve"><value>Arguments</value></data>
+  <data name="RabbitMqUser" xml:space="preserve"><value>User</value></data>
+  <data name="RabbitMqProtocol" xml:space="preserve"><value>Protocol</value></data>
+  <data name="RabbitMqReceiveRate" xml:space="preserve"><value>Received /s</value></data>
+  <data name="RabbitMqSendRate" xml:space="preserve"><value>Sent /s</value></data>
+  <data name="RabbitMqPrefetch" xml:space="preserve"><value>Prefetch</value></data>
+  <data name="RabbitMqDescription" xml:space="preserve"><value>Description</value></data>
+  <data name="RabbitMqDefaultQueueType" xml:space="preserve"><value>Default queue type</value></data>
+  <data name="RabbitMqTags" xml:space="preserve"><value>Tags (comma-separated)</value></data>
+  <data name="RabbitMqRoles" xml:space="preserve"><value>Management roles</value></data>
+  <data name="RabbitMqConfigurePattern" xml:space="preserve"><value>Configure (resource name regex)</value></data>
+  <data name="RabbitMqWritePattern" xml:space="preserve"><value>Write pattern</value></data>
+  <data name="RabbitMqReadPattern" xml:space="preserve"><value>Read pattern</value></data>
+  <data name="RabbitMqExchange" xml:space="preserve"><value>Exchange</value></data>
+  <data name="RabbitMqPattern" xml:space="preserve"><value>Resource pattern</value></data>
+  <data name="RabbitMqApplyTo" xml:space="preserve"><value>Apply to</value></data>
+  <data name="RabbitMqPriority" xml:space="preserve"><value>Priority</value></data>
+  <data name="RabbitMqDefinition" xml:space="preserve"><value>Definition</value></data>
+  <data name="RabbitMqMemory" xml:space="preserve"><value>Memory used</value></data>
+  <data name="RabbitMqDisk" xml:space="preserve"><value>Disk free</value></data>
+  <data name="RabbitMqFileDescriptors" xml:space="preserve"><value>File descriptors</value></data>
+  <data name="RabbitMqConsumerTag" xml:space="preserve"><value>Consumer tag</value></data>
+  <data name="RabbitMqChannel" xml:space="preserve"><value>Channel</value></data>
+  <data name="RabbitMqAcknowledgements" xml:space="preserve"><value>Acknowledgements</value></data>
+  <data name="RabbitMqDefaultExchange" xml:space="preserve"><value>(Default exchange)</value></data>
+  <data name="RabbitMqUnavailable" xml:space="preserve"><value>—</value></data>
+  <data name="RabbitMqYes" xml:space="preserve"><value>Yes</value></data>
+  <data name="RabbitMqNo" xml:space="preserve"><value>No</value></data>
+  <data name="RabbitMqRunning" xml:space="preserve"><value>Running</value></data>
+  <data name="RabbitMqIdle" xml:space="preserve"><value>Idle</value></data>
+  <data name="RabbitMqDown" xml:space="preserve"><value>Down</value></data>
+  <data name="RabbitMqScope" xml:space="preserve"><value>Virtual host: {0}</value></data>
+  <data name="RabbitMqNoVhost" xml:space="preserve"><value>None selected</value></data>
+  <data name="RabbitMqNoVhostsHint" xml:space="preserve"><value>No virtual host is available for browsing. An administrator can create a virtual host or grant resource permissions from administration.</value></data>
+  <data name="RabbitMqNoMatches" xml:space="preserve"><value>No matching resources. Adjust the search and try again.</value></data>
+  <data name="RabbitMqEmpty" xml:space="preserve"><value>No resources to display in this scope.</value></data>
+  <data name="RabbitMqPage" xml:space="preserve"><value>Page {0} / {1} · {2} items</value></data>
+  <data name="RabbitMqLocalPaging" xml:space="preserve"><value>Local pagination of the loaded list</value></data>
+  <data name="RabbitMqServerPaging" xml:space="preserve"><value>Server pagination</value></data>
+  <data name="RabbitMqNothingSelected" xml:space="preserve"><value>Select an object to view available actions</value></data>
+  <data name="RabbitMqSelected" xml:space="preserve"><value>Selected: {0}</value></data>
+  <data name="RabbitMqStatus" xml:space="preserve"><value>RabbitMQ {0} · {1} · {2}</value></data>
+  <data name="RabbitMqHttpsVerified" xml:space="preserve"><value>HTTPS verified</value></data>
+  <data name="RabbitMqHttp" xml:space="preserve"><value>HTTP · unencrypted</value></data>
+  <data name="RabbitMqNotUpdated" xml:space="preserve"><value>Not refreshed yet</value></data>
+  <data name="RabbitMqUpdated" xml:space="preserve"><value>Updated {0} · auto-refresh 5 s</value></data>
+  <data name="RabbitMqSnapshotDisconnected" xml:space="preserve"><value>Snapshot {0} · disconnected</value></data>
+  <data name="RabbitMqRefresh" xml:space="preserve"><value>Refresh</value></data>
+  <data name="RabbitMqSearch" xml:space="preserve"><value>Search objects</value></data>
+  <data name="RabbitMqToggleExplorer" xml:space="preserve"><value>Toggle object explorer</value></data>
+  <data name="RabbitMqPageSize" xml:space="preserve"><value>Items per page</value></data>
+  <data name="RabbitMqPrevious" xml:space="preserve"><value>Previous page</value></data>
+  <data name="RabbitMqNext" xml:space="preserve"><value>Next page</value></data>
+  <data name="RabbitMqDetails" xml:space="preserve"><value>Details</value></data>
+  <data name="RabbitMqEdit" xml:space="preserve"><value>Edit</value></data>
+  <data name="RabbitMqDelete" xml:space="preserve"><value>Delete</value></data>
+  <data name="RabbitMqRates" xml:space="preserve"><value>Message rates · last 60 seconds</value></data>
+  <data name="RabbitMqRateLegend" xml:space="preserve"><value>Blue: published · Green: delivered · messages/s</value></data>
+  <data name="RabbitMqNoRateSamples" xml:space="preserve"><value>No rate samples available</value></data>
+  <data name="RabbitMqArgumentsPolicies" xml:space="preserve"><value>Arguments &amp; policies</value></data>
+  <data name="RabbitMqGetMessages" xml:space="preserve"><value>Get messages</value></data>
+  <data name="RabbitMqGetCount" xml:space="preserve"><value>Count</value></data>
+  <data name="RabbitMqGetMode" xml:space="preserve"><value>Acknowledgement mode</value></data>
+  <data name="RabbitMqRequeue" xml:space="preserve"><value>Preview and requeue</value></data>
+  <data name="RabbitMqRemoveMessages" xml:space="preserve"><value>Consume and remove</value></data>
+  <data name="RabbitMqAutomaticEncoding" xml:space="preserve"><value>Auto (UTF-8 / Base64)</value></data>
+  <data name="RabbitMqGetHint" xml:space="preserve"><value>Manual snapshot only. Requeue may change ordering and redelivery state. Up to 100 messages, with at most 64 KiB of each body returned.</value></data>
+  <data name="RabbitMqNoSnapshot" xml:space="preserve"><value>No snapshot · manual refresh only</value></data>
+  <data name="RabbitMqSnapshot" xml:space="preserve"><value>Fetched {0} · {1} messages · manual snapshot</value></data>
+  <data name="RabbitMqTruncated" xml:space="preserve"><value>Preview only: {0} of {1} bytes. Copy and export contain only this preview.</value></data>
+  <data name="RabbitMqMessageNumber" xml:space="preserve"><value>Message {0}</value></data>
+  <data name="RabbitMqMessageBytes" xml:space="preserve"><value>{0} / {1} bytes</value></data>
+  <data name="RabbitMqMessagesRemoved" xml:space="preserve"><value>The returned messages were consumed and removed, including any content beyond the preview limit.</value></data>
+  <data name="RabbitMqMessagesRequeued" xml:space="preserve"><value>The returned messages were requeued. This is a frozen snapshot; the queue may already have changed.</value></data>
+  <data name="RabbitMqRemoveMessagesImpact" xml:space="preserve"><value>This consumes and removes the entire messages, including bytes beyond the 64 KiB preview limit. It cannot be undone. Type the queue name to continue.</value></data>
+  <data name="RabbitMqPayload" xml:space="preserve"><value>Payload</value></data>
+  <data name="RabbitMqProperties" xml:space="preserve"><value>Properties</value></data>
+  <data name="RabbitMqHeaders" xml:space="preserve"><value>Headers</value></data>
+  <data name="RabbitMqCopyPreview" xml:space="preserve"><value>Copy preview</value></data>
+  <data name="RabbitMqCopyMessage" xml:space="preserve"><value>Copy message</value></data>
+  <data name="RabbitMqExportPreview" xml:space="preserve"><value>Export preview</value></data>
+  <data name="RabbitMqExportMessage" xml:space="preserve"><value>Export message</value></data>
+  <data name="RabbitMqPreviewCopied" xml:space="preserve"><value>Preview copied. The complete message was not copied.</value></data>
+  <data name="RabbitMqCopied" xml:space="preserve"><value>Message copied.</value></data>
+  <data name="RabbitMqExportFilter" xml:space="preserve"><value>Binary files (*.bin)|*.bin|All files (*.*)|*.*</value></data>
+  <data name="RabbitMqWriteTarget" xml:space="preserve"><value>Instance: {0} · Environment: {1}&#10;Endpoint: {2}&#10;Virtual host: {3}</value></data>
+  <data name="RabbitMqGlobalScope" xml:space="preserve"><value>Global administration</value></data>
+  <data name="RabbitMqDeclareQueue" xml:space="preserve"><value>Create queue</value></data>
+  <data name="RabbitMqDeclareQueueHint" xml:space="preserve"><value>Queue type is immutable. Quorum and stream queues require durability and cannot auto-delete. Arguments retain their declared value types.</value></data>
+  <data name="RabbitMqDeclareExchange" xml:space="preserve"><value>Create exchange</value></data>
+  <data name="RabbitMqDeclareExchangeHint" xml:space="preserve"><value>Choose how messages are routed. Durable exchanges survive a restart; internal exchanges cannot be published to directly.</value></data>
+  <data name="RabbitMqCreateBinding" xml:space="preserve"><value>Create binding</value></data>
+  <data name="RabbitMqCreateBindingHint" xml:space="preserve"><value>Bind a source exchange to a queue or another exchange. For headers exchanges, set x-match and typed header arguments.</value></data>
+  <data name="RabbitMqDestinationType" xml:space="preserve"><value>Destination type</value></data>
+  <data name="RabbitMqDeleteQueue" xml:space="preserve"><value>Delete queue</value></data>
+  <data name="RabbitMqDeleteQueueImpact" xml:space="preserve"><value>Deleting a queue removes its messages, consumers and bindings. The checks below are enforced by the server at deletion time.</value></data>
+  <data name="RabbitMqOnlyEmpty" xml:space="preserve"><value>Only delete if empty</value></data>
+  <data name="RabbitMqOnlyUnused" xml:space="preserve"><value>Only delete if unused</value></data>
+  <data name="RabbitMqDeleteExchange" xml:space="preserve"><value>Delete exchange</value></data>
+  <data name="RabbitMqDeleteExchangeImpact" xml:space="preserve"><value>Deleting this exchange removes its bindings and changes message routing. Queues are not deleted.</value></data>
+  <data name="RabbitMqDeleteBinding" xml:space="preserve"><value>Delete binding</value></data>
+  <data name="RabbitMqDeleteBindingImpact" xml:space="preserve"><value>Messages will no longer follow this binding. Existing messages in the destination remain.</value></data>
+  <data name="RabbitMqPurgeQueue" xml:space="preserve"><value>Purge queue</value></data>
+  <data name="RabbitMqPurgeQueueImpact" xml:space="preserve"><value>Purge permanently removes Ready messages. Unacknowledged messages are not removed and may return later. Consumers remain active.</value></data>
+  <data name="RabbitMqCloseConnection" xml:space="preserve"><value>Close connection</value></data>
+  <data name="RabbitMqCloseConnectionImpact" xml:space="preserve"><value>All channels and consumers on this connection will close. Unacknowledged messages may be requeued, and the client may reconnect automatically.</value></data>
+  <data name="RabbitMqCloseReason" xml:space="preserve"><value>Close reason</value></data>
+  <data name="RabbitMqCloseReasonDefault" xml:space="preserve"><value>Closed by an operator in Hermod</value></data>
+  <data name="RabbitMqPutVhost" xml:space="preserve"><value>Save virtual host</value></data>
+  <data name="RabbitMqPutVhostHint" xml:space="preserve"><value>A virtual host isolates resources and permissions. Grant resource permissions separately after creating it.</value></data>
+  <data name="RabbitMqDeleteVhost" xml:space="preserve"><value>Delete virtual host</value></data>
+  <data name="RabbitMqDeleteVhostImpact" xml:space="preserve"><value>This permanently deletes every queue, message, exchange, binding, policy and permission in this virtual host and closes its connections. This cannot be undone.</value></data>
+  <data name="RabbitMqPutUser" xml:space="preserve"><value>Save user</value></data>
+  <data name="RabbitMqPutUserHint" xml:space="preserve"><value>Management roles do not grant queue or exchange access. Grant virtual host permissions separately. When editing, leave both password fields empty to keep the existing password.</value></data>
+  <data name="RabbitMqDeleteUser" xml:space="preserve"><value>Delete user</value></data>
+  <data name="RabbitMqDeleteUserImpact" xml:space="preserve"><value>This deletes the user and its permissions. Applications using this identity may fail to authenticate.</value></data>
+  <data name="RabbitMqPassword" xml:space="preserve"><value>Password</value></data>
+  <data name="RabbitMqPasswordRepeat" xml:space="preserve"><value>Repeat password</value></data>
+  <data name="RabbitMqRolemanagement" xml:space="preserve"><value>Management UI</value></data>
+  <data name="RabbitMqRolepolicymaker" xml:space="preserve"><value>Policy maker</value></data>
+  <data name="RabbitMqRolemonitoring" xml:space="preserve"><value>Monitoring</value></data>
+  <data name="RabbitMqRoleadministrator" xml:space="preserve"><value>Administrator</value></data>
+  <data name="RabbitMqPutPermissions" xml:space="preserve"><value>Save permissions</value></data>
+  <data name="RabbitMqPutPermissionsHint" xml:space="preserve"><value>Configure, write and read are Erlang regular expressions over resource names. Empty patterns deny access. Management roles do not replace these permissions.</value></data>
+  <data name="RabbitMqDeletePermissions" xml:space="preserve"><value>Revoke permissions</value></data>
+  <data name="RabbitMqDeletePermissionsImpact" xml:space="preserve"><value>This revokes the user&apos;s resource permissions in this virtual host. Applications may lose access.</value></data>
+  <data name="RabbitMqPutTopicPermissions" xml:space="preserve"><value>Save topic permissions</value></data>
+  <data name="RabbitMqPutTopicPermissionsHint" xml:space="preserve"><value>Topic permissions match routing keys on a topic exchange. They are additional to resource permissions; write and read are Erlang regular expressions.</value></data>
+  <data name="RabbitMqDeleteTopicPermissions" xml:space="preserve"><value>Revoke topic permissions</value></data>
+  <data name="RabbitMqDeleteTopicPermissionsImpact" xml:space="preserve"><value>The API revokes ALL topic-exchange permissions for this user in the current virtual host, including other exchanges. Without topic rules, routing-key restrictions may no longer apply.</value></data>
+  <data name="RabbitMqPutPolicy" xml:space="preserve"><value>Save policy</value></data>
+  <data name="RabbitMqPutPolicyHint" xml:space="preserve"><value>Only the highest-priority matching regular policy applies; regular policy definitions are not merged. Review the pattern, priority and existing policies before saving.</value></data>
+  <data name="RabbitMqDeletePolicy" xml:space="preserve"><value>Delete policy</value></data>
+  <data name="RabbitMqDeletePolicyImpact" xml:space="preserve"><value>Removing this policy may change effective queue or exchange settings, including retention and dead-letter routing.</value></data>
+  <data name="RabbitMqPublish" xml:space="preserve"><value>Publish message</value></data>
+  <data name="RabbitMqPublishHint" xml:space="preserve"><value>Publish through the selected exchange. A routed result confirms queue routing, not consumer acknowledgement. The default exchange routes by queue name.</value></data>
+  <data name="RabbitMqPublishRouted" xml:space="preserve"><value>Published and routed to a queue. Consumer delivery is not confirmed.</value></data>
+  <data name="RabbitMqPublishUnrouted" xml:space="preserve"><value>The publish request completed, but the message was not routed to a queue.</value></data>
+  <data name="RabbitMqEncoding" xml:space="preserve"><value>Encoding</value></data>
+  <data name="RabbitMqContentType" xml:space="preserve"><value>Content type</value></data>
+  <data name="RabbitMqDeliveryMode" xml:space="preserve"><value>Delivery mode</value></data>
+  <data name="RabbitMqPropertymessage_id" xml:space="preserve"><value>Message ID</value></data>
+  <data name="RabbitMqPropertycorrelation_id" xml:space="preserve"><value>Correlation ID</value></data>
+  <data name="RabbitMqPropertyreply_to" xml:space="preserve"><value>Reply to</value></data>
+  <data name="RabbitMqPropertyexpiration" xml:space="preserve"><value>Expiration (milliseconds)</value></data>
+  <data name="RabbitMqOperationSucceeded" xml:space="preserve"><value>Operation completed.</value></data>
+  <data name="RabbitMqTypeToConfirm" xml:space="preserve"><value>Type {0} to confirm</value></data>
+  <data name="RabbitMqRequired" xml:space="preserve"><value>Complete all required fields.</value></data>
+  <data name="RabbitMqConfirmationMismatch" xml:space="preserve"><value>The confirmation does not match the resource name.</value></data>
+  <data name="RabbitMqPasswordMismatch" xml:space="preserve"><value>The two passwords do not match.</value></data>
+  <data name="RabbitMqPriorityInvalid" xml:space="preserve"><value>Enter an integer priority.</value></data>
+  <data name="RabbitMqDefinitionRequired" xml:space="preserve"><value>Add at least one policy definition entry.</value></data>
+  <data name="RabbitMqArgumentInvalid" xml:space="preserve"><value>Check argument names, unique keys and value types. JSON and numbers must use invariant protocol formatting.</value></data>
+  <data name="RabbitMqQueueTypeArgument" xml:space="preserve"><value>Choose the queue type above instead of adding x-queue-type manually.</value></data>
+  <data name="RabbitMqAddArgument" xml:space="preserve"><value>Add entry</value></data>
+  <data name="RabbitMqRemoveArgument" xml:space="preserve"><value>Remove entry</value></data>
+  <data name="RabbitMqKey" xml:space="preserve"><value>Key</value></data>
+  <data name="RabbitMqValue" xml:space="preserve"><value>Value</value></data>
+  <data name="RabbitMqString" xml:space="preserve"><value>String</value></data>
+  <data name="RabbitMqNumber" xml:space="preserve"><value>Number</value></data>
+  <data name="RabbitMqBoolean" xml:space="preserve"><value>Boolean</value></data>
+  <data name="RabbitMqChoiceclassic" xml:space="preserve"><value>Classic</value></data>
+  <data name="RabbitMqChoicequorum" xml:space="preserve"><value>Quorum</value></data>
+  <data name="RabbitMqChoicestream" xml:space="preserve"><value>Stream</value></data>
+  <data name="RabbitMqChoicedirect" xml:space="preserve"><value>Direct</value></data>
+  <data name="RabbitMqChoicefanout" xml:space="preserve"><value>Fanout</value></data>
+  <data name="RabbitMqChoicetopic" xml:space="preserve"><value>Topic</value></data>
+  <data name="RabbitMqChoiceheaders" xml:space="preserve"><value>Headers</value></data>
+  <data name="RabbitMqChoicequeue" xml:space="preserve"><value>Queue</value></data>
+  <data name="RabbitMqChoiceexchange" xml:space="preserve"><value>Exchange</value></data>
+  <data name="RabbitMqChoiceall" xml:space="preserve"><value>All resources</value></data>
+  <data name="RabbitMqChoicequeues" xml:space="preserve"><value>Queues</value></data>
+  <data name="RabbitMqChoiceexchanges" xml:space="preserve"><value>Exchanges</value></data>
+  <data name="RabbitMqChoiceclassic_queues" xml:space="preserve"><value>Classic queues</value></data>
+  <data name="RabbitMqChoicequorum_queues" xml:space="preserve"><value>Quorum queues</value></data>
+  <data name="RabbitMqChoicestreams" xml:space="preserve"><value>Streams</value></data>
+  <data name="RabbitMqChoicestring" xml:space="preserve"><value>UTF-8</value></data>
+  <data name="RabbitMqChoicebase64" xml:space="preserve"><value>Base64</value></data>
+  <data name="RabbitMqChoice1" xml:space="preserve"><value>Transient (1)</value></data>
+  <data name="RabbitMqChoice2" xml:space="preserve"><value>Persistent (2)</value></data>
+  <data name="RabbitMqAgent" xml:space="preserve"><value>Agent</value></data>
+  <data name="RabbitMqAgentTitle" xml:space="preserve"><value>{0} · RabbitMQ Agent</value></data>
+  <data name="RabbitMqAgentWelcome" xml:space="preserve"><value>Discuss RabbitMQ configuration and explain selected snapshots.</value></data>
+  <data name="RabbitMqAgentPrompt" xml:space="preserve"><value>Ask about RabbitMQ…</value></data>
+  <data name="RabbitMqAgentPrivacy" xml:space="preserve"><value>Nothing is attached automatically. The Agent receives only your question and explicitly attached snapshots; it cannot execute remote actions.</value></data>
+  <data name="RabbitMqAttachObject" xml:space="preserve"><value>Attach selected object</value></data>
+  <data name="RabbitMqAttachMessage" xml:space="preserve"><value>Attach message preview</value></data>
+  <data name="RabbitMqAgentTruncated" xml:space="preserve"><value>Truncated attachment preview:&#10;{0}</value></data>
+  <data name="RabbitMqAdministration" xml:space="preserve"><value>Administration</value></data>
+  <data name="RabbitMqAllTypes" xml:space="preserve"><value>All types</value></data>
+  <data name="RabbitMqManualRefresh" xml:space="preserve"><value>Manual refresh</value></data>
+  <data name="RabbitMqRefreshInterval" xml:space="preserve"><value>Auto-refresh {0} s</value></data>
+  <data name="RabbitMqUpdatedInterval" xml:space="preserve"><value>Updated {0} · auto-refresh {1} s</value></data>
+  <data name="RabbitMqUpdatedManual" xml:space="preserve"><value>Updated {0} · manual refresh</value></data>
+  <data name="RabbitMqSearchPlaceholder" xml:space="preserve"><value>Search names…</value></data>
+  <data name="RabbitMqOutgoing" xml:space="preserve"><value>Outgoing</value></data>
+  <data name="RabbitMqIncoming" xml:space="preserve"><value>Incoming</value></data>
+  <data name="RabbitMqQueueLegend" xml:space="preserve"><value>Ready: awaiting delivery · Unacked: awaiting acknowledgement · Stream metrics are shown separately.</value></data>
+  <data name="RabbitMqScopeLabel" xml:space="preserve"><value>Scope</value></data>
+  <data name="RabbitMqTotalHint" xml:space="preserve"><value>Ready + Unacked</value></data>
+  <data name="RabbitMqReadyHint" xml:space="preserve"><value>Awaiting delivery</value></data>
+  <data name="RabbitMqDeadLetterExchange" xml:space="preserve"><value>Dead-letter exchange</value></data>
+  <data name="RabbitMqDurability" xml:space="preserve"><value>Durable / Auto-delete</value></data>
+  <data name="RabbitMqPolicy" xml:space="preserve"><value>Policy</value></data>
+  <data name="RabbitMqNode" xml:space="preserve"><value>Node</value></data>
+  <data name="RabbitMqCount" xml:space="preserve"><value>Count</value></data>
+  <data name="RabbitMqProperty" xml:space="preserve"><value>Property</value></data>
+  <data name="RabbitMqRateSummary" xml:space="preserve"><value>Incoming {0} /s · Outgoing {1} /s</value></data>
+  <data name="RabbitMqMessageTtl" xml:space="preserve"><value>Message TTL (ms)</value></data>
+  <data name="RabbitMqResourceSummary" xml:space="preserve"><value>Resource overview</value></data>
+  <data name="RabbitMqMonitoringScope" xml:space="preserve"><value>Virtual-host metrics and cluster nodes have separate scopes. Cluster nodes require monitoring permission.</value></data>
+  <data name="RabbitMqChannelsHint" xml:space="preserve"><value>Open channels</value></data>
+  <data name="RabbitMqConsumersHint" xml:space="preserve"><value>Connected consumers</value></data>
+  <data name="RabbitMqPair" xml:space="preserve"><value>{0} / {1}</value></data>
+  <data name="RabbitMqUnackedHint" xml:space="preserve"><value>Awaiting acknowledgement</value></data>
+  <data name="RabbitMqResource" xml:space="preserve"><value>Resource</value></data>
+  <data name="RabbitMqDeadLetterRoutingKey" xml:space="preserve"><value>Dead-letter routing key</value></data>
+  <data name="RabbitMqCurrentVhost" xml:space="preserve"><value>Current virtual host</value></data>
+  <data name="RabbitMqPrefetchHint" xml:space="preserve"><value>Prefetch limit</value></data>
+  <data name="RabbitMqBackToList" xml:space="preserve"><value>Back to list</value></data>
+  <data name="RabbitMqSearchVhostPlaceholder" xml:space="preserve"><value>Search this virtual host…</value></data>
 </root>

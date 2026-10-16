@@ -4653,4 +4653,312 @@ SQL：
   <data name="ChatToolBoundedResult" xml:space="preserve"><value>冻结的有界结果预览；单个值和总长度可能已截断。</value></data>
   <data name="ChatToolFrozenPreviewHint" xml:space="preserve"><value>仅查看发送时冻结的有界结果预览。</value></data>
   <data name="ChatToolSqlCopied" xml:space="preserve"><value>已复制 SQL</value></data>
+  <data name="RabbitMqProduct" xml:space="preserve"><value>RabbitMQ</value></data>
+  <data name="RabbitMqTypeHint" xml:space="preserve"><value>管理队列、交换机、绑定和消息</value></data>
+  <data name="MainDatabase" xml:space="preserve"><value>数据库</value></data>
+  <data name="MainDatabaseProducts" xml:space="preserve"><value>MySQL、PostgreSQL、Redis</value></data>
+  <data name="MainMessageQueue" xml:space="preserve"><value>消息队列（MQ）</value></data>
+  <data name="MainMessageQueueProducts" xml:space="preserve"><value>RabbitMQ 等消息队列产品</value></data>
+  <data name="ChooseInstanceCategoryDescription" xml:space="preserve"><value>先选择服务分类，再选择具体产品并配置连接。</value></data>
+  <data name="InstanceChooseProduct" xml:space="preserve"><value>选择产品</value></data>
+  <data name="DatabaseChooseProduct" xml:space="preserve"><value>选择数据库产品</value></data>
+  <data name="DatabaseChooseProductHint" xml:space="preserve"><value>选择数据库产品，然后配置它的连接方式。</value></data>
+  <data name="RabbitMqChooseProduct" xml:space="preserve"><value>选择 MQ 产品</value></data>
+  <data name="RabbitMqChooseProductHint" xml:space="preserve"><value>选择要连接的消息队列产品，然后配置它的连接方式。</value></data>
+  <data name="RabbitMqDirect" xml:space="preserve"><value>直连</value></data>
+  <data name="RabbitMqDirectHint" xml:space="preserve"><value>直接连接 RabbitMQ Management HTTP API。</value></data>
+  <data name="RabbitMqSsh" xml:space="preserve"><value>SSH 隧道</value></data>
+  <data name="RabbitMqSshHint" xml:space="preserve"><value>通过已验证的 SSH 主机访问 Management API。</value></data>
+  <data name="RabbitMqRoute" xml:space="preserve"><value>连接方式</value></data>
+  <data name="RabbitMqRouteHint" xml:space="preserve"><value>选择访问 Management API 的方式，AMQP 端口不能用于管理连接。</value></data>
+  <data name="RabbitMqTestHint" xml:space="preserve"><value>验证管理 API、身份和可见虚拟主机，不修改资源或消费消息。</value></data>
+  <data name="RabbitMqScheme" xml:space="preserve"><value>协议</value></data>
+  <data name="RabbitMqHost" xml:space="preserve"><value>管理服务主机</value></data>
+  <data name="RabbitMqPort" xml:space="preserve"><value>管理服务端口</value></data>
+  <data name="RabbitMqPrefix" xml:space="preserve"><value>API 路径前缀</value></data>
+  <data name="RabbitMqPrefixHint" xml:space="preserve"><value>通常使用 /；使用反向代理时填写前缀，不包含 /api。</value></data>
+  <data name="RabbitMqTls" xml:space="preserve"><value>TLS</value></data>
+  <data name="RabbitMqAdvanced" xml:space="preserve"><value>高级</value></data>
+  <data name="RabbitMqConnectionDetails" xml:space="preserve"><value>连接设置</value></data>
+  <data name="RabbitMqPlaintextWarning" xml:space="preserve"><value>HTTP 不会使用 TLS 加密管理密码和消息内容。非受信网络请使用 HTTPS。</value></data>
+  <data name="RabbitMqTestPassed" xml:space="preserve"><value>管理 API 可用，身份验证通过。</value></data>
+  <data name="RabbitMqTestNoVhosts" xml:space="preserve"><value>身份验证通过。当前没有可浏览的虚拟主机；有权限时仍可使用全局管理。</value></data>
+  <data name="RabbitMqApiVerified" xml:space="preserve"><value>管理 API 已验证</value></data>
+  <data name="RabbitMqAuthenticationVerified" xml:space="preserve"><value>身份验证通过</value></data>
+  <data name="RabbitMqVisibleVhosts" xml:space="preserve"><value>可见虚拟主机：{0}</value></data>
+  <data name="RabbitMqConfigurationInvalid" xml:space="preserve"><value>RabbitMQ 连接配置无效，请检查端点和凭据。</value></data>
+  <data name="RabbitMqPathInvalid" xml:space="preserve"><value>请输入绝对代理路径，不包含查询、片段、百分号转义或上级目录。</value></data>
+  <data name="RabbitMqCertificateInvalid" xml:space="preserve"><value>无法加载自定义 CA 证书，请检查本地 PEM 文件。</value></data>
+  <data name="RabbitMqConnectionFailed" xml:space="preserve"><value>管理 API 连接失败，请检查网络、端口、TLS 证书和 SSH 配置。</value></data>
+  <data name="RabbitMqDisconnected" xml:space="preserve"><value>连接已中断，请手动重连后继续远程操作。</value></data>
+  <data name="RabbitMqAuthenticationFailed" xml:space="preserve"><value>身份验证失败，请检查用户名和密码。</value></data>
+  <data name="RabbitMqPermissionDenied" xml:space="preserve"><value>服务器拒绝了本次操作，请检查虚拟主机权限和管理角色。</value></data>
+  <data name="RabbitMqNotFound" xml:space="preserve"><value>未找到资源或管理 API 端点，请刷新列表并检查 API 前缀。</value></data>
+  <data name="RabbitMqRequestRejected" xml:space="preserve"><value>服务器拒绝了请求，请检查资源约束、参数和当前状态。</value></data>
+  <data name="RabbitMqRequestFailed" xml:space="preserve"><value>请求失败，请检查连接和服务器状态后再操作。</value></data>
+  <data name="RabbitMqOutcomeUnknown" xml:space="preserve"><value>操作可能已完成，但未收到可靠结果，系统未重试。请先核对服务器状态，再发起新的操作。</value></data>
+  <data name="RabbitMqResponseTooLarge" xml:space="preserve"><value>响应超出安全浏览上限，请缩小范围或使用 RabbitMQ 管理控制台。</value></data>
+  <data name="RabbitMqInvalidResponse" xml:space="preserve"><value>服务器返回了无效的管理响应。</value></data>
+  <data name="RabbitMqGetInvalid" xml:space="preserve"><value>请选择队列，并填写 1 至 100 的消息数量。</value></data>
+  <data name="RabbitMqStreamUnsupported" xml:space="preserve"><value>Stream 队列不支持此管理 API 的获取或清空操作。</value></data>
+  <data name="RabbitMqNameInvalid" xml:space="preserve"><value>请输入不含控制字符、UTF-8 长度不超过 255 字节的有效资源名。</value></data>
+  <data name="RabbitMqReservedName" xml:space="preserve"><value>以 amq. 开头的名称由 RabbitMQ 保留。</value></data>
+  <data name="RabbitMqSystemExchange" xml:space="preserve"><value>此处不能删除默认交换机或内置交换机。</value></data>
+  <data name="RabbitMqBodyInvalid" xml:space="preserve"><value>请求数据无效或过大。</value></data>
+  <data name="RabbitMqQueueTypeInvalid" xml:space="preserve"><value>Quorum 和 Stream 队列必须持久化，且不能自动删除。</value></data>
+  <data name="RabbitMqExchangeTypeInvalid" xml:space="preserve"><value>请选择受支持的交换机类型。</value></data>
+  <data name="RabbitMqReasonInvalid" xml:space="preserve"><value>关闭原因不能超过 256 个字符，也不能包含换行。</value></data>
+  <data name="RabbitMqBase64Invalid" xml:space="preserve"><value>消息正文不是有效的 Base64。</value></data>
+  <data name="RabbitMqPayloadTooLarge" xml:space="preserve"><value>消息必须是有效的 UTF-8 或 Base64，且不超过 1 MiB。</value></data>
+  <data name="RabbitMqOverview" xml:space="preserve"><value>概览</value></data>
+  <data name="RabbitMqQueues" xml:space="preserve"><value>队列</value></data>
+  <data name="RabbitMqExchanges" xml:space="preserve"><value>交换机</value></data>
+  <data name="RabbitMqBindings" xml:space="preserve"><value>绑定</value></data>
+  <data name="RabbitMqConnections" xml:space="preserve"><value>连接</value></data>
+  <data name="RabbitMqChannels" xml:space="preserve"><value>通道</value></data>
+  <data name="RabbitMqVhosts" xml:space="preserve"><value>虚拟主机</value></data>
+  <data name="RabbitMqUsers" xml:space="preserve"><value>用户</value></data>
+  <data name="RabbitMqPermissions" xml:space="preserve"><value>权限</value></data>
+  <data name="RabbitMqTopicPermissions" xml:space="preserve"><value>主题权限</value></data>
+  <data name="RabbitMqPolicies" xml:space="preserve"><value>策略</value></data>
+  <data name="RabbitMqNodes" xml:space="preserve"><value>集群节点</value></data>
+  <data name="RabbitMqConsumers" xml:space="preserve"><value>消费者</value></data>
+  <data name="RabbitMqVhost" xml:space="preserve"><value>虚拟主机</value></data>
+  <data name="RabbitMqExplorer" xml:space="preserve"><value>对象工具箱</value></data>
+  <data name="RabbitMqVisibleScope" xml:space="preserve"><value>仅显示当前账号可访问的资源。</value></data>
+  <data name="RabbitMqName" xml:space="preserve"><value>名称</value></data>
+  <data name="RabbitMqType" xml:space="preserve"><value>类型</value></data>
+  <data name="RabbitMqState" xml:space="preserve"><value>状态</value></data>
+  <data name="RabbitMqReady" xml:space="preserve"><value>就绪</value></data>
+  <data name="RabbitMqUnacked" xml:space="preserve"><value>未确认</value></data>
+  <data name="RabbitMqTotal" xml:space="preserve"><value>总计</value></data>
+  <data name="RabbitMqPublishRate" xml:space="preserve"><value>发布 /秒</value></data>
+  <data name="RabbitMqDeliverRate" xml:space="preserve"><value>投递 /秒</value></data>
+  <data name="RabbitMqDurable" xml:space="preserve"><value>持久化</value></data>
+  <data name="RabbitMqAutoDelete" xml:space="preserve"><value>自动删除</value></data>
+  <data name="RabbitMqInternal" xml:space="preserve"><value>内部</value></data>
+  <data name="RabbitMqSource" xml:space="preserve"><value>源交换机</value></data>
+  <data name="RabbitMqDestination" xml:space="preserve"><value>目标</value></data>
+  <data name="RabbitMqRoutingKey" xml:space="preserve"><value>路由键</value></data>
+  <data name="RabbitMqArguments" xml:space="preserve"><value>参数</value></data>
+  <data name="RabbitMqUser" xml:space="preserve"><value>用户</value></data>
+  <data name="RabbitMqProtocol" xml:space="preserve"><value>协议</value></data>
+  <data name="RabbitMqReceiveRate" xml:space="preserve"><value>接收 /秒</value></data>
+  <data name="RabbitMqSendRate" xml:space="preserve"><value>发送 /秒</value></data>
+  <data name="RabbitMqPrefetch" xml:space="preserve"><value>预取数量</value></data>
+  <data name="RabbitMqDescription" xml:space="preserve"><value>描述</value></data>
+  <data name="RabbitMqDefaultQueueType" xml:space="preserve"><value>默认队列类型</value></data>
+  <data name="RabbitMqTags" xml:space="preserve"><value>标签（以逗号分隔）</value></data>
+  <data name="RabbitMqRoles" xml:space="preserve"><value>管理角色</value></data>
+  <data name="RabbitMqConfigurePattern" xml:space="preserve"><value>配置（资源名正则）</value></data>
+  <data name="RabbitMqWritePattern" xml:space="preserve"><value>写入正则</value></data>
+  <data name="RabbitMqReadPattern" xml:space="preserve"><value>读取正则</value></data>
+  <data name="RabbitMqExchange" xml:space="preserve"><value>交换机</value></data>
+  <data name="RabbitMqPattern" xml:space="preserve"><value>资源名正则</value></data>
+  <data name="RabbitMqApplyTo" xml:space="preserve"><value>应用范围</value></data>
+  <data name="RabbitMqPriority" xml:space="preserve"><value>优先级</value></data>
+  <data name="RabbitMqDefinition" xml:space="preserve"><value>策略定义</value></data>
+  <data name="RabbitMqMemory" xml:space="preserve"><value>已用内存</value></data>
+  <data name="RabbitMqDisk" xml:space="preserve"><value>可用磁盘</value></data>
+  <data name="RabbitMqFileDescriptors" xml:space="preserve"><value>文件描述符</value></data>
+  <data name="RabbitMqConsumerTag" xml:space="preserve"><value>消费者标签</value></data>
+  <data name="RabbitMqChannel" xml:space="preserve"><value>通道</value></data>
+  <data name="RabbitMqAcknowledgements" xml:space="preserve"><value>需要确认</value></data>
+  <data name="RabbitMqDefaultExchange" xml:space="preserve"><value>（默认交换机）</value></data>
+  <data name="RabbitMqUnavailable" xml:space="preserve"><value>—</value></data>
+  <data name="RabbitMqYes" xml:space="preserve"><value>是</value></data>
+  <data name="RabbitMqNo" xml:space="preserve"><value>否</value></data>
+  <data name="RabbitMqRunning" xml:space="preserve"><value>运行中</value></data>
+  <data name="RabbitMqIdle" xml:space="preserve"><value>空闲</value></data>
+  <data name="RabbitMqDown" xml:space="preserve"><value>已停止</value></data>
+  <data name="RabbitMqScope" xml:space="preserve"><value>虚拟主机：{0}</value></data>
+  <data name="RabbitMqNoVhost" xml:space="preserve"><value>未选择</value></data>
+  <data name="RabbitMqNoVhostsHint" xml:space="preserve"><value>没有可浏览的虚拟主机。管理员可在管理页创建虚拟主机或授予资源权限。</value></data>
+  <data name="RabbitMqNoMatches" xml:space="preserve"><value>没有匹配的资源，请调整搜索条件。</value></data>
+  <data name="RabbitMqEmpty" xml:space="preserve"><value>当前范围内没有可显示的资源。</value></data>
+  <data name="RabbitMqPage" xml:space="preserve"><value>第 {0} / {1} 页 · 共 {2} 项</value></data>
+  <data name="RabbitMqLocalPaging" xml:space="preserve"><value>已加载列表的本地分页</value></data>
+  <data name="RabbitMqServerPaging" xml:space="preserve"><value>服务器分页</value></data>
+  <data name="RabbitMqNothingSelected" xml:space="preserve"><value>请选择对象以查看可用操作</value></data>
+  <data name="RabbitMqSelected" xml:space="preserve"><value>已选择：{0}</value></data>
+  <data name="RabbitMqStatus" xml:space="preserve"><value>RabbitMQ {0} · {1} · {2}</value></data>
+  <data name="RabbitMqHttpsVerified" xml:space="preserve"><value>HTTPS 已验证</value></data>
+  <data name="RabbitMqHttp" xml:space="preserve"><value>HTTP · 未加密</value></data>
+  <data name="RabbitMqNotUpdated" xml:space="preserve"><value>尚未刷新</value></data>
+  <data name="RabbitMqUpdated" xml:space="preserve"><value>更新于 {0} · 自动刷新 5 秒</value></data>
+  <data name="RabbitMqSnapshotDisconnected" xml:space="preserve"><value>快照时间 {0} · 连接已中断</value></data>
+  <data name="RabbitMqRefresh" xml:space="preserve"><value>刷新</value></data>
+  <data name="RabbitMqSearch" xml:space="preserve"><value>搜索对象</value></data>
+  <data name="RabbitMqToggleExplorer" xml:space="preserve"><value>展开或收起对象工具箱</value></data>
+  <data name="RabbitMqPageSize" xml:space="preserve"><value>每页条数</value></data>
+  <data name="RabbitMqPrevious" xml:space="preserve"><value>上一页</value></data>
+  <data name="RabbitMqNext" xml:space="preserve"><value>下一页</value></data>
+  <data name="RabbitMqDetails" xml:space="preserve"><value>详情</value></data>
+  <data name="RabbitMqEdit" xml:space="preserve"><value>编辑</value></data>
+  <data name="RabbitMqDelete" xml:space="preserve"><value>删除</value></data>
+  <data name="RabbitMqRates" xml:space="preserve"><value>消息速率 · 最近 60 秒</value></data>
+  <data name="RabbitMqRateLegend" xml:space="preserve"><value>蓝色：发布 · 绿色：投递 · 消息/秒</value></data>
+  <data name="RabbitMqNoRateSamples" xml:space="preserve"><value>暂无速率采样</value></data>
+  <data name="RabbitMqArgumentsPolicies" xml:space="preserve"><value>参数与策略</value></data>
+  <data name="RabbitMqGetMessages" xml:space="preserve"><value>获取消息</value></data>
+  <data name="RabbitMqGetCount" xml:space="preserve"><value>数量</value></data>
+  <data name="RabbitMqGetMode" xml:space="preserve"><value>确认模式</value></data>
+  <data name="RabbitMqRequeue" xml:space="preserve"><value>预览后重新入队</value></data>
+  <data name="RabbitMqRemoveMessages" xml:space="preserve"><value>消费并移除</value></data>
+  <data name="RabbitMqAutomaticEncoding" xml:space="preserve"><value>自动（UTF-8 / Base64）</value></data>
+  <data name="RabbitMqGetHint" xml:space="preserve"><value>仅手动获取快照。重新入队可能改变顺序和重投递状态。最多获取 100 条，每条正文最多返回 64 KiB。</value></data>
+  <data name="RabbitMqNoSnapshot" xml:space="preserve"><value>尚无快照 · 仅手动刷新</value></data>
+  <data name="RabbitMqSnapshot" xml:space="preserve"><value>获取于 {0} · {1} 条消息 · 手动快照</value></data>
+  <data name="RabbitMqTruncated" xml:space="preserve"><value>仅预览：已返回 {0} / {1} 字节。复制和导出仅包含当前预览。</value></data>
+  <data name="RabbitMqMessageNumber" xml:space="preserve"><value>消息 {0}</value></data>
+  <data name="RabbitMqMessageBytes" xml:space="preserve"><value>{0} / {1} 字节</value></data>
+  <data name="RabbitMqMessagesRemoved" xml:space="preserve"><value>本次返回的消息已消费并移除，包括超出预览上限的内容。</value></data>
+  <data name="RabbitMqMessagesRequeued" xml:space="preserve"><value>本次返回的消息已重新入队。这是固定快照，队列可能已发生变化。</value></data>
+  <data name="RabbitMqRemoveMessagesImpact" xml:space="preserve"><value>此操作会消费并移除整条消息，包括超出 64 KiB 预览上限的字节，无法撤销。请输入队列名称以继续。</value></data>
+  <data name="RabbitMqPayload" xml:space="preserve"><value>正文</value></data>
+  <data name="RabbitMqProperties" xml:space="preserve"><value>属性</value></data>
+  <data name="RabbitMqHeaders" xml:space="preserve"><value>消息头</value></data>
+  <data name="RabbitMqCopyPreview" xml:space="preserve"><value>复制预览</value></data>
+  <data name="RabbitMqCopyMessage" xml:space="preserve"><value>复制消息</value></data>
+  <data name="RabbitMqExportPreview" xml:space="preserve"><value>导出预览</value></data>
+  <data name="RabbitMqExportMessage" xml:space="preserve"><value>导出消息</value></data>
+  <data name="RabbitMqPreviewCopied" xml:space="preserve"><value>已复制预览，未复制完整消息。</value></data>
+  <data name="RabbitMqCopied" xml:space="preserve"><value>消息已复制。</value></data>
+  <data name="RabbitMqExportFilter" xml:space="preserve"><value>二进制文件 (*.bin)|*.bin|所有文件 (*.*)|*.*</value></data>
+  <data name="RabbitMqWriteTarget" xml:space="preserve"><value>实例：{0} · 环境：{1}&#10;端点：{2}&#10;虚拟主机：{3}</value></data>
+  <data name="RabbitMqGlobalScope" xml:space="preserve"><value>全局管理</value></data>
+  <data name="RabbitMqDeclareQueue" xml:space="preserve"><value>创建队列</value></data>
+  <data name="RabbitMqDeclareQueueHint" xml:space="preserve"><value>队列类型创建后不可更改。Quorum 和 Stream 队列必须持久化且不能自动删除。参数保留声明的数据类型。</value></data>
+  <data name="RabbitMqDeclareExchange" xml:space="preserve"><value>创建交换机</value></data>
+  <data name="RabbitMqDeclareExchangeHint" xml:space="preserve"><value>选择消息路由方式。持久化交换机在重启后保留，内部交换机不能直接发布消息。</value></data>
+  <data name="RabbitMqCreateBinding" xml:space="preserve"><value>创建绑定</value></data>
+  <data name="RabbitMqCreateBindingHint" xml:space="preserve"><value>将源交换机绑定到队列或另一个交换机。Headers 交换机需设置 x-match 和带类型的消息头参数。</value></data>
+  <data name="RabbitMqDestinationType" xml:space="preserve"><value>目标类型</value></data>
+  <data name="RabbitMqDeleteQueue" xml:space="preserve"><value>删除队列</value></data>
+  <data name="RabbitMqDeleteQueueImpact" xml:space="preserve"><value>删除队列会移除其消息、消费者和绑定。以下条件由服务器在删除时检查。</value></data>
+  <data name="RabbitMqOnlyEmpty" xml:space="preserve"><value>仅在队列为空时删除</value></data>
+  <data name="RabbitMqOnlyUnused" xml:space="preserve"><value>仅在未被使用时删除</value></data>
+  <data name="RabbitMqDeleteExchange" xml:space="preserve"><value>删除交换机</value></data>
+  <data name="RabbitMqDeleteExchangeImpact" xml:space="preserve"><value>删除此交换机会移除其绑定并改变消息路由，不会删除队列。</value></data>
+  <data name="RabbitMqDeleteBinding" xml:space="preserve"><value>删除绑定</value></data>
+  <data name="RabbitMqDeleteBindingImpact" xml:space="preserve"><value>消息将不再通过此绑定路由，目标中的现有消息保留。</value></data>
+  <data name="RabbitMqPurgeQueue" xml:space="preserve"><value>清空队列</value></data>
+  <data name="RabbitMqPurgeQueueImpact" xml:space="preserve"><value>清空会永久移除 Ready 消息；不会移除未确认消息，这些消息之后可能重新入队。消费者仍会继续运行。</value></data>
+  <data name="RabbitMqCloseConnection" xml:space="preserve"><value>关闭连接</value></data>
+  <data name="RabbitMqCloseConnectionImpact" xml:space="preserve"><value>此连接上的所有通道和消费者都会关闭，未确认消息可能重新入队，客户端也可能自动重连。</value></data>
+  <data name="RabbitMqCloseReason" xml:space="preserve"><value>关闭原因</value></data>
+  <data name="RabbitMqCloseReasonDefault" xml:space="preserve"><value>操作员通过 Hermod 关闭连接</value></data>
+  <data name="RabbitMqPutVhost" xml:space="preserve"><value>保存虚拟主机</value></data>
+  <data name="RabbitMqPutVhostHint" xml:space="preserve"><value>虚拟主机用于隔离资源与权限，创建后需另行授予资源权限。</value></data>
+  <data name="RabbitMqDeleteVhost" xml:space="preserve"><value>删除虚拟主机</value></data>
+  <data name="RabbitMqDeleteVhostImpact" xml:space="preserve"><value>此操作将永久删除该虚拟主机中的所有队列、消息、交换机、绑定、策略及权限，并关闭相关连接，无法撤销。</value></data>
+  <data name="RabbitMqPutUser" xml:space="preserve"><value>保存用户</value></data>
+  <data name="RabbitMqPutUserHint" xml:space="preserve"><value>管理角色不授予队列或交换机访问权，需另行设置虚拟主机权限。编辑时两个密码字段均留空可保留原密码。</value></data>
+  <data name="RabbitMqDeleteUser" xml:space="preserve"><value>删除用户</value></data>
+  <data name="RabbitMqDeleteUserImpact" xml:space="preserve"><value>此操作会删除用户及其权限，使用该身份的应用可能无法继续认证。</value></data>
+  <data name="RabbitMqPassword" xml:space="preserve"><value>密码</value></data>
+  <data name="RabbitMqPasswordRepeat" xml:space="preserve"><value>重复密码</value></data>
+  <data name="RabbitMqRolemanagement" xml:space="preserve"><value>管理界面</value></data>
+  <data name="RabbitMqRolepolicymaker" xml:space="preserve"><value>策略管理</value></data>
+  <data name="RabbitMqRolemonitoring" xml:space="preserve"><value>监控</value></data>
+  <data name="RabbitMqRoleadministrator" xml:space="preserve"><value>管理员</value></data>
+  <data name="RabbitMqPutPermissions" xml:space="preserve"><value>保存权限</value></data>
+  <data name="RabbitMqPutPermissionsHint" xml:space="preserve"><value>配置、写入和读取权限是匹配资源名的 Erlang 正则。空正则拒绝访问，管理角色不会替代这些资源权限。</value></data>
+  <data name="RabbitMqDeletePermissions" xml:space="preserve"><value>撤销权限</value></data>
+  <data name="RabbitMqDeletePermissionsImpact" xml:space="preserve"><value>此操作会撤销该用户在当前虚拟主机的资源权限，应用可能失去访问能力。</value></data>
+  <data name="RabbitMqPutTopicPermissions" xml:space="preserve"><value>保存主题权限</value></data>
+  <data name="RabbitMqPutTopicPermissionsHint" xml:space="preserve"><value>主题权限匹配 Topic 交换机的路由键，并叠加在资源权限之上。写入和读取规则使用 Erlang 正则。</value></data>
+  <data name="RabbitMqDeleteTopicPermissions" xml:space="preserve"><value>撤销主题权限</value></data>
+  <data name="RabbitMqDeleteTopicPermissionsImpact" xml:space="preserve"><value>此 API 会撤销该用户在当前虚拟主机中所有 Topic 交换机的主题权限，包括其他交换机。没有主题规则后，路由键限制可能不再生效。</value></data>
+  <data name="RabbitMqPutPolicy" xml:space="preserve"><value>保存策略</value></data>
+  <data name="RabbitMqPutPolicyHint" xml:space="preserve"><value>普通策略只应用优先级最高的匹配项，其定义不会合并。保存前请检查匹配规则、优先级与已有策略。</value></data>
+  <data name="RabbitMqDeletePolicy" xml:space="preserve"><value>删除策略</value></data>
+  <data name="RabbitMqDeletePolicyImpact" xml:space="preserve"><value>移除此策略可能改变队列或交换机的实际配置，包括保留规则和死信路由。</value></data>
+  <data name="RabbitMqPublish" xml:space="preserve"><value>发布消息</value></data>
+  <data name="RabbitMqPublishHint" xml:space="preserve"><value>通过所选交换机发布消息。“已路由”只代表路由到队列，不表示消费者已确认。默认交换机按队列名称路由。</value></data>
+  <data name="RabbitMqPublishRouted" xml:space="preserve"><value>已发布并路由到队列，未确认消费者投递结果。</value></data>
+  <data name="RabbitMqPublishUnrouted" xml:space="preserve"><value>发布请求已完成，但消息未路由到任何队列。</value></data>
+  <data name="RabbitMqEncoding" xml:space="preserve"><value>编码</value></data>
+  <data name="RabbitMqContentType" xml:space="preserve"><value>内容类型</value></data>
+  <data name="RabbitMqDeliveryMode" xml:space="preserve"><value>投递模式</value></data>
+  <data name="RabbitMqPropertymessage_id" xml:space="preserve"><value>消息 ID</value></data>
+  <data name="RabbitMqPropertycorrelation_id" xml:space="preserve"><value>关联 ID</value></data>
+  <data name="RabbitMqPropertyreply_to" xml:space="preserve"><value>回复地址</value></data>
+  <data name="RabbitMqPropertyexpiration" xml:space="preserve"><value>过期时间（毫秒）</value></data>
+  <data name="RabbitMqOperationSucceeded" xml:space="preserve"><value>操作已完成。</value></data>
+  <data name="RabbitMqTypeToConfirm" xml:space="preserve"><value>输入 {0} 以确认</value></data>
+  <data name="RabbitMqRequired" xml:space="preserve"><value>请填写所有必填字段。</value></data>
+  <data name="RabbitMqConfirmationMismatch" xml:space="preserve"><value>确认内容与资源名称不一致。</value></data>
+  <data name="RabbitMqPasswordMismatch" xml:space="preserve"><value>两次输入的密码不一致。</value></data>
+  <data name="RabbitMqPriorityInvalid" xml:space="preserve"><value>请输入整数优先级。</value></data>
+  <data name="RabbitMqDefinitionRequired" xml:space="preserve"><value>请至少添加一项策略定义。</value></data>
+  <data name="RabbitMqArgumentInvalid" xml:space="preserve"><value>请检查参数名称、唯一键和数值类型。JSON 和数字必须使用协议标准格式。</value></data>
+  <data name="RabbitMqQueueTypeArgument" xml:space="preserve"><value>请使用上方的队列类型选择，不要手动添加 x-queue-type。</value></data>
+  <data name="RabbitMqAddArgument" xml:space="preserve"><value>添加参数</value></data>
+  <data name="RabbitMqRemoveArgument" xml:space="preserve"><value>移除参数</value></data>
+  <data name="RabbitMqKey" xml:space="preserve"><value>键</value></data>
+  <data name="RabbitMqValue" xml:space="preserve"><value>值</value></data>
+  <data name="RabbitMqString" xml:space="preserve"><value>字符串</value></data>
+  <data name="RabbitMqNumber" xml:space="preserve"><value>数字</value></data>
+  <data name="RabbitMqBoolean" xml:space="preserve"><value>布尔值</value></data>
+  <data name="RabbitMqChoiceclassic" xml:space="preserve"><value>Classic</value></data>
+  <data name="RabbitMqChoicequorum" xml:space="preserve"><value>Quorum</value></data>
+  <data name="RabbitMqChoicestream" xml:space="preserve"><value>Stream</value></data>
+  <data name="RabbitMqChoicedirect" xml:space="preserve"><value>Direct</value></data>
+  <data name="RabbitMqChoicefanout" xml:space="preserve"><value>Fanout</value></data>
+  <data name="RabbitMqChoicetopic" xml:space="preserve"><value>Topic</value></data>
+  <data name="RabbitMqChoiceheaders" xml:space="preserve"><value>Headers</value></data>
+  <data name="RabbitMqChoicequeue" xml:space="preserve"><value>队列</value></data>
+  <data name="RabbitMqChoiceexchange" xml:space="preserve"><value>交换机</value></data>
+  <data name="RabbitMqChoiceall" xml:space="preserve"><value>全部资源</value></data>
+  <data name="RabbitMqChoicequeues" xml:space="preserve"><value>队列</value></data>
+  <data name="RabbitMqChoiceexchanges" xml:space="preserve"><value>交换机</value></data>
+  <data name="RabbitMqChoiceclassic_queues" xml:space="preserve"><value>Classic 队列</value></data>
+  <data name="RabbitMqChoicequorum_queues" xml:space="preserve"><value>Quorum 队列</value></data>
+  <data name="RabbitMqChoicestreams" xml:space="preserve"><value>Stream 队列</value></data>
+  <data name="RabbitMqChoicestring" xml:space="preserve"><value>UTF-8</value></data>
+  <data name="RabbitMqChoicebase64" xml:space="preserve"><value>Base64</value></data>
+  <data name="RabbitMqChoice1" xml:space="preserve"><value>非持久化（1）</value></data>
+  <data name="RabbitMqChoice2" xml:space="preserve"><value>持久化（2）</value></data>
+  <data name="RabbitMqAgent" xml:space="preserve"><value>Agent</value></data>
+  <data name="RabbitMqAgentTitle" xml:space="preserve"><value>{0} · RabbitMQ Agent</value></data>
+  <data name="RabbitMqAgentWelcome" xml:space="preserve"><value>分析 RabbitMQ 配置并解释所选快照。</value></data>
+  <data name="RabbitMqAgentPrompt" xml:space="preserve"><value>询问 RabbitMQ 问题…</value></data>
+  <data name="RabbitMqAgentPrivacy" xml:space="preserve"><value>不会自动附加数据。Agent 仅接收你的问题和明确附加的快照，不能执行远程操作。</value></data>
+  <data name="RabbitMqAttachObject" xml:space="preserve"><value>附加所选对象</value></data>
+  <data name="RabbitMqAttachMessage" xml:space="preserve"><value>附加消息预览</value></data>
+  <data name="RabbitMqAgentTruncated" xml:space="preserve"><value>已截断的附件预览：&#10;{0}</value></data>
+  <data name="RabbitMqAdministration" xml:space="preserve"><value>管理</value></data>
+  <data name="RabbitMqAllTypes" xml:space="preserve"><value>全部类型</value></data>
+  <data name="RabbitMqManualRefresh" xml:space="preserve"><value>手动刷新</value></data>
+  <data name="RabbitMqRefreshInterval" xml:space="preserve"><value>自动刷新 {0} 秒</value></data>
+  <data name="RabbitMqUpdatedInterval" xml:space="preserve"><value>更新于 {0} · 自动刷新 {1} 秒</value></data>
+  <data name="RabbitMqUpdatedManual" xml:space="preserve"><value>更新于 {0} · 手动刷新</value></data>
+  <data name="RabbitMqSearchPlaceholder" xml:space="preserve"><value>搜索名称…</value></data>
+  <data name="RabbitMqOutgoing" xml:space="preserve"><value>出站</value></data>
+  <data name="RabbitMqIncoming" xml:space="preserve"><value>入站</value></data>
+  <data name="RabbitMqQueueLegend" xml:space="preserve"><value>Ready：待投递消息 · Unacked：等待消费者确认的消息 · stream 的积压和读取方式另行展示。</value></data>
+  <data name="RabbitMqScopeLabel" xml:space="preserve"><value>范围</value></data>
+  <data name="RabbitMqTotalHint" xml:space="preserve"><value>Ready + Unacked</value></data>
+  <data name="RabbitMqReadyHint" xml:space="preserve"><value>待投递</value></data>
+  <data name="RabbitMqDeadLetterExchange" xml:space="preserve"><value>死信交换机</value></data>
+  <data name="RabbitMqDurability" xml:space="preserve"><value>持久化 / 自动删除</value></data>
+  <data name="RabbitMqPolicy" xml:space="preserve"><value>策略</value></data>
+  <data name="RabbitMqNode" xml:space="preserve"><value>所在节点</value></data>
+  <data name="RabbitMqCount" xml:space="preserve"><value>数量</value></data>
+  <data name="RabbitMqProperty" xml:space="preserve"><value>属性</value></data>
+  <data name="RabbitMqRateSummary" xml:space="preserve"><value>入站 {0} /s · 出站 {1} /s</value></data>
+  <data name="RabbitMqMessageTtl" xml:space="preserve"><value>消息 TTL（ms）</value></data>
+  <data name="RabbitMqResourceSummary" xml:space="preserve"><value>资源概况</value></data>
+  <data name="RabbitMqMonitoringScope" xml:space="preserve"><value>虚拟主机指标与集群节点信息分开呈现；查看节点需要监控权限。</value></data>
+  <data name="RabbitMqChannelsHint" xml:space="preserve"><value>已打开通道</value></data>
+  <data name="RabbitMqConsumersHint" xml:space="preserve"><value>连接中的消费者</value></data>
+  <data name="RabbitMqPair" xml:space="preserve"><value>{0} / {1}</value></data>
+  <data name="RabbitMqUnackedHint" xml:space="preserve"><value>等待确认</value></data>
+  <data name="RabbitMqResource" xml:space="preserve"><value>资源</value></data>
+  <data name="RabbitMqDeadLetterRoutingKey" xml:space="preserve"><value>死信路由键</value></data>
+  <data name="RabbitMqCurrentVhost" xml:space="preserve"><value>当前虚拟主机</value></data>
+  <data name="RabbitMqPrefetchHint" xml:space="preserve"><value>预取限制</value></data>
+  <data name="RabbitMqBackToList" xml:space="preserve"><value>返回列表</value></data>
+  <data name="RabbitMqSearchVhostPlaceholder" xml:space="preserve"><value>搜索当前虚拟主机…</value></data>
 </root>

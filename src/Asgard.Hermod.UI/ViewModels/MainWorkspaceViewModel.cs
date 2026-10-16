@@ -18,11 +18,10 @@ public sealed class MainWorkspaceViewModel : ObservableObject, IDisposable
     {
         _catalog = catalog; _workspace = workspace; _editor = editor;
         Navigation = [new("overview", Text.Get("MainOverview"), "house"), new("all", Text.Get("MainAllInstances"), "list"),
-            new("mysql", Text.Get("MainMySql"), "brand-mysql", Text.Get("MainDatabaseConnections")),
-            new("postgresql", Text.Get("MainPostgreSql"), "brand-postgresql", Text.Get("MainDatabaseConnections")),
-            new("redis", Text.Get("MainRedis"), "layers", Text.Get("MainCacheConnections")),
+            new("database", Text.Get("MainDatabase"), "database", Text.Get("MainDatabaseProducts")),
             new("ssh", Text.Get("MainSsh"), "terminal", Text.Get("MainServerConnections")),
-            new("storage", Text.Get("MainStorage"), "box", Text.Get("MainStorageConnections"))];
+            new("storage", Text.Get("MainStorage"), "box", Text.Get("MainStorageConnections")),
+            new("mq", Text.Get("MainMessageQueue"), "layers", Text.Get("MainMessageQueueProducts"))];
         SelectedNavigation = Navigation[0];
         SelectNavigationCommand = new RelayCommand(value => { if (value is MainNavigationItem item) SelectedNavigation = item; });
         OpenCommand = new RelayCommand(value => { if (value is MainInstanceRow row) _catalog.OpenInstanceCommand.Execute(row.Instance); });
@@ -165,7 +164,7 @@ public sealed class MainWorkspaceViewModel : ObservableObject, IDisposable
     private IEnumerable<MainInstanceRow> Filtered()
     {
         var rows = AllRows();
-        if (SelectedNavigation is not null && SelectedNavigation.Id is not ("all" or "overview")) rows = rows.Where(row => row.Instance.Summary.TypeId == SelectedNavigation.Id);
+        if (SelectedNavigation is not null && SelectedNavigation.Id is not ("all" or "overview")) rows = rows.Where(row => MatchesCategory(SelectedNavigation.Id, row.Instance.Summary.TypeId));
         if (SelectedProvider is { Id.Length: > 0 }) rows = rows.Where(row => row.ProviderFilterId == SelectedProvider.Id);
         var matchingTags = _catalog.Instances.Cast<InstanceItemViewModel>().Select(item => item.Id).ToHashSet();
         rows = rows.Where(row => matchingTags.Contains(row.Instance.Id));
@@ -176,7 +175,7 @@ public sealed class MainWorkspaceViewModel : ObservableObject, IDisposable
     }
     private void Refresh()
     {
-        foreach (var type in Types) type.Count = _catalog.AllInstances.Count(item => !item.IsLocal && item.Summary.TypeId == type.Id);
+        foreach (var type in Types) type.Count = _catalog.AllInstances.Count(item => !item.IsLocal && MatchesCategory(type.Id, item.Summary.TypeId));
         string provider = SelectedProvider?.Id ?? "";
         Providers.Clear(); Providers.Add(new("", Text.Get("MainAllProviders")));
         foreach (var group in AllRows().GroupBy(row => row.ProviderFilterId).OrderBy(group => group.First().ProviderName))
@@ -184,6 +183,8 @@ public sealed class MainWorkspaceViewModel : ObservableObject, IDisposable
         SelectedProvider = Providers.FirstOrDefault(option => option.Id == provider) ?? Providers[0];
         RefreshRows(); OnPropertyChanged(nameof(TotalText));
     }
+    private static bool MatchesCategory(string category, string type) => category switch
+    { "database" => type is "mysql" or "postgresql" or "redis", "mq" => type == "rabbitmq", _ => type == category };
     private void RefreshRows()
     {
         if (SelectedNavigation is null || _workspace is null) return;

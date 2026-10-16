@@ -46,7 +46,7 @@ public sealed class InstanceItemViewModel : ObservableObject
     /// <summary>矢量图标名称。</summary>
     public string Icon => Summary.Icon;
     /// <summary>类型来自连接器注册表，品牌图标不能替代类型图标。</summary>
-    public string TypeIcon => Summary.TypeId switch { "mysql" => "brand-mysql", "postgresql" => "brand-postgresql", _ => DefaultTypeIcon };
+    public string TypeIcon => Summary.TypeId switch { "mysql" => "brand-mysql", "postgresql" => "brand-postgresql", "rabbitmq" => "brand-rabbitmq", _ => DefaultTypeIcon };
     private string DefaultTypeIcon => Type?.Icon ?? (IsStorage ? "box" : IsLocal ? "terminal" :
         Summary.HasConfiguration ? "app-window" : Icon);
     /// <summary>未安装连接器时保持安全的通用类型说明。</summary>

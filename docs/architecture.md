@@ -35,6 +35,8 @@ storage and owns application startup and shutdown.
 | `Asgard.Hermod.MySql.UI` | Connection forms, lazy object trees, SQL tabs, inline editing and field windows | Shared UI, MySQL protocol module |
 | `Asgard.Hermod.PostgreSql` | PostgreSQL connections, database/schema metadata, bounded SQL results, estimated plans and transactional table updates | Shared contracts, SSH forwarding contract, Npgsql |
 | `Asgard.Hermod.PostgreSql.UI` | PostgreSQL connection forms, focused database workspaces, SQL tabs and field editing | Shared UI, PostgreSQL protocol module, Agent module |
+| `Asgard.Hermod.RabbitMq` | Bounded Management HTTP API sessions, verified HTTPS and SSH routing, resource administration and explicit message snapshots | Shared contracts, SSH transport, HTTP resilience |
+| `Asgard.Hermod.RabbitMq.UI` | RabbitMQ connection wizard, object explorer, management forms, message snapshots and independent Agent | Shared UI, RabbitMQ protocol module, Agent module |
 | `Asgard.Hermod.ObjectStorage.Abstractions` | Object storage models, service and client contracts | Shared contracts |
 | `Asgard.Hermod.ObjectStorage` | Resource client factory, connection probe, transfers, previews and deletion policies | Object storage contracts, DI abstractions |
 | `Asgard.Hermod.ObjectStorage.UI` | Object browser, feature dialogs, view models and page template | Shared UI, object storage contracts, DI abstractions |
@@ -57,8 +59,9 @@ Both editors preserve the same two-way binding and maximum length. Hiding the
 password, hiding or closing the window, and reapplying the template clear the
 plain-text editor; its undo history is disabled. Visibility is never persisted.
 
-The main window uses fixed Overview, All instances, MySQL, PostgreSQL, Redis, SSH and object
-storage navigation above a configuration table. Type icons, safe connection
+The main window uses Overview, All instances, Database, SSH, object storage and MQ
+navigation above a configuration table. Database groups MySQL, PostgreSQL and Redis;
+MQ contains RabbitMQ. Grouping does not change saved protocol type IDs. Type icons, safe connection
 addresses, provider identities and tags have separate columns. Tooltips and
 accessibility labels preserve names at narrow sizes. The creation wizard uses one outer scroll viewer for its body; type and
 provider card lists do not intercept the mouse wheel with nested scroll viewers.
@@ -73,9 +76,10 @@ the verified test. Its create and edit flows show four steps: connection method,
 connection information, connection test and confirmation. Automatic save location
 appears on confirmation. Step identities and visible sequence numbers are separate.
 
-Instance creation begins with the independent `InstanceTypePicker`, which lays
-out registered types in two columns. This entrance has no steps or total count.
-Selecting a type opens its connection flow; returning from the first flow step
+Instance creation begins with independent category cards for Database, SSH, object
+storage and MQ. This entrance has no steps or total count. Database and MQ open a
+product-selection step before the existing connection flow; direct SSH and storage
+flows keep their existing steps. Returning from the first flow step
 clears the previous connection fields, name and test result before showing the
 type entrance again. Editing retains the saved type and permits selecting another
 registered provider within that type. Switching providers invalidates the connection
@@ -90,6 +94,20 @@ connection tests and confirmation, while `NewInstanceViewModel` owns the guarded
 connection workflow and persistence. Future type-specific views can reuse the
 same picker and container with their own step collections and content without
 putting their protocol behavior into these shared controls.
+
+RabbitMQ uses the Management plugin's HTTP API, not an AMQP consumer. Direct HTTP,
+verified HTTPS and SSH-routed connections share the existing protected credential
+storage and SSH host trust. Requests have bounded bodies and timeouts and never
+retry automatically. An interrupted write reports an unknown outcome and blocks
+resubmitting that draft. Message retrieval runs only after an explicit action;
+requeue and remove modes both create frozen snapshots. Previews contain at most
+64 KiB per message, and copy/export cannot recover truncated bytes. Stream queues
+do not expose destructive HTTP retrieval or purge. Server role tags govern
+administration, while resource permissions separately govern vhost browsing.
+Administrators without resource permissions can still manage users and vhosts.
+The visual source is `design/RabbitMQ.pen`; headless WPF layout tests verify its
+44px title bar, table sizing, themes, compact layout and bindings without opening
+application windows.
 
 Every connection form uses `InstanceConfigurationEditorViewModel` in shared UI:
 the generic storage form and the MySQL, Redis and SSH adapters share its field
