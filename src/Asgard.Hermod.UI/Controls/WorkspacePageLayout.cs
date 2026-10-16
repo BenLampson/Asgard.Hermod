@@ -3,6 +3,16 @@ namespace Asgard.Hermod.UI.Controls;
 /// <summary>类型无关的内容页布局；工具栏、通知、正文、详情和状态栏均由模块提供。</summary>
 public class WorkspacePageLayout : ContentControl
 {
+    /// <summary>状态栏底色默认沿用共享主题，模块可按设计稿覆写。</summary>
+    public static readonly DependencyProperty StatusBarBackgroundProperty = DependencyProperty.Register(
+        nameof(StatusBarBackground), typeof(Brush), typeof(WorkspacePageLayout));
+    /// <summary>底部状态栏背景。</summary>
+    public Brush? StatusBarBackground { get => (Brush?)GetValue(StatusBarBackgroundProperty); set => SetValue(StatusBarBackgroundProperty, value); }
+    /// <summary>独立标题栏可使用 44px，常规页内工具栏默认保留 56px。</summary>
+    public static readonly DependencyProperty ToolbarMinHeightProperty = DependencyProperty.Register(
+        nameof(ToolbarMinHeight), typeof(double), typeof(WorkspacePageLayout), new PropertyMetadata(56d));
+    /// <summary>工具栏的最小高度，避免紧凑标题栏在容器中产生上下留白。</summary>
+    public double ToolbarMinHeight { get => (double)GetValue(ToolbarMinHeightProperty); set => SetValue(ToolbarMinHeightProperty, value); }
     /// <summary>顶部工具栏插槽。</summary>
     public static readonly DependencyProperty ToolbarProperty = DependencyProperty.Register(
         nameof(Toolbar), typeof(object), typeof(WorkspacePageLayout));

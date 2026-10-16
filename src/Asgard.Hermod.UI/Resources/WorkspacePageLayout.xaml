@@ -6,6 +6,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+        <Setter Property="StatusBarBackground" Value="{DynamicResource AppBackgroundBrush}" />
         <Setter Property="Template"><Setter.Value>
             <ControlTemplate TargetType="controls:WorkspacePageLayout">
                 <Grid Background="{TemplateBinding Background}">
@@ -15,7 +16,7 @@
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Border x:Name="PART_Toolbar" MinHeight="56">
+                    <Border x:Name="PART_Toolbar" MinHeight="{TemplateBinding ToolbarMinHeight}">
                         <ContentPresenter Content="{TemplateBinding Toolbar}" />
                     </Border>
                     <ContentPresenter Grid.Row="1" Content="{TemplateBinding Notification}" />
@@ -25,7 +26,7 @@
                         <ContentPresenter x:Name="PART_Details" Grid.Column="1" Content="{TemplateBinding Details}" Width="{TemplateBinding DetailsWidth}"
                                           Visibility="Collapsed" HorizontalAlignment="Right" />
                     </Grid>
-                    <Border x:Name="PART_StatusBar" Grid.Row="3" Height="28" Background="{DynamicResource AppBackgroundBrush}" Padding="16,0" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,1,0,0">
+                    <Border x:Name="PART_StatusBar" Grid.Row="3" Height="28" Background="{TemplateBinding StatusBarBackground}" Padding="16,0" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,1,0,0">
                         <ContentPresenter Content="{TemplateBinding StatusContent}" VerticalAlignment="Center" />
                     </Border>
                     <ContentPresenter x:Name="PART_Overlay" Grid.RowSpan="4" Panel.ZIndex="100" Content="{TemplateBinding Overlay}" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
