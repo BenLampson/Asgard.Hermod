@@ -83,3 +83,12 @@ committing. All application text is provided in English and Simplified Chinese.
 
 PostgreSQL lexical behavior follows the official
 [SQL lexical structure documentation](https://www.postgresql.org/docs/current/sql-syntax-lexical.html).
+
+
+The production Agent uses a single-use inline confirmation card for explicit SQL
+execution. It shows the full statement and frozen original Session/target, remains
+expanded while pending and keeps the task busy. Decline, Insert into editor,
+Stop, source closure or a database/scope change cannot dispatch that operation.
+The original Session validates its revision again after confirmation and owns
+the query cancellation. A stop after dispatch leaves an unknown-outcome record;
+an uncooperative late result cannot replace it or automatically repeat the SQL.

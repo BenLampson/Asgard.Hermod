@@ -9,10 +9,12 @@ public sealed partial class MySqlAssistantViewModel : ObservableObject, IDisposa
     private readonly AgentConversation? _conversation;
     private CancellationTokenSource? _pending;
     private bool _disposed;
+    private readonly bool _useInlineApproval;
 
     /// <summary>绑定原有页签；手动执行复用原会话，自动查询由页签创建独立只读会话。</summary>
-    public MySqlAssistantViewModel(MySqlTabViewModel tab, IAgentClient? client, Action? hide = null)
+    public MySqlAssistantViewModel(MySqlTabViewModel tab, IAgentClient? client, Action? hide = null, bool useInlineApproval = false)
     {
+        _useInlineApproval = useInlineApproval;
         HideCommand = new RelayCommand(_ => hide?.Invoke());
         _tab = tab; _conversation = client is null ? null : new(client);
         Archive = new(Messages, () => _conversation?.Capture() ?? AgentConversationSnapshot.Empty, snapshot => _conversation?.Restore(snapshot), () => Prompt, value => Prompt = value, () => IsBusy,
@@ -25,7 +27,7 @@ public sealed partial class MySqlAssistantViewModel : ObservableObject, IDisposa
         SendCommand = new AsyncRelayCommand(_ => SendAsync(), _ => !IsBusy && !_disposed && !_tab.IsBusy && !_tab.IsManagingScope && _tab.ConnectionAvailable && !string.IsNullOrWhiteSpace(Prompt));
         CancelCommand = new RelayCommand(_ => _pending?.Cancel(), _ => IsBusy);
         InsertCommand = new RelayCommand(sql => { if (sql is MySqlAssistantSql suggestion) _tab.InsertAssistantSql(suggestion.Sql); }, _ => !_disposed && _tab.IsQuery && !_tab.IsBusy);
-        ExecuteCommand = new AsyncRelayCommand(sql => sql is MySqlAssistantSql suggestion ? _tab.ExecuteAssistantSqlAsync(suggestion) : Task.CompletedTask, _ => !_disposed && _tab.CanRun && !IsBusy);
+        ExecuteCommand = new AsyncRelayCommand(sql => sql is MySqlAssistantSql suggestion ? ExecuteSuggestionAsync(suggestion) : Task.CompletedTask, _ => !_disposed && _tab.CanRun && !IsBusy);
         ClearCommand = new AsyncRelayCommand(async _ => { if (await _tab.ConfirmRemovalAsync("DatabaseSessionClearAi")) { _conversation?.Clear(); Messages.Clear(); Error = ""; } }, _ => !IsBusy && !_disposed);
         _tab.PropertyChanged += OnTabChanged;
     }
@@ -99,6 +101,7 @@ public sealed partial class MySqlAssistantViewModel : ObservableObject, IDisposa
 
     private void OnTabChanged(object? sender, PropertyChangedEventArgs args)
     {
+        if (PendingApproval?.IsPending == true && args.PropertyName is nameof(MySqlTabViewModel.Database) or nameof(MySqlTabViewModel.ScopeRevision) or nameof(MySqlTabViewModel.ConnectionAvailable)) _pending?.Cancel();
         if (args.PropertyName is nameof(MySqlTabViewModel.Database) or nameof(MySqlTabViewModel.IsBusy) or nameof(MySqlTabViewModel.CanRun) or nameof(MySqlTabViewModel.ConnectionAvailable) or nameof(MySqlTabViewModel.ScopeRevision) or nameof(MySqlTabViewModel.CanShareResults)) Refresh();
     }
     private void Refresh()

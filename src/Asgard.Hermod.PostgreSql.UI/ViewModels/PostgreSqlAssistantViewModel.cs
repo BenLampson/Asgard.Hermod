@@ -9,10 +9,12 @@ public sealed partial class PostgreSqlAssistantViewModel : ObservableObject, IDi
     private readonly AgentConversation? _conversation;
     private CancellationTokenSource? _pending;
     private bool _disposed;
+    private readonly bool _useInlineApproval;
 
     /// <summary>绑定原有页签；手动执行复用原会话，自动查询由页签创建独立只读会话。</summary>
-    public PostgreSqlAssistantViewModel(PostgreSqlTabViewModel tab, IAgentClient? client, Action? hide = null)
+    public PostgreSqlAssistantViewModel(PostgreSqlTabViewModel tab, IAgentClient? client, Action? hide = null, bool useInlineApproval = false)
     {
+        _useInlineApproval = useInlineApproval;
         HideCommand = new RelayCommand(_ => hide?.Invoke());
         _tab = tab; _conversation = client is null ? null : new(client);
         Archive = new(Messages, () => _conversation?.Capture() ?? AgentConversationSnapshot.Empty, snapshot => _conversation?.Restore(snapshot), () => Prompt, value => Prompt = value, () => IsBusy,
@@ -25,7 +27,7 @@ public sealed partial class PostgreSqlAssistantViewModel : ObservableObject, IDi
         SendCommand = new AsyncRelayCommand(_ => SendAsync(), _ => !IsBusy && !_disposed && !_tab.IsBusy && !_tab.IsManagingScope && _tab.ConnectionAvailable && !string.IsNullOrWhiteSpace(Prompt));
         CancelCommand = new RelayCommand(_ => _pending?.Cancel(), _ => IsBusy);
         InsertCommand = new RelayCommand(sql => { if (sql is PostgreSqlAssistantSql suggestion) _tab.InsertAssistantSql(suggestion.Sql); }, _ => !_disposed && _tab.IsQuery && !_tab.IsBusy);
-        ExecuteCommand = new AsyncRelayCommand(sql => sql is PostgreSqlAssistantSql suggestion ? _tab.ExecuteAssistantSqlAsync(suggestion) : Task.CompletedTask, _ => !_disposed && _tab.CanRun && !IsBusy);
+        ExecuteCommand = new AsyncRelayCommand(sql => sql is PostgreSqlAssistantSql suggestion ? ExecuteSuggestionAsync(suggestion) : Task.CompletedTask, _ => !_disposed && _tab.CanRun && !IsBusy);
         ClearCommand = new AsyncRelayCommand(async _ => { if (await _tab.ConfirmRemovalAsync("DatabaseSessionClearAi")) { _conversation?.Clear(); Messages.Clear(); Error = ""; } }, _ => !IsBusy && !_disposed);
         _tab.PropertyChanged += OnTabChanged;
     }
@@ -99,6 +101,7 @@ public sealed partial class PostgreSqlAssistantViewModel : ObservableObject, IDi
 
     private void OnTabChanged(object? sender, PropertyChangedEventArgs args)
     {
+        if (PendingApproval?.IsPending == true && args.PropertyName is nameof(PostgreSqlTabViewModel.Database) or nameof(PostgreSqlTabViewModel.ScopeRevision) or nameof(PostgreSqlTabViewModel.ConnectionAvailable)) _pending?.Cancel();
         if (args.PropertyName is nameof(PostgreSqlTabViewModel.Database) or nameof(PostgreSqlTabViewModel.IsBusy) or nameof(PostgreSqlTabViewModel.CanRun) or nameof(PostgreSqlTabViewModel.ConnectionAvailable) or nameof(PostgreSqlTabViewModel.ScopeRevision) or nameof(PostgreSqlTabViewModel.CanShareResults)) Refresh();
     }
     private void Refresh()

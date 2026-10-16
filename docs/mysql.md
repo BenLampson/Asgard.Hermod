@@ -142,7 +142,8 @@ model context. Users should review editor SQL and shared result samples for
 sensitive content before sending them to their chosen model service.
 
 Generated SQL can be inserted at the editor's caret/selection without execution.
-Review and run shows the complete SQL and target database before using the same
+Review and run adds a single-use inline approval card showing the complete SQL,
+instance, endpoint, original Session and target database before using the same
 query execution path and session, including existing draft and transaction guards.
 Scope, execution target or physical connection changes invalidate old execution
 suggestions. Future model requests exclude conversation from earlier scope revisions;
@@ -199,3 +200,13 @@ unknown-outcome recovery. `HERMOD_UI_PREVIEW_DIR` optionally saves PNG previews;
 previews and test certificates are ignored and are not committed. Editable database
 designs live in `design/DBWindow.pen`, treated as binary and accessed through
 Pencil tools without copies in audit or test directories.
+
+
+The production Agent keeps its task busy while an approval is pending. Review and
+execute approves only the displayed operation; Decline and Insert into editor do
+not execute it. Stopping or changing the source database/scope cancels the approval.
+Old cards remain readable but cannot authorize another operation. Cancellation
+after dispatch is reported as an unknown outcome, never as an undo or a retry.
+If a provider ignores cancellation, the Agent stops waiting while the original
+Session continues tracking that operation; late completion cannot rewrite the
+Agent's retained unknown-outcome record.

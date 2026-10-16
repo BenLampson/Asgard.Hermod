@@ -199,10 +199,11 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
         if (target != Database || revision != ScopeRevision || !CanRun) return;
         await RunAsync(token => ExecuteCoreAsync(sql, token));
     }
-    private async Task ExecuteCoreAsync(string sql, CancellationToken token)
+    private async Task ExecuteCoreAsync(string sql, CancellationToken token, Action? dispatched = null)
     {
         if (sql.Length == 0) return;
         var session = await SessionAsync(token);
+        token.ThrowIfCancellationRequested(); dispatched?.Invoke();
         var execution = await ExecuteTrackedAsync(session, sql, "query", token);
         _completionMetadata.Clear();
         if (Scope is null) Database = session.CurrentDatabase;

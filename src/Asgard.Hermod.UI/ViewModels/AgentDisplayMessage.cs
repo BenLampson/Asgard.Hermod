@@ -8,10 +8,12 @@ public class AgentDisplayMessage : ObservableObject, IAgentDisplayMessage
     private readonly Stopwatch? _elapsed;
     private string _statusKey = "";
     /// <summary>保存原文、来源和生成时模型身份，不读取当前模型选择。</summary>
-    public AgentDisplayMessage(string content, bool isUser, bool isTool = false, bool isError = false, string recoveryPrompt = "", string modelIdentity = "")
+    public AgentDisplayMessage(string content, bool isUser, bool isTool = false, bool isError = false, string recoveryPrompt = "", string modelIdentity = "", AgentApprovalRequest? approval = null)
     {
         Content = content; IsUser = isUser; IsTool = isTool; IsError = isError; RecoveryPrompt = recoveryPrompt; ModelIdentity = modelIdentity;
-        if (isTool) _elapsed = Stopwatch.StartNew();
+        Approval = approval;
+        if (approval is not null) approval.PropertyChanged += (_, args) => { if (args.PropertyName == nameof(AgentApprovalRequest.IsPending)) OnPropertyChanged(nameof(IsAwaitingApproval)); };
+        if (isTool) _elapsed = new();
     }
     /// <summary>用户、模型和工具原文不翻译。</summary>
     public string Content { get; protected set => SetProperty(ref field, value); }
@@ -34,18 +36,21 @@ public class AgentDisplayMessage : ObservableObject, IAgentDisplayMessage
     /// <summary>工具折叠状态保留在消息对象上。</summary>
     public bool IsExpanded { get; set => SetProperty(ref field, value); }
     /// <summary>待确认操作必须保持展开。</summary>
-    public bool IsAwaitingApproval => _statusKey == "SshAgentAwaitingApproval";
+    public bool IsAwaitingApproval => Approval?.IsPending == true || _statusKey is "SshAgentAwaitingApproval" or "ChatAwaitingApproval";
+    /// <summary>本条工具步骤的单次确认，历史恢复不会重建授权。</summary>
+    public AgentApprovalRequest? Approval { get; }
     /// <summary>显示角色由稳定标记决定。</summary>
     public virtual string Role => Text.Get(IsTool ? "ChatToolActivity" : IsUser ? "ChatUserRole" : "AgentPanelTitle");
     /// <summary>资源化的当前状态。</summary>
     public string Status => _statusKey.Length == 0 ? "" : Text.Get(_statusKey);
     /// <summary>仅工具完成后展示实际经过的时间。</summary>
-    public string Elapsed => _elapsed is { IsRunning: false } elapsed ? Text.Format("ChatActivityElapsed", elapsed.Elapsed.TotalMilliseconds) : "";
+    public string Elapsed => _elapsed is { IsRunning: false, ElapsedTicks: > 0 } elapsed ? Text.Format("ChatActivityElapsed", elapsed.Elapsed.TotalMilliseconds) : "";
     /// <summary>更新原对象，不改变用户已经选择的展开状态。</summary>
     protected void UpdateMessage(string content, string statusKey)
     {
         Content = content; _statusKey = statusKey;
-        if (statusKey is not ("SqlAgentQueryRunning" or "SshAgentAwaitingApproval" or "SshAgentExecuting")) _elapsed?.Stop();
+        if (statusKey is "SqlAgentQueryRunning" or "SshAgentExecuting" or "ChatActionExecuting") _elapsed?.Start();
+        if (statusKey is not ("SqlAgentQueryRunning" or "SshAgentAwaitingApproval" or "SshAgentExecuting" or "ChatAwaitingApproval" or "ChatActionExecuting")) _elapsed?.Stop();
         OnPropertyChanged(nameof(Status)); OnPropertyChanged(nameof(IsAwaitingApproval)); OnPropertyChanged(nameof(Elapsed));
     }
 }

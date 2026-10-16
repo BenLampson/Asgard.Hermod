@@ -11,15 +11,17 @@ public sealed class SshAssistantViewModel : ObservableObject, IDisposable
     private readonly Func<ISshWorkspaceConnection?> _connection;
     private readonly Func<string> _host;
     private readonly ISshWorkspaceDialogs _dialogs;
+    private readonly bool _useInlineApproval;
     private CancellationTokenSource? _pending;
     private bool _disposed;
     private bool _sourceClosed;
     private long _revision;
 
     /// <summary>复用模型和已认证的 SSH 连接；连接凭据从不进入模型上下文。</summary>
-    public SshAssistantViewModel(IAgentClient? client, Func<ISshWorkspaceConnection?> connection, Func<string> host, ISshWorkspaceDialogs dialogs)
+    public SshAssistantViewModel(IAgentClient? client, Func<ISshWorkspaceConnection?> connection, Func<string> host, ISshWorkspaceDialogs dialogs, bool useInlineApproval = false)
     {
         _conversation = client is null ? null : new(client); _connection = connection; _host = host; _dialogs = dialogs;
+        _useInlineApproval = useInlineApproval;
         Archive = new(Messages, () => _conversation?.Capture() ?? AgentConversationSnapshot.Empty, snapshot => _conversation?.Restore(snapshot), () => Prompt, value => Prompt = value, () => IsBusy,
             () => new Asgard.Hermod.UI.Models.AgentConversationFeedback(Error, LastFailedPrompt), state =>
             {
@@ -60,6 +62,8 @@ public sealed class SshAssistantViewModel : ObservableObject, IDisposable
     public bool IsBusy { get; private set { if (SetProperty(ref field, value)) Refresh(); } }
     /// <summary>思考、诊断、等待确认等阶段通过资源显示。</summary>
     public string Status { get; private set => SetProperty(ref field, value); } = "";
+    /// <summary>当前控制台单次操作的可取消确认，不授予后续工具权限。</summary>
+    public AgentApprovalRequest? PendingApproval { get; private set => SetProperty(ref field, value); }
     /// <summary>安全错误资源。</summary>
     public string Error { get; private set => SetProperty(ref field, value); } = "";
     /// <summary>发送排障任务。</summary>
@@ -125,7 +129,8 @@ public sealed class SshAssistantViewModel : ObservableObject, IDisposable
     private async Task<SshAgentToolResult> PerformActionAsync(SshAgentAction action, ISshWorkspaceConnection connection, string host, long revision, CancellationToken token)
     {
         EnsureCurrent(revision, connection, token);
-        var record = new SshAssistantMessage(action.Command, false, revision, false, action.RequiresConfirmation ? "SshAgentCommandStep" : "SshAgentDiagnosticStep", true);
+        var approval = action.RequiresConfirmation && _useInlineApproval ? new AgentApprovalRequest(Text.Get("ChatReviewOperation"), Text.Format("ChatSshApprovalTarget", host), action.ExecutionCommand, token) : null;
+        var record = new SshAssistantMessage(action.Command, false, revision, false, action.RequiresConfirmation ? "SshAgentCommandStep" : "SshAgentDiagnosticStep", true, approval: approval);
         Add(record);
         bool dispatched = false;
         try
@@ -133,7 +138,9 @@ public sealed class SshAssistantViewModel : ObservableObject, IDisposable
             if (action.RequiresConfirmation)
             {
                 Status = Text.Get("SshAgentAwaitingApproval"); record.Update(action.Command, "SshAgentAwaitingApproval");
-                bool confirmed = await _dialogs.ConfirmActionAsync(Text.Get("SshAgentExecuteTitle"), Text.Format("SshAgentExecuteHint", host), action.ExecutionCommand);
+                PendingApproval = approval;
+                bool confirmed = approval is not null ? await approval.WaitAsync()
+                    : await _dialogs.ConfirmActionAsync(Text.Get("SshAgentExecuteTitle"), Text.Format("SshAgentExecuteHint", host), action.ExecutionCommand).WaitAsync(token);
                 EnsureCurrent(revision, connection, token);
                 if (!confirmed) { record.Update(action.Command, "SshAgentActionDenied"); return new("denied", "", StopActions: true); }
             }
@@ -141,7 +148,7 @@ public sealed class SshAssistantViewModel : ObservableObject, IDisposable
             record.Update(action.Command, "SshAgentExecuting");
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token); timeout.CancelAfter(TimeSpan.FromMinutes(2));
             dispatched = true;
-            var result = await connection.ExecuteCommandAsync(action.ExecutionCommand, timeout.Token);
+            var result = await connection.ExecuteCommandAsync(action.ExecutionCommand, timeout.Token).WaitAsync(timeout.Token);
             EnsureCurrent(revision, connection, token);
             // 协议层在输出超限时可能提前终止读取，因此不能把该状态当作完整退出结果。
             bool unknown = result.Truncated && result.ExitCode == -1;
@@ -160,7 +167,7 @@ public sealed class SshAssistantViewModel : ObservableObject, IDisposable
             record.Update(Text.Format("SshAgentStepFailure", action.Command, safe), "SshAgentOutcomeUnknown");
             return new("unknown", safe, StopActions: true);
         }
-        finally { if (!IsSourceClosed && revision == _revision) Status = Text.Get("ChatWaitingModel"); }
+        finally { PendingApproval = null; if (!IsSourceClosed && revision == _revision) Status = Text.Get("ChatWaitingModel"); }
     }
 
     private void Add(SshAssistantMessage message) { Messages.Add(message); while (Messages.Count > 48) Messages.RemoveAt(0); }

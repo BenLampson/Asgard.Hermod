@@ -19,6 +19,7 @@ internal sealed class AgentPanelTestModel : ObservableObject
         ExecuteCommand = new RelayCommand(value => Executed = value);
     }
 
+    public AgentApprovalRequest? PendingApproval => null;
     public bool IsSourceClosed => false;
     public IReadOnlyList<string> QuickPrompts { get; } = [];
     public AgentConversationArchive Archive { get; }

@@ -220,3 +220,14 @@ Windows named pipe and restores its test-process `SSH_AUTH_SOCK` afterward;
 it never starts or changes the user's Windows Agent service. Unconfigured live
 tests are skipped. Configured tests cover password, encrypted key, Agent,
 jump, authenticated proxies, PTY resize, UTF-8, exit codes and host trust changes.
+
+
+Production Agent command approvals are inline cards rather than native modal
+dialogs. The full independent-channel command and fixed SSH target are visible,
+and a pending card cannot be collapsed. Approval authorizes only that command.
+Decline feeds a denied result to the model with further actions disabled for the
+task. Stop, disconnect, source closure and reconnect invalidate the pending card.
+Once a command has been dispatched, cancellation retains an unknown outcome and
+never retries it. The UI can stop waiting for an uncooperative command client
+without claiming that remote side effects were undone. Tool elapsed time starts
+at dispatch, excluding the time spent waiting for the user's review.

@@ -19,6 +19,10 @@ public partial class AgentPanel : UserControl
     /// <summary>当前来源的历史。</summary>
     public AgentConversationArchive? Archive { get => (AgentConversationArchive?)GetValue(ArchiveProperty); set => SetValue(ArchiveProperty, value); }
     private bool _composing;
+    /// <summary>确认阶段显示准确的操作提示，Enter 仍不会重复发送。</summary>
+    public static readonly DependencyProperty IsAwaitingApprovalProperty = DependencyProperty.Register(nameof(IsAwaitingApproval), typeof(bool), typeof(AgentPanel));
+    /// <summary>当前等待单次确认。</summary>
+    public bool IsAwaitingApproval { get => (bool)GetValue(IsAwaitingApprovalProperty); set => SetValue(IsAwaitingApprovalProperty, value); }
     /// <summary>来源已关闭时编辑区只读，历史仍可选择和复制。</summary>
     public static readonly DependencyProperty IsSourceClosedProperty = DependencyProperty.Register(nameof(IsSourceClosed), typeof(bool), typeof(AgentPanel));
     /// <summary>当前来源已关闭。</summary>

@@ -26,7 +26,7 @@ public sealed partial class PostgreSqlWorkspaceViewModel
     }
     private PostgreSqlAssistantViewModel GetAssistant(PostgreSqlTabViewModel tab)
     {
-        if (!_assistants.TryGetValue(tab, out var assistant)) { assistant = new(tab, _assistantClient, () => IsAssistantOpen = false); _assistants.Add(tab, assistant); }
+        if (!_assistants.TryGetValue(tab, out var assistant)) { assistant = new(tab, _assistantClient, () => IsAssistantOpen = false, useInlineApproval: true); _assistants.Add(tab, assistant); }
         return assistant;
     }
     partial void OnActiveTabChanged() => OnPropertyChanged(nameof(Assistant));

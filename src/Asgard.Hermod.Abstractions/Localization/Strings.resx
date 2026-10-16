@@ -4444,4 +4444,31 @@ You decide before execution.</value></data>
   <data name="ChatLogPromptThree" xml:space="preserve"><value>Suggest checks supported by this evidence</value></data>
   <data name="AgentInvalidHistory" xml:space="preserve"><value>The conversation history cannot be restored.</value></data>
   <data name="ChatContext" xml:space="preserve"><value>Context</value></data>
+  <data name="ChatAwaitingApproval" xml:space="preserve"><value>Waiting for your approval</value></data>
+  <data name="ChatActionApproved" xml:space="preserve"><value>Approved for this operation</value></data>
+  <data name="ChatActionRejected" xml:space="preserve"><value>Rejected; nothing was executed</value></data>
+  <data name="ChatActionInserted" xml:space="preserve"><value>Inserted into the editor; not executed</value></data>
+  <data name="ChatActionCanceled" xml:space="preserve"><value>Canceled; this approval is no longer valid</value></data>
+  <data name="ChatActionExecuting" xml:space="preserve"><value>Executing the approved operation</value></data>
+  <data name="ChatActionCompleted" xml:space="preserve"><value>Operation completed</value></data>
+  <data name="ChatActionNotExecuted" xml:space="preserve"><value>Not executed</value></data>
+  <data name="ChatActionUnknown" xml:space="preserve"><value>Outcome unknown; verify the target before trying again</value></data>
+  <data name="ChatReviewOperation" xml:space="preserve"><value>Waiting for your approval</value></data>
+  <data name="ChatApprovalCode" xml:space="preserve"><value>Complete operation awaiting approval</value></data>
+  <data name="ChatApprovalNotice" xml:space="preserve"><value>Nothing runs before approval. You can decline and continue the conversation.</value></data>
+  <data name="ChatApprove" xml:space="preserve"><value>Review and execute</value></data>
+  <data name="ChatReject" xml:space="preserve"><value>Decline</value></data>
+  <data name="ChatInsertOnly" xml:space="preserve"><value>Insert into editor</value></data>
+  <data name="ChatSqlApprovalTarget" xml:space="preserve"><value>Instance: {0} · {1}
+Session: {2} · Database: {3}</value></data>
+  <data name="ChatSshApprovalTarget" xml:space="preserve"><value>SSH target: {0}</value></data>
+  <data name="ChatSqlActionResult" xml:space="preserve"><value>Target: {0}
+SQL:
+{1}
+Status: {2}
+{3}
+{4}</value></data>
+  <data name="ChatActionFailed" xml:space="preserve"><value>The operation failed or stopped; review the workspace results.</value></data>
+  <data name="ChatApprovalComposerHint" xml:space="preserve"><value>Waiting for approval · Review or decline the operation first</value></data>
+  <data name="ChatReviewedOperation" xml:space="preserve"><value>Operation review</value></data>
 </root>

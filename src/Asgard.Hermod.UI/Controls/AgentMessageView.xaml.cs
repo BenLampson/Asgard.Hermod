@@ -3,6 +3,10 @@ namespace Asgard.Hermod.UI.Controls;
 /// <summary>共享消息气泡；用户、助手与工具使用稳定来源标记，业务动作由模块插槽承载。</summary>
 public partial class AgentMessageView : UserControl
 {
+    /// <summary>单次操作的内联确认内容。</summary>
+    public static readonly DependencyProperty ApprovalProperty = DependencyProperty.Register(nameof(Approval), typeof(AgentApprovalRequest), typeof(AgentMessageView));
+    /// <summary>确认卡在消息历史中保留已结算状态。</summary>
+    public AgentApprovalRequest? Approval { get => (AgentApprovalRequest?)GetValue(ApprovalProperty); set => SetValue(ApprovalProperty, value); }
     /// <summary>显示消息冻结的创建时间。</summary>
     public static readonly DependencyProperty TimestampLabelProperty = DependencyProperty.Register(nameof(TimestampLabel), typeof(string), typeof(AgentMessageView), new PropertyMetadata(""));
     /// <summary>角色与时间的完整本地化模板。</summary>

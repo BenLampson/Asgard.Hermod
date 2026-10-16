@@ -55,3 +55,4 @@ The history alias uses the official icons/history.svg from Lucide tag 0.468.0 (s
 
 Agent cpu.svg, sparkles.svg and arrow-up-left.svg use the fixed Lucide source revision above; WPF geometry is converted directly from those SVG paths.
 Agent paperclip.svg and its WPF geometry use the same fixed Lucide source revision above.
+Agent shield-alert.svg and its WPF geometry use the same fixed Lucide source revision above.

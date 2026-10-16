@@ -33,7 +33,7 @@ public sealed partial class SshWorkspaceViewModel
     private SshConsoleViewModel AddOpenedConsole(ISshConsoleConnection handle, int columns, int rows)
     {
         var owner = _connection; string host = RemoteIdentity; SshConsoleViewModel? console = null;
-        var assistant = new SshAssistantViewModel(_agentClient, () => console?.IsRunning == true && IsConnected && ReferenceEquals(owner, _connection) ? owner as ISshWorkspaceConnection : null, () => host, _dialogs);
+        var assistant = new SshAssistantViewModel(_agentClient, () => console?.IsRunning == true && IsConnected && ReferenceEquals(owner, _connection) ? owner as ISshWorkspaceConnection : null, () => host, _dialogs, useInlineApproval: true);
         console = new(Text.Format("SshConsoleName", ++_consoleNumber), handle, assistant, columns, rows);
         console.StateChanged += (_, _) =>
         {

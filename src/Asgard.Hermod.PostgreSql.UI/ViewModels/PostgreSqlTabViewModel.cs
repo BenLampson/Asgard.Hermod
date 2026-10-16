@@ -201,10 +201,11 @@ public sealed partial class PostgreSqlTabViewModel : ObservableObject, IAsyncDis
         if (target != Database || revision != ScopeRevision || !CanRun) return;
         await RunAsync(token => ExecuteCoreAsync(sql, token));
     }
-    private async Task ExecuteCoreAsync(string sql, CancellationToken token)
+    private async Task ExecuteCoreAsync(string sql, CancellationToken token, Action? dispatched = null)
     {
         if (sql.Length == 0) return;
-        var session = await SessionAsync(token); _executed = true;
+        var session = await SessionAsync(token);
+        token.ThrowIfCancellationRequested(); dispatched?.Invoke(); _executed = true;
         var execution = await ExecuteTrackedAsync(session, sql, false, token);
         if (Scope is null) Database = session.CurrentDatabase;
         SetResults(execution.Results, execution.Elapsed);

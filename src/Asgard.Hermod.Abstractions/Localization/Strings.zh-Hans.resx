@@ -4444,4 +4444,31 @@ Session：{2}
   <data name="ChatLogPromptThree" xml:space="preserve"><value>根据现有证据给出排查建议</value></data>
   <data name="AgentInvalidHistory" xml:space="preserve"><value>无法恢复此对话历史。</value></data>
   <data name="ChatContext" xml:space="preserve"><value>上下文</value></data>
+  <data name="ChatAwaitingApproval" xml:space="preserve"><value>等待确认</value></data>
+  <data name="ChatActionApproved" xml:space="preserve"><value>已批准本次操作</value></data>
+  <data name="ChatActionRejected" xml:space="preserve"><value>已拒绝，未执行</value></data>
+  <data name="ChatActionInserted" xml:space="preserve"><value>已填入编辑器，未执行</value></data>
+  <data name="ChatActionCanceled" xml:space="preserve"><value>已取消，此确认不再有效</value></data>
+  <data name="ChatActionExecuting" xml:space="preserve"><value>正在执行已确认的操作</value></data>
+  <data name="ChatActionCompleted" xml:space="preserve"><value>操作已完成</value></data>
+  <data name="ChatActionNotExecuted" xml:space="preserve"><value>未执行</value></data>
+  <data name="ChatActionUnknown" xml:space="preserve"><value>结果未知，请先核对目标状态再决定下一步</value></data>
+  <data name="ChatReviewOperation" xml:space="preserve"><value>等待你的确认</value></data>
+  <data name="ChatApprovalCode" xml:space="preserve"><value>待确认的完整操作</value></data>
+  <data name="ChatApprovalNotice" xml:space="preserve"><value>确认前不会执行；拒绝后可继续讨论。</value></data>
+  <data name="ChatApprove" xml:space="preserve"><value>审阅并执行</value></data>
+  <data name="ChatReject" xml:space="preserve"><value>拒绝</value></data>
+  <data name="ChatInsertOnly" xml:space="preserve"><value>插入编辑器</value></data>
+  <data name="ChatSqlApprovalTarget" xml:space="preserve"><value>实例：{0} · {1}
+会话：{2} · 执行目标：{3}</value></data>
+  <data name="ChatSshApprovalTarget" xml:space="preserve"><value>SSH 执行目标：{0}</value></data>
+  <data name="ChatSqlActionResult" xml:space="preserve"><value>执行目标：{0}
+SQL：
+{1}
+状态：{2}
+{3}
+{4}</value></data>
+  <data name="ChatActionFailed" xml:space="preserve"><value>操作失败或已停止，请核对工作区结果。</value></data>
+  <data name="ChatApprovalComposerHint" xml:space="preserve"><value>等待确认 · 请先审阅或拒绝操作</value></data>
+  <data name="ChatReviewedOperation" xml:space="preserve"><value>操作审阅记录</value></data>
 </root>

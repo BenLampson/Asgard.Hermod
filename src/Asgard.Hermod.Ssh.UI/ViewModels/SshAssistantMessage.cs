@@ -6,7 +6,7 @@ namespace Asgard.Hermod.Ssh.UI.ViewModels;
 public sealed partial class SshAssistantMessage : AgentDisplayMessage
 {
     /// <summary>区分用户、助手与工具记录，保留连接代次供命令应用时校验。</summary>
-    public SshAssistantMessage(string content, bool user, long revision, bool extractCommands = true, string? roleKey = null, bool isTool = false, bool isError = false, string recoveryPrompt = "", string modelIdentity = "") : base(content, user, isTool, isError, recoveryPrompt, modelIdentity)
+    public SshAssistantMessage(string content, bool user, long revision, bool extractCommands = true, string? roleKey = null, bool isTool = false, bool isError = false, string recoveryPrompt = "", string modelIdentity = "", AgentApprovalRequest? approval = null) : base(content, user, isTool, isError, recoveryPrompt, modelIdentity, approval)
     {
         Role = Text.Get(roleKey ?? (user ? "SshAgentYou" : "SshAgentTitle"));
         Commands = user || !extractCommands ? [] : ShellBlocks().Matches(content).Select(match => match.Groups[1].Value.Trim()).Where(value => value.Length is > 0 and <= 8192).Take(8).Select(value => new SshAssistantCommand(value, revision)).ToArray();

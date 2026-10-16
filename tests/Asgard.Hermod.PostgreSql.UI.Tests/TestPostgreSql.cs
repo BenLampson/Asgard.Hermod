@@ -26,6 +26,7 @@ internal sealed class TestPostgreSql : IPostgreSqlSessionFactory
     internal bool InTransaction;
     internal bool Unknown, CommitBeforeUnknown;
     internal TaskCompletionSource? BlockedQuery;
+    internal bool IgnoreQueryCancellation;
     internal Exception? ListFailure { get; set; }
     internal PostgreSqlResult? ResultOverride { get; set; }
     internal TaskCompletionSource? BlockedOpen;
@@ -68,7 +69,7 @@ internal sealed class TestPostgreSql : IPostgreSqlSessionFactory
         { server.ExplainedSql.Add(sql); if (server.ExplainError is { } error) throw error; return Task.FromResult(new PostgreSqlExecution([server.Result()], [new(1, 0, true)], null, TimeSpan.FromMilliseconds(1), State)); }
         public async Task<PostgreSqlExecution> ExecuteAsync(string sql, string database, CancellationToken token = default)
         {
-            server.ExecutedSql.Add((sql, database)); server.Executions++; if (server.BlockedQuery is { } blocked) await blocked.Task.WaitAsync(token);
+            server.ExecutedSql.Add((sql, database)); server.Executions++; if (server.BlockedQuery is { } blocked) { if (server.IgnoreQueryCancellation) await blocked.Task; else await blocked.Task.WaitAsync(token); }
             return new([server.Result()], [new(1, 0, true)], null, TimeSpan.FromMilliseconds(2), State);
         }
         public async Task<PostgreSqlExecution> ExecuteReadOnlyAsync(string sql, string database, CancellationToken token = default)

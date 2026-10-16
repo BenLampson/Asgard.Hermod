@@ -27,6 +27,7 @@ internal sealed class TestMySql : IMySqlSessionFactory
     internal bool InTransaction;
     internal bool Unknown, CommitBeforeUnknown;
     internal TaskCompletionSource? BlockedQuery;
+    internal bool IgnoreQueryCancellation;
     internal Exception? ListFailure;
     internal MySqlResult? ResultOverride;
     internal TaskCompletionSource? BlockedOpen;
@@ -68,7 +69,7 @@ internal sealed class TestMySql : IMySqlSessionFactory
         public async Task<MySqlExecution> ExecuteAsync(string sql, string database, CancellationToken token = default)
         {
             if (server.ExecuteError is { } error) throw error;
-            server.ExecutedSql.Add((sql, database)); server.Executions++; if (server.BlockedQuery is { } blocked) await blocked.Task.WaitAsync(token);
+            server.ExecutedSql.Add((sql, database)); server.Executions++; if (server.BlockedQuery is { } blocked) { if (server.IgnoreQueryCancellation) await blocked.Task; else await blocked.Task.WaitAsync(token); }
             return new([server.Result()], [new(1, 0, true)], null, server.Elapsed, State);
         }
         public async Task<MySqlExecution> ExecuteReadOnlyAsync(string sql, string database, CancellationToken token = default)

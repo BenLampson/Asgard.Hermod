@@ -13,16 +13,29 @@ public sealed partial class PostgreSqlTabViewModel
     internal object AssistantSessionIdentity => _assistantContextIdentity;
 
     /// <summary>确认完整 SQL 和实际目标，并在草稿确认后再次验证原会话。</summary>
-    public async Task ExecuteAssistantSqlAsync(PostgreSqlAssistantSql suggestion)
+    public async Task ExecuteAssistantSqlAsync(PostgreSqlAssistantSql suggestion, Func<Task<bool>>? confirm = null, CancellationToken cancellationToken = default, Action? dispatched = null)
     {
         ArgumentNullException.ThrowIfNull(suggestion);
         if (!CanRun || _disposed) return;
         bool Matches() => suggestion.ScopeRevision == ScopeRevision && suggestion.Database == Database && ReferenceEquals(suggestion.SessionIdentity, AssistantSessionIdentity);
         if (!Matches()) { Error = Text.Get("PostgreSqlAssistantContextChanged"); Refresh(); return; }
-        if (!await _dialogs.ConfirmAssistantSqlAsync(suggestion.Sql, Database, Instance?.Name ?? "", Name, Endpoint) || !Matches() || _disposed || !CanRun) return;
+        cancellationToken.ThrowIfCancellationRequested();
+        bool approved = confirm is null
+            ? await _dialogs.ConfirmAssistantSqlAsync(suggestion.Sql, Database, Instance?.Name ?? "", Name, Endpoint).WaitAsync(cancellationToken)
+            : await confirm().WaitAsync(cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
+        if (!approved || !Matches() || _disposed || !CanRun) return;
         if (CommitInputRequested?.Invoke() == false || !await ResolveDataDraftAsync()) return;
         if (!Matches()) { Error = Text.Get("PostgreSqlAssistantContextChanged"); Refresh(); return; }
-        await RunAsync(token => Matches() ? ExecuteCoreAsync(suggestion.Sql, token) : Task.CompletedTask);
+        cancellationToken.ThrowIfCancellationRequested();
+        await RunAsync(async token =>
+        {
+            if (!Matches()) return;
+            // 只取消这一轮 RunAsync 的令牌，不能在迟到取消时误伤后来启动的查询。
+            var executionCancellation = _pending;
+            using var registration = cancellationToken.Register(() => executionCancellation?.Cancel());
+            await ExecuteCoreAsync(suggestion.Sql, token, dispatched);
+        });
     }
 
     /// <summary>用户主动应用生成的 SQL，不触发执行或替换整份文稿。</summary>
