@@ -3592,7 +3592,7 @@
   <data name="MySqlAssistantPrivacy" xml:space="preserve"><value>请在系统设置 → AI 助手中配置模型。发送消息会将有限的结构元数据和所选上下文传给你的模型服务。自动模式会执行只读查询并发送结果样本供分析，修改类 SQL 仍需确认。</value></data>
   <data name="MySqlAssistantSuggestion" xml:space="preserve"><value>建议 SQL</value></data>
   <data name="MySqlAssistantInsert" xml:space="preserve"><value>插入编辑器</value></data>
-  <data name="MySqlAssistantExecute" xml:space="preserve"><value>确认并执行</value></data>
+  <data name="MySqlAssistantExecute" xml:space="preserve"><value>审阅执行</value></data>
   <data name="MySqlAssistantExecuteTitle" xml:space="preserve"><value>执行助手 SQL</value></data>
   <data name="MySqlAssistantExecuteHint" xml:space="preserve"><value>是否使用本页签会话在数据库 {0} 执行下方 SQL？请检查语句：写入、函数及事务命令可能更改数据和会话状态。</value></data>
   <data name="MySqlAssistantIncludeSql" xml:space="preserve"><value>附带编辑器 SQL</value></data>
@@ -3849,7 +3849,7 @@
   <data name="PostgreSqlAssistantPrivacy" xml:space="preserve"><value>请在系统设置 → AI 助手中配置模型。发送消息会将有限的结构元数据和所选上下文传给你的模型服务。自动模式会执行只读查询并发送结果样本供分析，修改类 SQL 仍需确认。</value></data>
   <data name="PostgreSqlAssistantSuggestion" xml:space="preserve"><value>建议 SQL</value></data>
   <data name="PostgreSqlAssistantInsert" xml:space="preserve"><value>插入编辑器</value></data>
-  <data name="PostgreSqlAssistantExecute" xml:space="preserve"><value>确认并执行</value></data>
+  <data name="PostgreSqlAssistantExecute" xml:space="preserve"><value>审阅执行</value></data>
   <data name="PostgreSqlAssistantExecuteTitle" xml:space="preserve"><value>执行助手 SQL</value></data>
   <data name="PostgreSqlAssistantExecuteHint" xml:space="preserve"><value>请检查下方 SQL，确认后将在数据库 {0} 中执行。</value></data>
   <data name="PostgreSqlAssistantIncludeSql" xml:space="preserve"><value>附带编辑器 SQL</value></data>
@@ -4969,4 +4969,11 @@ SQL：
   <data name="PostgreSqlForeignTable" xml:space="preserve"><value>外部表</value></data>
   <data name="PostgreSqlRelationView" xml:space="preserve"><value>视图</value></data>
   <data name="PostgreSqlMaterializedView" xml:space="preserve"><value>物化视图</value></data>
+  <data name="ChatSqlExecuted" xml:space="preserve"><value>已执行</value></data>
+  <data name="ChatSqlRunAgain" xml:space="preserve"><value>再次执行</value></data>
+  <data name="ChatSqlExecutionResultLabel" xml:space="preserve"><value>执行结果</value></data>
+  <data name="ChatSqlResultPreview" xml:space="preserve"><value>结果预览（首个结果集，最多 20 行、16 列）</value></data>
+  <data name="ChatSqlExecutionResult" xml:space="preserve"><value>{0}
+{1}
+{2}</value></data>
 </root>

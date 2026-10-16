@@ -27,7 +27,7 @@ public sealed partial class PostgreSqlAssistantViewModel : ObservableObject, IDi
         SendCommand = new AsyncRelayCommand(_ => SendAsync(), _ => !IsBusy && !_disposed && !_tab.IsBusy && !_tab.IsManagingScope && _tab.ConnectionAvailable && !string.IsNullOrWhiteSpace(Prompt));
         CancelCommand = new RelayCommand(_ => _pending?.Cancel(), _ => IsBusy);
         InsertCommand = new RelayCommand(sql => { if (sql is PostgreSqlAssistantSql suggestion) _tab.InsertAssistantSql(suggestion.Sql); }, _ => !_disposed && _tab.IsQuery && !_tab.IsBusy);
-        ExecuteCommand = new AsyncRelayCommand(sql => sql is PostgreSqlAssistantSql suggestion ? ExecuteSuggestionAsync(suggestion) : Task.CompletedTask, _ => !_disposed && _tab.CanRun && !IsBusy);
+        ExecuteCommand = new AsyncRelayCommand(sql => sql is PostgreSqlAssistantSql suggestion ? ExecuteSuggestionAsync(suggestion) : Task.CompletedTask, sql => !_disposed && _tab.CanRun && !IsBusy && (sql is not PostgreSqlAssistantSql suggestion || suggestion.Execution.CanExecute));
         ClearCommand = new AsyncRelayCommand(async _ => { if (await _tab.ConfirmRemovalAsync("DatabaseSessionClearAi")) { _conversation?.Clear(); Messages.Clear(); Error = ""; } }, _ => !IsBusy && !_disposed);
         _tab.PropertyChanged += OnTabChanged;
     }

@@ -1,6 +1,9 @@
+using Asgard.Hermod.Agent;
+using Asgard.Hermod.UI.Models;
+
 namespace Asgard.Hermod.MySql.UI.ViewModels;
 
-/// <summary>用户审阅完整操作后才复用原 Session 执行；确认不跨范围或连接代次。</summary>
+/// <summary>用户在原 SQL 卡片审阅与查看结果；确认不跨范围或连接代次。</summary>
 public sealed partial class MySqlAssistantViewModel
 {
     /// <summary>尚待用户决策的单次操作。</summary>
@@ -8,9 +11,10 @@ public sealed partial class MySqlAssistantViewModel
     private async Task ExecuteSuggestionAsync(MySqlAssistantSql suggestion)
     {
         if (!_useInlineApproval) { await _tab.ExecuteAssistantSqlAsync(suggestion); return; }
-        if (_disposed || IsBusy || !_tab.CanRun) return;
-        using var pending = new CancellationTokenSource(); _pending = pending; IsBusy = true; Error = ""; Refresh();
-        MySqlAssistantMessage? record = null; bool dispatched = false;
+        if (_disposed || IsBusy || !_tab.CanRun || !suggestion.Execution.CanExecute) return;
+        using var pending = new CancellationTokenSource(); _pending = pending; IsBusy = true; Error = "";
+        var execution = suggestion.Execution; execution.Begin(); Refresh();
+        bool dispatched = false, approved = false;
         try
         {
             using var modelTask = ModelSession?.BeginTask(pending.Token, requireModel: false);
@@ -20,25 +24,30 @@ public sealed partial class MySqlAssistantViewModel
                 var approval = new AgentApprovalRequest(Text.Get("ChatReviewOperation"),
                     Text.Format("ChatSqlApprovalTarget", _tab.Instance?.Name ?? "", _tab.Endpoint, _tab.Name, suggestion.Database),
                     suggestion.Sql, taskToken, () => _tab.InsertAssistantSql(suggestion.Sql));
-                PendingApproval = approval; Status = Text.Get("ChatAwaitingApproval");
-                record = new("", false, isTool: true, approval: approval); record.Update("", "ChatAwaitingApproval"); AddMessage(record);
-                return await approval.WaitAsync();
+                PendingApproval = approval; Status = Text.Get("ChatAwaitingApproval"); execution.RequestApproval(approval);
+                approved = await approval.WaitAsync(); return approved;
             }, taskToken, () =>
             {
-                dispatched = true; Status = Text.Get("ChatActionExecuting"); record?.Update(suggestion.Sql, "ChatActionExecuting");
+                dispatched = true; Status = Text.Get("ChatActionExecuting"); execution.Dispatched();
             }).WaitAsync(taskToken);
-            if (record is not null)
-            {
-                string state = !dispatched ? "ChatActionNotExecuted" : taskToken.IsCancellationRequested || _tab.OutcomeUnknown ? "ChatActionUnknown" : _tab.HasError ? "ChatActionFailed" : "ChatActionCompleted";
-                record.Update(Text.Format("ChatSqlActionResult", suggestion.Database, suggestion.Sql, dispatched ? _tab.Status : Text.Get("ChatActionNotExecuted"), dispatched ? _tab.Error : "", dispatched ? _tab.Message : ""), state);
-            }
-            else if (_tab.HasError && !_disposed) AddFailure("", _tab.Error);
+            var state = !dispatched ? AgentSqlExecutionState.NotExecuted
+                : taskToken.IsCancellationRequested || _tab.OutcomeUnknown ? AgentSqlExecutionState.Unknown
+                : _tab.HasError ? AgentSqlExecutionState.Failed : AgentSqlExecutionState.Succeeded;
+            // 只冻结本次成功返回的行集，取消或失败时不能误显示之前的工作区结果。
+            var result = state == AgentSqlExecutionState.Succeeded ? _tab.Results.FirstOrDefault()?.Result : null;
+            string output = result is null ? "" : SqlAgentSample.Create(result.Columns.Select(column => column.Name), result.Rows, result.IsTruncated);
+            string detail = dispatched ? Text.Format("ChatSqlExecutionResult", _tab.Status, _tab.Error, _tab.Message)
+                : execution.Approval is null && _tab.HasError ? _tab.Error
+                : approved ? Text.Get("ChatActionNotExecuted") : execution.Approval?.Status ?? Text.Get("ChatActionNotExecuted");
+            execution.Complete(state, detail, output);
         }
-        catch (OperationCanceledException) { record?.Update(suggestion.Sql, dispatched ? "ChatActionUnknown" : "ChatActionNotExecuted"); }
+        catch (OperationCanceledException)
+        {
+            execution.Complete(dispatched ? AgentSqlExecutionState.Unknown : AgentSqlExecutionState.NotExecuted);
+        }
         catch (Exception error)
         {
-            record?.Update(suggestion.Sql, dispatched ? "ChatActionUnknown" : "ChatActionNotExecuted");
-            if (!_disposed) AddFailure("", Text.Error(error, "AgentRequestFailed"));
+            execution.Complete(dispatched ? AgentSqlExecutionState.Unknown : AgentSqlExecutionState.Failed, Text.Error(error, "AgentRequestFailed"));
         }
         finally { PendingApproval = null; _pending = null; IsBusy = false; Status = ""; Refresh(); }
     }

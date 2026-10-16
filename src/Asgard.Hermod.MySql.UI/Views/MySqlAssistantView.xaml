@@ -19,7 +19,7 @@
    <controls:AgentMessageView Role="{Binding Role}" Body="{Binding Content}" CopyText="{Binding OriginalContent}" ToolEvidence="{Binding QueryEvidence}" Question="{Binding Question}" Feedback="{Binding Feedback, Mode=TwoWay}" TimestampLabel="{Binding TimestampLabel}" IsUser="{Binding IsUser}" IsTool="{Binding IsTool}" Status="{Binding Status}" ActivityTitle="{Binding ActivityTitle}" ActivityIcon="{Binding ActivityIcon}" ActivityTone="{Binding ActivityTone}" IsExpanded="{Binding IsExpanded, Mode=TwoWay}" Approval="{Binding Approval}" IsAwaitingApproval="{Binding IsAwaitingApproval}" IsError="{Binding IsError}" ModelIdentity="{Binding ModelIdentity}" Elapsed="{Binding Elapsed}" RecoveryPrompt="{Binding RecoveryPrompt}" RestoreDraftCommand="{Binding DataContext.RestoreDraftCommand, RelativeSource={RelativeSource AncestorType=controls:AgentPanel}}">
     <controls:AgentMessageView.ActionsContent>
      <ItemsControl ItemsSource="{Binding SqlBlocks}"><ItemsControl.ItemTemplate><DataTemplate>
-      <controls:AgentCodeSuggestion Code="{Binding Sql}" Caption="{loc:Loc MySqlAssistantSuggestion}"
+      <controls:AgentCodeSuggestion Code="{Binding Sql}" Execution="{Binding Execution}" Caption="{loc:Loc MySqlAssistantSuggestion}"
        InsertText="{loc:Loc MySqlAssistantInsert}" ExecuteText="{loc:Loc MySqlAssistantExecute}" CommandParameter="{Binding}"
        InsertCommand="{Binding DataContext.InsertCommand, RelativeSource={RelativeSource AncestorType=controls:AgentPanel}}"
        ExecuteCommand="{Binding DataContext.ExecuteCommand, RelativeSource={RelativeSource AncestorType=controls:AgentPanel}}" />

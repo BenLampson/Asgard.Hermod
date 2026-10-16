@@ -9,6 +9,8 @@ public sealed class PostgreSqlAssistantSql
     public string Sql { get; }
     /// <summary>生成建议时的数据库。</summary>
     public string Database { get; }
+    /// <summary>确认与执行结果归属原 SQL 卡片，归档恢复时保留同一对象。</summary>
+    public AgentSqlSuggestionExecution Execution { get; } = new();
     internal long ScopeRevision { get; }
     internal object? SessionIdentity { get; }
 }

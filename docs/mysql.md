@@ -142,7 +142,7 @@ model context. Users should review editor SQL and shared result samples for
 sensitive content before sending them to their chosen model service.
 
 Generated SQL can be inserted at the editor's caret/selection without execution.
-Review and run adds a single-use inline approval card showing the complete SQL,
+Review and run expands a single-use approval inside the original SQL card, showing
 instance, endpoint, original Session and target database before using the same
 query execution path and session, including existing draft and transaction guards.
 Scope, execution target or physical connection changes invalidate old execution
@@ -210,3 +210,12 @@ after dispatch is reported as an unknown outcome, never as an undo or a retry.
 If a provider ignores cancellation, the Agent stops waiting while the original
 Session continues tracking that operation; late completion cannot rewrite the
 Agent's retained unknown-outcome record.
+
+SQL suggestion approval now expands inside the original suggestion card. The same
+card retains the frozen target, execution status, safe result summary and bounded
+first-result preview. Successful execution is labeled Executed; subsequent dispatch
+uses Run again and always requires a fresh approval. Rejected, canceled, failed and
+unknown outcomes remain distinct. Unknown outcomes cannot be retried from that
+suggestion. Approval and completion do not append chat messages or scroll to the
+conversation end. New chat messages follow the end only while the reader is already
+there; reading earlier messages preserves the viewport.

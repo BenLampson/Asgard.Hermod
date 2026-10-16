@@ -85,10 +85,19 @@ PostgreSQL lexical behavior follows the official
 [SQL lexical structure documentation](https://www.postgresql.org/docs/current/sql-syntax-lexical.html).
 
 
-The production Agent uses a single-use inline confirmation card for explicit SQL
-execution. It shows the full statement and frozen original Session/target, remains
+The production Agent confirms explicit SQL execution inside the original suggestion
+card with a single-use approval. It shows the full statement and frozen original Session/target, remains
 expanded while pending and keeps the task busy. Decline, Insert into editor,
 Stop, source closure or a database/scope change cannot dispatch that operation.
 The original Session validates its revision again after confirmation and owns
 the query cancellation. A stop after dispatch leaves an unknown-outcome record;
 an uncooperative late result cannot replace it or automatically repeat the SQL.
+
+SQL suggestion approval now expands inside the original suggestion card. The same
+card retains the frozen target, execution status, safe result summary and bounded
+first-result preview. Successful execution is labeled Executed; subsequent dispatch
+uses Run again and always requires a fresh approval. Rejected, canceled, failed and
+unknown outcomes remain distinct. Unknown outcomes cannot be retried from that
+suggestion. Approval and completion do not append chat messages or scroll to the
+conversation end. New chat messages follow the end only while the reader is already
+there; reading earlier messages preserves the viewport.

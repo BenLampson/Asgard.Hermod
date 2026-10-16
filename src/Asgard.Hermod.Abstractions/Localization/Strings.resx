@@ -4969,4 +4969,11 @@ Address: {2}</value></data>
   <data name="PostgreSqlForeignTable" xml:space="preserve"><value>Foreign table</value></data>
   <data name="PostgreSqlRelationView" xml:space="preserve"><value>View</value></data>
   <data name="PostgreSqlMaterializedView" xml:space="preserve"><value>Materialized view</value></data>
+  <data name="ChatSqlExecuted" xml:space="preserve"><value>Executed</value></data>
+  <data name="ChatSqlRunAgain" xml:space="preserve"><value>Run again</value></data>
+  <data name="ChatSqlExecutionResultLabel" xml:space="preserve"><value>Execution result</value></data>
+  <data name="ChatSqlResultPreview" xml:space="preserve"><value>Result preview (first result set, up to 20 rows and 16 columns)</value></data>
+  <data name="ChatSqlExecutionResult" xml:space="preserve"><value>{0}
+{1}
+{2}</value></data>
 </root>

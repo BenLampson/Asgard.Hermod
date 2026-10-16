@@ -17,6 +17,8 @@ public partial class AgentCodeSuggestion : UserControl
     public static readonly DependencyProperty ExecuteCommandProperty = DependencyProperty.Register(nameof(ExecuteCommand), typeof(ICommand), typeof(AgentCodeSuggestion));
     /// <summary>保留连接代次、数据库范围等业务证据的原始建议对象。</summary>
     public static readonly DependencyProperty CommandParameterProperty = DependencyProperty.Register(nameof(CommandParameter), typeof(object), typeof(AgentCodeSuggestion));
+    /// <summary>SQL 建议自身的确认和结果；SSH 等其他建议无需提供。</summary>
+    public static readonly DependencyProperty ExecutionProperty = DependencyProperty.Register(nameof(Execution), typeof(AgentSqlSuggestionExecution), typeof(AgentCodeSuggestion));
 
     /// <summary>加载只读代码与动作区。</summary>
     public AgentCodeSuggestion() => InitializeComponent();
@@ -34,4 +36,6 @@ public partial class AgentCodeSuggestion : UserControl
     public ICommand? ExecuteCommand { get => (ICommand?)GetValue(ExecuteCommandProperty); set => SetValue(ExecuteCommandProperty, value); }
     /// <summary>原始建议对象。</summary>
     public object? CommandParameter { get => GetValue(CommandParameterProperty); set => SetValue(CommandParameterProperty, value); }
+    /// <summary>原卡片保留的执行状态。</summary>
+    public AgentSqlSuggestionExecution? Execution { get => (AgentSqlSuggestionExecution?)GetValue(ExecutionProperty); set => SetValue(ExecutionProperty, value); }
 }
