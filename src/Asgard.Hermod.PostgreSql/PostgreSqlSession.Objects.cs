@@ -29,7 +29,7 @@ internal sealed partial class PostgreSqlSession
             PostgreSqlObjectKind.Tables => ("SELECT c.relname, c.relkind::text FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname=@schema AND c.relkind IN ('r','p','f') ORDER BY c.relname", PostgreSqlObjectKind.Table),
             PostgreSqlObjectKind.Views => ("SELECT c.relname, c.relkind::text FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname=@schema AND c.relkind IN ('v','m') ORDER BY c.relname", PostgreSqlObjectKind.View),
             PostgreSqlObjectKind.Procedures or PostgreSqlObjectKind.Functions => ("SELECT quote_ident(p.proname)||'('||oidvectortypes(p.proargtypes)||')', pg_get_function_result(p.oid) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname=@schema AND p.prokind::text=@kind ORDER BY 1", parent.Kind == PostgreSqlObjectKind.Procedures ? PostgreSqlObjectKind.Procedure : PostgreSqlObjectKind.Function),
-            PostgreSqlObjectKind.Columns => ("SELECT a.attname, format_type(a.atttypid,a.atttypmod) FROM pg_attribute a JOIN pg_class c ON c.oid=a.attrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname=@schema AND c.relname=@parent AND a.attnum>0 AND NOT a.attisdropped ORDER BY a.attnum", PostgreSqlObjectKind.Column),
+            PostgreSqlObjectKind.Columns => (PostgreSqlColumnMetadata.Sql, PostgreSqlObjectKind.Column),
             PostgreSqlObjectKind.Indexes => ("SELECT i.relname, pg_get_indexdef(i.oid) FROM pg_index x JOIN pg_class c ON c.oid=x.indrelid JOIN pg_namespace n ON n.oid=c.relnamespace JOIN pg_class i ON i.oid=x.indexrelid WHERE n.nspname=@schema AND c.relname=@parent ORDER BY i.relname", PostgreSqlObjectKind.Index),
             PostgreSqlObjectKind.ForeignKeys => ("SELECT k.conname, pg_get_constraintdef(k.oid,true) FROM pg_constraint k JOIN pg_class c ON c.oid=k.conrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname=@schema AND c.relname=@parent AND k.contype='f' ORDER BY k.conname", PostgreSqlObjectKind.ForeignKey),
             PostgreSqlObjectKind.Triggers => ("SELECT t.tgname, pg_get_triggerdef(t.oid,true) FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname=@schema AND c.relname=@parent AND NOT t.tgisinternal ORDER BY t.tgname", PostgreSqlObjectKind.Trigger),
@@ -49,7 +49,8 @@ internal sealed partial class PostgreSqlSession
             if (items.Count == 200) { more = true; break; }
             string name = reader.GetString(0), detail = reader.IsDBNull(1) ? "" : reader.GetString(1);
             items.Add(new(kind, name, kind == PostgreSqlObjectKind.Database ? name : parent.Database, parent.ParentName, detail,
-                kind == PostgreSqlObjectKind.Schema ? name : parent.Schema));
+                kind == PostgreSqlObjectKind.Schema ? name : parent.Schema)
+            { ColumnDefinition = kind == PostgreSqlObjectKind.Column ? PostgreSqlColumnMetadata.Read(reader) : null });
         }
         return new(items, more);
     }, token);

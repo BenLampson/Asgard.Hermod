@@ -42,7 +42,7 @@ internal sealed partial class MySqlSession
             MySqlObjectKind.Views => ("SELECT TABLE_NAME, '' FROM information_schema.VIEWS WHERE TABLE_SCHEMA=@db ORDER BY TABLE_NAME", MySqlObjectKind.View),
             MySqlObjectKind.Procedures or MySqlObjectKind.Functions => ("SELECT ROUTINE_NAME, DATA_TYPE FROM information_schema.ROUTINES WHERE ROUTINE_SCHEMA=@db AND ROUTINE_TYPE=@type ORDER BY ROUTINE_NAME", parent.Kind == MySqlObjectKind.Procedures ? MySqlObjectKind.Procedure : MySqlObjectKind.Function),
             MySqlObjectKind.Events => ("SELECT EVENT_NAME, STATUS FROM information_schema.EVENTS WHERE EVENT_SCHEMA=@db ORDER BY EVENT_NAME", MySqlObjectKind.Event),
-            MySqlObjectKind.Columns => ("SELECT COLUMN_NAME, COLUMN_TYPE FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=@db AND TABLE_NAME=@parent ORDER BY ORDINAL_POSITION", MySqlObjectKind.Column),
+            MySqlObjectKind.Columns => (MySqlColumnMetadata.Sql, MySqlObjectKind.Column),
             MySqlObjectKind.Indexes => ("SELECT INDEX_NAME, GROUP_CONCAT(COLUMN_NAME ORDER BY SEQ_IN_INDEX SEPARATOR ', ') FROM information_schema.STATISTICS WHERE TABLE_SCHEMA=@db AND TABLE_NAME=@parent GROUP BY INDEX_NAME ORDER BY INDEX_NAME", MySqlObjectKind.Index),
             MySqlObjectKind.ForeignKeys => ("SELECT CONSTRAINT_NAME, GROUP_CONCAT(CONCAT(COLUMN_NAME,' → ',REFERENCED_TABLE_NAME,'.',REFERENCED_COLUMN_NAME) ORDER BY ORDINAL_POSITION SEPARATOR ', ') FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA=@db AND TABLE_NAME=@parent AND REFERENCED_TABLE_NAME IS NOT NULL GROUP BY CONSTRAINT_NAME ORDER BY CONSTRAINT_NAME", MySqlObjectKind.ForeignKey),
             MySqlObjectKind.Triggers => ("SELECT TRIGGER_NAME, CONCAT(ACTION_TIMING,' ',EVENT_MANIPULATION) FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=@db AND EVENT_OBJECT_TABLE=@parent ORDER BY TRIGGER_NAME", MySqlObjectKind.Trigger),
@@ -59,7 +59,7 @@ internal sealed partial class MySqlSession
         {
             if (items.Count == 200) { more = true; break; }
             string name = reader.GetString(0), detail = reader.IsDBNull(1) ? "" : reader.GetString(1);
-            items.Add(new(kind, name, kind == MySqlObjectKind.Database ? name : parent.Database, parent.ParentName, detail));
+            items.Add(new(kind, name, kind == MySqlObjectKind.Database ? name : parent.Database, parent.ParentName, detail) { ColumnDefinition = kind == MySqlObjectKind.Column ? MySqlColumnMetadata.Read(reader) : null });
         }
         return new MySqlObjectPage(items, more);
     }, token);

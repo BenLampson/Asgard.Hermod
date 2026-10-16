@@ -24,6 +24,11 @@ public sealed partial class MySqlTabViewModel
         "parameters" => MySqlObjectKind.Parameter,
         _ => MySqlObjectKind.Column,
     })).ToArray();
+    /// <summary>字段表格使用服务器的独立属性，未知元数据不从详情文字猜测。</summary>
+    public IReadOnlyList<Asgard.Hermod.UI.ViewModels.DatabaseColumnRow> ColumnRows => Structure.Where(item => item.Kind == MySqlObjectKind.Column)
+        .Select(item => new Asgard.Hermod.UI.ViewModels.DatabaseColumnRow(item.Name, item.Detail, item.ColumnDefinition)).ToArray();
+    /// <summary>列分区使用专用只读元数据表，其他分区保留各自原始定义。</summary>
+    public bool IsColumnsSection => StructureSection == "columns";
     /// <summary>DDL 原文单独展示，不改变执行或数据编辑状态。</summary>
     public bool IsDefinitionSelected => StructureSection == "definition";
     /// <summary>只有读取完成且没有错误时，才能声明当前分区为空。</summary>
@@ -44,6 +49,6 @@ public sealed partial class MySqlTabViewModel
     /// <summary>刷新只通知结构展示，不重建数据结果、会话或草稿。</summary>
     private void RefreshStructure()
     {
-        foreach (string property in new[] { nameof(StructureRows), nameof(IsDefinitionSelected), nameof(IsEmptyStructure) }) OnPropertyChanged(property);
+        foreach (string property in new[] { nameof(StructureRows), nameof(IsDefinitionSelected), nameof(IsEmptyStructure), nameof(ColumnRows), nameof(IsColumnsSection) }) OnPropertyChanged(property);
     }
 }

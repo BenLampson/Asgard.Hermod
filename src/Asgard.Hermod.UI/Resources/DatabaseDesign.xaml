@@ -16,6 +16,8 @@
  <SolidColorBrush x:Key="AccentBrush" Color="{DynamicResource DbAccentColor}" />
  <SolidColorBrush x:Key="AccentTextBrush" Color="{DynamicResource DbAccentColor}" />
  <SolidColorBrush x:Key="AccentWeakBrush" Color="{DynamicResource DbSelectedColor}" />
+ <SolidColorBrush x:Key="DatabaseMetadataCodeBrush" Color="{DynamicResource DbMetadataCodeColor}" />
+ <SolidColorBrush x:Key="DatabaseMetadataBackgroundBrush" Color="{DynamicResource DbMetadataBackgroundColor}" />
  <SolidColorBrush x:Key="DatabaseEditorBrush" Color="{DynamicResource DbEditorColor}" />
  <ControlTemplate x:Key="DatabaseToolbarTemplate" TargetType="Button"><Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5"><ContentPresenter Margin="{TemplateBinding Padding}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center"><ContentPresenter.Resources><Style TargetType="TextBlock" BasedOn="{StaticResource ButtonContentText}" /></ContentPresenter.Resources></ContentPresenter></Border></ControlTemplate>
  <Style x:Key="DatabaseToolbarButton" TargetType="Button" BasedOn="{StaticResource StandardButton}">

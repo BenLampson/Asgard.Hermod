@@ -641,3 +641,20 @@ controls can be embedded; model HTML, links and images stay inert.
 creation, so the first real glyph aligns with the message header. Font defaults
 remain in styles, allowing the 15-DIP user, 16-DIP assistant and 12-DIP tool styles
 to apply to the actual document rather than being hidden by constructor values.
+
+Database field structure is separate from the object's display detail string.
+`DatabaseColumnDefinition` retains server ordinal, type, nullable state, key/index
+membership, exact default, comment and generated expression. MySQL reads those
+fields from `information_schema.COLUMNS`; PostgreSQL reads catalog attributes,
+domain nullability, constraints and native default/generated expressions. Neither
+path changes the table editing permission checks. Missing defaults remain
+distinct from an empty string, and generated expressions are not presented as
+PostgreSQL defaults.
+
+`DatabaseColumnReader` presents those facts with the reference's 36-DIP header,
+44-DIP rows and 210/210/110/250-DIP leading columns. Narrow layouts scroll inside
+the grid. Selection and structure/DDL switching use the existing snapshot and
+never issue another request. The selected field card preserves original comments
+and expressions. Missing legacy metadata is explicitly reported rather than
+inferred from display text. Its 13-DIP medium code title uses the bundled genuine
+JetBrains Mono Medium face at the same pinned upstream revision as Regular.

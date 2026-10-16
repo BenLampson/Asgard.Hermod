@@ -4,6 +4,7 @@ namespace Asgard.Hermod.PostgreSql.Tests;
 
 internal sealed class TestPostgreSql : IPostgreSqlSessionFactory
 {
+    internal Func<PostgreSqlObject, PostgreSqlObject[]?>? MetadataOverride;
     internal int DatabasePageSize = int.MaxValue;
     internal string[] DatabaseNames = ["app"];
     internal List<string> MetadataDatabases { get; } = [];
@@ -60,6 +61,7 @@ internal sealed class TestPostgreSql : IPostgreSqlSessionFactory
                 PostgreSqlObjectKind.Columns => Columns.Select(column => new PostgreSqlObject(PostgreSqlObjectKind.Column, column.Name, CurrentDatabase, "users", column.TypeName, parent.Schema)).ToArray(),
                 _ => [],
             };
+            items = server.MetadataOverride?.Invoke(parent) ?? items;
             if (parent.Kind == PostgreSqlObjectKind.Root) return Task.FromResult(new PostgreSqlObjectPage(items.Skip(offset).Take(server.DatabasePageSize).ToArray(), (long)offset + server.DatabasePageSize < items.Length));
             return Task.FromResult(new PostgreSqlObjectPage(items, false));
         }

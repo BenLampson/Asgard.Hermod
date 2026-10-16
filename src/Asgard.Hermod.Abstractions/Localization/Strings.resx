@@ -4571,4 +4571,29 @@ Address: {2}</value></data>
   <data name="ChatQueryCompleted" xml:space="preserve"><value>Read-only query completed</value></data>
   <data name="ChatCommandRunning" xml:space="preserve"><value>Running a command</value></data>
   <data name="ChatCommandCompleted" xml:space="preserve"><value>Command completed</value></data>
+  <data name="DatabaseColumnFields" xml:space="preserve"><value>Fields</value></data>
+  <data name="DatabaseColumnName" xml:space="preserve"><value>Field name</value></data>
+  <data name="DatabaseColumnType" xml:space="preserve"><value>Type</value></data>
+  <data name="DatabaseColumnNullable" xml:space="preserve"><value>Allow NULL</value></data>
+  <data name="DatabaseColumnDefault" xml:space="preserve"><value>Default</value></data>
+  <data name="DatabaseColumnConstraints" xml:space="preserve"><value>Constraints</value></data>
+  <data name="DatabaseColumnAllowsNull" xml:space="preserve"><value>Yes</value></data>
+  <data name="DatabaseColumnRequired" xml:space="preserve"><value>No</value></data>
+  <data name="DatabaseMetadataUnavailable" xml:space="preserve"><value>Not reported</value></data>
+  <data name="DatabaseMetadataEmpty" xml:space="preserve"><value>—</value></data>
+  <data name="DatabaseColumnPrimaryKey" xml:space="preserve"><value>PRIMARY KEY</value></data>
+  <data name="DatabaseColumnUniqueKey" xml:space="preserve"><value>UNIQUE KEY</value></data>
+  <data name="DatabaseColumnIndex" xml:space="preserve"><value>INDEX</value></data>
+  <data name="DatabaseColumnEmptyString" xml:space="preserve"><value>''</value></data>
+  <data name="DatabaseColumnDetail" xml:space="preserve"><value>{0}  ·  {1}  ·  Default: {2}</value></data>
+  <data name="DatabaseColumnSelect" xml:space="preserve"><value>Select a field</value></data>
+  <data name="DatabaseColumnServerDefinition" xml:space="preserve"><value>Server field metadata</value></data>
+  <data name="DatabaseColumnOriginalHint" xml:space="preserve"><value>Data types and defaults are shown as reported by the server.</value></data>
+  <data name="DatabaseColumnDetailWithExtra" xml:space="preserve"><value>{0}  ·  {1}  ·  Default: {2}  ·  {3}</value></data>
+  <data name="DatabaseColumnGeneratedDetail" xml:space="preserve"><value>{0}  ·  {1}  ·  {2}
+{3}</value></data>
+  <data name="DatabaseColumnSqlNull" xml:space="preserve"><value>NULL</value></data>
+  <data name="DatabaseColumnSqlNotNull" xml:space="preserve"><value>NOT NULL</value></data>
+  <data name="DatabaseColumnDefinitionWithDefault" xml:space="preserve"><value>{0}  ·  {1}  ·  DEFAULT {2}</value></data>
+  <data name="DatabaseColumnDefinitionWithDefaultExtra" xml:space="preserve"><value>{0}  ·  {1}  ·  DEFAULT {2}  ·  {3}</value></data>
 </root>

@@ -30,10 +30,10 @@ The static TTF files are bundled unchanged.
 JetBrains Mono
 Repository: https://github.com/JetBrains/JetBrainsMono
 Source revision: 19371302b95d218af43299bce79ddbddd0bc364d
-Original file: fonts/ttf/JetBrainsMono-Regular.ttf
-Bundled file: Assets/Fonts/JetBrainsMono-Regular.ttf
+Original files: fonts/ttf/JetBrainsMono-Regular.ttf and fonts/ttf/JetBrainsMono-Medium.ttf
+Bundled files: Assets/Fonts/JetBrainsMono-Regular.ttf and Assets/Fonts/JetBrainsMono-Medium.ttf
 License: Assets/Licenses/JetBrainsMono.OFL.txt (SIL Open Font License 1.1)
-The static TTF file is bundled unchanged.
+The static TTF files are bundled unchanged.
 
 Noto Sans SC
 Source: Windows font NotoSansSC-VF.ttf (Noto Sans SC, Adobe/Google, SIL OFL 1.1)

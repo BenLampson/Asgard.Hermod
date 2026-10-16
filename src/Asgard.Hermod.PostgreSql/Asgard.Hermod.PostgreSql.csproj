@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Asgard.Hermod.PostgreSql.Tests" />
     <PackageReference Include="Npgsql" Version="10.0.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.12" />
     <ProjectReference Include="../Asgard.Hermod.Abstractions/Asgard.Hermod.Abstractions.csproj" />
