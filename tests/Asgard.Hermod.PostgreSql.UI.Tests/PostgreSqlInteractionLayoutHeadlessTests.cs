@@ -92,6 +92,40 @@ public sealed class PostgreSqlInteractionLayoutHeadlessTests(WpfTestFixture fixt
             Assert.True(args.Handled);
         }
     });
+    [Theory]
+    [InlineData("zh-Hans", UiTheme.Light, 1362)]
+    [InlineData("en", UiTheme.Dark, 800)]
+    public Task EstimatePlan_UsesSharedReaderWithoutReplacingQueryAndRetainsEvidenceAfterFailure(string language, UiTheme theme, double width) => fixture.RunOffscreenAsync(async () =>
+    {
+        Text.SetApplicationCulture(CultureInfo.GetCultureInfo(language));
+        try
+        {
+            new ThemeService(Application.Current.Resources).SetTheme(theme);
+            var server = new TestPostgreSql();
+            await using var query = new PostgreSqlTabViewModel("Query", "app", PostgreSqlObjectKind.Root, server, TestPostgreSql.Connection, new TestPostgreSqlDialogs());
+            query.Sql = "SELECT * FROM model_config WHERE enabled ORDER BY updated_at DESC";
+            await query.ExecuteScopeAsync("", 0, true); var result = query.SelectedResult; string elapsed = query.QuerySummary;
+            const string raw = "[{\"Plan\":{\"Node Type\":\"Sort\",\"Startup Cost\":1.240,\"Total Cost\":1.252,\"Plan Rows\":5,\"Plan Width\":80,\"Sort Key\":[\"updated_at DESC\"],\"Plans\":[{\"Node Type\":\"Seq Scan\",\"Relation Name\":\"model_config\",\"Filter\":\"enabled\",\"Startup Cost\":0.00,\"Total Cost\":1.20,\"Plan Rows\":5,\"Plan Width\":80}]}}]";
+            server.ResultOverride = new(1, 1, [new(0, "QUERY PLAN", "json", typeof(string), false)], [[raw]]);
+            await query.ExplainScopeAsync("", 0); var plan = Assert.IsType<Asgard.Hermod.UI.ViewModels.DatabaseExecutionPlanViewModel>(query.Plan);
+            Assert.Equal("plan", query.OutputView); Assert.Same(result, query.SelectedResult); Assert.Equal(elapsed, query.QuerySummary);
+            Assert.Same(plan.Snapshot, query.SelectedTrace!.Plan); Assert.Equal(query.Sql, plan.Snapshot.Sql); Assert.Equal("app", plan.Snapshot.Database);
+            Assert.Equal("1.252", plan.VisibleNodes[0].Cost); Assert.Equal("enabled", plan.VisibleNodes[1].Node.RawFields["Filter"]);
+            using var bindings = new WpfBindingTrace(); var view = new PostgreSqlTabView { DataContext = query }; var root = Root(view); Layout(root, width);
+            await WpfTestFixture.DrainDispatcherAsync(); Layout(root, width);
+            var workspace = (Asgard.Hermod.UI.Controls.DatabaseSqlWorkspace)view.FindName("SqlWorkspace");
+            var reader = (Asgard.Hermod.UI.Controls.DatabasePlanReader)workspace.FindName("PlanReader");
+            Assert.Equal(Visibility.Visible, reader.Visibility); Assert.Same(plan, reader.DataContext); Assert.Equal(width >= 1000, plan.IsDetailsVisible);
+            int calls = server.ExplainedSql.Count; plan.ViewMode = "raw"; Layout(root, width);
+            Assert.Equal(raw, ((TextBox)reader.FindName("RawEditor")).Text); plan.ViewMode = "structured"; Layout(root, width);
+            Assert.Equal(calls, server.ExplainedSql.Count); Assert.Empty(bindings.Messages); Capture(root, $"postgresql-plan-{language}-{theme}-{width}");
+            server.ExplainError = new InvalidOperationException("sensitive server response"); await query.ExplainScopeAsync("", 0);
+            Assert.Same(plan, query.Plan); Assert.True(plan.IsStale); Assert.Equal(raw, plan.RawText); Assert.True(query.HasError);
+            Assert.DoesNotContain("sensitive", query.Error); Assert.Same(result, query.SelectedResult); Assert.Equal(elapsed, query.QuerySummary);
+        }
+        finally { Text.SetApplicationCulture(null); }
+    });
+
     private static Border Root(UIElement view)
     { var root = new Border { Child = view }; root.Resources.MergedDictionaries.Add(Application.Current.Resources); root.SetResourceReference(Border.BackgroundProperty, "SurfaceBrush"); return root; }
     private static void Layout(FrameworkElement root, double width)

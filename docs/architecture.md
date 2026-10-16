@@ -508,3 +508,23 @@ never silently switch the target. PostgreSQL still opens one physical database p
 connection and does not emulate cross-database SQL. Model metadata uses bounded,
 same-instance reads; scope revision changes invalidate execution suggestions and
 exclude old-scope conversation from subsequent model requests.
+
+## Execution plan reading
+
+MySQL and PostgreSQL parse already returned plan evidence in their protocol modules.
+The shared immutable `DatabaseExecutionPlan` keeps the complete original text, SQL,
+database and client request duration. Traditional MySQL EXPLAIN remains a field table;
+only native ANALYZE indentation or PostgreSQL JSON parent-child relationships create
+a tree. Unsupported formats and ambiguous duplicate JSON fields fall back to raw text.
+Parsers retain server numeric precision and distinguish missing values from zero.
+Estimated costs are never labeled as elapsed milliseconds. Actual per-loop inclusive
+times are not added or converted into exclusive timings.
+
+`DatabasePlanReader` presents that snapshot in the existing SQL output slot, using
+the database design's 40-pixel toolbar, 68-pixel rows and 296-pixel details panel.
+Switching modes, expanding nodes, searching, locating evidence and opening details
+never issue database requests. Narrow layouts initially collapse details. Raw copy
+and export always use the full original text. Running a plan does not replace query
+results or their elapsed time; a subsequent failed request retains the previous plan
+with an explicit previous-result label. Offscreen WPF tests measure actual geometry
+and bindings without constructing desktop windows.

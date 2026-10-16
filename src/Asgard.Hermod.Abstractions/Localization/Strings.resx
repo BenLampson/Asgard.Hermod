@@ -4270,4 +4270,92 @@ Result sample:
   <data name="DatabaseClipboardFailed" xml:space="preserve"><value>Unable to copy the output. Try again.</value></data>
   <data name="LocalTerminalSubtitle" xml:space="preserve"><value>Local · {0}</value></data>
   <data name="WindowsPowerShell" xml:space="preserve"><value>Windows PowerShell</value></data>
+  <data name="PlanTreeView" xml:space="preserve"><value>Execution tree</value></data>
+  <data name="PlanFieldsView" xml:space="preserve"><value>Plan table</value></data>
+  <data name="PlanRawView" xml:space="preserve"><value>Raw</value></data>
+  <data name="PlanActualFact" xml:space="preserve"><value>Actual analysis · SELECT executed</value></data>
+  <data name="PlanEstimateFact" xml:space="preserve"><value>Estimated plan · SQL not executed</value></data>
+  <data name="PlanPreviousFact" xml:space="preserve"><value>Previous result · {0}</value></data>
+  <data name="PlanActualRequestTime" xml:space="preserve"><value>Actual analysis · request {0:0.###} ms</value></data>
+  <data name="PlanEstimatedRequestTime" xml:space="preserve"><value>Estimated plan · request {0:0.###} ms</value></data>
+  <data name="PlanStructureUnavailable" xml:space="preserve"><value>Structured view unavailable; original output retained</value></data>
+  <data name="PlanNodeCount" xml:space="preserve"><value>{0} nodes</value></data>
+  <data name="PlanFieldRows" xml:space="preserve"><value>EXPLAIN fields · rows: {0}</value></data>
+  <data name="PlanActualRows" xml:space="preserve"><value>Actual rows</value></data>
+  <data name="PlanEstimatedRows" xml:space="preserve"><value>Estimated rows</value></data>
+  <data name="PlanActualTimeHeading" xml:space="preserve"><value>First / finish · ms</value></data>
+  <data name="PlanCostHeading" xml:space="preserve"><value>Total cost</value></data>
+  <data name="PlanLoops" xml:space="preserve"><value>Loops</value></data>
+  <data name="PlanWidth" xml:space="preserve"><value>Width · B</value></data>
+  <data name="PlanAccessObject" xml:space="preserve"><value>Access object</value></data>
+  <data name="PlanFirstTime" xml:space="preserve"><value>First row time</value></data>
+  <data name="PlanFinishTime" xml:space="preserve"><value>Completion time</value></data>
+  <data name="PlanStartupCost" xml:space="preserve"><value>Startup cost</value></data>
+  <data name="PlanTotalCost" xml:space="preserve"><value>Total cost</value></data>
+  <data name="PlanTimeNotice" xml:space="preserve"><value>Times include child nodes and are per-loop averages for repeated execution.</value></data>
+  <data name="PlanCostNotice" xml:space="preserve"><value>Costs are optimizer units, not elapsed time.</value></data>
+  <data name="PlanExplainFieldNotice" xml:space="preserve"><value>Server fields only; the original SQL was not executed.</value></data>
+  <data name="PlanNumberPair" xml:space="preserve"><value>{0} / {1}</value></data>
+  <data name="PlanMilliseconds" xml:space="preserve"><value>{0} ms</value></data>
+  <data name="PlanMissingMetric" xml:space="preserve"><value>—</value></data>
+  <data name="PlanSqlNull" xml:space="preserve"><value>NULL</value></data>
+  <data name="PlanNeverExecuted" xml:space="preserve"><value>Not executed</value></data>
+  <data name="PlanQueryBlock" xml:space="preserve"><value>Query block {0} · {1}</value></data>
+  <data name="PlanAccessType" xml:space="preserve"><value>Access type</value></data>
+  <data name="PlanPossibleKeys" xml:space="preserve"><value>Possible indexes</value></data>
+  <data name="PlanUsedKey" xml:space="preserve"><value>Used index</value></data>
+  <data name="PlanExtra" xml:space="preserve"><value>Extra</value></data>
+  <data name="PlanFieldHeading" xml:space="preserve"><value>Table and execution information</value></data>
+  <data name="PlanStepHeading" xml:space="preserve"><value>Execution step</value></data>
+  <data name="PlanNodeDetails" xml:space="preserve"><value>Node details</value></data>
+  <data name="PlanShowDetails" xml:space="preserve"><value>Details</value></data>
+  <data name="PlanCloseDetails" xml:space="preserve"><value>Close node details</value></data>
+  <data name="PlanRawFields" xml:space="preserve"><value>Original fields</value></data>
+  <data name="PlanLocateRaw" xml:space="preserve"><value>View original node</value></data>
+  <data name="PlanCopyRaw" xml:space="preserve"><value>Copy raw</value></data>
+  <data name="PlanMore" xml:space="preserve"><value>More</value></data>
+  <data name="PlanExpandAll" xml:space="preserve"><value>Expand all</value></data>
+  <data name="PlanCollapseAll" xml:space="preserve"><value>Collapse all</value></data>
+  <data name="PlanExportRaw" xml:space="preserve"><value>Export original plan</value></data>
+  <data name="PlanShowSource" xml:space="preserve"><value>View SQL and target</value></data>
+  <data name="PlanSourceContext" xml:space="preserve"><value>Database: {0}
+
+{1}</value></data>
+  <data name="PlanRawSearch" xml:space="preserve"><value>Search original plan</value></data>
+  <data name="PlanSearchNext" xml:space="preserve"><value>Next match</value></data>
+  <data name="PlanSearchPrevious" xml:space="preserve"><value>Previous match</value></data>
+  <data name="PlanCloseSearch" xml:space="preserve"><value>Close plan search</value></data>
+  <data name="PlanRawWrap" xml:space="preserve"><value>Wrap text</value></data>
+  <data name="PlanExportFailed" xml:space="preserve"><value>Unable to export the original plan.</value></data>
+  <data name="PlanRawFileFilter" xml:space="preserve"><value>Text files (*.txt)|*.txt|JSON files (*.json)|*.json|All files (*.*)|*.*</value></data>
+  <data name="PlanNoPlan" xml:space="preserve"><value>No execution plan yet</value></data>
+  <data name="PlanNoPlanHint" xml:space="preserve"><value>Select one SQL statement, then use Analyze to read its execution plan.</value></data>
+  <data name="PlanScanFilterSortFlow" xml:space="preserve"><value>Per loop: scanned {0} rows → filtered to {1} → sorted output {2}</value></data>
+  <data name="PlanOperatorSort" xml:space="preserve"><value>Sort</value></data>
+  <data name="PlanOperatorFilter" xml:space="preserve"><value>Filter</value></data>
+  <data name="PlanOperatorTableScan" xml:space="preserve"><value>Table scan</value></data>
+  <data name="PlanOperatorIndexScan" xml:space="preserve"><value>Index scan</value></data>
+  <data name="PlanOperatorIndexRangeScan" xml:space="preserve"><value>Index range scan</value></data>
+  <data name="PlanOperatorIndexLookup" xml:space="preserve"><value>Index lookup</value></data>
+  <data name="PlanOperatorNestedLoop" xml:space="preserve"><value>Nested loop</value></data>
+  <data name="PlanOperatorHashJoin" xml:space="preserve"><value>Hash join</value></data>
+  <data name="PlanOperatorMergeJoin" xml:space="preserve"><value>Merge join</value></data>
+  <data name="PlanOperatorAggregate" xml:space="preserve"><value>Aggregate</value></data>
+  <data name="PlanOperatorLimit" xml:space="preserve"><value>Limit</value></data>
+  <data name="PlanOperatorMaterialize" xml:space="preserve"><value>Materialize</value></data>
+  <data name="PlanOperatorGather" xml:space="preserve"><value>Gather</value></data>
+  <data name="PlanOperatorAppend" xml:space="preserve"><value>Append</value></data>
+  <data name="PlanOperatorBitmapScan" xml:space="preserve"><value>Bitmap scan</value></data>
+  <data name="PlanDefaultExportName" xml:space="preserve"><value>execution-plan.txt</value></data>
+  <data name="PlanFailedFact" xml:space="preserve"><value>Plan request failed · original output retained</value></data>
+  <data name="PlanTreeFooterHint" xml:space="preserve"><value>Select a node for details · original plan retained</value></data>
+  <data name="PlanFieldsFooterHint" xml:space="preserve"><value>EXPLAIN fields · select a row for all fields</value></data>
+  <data name="PlanRawFooterHint" xml:space="preserve"><value>Original server output retained</value></data>
+  <data name="PlanReturnedRows" xml:space="preserve"><value>Returned rows</value></data>
+  <data name="PlanLoopCount" xml:space="preserve"><value>Loop count</value></data>
+  <data name="PlanOperatorSequentialScan" xml:space="preserve"><value>Sequential scan</value></data>
+  <data name="PlanQueryBlockCount" xml:space="preserve"><value>Query blocks: {0} · MySQL EXPLAIN</value></data>
+  <data name="PlanNodeOutputSummary" xml:space="preserve"><value>{0} nodes · output {1} rows</value></data>
+  <data name="PlanSortExpression" xml:space="preserve"><value>Sort expression</value></data>
+  <data name="PlanFilterCondition" xml:space="preserve"><value>Filter condition</value></data>
 </root>

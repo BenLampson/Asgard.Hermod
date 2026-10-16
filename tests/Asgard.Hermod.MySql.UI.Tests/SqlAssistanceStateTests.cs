@@ -86,4 +86,17 @@ public sealed class SqlAssistanceStateTests(WpfTestFixture fixture)
     });
 
     private static MySqlTabViewModel Query(TestMySql server, TestMySqlDialogs dialogs) => new("Query", "app", MySqlObjectKind.Root, server, TestMySql.Connection, dialogs);
+
+    [Fact]
+    public Task FailedPlan_KeepsPreviousSnapshotAndMarksItAsPreviousResult() => fixture.RunOffscreenAsync(async () =>
+    {
+        var server = new TestMySql(); await using var tab = Query(server, new());
+        await tab.ExecuteAsync("SELECT 1"); var result = tab.SelectedResult;
+        await tab.ExplainScopeAsync("SELECT 1", 0, false); var previous = tab.Plan; string raw = tab.PlanRawText;
+        server.ExecuteError = new IOException("password=private-plan-test");
+        await tab.ExplainScopeAsync("SELECT 2", 0, false);
+        Assert.Same(previous, tab.Plan); Assert.True(previous!.IsStale); Assert.Equal(raw, tab.PlanRawText);
+        Assert.Same(result, tab.SelectedResult); Assert.Equal("messages", tab.OutputView); Assert.DoesNotContain("private-plan-test", tab.Error);
+        Assert.False(tab.ExecutionTraces[0].Succeeded); Assert.Equal("SELECT 2", tab.ExecutionTraces[0].Sql);
+    });
 }

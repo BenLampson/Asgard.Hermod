@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Text;
 
 namespace Asgard.Hermod.MySql.UI.ViewModels;
 
@@ -33,8 +32,11 @@ public sealed partial class MySqlTabViewModel
             if (analyze && !await _dialogs.ConfirmAnalyzeAsync(statements[0].Sql, target, Instance?.Name ?? "", Scope?.SessionName ?? Name, Endpoint)) return;
             token.ThrowIfCancellationRequested();
             if (target != Database || revision != ScopeRevision || !ConnectionAvailable) return;
-            var result = await ExecuteTrackedAsync(session, command, analyze ? "analyze" : "explain", token, statements[0].Sql);
-            PlanRawText = PlanText(result);
+            if (Plan is not null) Plan.IsStale = true;
+            MySqlExecution result;
+            try { result = await ExecuteTrackedAsync(session, command, analyze ? "analyze" : "explain", token, statements[0].Sql); }
+            catch { OutputView = "messages"; throw; }
+            if (result.Failure is null && ExecutionTraces.FirstOrDefault()?.Plan is { } snapshotPlan) Plan = new(snapshotPlan);
             Error = result.Failure is null ? "" : Text.Error(result.Failure, "MySqlCommandFailed");
             Message = Text.Get(analyze ? "MySqlAnalyzeResultHint" : "MySqlExplainResultHint");
             Status = Text.Format("MySqlExecutionStatus", result.Outcomes.Count, result.Elapsed.TotalMilliseconds);
@@ -44,13 +46,13 @@ public sealed partial class MySqlTabViewModel
     private async Task<MySqlExecution> ExecuteTrackedAsync(IMySqlSession session, string sql, string kind, CancellationToken token, string? sourceSql = null)
     {
         var started = DateTimeOffset.Now; var watch = Stopwatch.StartNew(); MySqlExecution? execution = null;
-        string detail = "";
+        string detail = ""; string target = Database; DatabaseExecutionPlan? plan = null;
         _executed = true;
         try
         {
-            execution = await session.ExecuteAsync(sql, Database, token);
+            execution = await session.ExecuteAsync(sql, target, token);
             detail = execution.Failure is null ? "" : Text.Error(execution.Failure, "MySqlCommandFailed");
-            if (kind != "query") detail = PlanText(execution) + (detail.Length == 0 ? "" : Environment.NewLine + detail);
+            if (kind != "query") { plan = MySqlPlanReader.Read(execution, sourceSql ?? sql, target, kind == "analyze"); detail = plan.RawText + (detail.Length == 0 ? "" : Environment.NewLine + detail); }
             return execution;
         }
         catch (OperationCanceledException) when (token.IsCancellationRequested) { detail = Text.Get("MySqlQueryCancelled"); throw; }
@@ -58,23 +60,11 @@ public sealed partial class MySqlTabViewModel
         finally
         {
             if (Scope is null) Database = session.CurrentDatabase;
-            var trace = new MySqlExecutionTrace(started, kind, Database, sourceSql ?? sql, execution?.Elapsed ?? watch.Elapsed,
-                execution?.Results.Sum(result => result.Rows.Count) ?? 0, execution is { Failure: null }, detail);
+            var trace = new MySqlExecutionTrace(started, kind, target, sourceSql ?? sql, execution?.Elapsed ?? watch.Elapsed,
+                execution?.Results.Sum(result => result.Rows.Count) ?? 0, execution is { Failure: null }, detail)
+            { Plan = plan };
             ExecutionTraces.Insert(0, trace); while (ExecutionTraces.Count > 50) ExecutionTraces.RemoveAt(ExecutionTraces.Count - 1);
             SelectedTrace = trace; OnPropertyChanged(nameof(HasExecutionTraces));
         }
-    }
-    private static string PlanText(MySqlExecution execution)
-    {
-        var result = new StringBuilder();
-        foreach (var grid in execution.Results)
-        {
-            result.AppendLine(string.Join("\t", grid.Columns.Select(column => column.Name)));
-            foreach (var row in grid.Rows)
-            {
-                result.AppendLine(string.Join("\t", row.Select(value => Convert.ToString(value, CultureInfo.InvariantCulture))));
-            }
-        }
-        return result.ToString();
     }
 }

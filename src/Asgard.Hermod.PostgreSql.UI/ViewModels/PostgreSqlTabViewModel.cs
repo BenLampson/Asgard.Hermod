@@ -104,7 +104,7 @@ public sealed partial class PostgreSqlTabViewModel : ObservableObject, IAsyncDis
     /// <summary>每个语句和结果集独立保留的网格。</summary>
     public ObservableCollection<PostgreSqlGridViewModel> Results { get; } = [];
     /// <summary>活动结果集，切换保留列宽和滚动。</summary>
-    public PostgreSqlGridViewModel? SelectedResult { get; set { if (SetProperty(ref field, value)) { OnPropertyChanged(nameof(EditHint)); OnPropertyChanged(nameof(OutputSummary)); OnPropertyChanged(nameof(QuerySummary)); OnPropertyChanged(nameof(HasResult)); OnPropertyChanged(nameof(CanShareResults)); OnPropertyChanged(nameof(HasDataRows)); OnPropertyChanged(nameof(CanEditRows)); } } }
+    public PostgreSqlGridViewModel? SelectedResult { get; set { if (SetProperty(ref field, value)) { OnPropertyChanged(nameof(EditHint)); OnPropertyChanged(nameof(OutputSummary)); OnPropertyChanged(nameof(QuerySummary)); OnPropertyChanged(nameof(OutputRequestSummary)); OnPropertyChanged(nameof(OutputFooterText)); OnPropertyChanged(nameof(HasResult)); OnPropertyChanged(nameof(CanShareResults)); OnPropertyChanged(nameof(HasDataRows)); OnPropertyChanged(nameof(CanEditRows)); } } }
     /// <summary>当前是否有结果可展示。</summary>
     public bool HasResult => SelectedResult is not null;
     /// <summary>当前结果实际包含数据行，区别于尚未查询和已查询的空结果。</summary>
@@ -219,7 +219,7 @@ public sealed partial class PostgreSqlTabViewModel : ObservableObject, IAsyncDis
         _resultScopeRevision = ScopeRevision;
         foreach (var grid in Results) grid.DraftChanged -= DraftChanged; Results.Clear();
         foreach (var result in results) { var grid = new PostgreSqlGridViewModel(result); grid.DraftChanged += DraftChanged; Results.Add(grid); }
-        SelectedResult = Results.FirstOrDefault(); OnPropertyChanged(nameof(QuerySummary)); DraftChanged();
+        SelectedResult = Results.FirstOrDefault(); OnPropertyChanged(nameof(QuerySummary)); OnPropertyChanged(nameof(OutputRequestSummary)); OnPropertyChanged(nameof(OutputFooterText)); DraftChanged();
     }
     private void DraftChanged()
     {

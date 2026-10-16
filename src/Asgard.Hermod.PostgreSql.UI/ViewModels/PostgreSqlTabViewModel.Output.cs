@@ -7,7 +7,26 @@ namespace Asgard.Hermod.PostgreSql.UI.ViewModels;
 public sealed partial class PostgreSqlTabViewModel
 {
     /// <summary>服务器的完整计划原文，读取和切换视图不会重新执行。</summary>
-    public string PlanRawText { get; private set => SetProperty(ref field, value); } = "";
+    public string PlanRawText => Plan?.RawText ?? "";
+    /// <summary>当前计划的独立阅读状态，失败请求不替换上次快照。</summary>
+    public DatabaseExecutionPlanViewModel? Plan
+    {
+        get; private set
+        {
+            if (!SetProperty(ref field, value)) return;
+            foreach (string name in new[] { nameof(HasPlan), nameof(PlanRawText), nameof(OutputRequestSummary), nameof(OutputFooterText), nameof(OutputFooterHint) }) OnPropertyChanged(name);
+        }
+    }
+    /// <summary>计划为空时显示本地化入口说明。</summary>
+    public bool HasPlan => Plan is not null;
+    /// <summary>请求耗时与当前输出相符，不套用另一个结果的耗时。</summary>
+    public string OutputRequestSummary => IsPlanOutput ? Plan?.RequestTime ?? "" : IsResultsOutput ? QuerySummary : "";
+    /// <summary>计划保留底部阅读提示，但不重复结果操作。</summary>
+    public bool IsOutputFooterVisible => IsResultsOutput || IsPlanOutput;
+    /// <summary>互斥输出的底部说明。</summary>
+    public string OutputFooterText => IsPlanOutput ? Plan?.FooterHint ?? Text.Get("PlanNoPlan") : OutputSummary;
+    /// <summary>状态说明与当前输出匹配。</summary>
+    public string OutputFooterHint => IsPlanOutput ? Plan?.MetricNotice ?? Text.Get("PlanNoPlanHint") : EditHint;
     /// <summary>本地化的四个输出入口，行为只比较稳定 ID。</summary>
     public IReadOnlyList<DatabaseOutputOption> OutputViews { get; } = [
         new("results", Text.Get("DatabaseOutputResults"), "table-2"), new("messages", Text.Get("DatabaseOutputMessages"), "message-square"),
@@ -18,7 +37,7 @@ public sealed partial class PostgreSqlTabViewModel
         get; set
         {
             if (value is not ("results" or "messages" or "plan" or "history") || !SetProperty(ref field, value)) return;
-            foreach (string name in new[] { nameof(IsResultsOutput), nameof(IsMessagesOutput), nameof(IsPlanOutput), nameof(IsHistoryOutput), nameof(IsHistoryOpen) }) OnPropertyChanged(name);
+            foreach (string name in new[] { nameof(IsResultsOutput), nameof(IsMessagesOutput), nameof(IsPlanOutput), nameof(IsHistoryOutput), nameof(IsHistoryOpen), nameof(IsOutputFooterVisible), nameof(OutputRequestSummary), nameof(OutputFooterText), nameof(OutputFooterHint) }) OnPropertyChanged(name);
         }
     } = "results";
     /// <summary>显示结果。</summary>

@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Text;
 
 namespace Asgard.Hermod.PostgreSql.UI.ViewModels;
 
@@ -29,8 +28,11 @@ public sealed partial class PostgreSqlTabViewModel
                 sql = current?.Sql ?? "";
             }
             if (string.IsNullOrWhiteSpace(sql)) return;
-            var execution = await ExecuteTrackedAsync(session, sql, true, token);
-            PlanRawText = PlanText(execution);
+            if (Plan is not null) Plan.IsStale = true;
+            PostgreSqlExecution execution;
+            try { execution = await ExecuteTrackedAsync(session, sql, true, token); }
+            catch { OutputView = "messages"; throw; }
+            if (execution.Failure is null && ExecutionTraces.FirstOrDefault()?.Plan is { } snapshotPlan) Plan = new(snapshotPlan);
             Error = execution.Failure is null ? "" : Text.Error(execution.Failure, "PostgreSqlCommandFailed");
             Message = execution.Failure is null ? Text.Get("PostgreSqlExplainComplete") : "";
             Status = Text.Format("PostgreSqlExecutionStatus", execution.Outcomes.Count, execution.Elapsed.TotalMilliseconds);
@@ -40,34 +42,25 @@ public sealed partial class PostgreSqlTabViewModel
 
     private async Task<PostgreSqlExecution> ExecuteTrackedAsync(IPostgreSqlSession session, string sql, bool explain, CancellationToken token)
     {
-        var started = DateTimeOffset.UtcNow; var watch = Stopwatch.StartNew(); PostgreSqlExecution? execution = null; string detail = "";
+        var started = DateTimeOffset.UtcNow; var watch = Stopwatch.StartNew(); PostgreSqlExecution? execution = null; string detail = ""; string target = Database; DatabaseExecutionPlan? plan = null;
         _executed = true;
         try
         {
-            execution = explain ? await session.ExplainAsync(sql, Database, token) : await session.ExecuteAsync(sql, Database, token);
+            execution = explain ? await session.ExplainAsync(sql, target, token) : await session.ExecuteAsync(sql, target, token);
             detail = execution.Failure is null ? "" : Text.Error(execution.Failure, "PostgreSqlCommandFailed");
-            if (explain) detail = PlanText(execution) + (detail.Length == 0 ? "" : Environment.NewLine + detail);
+            if (explain) { plan = PostgreSqlPlanReader.Read(execution, sql, target); detail = plan.RawText + (detail.Length == 0 ? "" : Environment.NewLine + detail); }
             return execution;
         }
         catch (OperationCanceledException) when (token.IsCancellationRequested) { detail = Text.Get("PostgreSqlQueryCancelled"); throw; }
         catch (Exception error) { detail = Text.Error(error, "PostgreSqlCommandFailed"); throw; }
         finally
         {
-            var trace = new PostgreSqlExecutionTrace(started, explain ? "explain" : "query", Database, sql, execution?.Elapsed ?? watch.Elapsed,
-                execution?.Results.Sum(result => result.Rows.Count) ?? 0, execution is { Failure: null }, detail);
+            var trace = new PostgreSqlExecutionTrace(started, explain ? "explain" : "query", target, sql, execution?.Elapsed ?? watch.Elapsed,
+                execution?.Results.Sum(result => result.Rows.Count) ?? 0, execution is { Failure: null }, detail)
+            { Plan = plan };
             ExecutionTraces.Insert(0, trace); while (ExecutionTraces.Count > 50) ExecutionTraces.RemoveAt(ExecutionTraces.Count - 1);
             SelectedTrace = trace; OnPropertyChanged(nameof(HasExecutionTraces));
         }
     }
 
-    private static string PlanText(PostgreSqlExecution execution)
-    {
-        var text = new StringBuilder();
-        foreach (var result in execution.Results)
-            foreach (var row in result.Rows)
-            {
-                text.AppendLine(string.Join("\t", row.Select(value => Convert.ToString(value, CultureInfo.InvariantCulture))));
-            }
-        return text.ToString();
-    }
 }

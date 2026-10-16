@@ -5,6 +5,7 @@ internal static partial class IconCatalog
 {
     private static void AddDatabaseDesignIcons()
     {
+        Geometries.TryAdd("list-filter", Create("M3 6h18", "M7 12h10", "M10 18h4"));
         Geometries.TryAdd("message-square", Create("M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"));
         Geometries.TryAdd("git-branch", Create("M15 6a9 9 0 0 0-9 9V3", "M15 6a3 3 0 1 0 6 0a3 3 0 1 0 -6 0", "M3 18a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"));
         Geometries.TryAdd("history", Create("M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", "M3 3v5h5", "M12 7v5l4 2"));

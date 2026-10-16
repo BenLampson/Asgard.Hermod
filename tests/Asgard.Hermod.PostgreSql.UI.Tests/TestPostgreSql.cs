@@ -16,6 +16,7 @@ internal sealed class TestPostgreSql : IPostgreSqlSessionFactory
     internal List<(string Sql, string Database)> ExecutedSql { get; } = [];
     internal List<(string Sql, string Database)> ReadOnlyQueries { get; } = [];
     internal Exception? ReadOnlyError { get; set; }
+    internal Exception? ExplainError { get; set; }
     internal List<(string Database, string Schema, string Table)> SchemaReads { get; } = [];
     internal List<string> ExplainedSql { get; } = [];
     internal PostgreSqlTable Table { get; } = new("app", "users", Columns, "r");
@@ -64,7 +65,7 @@ internal sealed class TestPostgreSql : IPostgreSqlSessionFactory
         public Task<PostgreSqlTable> DescribeAsync(string database, string table, CancellationToken token = default) => Task.FromResult(server.Table);
         public Task<PostgreSqlTable> DescribeAsync(string database, string schema, string table, CancellationToken token = default) => Task.FromResult(server.Table with { Database = database, Schema = schema });
         public Task<PostgreSqlExecution> ExplainAsync(string sql, string database, CancellationToken token = default)
-        { server.ExplainedSql.Add(sql); return Task.FromResult(new PostgreSqlExecution([server.Result()], [new(1, 0, true)], null, TimeSpan.FromMilliseconds(1), State)); }
+        { server.ExplainedSql.Add(sql); if (server.ExplainError is { } error) throw error; return Task.FromResult(new PostgreSqlExecution([server.Result()], [new(1, 0, true)], null, TimeSpan.FromMilliseconds(1), State)); }
         public async Task<PostgreSqlExecution> ExecuteAsync(string sql, string database, CancellationToken token = default)
         {
             server.ExecutedSql.Add((sql, database)); server.Executions++; if (server.BlockedQuery is { } blocked) await blocked.Task.WaitAsync(token);

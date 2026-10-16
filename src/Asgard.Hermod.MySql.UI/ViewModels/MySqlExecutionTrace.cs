@@ -3,6 +3,8 @@ namespace Asgard.Hermod.MySql.UI.ViewModels;
 /// <summary>查询页签内存中的有界执行追踪，不持久化 SQL、计划或查询结果。</summary>
 public sealed record MySqlExecutionTrace(DateTimeOffset Started, string Kind, string Database, string Sql, TimeSpan Elapsed, int Rows, bool Succeeded, string Detail)
 {
+    /// <summary>该次请求的完整计划快照，选择历史不重新查询。</summary>
+    public DatabaseExecutionPlan? Plan { get; init; }
     /// <summary>时间按区域格式展示，操作类型和结果说明使用共享资源。</summary>
     public string Summary => Text.Format("MySqlTraceSummary", Started.ToLocalTime().ToString("T", CultureInfo.CurrentCulture),
         Text.Get(Kind switch { "explain" => "MySqlExplain", "analyze" => "MySqlAnalyze", _ => "MySqlTraceQuery" }), Elapsed.TotalMilliseconds, Rows,

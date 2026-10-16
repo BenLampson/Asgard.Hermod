@@ -4270,4 +4270,92 @@ Session：{2}
   <data name="DatabaseClipboardFailed" xml:space="preserve"><value>无法复制输出，请重试。</value></data>
   <data name="LocalTerminalSubtitle" xml:space="preserve"><value>本地 · {0}</value></data>
   <data name="WindowsPowerShell" xml:space="preserve"><value>Windows PowerShell</value></data>
+  <data name="PlanTreeView" xml:space="preserve"><value>执行树</value></data>
+  <data name="PlanFieldsView" xml:space="preserve"><value>计划表</value></data>
+  <data name="PlanRawView" xml:space="preserve"><value>原始</value></data>
+  <data name="PlanActualFact" xml:space="preserve"><value>实际分析 · 已执行 SELECT</value></data>
+  <data name="PlanEstimateFact" xml:space="preserve"><value>估算计划 · 未执行原 SQL</value></data>
+  <data name="PlanPreviousFact" xml:space="preserve"><value>上次结果 · {0}</value></data>
+  <data name="PlanActualRequestTime" xml:space="preserve"><value>实际分析 · 请求 {0:0.###} ms</value></data>
+  <data name="PlanEstimatedRequestTime" xml:space="preserve"><value>估算计划 · 请求 {0:0.###} ms</value></data>
+  <data name="PlanStructureUnavailable" xml:space="preserve"><value>结构化不可用，已保留原始输出</value></data>
+  <data name="PlanNodeCount" xml:space="preserve"><value>{0} 个节点</value></data>
+  <data name="PlanFieldRows" xml:space="preserve"><value>{0} 行 · EXPLAIN 字段</value></data>
+  <data name="PlanActualRows" xml:space="preserve"><value>实际行数</value></data>
+  <data name="PlanEstimatedRows" xml:space="preserve"><value>估算行数</value></data>
+  <data name="PlanActualTimeHeading" xml:space="preserve"><value>首行 / 完成 · ms</value></data>
+  <data name="PlanCostHeading" xml:space="preserve"><value>总成本</value></data>
+  <data name="PlanLoops" xml:space="preserve"><value>循环</value></data>
+  <data name="PlanWidth" xml:space="preserve"><value>宽度 B</value></data>
+  <data name="PlanAccessObject" xml:space="preserve"><value>访问对象</value></data>
+  <data name="PlanFirstTime" xml:space="preserve"><value>首行时间</value></data>
+  <data name="PlanFinishTime" xml:space="preserve"><value>完成时间</value></data>
+  <data name="PlanStartupCost" xml:space="preserve"><value>启动成本</value></data>
+  <data name="PlanTotalCost" xml:space="preserve"><value>总成本</value></data>
+  <data name="PlanTimeNotice" xml:space="preserve"><value>时间包含子节点；多循环时为每轮平均。</value></data>
+  <data name="PlanCostNotice" xml:space="preserve"><value>成本是优化器单位，不是耗时。</value></data>
+  <data name="PlanExplainFieldNotice" xml:space="preserve"><value>仅展示服务器字段；未执行原 SQL。</value></data>
+  <data name="PlanNumberPair" xml:space="preserve"><value>{0} / {1}</value></data>
+  <data name="PlanMilliseconds" xml:space="preserve"><value>{0} ms</value></data>
+  <data name="PlanMissingMetric" xml:space="preserve"><value>—</value></data>
+  <data name="PlanSqlNull" xml:space="preserve"><value>NULL</value></data>
+  <data name="PlanNeverExecuted" xml:space="preserve"><value>未执行</value></data>
+  <data name="PlanQueryBlock" xml:space="preserve"><value>查询块 {0} · {1}</value></data>
+  <data name="PlanAccessType" xml:space="preserve"><value>访问方式</value></data>
+  <data name="PlanPossibleKeys" xml:space="preserve"><value>可能的索引</value></data>
+  <data name="PlanUsedKey" xml:space="preserve"><value>已用索引</value></data>
+  <data name="PlanExtra" xml:space="preserve"><value>附加信息</value></data>
+  <data name="PlanFieldHeading" xml:space="preserve"><value>表与执行信息</value></data>
+  <data name="PlanStepHeading" xml:space="preserve"><value>执行步骤</value></data>
+  <data name="PlanNodeDetails" xml:space="preserve"><value>节点详情</value></data>
+  <data name="PlanShowDetails" xml:space="preserve"><value>详情</value></data>
+  <data name="PlanCloseDetails" xml:space="preserve"><value>收起节点详情</value></data>
+  <data name="PlanRawFields" xml:space="preserve"><value>原始字段</value></data>
+  <data name="PlanLocateRaw" xml:space="preserve"><value>查看原始节点</value></data>
+  <data name="PlanCopyRaw" xml:space="preserve"><value>复制原始</value></data>
+  <data name="PlanMore" xml:space="preserve"><value>更多</value></data>
+  <data name="PlanExpandAll" xml:space="preserve"><value>展开全部</value></data>
+  <data name="PlanCollapseAll" xml:space="preserve"><value>收起全部</value></data>
+  <data name="PlanExportRaw" xml:space="preserve"><value>导出原始计划</value></data>
+  <data name="PlanShowSource" xml:space="preserve"><value>查看 SQL 与目标</value></data>
+  <data name="PlanSourceContext" xml:space="preserve"><value>数据库：{0}
+
+{1}</value></data>
+  <data name="PlanRawSearch" xml:space="preserve"><value>搜索原始计划</value></data>
+  <data name="PlanSearchNext" xml:space="preserve"><value>下一个匹配</value></data>
+  <data name="PlanSearchPrevious" xml:space="preserve"><value>上一个匹配</value></data>
+  <data name="PlanCloseSearch" xml:space="preserve"><value>关闭计划搜索</value></data>
+  <data name="PlanRawWrap" xml:space="preserve"><value>自动换行</value></data>
+  <data name="PlanExportFailed" xml:space="preserve"><value>无法导出原始计划。</value></data>
+  <data name="PlanRawFileFilter" xml:space="preserve"><value>文本文件 (*.txt)|*.txt|JSON 文件 (*.json)|*.json|所有文件 (*.*)|*.*</value></data>
+  <data name="PlanNoPlan" xml:space="preserve"><value>尚无执行计划</value></data>
+  <data name="PlanNoPlanHint" xml:space="preserve"><value>选择一条 SQL，然后通过「分析」读取执行计划。</value></data>
+  <data name="PlanScanFilterSortFlow" xml:space="preserve"><value>每轮扫描 {0} 行 → 过滤后 {1} 行 → 排序输出 {2} 行</value></data>
+  <data name="PlanOperatorSort" xml:space="preserve"><value>排序</value></data>
+  <data name="PlanOperatorFilter" xml:space="preserve"><value>过滤</value></data>
+  <data name="PlanOperatorTableScan" xml:space="preserve"><value>全表扫描</value></data>
+  <data name="PlanOperatorIndexScan" xml:space="preserve"><value>索引扫描</value></data>
+  <data name="PlanOperatorIndexRangeScan" xml:space="preserve"><value>索引范围扫描</value></data>
+  <data name="PlanOperatorIndexLookup" xml:space="preserve"><value>索引查找</value></data>
+  <data name="PlanOperatorNestedLoop" xml:space="preserve"><value>嵌套循环</value></data>
+  <data name="PlanOperatorHashJoin" xml:space="preserve"><value>哈希连接</value></data>
+  <data name="PlanOperatorMergeJoin" xml:space="preserve"><value>合并连接</value></data>
+  <data name="PlanOperatorAggregate" xml:space="preserve"><value>聚合</value></data>
+  <data name="PlanOperatorLimit" xml:space="preserve"><value>限制行数</value></data>
+  <data name="PlanOperatorMaterialize" xml:space="preserve"><value>物化</value></data>
+  <data name="PlanOperatorGather" xml:space="preserve"><value>并行收集</value></data>
+  <data name="PlanOperatorAppend" xml:space="preserve"><value>追加子计划</value></data>
+  <data name="PlanOperatorBitmapScan" xml:space="preserve"><value>位图扫描</value></data>
+  <data name="PlanDefaultExportName" xml:space="preserve"><value>execution-plan.txt</value></data>
+  <data name="PlanFailedFact" xml:space="preserve"><value>计划请求失败 · 已保留原始输出</value></data>
+  <data name="PlanTreeFooterHint" xml:space="preserve"><value>点击节点查看详情 · 原始计划始终保留</value></data>
+  <data name="PlanFieldsFooterHint" xml:space="preserve"><value>表格来自 EXPLAIN · 点击行查看完整字段</value></data>
+  <data name="PlanRawFooterHint" xml:space="preserve"><value>已保留完整服务器原始输出</value></data>
+  <data name="PlanReturnedRows" xml:space="preserve"><value>返回行数</value></data>
+  <data name="PlanLoopCount" xml:space="preserve"><value>循环次数</value></data>
+  <data name="PlanOperatorSequentialScan" xml:space="preserve"><value>顺序扫描</value></data>
+  <data name="PlanQueryBlockCount" xml:space="preserve"><value>{0} 个查询块 · MySQL EXPLAIN</value></data>
+  <data name="PlanNodeOutputSummary" xml:space="preserve"><value>{0} 个节点 · 输出 {1} 行</value></data>
+  <data name="PlanSortExpression" xml:space="preserve"><value>排序表达式</value></data>
+  <data name="PlanFilterCondition" xml:space="preserve"><value>过滤条件</value></data>
 </root>

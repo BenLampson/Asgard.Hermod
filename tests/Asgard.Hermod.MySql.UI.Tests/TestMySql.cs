@@ -19,6 +19,7 @@ internal sealed class TestMySql : IMySqlSessionFactory
     internal List<(string Sql, string Database)> ExecutedSql { get; } = [];
     internal List<(string Sql, string Database)> ReadOnlyQueries { get; } = [];
     internal Exception? ReadOnlyError { get; set; }
+    internal Exception? ExecuteError { get; set; }
     internal MySqlTable Table { get; } = new("app", "users", Columns, "InnoDB");
     internal Dictionary<string, object?> Values { get; } = new() { ["id"] = 1, ["name"] = "Alice", ["profile"] = "{\"ok\":true}", ["payload"] = new byte[] { 0, 255 } };
     internal int Writes, Executions, Opens, Disposals;
@@ -66,6 +67,7 @@ internal sealed class TestMySql : IMySqlSessionFactory
         public Task<MySqlTable> DescribeAsync(string database, string table, CancellationToken token = default) => Task.FromResult(server.Table);
         public async Task<MySqlExecution> ExecuteAsync(string sql, string database, CancellationToken token = default)
         {
+            if (server.ExecuteError is { } error) throw error;
             server.ExecutedSql.Add((sql, database)); server.Executions++; if (server.BlockedQuery is { } blocked) await blocked.Task.WaitAsync(token);
             return new([server.Result()], [new(1, 0, true)], null, server.Elapsed, State);
         }

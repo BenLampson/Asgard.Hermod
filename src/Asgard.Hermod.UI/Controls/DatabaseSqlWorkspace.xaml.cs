@@ -5,14 +5,10 @@ public partial class DatabaseSqlWorkspace : UserControl
 {
     /// <summary>模块拥有的真实结果视图。</summary>
     public static readonly DependencyProperty ResultContentProperty = DependencyProperty.Register(nameof(ResultContent), typeof(object), typeof(DatabaseSqlWorkspace));
-    /// <summary>保留原始数据的执行计划阅读器。</summary>
-    public static readonly DependencyProperty PlanContentProperty = DependencyProperty.Register(nameof(PlanContent), typeof(object), typeof(DatabaseSqlWorkspace));
     /// <summary>PostgreSQL 当前仅提供估算，不能显示实际执行入口。</summary>
     public static readonly DependencyProperty SupportsActualAnalysisProperty = DependencyProperty.Register(nameof(SupportsActualAnalysis), typeof(bool), typeof(DatabaseSqlWorkspace), new PropertyMetadata(true));
     /// <summary>当前结果。</summary>
     public object? ResultContent { get => GetValue(ResultContentProperty); set => SetValue(ResultContentProperty, value); }
-    /// <summary>当前计划。</summary>
-    public object? PlanContent { get => GetValue(PlanContentProperty); set => SetValue(PlanContentProperty, value); }
     /// <summary>是否支持实际分析。</summary>
     public bool SupportsActualAnalysis { get => (bool)GetValue(SupportsActualAnalysisProperty); set => SetValue(SupportsActualAnalysisProperty, value); }
     /// <summary>真实 SQL 编辑器，提供选区与光标给协议模块。</summary>

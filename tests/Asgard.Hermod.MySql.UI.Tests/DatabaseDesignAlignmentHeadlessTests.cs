@@ -16,20 +16,7 @@ public sealed class DatabaseDesignAlignmentHeadlessTests(WpfTestFixture fixture)
         try
         {
             new ThemeService(Application.Current.Resources).SetTheme(UiTheme.Light);
-            var config = new Configuration(); var server = new TestMySql
-            {
-                DatabaseNames = [Database],
-                ResultOverride = ExampleResult(),
-                Version = "8.4",
-                Elapsed = TimeSpan.FromMilliseconds(25.7),
-                MetadataOverride = parent => parent.Kind switch
-                {
-                    MySqlObjectKind.Database => [new(MySqlObjectKind.Tables, "", Database), new(MySqlObjectKind.Views, "", Database),
-                        new(MySqlObjectKind.Procedures, "", Database), new(MySqlObjectKind.Functions, "", Database), new(MySqlObjectKind.Events, "", Database)],
-                    MySqlObjectKind.Tables => new[] { "audit_record", "event_log", "model_config", "user_account", "user_session" }.Select(name => new MySqlObject(MySqlObjectKind.Table, name, Database)).ToArray(),
-                    _ => null
-                }
-            };
+            var config = new Configuration(); var server = CreateServer();
             await using var page = new MySqlWorkspaceViewModel(new(Configuration.Instance), config, server, config, new TestMySqlDialogs(), Database);
             await page.InitializeAsync(); var script = page.ActiveSession!;
             page.NewQuery(Database); page.ActiveTab = script;
@@ -66,7 +53,6 @@ public sealed class DatabaseDesignAlignmentHeadlessTests(WpfTestFixture fixture)
             Assert.Equal(new Point(238, 164), sql.Editor.TranslatePoint(new(), root));
             Assert.Equal(268, sql.Editor.ActualHeight);
             Assert.Equal(232, ((Border)view.FindName("TreePanel")).ActualWidth);
-            Assert.Empty(WindowTestVisuals.Descendants<Expander>(sql));
             var run = Assert.IsType<Button>(sql.FindName("RunButton"));
             Assert.Equal(Color.FromRgb(0x30, 0x6B, 0xEA), Assert.IsType<SolidColorBrush>(run.Background).Color);
             var closeIcons = WindowTestVisuals.Descendants<Button>(view).Where(button => button.Visibility == Visibility.Visible && button.ActualWidth == 12 && button.Content is IconView { Kind: "x" }).ToArray();
@@ -105,7 +91,70 @@ public sealed class DatabaseDesignAlignmentHeadlessTests(WpfTestFixture fixture)
         finally { Text.SetApplicationCulture(null); }
     });
 
+    [Theory]
+    [InlineData("zh-Hans", UiTheme.Light, true)]
+    [InlineData("en", UiTheme.Dark, false)]
+    public Task PlanReader_ReusesQueryOutputSlotAndPreservesResultSnapshot(string language, UiTheme theme, bool analyze) => fixture.RunOffscreenAsync(async () =>
+    {
+        Text.SetApplicationCulture(CultureInfo.GetCultureInfo(language));
+        try
+        {
+            new ThemeService(Application.Current.Resources).SetTheme(theme);
+            var config = new Configuration(); var server = CreateServer(); var dialogs = new TestMySqlDialogs { AnalyzeAllowed = true };
+            await using var page = new MySqlWorkspaceViewModel(new(Configuration.Instance), config, server, config, dialogs, Database);
+            await page.InitializeAsync(); var script = page.ActiveSession!; page.NewQuery(Database); page.ActiveTab = script;
+            var database = Assert.Single(page.SessionTreeItems); await page.Tree!.LoadAsync(database); database.IsExpanded = true;
+            var tables = database.Children.Single(node => node.Object.Kind == MySqlObjectKind.Tables); await page.Tree.LoadAsync(tables); tables.IsExpanded = true;
+            await page.OpenObjectAsync(tables.Children.Single(node => node.Object.Name == "model_config").Object); page.ActiveTab = script;
+            script.Sql = "SELECT id, name, provider, model, enabled, updated_at\r\nFROM model_config\r\nWHERE enabled = 1\r\nORDER BY updated_at DESC;";
+            await script.ExecuteAsync(script.Sql); var result = script.SelectedResult; string queryTime = script.QuerySummary;
+            const string raw = "-> Sort: model_config.updated_at DESC\n   (actual time=0.221..0.241 rows=5 loops=1)\n   -> Filter: (model_config.enabled = 1)\n      (actual time=0.061..0.118 rows=5 loops=1)\n      -> Table scan on model_config\n         (actual time=0.052..0.083 rows=20 loops=1)";
+            server.ResultOverride = analyze ? new(1, 1, [new(0, "EXPLAIN", "TEXT", typeof(string), false)], [[raw]]) :
+                new(1, 1, new[] { "id", "select_type", "table", "type", "possible_keys", "key", "rows", "Extra" }.Select((name, index) => new MySqlColumn(index, name, "VARCHAR", typeof(string), true)).ToArray(),
+                    [["1", "SIMPLE", "model_config", "ALL", "idx_enabled_updated", null, "100", "Using where; Using filesort"]]);
+            server.Elapsed = TimeSpan.FromMilliseconds(26); await script.ExplainScopeAsync("", 0, analyze);
+            Assert.Equal("plan", script.OutputView); Assert.NotNull(script.Plan); Assert.Same(result, script.SelectedResult); Assert.Equal(queryTime, script.QuerySummary);
+            Assert.Equal(script.Plan.Snapshot, script.SelectedTrace!.Plan);
+            if (analyze) script.Plan.SelectedNode = script.Plan.VisibleNodes[^1];
+            using var bindings = new WpfBindingTrace(); var view = new MySqlWorkspaceView { DataContext = page };
+            var layout = (WorkspacePageLayout)view.FindName("WorkspaceLayout"); var header = Assert.IsType<WorkspaceHeader>(layout.Toolbar);
+            layout.Toolbar = null; header.DataContext = page; header.ShowWindowControls = true;
+            var root = new DockPanel(); root.Resources.MergedDictionaries.Add(Application.Current.Resources); DockPanel.SetDock(header, Dock.Top); root.Children.Add(header); root.Children.Add(view);
+            root.Measure(new(1600, 1000)); root.Arrange(new(0, 0, 1600, 1000)); root.UpdateLayout(); await WpfTestFixture.DrainDispatcherAsync(); root.UpdateLayout();
+            var tab = Assert.IsType<MySqlTabView>(((ContentControl)view.FindName("TabHost")).Content);
+            var sql = Assert.IsType<DatabaseSqlWorkspace>(tab.FindName("SqlWorkspace")); var reader = Assert.IsType<DatabasePlanReader>(sql.FindName("PlanReader"));
+            Assert.Equal(Visibility.Visible, reader.Visibility); Assert.Equal(new Point(238, 478), reader.TranslatePoint(new(), root)); Assert.Equal(462, reader.ActualHeight);
+            Assert.Same(script.Plan, reader.DataContext); Assert.Equal(296, ((Border)reader.FindName("DetailsPanel")).ActualWidth);
+            int calls = server.Executions; script.Plan.ViewMode = "raw"; root.UpdateLayout();
+            Assert.Equal(script.PlanRawText, ((TextBox)reader.FindName("RawEditor")).Text); script.Plan.ViewMode = "structured"; root.UpdateLayout(); Assert.Equal(calls, server.Executions);
+            var unexpected = bindings.Messages.Where(message => !message.StartsWith("System.Windows.Data Error: 4 :", StringComparison.Ordinal) && !message.Contains("AncestorType='System.Windows.Window'", StringComparison.Ordinal)).ToArray();
+            Assert.True(unexpected.Length == 0, string.Join(Environment.NewLine, unexpected));
+            string? directory = Environment.GetEnvironmentVariable("HERMOD_OFFSCREEN_OUTPUT");
+            if (directory is not null)
+            {
+                Directory.CreateDirectory(directory); var bitmap = new RenderTargetBitmap(1600, 1000, 96, 96, PixelFormats.Pbgra32); bitmap.Render(root);
+                var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap)); using var stream = File.Create(Path.Combine(directory, $"mysql-plan-{language}-{theme}-{analyze}-1600x1000.png")); encoder.Save(stream);
+            }
+            Assert.Null(Window.GetWindow(root)); Assert.Null(PresentationSource.FromVisual(root));
+        }
+        finally { Text.SetApplicationCulture(null); }
+    });
+
     private const string Database = "ben-aggregation-platform";
+    private static TestMySql CreateServer() => new()
+    {
+        DatabaseNames = [Database],
+        ResultOverride = ExampleResult(),
+        Version = "8.4",
+        Elapsed = TimeSpan.FromMilliseconds(25.7),
+        MetadataOverride = parent => parent.Kind switch
+        {
+            MySqlObjectKind.Database => [new(MySqlObjectKind.Tables, "", Database), new(MySqlObjectKind.Views, "", Database),
+                new(MySqlObjectKind.Procedures, "", Database), new(MySqlObjectKind.Functions, "", Database), new(MySqlObjectKind.Events, "", Database)],
+            MySqlObjectKind.Tables => new[] { "audit_record", "event_log", "model_config", "user_account", "user_session" }.Select(name => new MySqlObject(MySqlObjectKind.Table, name, Database)).ToArray(),
+            _ => null
+        }
+    };
     private static MySqlResult ExampleResult()
     {
         MySqlColumn[] columns = [new(0, "id", "BIGINT", typeof(long), false), new(1, "name", "VARCHAR", typeof(string), false),
