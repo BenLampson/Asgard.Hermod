@@ -128,11 +128,17 @@ public partial class AgentPanel : UserControl
         DetachActivityMessages();
     }
 
-    /// <summary>新消息到达只滚动当前会话，不打开隐藏面板或改变键盘焦点。</summary>
+    /// <summary>只有原本跟随末尾阅读时才追随新消息；阅读历史或操作旧卡片时保留位置。</summary>
     private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs args)
     {
+        double offset = ConversationScroll.VerticalOffset;
+        bool follow = PresentationMessages.Count == 0 || ConversationScroll.ScrollableHeight - offset <= 24;
         ProjectMessages();
-        if (IsVisible) Dispatcher.BeginInvoke(() => { if (IsLoaded && IsVisible) ConversationScroll.ScrollToEnd(); });
+        if (follow && IsVisible) Dispatcher.BeginInvoke(() =>
+        {
+            // 排队期间用户已经滚动时，不能用旧判断抢回阅读位置。
+            if (IsLoaded && IsVisible && Math.Abs(ConversationScroll.VerticalOffset - offset) < 1) ConversationScroll.ScrollToEnd();
+        });
     }
 
     /// <summary>转发收起请求，真正的窗口和业务生命周期由模块处理。</summary>

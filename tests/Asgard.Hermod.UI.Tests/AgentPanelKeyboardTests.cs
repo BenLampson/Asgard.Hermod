@@ -46,6 +46,9 @@ public sealed class AgentPanelKeyboardTests(WpfTestFixture fixture)
             Assert.Equal("draft", model.Prompt);
             await PressEnterAsync(window, ModifierKeys.Control);
             Assert.Equal(2, model.SendCount);
+            // 上下文默认折叠，先通过真实入口展开再验证其中控件的键盘边界。
+            ((System.Windows.Controls.Primitives.ToggleButton)panel.FindName("ContextToggle")).IsChecked = true;
+            await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.True(WindowTestVisuals.Descendants<CheckBox>(panel).First().Focus());
             await PressEnterAsync(window, ModifierKeys.None);
             Assert.Equal(2, model.SendCount);
@@ -70,6 +73,18 @@ public sealed class AgentPanelKeyboardTests(WpfTestFixture fixture)
             Assert.True(scroll.ScrollableHeight > 0);
             Assert.True(scroll.VerticalOffset > 0);
             Assert.True(prompt.IsKeyboardFocusWithin);
+            // 阅读旧消息时新回复不能抢回底部；回到末尾后继续跟随。
+            scroll.ScrollToVerticalOffset(40);
+            await WindowTestVisuals.UpdateLayoutAsync(window);
+            double readingOffset = scroll.VerticalOffset;
+            model.Messages.Add(Message(kind, "reply while reading history"));
+            await WindowTestVisuals.UpdateLayoutAsync(window);
+            Assert.Equal(readingOffset, scroll.VerticalOffset, 1);
+            scroll.ScrollToEnd();
+            await WindowTestVisuals.UpdateLayoutAsync(window);
+            model.Messages.Add(Message(kind, "reply while following the end"));
+            await WindowTestVisuals.UpdateLayoutAsync(window);
+            Assert.Equal(scroll.ScrollableHeight, scroll.VerticalOffset, 1);
             view.Visibility = Visibility.Collapsed;
             model.Messages.Add(Message(kind, "hidden reply"));
             await WindowTestVisuals.UpdateLayoutAsync(window);
