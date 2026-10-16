@@ -66,7 +66,7 @@ public partial class AgentMessageView : UserControl
     public static readonly DependencyProperty ActionsContentProperty = DependencyProperty.Register(nameof(ActionsContent), typeof(object), typeof(AgentMessageView));
 
     /// <summary>加载统一消息排版与主题资源。</summary>
-    public AgentMessageView() => InitializeComponent();
+    public AgentMessageView() { InitializeComponent(); AgentMessageScope.SetOwner(this, this); }
     /// <summary>角色显示文本。</summary>
     public string Role { get => (string)GetValue(RoleProperty); set => SetValue(RoleProperty, value); }
     /// <summary>消息原文。</summary>

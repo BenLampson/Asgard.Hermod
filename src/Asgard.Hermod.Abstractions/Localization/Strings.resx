@@ -4637,4 +4637,8 @@ Address: {2}</value></data>
   <data name="DatabaseMessagePreservedFooter" xml:space="preserve"><value>Editor and draft preserved</value></data>
   <data name="DatabaseMessagePositionSafety" xml:space="preserve"><value>Locations apply only to the unchanged document that was executed. Editing the document disables old locations.</value></data>
   <data name="DatabaseMessageErrorCount" xml:space="preserve"><value>{0:N0} error(s)</value></data>
+  <data name="ChatGroupedQueries" xml:space="preserve"><value>Queried {0:N0} database items</value></data>
+  <data name="ChatGroupedActions" xml:space="preserve"><value>Performed {0:N0} tool operations</value></data>
+  <data name="ChatGroupedQueriesRunning" xml:space="preserve"><value>Querying {0:N0} database items</value></data>
+  <data name="ChatGroupedActionsRunning" xml:space="preserve"><value>Processing {0:N0} tool operations</value></data>
 </root>

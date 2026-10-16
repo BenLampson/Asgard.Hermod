@@ -34,7 +34,7 @@ public partial class AgentPanel : UserControl
     /// <summary>模块保留所有权的消息集合。</summary>
     public static readonly DependencyProperty MessagesProperty = DependencyProperty.Register(nameof(Messages), typeof(IEnumerable), typeof(AgentPanel), new PropertyMetadata(null, OnMessagesChanged));
     /// <summary>模块声明消息和业务建议的绑定，外观由共享消息控件提供。</summary>
-    public static readonly DependencyProperty MessageTemplateProperty = DependencyProperty.Register(nameof(MessageTemplate), typeof(DataTemplate), typeof(AgentPanel));
+    public static readonly DependencyProperty MessageTemplateProperty = DependencyProperty.Register(nameof(MessageTemplate), typeof(DataTemplate), typeof(AgentPanel), new PropertyMetadata(null, (sender, args) => AgentConversationScope.SetMessageTemplate(sender, args.NewValue as DataTemplate)));
     /// <summary>模块上下文选项插槽。</summary>
     public static readonly DependencyProperty ContextContentProperty = DependencyProperty.Register(nameof(ContextContent), typeof(object), typeof(AgentPanel));
     /// <summary>输入区底部的模块选项，例如 SQL 的手动和自动执行模式。</summary>
@@ -108,7 +108,7 @@ public partial class AgentPanel : UserControl
     private static void OnMessagesChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
     {
         var panel = (AgentPanel)sender;
-        if (panel.IsLoaded) panel.ObserveMessages();
+        panel.ObserveMessages();
     }
 
     /// <summary>只观察展示生命周期内的当前消息集合。</summary>
@@ -116,19 +116,22 @@ public partial class AgentPanel : UserControl
     {
         DetachMessages();
         _observed = Messages as INotifyCollectionChanged;
-        if (_observed is not null) _observed.CollectionChanged += OnCollectionChanged;
+        if (_observed is not null) CollectionChangedEventManager.AddHandler(_observed, OnCollectionChanged);
+        ProjectMessages();
     }
 
     /// <summary>移除事件引用，允许旧业务模型被正常回收。</summary>
     private void DetachMessages()
     {
-        if (_observed is not null) _observed.CollectionChanged -= OnCollectionChanged;
+        if (_observed is not null) CollectionChangedEventManager.RemoveHandler(_observed, OnCollectionChanged);
         _observed = null;
+        DetachActivityMessages();
     }
 
     /// <summary>新消息到达只滚动当前会话，不打开隐藏面板或改变键盘焦点。</summary>
     private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs args)
     {
+        ProjectMessages();
         if (IsVisible) Dispatcher.BeginInvoke(() => { if (IsLoaded && IsVisible) ConversationScroll.ScrollToEnd(); });
     }
 

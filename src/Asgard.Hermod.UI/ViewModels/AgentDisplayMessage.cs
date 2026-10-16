@@ -41,6 +41,12 @@ public class AgentDisplayMessage : ObservableObject, IAgentDisplayMessage
     public string TimestampLabel => Text.Format("ChatUserTime", Role, CreatedAt.LocalDateTime);
     /// <summary>工具折叠状态保留在消息对象上。</summary>
     public bool IsExpanded { get; set => SetProperty(ref field, value); }
+    /// <summary>连续工具摘要的展开状态独立于每一步证据，归档切换时保留。</summary>
+    public bool IsActivityGroupExpanded { get; set => SetProperty(ref field, value); }
+    /// <summary>展示摘要按稳定种类组合，不解析本地化标题。</summary>
+    public string ActivityKind => _statusKey is "SqlAgentQueryRunning" or "SqlAgentQueryCompleted" or "SqlAgentQueryStopped" ? "query" : "action";
+    /// <summary>已完成步骤的真实耗时供摘要合计，运行中不显示完成耗时。</summary>
+    public TimeSpan? ActivityElapsed => _elapsed is { IsRunning: false, ElapsedTicks: > 0 } elapsed ? elapsed.Elapsed : null;
     /// <summary>待确认操作必须保持展开。</summary>
     public bool IsAwaitingApproval => Approval?.IsPending == true || _statusKey is "SshAgentAwaitingApproval" or "ChatAwaitingApproval";
     /// <summary>本条工具步骤的单次确认，历史恢复不会重建授权。</summary>
@@ -78,6 +84,6 @@ public class AgentDisplayMessage : ObservableObject, IAgentDisplayMessage
         OriginalContent = content; Content = content; _statusKey = statusKey;
         if (statusKey is "SqlAgentQueryRunning" or "SshAgentExecuting" or "ChatActionExecuting") _elapsed?.Start();
         if (statusKey is not ("SqlAgentQueryRunning" or "SshAgentAwaitingApproval" or "SshAgentExecuting" or "ChatAwaitingApproval" or "ChatActionExecuting")) _elapsed?.Stop();
-        OnPropertyChanged(nameof(Status)); OnPropertyChanged(nameof(IsAwaitingApproval)); OnPropertyChanged(nameof(Elapsed)); OnPropertyChanged(nameof(ActivityTitle)); OnPropertyChanged(nameof(ActivityTone)); OnPropertyChanged(nameof(ActivityIcon));
+        OnPropertyChanged(nameof(Status)); OnPropertyChanged(nameof(IsAwaitingApproval)); OnPropertyChanged(nameof(Elapsed)); OnPropertyChanged(nameof(ActivityTitle)); OnPropertyChanged(nameof(ActivityTone)); OnPropertyChanged(nameof(ActivityIcon)); OnPropertyChanged(nameof(ActivityKind)); OnPropertyChanged(nameof(ActivityElapsed));
     }
 }
