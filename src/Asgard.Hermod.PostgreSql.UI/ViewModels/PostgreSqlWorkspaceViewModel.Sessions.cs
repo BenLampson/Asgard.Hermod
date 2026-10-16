@@ -9,7 +9,8 @@ public sealed partial class PostgreSqlWorkspaceViewModel
     /// <summary>只过滤显示，不代替用户选择。</summary>
     public IReadOnlyList<DatabaseChoiceViewModel> CatalogItems => DatabaseChoices.Where(item => item.Name.Contains(CatalogSearch, StringComparison.OrdinalIgnoreCase)).ToArray();
     /// <summary>唯一数据库计入直接使用，多库只统计用户的明确勾选。</summary>
-    public string CatalogSelectionSummary => Text.Format("DatabaseSessionSelectedCount", DatabaseChoices.Count(item => HasSingleCatalogDatabase || item.IsSelected));
+    public string CatalogSelectionSummary => DatabaseChoices.Any(item => HasSingleCatalogDatabase || item.IsSelected)
+        ? Text.Format("DatabaseSessionSelectedCount", DatabaseChoices.Count(item => HasSingleCatalogDatabase || item.IsSelected)) : Text.Get("DatabasePickNone");
     /// <summary>真实数据库名称保持原文，便于核对即将打开的范围。</summary>
     public string CatalogSelectionNames => string.Join(Environment.NewLine, DatabaseChoices.Where(item => HasSingleCatalogDatabase || item.IsSelected).Select(item => item.Name));
     private IReadOnlyList<DatabaseIdentity> InitialDatabases { get; }
@@ -22,7 +23,8 @@ public sealed partial class PostgreSqlWorkspaceViewModel
     /// <summary>只呈现当前 Session 的脚本和对象视图。</summary>
     public IReadOnlyList<PostgreSqlTabViewModel> ActiveDocuments => ActiveSession?.Documents ?? (IReadOnlyList<PostgreSqlTabViewModel>)Array.Empty<PostgreSqlTabViewModel>();
     /// <summary>左侧只展示当前 Session 纳入的数据库。</summary>
-    public IReadOnlyList<PostgreSqlTreeNode> SessionTreeItems => Tree?.Root.Children.Where(node => ActiveSession?.Scope?.Contains(node.Object.Name) == true).ToArray() ?? [];
+    public IReadOnlyList<PostgreSqlTreeNode> SessionTreeItems => _sessionTreeItems;
+    private IReadOnlyList<PostgreSqlTreeNode> _sessionTreeItems = [];
     /// <summary>目录的明确选择；唯一数据库直接使用。</summary>
     public ObservableCollection<DatabaseChoiceViewModel> DatabaseChoices { get; } = [];
     /// <summary>只有一个已知库且目录已完整加载时省去选择。</summary>
@@ -43,9 +45,16 @@ public sealed partial class PostgreSqlWorkspaceViewModel
     public RelayCommand ShowSessionHistoryCommand { get; private set; } = null!;
     /// <summary>返回当前对象所属的脚本。</summary>
     public RelayCommand ReturnToScriptCommand { get; private set; } = null!;
+    /// <summary>全选状态只涵盖已经完整取得的当前实例目录。</summary>
+    public bool IsAllDatabasesSelected => DatabaseChoices.Count > 0 && Tree?.Root.HasMore == false && DatabaseChoices.All(item => item.IsSelected);
+    /// <summary>同一个全选入口可撤销选择，读取分页失败时不改变选择。</summary>
+    public AsyncRelayCommand ToggleAllDatabasesCommand { get; private set; } = null!;
+    /// <summary>范围入口使用完整翻译模板，计数与语言无关。</summary>
+    public string DatabaseScopeLabel => Text.Format("DatabaseScopeLabel", ActiveSession?.Scope?.Databases.Count ?? 0);
     private void InitializeSessionCommands()
     {
-        CancelDatabasePickerCommand = new RelayCommand(_ => SetDatabasePicker(false), _ => CanCancelDatabasePicker);
+        ToggleAllDatabasesCommand = new AsyncRelayCommand(async _ => { bool selected = IsAllDatabasesSelected; try { if (await LoadDatabaseCatalogAsync()) foreach (var item in DatabaseChoices) item.IsSelected = !selected; } finally { OnPropertyChanged(nameof(IsAllDatabasesSelected)); } }, _ => IsConnected && !IsManagingDatabases);
+        CancelDatabasePickerCommand = new RelayCommand(_ => { if (Sessions.Count == 0) CloseWindowCommand.Execute(null); else SetDatabasePicker(false); }, _ => !IsClosed);
         ShowSessionHistoryCommand = new RelayCommand(_ => { if (ActiveSession is { } session) { ActiveTab = session; session.IsHistoryOpen = !session.IsHistoryOpen; } }, _ => ActiveSession is not null);
         ReturnToScriptCommand = new RelayCommand(_ => ActiveTab = ActiveSession, _ => ActiveSession is not null && ActiveTab != ActiveSession);
         OpenSessionCommand = new AsyncRelayCommand(_ => OpenSelectedSessionAsync(), _ => IsConnected && !IsManagingDatabases && (HasSingleCatalogDatabase || DatabaseChoices.Any(item => item.IsSelected)));
@@ -82,23 +91,42 @@ public sealed partial class PostgreSqlWorkspaceViewModel
     }
     private void RefreshCatalogSelection()
     {
-        OnPropertyChanged(nameof(CatalogSelectionSummary)); OnPropertyChanged(nameof(CatalogSelectionNames));
+        OnPropertyChanged(nameof(IsAllDatabasesSelected)); OnPropertyChanged(nameof(CatalogSelectionSummary)); OnPropertyChanged(nameof(CatalogSelectionNames));
         OpenSessionCommand.NotifyCanExecuteChanged(); NewQueryCommand.NotifyCanExecuteChanged();
+    }
+    /// <summary>仅统计当前 Session 范围中真正已加载的对象。</summary>
+    public string NavigationLoadedSummary
+    {
+        get
+        {
+            int tables = 0, views = 0;
+            foreach (var database in SessionTreeItems) Count(database);
+            return tables + views == 0 ? "" : Text.Format("DatabaseLoadedObjects", tables, views);
+            void Count(PostgreSqlTreeNode node)
+            {
+                if (!node.IsPlaceholder && node.Object.Kind == PostgreSqlObjectKind.Table) tables++;
+                if (!node.IsPlaceholder && node.Object.Kind == PostgreSqlObjectKind.View) views++;
+                foreach (var child in node.Children) Count(child);
+            }
+        }
     }
     private void RefreshSessionNavigation()
     {
         if (Tree is not null && ActiveSession?.Scope is { } scope)
             foreach (var database in scope.Databases.Where(item => Tree.Root.Children.All(node => node.Object.Name != item.Name)))
                 Tree.Root.Children.Add(new(new(PostgreSqlObjectKind.Database, database.Name, database.Name), Tree) { Parent = Tree.Root });
-        foreach (string name in new[] { nameof(ActiveSession), nameof(ActiveDocuments), nameof(SessionTreeItems) }) OnPropertyChanged(name);
-        ToggleAssistantCommand?.NotifyCanExecuteChanged(); ShowSessionHistoryCommand.NotifyCanExecuteChanged(); ReturnToScriptCommand.NotifyCanExecuteChanged();
+        // SQL 和对象文档之间切换不替换同一个范围的树数据源，保留原生容器、选中项和滚动位置。
+        var nodes = Tree?.Root.Children.Where(node => ActiveSession?.Scope?.Contains(node.Object.Name) == true).ToArray() ?? [];
+        if (!_sessionTreeItems.SequenceEqual(nodes)) { _sessionTreeItems = nodes; OnPropertyChanged(nameof(SessionTreeItems)); }
+        foreach (string name in new[] { nameof(ActiveSession), nameof(ActiveDocuments), nameof(NavigationLoadedSummary), nameof(DatabaseScopeLabel) }) OnPropertyChanged(name);
+        ToggleAllDatabasesCommand.NotifyCanExecuteChanged(); SelectAllDatabasesCommand.NotifyCanExecuteChanged(); ToggleAssistantCommand?.NotifyCanExecuteChanged(); ShowSessionHistoryCommand.NotifyCanExecuteChanged(); ReturnToScriptCommand.NotifyCanExecuteChanged();
         AddSessionDatabaseCommand.NotifyCanExecuteChanged(); RemoveSessionDatabaseCommand.NotifyCanExecuteChanged();
     }
     private bool _selectingDatabases;
     /// <summary>取消新 Session 的选库只回到原会话，不修改其范围与执行目标。</summary>
     public RelayCommand CancelDatabasePickerCommand { get; private set; } = null!;
     /// <summary>已有会话时才显示返回入口。</summary>
-    public bool CanCancelDatabasePicker => Sessions.Count > 0;
+    public bool CanCancelDatabasePicker => !IsClosed;
     private void SetDatabasePicker(bool selecting)
     {
         _selectingDatabases = selecting;

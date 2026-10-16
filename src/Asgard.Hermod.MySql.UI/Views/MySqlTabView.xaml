@@ -3,7 +3,7 @@
  xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI" xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI"
  PreviewKeyDown="OnKeyDown">
  <UserControl.Resources>
-  <ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/WorkspaceSelectionStyles.xaml" /></ResourceDictionary.MergedDictionaries>
+  <ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/WorkspaceSelectionStyles.xaml" /><ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/DatabaseDesign.xaml" /></ResourceDictionary.MergedDictionaries>
   <BooleanToVisibilityConverter x:Key="Visible" />
   <Style x:Key="HistoryItem" TargetType="ListBoxItem"><Setter Property="HorizontalContentAlignment" Value="Stretch" /><Setter Property="VerticalContentAlignment" Value="Center" /></Style>
   <!-- 按设计字体的自然字距排版；普通元数据名称不套用 SQL 等宽字体。 -->
@@ -13,7 +13,8 @@
   <Style x:Key="StructureName" TargetType="TextBlock" BasedOn="{StaticResource StructureValue}"><Setter Property="FontFamily" Value="{DynamicResource UiFont}" /><Setter Property="FontSize" Value="13" /><Setter Property="ToolTip" Value="{Binding Name}" /></Style>
    </ResourceDictionary>
  </UserControl.Resources>
- <Grid Margin="0,12,0,0"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+ <Grid>
+ <Grid x:Name="ObjectContent" Margin="0,12,0,0"><Grid.Style><Style TargetType="Grid"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding IsQuery}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></Grid.Style><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
   <StackPanel>
    <Grid x:Name="ObjectContext" Margin="0,0,0,14" ToolTip="{Binding Header}" AutomationProperties.Name="{Binding Header}">
     <Grid.Style><Style TargetType="Grid"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding IsQuery}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></Grid.Style>
@@ -25,18 +26,6 @@
      <TextBlock Grid.Column="1" Text="{Binding DatabaseContext}" FontSize="12" Foreground="{DynamicResource TextBodyBrush}" TextTrimming="CharacterEllipsis" />
     </Grid>
    </Grid>
-   <WrapPanel x:Name="QueryToolbar" Visibility="{Binding IsQuery, Converter={StaticResource Visible}}" Margin="0,0,0,4">
-    <StackPanel Orientation="Horizontal" Margin="0,0,12,6"><TextBlock Text="{loc:Loc MySqlExecutionDatabase}" FontSize="12" VerticalAlignment="Center" Margin="0,0,8,0" />
-     <Grid Width="180">     <ComboBox x:Name="DatabaseSelector" Width="180" Height="32" MinHeight="32" Visibility="{Binding HasMultipleDatabases, Converter={StaticResource Visible}}" ItemsSource="{Binding Databases}" SelectedItem="{Binding Database, Mode=OneWay}" IsEditable="False" Text="{Binding Database, Mode=OneWay}" SelectionChanged="OnDatabaseChanged" PreviewKeyDown="OnDatabaseKeyDown" AutomationProperties.Name="{loc:Loc MySqlExecutionDatabase}" /><TextBlock Text="{loc:Loc DatabaseSessionChooseTarget}" Margin="10,0,28,0" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" IsHitTestVisible="False" Foreground="{DynamicResource TextMutedBrush}"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding Database}" Value=""><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock></Grid>
-     <TextBlock Text="{Binding Database}" VerticalAlignment="Center" FontWeight="SemiBold" Visibility="{Binding HasSingleDatabase, Converter={StaticResource Visible}}" />
-    </StackPanel>
-    <Button x:Name="RunCurrent" Content="{loc:Loc MySqlRunCurrentButton}" IsEnabled="{Binding CanRun}" Style="{StaticResource PrimaryButton}" Click="OnRun" ToolTip="{loc:Loc MySqlRunCurrentHint}" AutomationProperties.Name="{loc:Loc MySqlRunCurrentHint}" Margin="0,0,8,6" />
-    <Button x:Name="RunAll" Content="{loc:Loc MySqlRunAllButton}" IsEnabled="{Binding CanRun}" Click="OnRunAll" ToolTip="{loc:Loc MySqlRunAllHint}" AutomationProperties.Name="{loc:Loc MySqlRunAllHint}" Margin="0,0,8,6" />
-    <Button x:Name="ExplainQuery" Content="{loc:Loc MySqlExplain}" IsEnabled="{Binding CanRun}" Click="OnExplain" ToolTip="{loc:Loc MySqlExplainHint}" AutomationProperties.Name="{loc:Loc MySqlExplainHint}" Margin="0,0,8,6" />
-    <Button x:Name="AnalyzeQuery" Content="{loc:Loc MySqlAnalyze}" IsEnabled="{Binding CanRun}" Click="OnAnalyze" ToolTip="{loc:Loc MySqlAnalyzeHint}" AutomationProperties.Name="{loc:Loc MySqlAnalyzeHint}" Margin="0,0,8,6" />
-    <Button Content="{loc:Loc MySqlCancelQuery}" Command="{Binding CancelCommand}" Margin="0,0,8,6" />
-    <Button Content="{loc:Loc MySqlSaveQuery}" Command="{Binding SaveDocumentCommand}" Margin="0,0,0,6" />
-   </WrapPanel>
    <Grid x:Name="ObjectToolbar" Margin="0,0,0,10"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
     <StackPanel Grid.Column="1" Orientation="Horizontal">
      <Button x:Name="ShowFilter" Content="{loc:Loc MySqlShowFilter}" Command="{Binding ShowFilterCommand}" Margin="0,0,8,0"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Visibility" Value="{Binding ShowTableControls, Converter={StaticResource Visible}}" /><Style.Triggers><DataTrigger Binding="{Binding IsFilterOpen}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></Button.Style></Button>
@@ -60,7 +49,6 @@
   </Border>
   <Grid Grid.Row="2">
    <Grid x:Name="DataPanel" SizeChanged="OnDataSizeChanged"><Grid.RowDefinitions><RowDefinition x:Name="EditorRow" Height="210" /><RowDefinition x:Name="EditorSplitterRow" Height="6" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-    <controls:CodeEditor x:Name="SqlEditor" Text="{Binding Sql, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CompletionProvider="{Binding}" IsReadOnly="False" MinHeight="80" MaxLength="10485760" Visibility="{Binding IsQuery, Converter={StaticResource Visible}}" AutomationProperties.Name="{loc:Loc MySqlSqlEditor}" AutomationProperties.HelpText="{loc:Loc MySqlCompletionHint}" ToolTip="{loc:Loc MySqlCompletionHint}" />
     <GridSplitter Grid.Row="1" Height="6" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" Background="{DynamicResource LineSoftBrush}" ShowsPreview="True" Visibility="{Binding IsQuery, Converter={StaticResource Visible}}" />
     <Grid Grid.Row="2"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
      <DockPanel Margin="0,0,0,8"><TextBlock DockPanel.Dock="Right" Text="{Binding SelectedResult.Summary}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" /><controls:SectionSelector BorderThickness="0" ItemContainerStyle="{StaticResource WorkspaceSectionItem}" ItemsSource="{Binding Results}" DisplayMemberPath="Label" SelectedItem="{Binding SelectedResult, Mode=TwoWay}" Visibility="{Binding IsQuery, Converter={StaticResource Visible}}" /></DockPanel>
@@ -68,15 +56,6 @@
      <TextBlock Grid.Row="1" Text="{loc:Loc MySqlNoResults}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding HasResult}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
     </Grid>
     <Expander Grid.Row="3" Header="{loc:Loc MySqlMessages}" Visibility="{Binding HasMessage, Converter={StaticResource Visible}}" Margin="0,8,0,0"><TextBox Text="{Binding Message, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" MaxHeight="100" VerticalScrollBarVisibility="Auto" FontFamily="{DynamicResource MonoFont}" /></Expander>
-    <Expander Grid.Row="4" IsExpanded="{Binding IsHistoryOpen, Mode=TwoWay}" Header="{loc:Loc MySqlExecutionTrace}" Visibility="{Binding IsQuery, Converter={StaticResource Visible}}" Margin="0,6,0,0" ToolTip="{loc:Loc MySqlExecutionTraceHint}">
-     <Grid Height="180" Margin="0,6,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="2*" /><ColumnDefinition Width="3*" /></Grid.ColumnDefinitions>
-      <ListBox ItemContainerStyle="{StaticResource HistoryItem}" ItemsSource="{Binding ExecutionTraces}" SelectedItem="{Binding SelectedTrace, Mode=TwoWay}" DisplayMemberPath="Summary" ScrollViewer.HorizontalScrollBarVisibility="Auto" AutomationProperties.Name="{loc:Loc MySqlExecutionTrace}" />
-      <Grid Grid.Column="1" Margin="8,0,0,0"><Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition Height="*" /></Grid.RowDefinitions>
-       <controls:CodeEditor Text="{Binding SelectedTrace.Sql, Mode=OneWay}" IsReadOnly="True" AutomationProperties.Name="{loc:Loc MySqlTraceSql}" />
-       <controls:CodeEditor Grid.Row="1" Text="{Binding SelectedTrace.Detail, Mode=OneWay}" IsReadOnly="True" Margin="0,4,0,0" AutomationProperties.Name="{loc:Loc MySqlTraceDetails}" />
-      </Grid>
-     </Grid>
-    </Expander>
    </Grid>
    <Grid x:Name="StructurePanel" Visibility="Collapsed"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Focusable="False" Margin="0,0,0,12">
@@ -115,5 +94,7 @@
     </StackPanel>
    </StackPanel>
   </Grid>
+ </Grid>
+ <controls:DatabaseSqlWorkspace x:Name="SqlWorkspace" SupportsActualAnalysis="True" Visibility="{Binding IsQuery, Converter={StaticResource Visible}}" RunRequested="OnRun" RunAllRequested="OnRunAll" ExplainRequested="OnExplain" AnalyzeRequested="OnAnalyze" TargetChanged="OnSqlTargetChanged" CopyRequested="OnCopySqlOutput" ExportRequested="OnExportSqlOutput" />
  </Grid>
 </UserControl>

@@ -7,6 +7,8 @@ public interface IPostgreSqlSession : IAsyncDisposable
     PostgreSqlSessionOptions Options { get; }
     /// <summary>物理连接是否可用，失败后不自动重连。</summary>
     bool IsConnected { get; }
+    /// <summary>握手得到的服务端版本；未知时保持为空。</summary>
+    string? ServerVersion => null;
     /// <summary>实际传输失效通知，不包含 SDK 错误或凭据；主动释放不通知。</summary>
     event EventHandler? ConnectionLost { add { } remove { } }
     /// <summary>只检查当前连接是否存活，不重连或重放命令。</summary>

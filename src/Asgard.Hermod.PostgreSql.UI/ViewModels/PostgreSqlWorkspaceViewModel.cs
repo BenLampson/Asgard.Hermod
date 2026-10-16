@@ -57,6 +57,13 @@ public sealed partial class PostgreSqlWorkspaceViewModel : WorkspacePageViewMode
         Header = IsDatabaseFocused ? Text.Format("DatabaseSessionWorkspaceTitle", instance.Name) : instance.Name;
         OnPropertyChanged(nameof(Name));
     }
+    private string? _serverVersion;
+    /// <summary>版本取自握手，只在按需详情和状态栏展示。</summary>
+    public string EngineDescription => string.IsNullOrEmpty(_serverVersion) ? Text.Get("DatabaseEnginePostgreSql") : Text.Format("DatabaseEngineVersion", Text.Get("DatabaseEnginePostgreSql"), _serverVersion);
+    /// <summary>连接栏只描述已核实的状态，不把请求耗时当作连接元数据。</summary>
+    public string ConnectionSummary => IsConnected && _metadata is { } metadata
+        ? Text.Format("DatabaseConnectionSummary", EngineDescription, Text.Get(metadata.Options.TlsMode switch { "verify-full" => "DatabaseTlsVerified", "required" => "DatabaseTlsEncrypted", _ => "DatabaseTlsDisabled" }))
+        : Text.Format("DatabaseConnectionSummary", EngineDescription, Status);
     /// <summary>不含凭据的公开端点。</summary>
     public string Endpoint { get; private set; } = "";
     /// <summary>实例连接初始化状态。</summary>
@@ -135,10 +142,11 @@ public sealed partial class PostgreSqlWorkspaceViewModel : WorkspacePageViewMode
             if (IsDatabaseFocused) _options = WithDatabase(_options, FocusedDatabase);
             var session = await _factory.OpenAsync(_options, linked.Token);
             if (IsClosed || linked.IsCancellationRequested) { await session.DisposeAsync(); return; }
-            _metadata = session; Endpoint = Text.Format("PostgreSqlEndpoint", session.Options.Host, session.Options.Port);
+            _metadata = session; _serverVersion = session.ServerVersion; Endpoint = Text.Format("PostgreSqlEndpoint", session.Options.Host, session.Options.Port);
             Tree = new(session, _lifetime.Token); OnPropertyChanged(nameof(Tree)); await Tree.LoadAsync(Tree.Root).WaitAsync(linked.Token);
             Tree.Root.Children.CollectionChanged += (_, _) => RefreshCatalog();
             Tree.Root.PropertyChanged += (_, args) => { if (args.PropertyName == nameof(Tree.Root.HasMore)) RefreshCatalog(); };
+            Tree.Changed += (_, _) => OnPropertyChanged(nameof(NavigationLoadedSummary));
             NavigationRoot = Tree.Root;
             if (IsDatabaseFocused && FocusedDatabase.Length > 0)
             {
@@ -293,7 +301,7 @@ public sealed partial class PostgreSqlWorkspaceViewModel : WorkspacePageViewMode
     }
     private void Refresh()
     {
-        foreach (string property in new[] { nameof(Endpoint), nameof(WorkspaceSubtitle), nameof(IsConnecting), nameof(IsConnected), nameof(Status), nameof(ConnectionTone), nameof(Error), nameof(HasError), nameof(Tree), nameof(NavigationRoot) }) OnPropertyChanged(property);
+        foreach (string property in new[] { nameof(EngineDescription), nameof(ConnectionSummary), nameof(Endpoint), nameof(WorkspaceSubtitle), nameof(IsConnecting), nameof(IsConnected), nameof(Status), nameof(ConnectionTone), nameof(Error), nameof(HasError), nameof(Tree), nameof(NavigationRoot) }) OnPropertyChanged(property);
         NewQueryCommand.NotifyCanExecuteChanged(); OpenQueryCommand.NotifyCanExecuteChanged(); RefreshTreeCommand.NotifyCanExecuteChanged(); ReconnectCommand.NotifyCanExecuteChanged(); EditConnectionCommand.NotifyCanExecuteChanged();
     }
     partial void InitializeAssistant(IAgentClient? client);

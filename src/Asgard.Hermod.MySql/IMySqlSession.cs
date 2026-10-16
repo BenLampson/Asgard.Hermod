@@ -5,6 +5,8 @@ public interface IMySqlSession : IAsyncDisposable
 {
     /// <summary>本会话已验证的私有协议选项。</summary>
     MySqlSessionOptions Options { get; }
+    /// <summary>握手得到的服务端版本；未知时不填充示例或默认值。</summary>
+    string? ServerVersion => null;
     /// <summary>物理连接是否可用，失败后不自动重连。</summary>
     bool IsConnected { get; }
     /// <summary>实际传输失效通知，不包含 SDK 错误或凭据；主动释放不通知。</summary>

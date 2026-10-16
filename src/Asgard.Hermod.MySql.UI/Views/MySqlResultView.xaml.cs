@@ -24,7 +24,7 @@ public partial class MySqlResultView : UserControl
                 CellTemplate = display,
                 CellEditingTemplate = input,
                 Width = InitialWidth(column),
-                MinWidth = 80,
+                MinWidth = 48,
                 IsReadOnly = !grid.IsEditable || !column.CanUpdate || column.Generated,
                 ClipboardContentBinding = new Binding($"Cells[{column.Ordinal}].CopyValue")
             };

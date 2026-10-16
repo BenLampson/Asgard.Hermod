@@ -60,9 +60,11 @@ public sealed class PostgreSqlWorkspaceTests(WpfTestFixture fixture)
         Assert.Equal("SELECT $$semi;colon$$", server.ExecutedSql.Last().Sql);
         await tab.ExecuteScopeAsync("SELECT 7", 0, false); Assert.Equal("SELECT 7", server.ExecutedSql.Last().Sql);
         await tab.ExecuteScopeAsync("ignored", 0, true); Assert.Equal(tab.Sql, server.ExecutedSql.Last().Sql);
+        var resultBeforePlan = tab.SelectedResult; string summaryBeforePlan = tab.QuerySummary;
         await tab.ExplainScopeAsync("SELECT 9", 0);
+        Assert.Same(resultBeforePlan, tab.SelectedResult); Assert.Equal(summaryBeforePlan, tab.QuerySummary);
         Assert.Equal(3, server.Executions); Assert.Equal("SELECT 9", Assert.Single(server.ExplainedSql));
-        Assert.False(tab.SelectedResult!.IsEditable); Assert.Equal(4, tab.ExecutionTraces.Count);
+        Assert.NotEmpty(tab.PlanRawText); Assert.Equal("plan", tab.OutputView); Assert.Equal(4, tab.ExecutionTraces.Count);
         Assert.Equal("explain", tab.SelectedTrace!.Kind); Assert.Equal("SELECT 9", tab.SelectedTrace.Sql);
     });
 

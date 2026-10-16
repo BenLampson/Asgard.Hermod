@@ -102,7 +102,7 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
     /// <summary>每个语句和结果集独立保留的网格。</summary>
     public ObservableCollection<MySqlGridViewModel> Results { get; } = [];
     /// <summary>活动结果集，切换保留列宽和滚动。</summary>
-    public MySqlGridViewModel? SelectedResult { get; set { if (SetProperty(ref field, value)) { OnPropertyChanged(nameof(EditHint)); OnPropertyChanged(nameof(HasResult)); OnPropertyChanged(nameof(CanShareResults)); OnPropertyChanged(nameof(HasDataRows)); OnPropertyChanged(nameof(CanEditRows)); } } }
+    public MySqlGridViewModel? SelectedResult { get; set { if (SetProperty(ref field, value)) { OnPropertyChanged(nameof(EditHint)); OnPropertyChanged(nameof(OutputSummary)); OnPropertyChanged(nameof(QuerySummary)); OnPropertyChanged(nameof(HasResult)); OnPropertyChanged(nameof(CanShareResults)); OnPropertyChanged(nameof(HasDataRows)); OnPropertyChanged(nameof(CanEditRows)); } } }
     /// <summary>当前是否有结果可展示。</summary>
     public bool HasResult => SelectedResult is not null;
     /// <summary>当前结果实际包含数据行，区别于尚未查询和已查询的空结果。</summary>
@@ -144,7 +144,7 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
         try { await operation(pending.Token); }
         catch (OperationCanceledException) when (pending.IsCancellationRequested) { Error = Text.Get("MySqlQueryCancelled"); }
         catch (Exception error) { Error = Text.Error(error, "MySqlCommandFailed"); }
-        finally { IsBusy = false; _pending = null; _completion.TrySetResult(); Refresh(); }
+        finally { if (IsQuery && HasError) OutputView = "messages"; IsBusy = false; _pending = null; _completion.TrySetResult(); Refresh(); }
     }
     private async Task<IMySqlSession> SessionAsync(CancellationToken token)
     {
@@ -206,17 +206,19 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
         var execution = await ExecuteTrackedAsync(session, sql, "query", token);
         _completionMetadata.Clear();
         if (Scope is null) Database = session.CurrentDatabase;
-        SetResults(execution.Results);
+        SetResults(execution.Results, execution.Elapsed);
         Error = execution.Failure is null ? "" : Text.Error(execution.Failure, "MySqlCommandFailed");
         Message = string.Join(Environment.NewLine, execution.Outcomes.Select(outcome => Text.Format(outcome.Succeeded ? "MySqlStatementSucceeded" : "MySqlStatementStopped", outcome.Statement, Math.Max(0, outcome.AffectedRows))));
         Status = Text.Format("MySqlExecutionStatus", execution.Outcomes.Count, execution.Elapsed.TotalMilliseconds);
+        OutputView = Error.Length > 0 || Results.Count == 0 ? "messages" : "results";
     }
-    private void SetResults(IEnumerable<MySqlResult> results)
+    private void SetResults(IEnumerable<MySqlResult> results, TimeSpan? elapsed = null)
     {
+        _resultElapsed = elapsed;
         _resultScopeRevision = ScopeRevision;
         foreach (var grid in Results) grid.DraftChanged -= DraftChanged; Results.Clear();
         foreach (var result in results) { var grid = new MySqlGridViewModel(result); grid.DraftChanged += DraftChanged; Results.Add(grid); }
-        SelectedResult = Results.FirstOrDefault(); DraftChanged();
+        SelectedResult = Results.FirstOrDefault(); OnPropertyChanged(nameof(QuerySummary)); DraftChanged();
     }
     private void DraftChanged()
     {
@@ -227,7 +229,7 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
     {
         foreach (string property in new[] { nameof(IsBusy), nameof(CanRun), nameof(Error), nameof(HasError), nameof(Message), nameof(HasMessage), nameof(Status), nameof(StateLabel), nameof(OutcomeUnknown), nameof(EditHint), nameof(Header), nameof(Database), nameof(DatabaseContext) }) OnPropertyChanged(property);
         foreach (var command in new[] { RefreshCommand, ExecuteCommand, SaveDocumentCommand, SaveChangesCommand, VerifyCommand, PreviousCommand, NextCommand }) command.NotifyCanExecuteChanged();
-        CancelCommand.NotifyCanExecuteChanged(); RevertCommand.NotifyCanExecuteChanged(); DraftChanged();
+        CancelCommand.NotifyCanExecuteChanged(); RestoreTraceCommand.NotifyCanExecuteChanged(); RevertCommand.NotifyCanExecuteChanged(); DraftChanged();
         RefreshStructure();
         RefreshPaging();
     }

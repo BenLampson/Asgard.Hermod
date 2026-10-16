@@ -3,9 +3,9 @@
  xmlns:chrome="clr-namespace:System.Windows.Shell;assembly=PresentationFramework">
  <ResourceDictionary.MergedDictionaries><ResourceDictionary Source="ButtonStyles.xaml" /></ResourceDictionary.MergedDictionaries>
  <Style TargetType="controls:WorkspaceHeader">
-  <Style.Resources><BooleanToVisibilityConverter x:Key="Visible" />
+  <Style.Resources><FontFamily x:Key="UiFont">pack://application:,,,/Asgard.Hermod.UI;component/Assets/Fonts/#Noto Sans SC</FontFamily><BooleanToVisibilityConverter x:Key="Visible" />
    <Style x:Key="WorkspaceHeaderSecondaryStatus" TargetType="controls:StatusBadge"><Style.Triggers>
-    <DataTrigger Binding="{Binding IsCompact, RelativeSource={RelativeSource AncestorType=controls:WorkspaceHeader}}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+    <DataTrigger Binding="{Binding Instance.HasEnvironmentTag}" Value="False"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
    </Style.Triggers></Style>
   </Style.Resources>
   <Setter Property="FontFamily" Value="{DynamicResource WorkspaceFont}" />

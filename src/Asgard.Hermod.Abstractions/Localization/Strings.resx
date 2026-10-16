@@ -3190,7 +3190,7 @@
   <data name="MySqlCloseTab" xml:space="preserve"><value>Close tab</value></data>
   <data name="MySqlRefresh" xml:space="preserve"><value>Refresh</value></data>
   <data name="MySqlRefreshBranch" xml:space="preserve"><value>Refresh selected branch</value></data>
-  <data name="MySqlSearchLoaded" xml:space="preserve"><value>Filter loaded objects…</value></data>
+  <data name="MySqlSearchLoaded" xml:space="preserve"><value>Search loaded objects</value></data>
   <data name="MySqlSearchLoadedHint" xml:space="preserve"><value>Search only includes loaded objects and preserves their ancestors. Expand a branch to load more.</value></data>
   <data name="MySqlOpenKnownObject" xml:space="preserve"><value>Open table by name</value></data>
   <data name="MySqlOpenObject" xml:space="preserve"><value>Open</value></data>
@@ -3737,7 +3737,7 @@ Hiding to the notification area is temporarily unavailable. To exit Hermod, use 
   <data name="PostgreSqlCloseTab" xml:space="preserve"><value>Close tab</value></data>
   <data name="PostgreSqlRefresh" xml:space="preserve"><value>Refresh</value></data>
   <data name="PostgreSqlRefreshBranch" xml:space="preserve"><value>Refresh selected branch</value></data>
-  <data name="PostgreSqlSearchLoaded" xml:space="preserve"><value>Filter loaded objects…</value></data>
+  <data name="PostgreSqlSearchLoaded" xml:space="preserve"><value>Search loaded objects</value></data>
   <data name="PostgreSqlSearchLoadedHint" xml:space="preserve"><value>Search only includes loaded objects and preserves their ancestors. Expand a branch to load more.</value></data>
   <data name="PostgreSqlOpenKnownObject" xml:space="preserve"><value>Open table by name</value></data>
   <data name="PostgreSqlOpenObject" xml:space="preserve"><value>Open</value></data>
@@ -3899,7 +3899,7 @@ Hiding to the notification area is temporarily unavailable. To exit Hermod, use 
   <data name="DatabaseSessionAddTitle" xml:space="preserve"><value>Add databases to {0}</value></data>
   <data name="DatabaseSessionInstance" xml:space="preserve"><value>Current instance: {0} · {1} (fixed)</value></data>
   <data name="DatabaseSessionAddHint" xml:space="preserve"><value>Add databases from this instance to the current Session. This expands AI metadata access. The execution target stays unchanged.</value></data>
-  <data name="DatabaseSessionSearch" xml:space="preserve"><value>Search databases…</value></data>
+  <data name="DatabaseSessionSearch" xml:space="preserve"><value>Search databases on this instance</value></data>
   <data name="DatabaseSessionSelectAll" xml:space="preserve"><value>Select all</value></data>
   <data name="DatabaseSessionAdd" xml:space="preserve"><value>+ Add databases</value></data>
   <data name="DatabaseSessionAlreadyIncluded" xml:space="preserve"><value>{0} · Already in Session</value></data>
@@ -3921,7 +3921,7 @@ This removes the corresponding local content or view. Continue? Cancel keeps it 
   <data name="DatabaseSessionClearAi" xml:space="preserve"><value>Clear this Session’s AI conversation</value></data>
   <data name="DatabaseSessionDiscardRows" xml:space="preserve"><value>Discard pending data edits</value></data>
   <data name="DatabaseSessionCatalog" xml:space="preserve"><value>Database catalog</value></data>
-  <data name="DatabaseSessionScope" xml:space="preserve"><value>Scope</value></data>
+  <data name="DatabaseSessionScope" xml:space="preserve"><value>Database scope</value></data>
   <data name="DatabaseSessionDatabases" xml:space="preserve"><value>Session databases</value></data>
   <data name="DatabaseSessionCatalogHint" xml:space="preserve"><value>Open a script Session using databases from this instance. With one database, use it directly; with several, choose the databases or select all.</value></data>
   <data name="DatabaseSessionOpen" xml:space="preserve"><value>Open Session</value></data>
@@ -3948,7 +3948,7 @@ Review the full SQL below. Execution starts only after confirmation.</value></da
   <data name="DatabaseSessionEditConfiguration" xml:space="preserve"><value>Edit configuration</value></data>
   <data name="DatabaseSessionAgent" xml:space="preserve"><value>Agent</value></data>
   <data name="DatabaseSessionAgentHint" xml:space="preserve"><value>Open the current Session’s Agent. It can access only databases included in this Session.</value></data>
-  <data name="DatabaseSessionSelectedCount" xml:space="preserve"><value>{0} databases to open</value></data>
+  <data name="DatabaseSessionSelectedCount" xml:space="preserve"><value>{0} databases selected</value></data>
   <data name="DatabaseSessionRefreshCatalog" xml:space="preserve"><value>Refresh databases</value></data>
   <data name="DatabaseSessionObjectActionContext" xml:space="preserve"><value>{0} · Object: {1}</value></data>
   <data name="WorkspacePaneResize" xml:space="preserve"><value>Resize the side pane</value></data>
@@ -4226,4 +4226,46 @@ Exit code: {1}
 Result sample:
 {2}</value></data>
   <data name="WorkspaceOpeningInstance" xml:space="preserve"><value>Connecting to {0}…</value></data>
+  <data name="DatabaseRun" xml:space="preserve"><value>Run</value></data>
+  <data name="DatabaseRunSelection" xml:space="preserve"><value>Run current / selection</value></data>
+  <data name="DatabaseRunAll" xml:space="preserve"><value>Run all SQL</value></data>
+  <data name="DatabaseAnalyze" xml:space="preserve"><value>Analyze</value></data>
+  <data name="DatabaseExplain" xml:space="preserve"><value>Estimated plan</value></data>
+  <data name="DatabaseAnalyzeActual" xml:space="preserve"><value>Analyze by executing SQL…</value></data>
+  <data name="DatabaseSaveSql" xml:space="preserve"><value>Save SQL</value></data>
+  <data name="DatabaseCancelExecution" xml:space="preserve"><value>Cancel execution</value></data>
+  <data name="DatabaseExecutionTarget" xml:space="preserve"><value>Execution database</value></data>
+  <data name="DatabaseSqlEditor" xml:space="preserve"><value>SQL editor</value></data>
+  <data name="DatabaseOutputResults" xml:space="preserve"><value>Results</value></data>
+  <data name="DatabaseOutputMessages" xml:space="preserve"><value>Messages</value></data>
+  <data name="DatabaseOutputPlan" xml:space="preserve"><value>Execution plan</value></data>
+  <data name="DatabaseOutputHistory" xml:space="preserve"><value>Execution history</value></data>
+  <data name="DatabaseRestoreSql" xml:space="preserve"><value>Restore SQL</value></data>
+  <data name="DatabaseExportResult" xml:space="preserve"><value>Export results</value></data>
+  <data name="DatabaseRunShortcut" xml:space="preserve"><value>Ctrl+Enter</value></data>
+  <data name="DatabaseObjects" xml:space="preserve"><value>Database objects</value></data>
+  <data name="DatabaseCopyResult" xml:space="preserve"><value>Copy</value></data>
+  <data name="DatabasePickTitle" xml:space="preserve"><value>Choose databases for a new Session</value></data>
+  <data name="DatabasePickIntroduction" xml:space="preserve"><value>Selected databases form this Session’s access scope. Use Database scope to manage them after entering.</value></data>
+  <data name="DatabaseAvailableCount" xml:space="preserve"><value>{0} databases available</value></data>
+  <data name="DatabaseListName" xml:space="preserve"><value>Database</value></data>
+  <data name="DatabaseListState" xml:space="preserve"><value>Access status</value></data>
+  <data name="DatabaseAvailable" xml:space="preserve"><value>Available</value></data>
+  <data name="DatabaseCreateSession" xml:space="preserve"><value>Create Session</value></data>
+  <data name="DatabasePickTab" xml:space="preserve"><value>Choose databases</value></data>
+  <data name="DatabaseReadOnlyRows" xml:space="preserve"><value>Loaded {0} rows · Read-only results</value></data>
+  <data name="DatabaseEditableRows" xml:space="preserve"><value>Loaded {0} rows · Editable results</value></data>
+  <data name="DatabaseQuerySummary" xml:space="preserve"><value>{0} rows · {1} columns · {2:0.###} ms</value></data>
+  <data name="DatabaseRowNumberHeader" xml:space="preserve"><value>#</value></data>
+  <data name="DatabaseAnalyzeContextConfirm" xml:space="preserve"><value>Run actual analysis on instance {0}, Session {1}, database {2} ({3})? This executes the complete SQL shown below.</value></data>
+  <data name="DatabaseEngineVersion" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="DatabaseConnectionSummary" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="DatabaseTlsVerified" xml:space="preserve"><value>TLS verified</value></data>
+  <data name="DatabaseTlsEncrypted" xml:space="preserve"><value>TLS encrypted</value></data>
+  <data name="DatabaseTlsDisabled" xml:space="preserve"><value>TLS disabled</value></data>
+  <data name="DatabasePickNone" xml:space="preserve"><value>Select at least one database</value></data>
+  <data name="DatabaseObjectGroupCount" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="DatabaseLoadedObjects" xml:space="preserve"><value>{0} tables · {1} views</value></data>
+  <data name="DatabaseScopeLabel" xml:space="preserve"><value>Database scope · {0}</value></data>
+  <data name="DatabaseClipboardFailed" xml:space="preserve"><value>Unable to copy the output. Try again.</value></data>
 </root>

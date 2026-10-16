@@ -23,11 +23,10 @@ public sealed class MySqlInteractionLayoutHeadlessTests(WpfTestFixture fixture)
             var server = new TestMySql(); var dialogs = new TestMySqlDialogs();
             await using var query = new MySqlTabViewModel("Query", "app", MySqlObjectKind.Root, server, TestMySql.Connection, dialogs);
             var view = new MySqlTabView { DataContext = query }; var root = Root(view); Layout(root, width - 280);
-            Assert.IsType<WrapPanel>(view.FindName("QueryToolbar"));
-            var current = (Button)view.FindName("RunCurrent"); var all = (Button)view.FindName("RunAll");
-            Assert.Equal(Text.Get("MySqlRunCurrentButton"), current.Content); Assert.Equal(Text.Get("MySqlRunAllButton"), all.Content);
-            Assert.Equal(Visibility.Visible, current.Visibility); Assert.Equal(Visibility.Visible, all.Visibility);
-            Assert.True(all.TranslatePoint(new(), root).X + all.ActualWidth <= root.ActualWidth + 1);
+            var sqlWorkspace = Assert.IsType<Asgard.Hermod.UI.Controls.DatabaseSqlWorkspace>(view.FindName("SqlWorkspace"));
+            var current = Assert.IsType<Button>(sqlWorkspace.FindName("RunButton"));
+            Assert.True(current.IsEnabled); Assert.Equal(30, current.ActualHeight);
+            Assert.True(current.TranslatePoint(new(), root).X + current.ActualWidth <= root.ActualWidth + 1);
             Assert.Equal(Visibility.Collapsed, ((Grid)view.FindName("FilterToolbar")).Visibility);
             Capture(root, $"mysql-query-{language}-{theme}-{width}");
             query.Sql = "SELECT 1; SELECT 2;"; await query.ExecuteScopeAsync("SELECT 9", 0, false);

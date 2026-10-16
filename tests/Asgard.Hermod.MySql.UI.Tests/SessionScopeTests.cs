@@ -9,6 +9,18 @@ namespace Asgard.Hermod.MySql.Tests;
 public sealed class SessionScopeTests(WpfTestFixture fixture)
 {
     [Fact]
+    public Task HistoryRestore_ConfirmsDraftAndDoesNotExecute() => fixture.RunOffscreenAsync(async () =>
+    {
+        var server = new TestMySql(); var dialogs = new TestMySqlDialogs();
+        await using var tab = new MySqlTabViewModel("Query", "app", MySqlObjectKind.Root, server, TestMySql.Connection, dialogs);
+        tab.Sql = "SELECT original"; await tab.ExecuteAsync(tab.Sql); int calls = server.Executions;
+        tab.Sql = "SELECT pending"; tab.OutputView = "history";
+        await tab.RestoreTraceCommand.ExecuteAsync(); Assert.Equal("SELECT pending", tab.Sql);
+        dialogs.Choice = MySqlDraftChoice.Discard; await tab.RestoreTraceCommand.ExecuteAsync();
+        Assert.Equal("SELECT original", tab.Sql); Assert.Equal(calls, server.Executions); Assert.Equal("history", tab.OutputView);
+    });
+
+    [Fact]
     public Task Catalog_SingleDatabaseOpensDirectlyWithoutEditorInCatalog() => fixture.RunOffscreenAsync(async () =>
     {
         var config = new Configurations(); var server = new TestMySql();
@@ -28,6 +40,9 @@ public sealed class SessionScopeTests(WpfTestFixture fixture)
         await using var catalog = new MySqlWorkspaceViewModel(new(Configurations.Instance), config, server, config, new TestMySqlDialogs());
         await catalog.InitializeAsync(); Assert.False(catalog.HasSingleCatalogDatabase); Assert.False(catalog.OpenSessionCommand.CanExecute(null));
         catalog.SelectAllDatabasesCommand.Execute(null); Assert.All(catalog.DatabaseChoices, item => Assert.True(item.IsSelected));
+        Assert.True(catalog.IsAllDatabasesSelected); await catalog.ToggleAllDatabasesCommand.ExecuteAsync();
+        Assert.All(catalog.DatabaseChoices, item => Assert.False(item.IsSelected)); Assert.False(catalog.IsAllDatabasesSelected);
+        await catalog.ToggleAllDatabasesCommand.ExecuteAsync(); Assert.True(catalog.IsAllDatabasesSelected);
         WorkspacePageRequestEventArgs? requested = null; catalog.WorkspaceRequested += (_, request) => requested = request;
         await catalog.OpenSessionCommand.ExecuteAsync();
         var child = catalog; Assert.Null(requested);
@@ -158,6 +173,7 @@ public sealed class SessionScopeTests(WpfTestFixture fixture)
     /// <summary>实际 WPF 窗体校验目录、范围条、对象树和 AI 的中英文布局。</summary>
     [Theory]
     [InlineData("en", UiTheme.Light, 1440)]
+    [InlineData("zh-Hans", UiTheme.Light, 1440)]
     [InlineData("zh-Hans", UiTheme.Dark, 1120)]
     public Task Layout_CatalogAndSessionRespectScope(string language, UiTheme theme, double width) => fixture.RunOffscreenAsync(async () =>
     {
@@ -174,8 +190,17 @@ public sealed class SessionScopeTests(WpfTestFixture fixture)
             var root = new DockPanel(); root.Resources.MergedDictionaries.Add(Application.Current.Resources);
             DockPanel.SetDock(header, Dock.Top); root.Children.Add(header); root.Children.Add(view);
             Render("catalog"); Assert.True(page.IsCatalog); Assert.Empty(page.Sessions);
+            if (width == 1440 && language == "zh-Hans")
+            {
+                var picker = Assert.Single(WindowTestVisuals.Descendants<DatabaseSessionPicker>(view));
+                var surface = (Grid)picker.FindName("PickerSurface");
+                Assert.Equal(new Point(64, 120), surface.TranslatePoint(new(), root));
+                Assert.Equal(new Point(64, 270), ((Border)picker.FindName("PickerList")).TranslatePoint(new(), root));
+                Assert.Equal(496, ((Border)picker.FindName("PickerList")).ActualHeight);
+                Assert.Equal(new Point(64, 790), ((DockPanel)picker.FindName("PickerActions")).TranslatePoint(new(), root));
+            }
             page.DatabaseChoices[0].IsSelected = true; page.DatabaseChoices[1].IsSelected = true;
-            await page.OpenSessionCommand.ExecuteAsync(); Render("session");
+            await page.OpenSessionCommand.ExecuteAsync(); Assert.True(page.OpenSessionCommand.LastException is null, page.OpenSessionCommand.LastException?.ToString()); Render("session");
             Assert.False(page.IsCatalog); Assert.Single(page.Sessions);
             Assert.Equal(2, ((WorkspaceTreeView)view.FindName("ObjectTree")).Items.Count);
             Assert.Single(WindowTestVisuals.Descendants<DatabaseScopePicker>(view));

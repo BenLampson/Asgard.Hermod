@@ -3,6 +3,27 @@ namespace Asgard.Hermod.UI.Controls;
 /// <summary>纯文本编辑和只读代码预览共用行号与滚动，格式解释仍由调用模块负责。</summary>
 public partial class CodeEditor : UserControl
 {
+    /// <summary>SQL 工作区使用无圆角满幅代码表面与二十四 DIP 行高。</summary>
+    public static readonly DependencyProperty IsSqlWorkspaceProperty = DependencyProperty.Register(nameof(IsSqlWorkspace), typeof(bool), typeof(CodeEditor), new PropertyMetadata(false, (target, _) => ((CodeEditor)target).ApplySqlLayout()));
+    /// <summary>是否采用 SQL 母组件的代码排版。</summary>
+    public bool IsSqlWorkspace { get => (bool)GetValue(IsSqlWorkspaceProperty); set => SetValue(IsSqlWorkspaceProperty, value); }
+    private void ApplySqlLayout()
+    {
+        if (EditorFrame is null) return;
+        EditorFrame.CornerRadius = new(IsSqlWorkspace ? 0 : 6);
+        EditorFrame.BorderThickness = new(IsSqlWorkspace ? 0 : 1);
+        EditorFrame.SetResourceReference(Border.BackgroundProperty, IsSqlWorkspace ? "DatabaseEditorBrush" : "AppBackgroundBrush");
+        GutterColumn.Width = new(IsSqlWorkspace ? 56 : 48);
+        // 原生 TextBoxView 有两 DIP 的插入符内边距，抵消后正文落在设计的五十六 DIP 起点。
+        Input.Margin = new(IsSqlWorkspace ? -2 : 0, 0, 0, 0);
+        if (LineNumbers.Parent is Border gutter) gutter.Padding = new(0, 16, IsSqlWorkspace ? 14 : 12, 0);
+        LineNumbers.FontSize = IsSqlWorkspace ? 11 : 13;
+        LineNumbers.LineHeight = IsSqlWorkspace ? 24 : double.NaN;
+        LineNumbers.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
+        TextBlock.SetLineHeight(Input, IsSqlWorkspace ? 24 : double.NaN);
+        TextBlock.SetLineStackingStrategy(Input, LineStackingStrategy.BlockLineHeight);
+        Input.SetResourceReference(ForegroundProperty, IsSqlWorkspace ? "AccentBrush" : "TextBodyBrush");
+    }
     /// <summary>文本缓冲双向绑定，不自动格式化或保存。</summary>
     public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(CodeEditor), new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
     /// <summary>只读状态保留选择、滚动和复制。</summary>
@@ -45,6 +66,6 @@ public partial class CodeEditor : UserControl
         first = Math.Min(first, count - 1); last = Math.Min(last, count - 1);
         LineNumbers.Text = string.Join(Environment.NewLine, Enumerable.Range(first + 1, Math.Min(200, last - first + 1)).Select(number => number.ToString(System.Globalization.CultureInfo.InvariantCulture)));
         var rect = Input.GetRectFromCharacterIndex(Input.GetCharacterIndexFromLineIndex(first));
-        LineNumbers.RenderTransform = new TranslateTransform(0, rect.IsEmpty ? 0 : rect.Y - Input.Padding.Top);
+        LineNumbers.RenderTransform = new TranslateTransform(0, IsSqlWorkspace ? first * 24 - Input.VerticalOffset : rect.IsEmpty ? 0 : rect.Y - Input.Padding.Top);
     }
 }

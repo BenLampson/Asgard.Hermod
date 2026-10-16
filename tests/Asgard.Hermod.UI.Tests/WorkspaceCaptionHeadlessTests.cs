@@ -37,12 +37,17 @@ public sealed class WorkspaceCaptionHeadlessTests(WpfTestFixture fixture)
             var image = new RenderTargetBitmap((int)(width * dpi / 96), (int)(44 * dpi / 96), dpi, dpi, PixelFormats.Pbgra32);
             image.Render(root);
             var family = (FontFamily)Application.Current.FindResource("WorkspaceFont");
-            foreach (var weight in new[] { FontWeights.Normal, FontWeights.SemiBold })
+            foreach (var weight in new[] { FontWeights.Normal, FontWeights.Medium, FontWeights.SemiBold })
             {
-                Assert.True(new Typeface(family, FontStyles.Normal, weight, FontStretches.Normal).TryGetGlyphTypeface(out var glyphs));
+                var typeface = new Typeface(family, FontStyles.Normal, weight, FontStretches.Normal);
+                Assert.True(typeface.TryGetGlyphTypeface(out var glyphs));
                 Assert.Contains("Noto Sans SC", glyphs.FamilyNames.Values);
                 Assert.Contains("Asgard.Hermod.UI", glyphs.FontUri.OriginalString, StringComparison.OrdinalIgnoreCase);
                 Assert.True(glyphs.CharacterToGlyphMap.ContainsKey('数'));
+                Assert.False(typeface.IsBoldSimulated, $"{weight} selected {glyphs.Weight}: {glyphs.FontUri}");
+                Assert.Equal(weight, glyphs.Weight);
+                string face = weight == FontWeights.Normal ? "regular" : weight == FontWeights.Medium ? "medium" : "semibold-600";
+                Assert.EndsWith($"notosanssc-{face}.ttf", glyphs.FontUri.OriginalString, StringComparison.OrdinalIgnoreCase);
             }
             string? directory = Environment.GetEnvironmentVariable("HERMOD_OFFSCREEN_OUTPUT");
             if (!string.IsNullOrEmpty(directory))

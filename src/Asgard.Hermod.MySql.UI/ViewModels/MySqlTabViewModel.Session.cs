@@ -15,7 +15,7 @@ public sealed partial class MySqlTabViewModel
     /// <summary>正文脚本标题不与顶层 Session 标题重复。</summary>
     public string DocumentTitle => IsQuery ? Text.Get("DatabaseSessionScript") : Name;
     /// <summary>历史仅属于当前脚本。</summary>
-    public bool IsHistoryOpen { get; set => SetProperty(ref field, value); }
+    public bool IsHistoryOpen { get => IsHistoryOutput; set => OutputView = value ? "history" : "results"; }
     private long _resultScopeRevision;
     /// <summary>旧范围结果保留在界面，但不能作为新范围的 AI 样本。</summary>
     public bool CanShareResults => SelectedResult is not null && (Scope is null || _resultScopeRevision == ScopeRevision);

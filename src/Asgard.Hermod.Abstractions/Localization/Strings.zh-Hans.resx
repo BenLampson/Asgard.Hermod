@@ -3190,7 +3190,7 @@
   <data name="MySqlCloseTab" xml:space="preserve"><value>关闭页签</value></data>
   <data name="MySqlRefresh" xml:space="preserve"><value>刷新</value></data>
   <data name="MySqlRefreshBranch" xml:space="preserve"><value>刷新所选分支</value></data>
-  <data name="MySqlSearchLoaded" xml:space="preserve"><value>筛选已加载对象…</value></data>
+  <data name="MySqlSearchLoaded" xml:space="preserve"><value>搜索已加载对象</value></data>
   <data name="MySqlSearchLoadedHint" xml:space="preserve"><value>仅搜索已加载对象并保留祖先层级。展开分支以加载更多对象。</value></data>
   <data name="MySqlOpenKnownObject" xml:space="preserve"><value>按名称打开表</value></data>
   <data name="MySqlOpenObject" xml:space="preserve"><value>打开</value></data>
@@ -3737,7 +3737,7 @@
   <data name="PostgreSqlCloseTab" xml:space="preserve"><value>关闭页签</value></data>
   <data name="PostgreSqlRefresh" xml:space="preserve"><value>刷新</value></data>
   <data name="PostgreSqlRefreshBranch" xml:space="preserve"><value>刷新所选分支</value></data>
-  <data name="PostgreSqlSearchLoaded" xml:space="preserve"><value>筛选已加载对象…</value></data>
+  <data name="PostgreSqlSearchLoaded" xml:space="preserve"><value>搜索已加载对象</value></data>
   <data name="PostgreSqlSearchLoadedHint" xml:space="preserve"><value>仅搜索已加载对象并保留祖先层级。展开分支以加载更多对象。</value></data>
   <data name="PostgreSqlOpenKnownObject" xml:space="preserve"><value>按名称打开表</value></data>
   <data name="PostgreSqlOpenObject" xml:space="preserve"><value>打开</value></data>
@@ -3899,7 +3899,7 @@
   <data name="DatabaseSessionAddTitle" xml:space="preserve"><value>添加数据库到 {0}</value></data>
   <data name="DatabaseSessionInstance" xml:space="preserve"><value>当前实例：{0} · {1}（不可切换）</value></data>
   <data name="DatabaseSessionAddHint" xml:space="preserve"><value>将当前实例的数据库加入此 Session，扩展 AI 可访问的元数据范围。已有执行目标保持不变。</value></data>
-  <data name="DatabaseSessionSearch" xml:space="preserve"><value>搜索数据库…</value></data>
+  <data name="DatabaseSessionSearch" xml:space="preserve"><value>搜索当前实例的数据库</value></data>
   <data name="DatabaseSessionSelectAll" xml:space="preserve"><value>全选</value></data>
   <data name="DatabaseSessionAdd" xml:space="preserve"><value>＋ 添加数据库</value></data>
   <data name="DatabaseSessionAlreadyIncluded" xml:space="preserve"><value>{0} · 已在 Session</value></data>
@@ -3921,7 +3921,7 @@ Session 或对象：{1}
   <data name="DatabaseSessionClearAi" xml:space="preserve"><value>清空此 Session 的 AI 对话</value></data>
   <data name="DatabaseSessionDiscardRows" xml:space="preserve"><value>放弃未提交的数据编辑</value></data>
   <data name="DatabaseSessionCatalog" xml:space="preserve"><value>数据库目录</value></data>
-  <data name="DatabaseSessionScope" xml:space="preserve"><value>范围</value></data>
+  <data name="DatabaseSessionScope" xml:space="preserve"><value>数据库范围</value></data>
   <data name="DatabaseSessionDatabases" xml:space="preserve"><value>Session 数据库</value></data>
   <data name="DatabaseSessionCatalogHint" xml:space="preserve"><value>使用当前实例的数据库打开脚本 Session。只有一个数据库直接使用；多个数据库由你选择，也可以全选。</value></data>
   <data name="DatabaseSessionOpen" xml:space="preserve"><value>打开 Session</value></data>
@@ -3948,7 +3948,7 @@ Session：{2}
   <data name="DatabaseSessionEditConfiguration" xml:space="preserve"><value>编辑配置</value></data>
   <data name="DatabaseSessionAgent" xml:space="preserve"><value>Agent</value></data>
   <data name="DatabaseSessionAgentHint" xml:space="preserve"><value>打开当前 Session 的 Agent，仅可访问此 Session 纳入的数据库。</value></data>
-  <data name="DatabaseSessionSelectedCount" xml:space="preserve"><value>即将打开 {0} 个数据库</value></data>
+  <data name="DatabaseSessionSelectedCount" xml:space="preserve"><value>已选择 {0} 个数据库</value></data>
   <data name="DatabaseSessionRefreshCatalog" xml:space="preserve"><value>刷新数据库</value></data>
   <data name="DatabaseSessionObjectActionContext" xml:space="preserve"><value>{0} · 对象：{1}</value></data>
   <data name="WorkspacePaneResize" xml:space="preserve"><value>调整侧边分屏宽度</value></data>
@@ -4226,4 +4226,46 @@ Session：{2}
 结果样本：
 {2}</value></data>
   <data name="WorkspaceOpeningInstance" xml:space="preserve"><value>正在连接 {0}…</value></data>
+  <data name="DatabaseRun" xml:space="preserve"><value>执行</value></data>
+  <data name="DatabaseRunSelection" xml:space="preserve"><value>执行当前或选中 SQL</value></data>
+  <data name="DatabaseRunAll" xml:space="preserve"><value>执行全部 SQL</value></data>
+  <data name="DatabaseAnalyze" xml:space="preserve"><value>分析</value></data>
+  <data name="DatabaseExplain" xml:space="preserve"><value>估算执行计划</value></data>
+  <data name="DatabaseAnalyzeActual" xml:space="preserve"><value>实际分析（会执行 SQL）…</value></data>
+  <data name="DatabaseSaveSql" xml:space="preserve"><value>保存 SQL</value></data>
+  <data name="DatabaseCancelExecution" xml:space="preserve"><value>取消执行</value></data>
+  <data name="DatabaseExecutionTarget" xml:space="preserve"><value>执行数据库</value></data>
+  <data name="DatabaseSqlEditor" xml:space="preserve"><value>SQL 编辑器</value></data>
+  <data name="DatabaseOutputResults" xml:space="preserve"><value>结果</value></data>
+  <data name="DatabaseOutputMessages" xml:space="preserve"><value>消息</value></data>
+  <data name="DatabaseOutputPlan" xml:space="preserve"><value>执行计划</value></data>
+  <data name="DatabaseOutputHistory" xml:space="preserve"><value>执行记录</value></data>
+  <data name="DatabaseRestoreSql" xml:space="preserve"><value>恢复 SQL</value></data>
+  <data name="DatabaseExportResult" xml:space="preserve"><value>导出结果</value></data>
+  <data name="DatabaseRunShortcut" xml:space="preserve"><value>Ctrl+Enter</value></data>
+  <data name="DatabaseObjects" xml:space="preserve"><value>数据库对象</value></data>
+  <data name="DatabaseCopyResult" xml:space="preserve"><value>复制</value></data>
+  <data name="DatabasePickTitle" xml:space="preserve"><value>为新 Session 选择数据库</value></data>
+  <data name="DatabasePickIntroduction" xml:space="preserve"><value>所选数据库组成当前 Session 的访问范围。进入后仍可通过「数据库范围」统一管理。</value></data>
+  <data name="DatabaseAvailableCount" xml:space="preserve"><value>{0} 个可用数据库</value></data>
+  <data name="DatabaseListName" xml:space="preserve"><value>数据库</value></data>
+  <data name="DatabaseListState" xml:space="preserve"><value>访问状态</value></data>
+  <data name="DatabaseAvailable" xml:space="preserve"><value>可用</value></data>
+  <data name="DatabaseCreateSession" xml:space="preserve"><value>创建 Session</value></data>
+  <data name="DatabasePickTab" xml:space="preserve"><value>选择数据库</value></data>
+  <data name="DatabaseReadOnlyRows" xml:space="preserve"><value>已加载 {0} 行 · 只读结果</value></data>
+  <data name="DatabaseEditableRows" xml:space="preserve"><value>已加载 {0} 行 · 可编辑结果</value></data>
+  <data name="DatabaseQuerySummary" xml:space="preserve"><value>{0} 行 · {1} 列 · {2:0.###} ms</value></data>
+  <data name="DatabaseRowNumberHeader" xml:space="preserve"><value>#</value></data>
+  <data name="DatabaseAnalyzeContextConfirm" xml:space="preserve"><value>将在实例 {0}、Session {1}、数据库 {2}（{3}）中实际执行以下完整 SQL。是否继续分析？</value></data>
+  <data name="DatabaseEngineVersion" xml:space="preserve"><value>{0} {1}</value></data>
+  <data name="DatabaseConnectionSummary" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="DatabaseTlsVerified" xml:space="preserve"><value>TLS 已验证</value></data>
+  <data name="DatabaseTlsEncrypted" xml:space="preserve"><value>TLS 已加密</value></data>
+  <data name="DatabaseTlsDisabled" xml:space="preserve"><value>TLS 未启用</value></data>
+  <data name="DatabasePickNone" xml:space="preserve"><value>请选择至少一个数据库</value></data>
+  <data name="DatabaseObjectGroupCount" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="DatabaseLoadedObjects" xml:space="preserve"><value>{0} 张表 · {1} 个视图</value></data>
+  <data name="DatabaseScopeLabel" xml:space="preserve"><value>数据库范围 · {0}</value></data>
+  <data name="DatabaseClipboardFailed" xml:space="preserve"><value>无法复制输出，请重试。</value></data>
 </root>

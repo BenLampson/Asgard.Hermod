@@ -253,9 +253,15 @@ Filters accept catalog column comparisons, LIKE, IN, IS NULL, AND/OR, NOT and pa
 Every value is parameterized, identifiers are quoted, and statements, subqueries and
 functions are rejected. Paging/filter changes reuse save/discard/cancel for cell drafts.
 SQL documents retain independent execution databases and expose current/selection and
-whole-document execution as visible wrapping actions.
+whole-document execution through the shared split Run button. Database captions, Session strips, document tabs,
+SQL editor and output use the scoped tokens from `DBWindow.pen`. `DatabaseSqlWorkspace`
+provides the 48-DIP toolbar, a resizable editor and one mutually exclusive output slot
+for results, safe messages, complete plan text and recent execution history. Plans retain
+the previous query results and their request duration. Restoring history only restores
+SQL after the existing save/discard/cancel guard; it never executes it.
 
-MySQL and Redis share the same rounded internal tab/section resources. Middle-click
+MySQL and PostgreSQL share database-specific Session, document and output tab styles;
+Redis retains the generic internal tab resources. Middle-click
 passes the pointed tab to the existing guarded close command. Shared grid scrolling
 uses Shift+wheel only on the grid viewport and preserves editors and ordinary wheel
 handling. Empty tool groups do not reserve an extra line. The tree container intercepts
@@ -485,6 +491,11 @@ instance ID with the original database name. Scope additions are validated as a
 batch; a foreign instance rejects the entire operation. Existing scopes cannot
 become empty. Removal confirmations carry immutable revision snapshots and are
 revalidated after asynchronous draft and transaction guards.
+
+The instance window presents `DatabaseSessionPicker` before a multi-database Session
+is created. New Session reuses this picker in the same window and cancellation returns
+to the previous Session with its draft intact. Switching SQL and object documents within
+the same scope preserves the tree data source, selected row and scroll position.
 
 A script Session owns its object documents, SQL execution history and AI conversation.
 Scope is distinct from the physical connection's execution target. Unique candidates

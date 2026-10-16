@@ -12,7 +12,7 @@
   <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
   <Setter Property="ItemsPanel"><Setter.Value><ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate></Setter.Value></Setter>
   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="controls:WorkspaceTabStrip">
-   <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+   <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
     <ScrollViewer x:Name="PART_ScrollViewer" Focusable="False" IsTabStop="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" CanContentScroll="False"><ItemsPresenter /></ScrollViewer>
    </Border>
   </ControlTemplate></Setter.Value></Setter>

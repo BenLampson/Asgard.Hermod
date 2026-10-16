@@ -30,7 +30,7 @@ public sealed partial class PostgreSqlTabViewModel
             EnsureCurrent();
             var execution = await session.ExecuteReadOnlyAsync(query.Sql, query.Database, timeout.Token);
             EnsureCurrent();
-            SetResults(execution.Results.Select(item => item with { EditableTable = null }));
+            SetResults(execution.Results.Select(item => item with { EditableTable = null }), execution.Elapsed);
             Error = execution.Failure is null ? "" : Text.Error(execution.Failure, "PostgreSqlCommandFailed");
             Status = Text.Format("PostgreSqlExecutionStatus", execution.Outcomes.Count, execution.Elapsed.TotalMilliseconds);
             var grid = execution.Results.FirstOrDefault();

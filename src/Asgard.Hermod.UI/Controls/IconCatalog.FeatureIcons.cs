@@ -50,6 +50,7 @@ internal static partial class IconCatalog
         AddObjectStorageIcons();
         AddRedisIcons();
         AddMySqlIcons();
+        AddDatabaseDesignIcons();
         AddSshIcons();
     }
 }

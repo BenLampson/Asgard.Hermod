@@ -14,7 +14,8 @@ public sealed class SqlAssistanceStateTests(WpfTestFixture fixture)
         Assert.Contains(choices, item => item.Label == "name"); Assert.Equal(0, server.Executions);
         await tab.ExplainScopeAsync("SELECT id FROM users", 0, false);
         Assert.Equal(1, server.Opens); Assert.Equal("EXPLAIN SELECT id FROM users", Assert.Single(server.ExecutedSql).Sql);
-        Assert.False(tab.SelectedResult!.IsEditable); Assert.Equal("explain", Assert.Single(tab.ExecutionTraces).Kind);
+        Assert.Null(tab.SelectedResult); Assert.NotEmpty(tab.PlanRawText); Assert.Equal("plan", tab.OutputView); Assert.Equal("explain", Assert.Single(tab.ExecutionTraces).Kind);
+        Assert.Equal("SELECT id FROM users", Assert.Single(tab.ExecutionTraces).Sql);
     });
 
     [Fact]
@@ -72,6 +73,16 @@ public sealed class SqlAssistanceStateTests(WpfTestFixture fixture)
         await tab.ExecuteAsync("SELECT 1");
         Assert.Equal(database, Assert.Single(server.OpenedOptions).Parameters["database"]);
         Assert.Equal("app", options.Parameters["database"]);
+    });
+
+    [Fact]
+    public Task Plan_DoesNotReplaceQueryResultOrItsRequestTime() => fixture.RunOffscreenAsync(async () =>
+    {
+        var server = new TestMySql { Elapsed = TimeSpan.FromMilliseconds(12) }; await using var tab = Query(server, new());
+        await tab.ExecuteAsync("SELECT 1"); var result = tab.SelectedResult; string summary = tab.QuerySummary;
+        server.Elapsed = TimeSpan.FromMilliseconds(99); await tab.ExplainScopeAsync("SELECT 1", 0, false);
+        Assert.Same(result, tab.SelectedResult); Assert.Equal(summary, tab.QuerySummary); Assert.Equal("plan", tab.OutputView);
+        Assert.Equal(99, tab.ExecutionTraces[0].Elapsed.TotalMilliseconds);
     });
 
     private static MySqlTabViewModel Query(TestMySql server, TestMySqlDialogs dialogs) => new("Query", "app", MySqlObjectKind.Root, server, TestMySql.Connection, dialogs);

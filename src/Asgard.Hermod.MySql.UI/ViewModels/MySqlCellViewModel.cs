@@ -23,7 +23,8 @@ public sealed class MySqlCellViewModel : ObservableObject
     /// <summary>完整字段表示或二进制大小说明。</summary>
     public string FullValue => Value is byte[] bytes ? Text.Format("MySqlBinaryValue", bytes.Length) : MySqlValues.Format(Value);
     /// <summary>单行显示预览，不作为保存数据。</summary>
-    public string Display => FullValue.Length > 256 ? FullValue[..256].Replace('\r', ' ').Replace('\n', ' ') + "…" : FullValue.Replace('\r', ' ').Replace('\n', ' ');
+    private string DisplayValue => Value is DateTime timestamp ? timestamp.ToString("yyyy-MM-dd HH:mm:ss.FFFFFFF", CultureInfo.InvariantCulture) : Value is bool boolean ? boolean ? "true" : "false" : FullValue;
+    public string Display => DisplayValue.Length > 256 ? DisplayValue[..256].Replace('\r', ' ').Replace('\n', ' ') + "…" : DisplayValue.Replace('\r', ' ').Replace('\n', ' ');
     /// <summary>复制或导出的无损原值表示。</summary>
     public string CopyValue => MySqlValues.Format(Value);
     /// <summary>长文本和二进制值优先使用独立字段窗口。</summary>

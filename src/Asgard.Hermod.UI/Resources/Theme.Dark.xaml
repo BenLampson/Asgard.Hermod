@@ -48,4 +48,15 @@
     <SolidColorBrush x:Key="WorkspaceLineBrush" Color="#303B4E" />
     <SolidColorBrush x:Key="MySqlBrandBrush" Color="#80BED8" />
     <SolidColorBrush x:Key="PostgreSqlBrandBrush" Color="#8CAEDD" />
+    <Color x:Key="DbBackgroundColor">#161D28</Color>
+    <Color x:Key="DbSoftColor">#1D2634</Color>
+    <Color x:Key="DbLineColor">#303B4E</Color>
+    <Color x:Key="DbInkColor">#E6ECF5</Color>
+    <Color x:Key="DbMutedColor">#9DAAC0</Color>
+    <Color x:Key="DbAccentColor">#86ACFF</Color>
+    <Color x:Key="DbSelectedColor">#253752</Color>
+    <Color x:Key="DbEditorColor">#141C29</Color>
+    <Color x:Key="DbSuccessColor">#70D9B0</Color>
+    <Color x:Key="DbWarningColor">#EAC27C</Color>
+    <Color x:Key="DbDangerColor">#FF9BAB</Color>
 </ResourceDictionary>

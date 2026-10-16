@@ -43,6 +43,11 @@ public sealed class WindowsMySqlWorkspaceDialogs(Func<Window?> owner) : IMySqlWo
     public Task<bool> ConfirmEndSessionAsync() => Task.FromResult(new ConfirmationDialog(Text.Get("MySqlEndTransaction"), Text.Get("MySqlEndTransactionHint"), Text.Get("MySqlRollbackAndContinue")) { Owner = owner() }.ShowDialog() == true);
     /// <summary>明确提示实际执行及函数副作用，只有确认后才发送分析命令。</summary>
     public Task<bool> ConfirmAnalyzeAsync() => Task.FromResult(new ConfirmationDialog(Text.Get("MySqlAnalyze"), Text.Get("MySqlAnalyzeConfirmHint"), Text.Get("MySqlAnalyzeConfirm")) { Owner = owner() }.ShowDialog() == true);
+    /// <summary>确认只对当前捕获的完整语句和执行目标有效。</summary>
+    public Task<bool> ConfirmAnalyzeAsync(string sql, string database, string instance, string session, string endpoint) => Task.FromResult(
+        new ConfirmationDialog(Text.Get("MySqlAnalyze"), Text.Format("DatabaseAnalyzeContextConfirm", instance, session, database, endpoint),
+            Text.Get("MySqlAnalyzeConfirm"), preview: sql)
+        { Owner = owner() }.ShowDialog() == true);
     /// <summary>模型建议没有自动执行权限，展示完整 SQL 后才允许发送。</summary>
     public Task<bool> ConfirmAssistantSqlAsync(string sql, string database) => Task.FromResult(new ConfirmationDialog(Text.Get("MySqlAssistantExecuteTitle"), Text.Format("MySqlAssistantExecuteHint", database), Text.Get("MySqlAssistantExecute"), preview: sql) { Owner = owner() }.ShowDialog() == true);
     /// <summary>保存完整 SQL 文稿，失败不截断原文件。</summary>

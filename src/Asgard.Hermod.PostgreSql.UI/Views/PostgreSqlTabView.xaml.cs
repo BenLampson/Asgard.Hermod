@@ -13,10 +13,11 @@ public partial class PostgreSqlTabView : UserControl
         InitializeComponent(); DataContextChanged += (_, _) => Attach(); Loaded += (_, _) => Attach();
         Unloaded += (_, _) => { if (_model is not null) { _model.PropertyChanged -= OnChanged; _model.InsertSqlRequested = null; } _model = null; };
     }
+    private CodeEditor CurrentEditor => SqlWorkspace.Editor;
     private void Attach()
     {
         if (_model is not null) { _model.PropertyChanged -= OnChanged; _model.InsertSqlRequested = null; }
-        _model = DataContext as PostgreSqlTabViewModel; if (_model is not null) { _model.PropertyChanged += OnChanged; _model.CommitInputRequested = CommitInput; _model.InsertSqlRequested = SqlEditor.InsertText; }
+        _model = DataContext as PostgreSqlTabViewModel; if (_model is not null) { _model.PropertyChanged += OnChanged; _model.CommitInputRequested = CommitInput; _model.InsertSqlRequested = CurrentEditor.InsertText; }
         ShowResult();
     }
     private void OnChanged(object? sender, PropertyChangedEventArgs args)
@@ -25,8 +26,8 @@ public partial class PostgreSqlTabView : UserControl
     {
         if (_model is null) return;
         foreach (var stale in _views.Keys.Where(grid => !_model.Results.Contains(grid)).ToArray()) _views.Remove(stale);
-        if (_model.SelectedResult is not { } grid) GridHost.Content = null;
-        else { if (!_views.TryGetValue(grid, out var view)) { view = new() { DataContext = grid, Tab = _model }; _views.Add(grid, view); } GridHost.Content = view; }
+        if (_model.SelectedResult is not { } grid) { GridHost.Content = null; SqlWorkspace.ResultContent = null; }
+        else { if (!_views.TryGetValue(grid, out var view)) { view = new() { DataContext = grid, Tab = _model }; _views.Add(grid, view); } if (_model.IsQuery) SqlWorkspace.ResultContent = view; else GridHost.Content = view; }
         Layout();
     }
     private void Layout()
@@ -45,32 +46,36 @@ public partial class PostgreSqlTabView : UserControl
         if (_model?.IsQuery == true) EditorRow.MaxHeight = Math.Max(80, args.NewSize.Height - 210);
     }
     /// <summary>提交原生编辑器输入到本地草稿，校验失败时保留编辑。</summary>
-    public bool CommitInput() => GridHost.Content is not PostgreSqlResultView view || view.CommitInput();
+    public bool CommitInput() => (_model?.IsQuery == true ? SqlWorkspace.ResultContent : GridHost.Content) is not PostgreSqlResultView view || view.CommitInput();
     private async Task RunAsync(bool all)
     {
         if (_model is null || !CommitInput()) return;
-        await _model.ExecuteScopeAsync(SqlEditor.SelectedText, SqlEditor.CaretIndex, all);
+        await _model.ExecuteScopeAsync(CurrentEditor.SelectedText, CurrentEditor.CaretIndex, all);
     }
     private async void OnRun(object sender, RoutedEventArgs args) => await RunAsync(false);
     private async void OnRunAll(object sender, RoutedEventArgs args) => await RunAsync(true);
     private async void OnExplain(object sender, RoutedEventArgs args)
-    { if (_model is not null && CommitInput()) await _model.ExplainScopeAsync(SqlEditor.SelectedText, SqlEditor.CaretIndex); }
+    { if (_model is not null && CommitInput()) await _model.ExplainScopeAsync(CurrentEditor.SelectedText, CurrentEditor.CaretIndex); }
     private async void OnPageSizeChanged(object sender, SelectionChangedEventArgs args)
     {
         if (!IsLoaded || _model is null || PageSizeSelector.SelectedItem is not int size || size == _model.PageSize) return;
         await _model.ChangePageSizeAsync(size); PageSizeSelector.SelectedItem = _model.PageSize;
     }
-    private async void OnDatabaseChanged(object sender, SelectionChangedEventArgs args)
+    private async void OnSqlTargetChanged(object sender, SelectionChangedEventArgs args)
+    { if (_model is not null && SqlWorkspace.SelectedDatabase is { } database && database != _model.Database) await _model.ChangeDatabaseAsync(database); }
+    private async void OnExportSqlOutput(object sender, RoutedEventArgs args)
+    { if (_model is not null) await _model.ExportAsync(); }
+    private void OnCopySqlOutput(object sender, RoutedEventArgs args)
     {
-        if (!IsLoaded || _model is null || DatabaseSelector.SelectedItem is not string database || database == _model.Database) return;
-        await _model.ChangeDatabaseAsync(database); DatabaseSelector.Text = _model.Database;
+        if (_model?.SelectedResult?.Result is not { } result) return;
+        string text = string.Join("\t", result.Columns.Select(column => column.Name)) + Environment.NewLine +
+            string.Join(Environment.NewLine, result.Rows.Select(row => string.Join("\t", row.Select(value => Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture)))));
+        try { Clipboard.SetText(text); } catch (System.Runtime.InteropServices.ExternalException) { new Asgard.Hermod.UI.Views.Dialogs.MessageDialog(Text.Get("Hermod"), Text.Get("DatabaseClipboardFailed")).ShowDialog(); }
     }
-    private async void OnDatabaseKeyDown(object sender, KeyEventArgs args)
-    { if (args.Key == Key.Enter && _model is not null) { args.Handled = true; await _model.ChangeDatabaseAsync(DatabaseSelector.Text); DatabaseSelector.Text = _model.Database; } }
     private async void OnKeyDown(object sender, KeyEventArgs args)
     {
         if (_model is null || (Keyboard.Modifiers & ModifierKeys.Control) == 0) return;
         if (args.Key == Key.Enter && _model.IsQuery) { args.Handled = true; await RunAsync((Keyboard.Modifiers & ModifierKeys.Shift) != 0); }
-        else if (args.Key == Key.S) { args.Handled = true; if (!CommitInput()) return; if (SqlEditor.IsKeyboardFocusWithin) await _model.SaveDocumentAsync(); else await _model.SaveChangesCommand.ExecuteAsync(); }
+        else if (args.Key == Key.S) { args.Handled = true; if (!CommitInput()) return; if (CurrentEditor.IsKeyboardFocusWithin) await _model.SaveDocumentAsync(); else await _model.SaveChangesCommand.ExecuteAsync(); }
     }
 }

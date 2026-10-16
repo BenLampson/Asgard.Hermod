@@ -37,11 +37,15 @@ The static TTF file is bundled unchanged.
 
 Noto Sans SC
 Source: Windows font NotoSansSC-VF.ttf (Noto Sans SC, Adobe/Google, SIL OFL 1.1)
-Bundled files: Assets/Fonts/NotoSansSC-Regular.ttf and NotoSansSC-SemiBold.ttf
-Static 400/600 weight instances made with fontTools 4.63.0; full character map retained.
+Bundled files: Assets/Fonts/NotoSansSC-Regular.ttf, NotoSansSC-Medium.ttf and NotoSansSC-SemiBold-600.ttf
+Static 400/500/600 weight instances made with fontTools 4.63.0; full character map retained.
+Static family/style names are normalized; variable STAT metadata is removed from the fully pinned faces.
 License: Assets/Licenses/NotoSansSC.OFL.txt
 
 MySQL and PostgreSQL
 Source: Simple Icons SVG paths embedded in the current Pencil design components edWZ7/yNa5Y.
 Shared WPF fill geometry: Controls/DatabaseBrandCatalog.cs
 Brand names and logos remain the property of their respective owners.
+
+Database toolbar and output icons: message-square, git-branch, save and scan-search use the Lucide source revision above.
+The history alias uses the official icons/history.svg from Lucide tag 0.468.0 (same ISC license).

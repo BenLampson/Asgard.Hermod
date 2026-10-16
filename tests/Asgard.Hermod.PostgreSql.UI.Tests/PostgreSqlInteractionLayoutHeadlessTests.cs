@@ -23,11 +23,10 @@ public sealed class PostgreSqlInteractionLayoutHeadlessTests(WpfTestFixture fixt
             var server = new TestPostgreSql(); var dialogs = new TestPostgreSqlDialogs();
             await using var query = new PostgreSqlTabViewModel("Query", "app", PostgreSqlObjectKind.Root, server, TestPostgreSql.Connection, dialogs);
             var view = new PostgreSqlTabView { DataContext = query }; var root = Root(view); Layout(root, width - 280);
-            Assert.IsType<WrapPanel>(view.FindName("QueryToolbar"));
-            var current = (Button)view.FindName("RunCurrent"); var all = (Button)view.FindName("RunAll");
-            Assert.Equal(Text.Get("PostgreSqlRunCurrentButton"), current.Content); Assert.Equal(Text.Get("PostgreSqlRunAllButton"), all.Content);
-            Assert.Equal(Visibility.Visible, current.Visibility); Assert.Equal(Visibility.Visible, all.Visibility);
-            Assert.True(all.TranslatePoint(new(), root).X + all.ActualWidth <= root.ActualWidth + 1);
+            var sqlWorkspace = Assert.IsType<Asgard.Hermod.UI.Controls.DatabaseSqlWorkspace>(view.FindName("SqlWorkspace"));
+            var current = Assert.IsType<Button>(sqlWorkspace.FindName("RunButton"));
+            Assert.True(current.IsEnabled); Assert.Equal(30, current.ActualHeight);
+            Assert.True(current.TranslatePoint(new(), root).X + current.ActualWidth <= root.ActualWidth + 1);
             Assert.Equal(Visibility.Collapsed, ((Grid)view.FindName("FilterToolbar")).Visibility);
             Capture(root, $"postgresql-query-{language}-{theme}-{width}");
             query.Sql = "SELECT 1; SELECT 2;"; await query.ExecuteScopeAsync("SELECT 9", 0, false);

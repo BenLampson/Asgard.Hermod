@@ -1,0 +1,59 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+ <ResourceDictionary.MergedDictionaries><ResourceDictionary Source="ButtonStyles.xaml" /></ResourceDictionary.MergedDictionaries>
+ <!-- DBWindow.pen：模块自己的语义色不覆盖主窗体主题。 -->
+ <FontFamily x:Key="UiFont">pack://application:,,,/Asgard.Hermod.UI;component/Assets/Fonts/#Noto Sans SC</FontFamily>
+ <SolidColorBrush x:Key="SuccessBrush" Color="{DynamicResource DbSuccessColor}" />
+ <SolidColorBrush x:Key="WarningBrush" Color="{DynamicResource DbWarningColor}" />
+ <SolidColorBrush x:Key="DangerBrush" Color="{DynamicResource DbDangerColor}" />
+ <SolidColorBrush x:Key="TextFaintBrush" Color="{DynamicResource DbMutedColor}" />
+ <SolidColorBrush x:Key="SurfaceBrush" Color="{DynamicResource DbBackgroundColor}" />
+ <SolidColorBrush x:Key="AppBackgroundBrush" Color="{DynamicResource DbSoftColor}" />
+ <SolidColorBrush x:Key="LineBrush" Color="{DynamicResource DbLineColor}" />
+ <SolidColorBrush x:Key="LineSoftBrush" Color="{DynamicResource DbLineColor}" />
+ <SolidColorBrush x:Key="TextPrimaryBrush" Color="{DynamicResource DbInkColor}" />
+ <SolidColorBrush x:Key="TextBodyBrush" Color="{DynamicResource DbInkColor}" />
+ <SolidColorBrush x:Key="TextMutedBrush" Color="{DynamicResource DbMutedColor}" />
+ <SolidColorBrush x:Key="AccentBrush" Color="{DynamicResource DbAccentColor}" />
+ <SolidColorBrush x:Key="AccentTextBrush" Color="{DynamicResource DbAccentColor}" />
+ <SolidColorBrush x:Key="AccentWeakBrush" Color="{DynamicResource DbSelectedColor}" />
+ <SolidColorBrush x:Key="DatabaseEditorBrush" Color="{DynamicResource DbEditorColor}" />
+ <ControlTemplate x:Key="DatabaseToolbarTemplate" TargetType="Button"><Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5"><ContentPresenter Margin="{TemplateBinding Padding}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center"><ContentPresenter.Resources><Style TargetType="TextBlock" BasedOn="{StaticResource ButtonContentText}" /></ContentPresenter.Resources></ContentPresenter></Border></ControlTemplate>
+ <Style x:Key="DatabaseToolbarButton" TargetType="Button" BasedOn="{StaticResource StandardButton}">
+  <Setter Property="Template" Value="{StaticResource DatabaseToolbarTemplate}" />
+  <Setter Property="Height" Value="30" /><Setter Property="Padding" Value="10,0" /><Setter Property="FontSize" Value="12" /><Setter Property="FontWeight" Value="Normal" />
+  <Setter Property="Background" Value="Transparent" /><Setter Property="BorderThickness" Value="0" />
+ </Style>
+ <Style x:Key="DatabasePrimaryButton" TargetType="Button" BasedOn="{StaticResource DatabaseToolbarButton}"><Setter Property="Background" Value="{DynamicResource AccentBrush}" /><Setter Property="Foreground" Value="White" /><Style.Triggers><Trigger Property="IsEnabled" Value="False"><Setter Property="Background" Value="{DynamicResource AccentBrush}" /><Setter Property="Foreground" Value="White" /><Setter Property="Opacity" Value="0.4" /></Trigger></Style.Triggers></Style>
+ <Style x:Key="DatabaseDocumentTab" TargetType="ListBoxItem">
+  <Setter Property="Height" Value="36" /><Setter Property="Padding" Value="12,0" /><Setter Property="Margin" Value="0,0,4,0" /><Setter Property="FontFamily" Value="{DynamicResource UiFont}" /><Setter Property="FontSize" Value="12" /><Setter Property="FocusVisualStyle" Value="{x:Null}" />
+  <Setter Property="Foreground" Value="{DynamicResource TextBodyBrush}" /><Setter Property="VerticalContentAlignment" Value="Center" />
+  <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="Tab" BorderThickness="0,2,0,0" BorderBrush="Transparent" Background="Transparent"><ContentPresenter Margin="{TemplateBinding Padding}" VerticalAlignment="Center" /></Border><ControlTemplate.Triggers>
+   <Trigger Property="IsSelected" Value="True"><Setter TargetName="Tab" Property="BorderBrush" Value="{DynamicResource AccentBrush}" /><Setter TargetName="Tab" Property="Background" Value="{DynamicResource SurfaceBrush}" /></Trigger>
+   <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Tab" Property="Background" Value="{DynamicResource AccentWeakBrush}" /></Trigger>
+  </ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+ </Style>
+ <Style x:Key="DatabaseSessionTab" TargetType="ListBoxItem" BasedOn="{StaticResource DatabaseDocumentTab}"><Setter Property="Padding" Value="10,0" /><Style.Triggers><Trigger Property="IsSelected" Value="True"><Setter Property="Padding" Value="12,0" /><Setter Property="MinWidth" Value="152" /></Trigger></Style.Triggers></Style>
+ <Style x:Key="DatabaseCloseButton" TargetType="Button" BasedOn="{StaticResource IconButton}"><Setter Property="Padding" Value="0" /><Setter Property="BorderThickness" Value="0" /><Setter Property="Width" Value="12" /><Setter Property="Height" Value="12" /><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger><DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style>
+ <Style x:Key="DatabaseTabIcon" TargetType="Control"><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" /><Style.Triggers><DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True"><Setter Property="Foreground" Value="{DynamicResource AccentBrush}" /></DataTrigger></Style.Triggers></Style>
+ <Style x:Key="DatabaseOutputTab" TargetType="ListBoxItem" BasedOn="{StaticResource DatabaseDocumentTab}">
+  <Setter Property="Height" Value="40" /><Setter Property="Margin" Value="0,0,6,0" /><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" /><Setter Property="FontWeight" Value="Normal" />
+  <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="Tab" BorderThickness="0,0,0,2" BorderBrush="Transparent" Background="Transparent"><ContentPresenter Margin="{TemplateBinding Padding}" VerticalAlignment="Center" /></Border><ControlTemplate.Triggers>
+   <Trigger Property="IsSelected" Value="True"><Setter TargetName="Tab" Property="BorderBrush" Value="{DynamicResource AccentBrush}" /><Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" /><Setter Property="FontWeight" Value="SemiBold" /></Trigger>
+   <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="Tab" Property="Background" Value="{DynamicResource AccentWeakBrush}" /></Trigger>
+  </ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+ </Style>
+ <Style x:Key="DatabaseResultRowHeader" TargetType="DataGridRowHeader">
+  <Setter Property="FontFamily" Value="{DynamicResource MonoFont}" /><Setter Property="FontSize" Value="12" /><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+  <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" /><Setter Property="BorderBrush" Value="{DynamicResource LineSoftBrush}" /><Setter Property="BorderThickness" Value="0,0,0,1" />
+  <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="DataGridRowHeader"><Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"><TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}" Margin="12,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" /></Border></ControlTemplate></Setter.Value></Setter>
+  <Style.Triggers><Trigger Property="IsRowSelected" Value="True"><Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" /></Trigger></Style.Triggers>
+ </Style>
+ <Style x:Key="DatabaseResultCell" TargetType="DataGridCell" BasedOn="{StaticResource WorkspaceResultGridCell}">
+  <Setter Property="BorderThickness" Value="0" />
+  <Style.Triggers><Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter Property="BorderThickness" Value="1" /></Trigger></Style.Triggers>
+ </Style>
+ <Style x:Key="DatabaseCheckBox" TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+  <Setter Property="FontSize" Value="12" /><Setter Property="FontWeight" Value="Normal" /><Setter Property="FontFamily" Value="{DynamicResource UiFont}" />
+  <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="CheckBox"><StackPanel Orientation="Horizontal" VerticalAlignment="Center"><Border x:Name="Box" Width="13" Height="13" CornerRadius="1" BorderThickness="1" BorderBrush="{DynamicResource TextMutedBrush}" Background="{DynamicResource SurfaceBrush}"><Path x:Name="Check" Visibility="Collapsed" Data="M 2,6 L 5,9 L 10,3" Stroke="White" StrokeThickness="1.2" /></Border><ContentPresenter x:Name="Label" Margin="7,0,0,0" VerticalAlignment="Center" /></StackPanel><ControlTemplate.Triggers><Trigger Property="HasContent" Value="False"><Setter TargetName="Label" Property="Visibility" Value="Collapsed" /></Trigger><Trigger Property="IsChecked" Value="True"><Setter TargetName="Box" Property="Background" Value="{DynamicResource AccentBrush}" /><Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource AccentBrush}" /><Setter TargetName="Check" Property="Visibility" Value="Visible" /></Trigger><Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.4" /></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+ </Style>
+</ResourceDictionary>

@@ -14,6 +14,8 @@ internal sealed partial class MySqlSession(MySqlConnection connection, MySqlSess
     /// <summary>本会话已验证的连接选项。</summary>
     public MySqlSessionOptions Options { get; } = options;
     /// <summary>当前物理连接是否可用；失败后不自动重连。</summary>
+    public string? ServerVersion => IsConnected ? connection.ServerVersion : null;
+    /// <inheritdoc />
     public bool IsConnected => !_disposed && connection.State == ConnectionState.Open;
     /// <inheritdoc />
     public event EventHandler? ConnectionLost;

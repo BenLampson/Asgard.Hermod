@@ -9,7 +9,7 @@ public sealed partial class PostgreSqlTabViewModel
     /// <summary>只保留本页签最近 50 次执行追踪，不持久化 SQL 或查询结果。</summary>
     public ObservableCollection<PostgreSqlExecutionTrace> ExecutionTraces { get; } = [];
     /// <summary>当前查看的执行快照不随编辑器后续改动变化。</summary>
-    public PostgreSqlExecutionTrace? SelectedTrace { get; set => SetProperty(ref field, value); }
+    public PostgreSqlExecutionTrace? SelectedTrace { get; set { if (SetProperty(ref field, value)) RestoreTraceCommand.NotifyCanExecuteChanged(); } }
     /// <summary>只有实际执行后才显示追踪区域。</summary>
     public bool HasExecutionTraces => ExecutionTraces.Count > 0;
     /// <summary>服务器返回的执行计划与结果使用相同的有界表格展示。</summary>
@@ -30,10 +30,11 @@ public sealed partial class PostgreSqlTabViewModel
             }
             if (string.IsNullOrWhiteSpace(sql)) return;
             var execution = await ExecuteTrackedAsync(session, sql, true, token);
-            SetResults(execution.Results.Select(result => result with { EditableTable = null }));
+            PlanRawText = PlanText(execution);
             Error = execution.Failure is null ? "" : Text.Error(execution.Failure, "PostgreSqlCommandFailed");
             Message = execution.Failure is null ? Text.Get("PostgreSqlExplainComplete") : "";
             Status = Text.Format("PostgreSqlExecutionStatus", execution.Outcomes.Count, execution.Elapsed.TotalMilliseconds);
+            OutputView = Error.Length == 0 ? "plan" : "messages";
         });
     }
 
@@ -66,7 +67,6 @@ public sealed partial class PostgreSqlTabViewModel
             foreach (var row in result.Rows)
             {
                 text.AppendLine(string.Join("\t", row.Select(value => Convert.ToString(value, CultureInfo.InvariantCulture))));
-                if (text.Length > 100_000) return text.ToString(0, 100_000);
             }
         return text.ToString();
     }

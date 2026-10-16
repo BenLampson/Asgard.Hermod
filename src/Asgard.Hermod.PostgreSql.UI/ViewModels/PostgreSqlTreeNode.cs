@@ -18,6 +18,21 @@ public sealed class PostgreSqlTreeNode : ObservableObject
     public string Identity => string.Join('\0', Object.Database, Object.Schema, Object.Kind, Object.ParentName, Object.Name);
     /// <summary>供公共控件展示的已本地化标题。</summary>
     public string Label => IsPlaceholder ? Text.Get("PostgreSqlNotLoaded") : Object.Name.Length > 0 ? Object.Name : Text.Get("PostgreSql" + Object.Kind);
+    /// <summary>仅在该分组全部读取完成后展示精确数量，分页未完成时不推算总数。</summary>
+    public string DisplayLabel => Loaded && !HasMore && Object.Kind is (PostgreSqlObjectKind.Tables or PostgreSqlObjectKind.Views or PostgreSqlObjectKind.Procedures or PostgreSqlObjectKind.Functions or PostgreSqlObjectKind.Events)
+        ? Text.Format("DatabaseObjectGroupCount", Label, Children.Count(node => !node.IsPlaceholder)) : Label;
+    /// <summary>具体对象使用紧凑叶行；元数据仍可用键盘方向键展开。</summary>
+    public bool IsObjectEntry => Object.Name.Length > 0 && Object.Kind is not (PostgreSqlObjectKind.Root or PostgreSqlObjectKind.Database or PostgreSqlObjectKind.Schema);
+    /// <summary>对象图标与容器图标遵循画板的独立大小。</summary>
+    public double IconSize => IsObjectEntry ? 13 : 12;
+    private double ChildOffset => Object.Kind is PostgreSqlObjectKind.Tables or PostgreSqlObjectKind.Views or PostgreSqlObjectKind.Procedures or PostgreSqlObjectKind.Functions or PostgreSqlObjectKind.Events ? 22 : 12;
+    private double VisualIndent => Parent?.Parent is null ? 0 : Parent.VisualIndent + Parent.ChildOffset;
+    /// <summary>子级缩进只影响内容，选中背景延伸到整个树视口。</summary>
+    public Thickness ChildrenIndent => new(ChildOffset, 0, 0, 0);
+    /// <summary>抵消祖先缩进以保持整行的选中背景。</summary>
+    public Thickness RowOutset => new(-VisualIndent, 0, 0, 2);
+    /// <summary>抵消背景外扩后恢复内容原位。</summary>
+    public Thickness RowInset => new(VisualIndent, 0, 0, 0);
     /// <summary>服务器返回的元数据说明。</summary>
     public string Detail => Object.Detail;
     /// <summary>按真实对象类型选择的公共图标。</summary>
@@ -73,5 +88,5 @@ public sealed class PostgreSqlTreeNode : ObservableObject
     internal int Revision { get; set; }
     internal CancellationTokenSource? Pending { get; set; }
     internal bool SavedExpansion { get; set; }
-    internal void RefreshStatus() => OnPropertyChanged(nameof(HasStatus));
+    internal void RefreshStatus() { OnPropertyChanged(nameof(HasStatus)); OnPropertyChanged(nameof(DisplayLabel)); }
 }

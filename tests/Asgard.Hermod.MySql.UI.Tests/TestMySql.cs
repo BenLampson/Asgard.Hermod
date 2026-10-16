@@ -6,6 +6,9 @@ internal sealed class TestMySql : IMySqlSessionFactory
 {
     internal int DatabasePageSize = int.MaxValue;
     internal string[] DatabaseNames = ["app"];
+    internal Func<MySqlObject, MySqlObject[]?>? MetadataOverride;
+    internal TimeSpan Elapsed = TimeSpan.FromMilliseconds(2);
+    internal string? Version;
     internal List<string> MetadataDatabases { get; } = [];
     internal static InstanceConnectionOptions Connection => new() { TypeId = MySqlIds.Type, ProviderId = MySqlIds.Direct, Parameters = new Dictionary<string, string> { ["host"] = "localhost", ["user"] = "test", ["database"] = "app" } };
     internal static readonly MySqlColumn[] Columns = [new(0, "id", "INT", typeof(int), false, "app", "users", "id", true, true),
@@ -30,15 +33,16 @@ internal sealed class TestMySql : IMySqlSessionFactory
     internal List<Session> Sessions { get; } = [];
     internal List<InstanceConnectionOptions> OpenedOptions { get; } = [];
     public async Task<IMySqlSession> OpenAsync(InstanceConnectionOptions options, CancellationToken cancellationToken = default)
-    { Opens++; OpenedOptions.Add(options); if (BlockedOpen is { } blocked) await blocked.Task; if (OpenError is { } error) throw error; var session = new Session(this); Sessions.Add(session); return session; }
+    { Opens++; OpenedOptions.Add(options); if (BlockedOpen is { } blocked) await blocked.Task; if (OpenError is { } error) throw error; var session = new Session(this, options); Sessions.Add(session); return session; }
     internal MySqlResult Result() => ResultOverride ?? new(1, 1, Columns, [Columns.Select(column => MySqlValues.Clone(Values[column.Name])).ToArray()], EditableTable: Table);
-    internal sealed class Session(TestMySql server) : IMySqlSession
+    internal sealed class Session(TestMySql server, InstanceConnectionOptions? options = null) : IMySqlSession
     {
-        public MySqlSessionOptions Options => MySqlSessionOptions.Parse(Connection);
+        public MySqlSessionOptions Options => MySqlSessionOptions.Parse(options ?? Connection);
         public bool IsConnected { get; private set; } = true;
+        public string? ServerVersion => server.Version;
         public event EventHandler? ConnectionLost;
         internal void Disconnect() { IsConnected = false; ConnectionLost?.Invoke(this, EventArgs.Empty); }
-        public string CurrentDatabase => "app";
+        public string CurrentDatabase => Options.Database;
         public MySqlSessionState State => new(true, server.InTransaction);
         public Task<IReadOnlyList<MySqlStatement>> SplitAsync(string sql, CancellationToken token = default) => Task.FromResult(MySqlSql.Split(sql));
         public Task<string> ReadDefinitionAsync(MySqlObject item, CancellationToken token = default) => Task.FromResult("CREATE TABLE users(id INT PRIMARY KEY, name VARCHAR(100));");
@@ -55,6 +59,7 @@ internal sealed class TestMySql : IMySqlSessionFactory
                 MySqlObjectKind.Columns => Columns.Select(column => new MySqlObject(MySqlObjectKind.Column, column.Name, "app", "users", column.TypeName)).ToArray(),
                 _ => [],
             };
+            items = server.MetadataOverride?.Invoke(parent) ?? items;
             if (parent.Kind == MySqlObjectKind.Root) return Task.FromResult(new MySqlObjectPage(items.Skip(offset).Take(server.DatabasePageSize).ToArray(), (long)offset + server.DatabasePageSize < items.Length));
             return Task.FromResult(new MySqlObjectPage(items, false));
         }
@@ -62,7 +67,7 @@ internal sealed class TestMySql : IMySqlSessionFactory
         public async Task<MySqlExecution> ExecuteAsync(string sql, string database, CancellationToken token = default)
         {
             server.ExecutedSql.Add((sql, database)); server.Executions++; if (server.BlockedQuery is { } blocked) await blocked.Task.WaitAsync(token);
-            return new([server.Result()], [new(1, 0, true)], null, TimeSpan.FromMilliseconds(2), State);
+            return new([server.Result()], [new(1, 0, true)], null, server.Elapsed, State);
         }
         public async Task<MySqlExecution> ExecuteReadOnlyAsync(string sql, string database, CancellationToken token = default)
         {

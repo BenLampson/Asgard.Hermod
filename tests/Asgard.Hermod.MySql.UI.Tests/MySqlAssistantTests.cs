@@ -71,7 +71,7 @@ public sealed class MySqlAssistantTests(WpfTestFixture fixture)
         using var assistant = new MySqlAssistantViewModel(tab, new Model()) { Prompt = "Write SQL" };
         await assistant.SendCommand.ExecuteAsync();
         var view = new MySqlTabView { DataContext = tab }; var root = Root(view); Layout(root, 780, 680);
-        var editor = (CodeEditor)view.FindName("SqlEditor"); var input = (TextBox)editor.FindName("Input");
+        var editor = ((DatabaseSqlWorkspace)view.FindName("SqlWorkspace")).Editor; var input = (TextBox)editor.FindName("Input");
         input.Select(0, input.Text.Length);
         var suggestion = Assert.Single(assistant.Messages[1].SqlBlocks); assistant.InsertCommand.Execute(suggestion);
         Assert.Equal(suggestion.Sql, tab.Sql); Assert.Empty(server.ExecutedSql); Assert.True(input.CanUndo);

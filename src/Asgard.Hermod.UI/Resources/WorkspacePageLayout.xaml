@@ -25,7 +25,7 @@
                         <ContentPresenter x:Name="PART_Details" Grid.Column="1" Content="{TemplateBinding Details}" Width="{TemplateBinding DetailsWidth}"
                                           Visibility="Collapsed" HorizontalAlignment="Right" />
                     </Grid>
-                    <Border x:Name="PART_StatusBar" Grid.Row="3" Height="28" Padding="16,0" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,1,0,0">
+                    <Border x:Name="PART_StatusBar" Grid.Row="3" Height="28" Background="{DynamicResource AppBackgroundBrush}" Padding="16,0" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,1,0,0">
                         <ContentPresenter Content="{TemplateBinding StatusContent}" VerticalAlignment="Center" />
                     </Border>
                     <ContentPresenter x:Name="PART_Overlay" Grid.RowSpan="4" Panel.ZIndex="100" Content="{TemplateBinding Overlay}" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />

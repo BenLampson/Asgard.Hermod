@@ -11,7 +11,7 @@ public partial class PostgreSqlWorkspaceView : UserControl
     private PostgreSqlWorkspaceViewModel? _model;
     private bool _compact, _drawer;
     private bool _treeVisible = true;
-    private double _treeWidth = 240;
+    private double _treeWidth = 232;
     /// <summary>创建模块状态和依赖；真实连接或写入由显式操作启动。</summary>
     public PostgreSqlWorkspaceView()
     {
@@ -54,7 +54,8 @@ public partial class PostgreSqlWorkspaceView : UserControl
     private void OnTabChanged(object sender, SelectionChangedEventArgs args) => ShowTab();
     private void OnBodySizeChanged(object sender, SizeChangedEventArgs args)
     {
-        bool compact = args.NewSize.Width < 760; if (!_compact && compact && _treeVisible) _treeWidth = TreeColumn.ActualWidth;
+        ObjectTree.MaxHeight = Math.Max(80, args.NewSize.Height - 160);
+        bool compact = args.NewSize.Width < 1040; if (!_compact && compact && _treeVisible) _treeWidth = TreeColumn.ActualWidth;
         _compact = compact; Layout();
     }
     private void OnDrawer(object sender, RoutedEventArgs args)

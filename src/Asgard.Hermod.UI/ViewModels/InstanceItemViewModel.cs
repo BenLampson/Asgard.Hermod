@@ -24,6 +24,8 @@ public sealed class InstanceItemViewModel : ObservableObject
     /// <summary>详情和页签标题。</summary>
     public string DisplayName => Summary.DisplayName;
     /// <summary>只识别内置环境标签的稳定标识，多个环境明确显示，缺失不猜测。</summary>
+    public bool HasEnvironmentTag => Summary.TagIds.Any(id => id is "builtin.environment.production" or "builtin.environment.staging" or "builtin.environment.development");
+    /// <summary>只呈现已保存的内置环境标签。</summary>
     public string EnvironmentLabel
     {
         get
@@ -111,7 +113,7 @@ public sealed class InstanceItemViewModel : ObservableObject
         foreach (string property in new[] { nameof(Summary), nameof(Name), nameof(DisplayName),
             nameof(Icon), nameof(IsStorage), nameof(Tags), nameof(IsLocal), nameof(HasAlert), nameof(TypeIcon),
             nameof(TypeName), nameof(HasProviderIcon), nameof(ProviderName), nameof(ProviderIcon), nameof(TypeHint), nameof(ProviderHint),
-            nameof(HasSyncStatus), nameof(AccessibleName), nameof(EnvironmentLabel), nameof(EnvironmentTone) })
+            nameof(HasSyncStatus), nameof(AccessibleName), nameof(HasEnvironmentTag), nameof(EnvironmentLabel), nameof(EnvironmentTone) })
             OnPropertyChanged(property);
     }
 }

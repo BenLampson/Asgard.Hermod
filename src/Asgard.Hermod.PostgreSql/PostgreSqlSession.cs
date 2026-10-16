@@ -11,6 +11,8 @@ internal sealed partial class PostgreSqlSession(NpgsqlConnection connection, Npg
     /// <inheritdoc />
     public PostgreSqlSessionOptions Options { get; } = options;
     /// <inheritdoc />
+    public string? ServerVersion => IsConnected ? connection.ServerVersion : null;
+    /// <inheritdoc />
     public bool IsConnected => !_disposed && connection.State == ConnectionState.Open;
     /// <inheritdoc />
     public event EventHandler? ConnectionLost;
