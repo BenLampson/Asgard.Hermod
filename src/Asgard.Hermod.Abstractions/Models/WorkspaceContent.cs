@@ -16,5 +16,6 @@ public static class WorkspaceContent
             TagIds = item.TagIds.Order(StringComparer.Ordinal).ToArray(),
         }).ToArray(),
         Tags = value.Tags.OrderBy(item => item.Id, StringComparer.Ordinal).ToArray(),
+        AgentModels = value.AgentModels with { Profiles = value.AgentModels.Profiles.OrderBy(profile => profile.Id, StringComparer.Ordinal).ToArray() },
     });
 }

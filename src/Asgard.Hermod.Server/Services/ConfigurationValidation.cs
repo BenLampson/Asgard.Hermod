@@ -16,6 +16,11 @@ internal static class ConfigurationValidation
             || JsonSerializer.SerializeToUtf8Bytes(configuration).Length > 7 * 1024 * 1024) Invalid();
         var value = upload!.Configuration;
         WorkspaceEncryption.ValidateEnvelope(value.Protection!);
+        if (value.AgentModels is { } models)
+        {
+            WorkspaceEncryption.ValidateEnvelope(models);
+            if (models.Salt != value.Protection!.Salt) Invalid();
+        }
         if (value.Instances.Select(item => item.Id).Distinct().Count() != value.Instances.Count
             || value.Tags.Select(item => item.Tag.Id).Distinct().Count() != value.Tags.Count) Invalid();
         var ids = value.Tags.Select(item => item.Tag.Id).ToHashSet(StringComparer.Ordinal);

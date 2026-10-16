@@ -48,6 +48,8 @@ internal static class WorkspaceSnapshotValidation
                 || instance.TagIds.Count > tagIds.Count || instance.TagIds.Any(id => !tagIds.Contains(id))
                 || instance.TagIds.Distinct(StringComparer.Ordinal).Count() != instance.TagIds.Count) Invalid();
         }
+        try { AgentModelValidation.Validate(snapshot.AgentModels); }
+        catch (Exception) { Invalid(); }
         return ordered;
     }
     /// <summary>标识不得为空或包含控制字符，协议稳定字段不作翻译。</summary>

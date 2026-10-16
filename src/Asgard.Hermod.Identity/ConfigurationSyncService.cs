@@ -80,6 +80,8 @@ public sealed partial class ConfigurationSyncService : BackgroundService, IConfi
     /// <inheritdoc />
     public Task PrepareWorkspaceAsync(CancellationToken cancellationToken = default) => RunAsync(async (account, _) =>
         await SwitchWorkspaceAsync(account, cancellationToken), cancellationToken, false);
+    /// <inheritdoc />
+    public bool IsWorkspacePrepared => _store.ActiveOwner == (_accounts.Account is { } account ? Owner(account) : "");
 
     /// <inheritdoc />
     public Task RunLocalChangeAsync(Func<Task> action, CancellationToken cancellationToken = default) => RunAsync(async (account, _) =>
@@ -180,6 +182,8 @@ public sealed partial class ConfigurationSyncService : BackgroundService, IConfi
             {
                 var encoded = await Task.Run(() => _codec.Encode(candidate, remote, cloud, state.Password!, owner), cancellationToken);
                 cloud = await _transport.WriteAsync(token, new(cloud.Revision, encoded), cancellationToken);
+                // 旧服务器可能忽略未知字段；没有原样确认密文时不得把空响应恢复到本机。
+                if (encoded.AgentModels is not null && cloud.AgentModels != encoded.AgentModels) throw Text.Exception("AgentModelSyncUnavailable");
                 candidate = await Task.Run(() => _codec.Decode(cloud, state.Password!, owner), cancellationToken);
             }
             // 应用失败保留旧共同基准，下次仍能区分云端新增与网络期间的本机编辑。

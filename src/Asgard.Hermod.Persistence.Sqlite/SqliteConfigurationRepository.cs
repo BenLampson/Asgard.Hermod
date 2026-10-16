@@ -180,7 +180,9 @@ public sealed partial class SqliteConfigurationRepository : ILocalConfigurationR
             cancellationToken.ThrowIfCancellationRequested();
             instances.Add(ReadInstance(reader, associations.GetValueOrDefault(reader.GetString(0)) ?? []));
         }
-        return new LocalConfigurationSnapshot(instances, TagHierarchy.ToSnapshots(tags, associations));
+        reader.Close();
+        return new LocalConfigurationSnapshot(instances, TagHierarchy.ToSnapshots(tags, associations))
+        { ProtectedAgentModels = SqliteAgentModelStore.ReadProtected(command) };
     }
 
     /// <summary>将密文列映射到内部记录，任何导航读取都不会触发解密。</summary>

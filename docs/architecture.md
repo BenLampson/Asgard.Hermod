@@ -160,16 +160,33 @@ SSH's primary body switches between terminal, SFTP files and loopback forwarding
 Its compact monitoring notification samples Linux through separate read-only exec
 channels; detailed monitoring occupies a collapsible bottom region. The same
 verified transport supplies these channels without injecting terminal input.
-The shared `WorkspaceSplitView` owns native resizable columns and preserves both
-content instances while hiding a pane. SSH and database workspaces use it for
-Agent; closing or resizing the pane preserves conversation, draft and width.
+The shared `WorkspaceSplitView` owns native resizable tool columns. SSH and
+SQL Agent entries open independent `AgentChatWindow` instances keyed by their
+originating console or database Session. Closing the chat hides it and preserves
+its position, task, draft and bounded conversation history. Source closure revokes
+operations while retaining readable evidence. Container log readers attach an
+explicit frozen snapshot or selection and never execute tools.
 SSH, MySQL and PostgreSQL compose the same `AgentPanel`, `AgentMessageView`
-and `AgentCodeSuggestion` controls. The shared panel owns the header, message
-scrolling, composer, user-message colors and keyboard behavior (Enter or
-Ctrl+Enter sends; Shift+Enter inserts a newline). Modules provide context slots,
-message bindings and their existing commands. SQL scope, result sharing,
-confirmation and execution, and SSH selection, diagnostics and connection
-generation checks remain in their module view models.
+and `AgentCodeSuggestion` controls. Enter sends and Shift+Enter inserts a newline;
+IME composition does not submit. SQL scope, result sharing and execution, and SSH
+selection, diagnostics and connection generation checks remain in their modules.
+Inline approval cards freeze the full command and target, are single use and
+become invalid on cancellation, source changes or reconnection. Cancellation
+after dispatch records an unknown outcome without retrying the operation.
+
+Model profiles belong to the active workspace snapshot. SQLite stores the entire
+profile collection under `agent.models` using Windows user protection; corrupt
+ciphertext fails closed without replacing it with an empty collection. Profile
+changes participate in workspace compare-and-swap and owner-switch transactions.
+Cloud configuration uses a separate AES-GCM envelope bound to account and model
+purpose, with the existing sync key and an independent nonce. Server schema 3
+stores only this envelope; the immutable password-check envelope is unchanged.
+A missing upload field preserves existing models for old clients, while an
+encrypted empty collection propagates explicit deletion. Clients require the
+server to acknowledge the exact envelope before applying the returned snapshot.
+Three-way merge treats endpoint, model and key as one connection; conflict
+previews mask credentials and deleted defaults cannot resurrect deleted profiles.
+
 SQL adds a Manual/Automatic selector in the shared composer's options slot.
 Manual remains the default and retains insertion and explicit execution
 confirmation. Automatic enables at most four read-only query tool calls per

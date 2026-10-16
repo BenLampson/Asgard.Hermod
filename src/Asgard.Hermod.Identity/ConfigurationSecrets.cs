@@ -4,7 +4,7 @@ using System.Text;
 namespace Asgard.Hermod.Identity;
 
 /// <summary>一次操作派生一个密钥；每条凭据使用独立 nonce 并绑定账户、实例及服务商。</summary>
-internal sealed class ConfigurationSecrets : IDisposable
+internal sealed partial class ConfigurationSecrets : IDisposable
 {
     private readonly byte[] _key;
     private readonly string _owner;
@@ -13,7 +13,7 @@ internal sealed class ConfigurationSecrets : IDisposable
     public ConfigurationSecrets(string password, string owner, EncryptedWorkspace protection)
     {
         var check = WorkspaceEncryption.Decrypt(protection, password, owner + ":configuration");
-        if (check.SchemaVersion != 1 || check.Instances.Count != 0 || check.Tags.Count != 0)
+        if (check.SchemaVersion != 1 || check.Instances.Count != 0 || check.Tags.Count != 0 || check.AgentModels.Profiles.Count != 0 || check.AgentModels.DefaultProfileId.Length != 0)
             throw Text.Exception("SyncSnapshotInvalid");
         _owner = owner; _salt = protection.Salt;
         _key = Rfc2898DeriveBytes.Pbkdf2(password, Convert.FromBase64String(_salt), WorkspaceEncryption.Iterations,

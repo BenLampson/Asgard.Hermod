@@ -4,6 +4,8 @@ namespace Asgard.Hermod.Persistence.Sqlite;
 public sealed record LocalConfigurationSnapshot(IReadOnlyList<StoredInstanceConfiguration> Instances,
     IReadOnlyList<ManagedTag> Tags)
 {
+    /// <summary>与实例和标签在同一事务读取的模型密文，导航不触发解密。</summary>
+    public string? ProtectedAgentModels { get; init; }
     /// <summary>不让记录自动输出内部实例内容。</summary>
     public override string ToString() => $"Local configuration ({Instances.Count} instances, {Tags.Count} tags)";
 }

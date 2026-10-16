@@ -4205,7 +4205,7 @@ Exit code: {1}
   <data name="AgentHide" xml:space="preserve"><value>Hide Agent and keep the conversation and draft</value></data>
   <data name="AgentSend" xml:space="preserve"><value>Send</value></data>
   <data name="AgentStop" xml:space="preserve"><value>Stop</value></data>
-  <data name="AgentSendHint" xml:space="preserve"><value>Enter or Ctrl+Enter to send · Shift+Enter for a new line</value></data>
+  <data name="AgentSendHint" xml:space="preserve"><value>Enter to send · Shift+Enter for a new line</value></data>
   <data name="SqlAgentManual" xml:space="preserve"><value>Manual</value></data>
   <data name="SqlAgentAutomatic" xml:space="preserve"><value>Automatic</value></data>
   <data name="SqlAgentExecutionMode" xml:space="preserve"><value>SQL execution mode</value></data>
@@ -4471,4 +4471,53 @@ Status: {2}
   <data name="ChatActionFailed" xml:space="preserve"><value>The operation failed or stopped; review the workspace results.</value></data>
   <data name="ChatApprovalComposerHint" xml:space="preserve"><value>Waiting for approval · Review or decline the operation first</value></data>
   <data name="ChatReviewedOperation" xml:space="preserve"><value>Operation review</value></data>
+  <data name="AgentModelDataInvalid" xml:space="preserve"><value>The saved model configuration is invalid.</value></data>
+  <data name="AgentModelUnlockFailed" xml:space="preserve"><value>The saved model configuration could not be unlocked. The original data has been kept.</value></data>
+  <data name="AgentModelSyncUnavailable" xml:space="preserve"><value>The sync server did not confirm the encrypted model configuration. Local changes have been kept.</value></data>
+  <data name="AgentModelDefault" xml:space="preserve"><value>Default model configuration</value></data>
+  <data name="AgentModelConnection" xml:space="preserve"><value>Model service and credentials</value></data>
+  <data name="AgentModelProfileName" xml:space="preserve"><value>Configuration name</value></data>
+  <data name="AgentMigratedProfile" xml:space="preserve"><value>Imported configuration</value></data>
+  <data name="AgentModelChanged" xml:space="preserve"><value>The model configuration changed or was deleted. Reopen the editor and try again.</value></data>
+  <data name="AgentModelOwnerChanged" xml:space="preserve"><value>The account workspace changed. Open a new Session to use its model configuration.</value></data>
+  <data name="AgentModelIdentity" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="AgentModelStopBeforeSwitch" xml:space="preserve"><value>Stop the current task before switching model configurations.</value></data>
+  <data name="AgentModelCurrentDefault" xml:space="preserve"><value>Current default</value></data>
+  <data name="AgentModelMakeDefault" xml:space="preserve"><value>Set as default</value></data>
+  <data name="AgentModelDefaultBadge" xml:space="preserve"><value>Default</value></data>
+  <data name="AgentModelAdd" xml:space="preserve"><value>Add configuration</value></data>
+  <data name="AgentModelEdit" xml:space="preserve"><value>Edit model configuration</value></data>
+  <data name="AgentModelDelete" xml:space="preserve"><value>Delete configuration</value></data>
+  <data name="AgentModelSave" xml:space="preserve"><value>Save configuration</value></data>
+  <data name="AgentModelSettingsHeading" xml:space="preserve"><value>Model configurations</value></data>
+  <data name="AgentModelsIntroduction" xml:space="preserve"><value>Save multiple services, models and API keys. Each Session can choose independently.</value></data>
+  <data name="AgentModelsEmpty" xml:space="preserve"><value>No model configurations yet. Add one to start a conversation.</value></data>
+  <data name="AgentModelDeletePrompt" xml:space="preserve"><value>Delete “{0}”? Its saved key will be removed and the deletion will sync to your other devices.</value></data>
+  <data name="AgentModelsLocal" xml:space="preserve"><value>Encrypted on this device</value></data>
+  <data name="AgentModelsSynced" xml:space="preserve"><value>Encrypted and synced</value></data>
+  <data name="AgentModelsLocked" xml:space="preserve"><value>Encrypted sync is locked</value></data>
+  <data name="AgentModelsSyncFailed" xml:space="preserve"><value>Sync failed; local changes kept</value></data>
+  <data name="AgentModelsPending" xml:space="preserve"><value>Encrypted locally; sync pending</value></data>
+  <data name="AgentModelsSyncExplanation" xml:space="preserve"><value>Configurations follow the current account. API keys stay hidden and remain available after restarting.
+When signed out, they are encrypted only on this device.</value></data>
+  <data name="AgentModelsDefaultExplanation" xml:space="preserve"><value>New Sessions use the default configuration. Changing the default does not switch open Sessions.</value></data>
+  <data name="AgentModelNameHint" xml:space="preserve"><value>Choose this name in the chat panel.</value></data>
+  <data name="AgentModelEndpointHint" xml:space="preserve"><value>An OpenAI-compatible Chat Completions service address.</value></data>
+  <data name="AgentModelIdentifierHint" xml:space="preserve"><value>The model identifier supported by this service.</value></data>
+  <data name="AgentModelUseDefault" xml:space="preserve"><value>Use as the default for new Sessions</value></data>
+  <data name="AgentModelTest" xml:space="preserve"><value>Test connection</value></data>
+  <data name="AgentModelEncryptedNote" xml:space="preserve"><value>API keys are encrypted locally and included in encrypted account sync.</value></data>
+  <data name="AgentModelKeyRetained" xml:space="preserve"><value>A key is saved. Leave this blank to keep it, or enter a replacement.</value></data>
+  <data name="AgentModelKeyEndpointChanged" xml:space="preserve"><value>The service address changed. The old key will not be sent to the new service.</value></data>
+  <data name="AgentModelTestSucceeded" xml:space="preserve"><value>Connection succeeded · {0} ms</value></data>
+  <data name="AgentModelSwitchTitle" xml:space="preserve"><value>Switch model configuration</value></data>
+  <data name="AgentModelSwitchPrompt" xml:space="preserve"><value>The current task will stop. Future questions will use “{0}”. Existing messages, SQL and input drafts will be kept.</value></data>
+  <data name="AgentModelStopAndSwitch" xml:space="preserve"><value>Stop and switch</value></data>
+  <data name="AgentModelManage" xml:space="preserve"><value>Manage configurations…</value></data>
+  <data name="AgentModelServiceAddress" xml:space="preserve"><value>Service address</value></data>
+  <data name="AgentModelIdentifier" xml:space="preserve"><value>Model</value></data>
+  <data name="AgentModelApiKey" xml:space="preserve"><value>API Key</value></data>
+  <data name="AgentModelSwitchConfirmTitle" xml:space="preserve"><value>Stop the reply and switch models?</value></data>
+  <data name="AdditionalSettings" xml:space="preserve"><value>Other settings</value></data>
+  <data name="ChatBusyComposerHint" xml:space="preserve"><value>Reply in progress · You can draft your next question</value></data>
 </root>

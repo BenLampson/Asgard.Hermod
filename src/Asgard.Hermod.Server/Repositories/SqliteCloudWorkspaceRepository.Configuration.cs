@@ -39,9 +39,9 @@ public sealed partial class SqliteCloudWorkspaceRepository
     private static CloudConfiguration ReadConfiguration(SqliteConnection connection, SqliteTransaction transaction, string owner)
     {
         using var command = connection.CreateCommand(); command.Transaction = transaction;
-        command.CommandText = "SELECT revision, protection_json, update_time FROM sync_configuration WHERE owner_key = @owner;";
+        command.CommandText = "SELECT revision, protection_json, update_time, agent_models_json FROM sync_configuration WHERE owner_key = @owner;";
         command.Parameters.AddWithValue("@owner", owner);
-        string revision; EncryptedWorkspace? protection; DateTime updated;
+        string revision; EncryptedWorkspace? protection, agentModels; DateTime updated;
         using (var reader = command.ExecuteReader())
         {
             if (!reader.Read())
@@ -53,9 +53,11 @@ public sealed partial class SqliteCloudWorkspaceRepository
             }
             revision = reader.GetString(0); protection = JsonSerializer.Deserialize<EncryptedWorkspace>(reader.GetString(1));
             updated = DateTime.Parse(reader.GetString(2), CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+            agentModels = reader.IsDBNull(3) ? null : JsonSerializer.Deserialize<EncryptedWorkspace>(reader.GetString(3));
         }
         return new(revision, protection, ReadEntries<CloudInstanceConfiguration>(command, "sync_instance"),
-            ReadEntries<CloudTagConfiguration>(command, "sync_tag"), updated);
+            ReadEntries<CloudTagConfiguration>(command, "sync_tag"), updated)
+        { AgentModels = agentModels };
     }
 
     /// <summary>表名只来自固定实现，账户参数始终参数化。</summary>
@@ -76,6 +78,8 @@ public sealed partial class SqliteCloudWorkspaceRepository
         if (previous.Revision != upload.ExpectedRevision) return null;
         // 普通同步不能替换已有密码校验包，避免旧设备改变密码。
         if (previous.Protection is not null && previous.Protection != upload.Configuration.Protection) return null;
+        // null 是旧客户端未提供该字段；明确清除以非空密文内的空集合表达。
+        var agentModels = upload.Configuration.AgentModels ?? previous.AgentModels;
         using var command = connection.CreateCommand(); command.Transaction = transaction;
         var instances = new List<CloudInstanceConfiguration>(); var tags = new List<CloudTagConfiguration>();
         foreach (var input in upload.Configuration.Instances)
@@ -98,13 +102,14 @@ public sealed partial class SqliteCloudWorkspaceRepository
         }
         string now = DateTime.UtcNow.ToString("O", CultureInfo.InvariantCulture), revision = NewVersion();
         command.CommandText = """
-            INSERT INTO sync_configuration (owner_key, tenant_id, application_id, subject_id, revision, protection_json, create_time, update_time)
-            VALUES (@owner, @tenant, @app, @subject, @revision, @protection, @now, @now)
-            ON CONFLICT(owner_key) DO UPDATE SET revision = excluded.revision, protection_json = excluded.protection_json, update_time = excluded.update_time;
+            INSERT INTO sync_configuration (owner_key, tenant_id, application_id, subject_id, revision, protection_json, create_time, update_time, agent_models_json)
+            VALUES (@owner, @tenant, @app, @subject, @revision, @protection, @now, @now, @models)
+            ON CONFLICT(owner_key) DO UPDATE SET revision = excluded.revision, protection_json = excluded.protection_json, update_time = excluded.update_time, agent_models_json = excluded.agent_models_json;
             """;
         command.Parameters.AddWithValue("@owner", ownerKey); command.Parameters.AddWithValue("@tenant", account.TenantId);
         command.Parameters.AddWithValue("@app", account.ApplicationId); command.Parameters.AddWithValue("@subject", account.SubjectId);
         command.Parameters.AddWithValue("@revision", revision); command.Parameters.AddWithValue("@protection", JsonSerializer.Serialize(upload.Configuration.Protection));
+        command.Parameters.AddWithValue("@models", agentModels is null ? DBNull.Value : JsonSerializer.Serialize(agentModels));
         command.Parameters.AddWithValue("@now", now); command.ExecuteNonQuery();
         SaveEntries(command, "sync_instance", instances, item => item.Id, item => item.Version, now);
         SaveEntries(command, "sync_tag", tags, item => item.Tag.Id, item => item.Version, now);
@@ -112,7 +117,7 @@ public sealed partial class SqliteCloudWorkspaceRepository
         command.Parameters.Clear(); command.Parameters.AddWithValue("@owner", ownerKey);
         command.CommandText = "DELETE FROM sync_workspace WHERE owner_key = @owner;"; command.ExecuteNonQuery();
         cancellationToken.ThrowIfCancellationRequested(); transaction.Commit();
-        return new(revision, upload.Configuration.Protection, instances, tags, DateTime.Parse(now, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind));
+        return new(revision, upload.Configuration.Protection, instances, tags, DateTime.Parse(now, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)) { AgentModels = agentModels };
     }
 
     /// <summary>逐条 upsert 保留服务器创建审计，缺失条目在同一事务中删除。</summary>

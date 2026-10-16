@@ -5,7 +5,7 @@ namespace Asgard.Hermod.Persistence.Sqlite;
 
 /// <summary>快照读取使用同一仓储事务；恢复在单个写事务内重新保护全部参数。</summary>
 public sealed class SqliteWorkspaceStore(IFreeSql database, ILocalConfigurationRepository repository,
-    ISecretProtector protector, LocalTagManagementService tags) : ILocalWorkspaceStore
+    ISecretProtector protector, LocalTagManagementService tags, SqliteAgentModelStore? agentModels = null) : ILocalWorkspaceStore
 {
     /// <inheritdoc />
     public void Validate(WorkspaceSnapshot snapshot) => WorkspaceSnapshotValidation.Validate(snapshot);
@@ -34,7 +34,8 @@ public sealed class SqliteWorkspaceStore(IFreeSql database, ILocalConfigurationR
             finally { CryptographicOperations.ZeroMemory(plaintext); }
         }).ToArray();
         return new WorkspaceSnapshot(1, instances, snapshot.Tags.Select(tag =>
-            new SyncedTag(tag.Id, tag.Name, tag.ParentId, tag.Color, tag.IsBuiltIn)).ToArray());
+            new SyncedTag(tag.Id, tag.Name, tag.ParentId, tag.Color, tag.IsBuiltIn)).ToArray())
+        { AgentModels = SqliteAgentModelStore.Decode(snapshot.ProtectedAgentModels, protector) ?? AgentModelSet.Empty };
     }
 
     /// <inheritdoc />
@@ -42,6 +43,7 @@ public sealed class SqliteWorkspaceStore(IFreeSql database, ILocalConfigurationR
     {
         await Task.Run(() => Restore(snapshot, cancellationToken), cancellationToken).ConfigureAwait(false);
         tags.NotifyTagsChanged();
+        agentModels?.NotifyChanged();
     }
 
     /// <inheritdoc />
@@ -49,18 +51,21 @@ public sealed class SqliteWorkspaceStore(IFreeSql database, ILocalConfigurationR
     {
         await Task.Run(() => Restore(snapshot, cancellationToken, expected), cancellationToken).ConfigureAwait(false);
         tags.NotifyTagsChanged();
+        agentModels?.NotifyChanged();
     }
     /// <inheritdoc />
     public async Task SwitchOwnerAsync(string owner, WorkspaceSnapshot snapshot, WorkspaceSnapshot expected, CancellationToken cancellationToken = default)
     {
         await Task.Run(() => Restore(snapshot, cancellationToken, expected, owner), cancellationToken).ConfigureAwait(false);
         tags.NotifyTagsChanged();
+        agentModels?.NotifyChanged();
     }
 
     /// <summary>先完成验证和 DPAPI 保护，任何失败都不删除原配置。</summary>
     private void Restore(WorkspaceSnapshot snapshot, CancellationToken cancellationToken, WorkspaceSnapshot? expected = null, string? owner = null)
     {
         var orderedTags = WorkspaceSnapshotValidation.Validate(snapshot);
+        string protectedModels = SqliteAgentModelStore.Encode(snapshot.AgentModels, protector);
         var protectedInstances = snapshot.Instances.Select(instance =>
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -106,6 +111,7 @@ public sealed class SqliteWorkspaceStore(IFreeSql database, ILocalConfigurationR
                 command.ExecuteNonQuery();
             }
         }
+        SqliteAgentModelStore.WriteProtected(command, protectedModels);
         cancellationToken.ThrowIfCancellationRequested();
         if (owner is not null)
         {

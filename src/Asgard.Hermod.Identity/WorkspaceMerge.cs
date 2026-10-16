@@ -1,7 +1,7 @@
 namespace Asgard.Hermod.Identity;
 
 /// <summary>以共同基准逐字段合并；新增、删除和同字段分歧使用稳定冲突键。</summary>
-public sealed class WorkspaceMerge
+public sealed partial class WorkspaceMerge
 {
     private readonly List<ConfigurationConflict> _conflicts = [];
     private IReadOnlyDictionary<string, bool> _choices = new Dictionary<string, bool>();
@@ -17,7 +17,7 @@ public sealed class WorkspaceMerge
             item => item.Name, MergeInstance, InstanceEqual, "instance");
         var tags = MergeItems(baseline?.Tags ?? [], local.Tags, cloud.Tags, item => item.Id,
             item => item.Name, MergeTag, (a, b) => a == b, "tag");
-        return new(1, instances, tags);
+        return new(1, instances, tags) { AgentModels = MergeAgentModels(baseline?.AgentModels, local.AgentModels, cloud.AgentModels) };
     }
 
     /// <summary>物理删除结合基准判断，避免旧设备复活已删除条目。</summary>

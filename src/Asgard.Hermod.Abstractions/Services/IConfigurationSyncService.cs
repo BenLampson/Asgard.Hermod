@@ -5,6 +5,8 @@ public interface IConfigurationSyncService
 {
     /// <summary>稳定同步状态。</summary>
     ConfigurationSyncStatus Status { get; }
+    /// <summary>当前设备工作区是否已切换到当前登录身份；切换期间不得读取旧账号模型。</summary>
+    bool IsWorkspacePrepared => true;
     /// <summary>可直接显示的本地化安全提示。</summary>
     string Message { get; }
     /// <summary>最后完整成功同步的 UTC 时间。</summary>

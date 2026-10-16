@@ -17,7 +17,8 @@ internal sealed class ConfigurationCodec(IInstanceProviderRegistry registry)
             parameters.Remove(InstanceHostingProviders.MetadataKey, out string? hosting);
             return new SyncedInstance(item.Id, item.Name, item.TypeId, item.ProviderId, parameters, item.CreatedAt, item.TagIds)
             { HostingProviderId = hosting ?? "" };
-        }).ToArray(), cloud.Tags.Select(item => item.Tag).ToArray());
+        }).ToArray(), cloud.Tags.Select(item => item.Tag).ToArray())
+        { AgentModels = secrets.DecryptAgentModels(cloud.AgentModels) };
     }
 
     /// <summary>未变化条目复用原密文，避免每次检查都制造新版本。</summary>
@@ -43,6 +44,12 @@ internal sealed class ConfigurationCodec(IInstanceProviderRegistry registry)
         }).ToArray();
         var tags = snapshot.Tags.Select(item => new CloudTagConfiguration(item,
             cloud.Tags.FirstOrDefault(value => value.Tag.Id == item.Id)?.Version ?? "0")).ToArray();
-        return new(cloud.Revision, protection, instances, tags, cloud.UpdatedAt);
+        EncryptedWorkspace? models = cloud.AgentModels;
+        if (snapshot.AgentModels.Profiles.Count > 0 || original.AgentModels.Profiles.Count > 0 || models is not null)
+        {
+            bool unchanged = WorkspaceContent.Equal(new(1, [], []) { AgentModels = snapshot.AgentModels }, new(1, [], []) { AgentModels = original.AgentModels });
+            if (models is null || !unchanged) models = secrets.EncryptAgentModels(snapshot.AgentModels);
+        }
+        return new(cloud.Revision, protection, instances, tags, cloud.UpdatedAt) { AgentModels = models };
     }
 }

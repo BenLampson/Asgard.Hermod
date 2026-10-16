@@ -16,7 +16,7 @@ public sealed partial class SqliteCloudWorkspaceRepository(IOptions<HermodServer
         using var command = connection.CreateCommand(); command.Transaction = transaction;
         command.CommandText = "PRAGMA user_version;";
         long version = (long)command.ExecuteScalar()!;
-        if (version > 2) throw Text.Exception("SyncDatabaseVersionUnsupported");
+        if (version > 3) throw Text.Exception("SyncDatabaseVersionUnsupported");
         if (version == 0)
         {
             command.CommandText = """
@@ -31,6 +31,11 @@ public sealed partial class SqliteCloudWorkspaceRepository(IOptions<HermodServer
             command.ExecuteNonQuery();
         }
         if (version < 2) InitializeConfiguration(command);
+        if (version < 3)
+        {
+            command.CommandText = "ALTER TABLE sync_configuration ADD COLUMN agent_models_json TEXT NULL; PRAGMA user_version = 3;";
+            command.ExecuteNonQuery();
+        }
         command.CommandText = "SELECT owner_key, tenant_id, application_id, subject_id, revision, protected_json, create_time, update_time FROM sync_workspace LIMIT 0;";
         using (command.ExecuteReader()) { }
         transaction.Commit();
