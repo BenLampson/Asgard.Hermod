@@ -155,16 +155,17 @@ public partial class MainWindow : HermodWindow
         _closing = true;
         _exitFinished = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var windows = _workWindows?.Windows.ToArray() ?? [];
-        _model.Workspace.IsExitPending = true;
-        ShellView.IsEnabled = false;
-        if (CaptionContent is UIElement caption) caption.IsEnabled = false;
-        foreach (var window in windows)
-        {
-            window.IsExitPending = true;
-            if (window.Content is UIElement content) content.IsEnabled = false;
-        }
         try
         {
+            // 禁用控件也会触发绑定与事件；必须纳入恢复边界，不能把关闭标记永久留在 true。
+            _model.Workspace.IsExitPending = true;
+            ShellView.IsEnabled = false;
+            if (CaptionContent is UIElement caption) caption.IsEnabled = false;
+            foreach (var window in windows)
+            {
+                window.IsExitPending = true;
+                if (window.Content is UIElement content) content.IsEnabled = false;
+            }
             var plans = new List<WorkspaceClosePlan>();
             if (!sessionEnding)
             {
@@ -178,21 +179,20 @@ public partial class MainWindow : HermodWindow
                     plans.Add(plan);
                 }
             }
+            // 预检所属窗口即将被销毁；退出清理不能继续使用它显示模态错误。
+            DialogOwner.Override = null;
             IsExitCommitted = true;
-            ExitCommitted?.Invoke();
-            _menu?.Close();
-            foreach (var plan in plans) await plan.CommitAsync();
-            await _model.DisposeAsync();
-            await FinishExitAsync();
+            await CompleteExitAsync(plans);
             return true;
         }
         catch (Exception error)
         {
-            if (!sessionEnding) OnCommandFailed(this, error);
-            if (IsExitCommitted)
+            if (!sessionEnding && !IsExitCommitted)
             {
-                try { await _model.Workspace.DisposeAsync(); } catch (Exception) { }
-                await FinishExitAsync();
+                DialogOwner.Override = null;
+                var notice = new MessageDialog(Text.Get("ExitHermod"), Text.Error(error, "ExitPreparationFailed"), Text.Get("ExitPreparationFailedTitle")) { Owner = this };
+                try { notice.ShowDialog(); }
+                finally { notice.Close(); }
             }
             return false;
         }
@@ -211,6 +211,18 @@ public partial class MainWindow : HermodWindow
                 }
             }
         }
+    }
+
+    /// <summary>用户已批准退出后逐项回收；一个清理异常不能跳过其他会话或把界面留在冻结状态。</summary>
+    private async Task CompleteExitAsync(IEnumerable<WorkspaceClosePlan> plans)
+    {
+        Lifetime.ExitCleanup.Run(() => ExitCommitted?.Invoke());
+        Lifetime.ExitCleanup.Run(() => _menu?.Close());
+        foreach (var plan in plans) await Lifetime.ExitCleanup.RunAsync(plan.CommitAsync);
+        await Lifetime.ExitCleanup.RunAsync(() => _model.DisposeAsync().AsTask());
+        // 外壳的同步服务可能先失败，工作区仍必须得到独立的释放机会。
+        await Lifetime.ExitCleanup.RunAsync(() => _model.Workspace.DisposeAsync().AsTask());
+        await FinishExitAsync();
     }
 
     /// <summary>存在工作窗口或任务时明确显示影响，取消为默认焦点。</summary>
@@ -232,14 +244,16 @@ public partial class MainWindow : HermodWindow
         _model.SetLightThemeCommand.ExecutionFailed -= OnCommandFailed;
         _model.SetDarkThemeCommand.ExecutionFailed -= OnCommandFailed;
         _model.ToggleThemeCommand.ExecutionFailed -= OnCommandFailed;
-        ShellView.Dispose(); _workWindows?.Dispose();
+        Lifetime.ExitCleanup.Run(ShellView.Dispose);
+        Lifetime.ExitCleanup.Run(() => _workWindows?.Dispose());
         if (_tray is not null)
         {
             _tray.Activated -= ActivateMain; _tray.MenuRequested -= OpenTrayMenu;
-            _tray.AvailabilityChanged -= OnTrayAvailabilityChanged; _tray.Dispose();
+            _tray.AvailabilityChanged -= OnTrayAvailabilityChanged;
+            Lifetime.ExitCleanup.Run(_tray.Dispose);
         }
         _closeApproved = true;
-        await Dispatcher.InvokeAsync(() => Close(), System.Windows.Threading.DispatcherPriority.Background);
-        if (_finishExit is not null) await _finishExit();
+        await Lifetime.ExitCleanup.RunAsync(() => Dispatcher.InvokeAsync(() => Close(), System.Windows.Threading.DispatcherPriority.Background).Task);
+        if (_finishExit is not null) await Lifetime.ExitCleanup.RunAsync(_finishExit);
     }
 }

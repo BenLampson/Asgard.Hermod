@@ -57,7 +57,9 @@ public sealed class WorkspaceWindow : HermodWindow
         try { await _workspace.CloseTabAsync(Page); }
         catch (Exception error)
         {
-            new MessageDialog(Text.Get("Hermod"), Text.Error(error)) { Owner = this }.ShowDialog();
+            // 释放失败时页面已关闭，异步窗口回收负责收尾，不能用已销毁的 HWND 作为 Owner。
+            if (!Page.IsClosed)
+                new MessageDialog(Text.Get("Hermod"), Text.Error(error)) { Owner = this }.ShowDialog();
         }
         finally { _closing = false; }
     }
@@ -70,6 +72,7 @@ public sealed class WorkspaceWindow : HermodWindow
             {
                 IsEnabled = false;
                 try { await Page.CloseAsync(); }
+                catch (Exception error) { System.Diagnostics.Trace.TraceError("Hermod workspace cleanup failed: {0}", error.GetType().FullName); }
                 finally { Close(); }
             });
     }

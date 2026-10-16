@@ -4961,4 +4961,6 @@ SQL：
   <data name="RabbitMqPrefetchHint" xml:space="preserve"><value>预取限制</value></data>
   <data name="RabbitMqBackToList" xml:space="preserve"><value>返回列表</value></data>
   <data name="RabbitMqSearchVhostPlaceholder" xml:space="preserve"><value>搜索当前虚拟主机…</value></data>
+  <data name="ExitPreparationFailedTitle" xml:space="preserve"><value>无法开始退出</value></data>
+  <data name="ExitPreparationFailed" xml:space="preserve"><value>检查工作窗口的关闭状态时发生错误。Hermod 尚未退出，你可以继续使用或重试退出。</value></data>
 </root>

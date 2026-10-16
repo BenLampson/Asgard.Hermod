@@ -4,7 +4,7 @@ using Asgard.Hermod.UI.Windowing;
 namespace Asgard.Hermod.UI.Services;
 
 /// <summary>复用独立的非模态设置窗口，重复入口只导航或激活，关闭后释放订阅。</summary>
-public sealed class SettingsEditorService : ISettingsEditor, IDisposable
+public sealed class SettingsEditorService : ISettingsEditor, IDisposable, IAsyncDisposable
 {
     private readonly Func<Window?> _getOwner;
     private readonly ITagManagementService _tags;
@@ -123,11 +123,18 @@ public sealed class SettingsEditorService : ISettingsEditor, IDisposable
     /// <summary>应用退出时关闭独立设置窗口，并取消尚未完成的初始化。</summary>
     public void Dispose()
     {
-        _dispatcher.VerifyAccess();
+        if (!_dispatcher.CheckAccess()) { _dispatcher.Invoke(Dispose); return; }
         if (_disposed) return;
         _disposed = true;
         _lifetime.Cancel();
         _window?.Close();
         _lifetime.Dispose();
+    }
+
+    /// <summary>宿主异步释放途中可能离开 UI 线程，窗口及模型订阅仍交由原 Dispatcher 回收。</summary>
+    public async ValueTask DisposeAsync()
+    {
+        if (_dispatcher.CheckAccess()) Dispose();
+        else await _dispatcher.InvokeAsync(Dispose);
     }
 }

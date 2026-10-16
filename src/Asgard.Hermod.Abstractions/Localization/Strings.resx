@@ -4961,4 +4961,6 @@ Address: {2}</value></data>
   <data name="RabbitMqPrefetchHint" xml:space="preserve"><value>Prefetch limit</value></data>
   <data name="RabbitMqBackToList" xml:space="preserve"><value>Back to list</value></data>
   <data name="RabbitMqSearchVhostPlaceholder" xml:space="preserve"><value>Search this virtual host…</value></data>
+  <data name="ExitPreparationFailedTitle" xml:space="preserve"><value>Unable to start exiting</value></data>
+  <data name="ExitPreparationFailed" xml:space="preserve"><value>Hermod could not check whether the work windows can close. The application remains open. You can continue working or try exiting again.</value></data>
 </root>

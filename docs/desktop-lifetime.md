@@ -77,6 +77,13 @@ decisions, stops synchronization, waits for all page cleanup (including pages al
 removed by a single-window close), removes the tray and releases host services, IPC
 and instance ownership. Repeated exit requests cannot reenter this flow.
 
+A failed close preflight restores input and reports that exiting could not start,
+so the user can retry. Once exit is committed, cleanup failures are recorded without
+opening error dialogs on closing work windows. Remaining sessions, the tray, host
+services and process ownership still receive cleanup. Agent and Settings window
+services marshal both synchronous and asynchronous disposal to their original WPF
+Dispatcher, including when the DI container resumes cleanup on a background thread.
+
 System logoff/shutdown does not veto Windows by setting `SessionEnding.Cancel`.
 It skips the close question and interactive confirmation and gives cleanup a four-second Dispatcher budget,
 then allows the original OS request to continue. Windows may terminate a process

@@ -63,13 +63,18 @@ internal static class WindowTestVisuals
         await WpfTestFixture.DrainDispatcherAsync();
     }
 
-    /// <summary>沿实际按钮的命令目标执行用户动作，不直接调用被测窗口方法。</summary>
+    /// <summary>沿按钮的点击事件或命令目标执行用户动作，不直接调用被测窗口方法。</summary>
     internal static void Invoke(Button button)
     {
         Assert.True(button.IsEnabled,
             $"Button={button.Name}; Command={button.Command}; Target={button.CommandTarget}; "
             + $"Window={Window.GetWindow(button)?.WindowState}; ResizeMode={Window.GetWindow(button)?.ResizeMode}");
-        var command = Assert.IsAssignableFrom<ICommand>(button.Command);
+        // 标题按钮使用 Click 转发原生窗口命令；保留真实事件路径，而不是假设所有按钮直接绑定 ICommand。
+        if (button.Command is not { } command)
+        {
+            button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            return;
+        }
         if (command is RoutedCommand routed)
         {
             var target = button.CommandTarget ?? button;

@@ -110,17 +110,19 @@ public partial class App : Application
     protected override void OnExit(ExitEventArgs args)
     {
         // 系统会话结束超出清理预算时，也必须移除通知入口。
-        _tray?.Dispose();
-        _services?.Dispose();
-        if (_instance is not null) _instance.DisposeAsync().AsTask().GetAwaiter().GetResult();
+        Lifetime.ExitCleanup.Run(() => _tray?.Dispose());
+        Lifetime.ExitCleanup.Run(() => _services?.Dispose());
+        Lifetime.ExitCleanup.Run(() => _instance?.DisposeAsync().AsTask().GetAwaiter().GetResult());
         base.OnExit(args);
     }
 
     /// <summary>窗口和同步服务释放后关闭数据库，随后终止 IPC 并释放进程所有权。</summary>
     private async Task FinishExitAsync()
     {
-        if (_services is not null) { await _services.DisposeAsync(); _services = null; }
-        if (_instance is not null) { await _instance.DisposeAsync(); _instance = null; }
+        var services = _services; _services = null;
+        var instance = _instance; _instance = null;
+        if (services is not null) await Lifetime.ExitCleanup.RunAsync(() => services.DisposeAsync().AsTask());
+        if (instance is not null) await Lifetime.ExitCleanup.RunAsync(() => instance.DisposeAsync().AsTask());
         if (!_sessionEnding) Shutdown();
     }
 
