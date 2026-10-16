@@ -58,6 +58,15 @@ public sealed class IconView : Control
             drawingContext.DrawImage(brand, new Rect((ActualWidth - width) / 2, (ActualHeight - height) / 2, width, height));
             return;
         }
+        if (DatabaseBrandCatalog.TryGet(Kind, out var databaseBrand))
+        {
+            double brandScale = Math.Min(ActualWidth, ActualHeight) / 24d;
+            drawingContext.PushTransform(new MatrixTransform(brandScale, 0, 0, brandScale,
+                (ActualWidth - 24 * brandScale) / 2, (ActualHeight - 24 * brandScale) / 2));
+            drawingContext.DrawGeometry(Foreground, null, databaseBrand);
+            drawingContext.Pop();
+            return;
+        }
         if (!IconCatalog.TryGet(Kind, out var geometry) || Foreground is null)
         {
             return;

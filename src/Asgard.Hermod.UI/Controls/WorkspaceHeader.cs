@@ -1,6 +1,6 @@
 namespace Asgard.Hermod.UI.Controls;
 
-/// <summary>独立工作窗口的七十二像素标题；模块只定义身份、状态与操作内容。</summary>
+/// <summary>独立工作窗口的四十四 DIP 单行标题；模块只定义身份、状态与操作内容。</summary>
 public class WorkspaceHeader : Control
 {
     /// <summary>类型图标、名称及安全端点。</summary>
@@ -50,7 +50,6 @@ public class WorkspaceHeader : Control
     private void RefreshHeaderWidth()
     {
         SetValue(IsCompactPropertyKey, ActualWidth < 1000);
-        if (GetTemplateChild("IdentityColumn") is ColumnDefinition identity)
-            identity.Width = new(ActualWidth < 900 ? 190 : 240);
+
     }
 }

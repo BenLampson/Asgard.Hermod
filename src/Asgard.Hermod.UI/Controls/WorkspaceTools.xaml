@@ -5,7 +5,7 @@
              xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization">
     <Grid>
         <Button x:Name="ToolsTrigger" Click="OnToggleClick"
-                      Padding="8,0" ToolTip="{loc:Loc WorkspaceTools}"
+                      Height="28" MinHeight="28" FontSize="12" Padding="9,0" ToolTip="{loc:Loc WorkspaceTools}"
                       AutomationProperties.Name="{loc:Loc WorkspaceTools}">
             <Button.Style><Style TargetType="Button" BasedOn="{StaticResource StandardButton}"><Style.Triggers>
                 <DataTrigger Binding="{Binding IsOpen, ElementName=ToolsRoot}" Value="True">

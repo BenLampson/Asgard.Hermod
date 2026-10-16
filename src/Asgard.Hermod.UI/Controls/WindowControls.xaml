@@ -16,6 +16,9 @@
                     <Setter Property="Width" Value="28" />
                     <Setter Property="Height" Value="40" />
                     <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsWorkspace, RelativeSource={RelativeSource AncestorType=controls:WindowControls}}" Value="True">
+                            <Setter Property="Width" Value="36" /><Setter Property="Height" Value="44" /><Setter Property="Margin" Value="0" />
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding IsCompact, RelativeSource={RelativeSource AncestorType=controls:WindowControls}}" Value="True">
                             <Setter Property="Width" Value="14" />
                             <Setter Property="Height" Value="26" />
@@ -41,6 +44,9 @@
                     <Setter Property="AutomationProperties.Name" Value="{loc:Loc MaximizeWindow}" />
                     <Setter Property="Command" Value="{x:Static SystemCommands.MaximizeWindowCommand}" />
                     <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsWorkspace, RelativeSource={RelativeSource AncestorType=controls:WindowControls}}" Value="True">
+                            <Setter Property="Width" Value="36" /><Setter Property="Height" Value="44" /><Setter Property="Margin" Value="0" />
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding IsCompact, RelativeSource={RelativeSource AncestorType=controls:WindowControls}}" Value="True">
                             <Setter Property="Width" Value="14" />
                             <Setter Property="Height" Value="26" />
@@ -66,6 +72,9 @@
                     <Style TargetType="controls:IconView">
                         <Setter Property="Kind" Value="square" />
                         <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsWorkspace, RelativeSource={RelativeSource AncestorType=controls:WindowControls}}" Value="True">
+                            <Setter Property="Width" Value="36" /><Setter Property="Height" Value="44" /><Setter Property="Margin" Value="0" />
+                        </DataTrigger>
                             <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Maximized">
                                 <Setter Property="Kind" Value="copy" />
                             </DataTrigger>
@@ -85,6 +94,9 @@
                     <Setter Property="Width" Value="28" />
                     <Setter Property="Height" Value="40" />
                     <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsWorkspace, RelativeSource={RelativeSource AncestorType=controls:WindowControls}}" Value="True">
+                            <Setter Property="Width" Value="36" /><Setter Property="Height" Value="44" /><Setter Property="Margin" Value="0" />
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding (windowing:WindowCloseBehavior.HideToTray), RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
                             <Setter Property="ToolTip" Value="{loc:Loc HideMainWindowToTray}" />
                             <Setter Property="AutomationProperties.Name" Value="{loc:Loc HideMainWindowToTray}" />

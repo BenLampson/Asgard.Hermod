@@ -129,13 +129,12 @@ it; modules supply stable IDs and localized labels instead of copying selection
 templates. It retains native ListBox keyboard navigation without an inner scroll
 viewer.
 
-`WorkspaceHeader` provides a 72-pixel independent window caption with module-owned
+`WorkspaceHeader` provides a 44-DIP single-line independent window caption with module-owned
 `IdentityContent`, `StatusContent` and `ActionsContent` slots and fixed window controls.
 The window host transfers the same header element out of the module body, setting its
 data context before detachment to preserve two-way selections. All five workspace kinds
 use it; ordinary pages have a live-bound title fallback. Connection status remains visible
-in compact captions, secondary environment information yields, and failure replaces module
-actions with direct edit/retry controls. Read-only name and empty caption areas remain
+in compact captions, secondary environment information yields, and failure provides a compact reconnect action in the same caption. Read-only name and empty caption areas remain
 draggable, with the pencil and action controls explicitly hit-testable in WindowChrome.
 The main window title bar is unchanged.
 

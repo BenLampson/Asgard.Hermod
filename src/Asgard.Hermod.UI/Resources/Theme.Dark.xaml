@@ -42,4 +42,10 @@
     <SolidColorBrush x:Key="FilePresentationBrush" Color="#EBA06A" />
     <SolidColorBrush x:Key="FileCodeBrush" Color="#71C2DE" />
     <SolidColorBrush x:Key="FileDataBrush" Color="#A5A9EF" />
+    <SolidColorBrush x:Key="WorkspaceCaptionBrush" Color="#111824" />
+    <SolidColorBrush x:Key="WorkspaceInkBrush" Color="#E6ECF5" />
+    <SolidColorBrush x:Key="WorkspaceMutedBrush" Color="#9DAAC0" />
+    <SolidColorBrush x:Key="WorkspaceLineBrush" Color="#303B4E" />
+    <SolidColorBrush x:Key="MySqlBrandBrush" Color="#80BED8" />
+    <SolidColorBrush x:Key="PostgreSqlBrandBrush" Color="#8CAEDD" />
 </ResourceDictionary>

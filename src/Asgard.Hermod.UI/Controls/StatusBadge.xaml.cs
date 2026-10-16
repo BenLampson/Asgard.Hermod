@@ -3,6 +3,10 @@ namespace Asgard.Hermod.UI.Controls;
 /// <summary>使用主题语义色显示服务或会话状态的紧凑徽标。</summary>
 public partial class StatusBadge : UserControl
 {
+    /// <summary>标题环境标签采用十八 DIP 高、十 DIP 字号与内容自适应宽度。</summary>
+    public static readonly DependencyProperty IsCaptionProperty = DependencyProperty.Register(nameof(IsCaption), typeof(bool), typeof(StatusBadge), new PropertyMetadata(false));
+    /// <summary>是否采用紧凑标题环境标签。</summary>
+    public bool IsCaption { get => (bool)GetValue(IsCaptionProperty); set => SetValue(IsCaptionProperty, value); }
     /// <summary>类型标签与连接状态共用徽标，调用者可隐藏装饰性圆点。</summary>
     public static readonly DependencyProperty ShowIndicatorProperty = DependencyProperty.Register(nameof(ShowIndicator), typeof(bool), typeof(StatusBadge), new PropertyMetadata(true));
     /// <summary>是否显示装饰性状态圆点。</summary>

@@ -78,7 +78,6 @@ public partial class SshWorkspaceView : UserControl, IDisposable
         DetailsActionLabel.Visibility = ActualWidth >= 900 ? Visibility.Visible : Visibility.Collapsed;
         FooterRoute.Visibility = FooterTerminalType.Visibility = ActualWidth >= 800 ? Visibility.Visible : Visibility.Collapsed;
 
-        IdentityColumn.Width = new GridLength(1, GridUnitType.Star);
         ResizeSearchOverlay();
     }
     /// <summary>公共详情栏展开会改变正文宽度，搜索浮层跟随实际终端空间。</summary>

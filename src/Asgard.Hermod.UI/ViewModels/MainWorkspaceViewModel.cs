@@ -18,8 +18,8 @@ public sealed class MainWorkspaceViewModel : ObservableObject, IDisposable
     {
         _catalog = catalog; _workspace = workspace; _editor = editor;
         Navigation = [new("overview", Text.Get("MainOverview"), "house"), new("all", Text.Get("MainAllInstances"), "list"),
-            new("mysql", Text.Get("MainMySql"), "database", Text.Get("MainDatabaseConnections")),
-            new("postgresql", Text.Get("MainPostgreSql"), "database", Text.Get("MainDatabaseConnections")),
+            new("mysql", Text.Get("MainMySql"), "brand-mysql", Text.Get("MainDatabaseConnections")),
+            new("postgresql", Text.Get("MainPostgreSql"), "brand-postgresql", Text.Get("MainDatabaseConnections")),
             new("redis", Text.Get("MainRedis"), "layers", Text.Get("MainCacheConnections")),
             new("ssh", Text.Get("MainSsh"), "terminal", Text.Get("MainServerConnections")),
             new("storage", Text.Get("MainStorage"), "box", Text.Get("MainStorageConnections"))];

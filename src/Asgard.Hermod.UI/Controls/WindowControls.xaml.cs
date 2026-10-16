@@ -5,6 +5,11 @@ namespace Asgard.Hermod.UI.Controls;
 /// </summary>
 public partial class WindowControls : UserControl
 {
+    /// <summary>工作窗口标题使用三枚三十六乘四十四 DIP 的独立命中区域。</summary>
+    public static readonly DependencyProperty IsWorkspaceProperty = DependencyProperty.Register(
+        nameof(IsWorkspace), typeof(bool), typeof(WindowControls), new FrameworkPropertyMetadata(false));
+    /// <summary>是否遵循工作窗口标题规格。</summary>
+    public bool IsWorkspace { get => (bool)GetValue(IsWorkspaceProperty); set => SetValue(IsWorkspaceProperty, value); }
     /// <summary>紧凑标题栏使用十四像素图标按钮和八像素间距，主窗保留原有尺寸。</summary>
     public static readonly DependencyProperty IsCompactProperty = DependencyProperty.Register(
         nameof(IsCompact), typeof(bool), typeof(WindowControls), new FrameworkPropertyMetadata(false));

@@ -42,8 +42,8 @@ public sealed class WorkspaceHeaderModulesHeadlessTests(WpfTestFixture fixture)
         var view = Assert.IsAssignableFrom<FrameworkElement>(host.Content); var header = Assert.IsType<WorkspaceHeader>(host.TakeHeader());
         Assert.Same(page, header.DataContext); Assert.Null(host.TakeHeader());
         var root = new Border { Child = header }; root.Resources.MergedDictionaries.Add(Application.Current.Resources);
-        header.ShowWindowControls = true; root.Measure(new(800, 72)); root.Arrange(new(0, 0, 800, 72)); root.UpdateLayout();
-        Assert.Equal(72, header.ActualHeight); Assert.NotNull(header.IdentityContent); Assert.NotNull(header.StatusContent);
+        header.ShowWindowControls = true; root.Measure(new(800, 44)); root.Arrange(new(0, 0, 800, 44)); root.UpdateLayout();
+        Assert.Equal(44, header.ActualHeight); Assert.NotNull(header.IdentityContent); Assert.NotNull(header.StatusContent);
         Assert.Same(page, view.DataContext); Assert.Null(PresentationSource.FromVisual(root)); Assert.Null(Window.GetWindow(root));
     }
 }

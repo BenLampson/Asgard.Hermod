@@ -13,6 +13,9 @@
             <Setter Property="Background" Value="{DynamicResource TitleBarBrush}" />
             <Setter Property="TextElement.Foreground" Value="{DynamicResource TextMutedBrush}" />
             <Style.Triggers>
+                <DataTrigger Binding="{Binding IsCaption, RelativeSource={RelativeSource AncestorType={x:Type local:StatusBadge}}}" Value="True">
+                    <Setter Property="Height" Value="18" /><Setter Property="Padding" Value="5,0" /><Setter Property="CornerRadius" Value="3" />
+                </DataTrigger>
                 <DataTrigger Binding="{Binding Tone, RelativeSource={RelativeSource AncestorType={x:Type local:StatusBadge}}}" Value="{x:Static models:StatusTone.Accent}">
                     <Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" />
                     <Setter Property="TextElement.Foreground" Value="{DynamicResource AccentBrush}" />
@@ -40,7 +43,7 @@
                 <Ellipse.Style><Style TargetType="Ellipse"><Setter Property="Width" Value="7" /><Setter Property="Height" Value="7" /><Setter Property="Margin" Value="0,0,5,0" /><Style.Triggers><DataTrigger Binding="{Binding IsInline, RelativeSource={RelativeSource AncestorType={x:Type local:StatusBadge}}}" Value="True"><Setter Property="Width" Value="6" /><Setter Property="Height" Value="6" /><Setter Property="Margin" Value="0,0,6,0" /></DataTrigger><DataTrigger Binding="{Binding ShowIndicator, RelativeSource={RelativeSource AncestorType={x:Type local:StatusBadge}}}" Value="False"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></Ellipse.Style>
             </Ellipse>
             <TextBlock Grid.Column="1" TextTrimming="CharacterEllipsis" Text="{Binding Text, RelativeSource={RelativeSource AncestorType={x:Type local:StatusBadge}}}">
-                <TextBlock.Style><Style TargetType="TextBlock"><Setter Property="FontSize" Value="12" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="Foreground" Value="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource AncestorType=Border}}" /><Style.Triggers><DataTrigger Binding="{Binding IsInline, RelativeSource={RelativeSource AncestorType={x:Type local:StatusBadge}}}" Value="True"><Setter Property="FontWeight" Value="Normal" /><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" /></DataTrigger></Style.Triggers></Style></TextBlock.Style>
+                <TextBlock.Style><Style TargetType="TextBlock"><Setter Property="FontSize" Value="12" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="Foreground" Value="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource AncestorType=Border}}" /><Style.Triggers><DataTrigger Binding="{Binding IsCaption, RelativeSource={RelativeSource AncestorType={x:Type local:StatusBadge}}}" Value="True"><Setter Property="FontSize" Value="10" /><Setter Property="FontWeight" Value="Normal" /><Setter Property="VerticalAlignment" Value="Center" /><Setter Property="FontFamily" Value="{DynamicResource WorkspaceFont}" /></DataTrigger><DataTrigger Binding="{Binding IsInline, RelativeSource={RelativeSource AncestorType={x:Type local:StatusBadge}}}" Value="True"><Setter Property="FontWeight" Value="Normal" /><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" /></DataTrigger></Style.Triggers></Style></TextBlock.Style>
             </TextBlock>
         </Grid>
     </Border>

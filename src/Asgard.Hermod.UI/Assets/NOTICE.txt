@@ -34,3 +34,14 @@ Original file: fonts/ttf/JetBrainsMono-Regular.ttf
 Bundled file: Assets/Fonts/JetBrainsMono-Regular.ttf
 License: Assets/Licenses/JetBrainsMono.OFL.txt (SIL Open Font License 1.1)
 The static TTF file is bundled unchanged.
+
+Noto Sans SC
+Source: Windows font NotoSansSC-VF.ttf (Noto Sans SC, Adobe/Google, SIL OFL 1.1)
+Bundled files: Assets/Fonts/NotoSansSC-Regular.ttf and NotoSansSC-SemiBold.ttf
+Static 400/600 weight instances made with fontTools 4.63.0; full character map retained.
+License: Assets/Licenses/NotoSansSC.OFL.txt
+
+MySQL and PostgreSQL
+Source: Simple Icons SVG paths embedded in the current Pencil design components edWZ7/yNa5Y.
+Shared WPF fill geometry: Controls/DatabaseBrandCatalog.cs
+Brand names and logos remain the property of their respective owners.

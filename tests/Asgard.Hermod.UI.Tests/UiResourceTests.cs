@@ -67,7 +67,7 @@ public sealed class UiResourceTests
         return Task.CompletedTask;
     });
 
-    /// <summary>两套字体的中文都使用明确的微软雅黑 UI 回退，不依赖系统默认字体映射。</summary>
+    /// <summary>中文使用打包的设计字体，不依赖开发机器的显示语言或安装字体。</summary>
     [Theory]
     [InlineData("UiFont")]
     [InlineData("MonoFont")]
@@ -75,7 +75,10 @@ public sealed class UiResourceTests
     {
         var family = Assert.IsType<FontFamily>(Application.Current.FindResource(key));
         foreach (var glyphs in RenderedGlyphs(family, "系统设置对象存储"))
-            Assert.Contains(glyphs.FamilyNames.Values, name => name is "Microsoft YaHei UI" or "微软雅黑 UI");
+        {
+            Assert.Contains("Noto Sans SC", glyphs.FamilyNames.Values);
+            Assert.Contains("Asgard.Hermod.UI", glyphs.FontUri.OriginalString, StringComparison.OrdinalIgnoreCase);
+        }
         return Task.CompletedTask;
     });
 
