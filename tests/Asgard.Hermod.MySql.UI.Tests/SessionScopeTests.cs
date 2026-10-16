@@ -9,6 +9,52 @@ namespace Asgard.Hermod.MySql.Tests;
 public sealed class SessionScopeTests(WpfTestFixture fixture)
 {
     [Fact]
+    public Task UnifiedScope_CancelKeepsWholeDraftAndApplyCommitsOneRevisionWithoutExecuting() => fixture.RunOffscreenAsync(async () =>
+    {
+        var config = new Configurations(); var server = new TestMySql { DatabaseNames = ["app", "reports", "audit"] }; var dialogs = new TestMySqlDialogs();
+        await using var page = Page(config, server, dialogs, "app", "reports"); await page.InitializeAsync();
+        var session = page.ActiveSession!; await session.ChangeDatabaseAsync("app"); session.Sql = "SELECT pending";
+        long revision = session.Scope!.Revision;
+        await page.OpenScopeEditorCommand.ExecuteAsync(); var editor = Assert.IsType<DatabaseScopeEditorViewModel>(page.ScopeEditor);
+        editor.Choices.Single(item => item.Name == "reports").IsSelected = false; editor.Choices.Single(item => item.Name == "audit").IsSelected = true;
+        Assert.Equal(new[] { "app", "reports" }, session.Scope.Databases.Select(item => item.Name)); Assert.True(editor.ApplyCommand.CanExecute(null));
+        await editor.ApplyCommand.ExecuteAsync();
+        Assert.True(editor.IsOpen); Assert.Equal(revision, session.Scope.Revision); Assert.Equal(new[] { "app", "reports" }, session.Scope.Databases.Select(item => item.Name));
+        dialogs.RemovalDecision = new(); await editor.ApplyCommand.ExecuteAsync();
+        Assert.False(editor.IsOpen); Assert.Equal(revision + 1, session.Scope.Revision); Assert.Equal(new[] { "app", "audit" }, session.Scope.Databases.Select(item => item.Name));
+        Assert.Equal("app", session.Database); Assert.Equal("SELECT pending", session.Sql); Assert.Equal(0, server.Executions);
+    });
+
+    [Fact]
+    public Task UnifiedScope_LaterRemovalCancellationDoesNotPartiallyApplyEarlierConfirmation() => fixture.RunOffscreenAsync(async () =>
+    {
+        var config = new Configurations(); var server = new TestMySql { DatabaseNames = ["app", "reports", "audit", "warehouse"] }; var dialogs = new TestMySqlDialogs();
+        await using var page = Page(config, server, dialogs, "app", "reports", "audit"); await page.InitializeAsync();
+        var session = page.ActiveSession!; await session.ChangeDatabaseAsync("app"); int confirmations = 0;
+        dialogs.RemovalConfirmation = () => Task.FromResult<DatabaseRemovalDecision?>(++confirmations == 1 ? new() : null);
+        await page.OpenScopeEditorCommand.ExecuteAsync(); var editor = page.ScopeEditor!;
+        foreach (var item in editor.Choices) item.IsSelected = item.Name == "warehouse";
+        long revision = session.Scope!.Revision; await editor.ApplyCommand.ExecuteAsync();
+        Assert.Equal(2, confirmations); Assert.Equal(revision, session.Scope.Revision); Assert.Equal(new[] { "app", "reports", "audit" }, session.Scope.Databases.Select(item => item.Name));
+        Assert.Equal("app", session.Database); Assert.True(editor.IsOpen); Assert.Equal(0, server.Executions);
+    });
+
+    [Fact]
+    public Task UnifiedScope_ReplacingLastDatabaseRequiresConfirmationAndRejectsStaleDraft() => fixture.RunOffscreenAsync(async () =>
+    {
+        var config = new Configurations(); var server = new TestMySql { DatabaseNames = ["app", "audit"] }; var dialogs = new TestMySqlDialogs { RemovalDecision = new() };
+        await using var page = Page(config, server, dialogs, "app"); await page.InitializeAsync();
+        var session = page.ActiveSession!; await page.OpenScopeEditorCommand.ExecuteAsync(); var editor = page.ScopeEditor!;
+        editor.Choices.Single(item => item.Name == "app").IsSelected = false;
+        Assert.False(editor.ApplyCommand.CanExecute(null)); editor.Choices.Single(item => item.Name == "audit").IsSelected = true;
+        await editor.ApplyCommand.ExecuteAsync(); Assert.Equal("audit", session.Database); Assert.Single(session.Scope!.Databases); Assert.Equal(1, dialogs.RemovalConfirmations);
+        await page.OpenScopeEditorCommand.ExecuteAsync(); editor = page.ScopeEditor!; editor.Choices.Single(item => item.Name == "app").IsSelected = true;
+        session.Scope.Add([new(Configurations.Instance.Id, "reports")]); Assert.False(editor.ApplyCommand.CanExecute(null)); Assert.False(editor.IsOpen);
+        Assert.Equal(new[] { "audit", "reports" }, session.Scope.Databases.Select(item => item.Name)); Assert.Equal(0, server.Executions);
+    });
+
+
+    [Fact]
     public Task HistoryRestore_ConfirmsDraftAndDoesNotExecute() => fixture.RunOffscreenAsync(async () =>
     {
         var server = new TestMySql(); var dialogs = new TestMySqlDialogs();

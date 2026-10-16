@@ -53,6 +53,7 @@ public sealed partial class MySqlWorkspaceViewModel
     public string DatabaseScopeLabel => Text.Format("DatabaseScopeLabel", ActiveSession?.Scope?.Databases.Count ?? 0);
     private void InitializeSessionCommands()
     {
+        OpenScopeEditorCommand = new AsyncRelayCommand(_ => OpenScopeEditorAsync(), _ => IsConnected && !IsManagingDatabases && ActiveSession is { IsBusy: false, IsManagingScope: false });
         ToggleAllDatabasesCommand = new AsyncRelayCommand(async _ => { bool selected = IsAllDatabasesSelected; try { if (await LoadDatabaseCatalogAsync()) foreach (var item in DatabaseChoices) item.IsSelected = !selected; } finally { OnPropertyChanged(nameof(IsAllDatabasesSelected)); } }, _ => IsConnected && !IsManagingDatabases);
         CancelDatabasePickerCommand = new RelayCommand(_ => { if (Sessions.Count == 0) CloseWindowCommand.Execute(null); else SetDatabasePicker(false); }, _ => !IsClosed);
         ShowSessionHistoryCommand = new RelayCommand(_ => { if (ActiveSession is { } session) { ActiveTab = session; session.IsHistoryOpen = !session.IsHistoryOpen; } }, _ => ActiveSession is not null);
@@ -112,6 +113,8 @@ public sealed partial class MySqlWorkspaceViewModel
     }
     private void RefreshSessionNavigation()
     {
+        if (ScopeEditor is not null && (_scopeEditorSession != ActiveSession || !ScopeEditor.IsCurrent)) ScopeEditor.IsOpen = false;
+        OpenScopeEditorCommand?.NotifyCanExecuteChanged();
         if (Tree is not null && ActiveSession?.Scope is { } scope)
             foreach (var database in scope.Databases.Where(item => Tree.Root.Children.All(node => node.Object.Name != item.Name)))
                 Tree.Root.Children.Add(new(new(MySqlObjectKind.Database, database.Name, database.Name), Tree) { Parent = Tree.Root });

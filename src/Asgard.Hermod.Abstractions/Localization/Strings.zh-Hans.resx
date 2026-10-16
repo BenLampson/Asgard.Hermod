@@ -4358,4 +4358,12 @@ Session：{2}
   <data name="PlanNodeOutputSummary" xml:space="preserve"><value>{0} 个节点 · 输出 {1} 行</value></data>
   <data name="PlanSortExpression" xml:space="preserve"><value>排序表达式</value></data>
   <data name="PlanFilterCondition" xml:space="preserve"><value>过滤条件</value></data>
+  <data name="DatabaseScopeTitle" xml:space="preserve"><value>当前 Session 的数据库范围</value></data>
+  <data name="DatabaseScopeExplanation" xml:space="preserve"><value>在当前实例内添加或移除数据库；脚本的执行目标单独选择。</value></data>
+  <data name="DatabaseScopeMinimum" xml:space="preserve"><value>至少保留一个数据库。移除前会再次说明影响并确认。</value></data>
+  <data name="DatabaseScopeIncluded" xml:space="preserve"><value>已加入</value></data>
+  <data name="DatabaseScopeAvailable" xml:space="preserve"><value>可用</value></data>
+  <data name="DatabaseScopePendingAdd" xml:space="preserve"><value>待加入</value></data>
+  <data name="DatabaseScopePendingRemove" xml:space="preserve"><value>待移除</value></data>
+  <data name="DatabaseScopeApply" xml:space="preserve"><value>应用范围</value></data>
 </root>

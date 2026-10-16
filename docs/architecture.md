@@ -501,6 +501,15 @@ is created. New Session reuses this picker in the same window and cancellation r
 to the previous Session with its draft intact. Switching SQL and object documents within
 the same scope preserves the tree data source, selected row and scroll position.
 
+`DatabaseScopeEditor` is the single scope-management popover. Its checked rows form
+a local draft, with included, pending-addition and pending-removal states. Canceling
+never changes the Session. Applying freezes the original scope revision and selected
+identities. Both engines collect every removal confirmation and object/transaction
+close preflight before committing any scope change. A later cancellation leaves the
+entire original scope intact. The final batch preserves an available execution target;
+removing that target requires an explicit replacement when several candidates remain.
+Stale drafts, foreign instances and empty scopes are rejected.
+
 A script Session owns its object documents, SQL execution history and AI conversation.
 Scope is distinct from the physical connection's execution target. Unique candidates
 are fixed; ambiguous choices are left to the user. Tree navigation and adding scope

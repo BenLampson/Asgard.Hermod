@@ -46,6 +46,12 @@ public sealed partial class PostgreSqlTabViewModel
     {
         if (Scope?.ApplyConfirmedRemoval(request, decision) == true) { Database = Scope.ExecutionTarget; Refresh(); }
     }
+    /// <summary>整批确认完成后才改变范围与执行目标。</summary>
+    internal bool CommitScopeChange(DatabaseScopeChange change, string target)
+    {
+        if (Scope?.ApplyConfirmedChange(change, target) != true) return false;
+        Database = Scope.ExecutionTarget; Refresh(); return true;
+    }
     /// <summary>移除内容先确认，取消不修改原内容。</summary>
     internal Task<bool> ConfirmRemovalAsync(string actionKey) => _dialogs.ConfirmSessionActionAsync(Instance?.Name ?? "", IsQuery ? Text.Format("DatabaseSessionActionContext", Name, string.Join(", ", Databases)) : Text.Format("DatabaseSessionObjectActionContext", SessionOwner?.Name ?? Name, Header), actionKey, Endpoint);
 }

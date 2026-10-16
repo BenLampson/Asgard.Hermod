@@ -4358,4 +4358,12 @@ Result sample:
   <data name="PlanNodeOutputSummary" xml:space="preserve"><value>{0} nodes · output {1} rows</value></data>
   <data name="PlanSortExpression" xml:space="preserve"><value>Sort expression</value></data>
   <data name="PlanFilterCondition" xml:space="preserve"><value>Filter condition</value></data>
+  <data name="DatabaseScopeTitle" xml:space="preserve"><value>Database scope for this Session</value></data>
+  <data name="DatabaseScopeExplanation" xml:space="preserve"><value>Add or remove databases within this instance; choose the script execution target separately.</value></data>
+  <data name="DatabaseScopeMinimum" xml:space="preserve"><value>Keep at least one database. Removal requires another impact review and confirmation.</value></data>
+  <data name="DatabaseScopeIncluded" xml:space="preserve"><value>Included</value></data>
+  <data name="DatabaseScopeAvailable" xml:space="preserve"><value>Available</value></data>
+  <data name="DatabaseScopePendingAdd" xml:space="preserve"><value>Pending addition</value></data>
+  <data name="DatabaseScopePendingRemove" xml:space="preserve"><value>Pending removal</value></data>
+  <data name="DatabaseScopeApply" xml:space="preserve"><value>Apply scope</value></data>
 </root>
