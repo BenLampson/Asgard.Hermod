@@ -4550,4 +4550,14 @@ SQL：
   <data name="DatabaseTraceReturnedDetails" xml:space="preserve"><value>返回详情</value></data>
   <data name="DatabaseTraceSnapshot" xml:space="preserve"><value>发送时快照</value></data>
   <data name="DatabaseTraceRestoreHint" xml:space="preserve"><value>将此次 SQL 恢复到编辑器，不执行。</value></data>
+  <data name="MainConnectionOpening" xml:space="preserve"><value>正在连接 {0}</value></data>
+  <data name="MainConnectionFailed" xml:space="preserve"><value>未能连接 {0}</value></data>
+  <data name="MainConnectionWaiting" xml:space="preserve"><value>正在验证连接并准备工作区…</value></data>
+  <data name="MainConnectionCancel" xml:space="preserve"><value>取消连接</value></data>
+  <data name="MainConnectionBack" xml:space="preserve"><value>返回实例列表</value></data>
+  <data name="MainConnectionRetry" xml:space="preserve"><value>重新连接</value></data>
+  <data name="MainConnectionViewDiagnostics" xml:space="preserve"><value>查看诊断详情</value></data>
+  <data name="MainConnectionDiagnostics" xml:space="preserve"><value>实例 ID：{0}
+类型：{1}
+地址：{2}</value></data>
 </root>

@@ -7,6 +7,7 @@ internal static partial class IconCatalog
     private static void AddObjectStorageIcons()
     {
         AddFileTypeIcons();
+        Geometries.Add("circle-alert", Create("M2 12 A10 10 0 1 0 22 12 A10 10 0 1 0 2 12 Z", "M12 8v4", "M12 16h.01"));
         Geometries.Add("arrow-down-wide-narrow", Create("m3 16 4 4 4-4", "M7 20V4", "M11 4h10", "M11 8h7", "M11 12h4"));
         Geometries.Add("loader-circle", Create("M21 12a9 9 0 1 1-6.219-8.56"));
         Geometries.Add("upload", Create("M12 3v12", "m17 8-5-5-5 5", "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"));

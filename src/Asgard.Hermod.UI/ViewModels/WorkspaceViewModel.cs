@@ -58,7 +58,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IAsyncDisposa
     /// <summary>独立窗口模式下主窗体始终保留首页。</summary>
     public WorkspacePageViewModel? DisplayedPage => UseIndependentWindows ? Home : SelectedTab;
     /// <summary>退出预检期间禁止打开或关闭其他页，保持受检窗口快照稳定。</summary>
-    public bool IsExitPending { get => _isExitPending; set => _isExitPending = value; }
+    public bool IsExitPending { get => _isExitPending; set { _isExitPending = value; RefreshOpenFeedback(); } }
     /// <summary>包括已移出页签集合但仍在异步释放的工作页。</summary>
     public int PendingCloseCount => _closingPages.Count;
     /// <summary>独立窗口不在主窗体重复呈现外层页签。</summary>
@@ -205,7 +205,7 @@ public sealed partial class WorkspaceViewModel : ObservableObject, IAsyncDisposa
     /// <summary>应用退出时关闭所有页，不保存或恢复已打开的页签。</summary>
     public ValueTask DisposeAsync()
     {
-        _disposeStarted = true;
+        _disposeStarted = true; ClearOpenFeedback();
         _disposeTask ??= CloseAllAsync();
         return new ValueTask(_disposeTask);
     }

@@ -4550,4 +4550,14 @@ When signed out, they are encrypted only on this device.</value></data>
   <data name="DatabaseTraceReturnedDetails" xml:space="preserve"><value>Returned details</value></data>
   <data name="DatabaseTraceSnapshot" xml:space="preserve"><value>Snapshot at dispatch</value></data>
   <data name="DatabaseTraceRestoreHint" xml:space="preserve"><value>Restore this SQL to the editor without executing it.</value></data>
+  <data name="MainConnectionOpening" xml:space="preserve"><value>Connecting to {0}</value></data>
+  <data name="MainConnectionFailed" xml:space="preserve"><value>Could not connect to {0}</value></data>
+  <data name="MainConnectionWaiting" xml:space="preserve"><value>Verifying the connection and preparing the workspace…</value></data>
+  <data name="MainConnectionCancel" xml:space="preserve"><value>Cancel connection</value></data>
+  <data name="MainConnectionBack" xml:space="preserve"><value>Back to instances</value></data>
+  <data name="MainConnectionRetry" xml:space="preserve"><value>Reconnect</value></data>
+  <data name="MainConnectionViewDiagnostics" xml:space="preserve"><value>View diagnostic details</value></data>
+  <data name="MainConnectionDiagnostics" xml:space="preserve"><value>Instance ID: {0}
+Type: {1}
+Address: {2}</value></data>
 </root>

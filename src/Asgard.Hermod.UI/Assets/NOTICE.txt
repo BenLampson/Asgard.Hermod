@@ -58,3 +58,4 @@ Agent paperclip.svg and its WPF geometry use the same fixed Lucide source revisi
 Agent shield-alert.svg and its WPF geometry use the same fixed Lucide source revision above.
 The model editor plug.svg and its WPF geometry use the same fixed Lucide source revision above.
 The log reader corner-down-left.svg and its WPF geometry use the same fixed Lucide source revision above.
+The first-connection card circle-alert.svg and its WPF geometry use the same fixed Lucide source revision above.

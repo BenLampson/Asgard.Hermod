@@ -613,3 +613,12 @@ have independent read-only tabs; filtering, selecting and restoring never execut
 a request. Both database modules expose snapshot-specific time, target, duration
 and status. SQL gutter rendering uses actual character rectangles, including
 pixel scroll offsets, instead of WPF line-index estimates at custom line heights.
+
+Initial connection feedback is owned by `WorkspaceViewModel` and rendered in the
+main body's `MainConnectionFeedback`, leaving the native title bar available. A
+520-DIP card presents safe source identity, cancellation and failure actions.
+Each pending page owns one feedback object. Failure appears only after releasing
+that page; retry creates a fresh page. Concurrent requests keep separate cancel
+targets, while completed, dismissed and superseded feedback cannot retry or
+cancel another request. Successful connections activate the workspace exactly
+once, and canceled connections never create an empty window.

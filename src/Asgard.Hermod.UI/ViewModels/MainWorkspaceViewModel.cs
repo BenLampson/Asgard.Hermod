@@ -103,10 +103,11 @@ public sealed class MainWorkspaceViewModel : ObservableObject, IDisposable
     /// <summary>概览没有筛选表单，空状态不能要求调整不存在的筛选条件。</summary>
     public string EmptyText => Text.Get(IsOverview ? "MainRecentEmpty" : "MainEmptyList");
     /// <summary>错误仅用共享安全消息呈现。</summary>
+    public MainConnectionFeedbackViewModel? OpenFeedback => _workspace.OpenFeedback;
     public bool IsOpening => _workspace.IsOpening;
     public string OpeningText => _workspace.OpeningText;
     public RelayCommand CancelOpenCommand => _workspace.CancelOpenCommand;
-    public string Error => _workspace.OpenError.Length > 0 ? _workspace.OpenError : _error.Length > 0 ? _error : _catalog.OperationError;
+    public string Error => _workspace.OpenFeedback is null && _workspace.OpenError.Length > 0 ? _workspace.OpenError : _error.Length > 0 ? _error : _catalog.OperationError;
     /// <summary>无错误时不占正文高度。</summary>
     public Visibility ErrorVisibility => Error.Length == 0 ? Visibility.Collapsed : Visibility.Visible;
     /// <summary>概览与列表分别采用稿中的二十和十八像素间距。</summary>
@@ -211,6 +212,7 @@ public sealed class MainWorkspaceViewModel : ObservableObject, IDisposable
     private void OnWorkspaceChanged(object? sender, PropertyChangedEventArgs args)
     {
         if (args.PropertyName is nameof(WorkspaceViewModel.IsOpening) or nameof(WorkspaceViewModel.OpeningText)) { OnPropertyChanged(nameof(IsOpening)); OnPropertyChanged(nameof(OpeningText)); }
+        if (args.PropertyName == nameof(WorkspaceViewModel.OpenFeedback)) { OnPropertyChanged(nameof(OpenFeedback)); OnPropertyChanged(nameof(Error)); OnPropertyChanged(nameof(ErrorVisibility)); }
         if (args.PropertyName == nameof(WorkspaceViewModel.OpenError)) { OnPropertyChanged(nameof(Error)); OnPropertyChanged(nameof(ErrorVisibility)); }
     }
     /// <inheritdoc />

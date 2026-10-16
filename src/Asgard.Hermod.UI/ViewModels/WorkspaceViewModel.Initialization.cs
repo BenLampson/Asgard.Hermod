@@ -18,7 +18,7 @@ public sealed partial class WorkspaceViewModel
     {
         if (page.IsClosed || IsExitPending || _disposeStarted) return;
         OpenError = ""; OnPropertyChanged(nameof(OpenError));
-        if (_pendingActivations.Add(page)) _ = ActivateInitializedPageAsync(page);
+        if (_pendingActivations.Add(page)) { BeginOpenFeedback(page); _ = ActivateInitializedPageAsync(page); }
     }
     private async Task ActivateInitializedPageAsync(WorkspacePageViewModel page)
     {
@@ -29,7 +29,7 @@ public sealed partial class WorkspaceViewModel
             if (!page.IsClosed && Tabs.Contains(page) && !IsExitPending && !_disposeStarted &&
                 (page.HasConnectedOnce || page.InitialConnectionFailure is null)) PageActivated?.Invoke(page);
         }
-        finally { _pendingActivations.Remove(page); RefreshOpening(); }
+        finally { _pendingActivations.Remove(page); EndOpenFeedback(page); RefreshOpening(); }
     }
     private void RefreshOpening()
     { OnPropertyChanged(nameof(IsOpening)); OnPropertyChanged(nameof(OpeningText)); }
@@ -55,7 +55,7 @@ public sealed partial class WorkspaceViewModel
         catch (Exception error) { if (failure.Length == 0) failure = Text.Error(error); }
         finally { _closingPages.Remove(closing); }
         if (!_disposeStarted && _disposeTask is null && !IsExitPending && failure.Length > 0)
-        { OpenError = Text.Format("WorkspaceOpenFailed", page.Header, failure); OnPropertyChanged(nameof(OpenError)); }
+        { OpenError = Text.Format("WorkspaceOpenFailed", page.Header, failure); FailOpenFeedback(page, failure); OnPropertyChanged(nameof(OpenError)); }
     }
     private async void OnPageCloseRequested(object? sender, EventArgs args)
     {
