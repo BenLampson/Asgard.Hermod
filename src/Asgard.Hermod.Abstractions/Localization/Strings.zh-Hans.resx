@@ -4596,4 +4596,30 @@ SQL：
   <data name="DatabaseColumnSqlNotNull" xml:space="preserve"><value>NOT NULL</value></data>
   <data name="DatabaseColumnDefinitionWithDefault" xml:space="preserve"><value>{0}  ·  {1}  ·  DEFAULT {2}</value></data>
   <data name="DatabaseColumnDefinitionWithDefaultExtra" xml:space="preserve"><value>{0}  ·  {1}  ·  DEFAULT {2}  ·  {3}</value></data>
+  <data name="DatabaseObjectBaseTable" xml:space="preserve"><value>基表</value></data>
+  <data name="DatabaseObjectView" xml:space="preserve"><value>视图</value></data>
+  <data name="DatabaseObjectProcedure" xml:space="preserve"><value>存储过程</value></data>
+  <data name="DatabaseObjectFunction" xml:space="preserve"><value>函数</value></data>
+  <data name="DatabaseObjectEvent" xml:space="preserve"><value>事件</value></data>
+  <data name="DatabaseObjectDefinition" xml:space="preserve"><value>对象</value></data>
+  <data name="DatabaseObjectData" xml:space="preserve"><value>数据</value></data>
+  <data name="DatabaseObjectStructure" xml:space="preserve"><value>结构</value></data>
+  <data name="DatabaseObjectDdl" xml:space="preserve"><value>DDL</value></data>
+  <data name="DatabaseObjectRefresh" xml:space="preserve"><value>刷新</value></data>
+  <data name="DatabaseObjectRefreshStructure" xml:space="preserve"><value>刷新结构</value></data>
+  <data name="DatabaseObjectCopyTableName" xml:space="preserve"><value>复制表名</value></data>
+  <data name="DatabaseObjectCopyName" xml:space="preserve"><value>复制对象名</value></data>
+  <data name="DatabaseObjectReturnScript" xml:space="preserve"><value>返回脚本</value></data>
+  <data name="DatabaseObjectFilter" xml:space="preserve"><value>筛选</value></data>
+  <data name="DatabaseObjectExportPage" xml:space="preserve"><value>导出当前页</value></data>
+  <data name="DatabaseObjectExportHint" xml:space="preserve"><value>只导出当前已加载的行，不重新执行查询。</value></data>
+  <data name="DatabaseObjectDdlReadOnly" xml:space="preserve"><value>完整 DDL · 只读</value></data>
+  <data name="DatabaseObjectFieldsLoaded" xml:space="preserve"><value>已加载 {0:N0} 个字段 · 结构只读</value></data>
+  <data name="DatabaseObjectItemsLoaded" xml:space="preserve"><value>已加载 {0:N0} 项 · 结构只读</value></data>
+  <data name="DatabaseObjectEmptyPage" xml:space="preserve"><value>0 行 · 每页 {0:N0} 行</value></data>
+  <data name="DatabaseObjectPageRange" xml:space="preserve"><value>第 {0:N0}–{1:N0} 行 · 每页 {2:N0} 行</value></data>
+  <data name="DatabaseObjectViewDdl" xml:space="preserve"><value>查看完整 DDL</value></data>
+  <data name="DatabaseObjectOutcomeUnknown" xml:space="preserve"><value>保存结果未知，请先核对数据再继续。</value></data>
+  <data name="DatabaseObjectUndoChanges" xml:space="preserve"><value>撤销修改</value></data>
+  <data name="DatabaseObjectSaveChanges" xml:space="preserve"><value>保存修改</value></data>
 </root>

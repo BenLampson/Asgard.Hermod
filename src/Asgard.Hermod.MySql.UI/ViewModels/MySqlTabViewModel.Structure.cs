@@ -49,6 +49,6 @@ public sealed partial class MySqlTabViewModel
     /// <summary>刷新只通知结构展示，不重建数据结果、会话或草稿。</summary>
     private void RefreshStructure()
     {
-        foreach (string property in new[] { nameof(StructureRows), nameof(IsDefinitionSelected), nameof(IsEmptyStructure), nameof(ColumnRows), nameof(IsColumnsSection) }) OnPropertyChanged(property);
+        foreach (string property in new[] { nameof(StructureRows), nameof(IsDefinitionSelected), nameof(IsEmptyStructure), nameof(ColumnRows), nameof(IsColumnsSection), nameof(ObjectSection), nameof(ObjectFooterText) }) OnPropertyChanged(property);
     }
 }

@@ -9,6 +9,7 @@ internal static partial class IconCatalog
 {
     private static readonly Dictionary<string, Geometry> Geometries = new(StringComparer.OrdinalIgnoreCase)
     {
+        ["undo-2"] = Create("M9 14 4 9l5-5", "M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"),
         ["corner-down-left"] = Create("M20 4v7a4 4 0 0 1-4 4H4", "m9 10-5 5 5 5"),
         ["plug"] = Create("M12 22v-5", "M15 8V2", "M17 8a1 1 0 0 1 1 1v4a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1z", "M9 8V2"),
         // 助手星光几何直接转换固定版本 Lucide SVG，与 Pencil 使用同一图标。

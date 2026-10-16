@@ -4596,4 +4596,30 @@ Address: {2}</value></data>
   <data name="DatabaseColumnSqlNotNull" xml:space="preserve"><value>NOT NULL</value></data>
   <data name="DatabaseColumnDefinitionWithDefault" xml:space="preserve"><value>{0}  ·  {1}  ·  DEFAULT {2}</value></data>
   <data name="DatabaseColumnDefinitionWithDefaultExtra" xml:space="preserve"><value>{0}  ·  {1}  ·  DEFAULT {2}  ·  {3}</value></data>
+  <data name="DatabaseObjectBaseTable" xml:space="preserve"><value>Base table</value></data>
+  <data name="DatabaseObjectView" xml:space="preserve"><value>View</value></data>
+  <data name="DatabaseObjectProcedure" xml:space="preserve"><value>Procedure</value></data>
+  <data name="DatabaseObjectFunction" xml:space="preserve"><value>Function</value></data>
+  <data name="DatabaseObjectEvent" xml:space="preserve"><value>Event</value></data>
+  <data name="DatabaseObjectDefinition" xml:space="preserve"><value>Object</value></data>
+  <data name="DatabaseObjectData" xml:space="preserve"><value>Data</value></data>
+  <data name="DatabaseObjectStructure" xml:space="preserve"><value>Structure</value></data>
+  <data name="DatabaseObjectDdl" xml:space="preserve"><value>DDL</value></data>
+  <data name="DatabaseObjectRefresh" xml:space="preserve"><value>Refresh</value></data>
+  <data name="DatabaseObjectRefreshStructure" xml:space="preserve"><value>Refresh structure</value></data>
+  <data name="DatabaseObjectCopyTableName" xml:space="preserve"><value>Copy table name</value></data>
+  <data name="DatabaseObjectCopyName" xml:space="preserve"><value>Copy object name</value></data>
+  <data name="DatabaseObjectReturnScript" xml:space="preserve"><value>Return to script</value></data>
+  <data name="DatabaseObjectFilter" xml:space="preserve"><value>Filter</value></data>
+  <data name="DatabaseObjectExportPage" xml:space="preserve"><value>Export current page</value></data>
+  <data name="DatabaseObjectExportHint" xml:space="preserve"><value>Export only the currently loaded rows without running another query.</value></data>
+  <data name="DatabaseObjectDdlReadOnly" xml:space="preserve"><value>Full DDL · Read only</value></data>
+  <data name="DatabaseObjectFieldsLoaded" xml:space="preserve"><value>Loaded {0:N0} fields · Read only</value></data>
+  <data name="DatabaseObjectItemsLoaded" xml:space="preserve"><value>Loaded {0:N0} items · Read only</value></data>
+  <data name="DatabaseObjectEmptyPage" xml:space="preserve"><value>0 rows · {0:N0} rows per page</value></data>
+  <data name="DatabaseObjectPageRange" xml:space="preserve"><value>Rows {0:N0}–{1:N0} · {2:N0} rows per page</value></data>
+  <data name="DatabaseObjectViewDdl" xml:space="preserve"><value>View full DDL</value></data>
+  <data name="DatabaseObjectOutcomeUnknown" xml:space="preserve"><value>Save outcome unknown. Verify the rows before continuing.</value></data>
+  <data name="DatabaseObjectUndoChanges" xml:space="preserve"><value>Undo changes</value></data>
+  <data name="DatabaseObjectSaveChanges" xml:space="preserve"><value>Save changes</value></data>
 </root>

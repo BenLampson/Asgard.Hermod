@@ -29,7 +29,7 @@ public sealed partial class PostgreSqlTabViewModel : ObservableObject, IAsyncDis
         StructureSections = CreateStructureSections(kind); StructureSection = StructureSections[0].Id;
         Instance = instance;
         _lifetime = CancellationTokenSource.CreateLinkedTokenSource(lifetime);
-        RefreshCommand = new AsyncRelayCommand(_ => ReadAsync(), _ => ConnectionAvailable && !IsBusy && !IsQuery);
+        RefreshCommand = new AsyncRelayCommand(_ => RefreshObjectAsync(), _ => ConnectionAvailable && !IsBusy && !IsQuery);
         ExecuteCommand = new AsyncRelayCommand(sql => ExecuteAsync(sql as string ?? Sql), _ => CanRun);
         CancelCommand = new RelayCommand(_ => _pending?.Cancel(), _ => IsBusy);
         SaveDocumentCommand = new AsyncRelayCommand(_ => SaveDocumentAsync(), _ => IsQuery && !IsBusy);
@@ -116,7 +116,7 @@ public sealed partial class PostgreSqlTabViewModel : ObservableObject, IAsyncDis
     /// <summary>数据和结构区使用公共选择器。</summary>
     public IReadOnlyList<InstanceFieldChoice> Sections { get; } = [new("data", Text.Get("PostgreSqlData")), new("structure", Text.Get("PostgreSqlStructure"))];
     /// <summary>当前对象正文分区。</summary>
-    public string Section { get; set { if (SetProperty(ref field, value)) RefreshPaging(); } } = "data";
+    public string Section { get; set { if (SetProperty(ref field, value)) { RefreshPaging(); RefreshObjectPresentation(); } } } = "data";
     /// <summary>当前表页的起始偏移，不表示精确总行数。</summary>
     public int Offset { get; private set; }
     /// <summary>协调公共控件的操作命令，启用条件由当前状态决定。</summary>
@@ -178,21 +178,13 @@ public sealed partial class PostgreSqlTabViewModel : ObservableObject, IAsyncDis
             var session = await SessionAsync(token);
             if (!IsMetadataOnly)
             {
-                var result = await session.ReadTableAsync(Database, Schema, Name, Offset, PageSize, _appliedFilter, token); SetResults([result]);
+                var result = await session.ReadTableAsync(Database, Schema, Name, Offset, PageSize, _appliedFilter, token); _loadedPageOffset = Offset; _loadedPageSize = PageSize; SetResults([result]);
                 Status = result.Rows.Count == 0 ? Text.Get("PostgreSqlNoRows") : Text.Format("PostgreSqlPageStatus", Offset + 1, Offset + result.Rows.Count);
             }
-            var structure = new List<PostgreSqlObject>();
-            foreach (var kind in IsMetadataOnly ? new[] { PostgreSqlObjectKind.Parameters } : Kind == PostgreSqlObjectKind.View ? [PostgreSqlObjectKind.Columns] : new[] { PostgreSqlObjectKind.Columns, PostgreSqlObjectKind.Indexes, PostgreSqlObjectKind.ForeignKeys, PostgreSqlObjectKind.Triggers })
-            {
-                try { var page = await session.ListAsync(new(kind, "", Database, Name, Schema: Schema), 0, token); structure.AddRange(page.Items); }
-                catch (Exception error) { Error = Text.Error(error, "PostgreSqlCommandFailed"); }
-            }
-            Structure = structure; OnPropertyChanged(nameof(Structure)); RefreshStructure();
-            try { Definition = await session.ReadDefinitionAsync(new(Kind, Name, Database, Schema: Schema), token); OnPropertyChanged(nameof(Definition)); }
-            catch (Exception error) { Error = Text.Error(error, "PostgreSqlCommandFailed"); }
+            await ReadStructureCoreAsync(session, token);
         });
     }
-    private async Task PageAsync(int delta) { if (!await ResolveDataDraftAsync()) return; Offset = Math.Max(0, Offset + delta); OnPropertyChanged(nameof(Offset)); await ReadAsync(); }
+    private async Task PageAsync(int delta) { if (!await ResolveDataDraftAsync()) return; Offset = Math.Max(0, _loadedPageOffset + delta); OnPropertyChanged(nameof(Offset)); await ReadAsync(); }
     /// <summary>串行执行 SQL，保留已完成的结果和安全失败状态。</summary>
     public async Task ExecuteAsync(string sql)
     {
@@ -224,7 +216,7 @@ public sealed partial class PostgreSqlTabViewModel : ObservableObject, IAsyncDis
     }
     private void DraftChanged()
     {
-        foreach (string property in new[] { nameof(IsDirty), nameof(IsDocumentDirty), nameof(HasDataDraft), nameof(DraftSummary) }) OnPropertyChanged(property);
+        foreach (string property in new[] { nameof(IsDirty), nameof(IsDocumentDirty), nameof(HasDataDraft), nameof(DraftSummary), nameof(ObjectFooterText) }) OnPropertyChanged(property);
         SaveChangesCommand?.NotifyCanExecuteChanged(); RevertCommand?.NotifyCanExecuteChanged();
     }
     private void Refresh()
@@ -234,5 +226,6 @@ public sealed partial class PostgreSqlTabViewModel : ObservableObject, IAsyncDis
         CancelCommand.NotifyCanExecuteChanged(); RestoreTraceCommand.NotifyCanExecuteChanged(); RevertCommand.NotifyCanExecuteChanged(); DraftChanged();
         RefreshStructure();
         RefreshPaging();
+        RefreshObjectPresentation();
     }
 }

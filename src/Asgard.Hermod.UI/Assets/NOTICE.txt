@@ -60,3 +60,5 @@ The model editor plug.svg and its WPF geometry use the same fixed Lucide source 
 The log reader corner-down-left.svg and its WPF geometry use the same fixed Lucide source revision above.
 The first-connection card circle-alert.svg and its WPF geometry use the same fixed Lucide source revision above.
 The answer toolbar rotate-ccw.svg, thumbs-up.svg and thumbs-down.svg use the same fixed Lucide source revision above; geometry is converted directly from those SVG paths.
+
+The database object footer undo-2.svg uses the same fixed Lucide source revision above; geometry is converted directly from its SVG paths.

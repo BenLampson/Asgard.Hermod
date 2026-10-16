@@ -13,7 +13,7 @@ public sealed class StructureNavigationTests(WpfTestFixture fixture)
     [InlineData("en")]
     [InlineData("zh-Hans")]
     [InlineData("fr-FR")]
-    public Task StructureSections_PreserveObjectContextAndDataDraft(string language) => fixture.RunAsync(async () =>
+    public Task StructureSections_PreserveObjectContextAndDataDraft(string language) => fixture.RunOffscreenAsync(async () =>
     {
         Text.SetApplicationCulture(CultureInfo.GetCultureInfo(language));
         try

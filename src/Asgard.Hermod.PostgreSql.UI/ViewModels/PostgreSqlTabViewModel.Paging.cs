@@ -19,9 +19,9 @@ public sealed partial class PostgreSqlTabViewModel
     /// <summary>表和视图的数据区才提供表页控制。</summary>
     public bool ShowTableControls => !IsQuery && !IsMetadataOnly && Section == "data";
     /// <summary>上一页来自真实偏移。</summary>
-    public bool HasPreviousPage => !IsQuery && !IsMetadataOnly && Offset > 0;
+    public bool HasPreviousPage => !IsQuery && !IsMetadataOnly && PageSize == _loadedPageSize && _loadedPageOffset > 0;
     /// <summary>下一页来自额外探测行，不根据恰好满页猜测。</summary>
-    public bool HasNextPage => !IsQuery && !IsMetadataOnly && SelectedResult?.Result.HasMore == true;
+    public bool HasNextPage => !IsQuery && !IsMetadataOnly && PageSize == _loadedPageSize && SelectedResult?.Result.HasMore == true;
     /// <summary>首个且唯一页面不显示无意义的箭头。</summary>
     public bool ShowPageNavigation => ShowTableControls && (HasPreviousPage || HasNextPage);
     /// <summary>应用和清除复用草稿确认，不静默丢弃待保存单元格。</summary>

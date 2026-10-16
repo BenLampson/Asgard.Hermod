@@ -7,20 +7,31 @@ namespace Asgard.Hermod.PostgreSql.UI.Views;
 public partial class PostgreSqlResultView : UserControl
 {
     private bool _prepared;
+    private bool _objectLayout;
     /// <summary>此网格所属的独立会话页签。</summary>
     public PostgreSqlTabViewModel? Tab { get; set; }
     /// <summary>创建模块状态和依赖；真实连接或写入由显式操作启动。</summary>
     public PostgreSqlResultView() { InitializeComponent(); DataContextChanged += (_, _) => BuildColumns(); }
+    /// <summary>对象数据使用三十六 DIP 单行表头和四十二 DIP 行；SQL 结果继续保留类型表头。</summary>
+    public void UseObjectLayout()
+    {
+        if (_objectLayout) return; _objectLayout = true;
+        ResultGrid.RowHeight = 42; ResultGrid.ColumnHeaderHeight = 36; ResultGrid.RowHeaderWidth = 44;
+        ResultGrid.ColumnHeaderStyle = (Style)Resources["ObjectGridHeader"]; ResultGrid.RowHeaderStyle = (Style)Resources["ObjectRowHeaderStyle"];
+        RowHeaderCorner.Width = 44; RowHeaderCorner.Height = 36; RowHeaderCorner.BorderThickness = new(0, 0, 0, 1); RowHeaderCornerText.FontSize = 11; RowHeaderCornerText.FontWeight = FontWeights.Normal;
+        for (int index = 0; index < ResultGrid.Columns.Count; index++)
+            if (ResultGrid.Columns[index] is DataGridTemplateColumn column) { column.HeaderTemplate = (DataTemplate)Resources["ObjectColumnHeader"]; column.CellTemplate = CellTemplate(index, "ObjectCellDisplay"); }
+    }
     private void BuildColumns()
     {
         ResultGrid.Columns.Clear(); if (DataContext is not PostgreSqlGridViewModel grid) return;
         foreach (var column in grid.Columns)
         {
-            var display = CellTemplate(column.Ordinal, "CellDisplay"); var input = CellTemplate(column.Ordinal, "CellInput");
+            var display = CellTemplate(column.Ordinal, _objectLayout ? "ObjectCellDisplay" : "CellDisplay"); var input = CellTemplate(column.Ordinal, "CellInput");
             var data = new DataGridTemplateColumn
             {
                 Header = column,
-                HeaderTemplate = (DataTemplate)Resources["ColumnHeader"],
+                HeaderTemplate = (DataTemplate)Resources[_objectLayout ? "ObjectColumnHeader" : "ColumnHeader"],
                 CellTemplate = display,
                 CellEditingTemplate = input,
                 Width = InitialWidth(column),
@@ -41,7 +52,7 @@ public partial class PostgreSqlResultView : UserControl
     private static double InitialWidth(PostgreSqlColumn column) => Math.Clamp(column.ValueType == typeof(DateTime) ? 220 : column.ValueType == typeof(byte[]) ? 220
         : column.TypeName.Contains("json", StringComparison.OrdinalIgnoreCase) || column.TypeName.Contains("text", StringComparison.OrdinalIgnoreCase) ? 300
         : column.ValueType == typeof(string) ? Math.Max(180, column.Name.Length * 8 + 36) : Math.Max(110, column.Name.Length * 8 + 36), 80, 400);
-    private void OnLoadingRow(object? sender, DataGridRowEventArgs args) => args.Row.Header = (args.Row.GetIndex() + (Tab?.Offset ?? 0) + 1).ToString(CultureInfo.InvariantCulture);
+    private void OnLoadingRow(object? sender, DataGridRowEventArgs args) => args.Row.Header = (args.Row.GetIndex() + (Tab?.LoadedRowOffset ?? 0) + 1).ToString(CultureInfo.InvariantCulture);
     private async void OnBeginningEdit(object? sender, DataGridBeginningEditEventArgs args)
     {
         if (_prepared) { _prepared = false; return; }

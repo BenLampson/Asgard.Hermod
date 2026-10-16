@@ -27,7 +27,7 @@ public partial class PostgreSqlTabView : UserControl
         if (_model is null) return;
         foreach (var stale in _views.Keys.Where(grid => !_model.Results.Contains(grid)).ToArray()) _views.Remove(stale);
         if (_model.SelectedResult is not { } grid) { GridHost.Content = null; SqlWorkspace.ResultContent = null; }
-        else { if (!_views.TryGetValue(grid, out var view)) { view = new() { DataContext = grid, Tab = _model }; _views.Add(grid, view); } if (_model.IsQuery) SqlWorkspace.ResultContent = view; else GridHost.Content = view; }
+        else { if (!_views.TryGetValue(grid, out var view)) { view = new() { DataContext = grid, Tab = _model }; _views.Add(grid, view); } if (_model.IsQuery) SqlWorkspace.ResultContent = view; else { view.UseObjectLayout(); GridHost.Content = view; } }
         Layout();
     }
     private void Layout()
@@ -37,9 +37,17 @@ public partial class PostgreSqlTabView : UserControl
         else if (EditorRow.Height.Value == 0) EditorRow.Height = new(210);
         EditorSplitterRow.Height = new(_model?.IsQuery == true ? 6 : 0);
         StructurePanel.Visibility = structure ? Visibility.Visible : Visibility.Collapsed; DataPanel.Visibility = structure ? Visibility.Collapsed : Visibility.Visible;
-        DataActions.Visibility = structure ? Visibility.Collapsed : Visibility.Visible;
+        DataActions.Visibility = structure ? Visibility.Collapsed : Visibility.Visible; StructureActions.Visibility = structure ? Visibility.Visible : Visibility.Collapsed;
         // 空的后续页保留返回上一页；首个空页不提供无效分页。
         PageButtons.Visibility = _model?.IsQuery == false && !structure && _model.ShowPageNavigation ? Visibility.Visible : Visibility.Collapsed;
+    }
+    private void OnObjectSizeChanged(object sender, SizeChangedEventArgs args)
+    { RowsPerPageLabel.Visibility = args.NewSize.Width < 760 ? Visibility.Collapsed : Visibility.Visible; FooterStatus.Visibility = args.NewSize.Width < 560 ? Visibility.Collapsed : Visibility.Visible; }
+    private async void OnExportObject(object sender, RoutedEventArgs args) { if (_model is not null && CommitInput()) await _model.ExportAsync(); }
+    private void OnCopyObjectName(object sender, RoutedEventArgs args)
+    {
+        if (_model is null) return;
+        try { Clipboard.SetText(_model.Name); } catch (System.Runtime.InteropServices.ExternalException) { _model.ReportClipboardFailure(); }
     }
     private void OnDataSizeChanged(object sender, SizeChangedEventArgs args)
     {
