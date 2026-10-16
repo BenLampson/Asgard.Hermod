@@ -5,7 +5,7 @@
  <UserControl.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/AgentDesign.xaml" /></ResourceDictionary.MergedDictionaries></ResourceDictionary></UserControl.Resources>
  <Grid><Grid.RowDefinitions><RowDefinition Height="84" /><RowDefinition Height="*" /></Grid.RowDefinitions>
   <Border BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,0,0,1">
-   <Grid x:Name="SourceColumn" MaxWidth="1120" Margin="80,0">
+   <Grid x:Name="SourceColumn" Margin="80,0">
     <Grid.ColumnDefinitions><ColumnDefinition Width="48" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
     <Border Width="36" Height="36" CornerRadius="8" Background="{DynamicResource AccentWeakBrush}" HorizontalAlignment="Left"><controls:IconView Kind="{Binding Icon, ElementName=SourceRoot}" Width="18" Height="18" Foreground="{DynamicResource AccentBrush}" /></Border>
     <StackPanel Grid.Column="1" VerticalAlignment="Center">

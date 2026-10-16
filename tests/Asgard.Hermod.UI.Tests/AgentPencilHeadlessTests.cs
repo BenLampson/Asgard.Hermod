@@ -33,7 +33,7 @@ public sealed class AgentPencilHeadlessTests(WpfTestFixture fixture)
             Assert.Equal(dpi / 96, VisualTreeHelper.GetDpi(panel).DpiScaleX);
             Assert.Equal(44, caption.ActualHeight); Assert.Equal(new Point(0, 44), source.TranslatePoint(new(), root));
             Assert.Equal(128, panel.TranslatePoint(new(), root).Y); Assert.Equal(48, ((Border)toolbar.Parent).ActualHeight);
-            double expected = Math.Min(1120, width - (width < 800 ? 48 : 160));
+            double expected = width < 800 ? width - 48 : width * 0.8;
             Assert.Equal(expected, toolbar.ActualWidth, 1); Assert.Equal(expected, composer.ActualWidth, 1);
             Assert.Equal(height - 170, ((StackPanel)panel.FindName("ComposerColumn")).TranslatePoint(new(), root).Y, 1);
             Assert.Equal(128, composer.ActualHeight, 1); Capture(root, $"agent-empty-{language}-{theme}-{width}", dpi);

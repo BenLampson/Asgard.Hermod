@@ -6,7 +6,7 @@
  <Grid Background="{DynamicResource SurfaceBrush}">
   <Grid.RowDefinitions><RowDefinition Height="48" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
   <Border BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,0,0,1">
-   <DockPanel x:Name="ToolbarColumn" MaxWidth="1120" Margin="80,0">
+   <DockPanel x:Name="ToolbarColumn" Margin="80,0">
     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
      <Button Click="OnConfigureModel" Width="26" Height="30" MinHeight="30" Style="{StaticResource GhostButton}" Padding="0" ToolTip="{loc:Loc AgentModelManage}" AutomationProperties.Name="{loc:Loc AgentModelManage}"><controls:IconView Kind="settings-2" Width="16" Height="16" /></Button><Border Width="1" Height="16" Background="{DynamicResource LineBrush}" Margin="8,0" />
      <Button x:Name="HistoryPicker" Click="OnHistory" IsEnabled="{Binding Archive.CanSwitch, ElementName=AgentRoot}" Height="30" MinHeight="30" FontSize="11" FontWeight="Normal" Padding="7,0" Style="{StaticResource GhostButton}" ToolTip="{loc:Loc ChatHistory}" AutomationProperties.Name="{loc:Loc ChatHistory}" Margin="0,0,8,0"><StackPanel Orientation="Horizontal"><controls:IconView Kind="history" Width="14" Height="14" Margin="0,0,6,0" /><TextBlock Text="{loc:Loc ChatHistory}" /></StackPanel></Button>
@@ -20,7 +20,7 @@
     <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" ClipToBounds="True" />
     <ScrollBar x:Name="PART_VerticalScrollBar" Width="8" Orientation="Vertical" HorizontalAlignment="Right" Minimum="0" Maximum="{TemplateBinding ScrollableHeight}" ViewportSize="{TemplateBinding ViewportHeight}" Value="{TemplateBinding VerticalOffset}" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" />
    </Grid></ControlTemplate></ScrollViewer.Template>
-   <StackPanel x:Name="MessageColumn" MaxWidth="1120" Margin="80,28">
+   <StackPanel x:Name="MessageColumn" Margin="80,28">
     <Grid x:Name="Welcome" MinHeight="500">
      <Grid.Style><Style TargetType="Grid"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding Items.Count, ElementName=ConversationItems}" Value="0"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></Grid.Style>
      <StackPanel VerticalAlignment="Center" Margin="80,0">
@@ -47,7 +47,7 @@
     <TextBlock Text="{Binding Error, ElementName=AgentRoot}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding Items.Count, ElementName=ConversationItems}" Value="0"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
    </StackPanel>
   </ScrollViewer>
-  <StackPanel x:Name="ComposerColumn" Grid.Row="2" MaxWidth="1120" Margin="80,12,80,14" MinHeight="156">
+  <StackPanel x:Name="ComposerColumn" Grid.Row="2" Margin="80,12,80,14" MinHeight="156">
    <Border x:Name="Composer" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1" CornerRadius="12" Padding="14" MinHeight="128">
     <Grid><Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
      <Grid MinHeight="58">

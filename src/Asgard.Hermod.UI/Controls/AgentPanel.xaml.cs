@@ -156,7 +156,7 @@ public partial class AgentPanel : UserControl
 
     private void OnViewportChanged(object sender, SizeChangedEventArgs args)
     {
-        double inset = args.NewSize.Width < 800 ? 24 : 80;
+        double inset = args.NewSize.Width < 800 ? 24 : args.NewSize.Width * 0.1;
         ToolbarColumn.Margin = new(inset, 0, inset, 0); MessageColumn.Margin = new(inset, 28, inset, 28); ComposerColumn.Margin = new(inset, 12, inset, 14);
     }
     private void OnHistory(object sender, RoutedEventArgs args)

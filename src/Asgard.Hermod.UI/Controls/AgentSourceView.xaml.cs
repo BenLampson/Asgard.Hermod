@@ -18,7 +18,7 @@ public partial class AgentSourceView : UserControl
     public string SourceDetail => _request.Detail;
     /// <summary>协议来源图标。</summary>
     public string Icon => _request.Icon is "brand-mysql" or "brand-postgresql" ? "database" : _request.Icon;
-    private void OnViewportChanged(object sender, SizeChangedEventArgs args) => SourceColumn.Margin = new(args.NewSize.Width < 800 ? 24 : 80, 0, args.NewSize.Width < 800 ? 24 : 80, 0);
+    private void OnViewportChanged(object sender, SizeChangedEventArgs args) => SourceColumn.Margin = new(args.NewSize.Width < 800 ? 24 : args.NewSize.Width * 0.1, 0, args.NewSize.Width < 800 ? 24 : args.NewSize.Width * 0.1, 0);
     private void OnLocate(object sender, RoutedEventArgs args) { if (!_request.IsClosed()) _request.Locate(); }
     private void OnConversationChanged(object? sender, PropertyChangedEventArgs args) { if (args.PropertyName == "IsSourceClosed") UpdateClosed(); }
     private void UpdateClosed() { LocateButton.IsEnabled = !_request.IsClosed(); LocateButton.ToolTip = _request.IsClosed() ? Text.Get("ChatSourceClosed") : Text.Get("ChatLocateSource"); }
