@@ -7,6 +7,29 @@ namespace Asgard.Hermod.Agent.Tests;
 
 public sealed class AgentClientTests
 {
+    /// <summary>一次任务冻结整套地址、模型和密钥，后续回合不会读取全局默认，回答保留实际模型身份。</summary>
+    [Fact]
+    public async Task FrozenProfileKeepsWholeConnectionAcrossRequestsAndReportsActualModel()
+    {
+        using var handler = new AgentHttpHandler
+        {
+            Response = """{"model":"returned-model","choices":[{"finish_reason":"stop","message":{"role":"assistant","content":"Observed response"}}]}"""
+        };
+        using var http = new HttpClient(handler); var configuration = new AgentConfiguration();
+        configuration.Update("https://original.example/v1", "original-model", "original-key");
+        var transport = new OpenAiCompatibleAgentClient(http, configuration);
+        var frozen = transport.ForOptions(configuration.Current, "Work profile");
+        for (int turn = 0; turn < 2; turn++)
+        {
+            configuration.Update("https://changed.example/v1", "changed-model", "changed-key");
+            var reply = await frozen.CompleteAsync([new(AgentRole.User, "Explain the evidence")], TestContext.Current.CancellationToken);
+            Assert.Equal(Asgard.Hermod.Abstractions.Localization.Text.Format("AgentModelIdentity", "Work profile", "returned-model"), reply.ModelIdentity);
+        }
+        Assert.All(handler.Endpoints, endpoint => Assert.Equal("https://original.example/v1/chat/completions", endpoint!.AbsoluteUri));
+        Assert.All(handler.Keys, key => Assert.Equal("original-key", key));
+        Assert.All(handler.Bodies, body => { Assert.Contains("original-model", body); Assert.DoesNotContain("changed-model", body); Assert.DoesNotContain("original-key", body); });
+    }
+
     [Theory]
     [InlineData("https://models.example/v1", "https://models.example/v1/chat/completions")]
     [InlineData("https://models.example/v1/chat/completions/", "https://models.example/v1/chat/completions")]

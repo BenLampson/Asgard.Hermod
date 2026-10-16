@@ -36,6 +36,7 @@ public partial class App : Application
                 .AddYamlFile(Path.Combine(AppContext.BaseDirectory, "app.yaml"))
                 .AddEnvironmentVariables("HERMOD_").AddCommandLine(args.Args).Build();
             services.AddHermodIdentity(configuration.LoadSection<HermodIdentityOptions>("identity"));
+            services.AddHermodAgentModels();
             services.AddObjectStorage();
             services.AddAliyunOss();
             services.AddTencentCos();
@@ -67,14 +68,8 @@ public partial class App : Application
             Text.SetApplicationCulture(Text.Culture);
             Resources[typeof(Asgard.Hermod.UI.Services.IAgentWindowService)] = provider.GetRequiredService<Asgard.Hermod.UI.Services.IAgentWindowService>();
             Resources[typeof(Asgard.Hermod.UI.Services.ISettingsEditor)] = provider.GetRequiredService<Asgard.Hermod.UI.Services.ISettingsEditor>();
-            // AI 只恢复非敏感本机配置，API Key 每次启动均为空。
-            try
-            {
-                var agentPreferences = provider.GetRequiredService<IAgentPreferenceStore>().Load();
-                if (agentPreferences.Endpoint.Length > 0 && agentPreferences.Model.Length > 0)
-                    provider.GetRequiredService<AgentConfiguration>().Update(agentPreferences.Endpoint, agentPreferences.Model, "");
-            }
-            catch (Exception) { /* 配置不可用不阻止启动，可在系统设置重新配置。 */ }
+            // 模型目录在语言初始化后迁移与解密；失败保留原密文并在设置中呈现安全提示。
+            provider.GetRequiredService<AgentModelCatalog>().Initialize();
             // 先恢复主题，再构造外壳、窗口和通知入口，避免重启后显示默认浅色。
             provider.GetRequiredService<IThemeService>();
             // 临时文件维护失败不阻断登录或工作区；设置页可重新扫描并给出安全提示。

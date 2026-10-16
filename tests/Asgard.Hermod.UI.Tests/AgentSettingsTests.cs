@@ -116,28 +116,29 @@ public sealed class AgentSettingsTests(WpfTestFixture fixture)
     [Theory]
     [InlineData("en", UiTheme.Light)]
     [InlineData("zh-Hans", UiTheme.Dark)]
-    public Task SettingsView_UsesLocalizedLabelsAndMaskedNonRefilledKey(string language, UiTheme theme) => fixture.RunAsync(async () =>
+    public Task SettingsView_UsesLocalizedLabelsAndMaskedNonRefilledKey(string language, UiTheme theme) => fixture.RunOffscreenAsync(async () =>
     {
         using var trace = new WpfBindingTrace(); Text.SetApplicationCulture(CultureInfo.GetCultureInfo(language));
         var themes = new ThemeService(Application.Current.Resources); themes.SetTheme(theme);
-        var configuration = new AgentConfiguration(); configuration.Update("https://models.example.test/v1", "my-model", "existing-private-key");
-        using var model = new AgentSettingsViewModel(configuration, new PreferenceStore());
-        var view = new AgentSettingsView { DataContext = model }; var window = new HermodWindow { Content = view, Width = 720, Height = 650 };
+        using var runtime = new AgentModelTestRuntime();
+        using var model = new AgentModelEditorViewModel(runtime.Catalog, runtime.Client, AgentModelTestRuntime.First);
+        var view = new AgentModelEditorView { DataContext = model };
         try
         {
-            WindowPreviewCapture.Show(window); await WindowTestVisuals.UpdateLayoutAsync(window);
+            await Layout();
             var secret = Assert.Single(WindowTestVisuals.Descendants<SecretInput>(view)); Assert.Empty(secret.Value); Assert.False(secret.IsPasswordVisible);
-            Assert.Equal(Text.Get("AgentApiKey"), AutomationProperties.GetName(secret));
-            Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(view), label => label.Text == Text.Get("AgentSettingsTitle"));
-            Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(view), label => label.Text == Text.Get("AgentKeyInMemory"));
+            Assert.Equal(Text.Get("AgentModelApiKey"), AutomationProperties.GetName(secret));
+            Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(view), label => label.Text == Text.Get("AgentModelProfileName"));
+            Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(view), label => label.Text == Text.Get("AgentModelKeyRetained"));
             var password = Assert.IsType<PasswordBox>(secret.Template.FindName("PART_Editor", secret));
             password.Password = "new-private-key"; Assert.Equal("new-private-key", model.ApiKey); Assert.False(secret.IsPasswordVisible);
-            model.SaveCommand.Execute(null); await WindowTestVisuals.UpdateLayoutAsync(window);
+            await model.SaveCommand.ExecuteAsync(); await Layout(); Assert.Empty(model.Error);
             Assert.Empty(model.ApiKey); Assert.Empty(secret.Value); Assert.Empty(password.Password);
             Assert.DoesNotContain(WindowTestVisuals.Descendants<TextBlock>(view), label => label.Text.Contains("private-key", StringComparison.Ordinal));
-            Assert.Empty(trace.Messages);
+            Assert.Empty(trace.Messages); Assert.Null(PresentationSource.FromVisual(view));
         }
-        finally { window.Close(); themes.SetTheme(UiTheme.Light); Text.SetApplicationCulture(null); }
+        finally { themes.SetTheme(UiTheme.Light); Text.SetApplicationCulture(null); }
+        async Task Layout() { await WpfTestFixture.DrainDispatcherAsync(); view.Measure(new(660, 740)); view.Arrange(new(0, 0, 660, 740)); view.UpdateLayout(); await WpfTestFixture.DrainDispatcherAsync(); }
     });
 
     private sealed class PreferenceStore : IAgentPreferenceStore

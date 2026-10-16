@@ -186,6 +186,20 @@ encrypted empty collection propagates explicit deletion. Clients require the
 server to acknowledge the exact envelope before applying the returned snapshot.
 Three-way merge treats endpoint, model and key as one connection; conflict
 previews mask credentials and deleted defaults cannot resurrect deleted profiles.
+`AgentModelCatalog` migrates the legacy address/model preference once, then
+tracks the current account workspace. `AgentModelSession` pins a profile per
+originating Session; changing the default only seeds future Sessions. A task
+freezes endpoint, model, key and display identity for its entire context/tool
+loop. Changing or deleting that profile, closing the source, or changing account
+cancels the frozen task without replay. Busy selection requires an inline stop
+confirmation and waits for the source task to exit before switching.
+The settings manager uses the 1020x800 frame with four primary navigation entries;
+existing tag/storage/file-opening/about settings remain reachable from General.
+The 660x800 profile editor never fills a saved key into its input. A fixed-length
+placeholder indicates a retained key, changing endpoint discards that retention,
+and explicit key clearing commits immediately. Each edit invalidates a real,
+cancellable minimal connection test; stale replies cannot restore its status.
+Old editors compare both original profile and owner epoch before saving.
 
 SQL adds a Manual/Automatic selector in the shared composer's options slot.
 Manual remains the default and retains insertion and explicit execution

@@ -12,4 +12,5 @@
  <SolidColorBrush x:Key="ActionFillBrush" Color="{DynamicResource AgentAccentColor}" />
  <SolidColorBrush x:Key="AccentTextBrush" Color="{DynamicResource AgentAccentColor}" />
  <SolidColorBrush x:Key="AccentWeakBrush" Color="{DynamicResource AgentSelectedColor}" />
+ <SolidColorBrush x:Key="AgentSuccessBrush" Color="{DynamicResource AgentSuccessColor}" />
 </ResourceDictionary>

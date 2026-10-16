@@ -21,14 +21,16 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         ILanguagePreferenceStore? languageStore = null, IFileOpenRuleStore? fileRules = null,
         ITemporaryFileStorage? temporaryFiles = null, IStorageSettingsDialogs? storageDialogs = null,
         IAccountService? accounts = null, Func<Task>? openAccount = null, IMainWindowClosePreferenceStore? closePreferences = null,
-        Agent.AgentConfiguration? agentConfiguration = null, IAgentPreferenceStore? agentPreferences = null)
+        Agent.AgentConfiguration? agentConfiguration = null, IAgentPreferenceStore? agentPreferences = null,
+        Agent.AgentModelCatalog? modelCatalog = null, Agent.IAgentClient? agentClient = null)
     {
         ArgumentNullException.ThrowIfNull(tags);
         ArgumentNullException.ThrowIfNull(dialogs);
         Tags = new TagManagementViewModel(tags, dialogs);
         _languageStore = languageStore;
         CloseSettings = closePreferences is null ? null : new(closePreferences);
-        AgentSettings = agentConfiguration is not null && agentPreferences is not null ? new(agentConfiguration, agentPreferences) : null;
+        AgentSettings = modelCatalog is null && agentConfiguration is not null && agentPreferences is not null ? new(agentConfiguration, agentPreferences) : null;
+        AgentModels = modelCatalog is not null && agentClient is not null ? new(modelCatalog, agentClient) : null;
         _accounts = accounts;
         OpenAccountCommand = new AsyncRelayCommand(_ => openAccount?.Invoke() ?? Task.CompletedTask,
             _ => !_disposed && accounts is not null && openAccount is not null);
@@ -39,14 +41,16 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         [
             new("general", Text.Get("General"), "sliders-horizontal", languageStore is not null || closePreferences is not null),
             new("appearance", Text.Get("Appearance"), "palette", false),
-            new("agent", Text.Get("AgentSettingsTitle"), "sparkles", AgentSettings is not null),
+            new("agent", Text.Get("AgentSettingsTitle"), "sparkles", AgentModels is not null || AgentSettings is not null),
             new("tags", Text.Get("TagManagement"), "tags", true),
             new("storage", Text.Get("Storage"), "hard-drive", Storage is not null),
             new("file-opening", Text.Get("FileOpening"), "folder-open", fileRules is not null),
-            new("account", Text.Get("Account"), "user-round", accounts is not null && openAccount is not null),
+            new("account", Text.Get("AccountAndSync"), "user-round", accounts is not null && openAccount is not null),
             new("shortcuts", Text.Get("KeyboardShortcuts"), "keyboard", false),
             new("about", Text.Get("About"), "info", true),
         ];
+        PrimaryCategories = Categories.Where(category => category.Id is "general" or "appearance" or "agent" or "account").ToArray();
+        AdditionalCategories = Categories.Where(category => category.Id is not ("general" or "appearance" or "agent" or "account")).ToArray();
         Languages = [new("", Text.Get("FollowWindows"), []), .. Text.Languages];
         _selectedLanguage = Languages[0];
         try
@@ -69,10 +73,18 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
     public event EventHandler<bool>? CloseRequested;
     /// <summary>设计稿中的完整分类导航，未设计的页面保持不可用。</summary>
     public IReadOnlyList<SettingsCategoryViewModel> Categories { get; }
+    /// <summary>Pencil 四项主导航，其他已有功能放在通用页，不删除能力。</summary>
+    public IReadOnlyList<SettingsCategoryViewModel> PrimaryCategories { get; }
+    /// <summary>通用页保留标签、存储、文件打开和关于等已有设置入口。</summary>
+    public IReadOnlyList<SettingsCategoryViewModel> AdditionalCategories { get; }
+    /// <summary>附加设置仍归于通用导航。</summary>
+    public bool IsGeneralNavigationSelected => SelectedCategory.Id is not ("agent" or "appearance" or "account");
     /// <summary>本机关闭询问和默认动作，保存后立即作用于主窗体。</summary>
     public MainWindowCloseSettingsViewModel? CloseSettings { get; }
     /// <summary>本机模型配置，与账号及实例同步独立。</summary>
     public AgentSettingsViewModel? AgentSettings { get; }
+    /// <summary>当前账号的命名模型配置管理。</summary>
+    public AgentModelsViewModel? AgentModels { get; }
     /// <summary>AI 设置使用稳定导航标识。</summary>
     public bool IsAgentSelected => SelectedCategory.Id == "agent";
 
@@ -139,6 +151,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         {
             if (!SetProperty(ref _selectedCategory, value)) return;
             OnPropertyChanged(nameof(IsGeneralSelected));
+            OnPropertyChanged(nameof(IsGeneralNavigationSelected));
             OnPropertyChanged(nameof(IsAgentSelected));
             OnPropertyChanged(nameof(IsTagsSelected));
             OnPropertyChanged(nameof(IsFileOpeningSelected));
@@ -165,7 +178,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         _disposed = true;
         if (_accounts is not null) _accounts.AccountChanged -= OnAccountChanged;
         OpenAccountCommand.NotifyCanExecuteChanged();
-        Tags.Dispose(); Storage?.Dispose(); AgentSettings?.Dispose();
+        Tags.Dispose(); Storage?.Dispose(); AgentSettings?.Dispose(); AgentModels?.Dispose();
     }
 
     /// <summary>后台账号通知切回设置窗口线程，关闭后的排队通知不再更新绑定。</summary>

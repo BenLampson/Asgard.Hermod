@@ -13,21 +13,23 @@ public sealed partial class MySqlAssistantViewModel
         MySqlAssistantMessage? record = null; bool dispatched = false;
         try
         {
+            using var modelTask = ModelSession?.BeginTask(pending.Token, requireModel: false);
+            var taskToken = modelTask?.Token ?? pending.Token;
             await _tab.ExecuteAssistantSqlAsync(suggestion, async () =>
             {
                 var approval = new AgentApprovalRequest(Text.Get("ChatReviewOperation"),
                     Text.Format("ChatSqlApprovalTarget", _tab.Instance?.Name ?? "", _tab.Endpoint, _tab.Name, suggestion.Database),
-                    suggestion.Sql, pending.Token, () => _tab.InsertAssistantSql(suggestion.Sql));
+                    suggestion.Sql, taskToken, () => _tab.InsertAssistantSql(suggestion.Sql));
                 PendingApproval = approval; Status = Text.Get("ChatAwaitingApproval");
                 record = new("", false, isTool: true, approval: approval); record.Update("", "ChatAwaitingApproval"); AddMessage(record);
                 return await approval.WaitAsync();
-            }, pending.Token, () =>
+            }, taskToken, () =>
             {
                 dispatched = true; Status = Text.Get("ChatActionExecuting"); record?.Update(suggestion.Sql, "ChatActionExecuting");
-            }).WaitAsync(pending.Token);
+            }).WaitAsync(taskToken);
             if (record is not null)
             {
-                string state = !dispatched ? "ChatActionNotExecuted" : pending.IsCancellationRequested || _tab.OutcomeUnknown ? "ChatActionUnknown" : _tab.HasError ? "ChatActionFailed" : "ChatActionCompleted";
+                string state = !dispatched ? "ChatActionNotExecuted" : taskToken.IsCancellationRequested || _tab.OutcomeUnknown ? "ChatActionUnknown" : _tab.HasError ? "ChatActionFailed" : "ChatActionCompleted";
                 record.Update(Text.Format("ChatSqlActionResult", suggestion.Database, suggestion.Sql, dispatched ? _tab.Status : Text.Get("ChatActionNotExecuted"), dispatched ? _tab.Error : "", dispatched ? _tab.Message : ""), state);
             }
             else if (_tab.HasError && !_disposed) AddFailure("", _tab.Error);

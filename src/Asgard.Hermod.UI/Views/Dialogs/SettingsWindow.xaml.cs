@@ -16,6 +16,7 @@ public partial class SettingsWindow : HermodDialog
         DataContext = model;
         model.CloseRequested += OnCloseRequested;
         if (model.FileOpening is { } files) files.EditRequested += OnEditFileRule;
+        if (model.AgentModels is { } models) models.EditRequested += OnEditModel;
         Loaded += OnLoaded;
         Closed += OnClosed;
     }
@@ -38,12 +39,19 @@ public partial class SettingsWindow : HermodDialog
         var window = new FileOpenRuleWindow(editor) { Owner = this };
         if (window.ShowDialog() == true) files.Reload();
     }
+    private void OnEditModel(object? sender, AgentModelEditRequest request)
+    {
+        if (_model.AgentModels is not { } models) return;
+        using var editor = models.CreateEditor(request.Profile, request.Epoch);
+        new AgentModelEditorWindow(editor) { Owner = this }.ShowDialog();
+    }
 
     /// <summary>解除窗口与状态订阅，结束后台刷新。</summary>
     private void OnClosed(object? sender, EventArgs args)
     {
         _model.CloseRequested -= OnCloseRequested;
         if (_model.FileOpening is { } files) files.EditRequested -= OnEditFileRule;
+        if (_model.AgentModels is { } models) models.EditRequested -= OnEditModel;
         Loaded -= OnLoaded;
         Closed -= OnClosed;
         _model.Dispose();

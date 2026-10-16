@@ -2,7 +2,7 @@ using Asgard.Hermod.Agent;
 
 namespace Asgard.Hermod.UI.ViewModels;
 
-/// <summary>系统设置只持久化地址和模型，密钥在当前进程中应用并在关闭编辑器时清理副本。</summary>
+/// <summary>旧单套非敏感偏好的兼容状态；生产设置界面使用命名模型目录和设备加密存储。</summary>
 public sealed class AgentSettingsViewModel : ObservableObject, IDisposable
 {
     private readonly AgentConfiguration _configuration;

@@ -1,6 +1,6 @@
 namespace Asgard.Hermod.Agent;
 
-/// <summary>进程内模型配置容器；调用方只持久化地址和模型，密钥永不落盘。</summary>
+/// <summary>兼容调用方的进程内配置快照；模型目录负责设备加密持久化。</summary>
 public sealed class AgentConfiguration
 {
     private AgentModelOptions _current = new();

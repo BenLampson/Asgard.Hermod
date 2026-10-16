@@ -6,6 +6,8 @@ namespace Asgard.Hermod.UI.Tests;
 /// <summary>只记录展示层委托的动作，不包含 SQL、SSH 或模型服务实现。</summary>
 internal sealed class AgentPanelTestModel : ObservableObject
 {
+    /// <summary>展示用替代传输没有模型目录，仍履行模块视图的绑定契约。</summary>
+    public Asgard.Hermod.Agent.AgentModelSession? ModelSession => null;
     /// <summary>创建可观察的命令，便于验证共享控件没有代替模块执行业务。</summary>
     internal AgentPanelTestModel()
     {

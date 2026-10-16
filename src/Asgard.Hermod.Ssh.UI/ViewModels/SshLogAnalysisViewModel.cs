@@ -28,6 +28,8 @@ public sealed class SshLogAnalysisViewModel : ObservableObject, IDisposable
         RestoreDraftCommand = new RelayCommand(value => Prompt = value as string ?? LastFailedPrompt,
             value => !_disposed && !IsBusy && Prompt.Length == 0 && !string.IsNullOrEmpty(value as string ?? LastFailedPrompt));
     }
+    /// <summary>日志文档的独立模型选择。</summary>
+    public AgentModelSession? ModelSession => _conversation?.ModelSession;
     /// <summary>快捷提问只准备草稿。</summary>
     public IReadOnlyList<string> QuickPrompts { get; } = [Text.Get("ChatLogPromptOne"), Text.Get("ChatLogPromptTwo"), Text.Get("ChatLogPromptThree")];
     /// <summary>有界消息，关闭来源仍保留。</summary>
@@ -114,6 +116,6 @@ public sealed class SshLogAnalysisViewModel : ObservableObject, IDisposable
     public void Dispose()
     {
         if (_disposed) return;
-        Archive.CloseSource(); _disposed = true; _pending?.Cancel(); _conversation?.Clear(); OnPropertyChanged(nameof(IsSourceClosed)); Refresh();
+        Archive.CloseSource(); ModelSession?.Dispose(); _disposed = true; _pending?.Cancel(); _conversation?.Clear(); OnPropertyChanged(nameof(IsSourceClosed)); Refresh();
     }
 }

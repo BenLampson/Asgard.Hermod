@@ -6,6 +6,10 @@ namespace Asgard.Hermod.UI.Controls;
 /// <summary>协议无关的聊天面板；仅管理布局、输入与滚动，所有业务操作交还模块命令。</summary>
 public partial class AgentPanel : UserControl
 {
+    /// <summary>模块拥有的独立模型选择，与活动窗口无关。</summary>
+    public static readonly DependencyProperty ModelSessionProperty = DependencyProperty.Register(nameof(ModelSession), typeof(Agent.AgentModelSession), typeof(AgentPanel));
+    /// <summary>来源的模型选择。</summary>
+    public Agent.AgentModelSession? ModelSession { get => (Agent.AgentModelSession?)GetValue(ModelSessionProperty); set => SetValue(ModelSessionProperty, value); }
     /// <summary>来源对应的快捷提问，只填入草稿。</summary>
     public static readonly DependencyProperty QuickPromptsProperty = DependencyProperty.Register(nameof(QuickPrompts), typeof(IEnumerable), typeof(AgentPanel));
     /// <summary>快捷提问集合。</summary>
@@ -138,7 +142,7 @@ public partial class AgentPanel : UserControl
         if (args.Key != Key.Enter || Keyboard.Modifiers is not (ModifierKeys.None or ModifierKeys.Control) || !PromptEditor.IsKeyboardFocusWithin) return;
         args.Handled = true;
         // 已禁用的发送入口也消费 Enter，避免忙碌时意外向草稿插入换行。
-        if (SendCommand?.CanExecute(null) == true) SendCommand.Execute(null);
+        if (ModelSelector.IsConfigured && SendCommand?.CanExecute(null) == true) SendCommand.Execute(null);
     }
 
     private void OnViewportChanged(object sender, SizeChangedEventArgs args)
@@ -162,6 +166,7 @@ public partial class AgentPanel : UserControl
     {
         if (TryFindResource(typeof(ISettingsEditor)) is ISettingsEditor settings) await settings.OpenAgentAsync();
     }
+    private void OnModelManageRequested(object? sender, EventArgs args) => OnConfigureModel(sender ?? this, new());
     private void OnQuickPrompt(object sender, RoutedEventArgs args)
     {
         if (!IsSourceClosed && sender is Button { DataContext: string prompt } && Prompt.Length == 0) { SetCurrentValue(PromptProperty, prompt); PromptEditor.Focus(); }

@@ -24,7 +24,8 @@ public static class HermodUiServiceCollectionExtensions
             provider.GetRequiredService<IFileOpenRuleStore>(),
             provider.GetRequiredService<ITemporaryFileStorage>(),
             provider.GetService<IAccountService>(), provider.GetService<IAccountEditor>(), provider.GetService<IMainWindowClosePreferenceStore>(),
-            provider.GetService<Agent.AgentConfiguration>(), provider.GetService<IAgentPreferenceStore>()));
+            provider.GetService<Agent.AgentConfiguration>(), provider.GetService<IAgentPreferenceStore>(),
+            provider.GetService<Agent.AgentModelCatalog>(), provider.GetService<Agent.IAgentClient>()));
         services.TryAddSingleton<IFileOpenService>(provider => new WindowsFileOpenService(owner,
             provider.GetRequiredService<IFileOpenRuleStore>()));
         services.TryAddSingleton<IInstanceWorkspaceFactory, InstanceWorkspaceFactory>();

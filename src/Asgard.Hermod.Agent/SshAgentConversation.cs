@@ -5,6 +5,8 @@ namespace Asgard.Hermod.Agent;
 /// <summary>当前 SSH 工作区独立的有界对话；工具权限由工作区执行边界校验。</summary>
 public sealed class SshAgentConversation(IAgentClient client)
 {
+    /// <summary>控制台独立模型选择，后续工具回合共用同一个冻结连接。</summary>
+    public AgentModelSession? ModelSession { get; } = (client as IAgentSessionClientFactory)?.CreateSession();
     private readonly List<AgentMessage> _history = [];
     private readonly object _gate = new();
     private long _revision;
@@ -43,6 +45,9 @@ public sealed class SshAgentConversation(IAgentClient client)
     private async Task<AgentReply> SendCoreAsync(string prompt, string host, string selectedOutput,
         Func<SshAgentAction, CancellationToken, Task<SshAgentToolResult>>? execute, Action<AgentReply>? receive, CancellationToken cancellationToken, SshAgentAction? completedAction = null, SshAgentToolResult? completedResult = null)
     {
+        using var modelTask = ModelSession?.BeginTask(cancellationToken);
+        cancellationToken = modelTask?.Token ?? cancellationToken;
+        var requestClient = modelTask?.Client ?? client;
         if (string.IsNullOrWhiteSpace(prompt)) throw Text.Exception("AgentPromptRequired");
         if (prompt.Length > 16000 || selectedOutput.Length > 8192 || host.Length > 1024) throw Text.Exception("AgentInputTooLarge");
         var messages = new List<AgentMessage> { new(AgentRole.System, Instructions) };
@@ -61,8 +66,8 @@ public sealed class SshAgentConversation(IAgentClient client)
         try
         {
             EnsureCurrent();
-            var reply = execute is null ? await client.CompleteAsync(messages, cancellationToken).WaitAsync(cancellationToken)
-                : await SshTroubleshootingRun.RunAsync(client, messages, execute, receive!, EnsureCurrent, cancellationToken, completedResult?.StopActions != true);
+            var reply = execute is null ? await requestClient.CompleteAsync(messages, cancellationToken).WaitAsync(cancellationToken)
+                : await SshTroubleshootingRun.RunAsync(requestClient, messages, execute, receive!, EnsureCurrent, cancellationToken, completedResult?.StopActions != true);
             EnsureCurrent();
             if (reply.Content.Length > 64000) throw Text.Exception("AgentInvalidResponse");
             lock (_gate)

@@ -74,4 +74,5 @@
     <Color x:Key="AgentMutedColor">#A3AFC2</Color>
     <Color x:Key="AgentAccentColor">#79A4FF</Color>
     <Color x:Key="AgentSelectedColor">#253656</Color>
+    <Color x:Key="AgentSuccessColor">#79D7B3</Color>
 </ResourceDictionary>

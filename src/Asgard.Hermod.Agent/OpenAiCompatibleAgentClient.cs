@@ -6,8 +6,17 @@ using System.Text.Json;
 namespace Asgard.Hermod.Agent;
 
 /// <summary>通过 Chat Completions 请求用户配置的模型；只有 SSH 排障显式注册工具。</summary>
-public sealed class OpenAiCompatibleAgentClient(HttpClient client, AgentConfiguration configuration) : IAgentClient
+public sealed class OpenAiCompatibleAgentClient(HttpClient client, AgentConfiguration configuration, AgentModelCatalog? catalog = null) : IAgentClient, IAgentSessionClientFactory
 {
+    private string _profileName = "";
+    /// <inheritdoc />
+    public AgentModelSession? CreateSession() => catalog?.CreateSession(this);
+    /// <inheritdoc />
+    public IAgentClient ForOptions(AgentModelOptions options, string profileName)
+    {
+        var frozen = new AgentConfiguration(); frozen.Update(options.Endpoint, options.Model, options.ApiKey);
+        return new OpenAiCompatibleAgentClient(client, frozen) { _profileName = profileName };
+    }
     private const int MaximumResponseBytes = 1024 * 1024;
     /// <inheritdoc />
     public Task<AgentReply> CompleteAsync(IReadOnlyList<AgentMessage> messages, CancellationToken cancellationToken = default) => CompleteCoreAsync(messages, null, cancellationToken);
@@ -52,7 +61,8 @@ public sealed class OpenAiCompatibleAgentClient(HttpClient client, AgentConfigur
             var reply = AgentChatProtocol.ReadReply(document.RootElement, tools);
             cancellationToken.ThrowIfCancellationRequested();
             string model = document.RootElement.TryGetProperty("model", out var returned) && returned.ValueKind == JsonValueKind.String ? returned.GetString() ?? "" : "";
-            return reply with { ModelIdentity = model.Length is > 0 and <= 200 && !model.Any(char.IsControl) ? model : options.Model };
+            string identity = model.Length is > 0 and <= 200 && !model.Any(char.IsControl) ? model : options.Model;
+            return reply with { ModelIdentity = _profileName.Length == 0 ? identity : Text.Format("AgentModelIdentity", _profileName, identity) };
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
         catch (OperationCanceledException) { throw Text.Exception("AgentTimedOut"); }

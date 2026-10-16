@@ -5,6 +5,8 @@ namespace Asgard.Hermod.Agent;
 /// <summary>仅分析用户明确提交的日志快照，不开放 SSH 或其他执行工具。</summary>
 public sealed class LogAnalysisConversation(IAgentClient client)
 {
+    /// <summary>日志来源拥有独立的模型选择，不随活动控制台改变。</summary>
+    public AgentModelSession? ModelSession { get; } = (client as IAgentSessionClientFactory)?.CreateSession();
     private readonly List<AgentMessage> _history = [];
     private readonly object _gate = new();
     private long _revision;
@@ -33,6 +35,8 @@ public sealed class LogAnalysisConversation(IAgentClient client)
     /// <summary>每次发送冻结当前来源和文本；后续刷新不改变进行中的分析。</summary>
     public async Task<AgentReply> SendAsync(string prompt, string source, string log, DateTimeOffset? capturedAt, bool incomplete, CancellationToken token, LogEvidenceRange? range = null)
     {
+        using var modelTask = ModelSession?.BeginTask(token);
+        token = modelTask?.Token ?? token;
         if (string.IsNullOrWhiteSpace(prompt)) throw Text.Exception("AgentPromptRequired");
         if (prompt.Length > 16000 || source.Length > 2048 || log.Length > ContextLimit) throw Text.Exception("AgentInputTooLarge");
         if (range is { } evidence && (evidence.DocumentId.Length > 128 || evidence.Host.Length > 1024 || evidence.ContainerId.Length > 128 ||
@@ -48,7 +52,7 @@ public sealed class LogAnalysisConversation(IAgentClient client)
         try
         {
             messages.Add(new(AgentRole.User, JsonSerializer.Serialize(new { request = prompt, context = new { source, capturedAt, incomplete, range, log } })));
-            var reply = await client.CompleteAsync(messages, token).WaitAsync(token);
+            var reply = await (modelTask?.Client ?? client).CompleteAsync(messages, token).WaitAsync(token);
             token.ThrowIfCancellationRequested();
             if (reply.Content.Length > 64000 || reply.ToolCalls.Count > 0) throw Text.Exception("AgentInvalidResponse");
             lock (_gate)

@@ -4520,4 +4520,5 @@ When signed out, they are encrypted only on this device.</value></data>
   <data name="AgentModelSwitchConfirmTitle" xml:space="preserve"><value>Stop the reply and switch models?</value></data>
   <data name="AdditionalSettings" xml:space="preserve"><value>Other settings</value></data>
   <data name="ChatBusyComposerHint" xml:space="preserve"><value>Reply in progress · You can draft your next question</value></data>
+  <data name="AgentModelHiddenKey" xml:space="preserve"><value>••••••••••••••••</value></data>
 </root>

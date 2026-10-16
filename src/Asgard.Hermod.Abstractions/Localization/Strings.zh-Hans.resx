@@ -4520,4 +4520,5 @@ SQL：
   <data name="AgentModelSwitchConfirmTitle" xml:space="preserve"><value>停止回答并切换模型？</value></data>
   <data name="AdditionalSettings" xml:space="preserve"><value>其他设置</value></data>
   <data name="ChatBusyComposerHint" xml:space="preserve"><value>正在回答 · 可先编辑下一条问题</value></data>
+  <data name="AgentModelHiddenKey" xml:space="preserve"><value>••••••••••••••••</value></data>
 </root>

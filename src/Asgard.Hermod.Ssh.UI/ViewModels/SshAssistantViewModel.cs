@@ -36,6 +36,8 @@ public sealed class SshAssistantViewModel : ObservableObject, IDisposable
         ExecuteCommand = new AsyncRelayCommand(value => value is SshAssistantCommand item ? ExecuteAsync(item) : Task.CompletedTask, value => value is SshAssistantCommand item && IsCurrent(item) && !IsBusy);
     }
 
+    /// <summary>绑定原控制台的模型选择。</summary>
+    public AgentModelSession? ModelSession => _conversation?.ModelSession;
     /// <summary>用户明确填入终端，不添加回车。</summary>
     public event EventHandler<string>? InsertRequested;
     /// <summary>快捷提问只填入草稿，仍需用户发送。</summary>
@@ -106,20 +108,22 @@ public sealed class SshAssistantViewModel : ObservableObject, IDisposable
         using var pending = new CancellationTokenSource(); _pending = pending; IsBusy = true; Error = ""; LastFailedPrompt = ""; Status = Text.Get("ChatWaitingModel");
         try
         {
+            using var modelTask = ModelSession?.BeginTask(pending.Token, requireModel: initialAction is null);
+            var taskToken = modelTask?.Token ?? pending.Token;
             string selected = IncludeOutput ? SelectedOutput : "";
             SshAgentToolResult? completed = null;
             if (initialAction is null) { Add(new(prompt, true, revision)); accepted?.Invoke(); }
             else
             {
-                completed = await PerformActionAsync(initialAction, connection, host, revision, pending.Token);
-                EnsureCurrent(revision, connection, pending.Token);
+                completed = await PerformActionAsync(initialAction, connection, host, revision, taskToken);
+                EnsureCurrent(revision, connection, taskToken);
                 if (completed.Status == "denied" || _conversation is null) return;
                 selected = "";
             }
             if (_conversation is not null)
                 await _conversation.RunAsync(prompt, host, selected,
                     (action, token) => PerformActionAsync(action, connection, host, revision, token),
-                    reply => { EnsureCurrent(revision, connection, pending.Token); Add(new(reply.Content, false, revision, reply.ToolCalls.Count == 0, modelIdentity: reply.ModelIdentity)); }, pending.Token, initialAction, completed);
+                    reply => { EnsureCurrent(revision, connection, taskToken); Add(new(reply.Content, false, revision, reply.ToolCalls.Count == 0, modelIdentity: reply.ModelIdentity)); }, taskToken, initialAction, completed);
         }
         catch (OperationCanceledException) { if (!IsSourceClosed && revision == _revision) AddFailure(initialAction is null ? prompt : "", Text.Get("SshAgentCanceled")); }
         catch (Exception error) { if (!IsSourceClosed && revision == _revision) AddFailure(initialAction is null ? prompt : "", Text.Error(error, "AgentRequestFailed")); }
@@ -184,6 +188,6 @@ public sealed class SshAssistantViewModel : ObservableObject, IDisposable
     /// <summary>来源结束仅撤销操作；窗口中已经显示的记录与草稿继续保留。</summary>
     public void CloseSource()
     {
-        if (_sourceClosed) return; Archive.CloseSource(); _sourceClosed = true; _pending?.Cancel(); _revision++; _conversation?.Clear(); OnPropertyChanged(nameof(IsSourceClosed)); Refresh();
+        if (_sourceClosed) return; Archive.CloseSource(); ModelSession?.Dispose(); _sourceClosed = true; _pending?.Cancel(); _revision++; _conversation?.Clear(); OnPropertyChanged(nameof(IsSourceClosed)); Refresh();
     }
 }

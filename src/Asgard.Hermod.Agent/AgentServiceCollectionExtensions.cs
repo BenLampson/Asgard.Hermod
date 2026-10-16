@@ -7,6 +7,11 @@ namespace Asgard.Hermod.Agent;
 /// <summary>独立注册模型传输和内存配置；不依赖 UI、数据库或设置存储。</summary>
 public static class AgentServiceCollectionExtensions
 {
+    /// <summary>宿主已装配设备存储和账号同步时启用模型目录。</summary>
+    public static IServiceCollection AddHermodAgentModels(this IServiceCollection services)
+    {
+        services.TryAddSingleton<AgentModelCatalog>(); return services;
+    }
     /// <summary>注册用户模型客户端；禁止请求重定向、日志和 POST 自动重试。</summary>
     public static IServiceCollection AddHermodAgent(this IServiceCollection services)
     {

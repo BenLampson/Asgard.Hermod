@@ -28,7 +28,10 @@ public sealed class AgentConversation
     {
         ArgumentNullException.ThrowIfNull(client); ArgumentOutOfRangeException.ThrowIfLessThan(maxTurns, 1); ArgumentOutOfRangeException.ThrowIfGreaterThan(maxTurns, 24);
         _client = client; _maxTurns = maxTurns;
+        ModelSession = (client as IAgentSessionClientFactory)?.CreateSession();
     }
+    /// <summary>当前来源独立的模型选择；无目录的测试传输保持为空。</summary>
+    public AgentModelSession? ModelSession { get; }
     /// <summary>返回当前成功对话的独立只读快照，不包含临时数据库上下文。</summary>
     public IReadOnlyList<AgentMessage> Messages { get { lock (_gate) return _messages.ToArray(); } }
     /// <summary>保存独立历史页所需的成功消息与原范围标识。</summary>
@@ -57,6 +60,9 @@ public sealed class AgentConversation
     private async Task<AgentReply> SendCoreAsync(string prompt, AgentSqlContext context,
         Func<SqlAgentQuery, CancellationToken, Task<SqlAgentResult>>? execute, Action<AgentReply>? receive, CancellationToken cancellationToken)
     {
+        using var modelTask = ModelSession?.BeginTask(cancellationToken);
+        cancellationToken = modelTask?.Token ?? cancellationToken;
+        var requestClient = modelTask?.Client ?? _client;
         ArgumentNullException.ThrowIfNull(prompt); ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(context.Database); ArgumentNullException.ThrowIfNull(context.Schema);
         ArgumentNullException.ThrowIfNull(context.Sql); ArgumentNullException.ThrowIfNull(context.Results);
@@ -86,8 +92,8 @@ public sealed class AgentConversation
                 request = prompt,
                 context = new { dialect, database = context.Database, databases = context.Databases, schema = context.Schema, sql = context.Sql, results = context.Results },
             })));
-            var reply = execute is null ? await _client.CompleteAsync(request, cancellationToken).WaitAsync(cancellationToken).ConfigureAwait(false)
-                : await SqlAgentRun.RunAsync(_client, request, context, execute, receive!, cancellationToken).ConfigureAwait(false);
+            var reply = execute is null ? await requestClient.CompleteAsync(request, cancellationToken).WaitAsync(cancellationToken).ConfigureAwait(false)
+                : await SqlAgentRun.RunAsync(requestClient, request, context, execute, receive!, cancellationToken).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
             lock (_gate)
             {

@@ -32,6 +32,8 @@ public sealed partial class MySqlAssistantViewModel : ObservableObject, IDisposa
         _tab.PropertyChanged += OnTabChanged;
     }
 
+    /// <summary>绑定当前数据库 Session 的模型选择，不跟随活动页签。</summary>
+    public AgentModelSession? ModelSession => _conversation?.ModelSession;
     /// <summary>只收起分屏，不清除对话或输入，也不取消正在进行的请求。</summary>
     public RelayCommand HideCommand { get; }
 
@@ -84,12 +86,14 @@ public sealed partial class MySqlAssistantViewModel : ObservableObject, IDisposa
         LastFailedPrompt = ""; Status = Text.Get("ChatPreparingContext"); AddMessage(new(prompt, true)); Prompt = "";
         try
         {
+            using var modelTask = ModelSession?.BeginTask(pending.Token);
+            var taskToken = modelTask?.Token ?? pending.Token;
             long revision = _tab.ScopeRevision;
-            var context = await _tab.ReadAssistantContextAsync(IncludeSql, IncludeResults, pending.Token);
+            var context = await _tab.ReadAssistantContextAsync(IncludeSql, IncludeResults, taskToken);
             if (revision != _tab.ScopeRevision) throw Text.Exception("MySqlAssistantContextChanged");
             var sessionIdentity = _tab.AssistantSessionIdentity;
             Status = Text.Get("ChatWaitingModel");
-            var reply = await _conversation.SendAsync(prompt, context, pending.Token);
+            var reply = await _conversation.SendAsync(prompt, context, taskToken);
             if (_disposed) return;
             if (revision != _tab.ScopeRevision) throw Text.Exception("MySqlAssistantContextChanged");
             AddMessage(new(reply.Content, false, reply.SqlBlocks.Select(sql => new MySqlAssistantSql(sql, context.Database, sessionIdentity, revision)).ToArray(), modelIdentity: reply.ModelIdentity));
@@ -117,7 +121,7 @@ public sealed partial class MySqlAssistantViewModel : ObservableObject, IDisposa
     public void Dispose()
     {
         if (_disposed) return;
-        Archive.CloseSource(); _disposed = true; _pending?.Cancel(); _tab.PropertyChanged -= OnTabChanged; OnPropertyChanged(nameof(IsSourceClosed)); Refresh();
+        Archive.CloseSource(); ModelSession?.Dispose(); _disposed = true; _pending?.Cancel(); _tab.PropertyChanged -= OnTabChanged; OnPropertyChanged(nameof(IsSourceClosed)); Refresh();
         if (!IsBusy) _conversation?.Clear();
     }
 }

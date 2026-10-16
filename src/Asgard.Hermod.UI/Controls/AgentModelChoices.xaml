@@ -1,0 +1,15 @@
+<UserControl x:Class="Asgard.Hermod.UI.Controls.AgentModelChoices"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls" xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization" Width="440">
+ <UserControl.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/AgentDesign.xaml" /></ResourceDictionary.MergedDictionaries></ResourceDictionary></UserControl.Resources>
+ <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1" CornerRadius="8" Padding="10"><StackPanel>
+  <TextBlock Text="{loc:Loc AgentModelSwitchTitle}" FontSize="12" FontWeight="Medium" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,6" />
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" MaxHeight="310"><ItemsControl ItemsSource="{Binding Choices}"><ItemsControl.ItemTemplate><DataTemplate>
+   <Button Command="{Binding DataContext.SelectCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}" Height="62" MinHeight="62" HorizontalContentAlignment="Stretch" Padding="10,8" BorderThickness="0" Margin="0,0,0,6" AutomationProperties.Name="{Binding Name}">
+    <Button.Style><Style TargetType="Button" BasedOn="{StaticResource GhostButton}"><Setter Property="Background" Value="{DynamicResource SurfaceBrush}" /><Style.Triggers><DataTrigger Binding="{Binding IsSelected}" Value="True"><Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" /></DataTrigger></Style.Triggers></Style></Button.Style>
+    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="24" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><controls:IconView Kind="cpu" Width="15" Height="15" VerticalAlignment="Center" /><StackPanel Grid.Column="1" VerticalAlignment="Center"><TextBlock Text="{Binding Name}" FontSize="12" FontWeight="Medium" TextTrimming="CharacterEllipsis" /><TextBlock Text="{Binding Detail}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,5,0,0" TextTrimming="CharacterEllipsis" /></StackPanel></Grid>
+   </Button>
+  </DataTemplate></ItemsControl.ItemTemplate></ItemsControl></ScrollViewer>
+  <Border BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,1,0,0" Height="40"><Button Command="{Binding ManageCommand}" Content="{loc:Loc AgentModelManage}" Style="{StaticResource GhostButton}" Padding="10,0" FontSize="12" HorizontalContentAlignment="Left" /></Border>
+ </StackPanel></Border>
+</UserControl>

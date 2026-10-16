@@ -39,12 +39,14 @@ public sealed partial class MySqlAssistantViewModel
         LastFailedPrompt = ""; Status = Text.Get("ChatPreparingContext"); AddMessage(new(prompt, true)); Prompt = "";
         try
         {
+            using var modelTask = ModelSession?.BeginTask(pending.Token);
+            var taskToken = modelTask?.Token ?? pending.Token;
             long revision = _tab.ScopeRevision;
-            var context = await _tab.ReadAssistantContextAsync(IncludeSql, IncludeResults, pending.Token);
+            var context = await _tab.ReadAssistantContextAsync(IncludeSql, IncludeResults, taskToken);
             object identity = _tab.AssistantSessionIdentity;
             void EnsureCurrent()
             {
-                pending.Token.ThrowIfCancellationRequested();
+                taskToken.ThrowIfCancellationRequested();
                 if (_disposed || !IsAutomaticExecution || context.Database != _tab.Database || revision != _tab.ScopeRevision || !ReferenceEquals(identity, _tab.AssistantSessionIdentity) || !_tab.ConnectionAvailable)
                     throw Text.Exception("MySqlAssistantContextChanged");
             }
@@ -76,7 +78,7 @@ public sealed partial class MySqlAssistantViewModel
             {
                 EnsureCurrent();
                 AddMessage(new(reply.Content, false, reply.SqlBlocks.Select(sql => new MySqlAssistantSql(sql, context.Database, identity, revision)).ToArray(), modelIdentity: reply.ModelIdentity));
-            }, pending.Token);
+            }, taskToken);
             EnsureCurrent();
         }
         catch (OperationCanceledException) { if (!_disposed) AddFailure(prompt, Text.Get("MySqlAssistantCancelled")); }
