@@ -4641,4 +4641,16 @@ Address: {2}</value></data>
   <data name="ChatGroupedActions" xml:space="preserve"><value>Performed {0:N0} tool operations</value></data>
   <data name="ChatGroupedQueriesRunning" xml:space="preserve"><value>Querying {0:N0} database items</value></data>
   <data name="ChatGroupedActionsRunning" xml:space="preserve"><value>Processing {0:N0} tool operations</value></data>
+  <data name="SshLogSelectedSnapshotStatus" xml:space="preserve"><value>{0:N0} line(s) selected · Snapshot {1:N0}–{2:N0} · {3:T}</value></data>
+  <data name="ChatToolQueryTarget" xml:space="preserve"><value>Instance: {0} · Session: {1} · Database: {2} · {3}</value></data>
+  <data name="ChatToolQueryMetrics" xml:space="preserve"><value>Loaded {0:N0} row(s), {1:N0} column(s) · {2:N1} ms</value></data>
+  <data name="ChatToolQueryMetricsTruncated" xml:space="preserve"><value>Loaded {0:N0} row(s), {1:N0} column(s) · {2:N1} ms · Preview truncated</value></data>
+  <data name="ChatToolQueryWaiting" xml:space="preserve"><value>Waiting for read-only query results.</value></data>
+  <data name="ChatToolQueryNoMetrics" xml:space="preserve"><value>No verified result metrics are available.</value></data>
+  <data name="ChatToolSqlSource" xml:space="preserve"><value>SQL</value></data>
+  <data name="ChatToolViewResult" xml:space="preserve"><value>View result</value></data>
+  <data name="ChatToolCopySql" xml:space="preserve"><value>Copy SQL</value></data>
+  <data name="ChatToolBoundedResult" xml:space="preserve"><value>Frozen bounded result preview. Values and total text may be truncated.</value></data>
+  <data name="ChatToolFrozenPreviewHint" xml:space="preserve"><value>Only the frozen bounded result preview is shown.</value></data>
+  <data name="ChatToolSqlCopied" xml:space="preserve"><value>SQL copied</value></data>
 </root>

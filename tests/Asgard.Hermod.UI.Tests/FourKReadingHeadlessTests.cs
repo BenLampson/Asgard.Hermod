@@ -43,6 +43,7 @@ public sealed class FourKReadingHeadlessTests(WpfTestFixture fixture)
             string original = input.Text; input.Select(0, original.IndexOf("2026-10-16 ERROR", StringComparison.Ordinal)); await Layout();
             var secondLine = input.GetRectFromCharacterIndex(original.IndexOf("WARNING", StringComparison.Ordinal));
             AssertTint(new Point(20, input.TranslatePoint(new(0, secondLine.Top + .5), root).Y)); Assert.Equal(original, input.Text);
+            Assert.Equal(Text.Format("SshLogSelectedSnapshotStatus", 2, 1, 2, model.Snapshot!.CapturedAt.ToLocalTime()), model.SnapshotStatus); Assert.Null(model.Assistant.Attachment);
             ((TextBox)view.FindName("SearchInput")).Text = ""; ((TextBox)view.FindName("SearchInput")).Text = "ERROR"; await Layout();
             void AssertTint(Point point)
             {

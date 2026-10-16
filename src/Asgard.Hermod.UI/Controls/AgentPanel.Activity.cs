@@ -34,6 +34,18 @@ public partial class AgentPanel
             }
             index = end;
         }
+        bool hasToolHeader = false, hasAssistantMessage = false;
+        for (int index = 0; index < desired.Count; index++)
+        {
+            var item = desired[index]; var message = OriginalMessage(item);
+            if (message is null || message.IsUser)
+            { item.ShowToolTurnHeader = false; item.HideMessageIdentity = false; hasToolHeader = false; hasAssistantMessage = false; continue; }
+            item.ShowToolTurnHeader = !hasAssistantMessage && message.IsTool;
+            if (item.ShowToolTurnHeader) hasToolHeader = true;
+            item.HideMessageIdentity = hasToolHeader; hasAssistantMessage = true;
+            if (item.ShowToolTurnHeader)
+                item.ModelIdentity = desired.Skip(index).Select(OriginalMessage).TakeWhile(candidate => candidate?.IsUser != true).FirstOrDefault(candidate => candidate?.ModelIdentity.Length > 0)?.ModelIdentity ?? "";
+        }
         // 原有回复的视图不因新工具到达而重建，保留文字选区和阅读状态。
         for (int index = 0; index < desired.Count; index++)
         {
@@ -48,6 +60,7 @@ public partial class AgentPanel
         foreach (var stale in _activityItems.Keys.Where(key => !desired.Any(item => item.IsGroup && ReferenceEquals(((AgentActivityGroup)item.Message).Messages[0], key))).ToArray()) _activityItems.Remove(stale);
     }
     private void OnActivityEligibilityChanged(object? sender, PropertyChangedEventArgs args) => ProjectMessages();
+    private static AgentDisplayMessage? OriginalMessage(AgentConversationItem item) => item.Message is AgentActivityGroup group ? group.Messages.FirstOrDefault() : item.Message as AgentDisplayMessage;
     private void DetachActivityMessages()
     {
         foreach (var message in _activityMessages) PropertyChangedEventManager.RemoveHandler(message, OnActivityEligibilityChanged, nameof(AgentDisplayMessage.IsAwaitingApproval));

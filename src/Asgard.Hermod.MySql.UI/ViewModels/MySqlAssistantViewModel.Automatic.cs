@@ -55,23 +55,25 @@ public sealed partial class MySqlAssistantViewModel
             await _conversation.RunAsync(prompt, context, async (query, token) =>
             {
                 EnsureCurrent();
-                var record = new MySqlAssistantMessage(Text.Format("SqlAgentStepQuery", query.Database, query.Sql), false, isTool: true);
+                var record = new MySqlAssistantMessage(Text.Format("SqlAgentStepQuery", query.Database, query.Sql), false, isTool: true) { QueryEvidence = new(query.Sql, Text.Format("ChatToolQueryTarget", _tab.Instance?.Name ?? _tab.Name, _tab.Name, query.Database, _tab.Endpoint)) };
                 Status = Text.Get("ChatReadingData");
                 record.Update(record.Content, "SqlAgentQueryRunning"); AddMessage(record);
                 try
                 {
                     var result = await _tab.ExecuteAgentReadOnlyAsync(query, revision, identity, token);
                     EnsureCurrent();
+                    record.QueryEvidence!.Complete(result);
                     record.Update(Text.Format("SqlAgentStepResult", query.Database, query.Sql, result.Output), result.Status == "completed" ? "SqlAgentQueryCompleted" : "SqlAgentQueryStopped");
                     Status = Text.Get("ChatWaitingModel");
                     return result;
                 }
-                catch (OperationCanceledException) { record.Update(record.Content, "SqlAgentQueryStopped"); throw; }
+                catch (OperationCanceledException) { record.QueryEvidence!.Complete(new("cancelled", Text.Get("MySqlAssistantCancelled"), true)); record.Update(record.Content, "SqlAgentQueryStopped"); throw; }
                 catch (Exception error)
                 {
-                    EnsureCurrent();
                     string safe = Text.Error(error, "SqlAgentQueryFailed");
+                    record.QueryEvidence!.Complete(new("unknown", safe, true));
                     record.Update(Text.Format("SqlAgentStepResult", query.Database, query.Sql, safe), "SqlAgentQueryStopped");
+                    EnsureCurrent();
                     return new SqlAgentResult("unknown", safe, true);
                 }
             }, reply =>

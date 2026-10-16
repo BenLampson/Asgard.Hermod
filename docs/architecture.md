@@ -703,3 +703,27 @@ before DPI propagation. Window caption clicks dispatch the original routed
 commands only when an actual owner exists, preserving the existing Closing
 preflight while making detached captions inspectable. See [visual alignment
 checks](visual-alignment.md) for coverage and validation limits.
+
+
+Expanded database tool evidence uses `DatabaseAgentEvidenceViewModel` and the
+shared `DatabaseAgentEvidenceView`. SQL and the safe target are frozen at the
+validated call; measured row/column counts and elapsed time come from the actual
+completed read. The result button only reveals the same bounded output already
+returned by that call. It never re-queries, executes SQL or creates a window.
+The native read-only SQL/result viewports retain independent horizontal scrolling.
+Plain model or result text is never parsed as XAML. Query metrics are local
+presentation data; the model tool payload remains exactly `status` and `output`.
+
+When tools precede a reply, the shared conversation projection places one
+assistant identity row before the first tool. It obtains model identity from the
+actual reply in that same round, never from the currently selected profile.
+Subsequent replies do not repeat the identity row; conversations without tools
+keep the existing reply layout. Log reading selections separately update the
+snapshot footer with accurate local line bounds and capture time, without
+preparing or replacing a frozen Agent attachment. Successful refresh resets the
+reading selection and re-applies any active local search to the new snapshot.
+
+The same completed automatic query updates the SQL workspace's single output
+slot and message snapshot. Agent errors never keep an unrelated earlier message
+on screen, and independent Agent SQL has no editor-location anchor. This avoids
+moving a user's retained editor draft to coordinates from a different query.

@@ -44,6 +44,10 @@ public sealed class AgentPencilHeadlessTests(WpfTestFixture fixture)
             Assert.Equal("next draft", model.Prompt); Assert.Equal("model-used-for-this-response", model.Messages[^1].ModelIdentity); Assert.Equal("Check service health", model.Messages[^1].Question);
             var tool = new SshAssistantMessage("uname -a\nLinux production", false, 0, false, "SshAgentDiagnosticStep", true); model.Messages.Insert(1, tool);
             await Layout(); var evidence = Assert.Single(WindowTestVisuals.Descendants<AgentMessageView>(root), item => item.IsTool);
+            Assert.True(panel.PresentationMessages[1].ShowToolTurnHeader); Assert.Equal("model-used-for-this-response", panel.PresentationMessages[1].ModelIdentity);
+            Assert.True(panel.PresentationMessages[^1].HideMessageIdentity);
+            var turnHeader = Assert.Single(WindowTestVisuals.Descendants<DockPanel>(root), item => item.Tag is "AgentToolTurnHeader" && item.Visibility == Visibility.Visible);
+            Assert.Equal(24, turnHeader.ActualHeight); Assert.True(turnHeader.TranslatePoint(new(), root).Y < evidence.TranslatePoint(new(), root).Y);
             Assert.False(evidence.IsExpanded); evidence.IsExpanded = true; await Layout(); Assert.True(tool.IsExpanded);
             var answer = Assert.Single(WindowTestVisuals.Descendants<AgentMessageView>(root), item => !item.IsUser && !item.IsTool && !item.IsError);
             Assert.Equal(16, Assert.Single(WindowTestVisuals.Descendants<MarkdownView>(answer)).FontSize);

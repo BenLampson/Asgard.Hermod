@@ -4641,4 +4641,16 @@ SQL：
   <data name="ChatGroupedActions" xml:space="preserve"><value>执行了 {0:N0} 项工具操作</value></data>
   <data name="ChatGroupedQueriesRunning" xml:space="preserve"><value>正在查询 {0:N0} 项数据库信息</value></data>
   <data name="ChatGroupedActionsRunning" xml:space="preserve"><value>正在处理 {0:N0} 项工具操作</value></data>
+  <data name="SshLogSelectedSnapshotStatus" xml:space="preserve"><value>已选择 {0:N0} 行 · 快照 {1:N0}–{2:N0} · {3:T}</value></data>
+  <data name="ChatToolQueryTarget" xml:space="preserve"><value>实例：{0} · Session：{1} · 数据库：{2} · {3}</value></data>
+  <data name="ChatToolQueryMetrics" xml:space="preserve"><value>已加载 {0:N0} 行、{1:N0} 列 · 耗时 {2:N1} ms</value></data>
+  <data name="ChatToolQueryMetricsTruncated" xml:space="preserve"><value>已加载 {0:N0} 行、{1:N0} 列 · 耗时 {2:N1} ms · 预览已截断</value></data>
+  <data name="ChatToolQueryWaiting" xml:space="preserve"><value>正在等待读取查询结果。</value></data>
+  <data name="ChatToolQueryNoMetrics" xml:space="preserve"><value>没有可验证的结果指标。</value></data>
+  <data name="ChatToolSqlSource" xml:space="preserve"><value>SQL</value></data>
+  <data name="ChatToolViewResult" xml:space="preserve"><value>查看结果</value></data>
+  <data name="ChatToolCopySql" xml:space="preserve"><value>复制 SQL</value></data>
+  <data name="ChatToolBoundedResult" xml:space="preserve"><value>冻结的有界结果预览；单个值和总长度可能已截断。</value></data>
+  <data name="ChatToolFrozenPreviewHint" xml:space="preserve"><value>仅查看发送时冻结的有界结果预览。</value></data>
+  <data name="ChatToolSqlCopied" xml:space="preserve"><value>已复制 SQL</value></data>
 </root>

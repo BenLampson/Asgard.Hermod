@@ -4,6 +4,21 @@ namespace Asgard.Hermod.Ssh.UI.ViewModels;
 public sealed partial class SshContainerLogViewModel
 {
     private bool _readFailed, _localFailed;
+    private SshLogSnapshot? _selectionSnapshot;
+    private int _selectionFromLine, _selectionToLine;
+    /// <summary>选区只更新当前快照的本地阅读提示，不准备、替换或发送 Agent 附件。</summary>
+    public void UpdateReadingSelection(string displayedText, int start, int length)
+    {
+        _selectionSnapshot = null;
+        if (Snapshot is { } snapshot && length > 0 && start >= 0 && start <= displayedText.Length - length
+            && displayedText.Replace("\r\n", "\n", StringComparison.Ordinal) == snapshot.Text.Replace("\r\n", "\n", StringComparison.Ordinal))
+        {
+            _selectionSnapshot = snapshot; _selectionFromLine = 1 + displayedText.AsSpan(0, start).Count('\n');
+            int end = start + length; if (displayedText[end - 1] == '\n') end--;
+            _selectionToLine = 1 + displayedText.AsSpan(0, end).Count('\n');
+        }
+        OnPropertyChanged(nameof(SnapshotStatus));
+    }
     /// <summary>打开时捕获的实例短名称，不随其他工作区选择变化。</summary>
     public string SourceName { get; }
     /// <summary>标题使用短来源，完整地址和 ID 按需查看。</summary>
@@ -22,6 +37,7 @@ public sealed partial class SshContainerLogViewModel
     public string EncodingAndFont => Text.Format("SshLogEncodingFont", LogFontSize);
     /// <summary>底部只描述已保留快照，不把失败的新范围当作成功读取结果。</summary>
     public string SnapshotStatus => Snapshot is not { } snapshot ? Text.Get("SshLogNoSnapshot")
+        : ReferenceEquals(snapshot, _selectionSnapshot) ? Text.Format("SshLogSelectedSnapshotStatus", _selectionToLine - _selectionFromLine + 1, _selectionFromLine, _selectionToLine, snapshot.CapturedAt.ToLocalTime())
         : Text.Format(snapshot.IsTruncated ? "SshLogSnapshotTruncated" : snapshot.Text.Length == 0 ? "SshLogSnapshotEmpty" : "SshLogSnapshotComplete",
             snapshot.CapturedAt.ToLocalTime(), snapshot.RequestedLines);
     /// <summary>完整采集时间在来源详情显示，使用用户区域格式。</summary>

@@ -51,6 +51,8 @@ public class AgentDisplayMessage : ObservableObject, IAgentDisplayMessage
     public bool IsAwaitingApproval => Approval?.IsPending == true || _statusKey is "SshAgentAwaitingApproval" or "ChatAwaitingApproval";
     /// <summary>本条工具步骤的单次确认，历史恢复不会重建授权。</summary>
     public AgentApprovalRequest? Approval { get; }
+    /// <summary>只读数据库工具的冻结 SQL、来源和结果阅读状态；普通回复与批准卡为空。</summary>
+    public DatabaseAgentEvidenceViewModel? QueryEvidence { get; init; }
     /// <summary>显示角色由稳定标记决定。</summary>
     public virtual string Role => Text.Get(IsTool ? "ChatToolActivity" : IsUser ? "ChatUserRole" : "AgentPanelTitle");
     /// <summary>资源化的当前状态。</summary>

@@ -36,10 +36,12 @@ public sealed partial class PostgreSqlTabViewModel
             var grid = execution.Results.FirstOrDefault();
             string sample = grid is null ? "{}" : SqlAgentSample.Create(grid.Columns.Select(column => column.Name), grid.Rows, grid.IsTruncated);
             bool succeeded = execution.Failure is null && execution.Outcomes.Count > 0 && execution.Outcomes.All(outcome => outcome.Succeeded);
-            result = new(succeeded ? "completed" : "failed", succeeded ? sample : Error.Length > 0 ? Error : Text.Get("SqlAgentQueryFailed"), !succeeded);
+            result = new(succeeded ? "completed" : "failed", succeeded ? sample : Error.Length > 0 ? Error : Text.Get("SqlAgentQueryFailed"), !succeeded) { Metrics = new(grid?.Rows.Count ?? 0, grid?.Columns.Count ?? 0, execution.Elapsed, grid?.IsTruncated == true) };
             var trace = new PostgreSqlExecutionTrace(DateTimeOffset.UtcNow, "agent-query", query.Database, query.Sql, execution.Elapsed, execution.Results.Sum(item => item.Rows.Count), succeeded, Error);
             ExecutionTraces.Insert(0, trace); while (ExecutionTraces.Count > 50) ExecutionTraces.RemoveAt(ExecutionTraces.Count - 1);
             SelectedTrace = trace; OnPropertyChanged(nameof(HasExecutionTraces));
+            SetOutputMessages(execution, null);
+            OutputView = Error.Length > 0 || Results.Count == 0 ? "messages" : "results";
         });
         EnsureCurrent();
         return result ?? new("unknown", Text.Get("SqlAgentQueryFailed"), true);

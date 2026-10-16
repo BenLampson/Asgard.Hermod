@@ -14,7 +14,7 @@ public sealed class MySqlAutomaticAgentTests(WpfTestFixture fixture)
     {
         var server = new TestMySql { InTransaction = true };
         await using var tab = Tab(server, new());
-        tab.Sql = "SELECT original_draft";
+        tab.Sql = "SELECT original_draft"; tab.OutputView = "messages";
         var client = new Client([Query(), AgentReply.FromContent("Analyzed Alice")]);
         using var assistant = new MySqlAssistantViewModel(tab, client) { ExecutionMode = "automatic", Prompt = "analyze" };
         await assistant.SendCommand.ExecuteAsync();
@@ -23,9 +23,15 @@ public sealed class MySqlAutomaticAgentTests(WpfTestFixture fixture)
         Assert.Contains("Alice", client.Requests[1].Single(message => message.Role == AgentRole.Tool).Content);
         Assert.Equal("SELECT original_draft", tab.Sql); Assert.True(server.InTransaction); Assert.Equal(0, server.Rollbacks);
         Assert.Null(Assert.Single(tab.Results).Result.EditableTable);
-        Assert.Single(assistant.Messages, message => message.IsTool);
+        var evidence = Assert.Single(assistant.Messages, message => message.IsTool).QueryEvidence!;
+        Assert.NotNull(evidence); Assert.Equal(server.ReadOnlyQueries[0].Sql, evidence.Sql); Assert.Contains("Alice", evidence.Output); Assert.Contains("app", evidence.Target);
+        string frozen = evidence.Output; tab.Sql = "another draft"; Assert.Equal(frozen, evidence.Output); Assert.Contains("1", evidence.Summary);
+        using var toolPayload = System.Text.Json.JsonDocument.Parse(client.Requests[1].Single(message => message.Role == AgentRole.Tool).Content);
+        Assert.Equal(new[] { "status", "output" }, toolPayload.RootElement.EnumerateObject().Select(property => property.Name));
+        tab.Sql = "SELECT original_draft";
         Assert.Equal("Analyzed Alice", assistant.Messages[^1].Content); Assert.Empty(assistant.Prompt);
         Assert.Equal("agent-query", Assert.Single(tab.ExecutionTraces).Kind);
+        Assert.Equal("results", tab.OutputView); Assert.Single(tab.OutputMessages); Assert.False(tab.LocateMessageCommand.CanExecute(tab.OutputMessages[0]));
     });
 
     /// <summary>自动模式下的修改建议仍需用户点击并确认，拒绝后不能进入协议执行。</summary>

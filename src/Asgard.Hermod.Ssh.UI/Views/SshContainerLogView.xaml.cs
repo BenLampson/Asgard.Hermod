@@ -34,6 +34,7 @@ public partial class SshContainerLogView : UserControl, IDisposable
     {
         if (args.PropertyName == nameof(SshContainerLogViewModel.WrapLines)) LogOutput.TextWrapping = _model?.WrapLines == true ? TextWrapping.Wrap : TextWrapping.NoWrap;
         else if (args.PropertyName == nameof(SshContainerLogViewModel.LogFontSize)) ApplyFont();
+        else if (args.PropertyName == nameof(SshContainerLogViewModel.Snapshot)) { LogOutput.Select(Math.Min(LogOutput.SelectionStart, LogOutput.Text.Length), 0); Find(false); }
     }
     private void OnMore(object sender, RoutedEventArgs args)
     {
@@ -103,6 +104,7 @@ public partial class SshContainerLogView : UserControl, IDisposable
     {
         if (_model is null) return;
         _model.Assistant.Selection = LogOutput.SelectedText; _model.Assistant.SelectionStart = LogOutput.SelectionStart; _model.Assistant.DisplayedText = LogOutput.Text;
+        _model.UpdateReadingSelection(LogOutput.Text, LogOutput.SelectionStart, LogOutput.SelectionLength);
     }
     private void OnCopy(object sender, RoutedEventArgs args)
     {

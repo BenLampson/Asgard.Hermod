@@ -3,6 +3,15 @@ namespace Asgard.Hermod.UI.Controls;
 /// <summary>共享消息气泡；用户、助手与工具使用稳定来源标记，业务动作由模块插槽承载。</summary>
 public partial class AgentMessageView : UserControl
 {
+    private static readonly DependencyPropertyKey HasToolEvidencePropertyKey = DependencyProperty.RegisterReadOnly(nameof(HasToolEvidence), typeof(bool), typeof(AgentMessageView), new PropertyMetadata(false));
+    /// <summary>有结构化证据时隐藏重复的原始拼接正文。</summary>
+    public static readonly DependencyProperty HasToolEvidenceProperty = HasToolEvidencePropertyKey.DependencyProperty;
+    /// <summary>当前工具是否有专用证据卡。</summary>
+    public bool HasToolEvidence => (bool)GetValue(HasToolEvidenceProperty);
+    /// <summary>模块提供的只读查询证据；不是可执行模型内容。</summary>
+    public static readonly DependencyProperty ToolEvidenceProperty = DependencyProperty.Register(nameof(ToolEvidence), typeof(DatabaseAgentEvidenceViewModel), typeof(AgentMessageView), new PropertyMetadata(null, (sender, args) => sender.SetValue(HasToolEvidencePropertyKey, args.NewValue is not null)));
+    /// <summary>查询证据对象。</summary>
+    public DatabaseAgentEvidenceViewModel? ToolEvidence { get => (DatabaseAgentEvidenceViewModel?)GetValue(ToolEvidenceProperty); set => SetValue(ToolEvidenceProperty, value); }
     /// <summary>单次操作的内联确认内容。</summary>
     public static readonly DependencyProperty ApprovalProperty = DependencyProperty.Register(nameof(Approval), typeof(AgentApprovalRequest), typeof(AgentMessageView));
     /// <summary>确认卡在消息历史中保留已结算状态。</summary>
