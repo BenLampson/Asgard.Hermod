@@ -30,9 +30,7 @@ public sealed class AgentPanelTests(WpfTestFixture fixture)
     [InlineData("postgresql", "zh-Hans", UiTheme.Dark)]
     public Task ModulesSharePresentationAndKeepTheirOwnBindings(string kind, string language, UiTheme theme) => fixture.RunOffscreenAsync(async () =>
     {
-        var old = CultureInfo.CurrentUICulture;
-        var oldDefault = CultureInfo.DefaultThreadCurrentUICulture;
-        Text.Initialize(language, CultureInfo.InvariantCulture);
+        Text.SetApplicationCulture(CultureInfo.GetCultureInfo(language));
         var themes = new ThemeService(Application.Current.Resources);
         themes.SetTheme(theme);
         using var bindings = new WpfBindingTrace();
@@ -76,7 +74,8 @@ public sealed class AgentPanelTests(WpfTestFixture fixture)
                 var literal = Assert.Single(WindowTestVisuals.Descendants<MarkdownView>(user));
                 Assert.False(literal.IsMarkdownEnabled);
                 Assert.Contains("## literal question", new TextRange(literal.Document.ContentStart, literal.Document.ContentEnd).Text);
-                Assert.Single(Assert.Single(WindowTestVisuals.Descendants<MarkdownView>(reply)).Document.Blocks.OfType<Table>());
+                var renderedReply = Assert.Single(WindowTestVisuals.Descendants<MarkdownView>(reply));
+                Assert.Single(renderedReply.Document.Blocks.OfType<BlockUIContainer>().Select(block => Assert.IsType<MarkdownOverflowBlock>(block.Child)), block => block.TableDocument is not null);
                 var composer = Assert.IsType<Border>(panel.FindName("Composer"));
                 var send = Assert.IsType<Button>(panel.FindName("SendAction"));
                 Assert.True(send.TranslatePoint(new Point(send.ActualWidth, send.ActualHeight), composer).X <= composer.ActualWidth);
@@ -125,8 +124,7 @@ public sealed class AgentPanelTests(WpfTestFixture fixture)
         finally
         {
             themes.SetTheme(UiTheme.Light);
-            CultureInfo.CurrentUICulture = old;
-            CultureInfo.DefaultThreadCurrentUICulture = oldDefault;
+            Text.SetApplicationCulture(null);
         }
     });
 

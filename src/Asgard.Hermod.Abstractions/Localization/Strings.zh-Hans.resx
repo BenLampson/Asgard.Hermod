@@ -4560,4 +4560,15 @@ SQL：
   <data name="MainConnectionDiagnostics" xml:space="preserve"><value>实例 ID：{0}
 类型：{1}
 地址：{2}</value></data>
+  <data name="ChatCopyAnswer" xml:space="preserve"><value>复制回答</value></data>
+  <data name="ChatRestoreAnswerQuestion" xml:space="preserve"><value>将原问题恢复到草稿，不发送。</value></data>
+  <data name="ChatHelpfulLocal" xml:space="preserve"><value>在本地对话中标记为有帮助，再次点击可撤销。</value></data>
+  <data name="ChatUnhelpfulLocal" xml:space="preserve"><value>在本地对话中标记为没有帮助，再次点击可撤销。</value></data>
+  <data name="ChatAnswerCopied" xml:space="preserve"><value>已复制回答</value></data>
+  <data name="ChatCodeBlock" xml:space="preserve"><value>只读代码块</value></data>
+  <data name="ChatTableBlock" xml:space="preserve"><value>只读回答表格</value></data>
+  <data name="ChatQueryRunning" xml:space="preserve"><value>正在执行只读查询</value></data>
+  <data name="ChatQueryCompleted" xml:space="preserve"><value>只读查询已完成</value></data>
+  <data name="ChatCommandRunning" xml:space="preserve"><value>正在执行命令</value></data>
+  <data name="ChatCommandCompleted" xml:space="preserve"><value>命令已完成</value></data>
 </root>

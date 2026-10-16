@@ -17,7 +17,7 @@ public partial class AgentSourceView : UserControl
     /// <summary>来源地址不包含凭据。</summary>
     public string SourceDetail => _request.Detail;
     /// <summary>协议来源图标。</summary>
-    public string Icon => _request.Icon;
+    public string Icon => _request.Icon is "brand-mysql" or "brand-postgresql" ? "database" : _request.Icon;
     private void OnViewportChanged(object sender, SizeChangedEventArgs args) => SourceColumn.Margin = new(args.NewSize.Width < 800 ? 24 : 80, 0, args.NewSize.Width < 800 ? 24 : 80, 0);
     private void OnLocate(object sender, RoutedEventArgs args) { if (!_request.IsClosed()) _request.Locate(); }
     private void OnConversationChanged(object? sender, PropertyChangedEventArgs args) { if (args.PropertyName == "IsSourceClosed") UpdateClosed(); }

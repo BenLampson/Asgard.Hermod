@@ -3,6 +3,7 @@
                     xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls">
     <!-- 使用最小只读文档模板，选择正文时不绘制输入框描边，整条回复由外层会话滚动。 -->
     <Style TargetType="controls:MarkdownView">
+        <Setter Property="FontFamily" Value="{DynamicResource UiFont}" /><Setter Property="FontSize" Value="13" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:MarkdownView">

@@ -622,3 +622,22 @@ that page; retry creates a fresh page. Concurrent requests keep separate cancel
 targets, while completed, dismissed and superseded feedback cannot retry or
 cancel another request. Successful connections activate the workspace exactly
 once, and canceled connections never create an empty window.
+
+Agent replies carry the original accepted question and an optional in-memory
+helpful/unhelpful mark. The four shared reply actions copy the complete original
+answer, restore the original question to an empty draft, and toggle mutually
+exclusive local feedback. Restoring never sends, and archive switching preserves
+the same message objects. Context-sharing guidance appears in the context drawer.
+Tool headers use a compact action, semantic status icon, measured duration and
+expand affordance; the complete safe status remains available as a tooltip.
+
+`MarkdownOverflowBlock` puts code and tables in independent native read-only
+viewports. Paragraphs wrap to the available body width while wide blocks scroll
+horizontally inside that width. Code selections retain exact source text, and
+tables retain native row/column semantics and alignment. The complete-answer
+copy action includes the full original Markdown. Only program-generated text
+controls can be embedded; model HTML, links and images stay inert.
+`MarkdownDocumentReader` removes WPF's inserted caret margin after template
+creation, so the first real glyph aligns with the message header. Font defaults
+remain in styles, allowing the 15-DIP user, 16-DIP assistant and 12-DIP tool styles
+to apply to the actual document rather than being hidden by constructor values.

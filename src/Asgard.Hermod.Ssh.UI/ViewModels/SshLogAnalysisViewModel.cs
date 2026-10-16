@@ -94,7 +94,7 @@ public sealed class SshLogAnalysisViewModel : ObservableObject, IDisposable
         {
             var reply = await _conversation.SendAsync(prompt, attachment.Source, attachment.Text, attachment.CapturedAt, attachment.IsTruncated, pending.Token,
                 new(attachment.DocumentId, attachment.Host, attachment.ContainerId, attachment.RequestedLines, attachment.StartCharacter, attachment.EndCharacter, attachment.FromLine, attachment.ToLine, attachment.IsSelection));
-            if (!_disposed) Add(new(reply.Content, false, attachment.Summary, modelIdentity: reply.ModelIdentity, attachment: attachment));
+            if (!_disposed) Add(new(reply.Content, false, attachment.Summary, modelIdentity: reply.ModelIdentity, attachment: attachment) { Question = prompt });
         }
         catch (OperationCanceledException) { if (!_disposed) Failed(Text.Get("SshAgentCanceled")); }
         catch (Exception error) { if (!_disposed) Failed(Text.Error(error, "AgentRequestFailed")); }

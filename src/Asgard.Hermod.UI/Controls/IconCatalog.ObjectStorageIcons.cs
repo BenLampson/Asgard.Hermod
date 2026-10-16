@@ -7,6 +7,10 @@ internal static partial class IconCatalog
     private static void AddObjectStorageIcons()
     {
         AddFileTypeIcons();
+        Geometries.Add("rotate-ccw", Create("M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", "M3 3v5h5"));
+        Geometries.Add("thumbs-up", Create("M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z", "M7 10v12"));
+        Geometries.Add("thumbs-down", Create("M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z", "M17 14V2"));
+
         Geometries.Add("circle-alert", Create("M2 12 A10 10 0 1 0 22 12 A10 10 0 1 0 2 12 Z", "M12 8v4", "M12 16h.01"));
         Geometries.Add("arrow-down-wide-narrow", Create("m3 16 4 4 4-4", "M7 20V4", "M11 4h10", "M11 8h7", "M11 12h4"));
         Geometries.Add("loader-circle", Create("M21 12a9 9 0 1 1-6.219-8.56"));

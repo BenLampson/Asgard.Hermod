@@ -27,6 +27,10 @@ public class AgentDisplayMessage : ObservableObject, IAgentDisplayMessage
     public bool IsAssistant => !IsUser && !IsTool && !IsError;
     /// <summary>恢复失败问题只填入草稿，不自动发送。</summary>
     public string RecoveryPrompt { get; }
+    /// <summary>生成本条回复时接受的原始问题，只允许在创建消息时指定。</summary>
+    public string Question { get; init; } = "";
+    /// <summary>反馈只保留在当前内存消息，归档切换仍复用同一对象，不向服务器发送。</summary>
+    public AgentMessageFeedback Feedback { get; set => SetProperty(ref field, value); }
     /// <summary>生成时的模型协议身份；后续选择不会重写它。</summary>
     public string ModelIdentity { get; }
     /// <summary>实际消息创建时间，不用示例时间填充。</summary>
@@ -43,6 +47,27 @@ public class AgentDisplayMessage : ObservableObject, IAgentDisplayMessage
     public virtual string Role => Text.Get(IsTool ? "ChatToolActivity" : IsUser ? "ChatUserRole" : "AgentPanelTitle");
     /// <summary>资源化的当前状态。</summary>
     public string Status => _statusKey.Length == 0 ? "" : Text.Get(_statusKey);
+    /// <summary>折叠标题只展示简短动作，完整状态放在提示中，不挤占耗时和展开入口。</summary>
+    public string ActivityTitle => _statusKey switch
+    {
+        "SqlAgentQueryRunning" => Text.Get("ChatQueryRunning"),
+        "SqlAgentQueryCompleted" => Text.Get("ChatQueryCompleted"),
+        "SshAgentExecuting" => Text.Get("ChatCommandRunning"),
+        "SshAgentStepCompleted" => Text.Get("ChatCommandCompleted"),
+        "ChatActionExecuting" => Text.Get("ChatCommandRunning"),
+        "ChatActionCompleted" => Text.Get("ChatActionCompleted"),
+        _ => Role,
+    };
+    /// <summary>图标和色调只由稳定状态键决定，不比较翻译后的说明。</summary>
+    public string ActivityTone => _statusKey switch
+    {
+        "SqlAgentQueryCompleted" or "SshAgentStepCompleted" or "ChatActionCompleted" => "success",
+        "SqlAgentQueryRunning" or "SshAgentExecuting" or "ChatActionExecuting" => "running",
+        "SqlAgentQueryStopped" or "SshAgentActionDenied" or "SshAgentOutcomeUnknown" or "SshAgentNotExecuted" or "ChatActionUnknown" or "ChatActionNotExecuted" or "ChatActionFailed" => "warning",
+        _ => "muted",
+    };
+    /// <summary>待审阅、运行中和完成状态使用不同图标。</summary>
+    public string ActivityIcon => IsAwaitingApproval ? "shield-alert" : ActivityTone switch { "success" => "circle-check", "running" => "loader-circle", "warning" => "circle-alert", _ => "terminal" };
     /// <summary>仅工具完成后展示实际经过的时间。</summary>
     public string Elapsed => _elapsed is { IsRunning: false, ElapsedTicks: > 0 } elapsed ? Text.Format("ChatActivityElapsed", elapsed.Elapsed.TotalMilliseconds) : "";
     /// <summary>更新原对象，不改变用户已经选择的展开状态。</summary>
@@ -51,6 +76,6 @@ public class AgentDisplayMessage : ObservableObject, IAgentDisplayMessage
         Content = content; _statusKey = statusKey;
         if (statusKey is "SqlAgentQueryRunning" or "SshAgentExecuting" or "ChatActionExecuting") _elapsed?.Start();
         if (statusKey is not ("SqlAgentQueryRunning" or "SshAgentAwaitingApproval" or "SshAgentExecuting" or "ChatAwaitingApproval" or "ChatActionExecuting")) _elapsed?.Stop();
-        OnPropertyChanged(nameof(Status)); OnPropertyChanged(nameof(IsAwaitingApproval)); OnPropertyChanged(nameof(Elapsed));
+        OnPropertyChanged(nameof(Status)); OnPropertyChanged(nameof(IsAwaitingApproval)); OnPropertyChanged(nameof(Elapsed)); OnPropertyChanged(nameof(ActivityTitle)); OnPropertyChanged(nameof(ActivityTone)); OnPropertyChanged(nameof(ActivityIcon));
     }
 }

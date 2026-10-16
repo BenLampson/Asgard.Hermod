@@ -123,7 +123,7 @@ public sealed class SshAssistantViewModel : ObservableObject, IDisposable
             if (_conversation is not null)
                 await _conversation.RunAsync(prompt, host, selected,
                     (action, token) => PerformActionAsync(action, connection, host, revision, token),
-                    reply => { EnsureCurrent(revision, connection, taskToken); Add(new(reply.Content, false, revision, reply.ToolCalls.Count == 0, modelIdentity: reply.ModelIdentity)); }, taskToken, initialAction, completed);
+                    reply => { EnsureCurrent(revision, connection, taskToken); Add(new(reply.Content, false, revision, reply.ToolCalls.Count == 0, modelIdentity: reply.ModelIdentity) { Question = initialAction is null ? prompt : "" }); }, taskToken, initialAction, completed);
         }
         catch (OperationCanceledException) { if (!IsSourceClosed && revision == _revision) AddFailure(initialAction is null ? prompt : "", Text.Get("SshAgentCanceled")); }
         catch (Exception error) { if (!IsSourceClosed && revision == _revision) AddFailure(initialAction is null ? prompt : "", Text.Error(error, "AgentRequestFailed")); }

@@ -96,7 +96,7 @@ public sealed partial class MySqlAssistantViewModel : ObservableObject, IDisposa
             var reply = await _conversation.SendAsync(prompt, context, taskToken);
             if (_disposed) return;
             if (revision != _tab.ScopeRevision) throw Text.Exception("MySqlAssistantContextChanged");
-            AddMessage(new(reply.Content, false, reply.SqlBlocks.Select(sql => new MySqlAssistantSql(sql, context.Database, sessionIdentity, revision)).ToArray(), modelIdentity: reply.ModelIdentity));
+            AddMessage(new(reply.Content, false, reply.SqlBlocks.Select(sql => new MySqlAssistantSql(sql, context.Database, sessionIdentity, revision)).ToArray(), modelIdentity: reply.ModelIdentity) { Question = prompt });
         }
         catch (OperationCanceledException) { if (!_disposed) AddFailure(prompt, Text.Get("MySqlAssistantCancelled")); }
         catch (Exception error) { if (!_disposed) AddFailure(prompt, Text.Error(error, "AgentRequestFailed")); }

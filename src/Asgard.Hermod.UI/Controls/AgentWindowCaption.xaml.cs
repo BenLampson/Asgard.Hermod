@@ -5,6 +5,8 @@ public partial class AgentWindowCaption : UserControl
 {
     /// <summary>加载 44 像素标题栏。</summary>
     public AgentWindowCaption() => InitializeComponent();
+    private void OnMinimize(object sender, RoutedEventArgs args) { if (Window.GetWindow(this) is { } window) SystemCommands.MinimizeWindow(window); }
+    private void OnClose(object sender, RoutedEventArgs args) { if (Window.GetWindow(this) is { } window) SystemCommands.CloseWindow(window); }
     private void OnMaximize(object sender, RoutedEventArgs args)
     {
         if (Window.GetWindow(this) is not { } window) return;

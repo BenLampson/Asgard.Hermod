@@ -68,6 +68,7 @@ internal static class MarkdownDocumentBuilder
         var paragraph = new Paragraph(new Run(text)) { Margin = new Thickness(0, 0, 0, 10), Padding = new Thickness(10), FontSize = 12 };
         paragraph.SetResourceReference(TextElement.FontFamilyProperty, "MonoFont");
         paragraph.SetResourceReference(TextElement.BackgroundProperty, "AppBackgroundBrush");
+        paragraph.SetValue(MarkdownOverflowBlock.CodeTextProperty, text);
         return paragraph;
     }
 
@@ -94,7 +95,7 @@ internal static class MarkdownDocumentBuilder
         return section;
     }
 
-    /// <summary>表格使用等宽弹性列和自动换行，在窄侧栏中保持完整行列与主题化表头。</summary>
+    /// <summary>保留原生表格行列、对齐与主题表头；外层只读滚动块负责窄窗中的横向溢出。</summary>
     private static System.Windows.Documents.Table Table(MdTable source, int depth)
     {
         var table = new System.Windows.Documents.Table { CellSpacing = 0, Margin = new Thickness(0, 0, 0, 12) };
@@ -109,11 +110,12 @@ internal static class MarkdownDocumentBuilder
             {
                 rendered.FontWeight = FontWeights.SemiBold;
                 rendered.SetResourceReference(TextElement.BackgroundProperty, "AppBackgroundBrush");
+                rendered.SetResourceReference(TextElement.FontFamilyProperty, "UiFont");
             }
             int columnIndex = 0;
             foreach (var cell in row.OfType<MdTableCell>())
             {
-                var result = new TableCell { Padding = new Thickness(7, 6, 7, 6), BorderThickness = new Thickness(0.5) };
+                var result = new TableCell { Padding = new Thickness(12, 8, 12, 8), BorderThickness = new Thickness(0, 0, 0, 1) };
                 result.SetResourceReference(TableCell.BorderBrushProperty, "LineBrush");
                 AppendBlocks(result.Blocks, cell, depth);
                 foreach (var paragraph in result.Blocks.OfType<Paragraph>()) paragraph.Margin = new Thickness(0);

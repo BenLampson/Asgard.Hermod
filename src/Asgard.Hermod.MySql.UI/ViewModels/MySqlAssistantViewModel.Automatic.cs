@@ -77,7 +77,7 @@ public sealed partial class MySqlAssistantViewModel
             }, reply =>
             {
                 EnsureCurrent();
-                AddMessage(new(reply.Content, false, reply.SqlBlocks.Select(sql => new MySqlAssistantSql(sql, context.Database, identity, revision)).ToArray(), modelIdentity: reply.ModelIdentity));
+                AddMessage(new(reply.Content, false, reply.SqlBlocks.Select(sql => new MySqlAssistantSql(sql, context.Database, identity, revision)).ToArray(), modelIdentity: reply.ModelIdentity) { Question = prompt });
             }, taskToken);
             EnsureCurrent();
         }

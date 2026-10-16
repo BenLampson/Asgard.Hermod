@@ -50,6 +50,18 @@ public partial class AgentMessageView : UserControl
     public static readonly DependencyProperty IsToolProperty = DependencyProperty.Register(nameof(IsTool), typeof(bool), typeof(AgentMessageView));
     /// <summary>可选的本地化工具步骤状态。</summary>
     public static readonly DependencyProperty StatusProperty = DependencyProperty.Register(nameof(Status), typeof(string), typeof(AgentMessageView), new PropertyMetadata(""));
+    /// <summary>简短工具动作标题。</summary>
+    public static readonly DependencyProperty ActivityTitleProperty = DependencyProperty.Register(nameof(ActivityTitle), typeof(string), typeof(AgentMessageView), new PropertyMetadata(""));
+    /// <summary>稳定工具图标名。</summary>
+    public static readonly DependencyProperty ActivityIconProperty = DependencyProperty.Register(nameof(ActivityIcon), typeof(string), typeof(AgentMessageView), new PropertyMetadata("terminal"));
+    /// <summary>稳定状态色调。</summary>
+    public static readonly DependencyProperty ActivityToneProperty = DependencyProperty.Register(nameof(ActivityTone), typeof(string), typeof(AgentMessageView), new PropertyMetadata("muted"));
+    /// <summary>简短工具动作。</summary>
+    public string ActivityTitle { get => (string)GetValue(ActivityTitleProperty); set => SetValue(ActivityTitleProperty, value); }
+    /// <summary>当前动作图标。</summary>
+    public string ActivityIcon { get => (string)GetValue(ActivityIconProperty); set => SetValue(ActivityIconProperty, value); }
+    /// <summary>当前动作语义色。</summary>
+    public string ActivityTone { get => (string)GetValue(ActivityToneProperty); set => SetValue(ActivityToneProperty, value); }
     /// <summary>模块提供的建议和动作，不包含共享层可执行的业务逻辑。</summary>
     public static readonly DependencyProperty ActionsContentProperty = DependencyProperty.Register(nameof(ActionsContent), typeof(object), typeof(AgentMessageView));
 

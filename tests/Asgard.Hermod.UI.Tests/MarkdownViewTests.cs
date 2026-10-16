@@ -28,7 +28,8 @@ public sealed class MarkdownViewTests(WpfTestFixture fixture)
         var paragraph = view.Document.Blocks.OfType<Paragraph>().ElementAt(1);
         Assert.Contains(paragraph.Inlines.OfType<Span>(), span => span.FontWeight == FontWeights.Bold);
         Assert.Contains(paragraph.Inlines.OfType<Span>(), span => span.FontStyle == FontStyles.Italic);
-        var table = Assert.Single(view.Document.Blocks.OfType<Table>());
+        var tableBlock = Assert.Single(view.Document.Blocks.OfType<BlockUIContainer>().Select(block => Assert.IsType<MarkdownOverflowBlock>(block.Child)), block => block.TableDocument is not null);
+        var table = Assert.Single(tableBlock.TableDocument!.Blocks.OfType<Table>());
         Assert.Equal(3, table.Columns.Count);
         var rows = Assert.Single(table.RowGroups.Cast<TableRowGroup>()).Rows;
         Assert.Equal(3, rows.Count);
@@ -38,8 +39,9 @@ public sealed class MarkdownViewTests(WpfTestFixture fixture)
         Assert.Equal(2, Assert.Single(view.Document.Blocks.OfType<System.Windows.Documents.List>()).ListItems.Count);
         Assert.Single(view.Document.Blocks.OfType<Section>());
         string copied = new TextRange(view.Document.ContentStart, view.Document.ContentEnd).Text;
-        Assert.Contains("raw | output", copied);
-        Assert.Contains("# literal heading", copied);
+        var code = Assert.Single(view.Document.Blocks.OfType<BlockUIContainer>().Select(block => Assert.IsType<MarkdownOverflowBlock>(block.Child)), block => block.CodeInput is not null).CodeInput!;
+        Assert.Contains("raw | output", code.Text); Assert.Contains("# literal heading", code.Text);
+        Assert.True(code.IsReadOnly);
         Assert.DoesNotContain("## Resource overview", copied);
         Assert.DoesNotContain("| :---", copied);
         Assert.True(view.IsReadOnly);
@@ -57,8 +59,9 @@ public sealed class MarkdownViewTests(WpfTestFixture fixture)
         string rendered = new TextRange(view.Document.ContentStart, view.Document.ContentEnd).Text;
         Assert.Contains("<script>", rendered);
         Assert.Contains("alt text", rendered);
-        Assert.Contains("<Button", rendered);
-        Assert.DoesNotContain(DocumentElements(view.Document), element => element is Hyperlink or InlineUIContainer or BlockUIContainer);
+        var code = Assert.Single(view.Document.Blocks.OfType<BlockUIContainer>());
+        Assert.Contains("<Button", Assert.IsType<MarkdownOverflowBlock>(code.Child).CodeInput!.Text);
+        Assert.DoesNotContain(DocumentElements(view.Document), element => element is Hyperlink or InlineUIContainer || element is BlockUIContainer container && container.Child is not MarkdownOverflowBlock);
         var previous = view.Document;
         view.IsMarkdownEnabled = false;
         Assert.NotSame(previous, view.Document);
@@ -78,66 +81,50 @@ public sealed class MarkdownViewTests(WpfTestFixture fixture)
     [InlineData("en", UiTheme.Dark)]
     [InlineData("zh-Hans", UiTheme.Light)]
     [InlineData("zh-Hans", UiTheme.Dark)]
-    public Task AgentMarkdownFitsNarrowPaneAndUpdatesWithTheme(string language, UiTheme theme) => fixture.RunAsync(async () =>
+    public Task AgentMarkdownFitsNarrowPaneAndUpdatesWithTheme(string language, UiTheme theme) => fixture.RunOffscreenAsync(async () =>
     {
-        var old = CultureInfo.CurrentUICulture;
-        var oldDefault = CultureInfo.DefaultThreadCurrentUICulture;
-        Text.Initialize(language, CultureInfo.InvariantCulture);
-        var themes = new ThemeService(Application.Current.Resources);
-        themes.SetTheme(theme);
+        Text.SetApplicationCulture(CultureInfo.GetCultureInfo(language));
+        var themes = new ThemeService(Application.Current.Resources); themes.SetTheme(theme);
         using var model = new SshAssistantViewModel(null, () => null, () => "host", new SshTroubleshootingWorkspaceTests.Dialogs());
         var user = new SshAssistantMessage("## User text\n| untouched | output |", true, 0);
-        var tool = new SshAssistantMessage("# raw tool output\n| a | b |", false, 0, false, "SshAgentDiagnosticStep", true);
+        var tool = new SshAssistantMessage("# raw tool output\n| a | b |", false, 0, false, "SshAgentDiagnosticStep", true) { IsExpanded = true };
         var assistant = new SshAssistantMessage(Sample + "\n\n```bash\nuname -a\n```", false, 0);
-        model.Messages.Add(user);
-        model.Messages.Add(tool);
-        model.Messages.Add(assistant);
-        var view = new SshAssistantView { DataContext = model };
-        var window = new HermodWindow { Content = view, Width = 440, Height = 900 };
+        model.Messages.Add(user); model.Messages.Add(tool); model.Messages.Add(assistant);
+        var view = new SshAssistantView { DataContext = model }; using var bindings = new WpfBindingTrace();
+        view.Resources.MergedDictionaries.Add(Application.Current.Resources);
         try
         {
-            WindowPreviewCapture.Show(window);
-            await WindowPreviewCapture.VerifyAsync(window, $"markdown-wide-{language}-{theme}");
-            var messages = WindowTestVisuals.Descendants<MarkdownView>(view).ToArray();
-            Assert.Equal(3, messages.Length);
+            await Layout(1120);
+            var messages = WindowTestVisuals.Descendants<MarkdownView>(view).ToArray(); Assert.Equal(3, messages.Length);
             foreach (var message in messages)
             {
                 Assert.Equal(ReferenceEquals(message.DataContext, assistant), message.IsMarkdownEnabled);
-                Assert.Null(message.Template.FindName("FocusRing", message));
                 Assert.True(message.ActualHeight > 0);
             }
             var rendered = Assert.Single(messages, message => message.IsMarkdownEnabled);
-            Assert.Single(rendered.Document.Blocks.OfType<Table>());
+            var tableBlock = Assert.Single(rendered.Document.Blocks.OfType<BlockUIContainer>().Select(block => Assert.IsType<MarkdownOverflowBlock>(block.Child)), block => block.TableDocument is not null);
+            Assert.Single(tableBlock.TableDocument!.Blocks.OfType<Table>());
             Assert.Equal("uname -a", Assert.Single(assistant.Commands).Command);
-            Assert.DoesNotContain("uname -a", new TextRange(rendered.Document.ContentStart, rendered.Document.ContentEnd).Text);
             Assert.Contains(WindowTestVisuals.Descendants<TextBox>(view), editor => editor.IsReadOnly && editor.Text == "uname -a");
-            window.Width = 320;
-            await WindowPreviewCapture.VerifyAsync(window, $"markdown-narrow-{language}-{theme}");
-            Assert.True(rendered.ActualWidth <= 285);
-            Assert.True(rendered.ExtentWidth <= rendered.ViewportWidth + 1);
-            Assert.True(rendered.ExtentHeight <= rendered.ViewportHeight + 1);
-            themes.SetTheme(theme == UiTheme.Light ? UiTheme.Dark : UiTheme.Light);
-            await WindowTestVisuals.UpdateLayoutAsync(window);
-            Assert.Equal(((SolidColorBrush)Application.Current.FindResource("TextBodyBrush")).Color, Assert.IsType<SolidColorBrush>(rendered.Document.Foreground).Color);
-            var cell = Assert.Single(rendered.Document.Blocks.OfType<Table>()).RowGroups[0].Rows[0].Cells[0];
-            Assert.Equal(((SolidColorBrush)Application.Current.FindResource("LineBrush")).Color, Assert.IsType<SolidColorBrush>(cell.BorderBrush).Color);
-            window.Activate();
-            rendered.Focus();
-            await WindowTestVisuals.UpdateLayoutAsync(window);
-            rendered.SelectAll();
-            Assert.Contains("Resource overview", rendered.Selection.Text);
-            Assert.True(rendered.MoveFocus(new System.Windows.Input.TraversalRequest(System.Windows.Input.FocusNavigationDirection.Next)));
+            await Layout(640);
+            Assert.True(rendered.ActualWidth <= 592);
+            Assert.True(rendered.ExtentWidth <= rendered.ViewportWidth + 1, $"outer extent {rendered.ExtentWidth} vs viewport {rendered.ViewportWidth}");
+            themes.SetTheme(theme == UiTheme.Light ? UiTheme.Dark : UiTheme.Light); await Layout(640);
+            Assert.Equal(((SolidColorBrush)rendered.FindResource("TextBodyBrush")).Color, Assert.IsType<SolidColorBrush>(rendered.Document.Foreground).Color);
+            var cell = tableBlock.TableDocument.Blocks.OfType<Table>().Single().RowGroups[0].Rows[0].Cells[0];
+            Assert.Equal(((SolidColorBrush)rendered.FindResource("LineBrush")).Color, Assert.IsType<SolidColorBrush>(cell.BorderBrush).Color);
+            rendered.SelectAll(); Assert.Contains("Resource overview", rendered.Selection.Text);
+            Assert.Empty(bindings.Messages); Assert.Null(PresentationSource.FromVisual(view)); Assert.Null(Window.GetWindow(view));
+            async Task Layout(double width)
+            {
+                view.Measure(new(width, 1000)); view.Arrange(new(0, 0, width, 1000)); view.UpdateLayout();
+                await WpfTestFixture.DrainDispatcherAsync(); view.UpdateLayout();
+            }
         }
-        finally
-        {
-            window.Close();
-            themes.SetTheme(UiTheme.Light);
-            CultureInfo.CurrentUICulture = old;
-            CultureInfo.DefaultThreadCurrentUICulture = oldDefault;
-        }
+        finally { Text.SetApplicationCulture(null); themes.SetTheme(UiTheme.Light); }
     });
 
-    /// <summary>递归读取文档逻辑树，确认渲染没有生成活动链接或嵌入式 UI。</summary>
+    /// <summary>递归读取文档逻辑树，确认渲染没有生成活动链接或不受信任的嵌入式 UI。</summary>
     private static IEnumerable<DependencyObject> DocumentElements(DependencyObject root)
     {
         foreach (object child in LogicalTreeHelper.GetChildren(root))

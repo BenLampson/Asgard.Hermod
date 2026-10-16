@@ -13,7 +13,7 @@
    </StackPanel>
   </controls:AgentPanel.ContextContent>
   <controls:AgentPanel.MessageTemplate><DataTemplate>
-   <controls:AgentMessageView Role="{Binding Role}" Body="{Binding Content}" TimestampLabel="{Binding TimestampLabel}" IsUser="{Binding IsUser}" IsTool="{Binding IsTool}" Status="{Binding Status}" IsExpanded="{Binding IsExpanded, Mode=TwoWay}" Approval="{Binding Approval}" IsAwaitingApproval="{Binding IsAwaitingApproval}" IsError="{Binding IsError}" ModelIdentity="{Binding ModelIdentity}" Elapsed="{Binding Elapsed}" RecoveryPrompt="{Binding RecoveryPrompt}" RestoreDraftCommand="{Binding DataContext.RestoreDraftCommand, RelativeSource={RelativeSource AncestorType=controls:AgentPanel}}">
+   <controls:AgentMessageView Role="{Binding Role}" Body="{Binding Content}" Question="{Binding Question}" Feedback="{Binding Feedback, Mode=TwoWay}" TimestampLabel="{Binding TimestampLabel}" IsUser="{Binding IsUser}" IsTool="{Binding IsTool}" Status="{Binding Status}" ActivityTitle="{Binding ActivityTitle}" ActivityIcon="{Binding ActivityIcon}" ActivityTone="{Binding ActivityTone}" IsExpanded="{Binding IsExpanded, Mode=TwoWay}" Approval="{Binding Approval}" IsAwaitingApproval="{Binding IsAwaitingApproval}" IsError="{Binding IsError}" ModelIdentity="{Binding ModelIdentity}" Elapsed="{Binding Elapsed}" RecoveryPrompt="{Binding RecoveryPrompt}" RestoreDraftCommand="{Binding DataContext.RestoreDraftCommand, RelativeSource={RelativeSource AncestorType=controls:AgentPanel}}">
     <controls:AgentMessageView.ActionsContent>
      <ItemsControl ItemsSource="{Binding Commands}"><ItemsControl.ItemTemplate><DataTemplate>
       <controls:AgentCodeSuggestion Code="{Binding Command}" Caption="{loc:Loc SshAgentSuggestion}"

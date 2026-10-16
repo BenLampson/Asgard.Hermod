@@ -96,7 +96,7 @@ public sealed partial class PostgreSqlAssistantViewModel : ObservableObject, IDi
             var reply = await _conversation.SendAsync(prompt, context, taskToken);
             if (_disposed) return;
             if (revision != _tab.ScopeRevision) throw Text.Exception("PostgreSqlAssistantContextChanged");
-            AddMessage(new(reply.Content, false, reply.SqlBlocks.Select(sql => new PostgreSqlAssistantSql(sql, context.Database, sessionIdentity, revision)).ToArray(), modelIdentity: reply.ModelIdentity));
+            AddMessage(new(reply.Content, false, reply.SqlBlocks.Select(sql => new PostgreSqlAssistantSql(sql, context.Database, sessionIdentity, revision)).ToArray(), modelIdentity: reply.ModelIdentity) { Question = prompt });
         }
         catch (OperationCanceledException) { if (!_disposed) AddFailure(prompt, Text.Get("PostgreSqlAssistantCancelled")); }
         catch (Exception error) { if (!_disposed) AddFailure(prompt, Text.Error(error, "AgentRequestFailed")); }

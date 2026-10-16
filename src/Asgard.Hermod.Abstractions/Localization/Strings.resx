@@ -4560,4 +4560,15 @@ When signed out, they are encrypted only on this device.</value></data>
   <data name="MainConnectionDiagnostics" xml:space="preserve"><value>Instance ID: {0}
 Type: {1}
 Address: {2}</value></data>
+  <data name="ChatCopyAnswer" xml:space="preserve"><value>Copy answer</value></data>
+  <data name="ChatRestoreAnswerQuestion" xml:space="preserve"><value>Restore the original question to the draft without sending it.</value></data>
+  <data name="ChatHelpfulLocal" xml:space="preserve"><value>Mark as helpful in this local conversation. Click again to undo.</value></data>
+  <data name="ChatUnhelpfulLocal" xml:space="preserve"><value>Mark as unhelpful in this local conversation. Click again to undo.</value></data>
+  <data name="ChatAnswerCopied" xml:space="preserve"><value>Answer copied</value></data>
+  <data name="ChatCodeBlock" xml:space="preserve"><value>Read-only code block</value></data>
+  <data name="ChatTableBlock" xml:space="preserve"><value>Read-only answer table</value></data>
+  <data name="ChatQueryRunning" xml:space="preserve"><value>Running a read-only query</value></data>
+  <data name="ChatQueryCompleted" xml:space="preserve"><value>Read-only query completed</value></data>
+  <data name="ChatCommandRunning" xml:space="preserve"><value>Running a command</value></data>
+  <data name="ChatCommandCompleted" xml:space="preserve"><value>Command completed</value></data>
 </root>

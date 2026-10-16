@@ -1,7 +1,7 @@
 namespace Asgard.Hermod.UI.Controls;
 
 /// <summary>可选择、复制的只读 Markdown 正文；只创建原生文档元素，不加载外部内容或执行模型输出。</summary>
-public sealed class MarkdownView : RichTextBox
+public sealed class MarkdownView : MarkdownDocumentReader
 {
     /// <summary>模型或用户原文，变化时重建当前控件独占的文档。</summary>
     public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(
@@ -19,15 +19,14 @@ public sealed class MarkdownView : RichTextBox
     {
         IsReadOnly = true;
         IsUndoEnabled = false;
-        IsDocumentEnabled = false;
+        // 仅允许程序创建的只读代码/表格视口接收选择和滚动；解析器不会创建链接、图片或模型指定的控件。
+        IsDocumentEnabled = true;
         BorderThickness = new Thickness(0);
         Background = Brushes.Transparent;
         Padding = new Thickness(0);
         FocusVisualStyle = null;
         VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
         HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
-        SetResourceReference(FontFamilyProperty, "UiFont");
-        FontSize = 13;
         SetResourceReference(ForegroundProperty, "TextBodyBrush");
         SetResourceReference(SelectionBrushProperty, "ActionFillBrush");
         SetResourceReference(SelectionTextBrushProperty, "InverseTextBrush");
@@ -49,6 +48,9 @@ public sealed class MarkdownView : RichTextBox
     private void RefreshDocument()
     {
         Document = MarkdownDocumentBuilder.Build(Source ?? "", IsMarkdownEnabled);
+        // RichTextBox 接管新文档时会注入左右五 DIP 插入符留白，接管后再恢复正文起点。
+        Document.PagePadding = new(0);
+        if (IsMarkdownEnabled) MarkdownOverflowLayout.Wrap(Document.Blocks, this);
         Document.FontSize = FontSize;
         Document.FontFamily = FontFamily;
         Document.LineHeight = FontSize * (IsMarkdownEnabled ? 1.75 : 1.7);
