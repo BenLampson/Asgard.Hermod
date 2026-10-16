@@ -4540,4 +4540,14 @@ SQL：
   <data name="SshLogWrapToggle" xml:space="preserve"><value>换行</value></data>
   <data name="SshLogSearchPlaceholder" xml:space="preserve"><value>搜索日志</value></data>
   <data name="SshLogSearchShortcut" xml:space="preserve"><value>Ctrl+F</value></data>
+  <data name="DatabaseTraceMetrics" xml:space="preserve"><value>{0:N1} ms  ·  {1:N0} 行  ·  {2}</value></data>
+  <data name="DatabaseTraceCurrentSession" xml:space="preserve"><value>当前 Session</value></data>
+  <data name="DatabaseTraceRetention" xml:space="preserve"><value>最近 {0} 次 · 最多保留 50 次</value></data>
+  <data name="DatabaseTraceFilter" xml:space="preserve"><value>筛选执行类型</value></data>
+  <data name="DatabaseTraceAllTypes" xml:space="preserve"><value>全部类型</value></data>
+  <data name="DatabaseTraceQueries" xml:space="preserve"><value>查询</value></data>
+  <data name="DatabaseTraceSql" xml:space="preserve"><value>SQL</value></data>
+  <data name="DatabaseTraceReturnedDetails" xml:space="preserve"><value>返回详情</value></data>
+  <data name="DatabaseTraceSnapshot" xml:space="preserve"><value>发送时快照</value></data>
+  <data name="DatabaseTraceRestoreHint" xml:space="preserve"><value>将此次 SQL 恢复到编辑器，不执行。</value></data>
 </root>

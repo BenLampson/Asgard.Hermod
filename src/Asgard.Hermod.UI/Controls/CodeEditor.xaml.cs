@@ -82,14 +82,30 @@ public partial class CodeEditor : UserControl
         finally { _applyingCompletion = false; }
     }
     /// <summary>只渲染可视行的行号，避免大值创建完整行号集合。</summary>
-    public CodeEditor() { InitializeComponent(); LogPaint.Attach(Input, LineNumbers); Loaded += (_, _) => UpdateNumbers(); Unloaded += (_, _) => CloseCompletion(); Input.LostKeyboardFocus += (_, _) => CloseCompletion(); Input.PreviewMouseLeftButtonDown += (_, _) => CloseCompletion(); }
+    public CodeEditor() { InitializeComponent(); LogPaint.Attach(Input, LineNumbers); Loaded += (_, _) => UpdateNumbers(); Unloaded += (_, _) => CloseCompletion(); Input.LostKeyboardFocus += (_, _) => CloseCompletion(); Input.PreviewMouseLeftButtonDown += (_, _) => CloseCompletion(); Input.LayoutUpdated += (_, _) => { if (IsSqlWorkspace) UpdateNumbers(); }; }
     private void OnTextChanged(object sender, TextChangedEventArgs args) { UpdateNumbers(); OnCompletionTextChanged(); }
     private void OnScrollChanged(object sender, ScrollChangedEventArgs args) => UpdateNumbers();
     private void OnInputSizeChanged(object sender, SizeChangedEventArgs args) => UpdateNumbers();
+    private string? _numberText;
+    private int[] _numberStarts = [0];
+    private object? _numberLayout;
     private void UpdateNumbers()
     {
         if (Input is null || LineNumbers is null || !Input.IsMeasureValid) return;
         if (IsLogReader) { LineNumbers.Text = ""; return; }
+        if (IsSqlWorkspace)
+        {
+            if (!Input.IsArrangeValid) return;
+            object layout = (Input.Text, Input.VerticalOffset, Input.HorizontalOffset, Input.ViewportHeight, Input.ViewportWidth, Input.TextWrapping, Input.FontSize);
+            if (Equals(_numberLayout, layout)) return;
+            _numberLayout = layout;
+            if (!ReferenceEquals(_numberText, Input.Text)) { _numberText = Input.Text; _numberStarts = LogTextLayout.LineStarts(Input.Text); }
+            var rows = LogTextLayout.VisibleLines(Input, _numberStarts).ToArray();
+            LineNumbers.Text = Input.Text.Length == 0 ? "1" : string.Join(Environment.NewLine, rows.Select(row => row.Start == row.PhysicalStart || Input.TextWrapping == TextWrapping.NoWrap
+                ? row.PhysicalNumber.ToString(System.Globalization.CultureInfo.InvariantCulture) : ""));
+            LineNumbers.RenderTransform = new TranslateTransform(0, rows.Length == 0 ? 0 : rows[0].Bounds.Top - Input.GetRectFromCharacterIndex(0).Top - Input.VerticalOffset);
+            return;
+        }
         int first = Input.GetFirstVisibleLineIndex(), last = Input.GetLastVisibleLineIndex();
         if (first < 0 || last < first) { LineNumbers.Text = ""; return; }
         // 文本替换事件先于滚动视口更新；可视行索引可能仍来自旧缓冲。

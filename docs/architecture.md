@@ -605,3 +605,11 @@ resizing moves removed top rows into local history, while local ConPTY retains i
 existing system-reflow behavior. Explicit terminal line height and PTY grid sizing
 use the same DIP metrics. Offscreen layout tests cover both languages and themes,
 toolbox expansion, multiple consoles and the zero-console state.
+
+The shared `DatabaseExecutionHistory` reads the current Session's bounded memory
+traces through a local collection view. Its 42-DIP context bar, 360-DIP navigation
+and 62-DIP rows follow the execution-history reference. SQL and returned details
+have independent read-only tabs; filtering, selecting and restoring never execute
+a request. Both database modules expose snapshot-specific time, target, duration
+and status. SQL gutter rendering uses actual character rectangles, including
+pixel scroll offsets, instead of WPF line-index estimates at custom line heights.

@@ -4540,4 +4540,14 @@ When signed out, they are encrypted only on this device.</value></data>
   <data name="SshLogWrapToggle" xml:space="preserve"><value>Wrap</value></data>
   <data name="SshLogSearchPlaceholder" xml:space="preserve"><value>Search logs</value></data>
   <data name="SshLogSearchShortcut" xml:space="preserve"><value>Ctrl+F</value></data>
+  <data name="DatabaseTraceMetrics" xml:space="preserve"><value>{0:N1} ms  ·  {1:N0} rows  ·  {2}</value></data>
+  <data name="DatabaseTraceCurrentSession" xml:space="preserve"><value>Current Session</value></data>
+  <data name="DatabaseTraceRetention" xml:space="preserve"><value>Recent {0} · Up to 50 retained</value></data>
+  <data name="DatabaseTraceFilter" xml:space="preserve"><value>Filter execution types</value></data>
+  <data name="DatabaseTraceAllTypes" xml:space="preserve"><value>All types</value></data>
+  <data name="DatabaseTraceQueries" xml:space="preserve"><value>Queries</value></data>
+  <data name="DatabaseTraceSql" xml:space="preserve"><value>SQL</value></data>
+  <data name="DatabaseTraceReturnedDetails" xml:space="preserve"><value>Returned details</value></data>
+  <data name="DatabaseTraceSnapshot" xml:space="preserve"><value>Snapshot at dispatch</value></data>
+  <data name="DatabaseTraceRestoreHint" xml:space="preserve"><value>Restore this SQL to the editor without executing it.</value></data>
 </root>

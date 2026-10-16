@@ -28,7 +28,8 @@ internal static class LogTextLayout
             bool hasNext = next > start && !nextBounds.IsEmpty && nextBounds.Top > bounds.Top + height / 2;
             int end = hasNext ? Math.Min(physicalEnd, next) : physicalEnd;
             while (end > start && text[end - 1] is '\r' or '\n') end--;
-            yield return new(start, end, starts[physical], physical + 1, bounds);
+            // TextBox 的顶部内边距也参与可见字形裁剪；不额外绘制原生文本已跳过的上一行。
+            if (bounds.Bottom > input.Padding.Top) yield return new(start, end, starts[physical], physical + 1, bounds);
             if (!hasNext) yield break;
             start = next; bounds = nextBounds;
         }
