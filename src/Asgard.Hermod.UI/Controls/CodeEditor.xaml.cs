@@ -11,9 +11,13 @@ public partial class CodeEditor : UserControl
     public TextBox TextInputControl => Input;
     private void ApplyLogLayout()
     {
-        if (EditorFrame is null || !IsLogReader) return;
+        if (EditorFrame is null) return;
+        LogPaint.Visibility = IsLogReader ? Visibility.Visible : Visibility.Collapsed; Input.AcceptsTab = !IsLogReader;
+        LineNumbers.Visibility = IsLogReader ? Visibility.Hidden : Visibility.Visible;
+        if (!IsLogReader) { ApplySqlLayout(); return; }
         EditorFrame.CornerRadius = new(0); EditorFrame.BorderThickness = new(0);
-        EditorFrame.SetResourceReference(Border.BackgroundProperty, "DatabaseEditorBrush");
+        EditorFrame.SetResourceReference(Border.BackgroundProperty, "LogBackgroundBrush");
+        Input.Foreground = Brushes.Transparent; LineNumbers.SetResourceReference(TextBlock.ForegroundProperty, "LogGutterBrush");
         GutterColumn.Width = new(68); Input.Margin = new(-2, 0, 0, 0); Input.Padding = new(0, 14, 16, 14);
         if (LineNumbers.Parent is Border gutter) gutter.Padding = new(0, 14, 16, 0);
         LineNumbers.FontSize = 11; LineNumbers.LineHeight = 23; LineNumbers.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
@@ -56,6 +60,17 @@ public partial class CodeEditor : UserControl
     public string SelectedText => Input.SelectedText;
     /// <summary>光标字符位置由调用方定位当前语句。</summary>
     public int CaretIndex => Input.CaretIndex;
+    /// <summary>按真实字符矩形定位日志命中，自定义行高不依赖默认字体的行号估算。</summary>
+    public void RevealCharacter(int index)
+    {
+        if (index < 0 || index >= Input.Text.Length) return;
+        var rect = Input.GetRectFromCharacterIndex(index);
+        if (rect.IsEmpty) return;
+        if (rect.Top < Input.Padding.Top || rect.Bottom > Input.ActualHeight - Input.Padding.Bottom)
+            Input.ScrollToVerticalOffset(Math.Max(0, Input.VerticalOffset + rect.Top - Input.Padding.Top));
+        if (rect.Left < 0 || rect.Right > Input.ViewportWidth)
+            Input.ScrollToHorizontalOffset(Math.Max(0, Input.HorizontalOffset + rect.Left));
+    }
     /// <summary>公共输入控件保持原生选择和键盘焦点。</summary>
     public void FocusInput() => Input.Focus();
     /// <summary>替换当前选区或插入光标处，沿用原生撤销历史；不执行插入的代码。</summary>
@@ -67,32 +82,21 @@ public partial class CodeEditor : UserControl
         finally { _applyingCompletion = false; }
     }
     /// <summary>只渲染可视行的行号，避免大值创建完整行号集合。</summary>
-    public CodeEditor() { InitializeComponent(); Loaded += (_, _) => UpdateNumbers(); Unloaded += (_, _) => CloseCompletion(); Input.LostKeyboardFocus += (_, _) => CloseCompletion(); Input.PreviewMouseLeftButtonDown += (_, _) => CloseCompletion(); }
+    public CodeEditor() { InitializeComponent(); LogPaint.Attach(Input, LineNumbers); Loaded += (_, _) => UpdateNumbers(); Unloaded += (_, _) => CloseCompletion(); Input.LostKeyboardFocus += (_, _) => CloseCompletion(); Input.PreviewMouseLeftButtonDown += (_, _) => CloseCompletion(); }
     private void OnTextChanged(object sender, TextChangedEventArgs args) { UpdateNumbers(); OnCompletionTextChanged(); }
     private void OnScrollChanged(object sender, ScrollChangedEventArgs args) => UpdateNumbers();
     private void OnInputSizeChanged(object sender, SizeChangedEventArgs args) => UpdateNumbers();
     private void UpdateNumbers()
     {
         if (Input is null || LineNumbers is null || !Input.IsMeasureValid) return;
+        if (IsLogReader) { LineNumbers.Text = ""; return; }
         int first = Input.GetFirstVisibleLineIndex(), last = Input.GetLastVisibleLineIndex();
         if (first < 0 || last < first) { LineNumbers.Text = ""; return; }
         // 文本替换事件先于滚动视口更新；可视行索引可能仍来自旧缓冲。
         int count = Input.LineCount;
         if (count < 1) { LineNumbers.Text = ""; return; }
         first = Math.Min(first, count - 1); last = Math.Min(last, count - 1);
-        if (IsLogReader && Input.TextWrapping != TextWrapping.NoWrap)
-        {
-            var numbers = new List<string>();
-            for (int line = first; line <= last && numbers.Count < 200; line++)
-            {
-                int start = Input.GetCharacterIndexFromLineIndex(line);
-                // 自动折行的续行不伪造新的快照行号；原始字符与选区保持不变。
-                numbers.Add(start == 0 || Input.Text[start - 1] == '\n'
-                    ? (1 + Input.Text.AsSpan(0, start).Count('\n')).ToString(System.Globalization.CultureInfo.InvariantCulture) : "");
-            }
-            LineNumbers.Text = string.Join(Environment.NewLine, numbers);
-        }
-        else LineNumbers.Text = string.Join(Environment.NewLine, Enumerable.Range(first + 1, Math.Min(200, last - first + 1)).Select(number => number.ToString(System.Globalization.CultureInfo.InvariantCulture)));
+        LineNumbers.Text = string.Join(Environment.NewLine, Enumerable.Range(first + 1, Math.Min(200, last - first + 1)).Select(number => number.ToString(System.Globalization.CultureInfo.InvariantCulture)));
         var rect = Input.GetRectFromCharacterIndex(Input.GetCharacterIndexFromLineIndex(first));
         LineNumbers.RenderTransform = new TranslateTransform(0, IsSqlWorkspace ? first * 24 - Input.VerticalOffset : rect.IsEmpty ? 0 : rect.Y - Input.Padding.Top);
     }

@@ -75,4 +75,10 @@
     <Color x:Key="AgentAccentColor">#79A4FF</Color>
     <Color x:Key="AgentSelectedColor">#253656</Color>
     <Color x:Key="AgentSuccessColor">#79D7B3</Color>
+    <SolidColorBrush x:Key="LogBackgroundBrush" Color="#141B25" />
+    <SolidColorBrush x:Key="LogInkBrush" Color="#D7E0ED" />
+    <SolidColorBrush x:Key="LogWarningBrush" Color="#FFC58F" />
+    <SolidColorBrush x:Key="LogErrorBrush" Color="#FDA29B" />
+    <SolidColorBrush x:Key="LogGutterBrush" Color="#6E7F97" />
+    <SolidColorBrush x:Key="LogSearchBackgroundBrush" Color="#141D29" />
 </ResourceDictionary>

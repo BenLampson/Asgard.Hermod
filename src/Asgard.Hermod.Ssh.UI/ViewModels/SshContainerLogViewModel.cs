@@ -3,7 +3,7 @@ using Asgard.Hermod.Agent;
 namespace Asgard.Hermod.Ssh.UI.ViewModels;
 
 /// <summary>一个容器一份独立日志文档；只使用认证连接的 exec 通道，不共享监测选中状态。</summary>
-public sealed class SshContainerLogViewModel : ObservableObject, IDisposable
+public sealed partial class SshContainerLogViewModel : ObservableObject, IDisposable
 {
     private ISshWorkspaceConnection? _connection;
     private CancellationTokenSource? _reading;
@@ -11,9 +11,9 @@ public sealed class SshContainerLogViewModel : ObservableObject, IDisposable
     private bool _disposed;
 
     /// <summary>容器身份在打开时固定，其他行的选择不会重定向该窗口。</summary>
-    public SshContainerLogViewModel(SshMonitorContainerItem container, string host, ISshWorkspaceConnection connection, IAgentClient? client)
+    public SshContainerLogViewModel(SshMonitorContainerItem container, string host, ISshWorkspaceConnection connection, IAgentClient? client, string? sourceName = null)
     {
-        Container = container; Host = host; _connection = connection;
+        Container = container; Host = host; SourceName = string.IsNullOrWhiteSpace(sourceName) ? host : sourceName; _connection = connection;
         Assistant = new(client, this);
         RefreshCommand = new AsyncRelayCommand(_ => RefreshAsync(), _ => !_disposed && !IsLoading && _connection is not null);
         CancelCommand = new RelayCommand(_ => _reading?.Cancel(), _ => IsLoading);
@@ -47,7 +47,7 @@ public sealed class SshContainerLogViewModel : ObservableObject, IDisposable
     /// <summary>防止重复读取。</summary>
     public bool IsLoading { get; private set { if (SetProperty(ref field, value)) RefreshCommands(); } }
     /// <summary>安全状态或读取错误，失败时保留上一次快照。</summary>
-    public string Status { get; private set => SetProperty(ref field, value); } = "";
+    public string Status { get; private set { if (SetProperty(ref field, value)) RefreshDisplay(); } } = "";
     /// <summary>独立的日志分析会话。</summary>
     public SshLogAnalysisViewModel Assistant { get; }
     /// <summary>兼容旧展示偏好；独立日志阅读器不再以此占用正文宽度。</summary>
@@ -68,7 +68,7 @@ public sealed class SshContainerLogViewModel : ObservableObject, IDisposable
         if (_disposed || IsLoading || _connection is not { } connection) return;
         long revision = _revision; int lines = TailLines;
         using var reading = new CancellationTokenSource(TimeSpan.FromSeconds(15)); _reading = reading;
-        IsLoading = true; Status = Text.Get("SshMonitorLogLoading");
+        _readFailed = false; _localFailed = false; IsLoading = true; Status = Text.Get("SshMonitorLogLoading");
         try
         {
             var result = await connection.ExecuteCommandAsync(SshMonitorDetailReader.ContainerLogCommand(Container.Id, lines), reading.Token).WaitAsync(reading.Token);
@@ -84,7 +84,7 @@ public sealed class SshContainerLogViewModel : ObservableObject, IDisposable
             if (result.Output.Length == 0) Status = Text.Get("SshMonitorLogEmpty");
         }
         catch (OperationCanceledException) { if (!_disposed && revision == _revision) Status = Text.Get("SshLogReadCanceled"); }
-        catch (Exception error) { if (!_disposed && revision == _revision) Status = Text.Error(error, "SshMonitorLogFailed"); }
+        catch (Exception error) { if (!_disposed && revision == _revision) { _readFailed = true; Status = Text.Error(error, "SshMonitorLogFailed"); } }
         finally { if (ReferenceEquals(_reading, reading)) _reading = null; IsLoading = false; }
     }
 
@@ -94,9 +94,9 @@ public sealed class SshContainerLogViewModel : ObservableObject, IDisposable
         _revision++; _connection = null; _reading?.Cancel(); Status = Text.Get("SshLogDisconnected");
         OnPropertyChanged(nameof(IsConnected)); RefreshCommands();
     }
-    private void RefreshCommands() { OnPropertyChanged(nameof(CanChangeRange)); RefreshCommand?.NotifyCanExecuteChanged(); CancelCommand?.NotifyCanExecuteChanged(); }
+    private void RefreshCommands() { OnPropertyChanged(nameof(CanChangeRange)); RefreshCommand?.NotifyCanExecuteChanged(); CancelCommand?.NotifyCanExecuteChanged(); RefreshDisplay(); }
     /// <summary>剪贴板或本地导出失败不展示系统路径及异常细节。</summary>
-    public void ReportLocalError() => Status = Text.Get("SshLogLocalFailed");
+    public void ReportLocalError() { _localFailed = true; Status = Text.Get("SshLogLocalFailed"); }
     /// <inheritdoc />
     public void Dispose() { if (_disposed) return; _disposed = true; Disconnect(); Assistant.Dispose(); }
 }

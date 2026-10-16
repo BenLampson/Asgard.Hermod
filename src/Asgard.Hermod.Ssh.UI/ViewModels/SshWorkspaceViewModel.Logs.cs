@@ -20,7 +20,7 @@ public sealed partial class SshWorkspaceViewModel
     {
         if (IsClosed || !IsConnected || _connection is not ISshWorkspaceConnection connection) return;
         var document = _logDocuments.FirstOrDefault(item => item.IsConnected && item.Container.Id == container.Id);
-        if (document is null) { document = new(container, RemoteIdentity, connection, _logClient); _logDocuments.Add(document); }
+        if (document is null) { document = new(container, RemoteIdentity, connection, _logClient, Name); _logDocuments.Add(document); }
         LogWindowRequested?.Invoke(this, document);
     }
 

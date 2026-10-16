@@ -7,6 +7,9 @@ public partial class SshLogCaption : UserControl
 {
     /// <summary>可完全离屏渲染的日志标题。</summary>
     public SshLogCaption() => InitializeComponent();
+    private void OnSourceDetails(object sender, RoutedEventArgs args) => SourcePopup.IsOpen = true;
+    private void OnMinimize(object sender, RoutedEventArgs args) { if (Window.GetWindow(this) is { } window) SystemCommands.MinimizeWindow(window); }
+    private void OnClose(object sender, RoutedEventArgs args) { if (Window.GetWindow(this) is { } window) SystemCommands.CloseWindow(window); }
     private void OnAgent(object sender, RoutedEventArgs args)
     {
         if (DataContext is not SshContainerLogViewModel document) return;

@@ -4521,4 +4521,23 @@ When signed out, they are encrypted only on this device.</value></data>
   <data name="AdditionalSettings" xml:space="preserve"><value>Other settings</value></data>
   <data name="ChatBusyComposerHint" xml:space="preserve"><value>Reply in progress · You can draft your next question</value></data>
   <data name="AgentModelHiddenKey" xml:space="preserve"><value>••••••••••••••••</value></data>
+  <data name="SshLogSourceCaption" xml:space="preserve"><value>{0} / Docker</value></data>
+  <data name="SshLogEncodingFont" xml:space="preserve"><value>UTF-8 · {0} px</value></data>
+  <data name="SshLogSnapshotComplete" xml:space="preserve"><value>Snapshot {0:T} · Last {1} lines · Fully read</value></data>
+  <data name="SshLogSnapshotTruncated" xml:space="preserve"><value>Snapshot {0:T} · Last {1} lines · Output truncated</value></data>
+  <data name="SshLogSnapshotEmpty" xml:space="preserve"><value>Snapshot {0:T} · Last {1} lines · No entries</value></data>
+  <data name="SshLogSnapshotTime" xml:space="preserve"><value>{0:G}</value></data>
+  <data name="SshLogNoSnapshot" xml:space="preserve"><value>No log snapshot</value></data>
+  <data name="SshLogNoSnapshotDetail" xml:space="preserve"><value>Refresh to read a snapshot from this container.</value></data>
+  <data name="SshLogLoadingDetail" xml:space="preserve"><value>Reading a snapshot. You can stop this request.</value></data>
+  <data name="SshLogEmptyDetail" xml:space="preserve"><value>This snapshot contains no log entries.</value></data>
+  <data name="SshLogReadFailedNoSnapshot" xml:space="preserve"><value>Read failed</value></data>
+  <data name="SshLogRefreshFailedRetained" xml:space="preserve"><value>Read failed · Previous snapshot kept</value></data>
+  <data name="SshLogSourceDetails" xml:space="preserve"><value>Log source</value></data>
+  <data name="SshLogContainerId" xml:space="preserve"><value>Container ID</value></data>
+  <data name="SshLogDocumentId" xml:space="preserve"><value>Document ID</value></data>
+  <data name="SshLogSnapshotLabel" xml:space="preserve"><value>Snapshot</value></data>
+  <data name="SshLogWrapToggle" xml:space="preserve"><value>Wrap</value></data>
+  <data name="SshLogSearchPlaceholder" xml:space="preserve"><value>Search logs</value></data>
+  <data name="SshLogSearchShortcut" xml:space="preserve"><value>Ctrl+F</value></data>
 </root>

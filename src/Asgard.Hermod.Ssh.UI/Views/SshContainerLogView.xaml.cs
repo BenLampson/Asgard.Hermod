@@ -25,6 +25,7 @@ public partial class SshContainerLogView : UserControl, IDisposable
         if (_model is not null) _model.PropertyChanged -= OnDocumentChanged;
         _model = args.NewValue as SshContainerLogViewModel;
         if (_model is not null) _model.PropertyChanged += OnDocumentChanged;
+        ApplyFont();
         Find(false);
     }
     /// <summary>供离屏验收与宿主使用的原生只读文本。</summary>
@@ -32,6 +33,7 @@ public partial class SshContainerLogView : UserControl, IDisposable
     private void OnDocumentChanged(object? sender, PropertyChangedEventArgs args)
     {
         if (args.PropertyName == nameof(SshContainerLogViewModel.WrapLines)) LogOutput.TextWrapping = _model?.WrapLines == true ? TextWrapping.Wrap : TextWrapping.NoWrap;
+        else if (args.PropertyName == nameof(SshContainerLogViewModel.LogFontSize)) ApplyFont();
     }
     private void OnMore(object sender, RoutedEventArgs args)
     {
@@ -50,8 +52,14 @@ public partial class SshContainerLogView : UserControl, IDisposable
     private void OnFontDecrease(object sender, RoutedEventArgs args) => SetFont(Math.Max(10, LogOutput.FontSize - 1));
     private void SetFont(double size)
     {
+        if (_model is not null) _model.LogFontSize = (int)size;
+        else ApplyFont();
+    }
+    private void ApplyFont()
+    {
+        int size = _model?.LogFontSize ?? 13;
         LogOutput.FontSize = size; TextBlock.SetLineHeight(LogOutput, size + 10);
-        var numbers = (TextBlock)LogEditor.FindName("LineNumbers"); numbers.LineHeight = size + 10;
+        var numbers = (TextBlock)LogEditor.FindName("LineNumbers"); numbers.FontSize = Math.Max(11, size - 2); numbers.LineHeight = size + 10;
     }
     private async void OnTailChanged(object sender, SelectionChangedEventArgs args)
     {
@@ -86,7 +94,7 @@ public partial class SshContainerLogView : UserControl, IDisposable
         {
             _matchIndex = advance ? (_matchIndex + (forward ? 1 : -1) + _matches.Count) % _matches.Count : 0;
             LogOutput.Select(_matches[_matchIndex], query.Length);
-            int line = LogOutput.GetLineIndexFromCharacterIndex(_matches[_matchIndex]); if (line >= 0) LogOutput.ScrollToLine(line);
+            LogEditor.RevealCharacter(_matches[_matchIndex]);
         }
         else LogOutput.Select(Math.Min(LogOutput.SelectionStart, text.Length), 0);
         MatchCount.Text = Text.Format("SshSearchMatches", _matchIndex + 1, _matches.Count);

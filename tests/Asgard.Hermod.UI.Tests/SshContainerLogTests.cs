@@ -22,7 +22,7 @@ public sealed class SshContainerLogTests(WpfTestFixture fixture)
     public Task WindowContentRendersWithoutShowingDesktop(string language, UiTheme theme) => fixture.RunOffscreenAsync(async () =>
     {
         var previous = CultureInfo.CurrentUICulture; var previousDefault = CultureInfo.DefaultThreadCurrentUICulture;
-        Text.Initialize(language, CultureInfo.InvariantCulture);
+        Text.SetApplicationCulture(CultureInfo.GetCultureInfo(language));
         var themes = new ThemeService(Application.Current.Resources); themes.SetTheme(theme);
         var connection = Connection(); var client = new Client();
         connection.Handler = (_, _) => Task.FromResult(new SshCommandResult(PreviewLog(), 0, false));
@@ -55,7 +55,7 @@ public sealed class SshContainerLogTests(WpfTestFixture fixture)
             Capture(root, $"container-logs-compact-{language}-{theme}");
             Assert.All(Application.Current.Windows.Cast<Window>(), item => Assert.False(item.IsVisible));
         }
-        finally { themes.SetTheme(UiTheme.Light); CultureInfo.CurrentUICulture = previous; CultureInfo.DefaultThreadCurrentUICulture = previousDefault; }
+        finally { themes.SetTheme(UiTheme.Light); Text.SetApplicationCulture(null); CultureInfo.CurrentUICulture = previous; CultureInfo.DefaultThreadCurrentUICulture = previousDefault; }
     });
 
     /// <summary>独立文档使用完整 ID，刷新失败隐藏 stderr 且保留最后成功快照。</summary>
@@ -162,7 +162,7 @@ public sealed class SshContainerLogTests(WpfTestFixture fixture)
     }
     private static void Capture(FrameworkElement view, string name)
     {
-        string? directory = Environment.GetEnvironmentVariable("HERMOD_UI_PREVIEW_DIR"); if (directory is null) return;
+        string? directory = Environment.GetEnvironmentVariable("HERMOD_OFFSCREEN_OUTPUT") ?? Environment.GetEnvironmentVariable("HERMOD_UI_PREVIEW_DIR"); if (directory is null) return;
         Directory.CreateDirectory(directory);
         var bitmap = new RenderTargetBitmap((int)view.ActualWidth, (int)view.ActualHeight, 96, 96, PixelFormats.Pbgra32); bitmap.Render(view);
         var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap)); using var stream = File.Create(Path.Combine(directory, name + ".png")); encoder.Save(stream);

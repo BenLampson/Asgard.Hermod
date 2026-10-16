@@ -201,6 +201,18 @@ and explicit key clearing commits immediately. Each edit invalidates a real,
 cancellable minimal connection test; stale replies cannot restore its status.
 Old editors compare both original profile and owner epoch before saving.
 
+Container log readers retain the native read-only TextBox for exact selection,
+copy and export. A bounded visible-line layer paints whole WARNING/ERROR rows
+and snapshot line numbers without rewriting the buffer. Custom 23-DIP line
+height makes WPF's default-font line-index helpers unreliable; log layout,
+wrapped continuations and search use native character rectangles and point
+queries instead. Glyph alignment is checked against native TextBox rendering.
+The 48/40/24 caption/toolbar/footer frame keeps errors and retry in the caption,
+source IDs in an on-demand details view, and successful snapshot metadata in
+the footer. Loading, a failed first read and a successful empty snapshot remain
+distinct; failed refreshes retain the previous text, range and capture time.
+
+
 SQL adds a Manual/Automatic selector in the shared composer's options slot.
 Manual remains the default and retains insertion and explicit execution
 confirmation. Automatic enables at most four read-only query tool calls per
