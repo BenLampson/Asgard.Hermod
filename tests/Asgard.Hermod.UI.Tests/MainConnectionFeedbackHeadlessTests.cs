@@ -10,9 +10,17 @@ namespace Asgard.Hermod.UI.Tests;
 public sealed class MainConnectionFeedbackHeadlessTests(WpfTestFixture fixture)
 {
     [Theory]
-    [InlineData("zh-Hans", UiTheme.Light)]
-    [InlineData("en", UiTheme.Dark)]
-    public Task FirstFailureStaysInReferenceCardAndExplicitRetryCreatesFreshPage(string language, UiTheme theme) => fixture.RunOffscreenAsync(async () =>
+    [InlineData("zh-Hans", UiTheme.Light, 1360, 818, 1)]
+    [InlineData("en", UiTheme.Dark, 1360, 818, 1)]
+    [InlineData("en", UiTheme.Light, 3840, 2160, 1)]
+    [InlineData("en", UiTheme.Light, 1920, 1080, 2)]
+    [InlineData("en", UiTheme.Dark, 3840, 2160, 1)]
+    [InlineData("en", UiTheme.Dark, 1920, 1080, 2)]
+    [InlineData("zh-Hans", UiTheme.Light, 3840, 2160, 1)]
+    [InlineData("zh-Hans", UiTheme.Light, 1920, 1080, 2)]
+    [InlineData("zh-Hans", UiTheme.Dark, 3840, 2160, 1)]
+    [InlineData("zh-Hans", UiTheme.Dark, 1920, 1080, 2)]
+    public Task FirstFailureStaysInReferenceCardAndExplicitRetryCreatesFreshPage(string language, UiTheme theme, double width, double height, double dpi) => fixture.RunOffscreenAsync(async () =>
     {
         Text.SetApplicationCulture(CultureInfo.GetCultureInfo(language));
         try
@@ -21,24 +29,24 @@ public sealed class MainConnectionFeedbackHeadlessTests(WpfTestFixture fixture)
             await using var shell = new ShellViewModel(source, new FakeInstanceEditor(), new Terminals(), themes, pageFactory: pages);
             shell.Main.SelectedNavigation = shell.Main.Navigation[1];
             using var bindings = new WpfBindingTrace(); var view = new AppShellView { DataContext = shell };
-            await Layout(view); Assert.Null(shell.Main.OpenFeedback);
+            await Layout(view, width, height, dpi); Assert.Null(shell.Main.OpenFeedback);
             var main = Assert.Single(WindowTestVisuals.Descendants<MainWorkspaceView>(view));
             var overlay = (MainConnectionFeedback)main.FindName("OpenFeedback"); Assert.Equal(Visibility.Collapsed, overlay.Visibility);
             int activated = 0; shell.Workspace.PageActivated += _ => activated++;
             shell.Workspace.OpenInstance(new(source.GetInstances()[0])); var first = pages.Created[0];
-            var feedback = Assert.IsType<MainConnectionFeedbackViewModel>(shell.Main.OpenFeedback); await Layout(view);
+            var feedback = Assert.IsType<MainConnectionFeedbackViewModel>(shell.Main.OpenFeedback); await Layout(view, width, height, dpi);
             Assert.Equal(Visibility.Visible, overlay.Visibility); Assert.Equal(0, activated);
             var card = (Border)overlay.FindName("ConnectionCard"); Assert.Equal(520, card.ActualWidth); Assert.Equal(new Thickness(26), card.Padding);
             Assert.Equal(new CornerRadius(8), card.CornerRadius); Assert.Equal(18, ((TextBlock)overlay.FindName("FeedbackTitle")).FontSize);
             Capture(view, $"main-opening-{language}-{theme}");
-            first.Complete(false); await shell.Workspace.InitializePageAsync(first); await Layout(view);
+            first.Complete(false); await shell.Workspace.InitializePageAsync(first); await Layout(view, width, height, dpi);
             Assert.Same(feedback, shell.Main.OpenFeedback); Assert.True(feedback.HasError); Assert.Equal(1, first.Releases);
             Assert.Single(shell.Workspace.Tabs); Assert.Equal(0, activated); Assert.Equal("mysql.prod.internal:3306", feedback.Address);
             Assert.Equal(Visibility.Collapsed, shell.Main.ErrorVisibility); Assert.DoesNotContain("unsafe", feedback.Detail);
             Capture(view, $"main-open-failed-{language}-{theme}");
             feedback.RetryCommand.Execute(null); Assert.Equal(2, pages.Created.Count); Assert.False(feedback.RetryCommand.CanExecute(null));
             feedback.RetryCommand.Execute(null); Assert.Equal(2, pages.Created.Count);
-            var next = pages.Created[1]; next.Complete(true); await shell.Workspace.InitializePageAsync(next); await Layout(view);
+            var next = pages.Created[1]; next.Complete(true); await shell.Workspace.InitializePageAsync(next); await Layout(view, width, height, dpi);
             Assert.Null(shell.Main.OpenFeedback); Assert.Equal(Visibility.Collapsed, overlay.Visibility); Assert.Equal(1, activated);
             Assert.Empty(bindings.Messages); Assert.Null(Window.GetWindow(view)); Assert.Null(PresentationSource.FromVisual(view));
         }
@@ -99,19 +107,23 @@ public sealed class MainConnectionFeedbackHeadlessTests(WpfTestFixture fixture)
     {
         public ITerminalWorkspaceSession OpenLocal() => throw new InvalidOperationException();
     }
-    private static async Task Layout(FrameworkElement view)
+    private static async Task Layout(FrameworkElement view, double width, double height, double dpi)
     {
-        view.Resources.MergedDictionaries.Add(Application.Current.Resources); view.Measure(new(1360, 818)); view.Arrange(new(0, 0, 1360, 818)); view.UpdateLayout();
-        await WpfTestFixture.DrainDispatcherAsync(); view.UpdateLayout();
+        if (view.Resources.MergedDictionaries.Count == 0) view.Resources.MergedDictionaries.Add(Application.Current.Resources);
+        for (int pass = 0; pass < 3; pass++)
+        {
+            view.Measure(new(width, height)); view.Arrange(new(0, 0, width, height)); view.UpdateLayout();
+            VisualTreeHelper.SetRootDpi(view, new(1, 1)); VisualTreeHelper.SetRootDpi(view, new(dpi, dpi)); await WpfTestFixture.DrainDispatcherAsync();
+        }
+        Assert.Equal(dpi, VisualTreeHelper.GetDpi(view).DpiScaleX);
     }
     private static void Capture(FrameworkElement view, string name)
     {
         if (Environment.GetEnvironmentVariable("HERMOD_OFFSCREEN_OUTPUT") is not { } directory) return;
         Directory.CreateDirectory(directory);
-        foreach (int scale in new[] { 1, 2 })
-        {
-            var bitmap = new RenderTargetBitmap(1360 * scale, 818 * scale, 96 * scale, 96 * scale, PixelFormats.Pbgra32); bitmap.Render(view);
-            var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap)); using var stream = File.Create(Path.Combine(directory, $"{name}-{scale * 100}pct.png")); encoder.Save(stream);
-        }
+        var dpi = VisualTreeHelper.GetDpi(view);
+        var bitmap = new RenderTargetBitmap((int)(view.ActualWidth * dpi.DpiScaleX), (int)(view.ActualHeight * dpi.DpiScaleY), dpi.PixelsPerInchX, dpi.PixelsPerInchY, PixelFormats.Pbgra32); bitmap.Render(view);
+        var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
+        using var stream = File.Create(Path.Combine(directory, $"{name}-{view.ActualWidth}x{view.ActualHeight}-{dpi.DpiScaleX * 100}pct.png")); encoder.Save(stream);
     }
 }

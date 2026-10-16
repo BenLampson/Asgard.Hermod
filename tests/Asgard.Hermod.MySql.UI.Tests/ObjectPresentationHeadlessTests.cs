@@ -54,11 +54,19 @@ public sealed class ObjectPresentationHeadlessTests(WpfTestFixture fixture)
     [InlineData("zh-Hans", UiTheme.Light, 1200, 1)]
     [InlineData("en", UiTheme.Dark, 520, 1)]
     [InlineData("zh-Hans", UiTheme.Dark, 1920, 2)]
+    [InlineData("en", UiTheme.Light, 3840, 1)]
+    [InlineData("en", UiTheme.Light, 1920, 2)]
+    [InlineData("en", UiTheme.Dark, 3840, 1)]
+    [InlineData("en", UiTheme.Dark, 1920, 2)]
+    [InlineData("zh-Hans", UiTheme.Light, 3840, 1)]
+    [InlineData("zh-Hans", UiTheme.Light, 1920, 2)]
+    [InlineData("zh-Hans", UiTheme.Dark, 3840, 1)]
     public Task ObjectGeometryAndVisibleActionsMatchReference(string language, UiTheme theme, double width, double dpi) => fixture.RunOffscreenAsync(async () =>
     {
         Text.SetApplicationCulture(CultureInfo.GetCultureInfo(language)); new ThemeService(Application.Current.Resources).SetTheme(theme);
         try
         {
+            double height = width >= 3840 ? 2160 : dpi > 1 ? 1080 : 800;
             var server = new TestMySql(); await using var model = new MySqlTabViewModel("users", "app", MySqlObjectKind.Table, server, TestMySql.Connection, new TestMySqlDialogs());
             await model.ReadAsync(); var view = new MySqlTabView { DataContext = model }; var root = new Border { Child = view };
             root.Resources.MergedDictionaries.Add(Application.Current.Resources); root.Background = (Brush)view.FindResource("SurfaceBrush");
@@ -69,7 +77,7 @@ public sealed class ObjectPresentationHeadlessTests(WpfTestFixture fixture)
             var toolbar = (Grid)view.FindName("ObjectToolbar"); Assert.Equal(52, toolbar.ActualHeight); Assert.Equal(92, toolbar.TranslatePoint(new(), root).Y);
             var grid = Assert.Single(WindowTestVisuals.Descendants<DataGrid>(view), item => item.Name == "ResultGrid");
             Assert.Equal(36, grid.ColumnHeaderHeight); Assert.Equal(42, grid.RowHeight); Assert.Equal(new Point(20, 144), grid.TranslatePoint(new(), root));
-            var footer = (Grid)view.FindName("DataActions"); Assert.Equal(40, footer.ActualHeight); Assert.Equal(760, footer.TranslatePoint(new(), root).Y);
+            var footer = (Grid)view.FindName("DataActions"); Assert.Equal(40, footer.ActualHeight); Assert.Equal(height - 40, footer.TranslatePoint(new(), root).Y);
             Assert.Equal(model.ObjectFooterText, ((TextBlock)view.FindName("FooterStatus")).Text);
             foreach (var button in WindowTestVisuals.Descendants<Button>(root).Where(IsShown))
             {
@@ -93,7 +101,7 @@ public sealed class ObjectPresentationHeadlessTests(WpfTestFixture fixture)
             {
                 for (int pass = 0; pass < 3; pass++)
                 {
-                    root.Measure(new(width, 800)); root.Arrange(new(0, 0, width, 800)); root.UpdateLayout();
+                    root.Measure(new(width, height)); root.Arrange(new(0, 0, width, height)); root.UpdateLayout();
                     VisualTreeHelper.SetRootDpi(root, new(1, 1)); VisualTreeHelper.SetRootDpi(root, new(dpi, dpi)); await WpfTestFixture.DrainDispatcherAsync();
                 }
                 Assert.Equal(dpi, VisualTreeHelper.GetDpi(root).DpiScaleX);
@@ -101,7 +109,7 @@ public sealed class ObjectPresentationHeadlessTests(WpfTestFixture fixture)
             void Capture(string section)
             {
                 string? directory = Environment.GetEnvironmentVariable("HERMOD_OFFSCREEN_OUTPUT"); if (directory is null) return; Directory.CreateDirectory(directory);
-                var bitmap = new RenderTargetBitmap((int)(width * dpi), (int)(800 * dpi), dpi * 96, dpi * 96, PixelFormats.Pbgra32); bitmap.Render(root);
+                var bitmap = new RenderTargetBitmap((int)(width * dpi), (int)(height * dpi), dpi * 96, dpi * 96, PixelFormats.Pbgra32); bitmap.Render(root);
                 var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
                 using var output = File.Create(Path.Combine(directory, $"mysql-object-{section}-{language}-{theme}-{width}-{dpi}.png")); encoder.Save(output);
             }

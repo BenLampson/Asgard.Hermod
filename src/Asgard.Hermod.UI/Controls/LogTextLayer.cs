@@ -21,6 +21,10 @@ public sealed class LogTextLayer : FrameworkElement
     public static readonly DependencyProperty GutterBrushProperty = DependencyProperty.Register(nameof(GutterBrush), typeof(Brush), typeof(LogTextLayer), new FrameworkPropertyMetadata(Brushes.Gray, FrameworkPropertyMetadataOptions.AffectsRender));
     /// <summary>行号画刷。</summary>
     public Brush GutterBrush { get => (Brush)GetValue(GutterBrushProperty); set => SetValue(GutterBrushProperty, value); }
+    /// <summary>选区与搜索命中底色；输入焦点移到搜索框后仍保留阅读位置。</summary>
+    public static readonly DependencyProperty SelectionBrushProperty = DependencyProperty.Register(nameof(SelectionBrush), typeof(Brush), typeof(LogTextLayer), new FrameworkPropertyMetadata(Brushes.Transparent, FrameworkPropertyMetadataOptions.AffectsRender));
+    /// <summary>当前主题的日志选区颜色。</summary>
+    public Brush SelectionBrush { get => (Brush)GetValue(SelectionBrushProperty); set => SetValue(SelectionBrushProperty, value); }
     private TextBox? _input;
     private TextBlock? _numbers;
     private string? _text;
@@ -32,9 +36,10 @@ public sealed class LogTextLayer : FrameworkElement
     {
         IsHitTestVisible = false; ClipToBounds = true;
         SetResourceReference(BodyBrushProperty, "LogInkBrush"); SetResourceReference(WarningBrushProperty, "LogWarningBrush"); SetResourceReference(ErrorBrushProperty, "LogErrorBrush"); SetResourceReference(GutterBrushProperty, "LogGutterBrush");
+        SetResourceReference(SelectionBrushProperty, "LogSelectionBrush");
     }
     /// <summary>只连接同一编辑器拥有的输入控件，不订阅全局事件。</summary>
-    internal void Attach(TextBox input, TextBlock numbers) { _input = input; _numbers = numbers; input.LayoutUpdated += OnLayoutUpdated; }
+    internal void Attach(TextBox input, TextBlock numbers) { _input = input; _numbers = numbers; input.LayoutUpdated += OnLayoutUpdated; input.SelectionChanged += (_, _) => InvalidateVisual(); }
     /// <summary>跨显示器缩放变化后重新按目标 DPI 绘制字形。</summary>
     protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi) { base.OnDpiChanged(oldDpi, newDpi); _layout = null; InvalidateVisual(); }
     private void OnLayoutUpdated(object? sender, EventArgs args)
@@ -57,6 +62,7 @@ public sealed class LogTextLayer : FrameworkElement
         foreach (var line in LogTextLayout.VisibleLines(input, _starts))
         {
             int start = line.Start, end = line.End;
+            DrawSelection(drawingContext, input, line);
             if (_numbers is { } numbers && (input.TextWrapping == TextWrapping.NoWrap || start == line.PhysicalStart))
             {
                 var number = new FormattedText(line.PhysicalNumber.ToString(CultureInfo.InvariantCulture), CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
@@ -88,6 +94,24 @@ public sealed class LogTextLayer : FrameworkElement
             drawingContext.Pop();
         }
         drawingContext.Pop();
+    }
+    private void DrawSelection(DrawingContext drawing, TextBox input, LogDisplayLine line)
+    {
+        if (input.SelectionLength == 0) return;
+        int from = Math.Max(line.Start, input.SelectionStart), to = Math.Min(line.End, input.SelectionStart + input.SelectionLength);
+        if (from >= to) return;
+        var point = input.TranslatePoint(line.Bounds.TopLeft, this);
+        double right = Math.Min(ActualWidth, input.TranslatePoint(new Point(input.ViewportWidth, 0), this).X);
+        // 完整可见行沿用 PEN 的整行底色；部分选择严格使用原生字符矩形，不把命中扩成整行。
+        if (from == line.Start && to == line.End) drawing.DrawRectangle(SelectionBrush, null, new Rect(0, point.Y, Math.Max(0, right), line.Bounds.Height));
+        else
+        {
+            var first = input.GetRectFromCharacterIndex(from); var last = input.GetRectFromCharacterIndex(to - 1, true);
+            if (first.IsEmpty || last.IsEmpty) return;
+            double left = Math.Max(input.TranslatePoint(new Point(2, 0), this).X, input.TranslatePoint(first.TopLeft, this).X);
+            right = Math.Min(right, input.TranslatePoint(last.TopRight, this).X);
+            if (right > left) drawing.DrawRectangle(SelectionBrush, null, new Rect(left, point.Y, right - left, line.Bounds.Height));
+        }
     }
     private Brush LineBrush(ReadOnlySpan<char> header)
     {

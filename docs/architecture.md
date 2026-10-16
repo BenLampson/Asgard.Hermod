@@ -658,3 +658,48 @@ never issue another request. The selected field card preserves original comments
 and expressions. Missing legacy metadata is explicitly reported rather than
 inferred from display text. Its 13-DIP medium code title uses the bundled genuine
 JetBrains Mono Medium face at the same pinned upstream revision as Regular.
+
+
+Object pages use the shared `DatabaseObjectHeader` and inherited navigation
+command. Their body uses 58-DIP identity, 34-DIP sections, 52-DIP toolbar and
+40-DIP footer; data grids use a 36-DIP single-line header and 42-DIP rows. The
+current SQL workspace's 44/36/36-DIP caption/session/document hierarchy remains
+consistent when switching between a script and an object. Structure refresh
+reads only metadata and DDL, preserving data snapshots and cell drafts. Paging
+labels and row numbers use the last successful offset and size. Failed next or
+previous requests retry the same target rather than skipping another page.
+
+`SqlErrorLocation` contains numeric statement, UTF-16 offset and one-based
+line/column coordinates. PostgreSQL's structured character position is converted
+across surrogate pairs and trimmed statement boundaries. MySQL reports the
+failed statement start when the protocol provides no precise position; raw
+server error text is never parsed for coordinates. `SqlDocumentAnchor` maps a
+current statement, selection or client DELIMITER wrapper back to its original
+editor document. Any later edit invalidates that anchor. Structured messages,
+copy and CSV export consume the same local safe snapshot without re-execution.
+
+`AgentPanel` projects consecutive ordinary tool messages into one compact
+activity summary. The projection preserves original message references and does
+not modify the conversation archive, protocol history or execution permissions.
+Approval messages, pending approval states, errors and recovery actions are
+always separate. A transition into a pending state immediately splits the group.
+A group retains its own expansion state on the first original message, separate
+from each step's evidence expansion. Status and duration use stable states and
+measured times; mixed failures are never summarized as all successful. Weak
+subscriptions allow removed projections to be collected. Inherited message and
+conversation scopes keep nested template bindings stable during regrouping.
+
+`LogTextLayer` paints selection from native TextBox character rectangles before
+painting semantic text. Full selected lines use the reference's row tint,
+including the gutter; partial selections preserve exact character bounds. The
+native input still owns selection, copying, accessibility and frozen attachments.
+Search focus therefore does not hide the current match or replace warning/error
+colors with native selection text. DPI changes invalidate the glyph layout.
+
+Offscreen acceptance uses real WPF controls and `SetRootDpi`, without constructing
+a Window or a PresentationSource. Physical 3840x2160 output is verified at both
+3840x2160 DIP / 100% and 1920x1080 DIP / 200%; new visual subtrees are laid out
+before DPI propagation. Window caption clicks dispatch the original routed
+commands only when an actual owner exists, preserving the existing Closing
+preflight while making detached captions inspectable. See [visual alignment
+checks](visual-alignment.md) for coverage and validation limits.

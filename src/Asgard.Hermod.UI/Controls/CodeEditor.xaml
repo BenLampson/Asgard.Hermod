@@ -3,13 +3,13 @@
  <Border x:Name="EditorFrame" CornerRadius="6" Background="{DynamicResource AppBackgroundBrush}" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="1" ClipToBounds="True">
   <Grid><Grid.ColumnDefinitions><ColumnDefinition x:Name="GutterColumn" Width="48" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
    <Border ClipToBounds="True" Padding="0,16,12,0"><TextBlock x:Name="LineNumbers" FontFamily="{DynamicResource MonoFont}" FontSize="13" TextAlignment="Right" Foreground="{DynamicResource TextFaintBrush}" VerticalAlignment="Top" TextOptions.TextFormattingMode="Ideal" /></Border>
-   <controls:LogTextLayer x:Name="LogPaint" Grid.ColumnSpan="2" Visibility="Collapsed" />
    <TextBox Grid.Column="1" x:Name="Input" Text="{Binding Text, ElementName=EditorRoot, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
     IsReadOnly="{Binding IsReadOnly, ElementName=EditorRoot}" MaxLength="{Binding MaxLength, ElementName=EditorRoot}" AcceptsReturn="True" AcceptsTab="True"
     FontFamily="{DynamicResource MonoFont}" FontSize="13" TextOptions.TextFormattingMode="Ideal" Padding="0,16,16,16" BorderThickness="0" Background="Transparent" VerticalContentAlignment="Top"
     ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" TextChanged="OnTextChanged" ScrollViewer.ScrollChanged="OnScrollChanged" SizeChanged="OnInputSizeChanged" PreviewKeyDown="OnCompletionKeyDown">
     <TextBox.Template><ControlTemplate TargetType="TextBox"><ScrollViewer x:Name="PART_ContentHost" /></ControlTemplate></TextBox.Template>
    </TextBox>
+   <controls:LogTextLayer x:Name="LogPaint" Grid.ColumnSpan="2" Visibility="Collapsed" />
    <Popup x:Name="CompletionPopup" PlacementTarget="{Binding ElementName=Input}" Placement="RelativePoint" StaysOpen="True" AllowsTransparency="True" Focusable="False" VerticalOffset="22">
     <Border BorderBrush="{DynamicResource LineBrush}" BorderThickness="1" Background="{DynamicResource AppBackgroundBrush}" CornerRadius="5" Padding="4" MinWidth="260" MaxWidth="500">
      <ListBox x:Name="CompletionList" MaxHeight="240" BorderThickness="0" Background="Transparent" Focusable="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled" PreviewMouseLeftButtonDown="OnCompletionMouseDown" AutomationProperties.Name="{loc:Loc CodeCompletionSuggestions}">

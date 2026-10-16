@@ -9,8 +9,11 @@ namespace Asgard.Hermod.MySql.Tests;
 [Collection(WpfTestCollection.Name)]
 public sealed class DatabaseDesignAlignmentHeadlessTests(WpfTestFixture fixture)
 {
-    [Fact]
-    public Task SqlWorkspace_MatchesReferenceGeometryAt1600By1000() => fixture.RunOffscreenAsync(async () =>
+    [Theory]
+    [InlineData(1600, 1000, 1)]
+    [InlineData(3840, 2160, 1)]
+    [InlineData(1920, 1080, 2)]
+    public Task SqlWorkspace_MatchesReferenceGeometryAt1600By1000(double width, double height, double dpi) => fixture.RunOffscreenAsync(async () =>
     {
         Text.SetApplicationCulture(CultureInfo.GetCultureInfo("zh-Hans"));
         try
@@ -32,8 +35,8 @@ public sealed class DatabaseDesignAlignmentHeadlessTests(WpfTestFixture fixture)
             var header = Assert.IsType<WorkspaceHeader>(layout.Toolbar); layout.Toolbar = null; header.DataContext = page; header.ShowWindowControls = true;
             var root = new DockPanel(); root.Resources.MergedDictionaries.Add(Application.Current.Resources);
             DockPanel.SetDock(header, Dock.Top); root.Children.Add(header); root.Children.Add(view);
-            root.Measure(new(1600, 1000)); root.Arrange(new(0, 0, 1600, 1000)); root.UpdateLayout();
-            await WpfTestFixture.DrainDispatcherAsync(); root.UpdateLayout();
+            root.Measure(new(width, height)); root.Arrange(new(0, 0, width, height)); root.UpdateLayout();
+            await WpfTestFixture.DrainDispatcherAsync(); root.UpdateLayout(); VisualTreeHelper.SetRootDpi(root, new(dpi, dpi)); root.UpdateLayout();
             var selectedObject = tables.Children.Single(node => node.Object.Name == "model_config");
             var treeItem = WindowTestVisuals.Descendants<TreeViewItem>(view).Single(item => ReferenceEquals(item.DataContext, selectedObject));
             treeItem.IsSelected = true; page.ActiveTab = script; root.UpdateLayout();
@@ -49,7 +52,7 @@ public sealed class DatabaseDesignAlignmentHeadlessTests(WpfTestFixture fixture)
             grid.Columns[^1].Width = new(1, DataGridLengthUnitType.Star); grid.SelectedItems.Add(script.SelectedResult!.Rows[0]);
             root.UpdateLayout(); await WpfTestFixture.DrainDispatcherAsync(); root.UpdateLayout();
             Assert.Equal(new Point(238, 116), sql.TranslatePoint(new(), root));
-            Assert.Equal(1362, sql.ActualWidth);
+            Assert.Equal(width - 238, sql.ActualWidth);
             Assert.Equal(new Point(238, 164), sql.Editor.TranslatePoint(new(), root));
             Assert.Equal(268, sql.Editor.ActualHeight);
             Assert.Equal(232, ((Border)view.FindName("TreePanel")).ActualWidth);
@@ -64,7 +67,7 @@ public sealed class DatabaseDesignAlignmentHeadlessTests(WpfTestFixture fixture)
                 && !message.Contains("AncestorType='System.Windows.Window'", StringComparison.Ordinal)).ToArray();
             Assert.True(unexpectedBindings.Length == 0, string.Join(Environment.NewLine, unexpectedBindings));
             Assert.Null(PresentationSource.FromVisual(root)); Assert.Null(Window.GetWindow(root));
-            var measured = new RenderTargetBitmap(1600, 1000, 96, 96, PixelFormats.Pbgra32); measured.Render(root);
+            var measured = new RenderTargetBitmap((int)(width * dpi), (int)(height * dpi), 96 * dpi, 96 * dpi, PixelFormats.Pbgra32); measured.Render(root);
             var codeGlyphs = OffscreenGlyphMeasurement.Read((TextBox)sql.Editor.FindName("Input"), root);
             var numberGlyphs = OffscreenGlyphMeasurement.Read((TextBlock)sql.Editor.FindName("LineNumbers"), root);
             Assert.Equal(4, codeGlyphs.Count); Assert.Equal(4, numberGlyphs.Count);
@@ -78,14 +81,14 @@ public sealed class DatabaseDesignAlignmentHeadlessTests(WpfTestFixture fixture)
             if (directory is not null)
             {
                 Directory.CreateDirectory(directory);
-                var bitmap = new RenderTargetBitmap(1600, 1000, 96, 96, PixelFormats.Pbgra32); bitmap.Render(root);
+                var bitmap = new RenderTargetBitmap((int)(width * dpi), (int)(height * dpi), 96 * dpi, 96 * dpi, PixelFormats.Pbgra32); bitmap.Render(root);
                 var input = (TextBox)sql.Editor.FindName("Input"); var numbers = (TextBlock)sql.Editor.FindName("LineNumbers");
                 File.WriteAllText(Path.Combine(directory, "sql-layout.txt"), $"rect={input.GetRectFromCharacterIndex(0)} numbersBaseline={numbers.BaselineOffset} inputOrigin={input.TranslatePoint(new(), root)} numbersOrigin={numbers.TranslatePoint(new(), root)} fontBaseline={input.FontFamily.Baseline} spacing={input.FontFamily.LineSpacing}");
                 File.WriteAllLines(Path.Combine(directory, "sql-glyphs.txt"),
                     OffscreenGlyphMeasurement.Read(input, root).Select(g => "code " + g).Concat(OffscreenGlyphMeasurement.Read(numbers, root).Select(g => "number " + g)));
 
                 var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
-                using var stream = File.Create(Path.Combine(directory, "mysql-oMvco-zh-Hans-Light-1600x1000-96.png")); encoder.Save(stream);
+                using var stream = File.Create(Path.Combine(directory, $"mysql-oMvco-zh-Hans-Light-{width}x{height}-{dpi * 100}pct.png")); encoder.Save(stream);
             }
         }
         finally { Text.SetApplicationCulture(null); }

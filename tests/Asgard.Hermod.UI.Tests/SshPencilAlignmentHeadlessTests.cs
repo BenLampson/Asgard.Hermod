@@ -12,11 +12,19 @@ namespace Asgard.Hermod.UI.Tests;
 public sealed class SshPencilAlignmentHeadlessTests(WpfTestFixture fixture)
 {
     [Theory]
-    [InlineData("zh-Hans", UiTheme.Light, 1600, 1000)]
-    [InlineData("en", UiTheme.Dark, 1600, 1000)]
-    [InlineData("en", UiTheme.Light, 1600, 1000)]
-    [InlineData("zh-Hans", UiTheme.Dark, 1120, 840)]
-    public Task InstanceToolsAndConsole_MatchReferenceWithoutDesktopWindows(string language, UiTheme theme, double width, double height) => fixture.RunOffscreenAsync(async () =>
+    [InlineData("zh-Hans", UiTheme.Light, 1600, 1000, 1)]
+    [InlineData("en", UiTheme.Dark, 1600, 1000, 1)]
+    [InlineData("en", UiTheme.Light, 1600, 1000, 1)]
+    [InlineData("zh-Hans", UiTheme.Dark, 1120, 840, 1)]
+    [InlineData("en", UiTheme.Light, 3840, 2160, 1)]
+    [InlineData("en", UiTheme.Light, 1920, 1080, 2)]
+    [InlineData("en", UiTheme.Dark, 3840, 2160, 1)]
+    [InlineData("en", UiTheme.Dark, 1920, 1080, 2)]
+    [InlineData("zh-Hans", UiTheme.Light, 3840, 2160, 1)]
+    [InlineData("zh-Hans", UiTheme.Light, 1920, 1080, 2)]
+    [InlineData("zh-Hans", UiTheme.Dark, 3840, 2160, 1)]
+    [InlineData("zh-Hans", UiTheme.Dark, 1920, 1080, 2)]
+    public Task InstanceToolsAndConsole_MatchReferenceWithoutDesktopWindows(string language, UiTheme theme, double width, double height, double dpi) => fixture.RunOffscreenAsync(async () =>
     {
         Text.SetApplicationCulture(CultureInfo.GetCultureInfo(language));
         try
@@ -63,7 +71,7 @@ public sealed class SshPencilAlignmentHeadlessTests(WpfTestFixture fixture)
             var unexpected = bindings.Messages.Where(message => !message.Contains("AncestorType='System.Windows.Window'", StringComparison.Ordinal)).ToArray();
             Assert.True(unexpected.Length == 0, string.Join(Environment.NewLine, unexpected));
             Assert.Null(Window.GetWindow(root)); Assert.Null(PresentationSource.FromVisual(root));
-            void Layout() { root.Measure(new(width, height)); root.Arrange(new(0, 0, width, height)); root.UpdateLayout(); }
+            void Layout() { root.Measure(new(width, height)); root.Arrange(new(0, 0, width, height)); root.UpdateLayout(); VisualTreeHelper.SetRootDpi(root, new(1, 1)); VisualTreeHelper.SetRootDpi(root, new(dpi, dpi)); root.UpdateLayout(); Assert.Equal(dpi, VisualTreeHelper.GetDpi(root).DpiScaleX); }
         }
         finally { Text.SetApplicationCulture(null); }
     });
@@ -71,7 +79,7 @@ public sealed class SshPencilAlignmentHeadlessTests(WpfTestFixture fixture)
     private static void Capture(FrameworkElement root, string name)
     {
         string? directory = Environment.GetEnvironmentVariable("HERMOD_OFFSCREEN_OUTPUT"); if (directory is null) return;
-        Directory.CreateDirectory(directory); var bitmap = new RenderTargetBitmap((int)root.ActualWidth, (int)root.ActualHeight, 96, 96, PixelFormats.Pbgra32); bitmap.Render(root);
-        var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap)); using var stream = File.Create(Path.Combine(directory, name + ".png")); encoder.Save(stream);
+        Directory.CreateDirectory(directory); var scale = VisualTreeHelper.GetDpi(root); var bitmap = new RenderTargetBitmap((int)(root.ActualWidth * scale.DpiScaleX), (int)(root.ActualHeight * scale.DpiScaleY), scale.PixelsPerInchX, scale.PixelsPerInchY, PixelFormats.Pbgra32); bitmap.Render(root);
+        var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap)); using var stream = File.Create(Path.Combine(directory, name + $"-{VisualTreeHelper.GetDpi(root).DpiScaleX * 100}pct.png")); encoder.Save(stream);
     }
 }

@@ -14,10 +14,12 @@ public partial class CodeEditor : UserControl
         if (EditorFrame is null) return;
         LogPaint.Visibility = IsLogReader ? Visibility.Visible : Visibility.Collapsed; Input.AcceptsTab = !IsLogReader;
         LineNumbers.Visibility = IsLogReader ? Visibility.Hidden : Visibility.Visible;
-        if (!IsLogReader) { ApplySqlLayout(); return; }
+        if (!IsLogReader) { Input.ClearValue(TextBox.SelectionBrushProperty); Input.ClearValue(TextBox.SelectionOpacityProperty); ApplySqlLayout(); return; }
         EditorFrame.CornerRadius = new(0); EditorFrame.BorderThickness = new(0);
         EditorFrame.SetResourceReference(Border.BackgroundProperty, "LogBackgroundBrush");
         Input.Foreground = Brushes.Transparent; LineNumbers.SetResourceReference(TextBlock.ForegroundProperty, "LogGutterBrush");
+        // 原生 TextBox 继续拥有连续选区和复制；语义绘制层统一着色，避免失焦丢失可见命中或覆盖 WARNING/ERROR。
+        Input.SelectionBrush = Brushes.Transparent; Input.SelectionOpacity = 0;
         GutterColumn.Width = new(68); Input.Margin = new(-2, 0, 0, 0); Input.Padding = new(0, 14, 16, 14);
         if (LineNumbers.Parent is Border gutter) gutter.Padding = new(0, 14, 16, 0);
         LineNumbers.FontSize = 11; LineNumbers.LineHeight = 23; LineNumbers.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;

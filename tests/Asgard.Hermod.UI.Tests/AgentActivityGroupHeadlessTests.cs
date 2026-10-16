@@ -11,9 +11,17 @@ namespace Asgard.Hermod.UI.Tests;
 public sealed class AgentActivityGroupHeadlessTests(WpfTestFixture fixture)
 {
     [Theory]
-    [InlineData("en", UiTheme.Dark)]
-    [InlineData("zh-Hans", UiTheme.Light)]
-    public Task ConsecutiveToolsUseOneSummaryAndPreserveEvidenceAndArchiveState(string language, UiTheme theme) => fixture.RunOffscreenAsync(async () =>
+    [InlineData("en", UiTheme.Dark, 1120, 1000, 1)]
+    [InlineData("zh-Hans", UiTheme.Light, 1120, 1000, 1)]
+    [InlineData("en", UiTheme.Light, 3840, 2160, 1)]
+    [InlineData("en", UiTheme.Light, 1920, 1080, 2)]
+    [InlineData("en", UiTheme.Dark, 3840, 2160, 1)]
+    [InlineData("en", UiTheme.Dark, 1920, 1080, 2)]
+    [InlineData("zh-Hans", UiTheme.Light, 3840, 2160, 1)]
+    [InlineData("zh-Hans", UiTheme.Light, 1920, 1080, 2)]
+    [InlineData("zh-Hans", UiTheme.Dark, 3840, 2160, 1)]
+    [InlineData("zh-Hans", UiTheme.Dark, 1920, 1080, 2)]
+    public Task ConsecutiveToolsUseOneSummaryAndPreserveEvidenceAndArchiveState(string language, UiTheme theme, double width, double height, double dpi) => fixture.RunOffscreenAsync(async () =>
     {
         Text.SetApplicationCulture(CultureInfo.GetCultureInfo(language)); new ThemeService(Application.Current.Resources).SetTheme(theme);
         try
@@ -41,12 +49,12 @@ public sealed class AgentActivityGroupHeadlessTests(WpfTestFixture fixture)
             Assert.True(restored.IsExpanded); Assert.Same(first, restored.Messages[0]); Assert.True(first.IsExpanded); Assert.Equal("draft remains", panel.Prompt);
             panel.IsSourceClosed = true; await Layout(); Assert.True(restored.IsExpanded); Assert.Equal(0, model.SendCount); Assert.True(bindings.Messages.Count == 0, string.Join(Environment.NewLine, bindings.Messages));
             Assert.Null(Window.GetWindow(root)); Assert.Null(PresentationSource.FromVisual(root));
-            async Task Layout() { for (int pass = 0; pass < 2; pass++) { root.Measure(new(1120, 1000)); root.Arrange(new(0, 0, 1120, 1000)); root.UpdateLayout(); await WpfTestFixture.DrainDispatcherAsync(); } }
+            async Task Layout() { for (int pass = 0; pass < 2; pass++) { root.Measure(new(width, height)); root.Arrange(new(0, 0, width, height)); root.UpdateLayout(); VisualTreeHelper.SetRootDpi(root, new(1, 1)); VisualTreeHelper.SetRootDpi(root, new(dpi, dpi)); await WpfTestFixture.DrainDispatcherAsync(); } }
             void Capture(string state)
             {
                 string? directory = Environment.GetEnvironmentVariable("HERMOD_OFFSCREEN_OUTPUT"); if (directory is null) return; Directory.CreateDirectory(directory);
-                var image = new RenderTargetBitmap(1120, 1000, 96, 96, PixelFormats.Pbgra32); image.Render(root); var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(image));
-                using var output = File.Create(Path.Combine(directory, $"agent-tool-group-{state}-{language}-{theme}.png")); encoder.Save(output);
+                var image = new RenderTargetBitmap((int)(width * dpi), (int)(height * dpi), dpi * 96, dpi * 96, PixelFormats.Pbgra32); image.Render(root); var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(image));
+                using var output = File.Create(Path.Combine(directory, $"agent-tool-group-{state}-{language}-{theme}-{width}-{dpi * 100}pct.png")); encoder.Save(output);
             }
         }
         finally { Text.SetApplicationCulture(null); new ThemeService(Application.Current.Resources).SetTheme(UiTheme.Light); }
