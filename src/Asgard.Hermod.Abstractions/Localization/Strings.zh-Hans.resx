@@ -4268,4 +4268,6 @@ Session：{2}
   <data name="DatabaseLoadedObjects" xml:space="preserve"><value>{0} 张表 · {1} 个视图</value></data>
   <data name="DatabaseScopeLabel" xml:space="preserve"><value>数据库范围 · {0}</value></data>
   <data name="DatabaseClipboardFailed" xml:space="preserve"><value>无法复制输出，请重试。</value></data>
+  <data name="LocalTerminalSubtitle" xml:space="preserve"><value>本地 · {0}</value></data>
+  <data name="WindowsPowerShell" xml:space="preserve"><value>Windows PowerShell</value></data>
 </root>

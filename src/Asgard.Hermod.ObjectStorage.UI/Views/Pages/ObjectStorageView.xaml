@@ -11,12 +11,9 @@
         <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
         <!-- 页头只使用安全摘要；在线状态由实际读取结果决定。 -->
         <controls:WorkspaceHeader State="{Binding Connection}" RetryCommand="{Binding ReconnectCommand}" EditCommand="{Binding EditConnectionCommand}">
-            <controls:WorkspaceHeader.IdentityContent><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="40" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                <controls:IconView Kind="{Binding Instance.TypeIcon}" Width="28" Height="28" Foreground="{DynamicResource WarningBrush}" HorizontalAlignment="Left" />
-                <StackPanel Grid.Column="1" VerticalAlignment="Center"><controls:InstanceNameButton Instance="{Binding Instance}" FontSize="14" HorizontalAlignment="Stretch" /><TextBlock Text="{Binding Subtitle}" ToolTip="{Binding Subtitle}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" /></StackPanel>
-            </Grid></controls:WorkspaceHeader.IdentityContent>
-            <controls:WorkspaceHeader.StatusContent><StackPanel Orientation="Horizontal"><controls:StatusBadge Style="{DynamicResource WorkspaceHeaderSecondaryStatus}" Text="{Binding Instance.EnvironmentLabel}" Tone="{Binding Instance.EnvironmentTone}" ShowIndicator="False" Margin="0,0,10,0" /><controls:StatusBadge Text="{Binding Status}" Tone="{Binding StatusTone}" ShowIndicator="False" /></StackPanel></controls:WorkspaceHeader.StatusContent>
-            <controls:WorkspaceHeader.ActionsContent><Button x:Name="EditConnectionButton" Command="{Binding EditConnectionCommand}" Width="32" Height="32" Padding="7" ToolTip="{Binding EditConnectionHint}" ToolTipService.ShowOnDisabled="True" AutomationProperties.Name="{loc:Loc EditObjectStorageConnection}"><controls:IconView Kind="settings-2" Width="16" Height="16" Foreground="{DynamicResource TextMutedBrush}" /></Button></controls:WorkspaceHeader.ActionsContent>
+            <controls:WorkspaceHeader.IdentityContent><controls:WorkspaceIdentity Instance="{Binding Instance}" Endpoint="{Binding Subtitle}" Icon="box" /></controls:WorkspaceHeader.IdentityContent>
+            <controls:WorkspaceHeader.StatusContent><controls:StatusBadge Style="{DynamicResource WorkspaceHeaderSecondaryStatus}" Text="{Binding Instance.EnvironmentLabel}" Tone="{Binding Instance.EnvironmentTone}" ShowIndicator="False" IsCaption="True" /></controls:WorkspaceHeader.StatusContent>
+
         </controls:WorkspaceHeader>
         <Grid Grid.Row="1" x:Name="BrowserPanels">
             <Grid.ColumnDefinitions><ColumnDefinition x:Name="ListColumn" Width="*" /><ColumnDefinition x:Name="SplitterColumn" Width="6" /><ColumnDefinition x:Name="DetailsColumn" Width="278" /></Grid.ColumnDefinitions>

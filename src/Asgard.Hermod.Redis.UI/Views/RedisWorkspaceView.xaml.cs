@@ -151,7 +151,6 @@ public partial class RedisWorkspaceView : UserControl
         _compact = compact; UpdateLayoutMode();
         DatabaseSelector.Width = args.NewSize.Width < 1000 ? 110 : 142;
         NewKeyLabel.Visibility = args.NewSize.Width < 600 ? Visibility.Collapsed : Visibility.Visible;
-        IdentityColumn.Width = new(1, GridUnitType.Star);
     }
     private void OnCompactChanged(object sender, SelectionChangedEventArgs args)
     { if (_model is not null) _model.ShowTree = CompactSelector.SelectedValue as string == "tree"; }

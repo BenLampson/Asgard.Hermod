@@ -40,7 +40,7 @@ public sealed class RedisOffscreenTests(WpfTestFixture fixture)
     });
 
     [Fact]
-    public Task Rename_UsesCatalogSaveAndUpdatesPageWithoutReopeningSession() => fixture.RunOffscreenAsync(async () =>
+    public Task RenameFromMainCatalog_UpdatesReadOnlyCaptionWithoutReopeningSession() => fixture.RunOffscreenAsync(async () =>
     {
         var configs = new RedisTestConfigurations(); var session = new RedisTestSession();
         var factory = new InstanceWorkspaceFactory([new RedisPageProvider(configs, session, configs, new RedisTestDialogs())]);
@@ -52,13 +52,11 @@ public sealed class RedisOffscreenTests(WpfTestFixture fixture)
         int reads = session.Reads, scans = session.Calls.Count;
         var view = new RedisWorkspaceView { DataContext = page };
         InstanceMetadataScope.SetRenameCommand(view, shell.Workspace.RenameInstanceCommand); Layout(view);
-        var name = Descendants<InstanceNameButton>(view).Single();
-        var button = (Button)name.FindName("RenameButton");
-        Assert.Same(shell.Sidebar.RenameInstanceCommand, button.Command);
-        Assert.True(button.Command.CanExecute(button.CommandParameter));
-        await shell.Sidebar.RenameInstanceCommand.ExecuteAsync(button.CommandParameter);
+        var identity = Assert.Single(Descendants<WorkspaceIdentity>(view));
+        Assert.Empty(Descendants<InstanceNameButton>(view));
+        await shell.Sidebar.RenameInstanceCommand.ExecuteAsync(instance);
         Assert.Equal(1, configs.Renames); Assert.Equal("Renamed cache", instance.Name); Assert.Equal(instance.Name, page.Header);
-        Assert.Same(instance, name.Instance); Assert.Same(tab, page.ActiveTab); Assert.True(tab.IsDirty);
+        Assert.Same(instance, identity.Instance); Assert.Same(tab, page.ActiveTab); Assert.True(tab.IsDirty);
         Assert.Equal("kept draft", tab.EditorText); Assert.Equal(reads, session.Reads); Assert.Equal(scans, session.Calls.Count);
         Assert.True(page.IsConnected);
     });
@@ -88,6 +86,7 @@ public sealed class RedisOffscreenTests(WpfTestFixture fixture)
             var databaseField = (StackPanel)view.FindName("DatabaseField");
             Assert.Equal(Orientation.Horizontal, databaseField.Orientation);
             Assert.Equal(32, database.ActualHeight);
+            Assert.Null(FindAncestor<WorkspaceHeader>(database));
             var layout = (WorkspacePageLayout)view.FindName("WorkspaceLayout");
             var status = Assert.IsType<DockPanel>(layout.StatusContent);
             var statusBar = (Border)layout.Template.FindName("PART_StatusBar", layout);
@@ -139,18 +138,20 @@ public sealed class RedisOffscreenTests(WpfTestFixture fixture)
             Assert.Same(original, header); Assert.Null(layout.Toolbar); Assert.Same(page, header.DataContext);
             Assert.Same(page, view.DataContext); header.ShowWindowControls = true;
             var caption = new Border { Child = header };
-            await WpfTestFixture.DrainDispatcherAsync(); Layout(caption, width, 72);
-            Assert.Equal(72, header.ActualHeight); Assert.Same(page.Instance, Descendants<InstanceNameButton>(header).Single().Instance);
-            var database = Descendants<ComboBox>(header).Single(); Assert.Equal(32, database.ActualHeight);
+            await WpfTestFixture.DrainDispatcherAsync(); Layout(caption, width, 44);
+            Assert.Equal(44, header.ActualHeight); Assert.Same(page.Instance, Descendants<WorkspaceIdentity>(header).Single().Instance);
+            Assert.Empty(Descendants<InstanceNameButton>(header)); Assert.Empty(Descendants<ComboBox>(header));
+            var database = (ComboBox)view.FindName("DatabaseSelector"); Assert.Equal(32, database.ActualHeight);
             Assert.Equal("0", page.DatabaseText); Assert.Equal("0", database.SelectedValue); Assert.Same(page.Connection, header.State);
             var windows = Descendants<WindowControls>(header).Single();
             Assert.Equal(Visibility.Visible, windows.Visibility); Assert.True(windows.ActualWidth > 0);
             var snapshot = header.ActionsContent;
             Capture(header, $"workspace-header-{language}-{theme}-{width}");
             session.Disconnect(); page.Connection.DismissCommand.Execute(null);
-            await WpfTestFixture.DrainDispatcherAsync(); Layout(caption, width, 72);
+            await WpfTestFixture.DrainDispatcherAsync(); Layout(caption, width, 44);
             Assert.False(page.Connection.IsOpen);
-            Assert.Equal(page.Status, Descendants<StatusBadge>(header).Last().Text);
+            Assert.True(page.Connection.HasError); Assert.True(page.Connection.IsDisconnected);
+            Assert.Contains(Descendants<TextBlock>(header), text => text.Text == page.Connection.Title);
             var retry = Descendants<Button>(header).Single(button => ReferenceEquals(button.Command, page.ReconnectCommand));
             Assert.Equal(Text.Get("WorkspaceConnectionRetry"), retry.Content);
             Assert.Equal(Text.Get("WorkspaceConnectionRetry"), AutomationProperties.GetName(retry));
@@ -158,11 +159,17 @@ public sealed class RedisOffscreenTests(WpfTestFixture fixture)
             Assert.Equal(Text.Get("WorkspaceConnectionEdit"), edit.Content); Assert.Equal(edit.Content, AutomationProperties.GetName(edit));
             Assert.Equal(Visibility.Visible, ((FrameworkElement)VisualTreeHelper.GetParent(retry)).Visibility); Assert.True(retry.IsEnabled);
             Capture(header, $"workspace-header-disconnected-{language}-{theme}-{width}");
-            await page.ReconnectCommand.ExecuteAsync(); Layout(caption, width, 72);
+            await page.ReconnectCommand.ExecuteAsync(); Layout(caption, width, 44);
             Assert.Same(snapshot, header.ActionsContent); Assert.True(page.IsConnected);
         }
         finally { Text.SetApplicationCulture(null); }
     });
+    private static T? FindAncestor<T>(DependencyObject element) where T : DependencyObject
+    {
+        for (var parent = VisualTreeHelper.GetParent(element); parent is not null; parent = VisualTreeHelper.GetParent(parent))
+            if (parent is T match) return match;
+        return null;
+    }
     private static void Layout(FrameworkElement view, double width = 1200, double height = 700)
     {
         // 离屏根不参与 Application.Windows 的资源广播，显式注册共享字典的视图所有者。

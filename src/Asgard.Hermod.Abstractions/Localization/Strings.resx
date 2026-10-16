@@ -4268,4 +4268,6 @@ Result sample:
   <data name="DatabaseLoadedObjects" xml:space="preserve"><value>{0} tables · {1} views</value></data>
   <data name="DatabaseScopeLabel" xml:space="preserve"><value>Database scope · {0}</value></data>
   <data name="DatabaseClipboardFailed" xml:space="preserve"><value>Unable to copy the output. Try again.</value></data>
+  <data name="LocalTerminalSubtitle" xml:space="preserve"><value>Local · {0}</value></data>
+  <data name="WindowsPowerShell" xml:space="preserve"><value>Windows PowerShell</value></data>
 </root>

@@ -8,15 +8,15 @@ namespace Asgard.Hermod.Redis.Tests;
 [Collection(WpfTestCollection.Name)]
 public sealed class ConnectionFeedbackTests(WpfTestFixture fixture)
 {
-    /// <summary>后台断线保持已有键页签和草稿，关闭只隐藏弹窗，重连前不执行写入。</summary>
+    /// <summary>后台断线保持已有键页签和草稿，标题内提供重连，恢复前不执行写入。</summary>
     [Fact]
-    public Task Disconnect_PreservesKeyTabAndShowsOnePopup() => fixture.RunAsync(async () =>
+    public Task Disconnect_PreservesKeyTabAndShowsInlineRecovery() => fixture.RunOffscreenAsync(async () =>
     {
         var session = new RedisTestSession(); var configs = new RedisTestConfigurations();
         await using var model = new RedisWorkspaceViewModel(new(new("redis-test", "Redis", "Redis", "layers", [], TypeId: RedisIds.Type, ProviderId: RedisIds.Standalone)), configs, session, configs, new RedisTestDialogs());
         await model.InitializeAsync(); await model.OpenAsync(RedisKeyId.FromText("kept-key")); var tab = Assert.Single(model.Tabs);
         await Task.Run(session.Disconnect); await WpfTestFixture.DrainDispatcherAsync();
-        Assert.True(model.Connection.IsDisconnected); Assert.True(model.Connection.IsOpen); Assert.False(model.IsConnected); Assert.False(model.HasError);
+        Assert.True(model.Connection.IsDisconnected); Assert.False(model.Connection.IsOpen); Assert.False(model.IsConnected); Assert.False(model.HasError);
         Assert.Same(tab, model.ActiveTab); Assert.Single(model.Tabs); Assert.Equal(0, session.Saves);
         model.Connection.DismissCommand.Execute(null); session.Disconnect(); Assert.False(model.Connection.IsOpen);
         await model.ReconnectCommand.ExecuteAsync(); Assert.True(model.IsConnected); Assert.False(model.Connection.HasError);
@@ -57,7 +57,7 @@ public sealed class ConnectionFeedbackTests(WpfTestFixture fixture)
             await model.ReconnectCommand.ExecuteAsync(); await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.True(model.Connection.HasError); Assert.True(layout.IsOverlayOpen); Assert.False(model.HasError); Assert.Equal(size, body.RenderSize);
             Assert.DoesNotContain("hidden-test-secret", model.Connection.Error); Assert.Equal(Text.Get("WorkspaceConnectionDisconnected"), model.Status);
-            Assert.Equal(StatusTone.Danger, Assert.IsType<StatusBadge>(view.FindName("ConnectionBadge")).Tone);
+            Assert.Same(model.Connection, Assert.IsType<WorkspaceHeader>(layout.Toolbar).State);
             await WindowPreviewCapture.VerifyAsync(window, $"redis-connection-failed-{language}-{theme}");
             window.Width = 620; window.Height = 640; await WindowPreviewCapture.VerifyAsync(window, $"redis-connection-failed-narrow-{language}-{theme}");
             var overlay = Assert.IsType<WorkspaceConnectionOverlay>(layout.Overlay); var card = Assert.IsType<Border>(overlay.FindName("ConnectionCard"));
@@ -65,7 +65,7 @@ public sealed class ConnectionFeedbackTests(WpfTestFixture fixture)
             model.Connection.DismissCommand.Execute(null); await WindowTestVisuals.UpdateLayoutAsync(window); Assert.False(layout.IsOverlayOpen); Assert.True(body.IsEnabled);
             session.OpenError = null; await model.ReconnectCommand.ExecuteAsync(); await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.True(model.IsConnected); Assert.False(model.Connection.HasError); Assert.False(layout.IsOverlayOpen);
-            Assert.Equal(StatusTone.Success, Assert.IsType<StatusBadge>(view.FindName("ConnectionBadge")).Tone);
+            Assert.False(Assert.IsType<WorkspaceHeader>(layout.Toolbar).State!.HasError);
         }
         finally { window.Close(); themes.SetTheme(UiTheme.Light); Text.SetApplicationCulture(null); }
     });

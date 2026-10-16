@@ -133,9 +133,13 @@ viewer.
 `IdentityContent`, `StatusContent` and `ActionsContent` slots and fixed window controls.
 The window host transfers the same header element out of the module body, setting its
 data context before detachment to preserve two-way selections. All five workspace kinds
-use it; ordinary pages have a live-bound title fallback. Connection status remains visible
-in compact captions, secondary environment information yields, and failure provides a compact reconnect action in the same caption. Read-only name and empty caption areas remain
-draggable, with the pencil and action controls explicitly hit-testable in WindowChrome.
+use it; ordinary pages have a live-bound title fallback. All workspace kinds use the same
+read-only `WorkspaceIdentity`: a 22-DIP icon, 13-DIP name and 11-DIP safe address. The
+address yields in compact captions. The optional environment badge is 18 DIP high;
+normal captions do not repeat a connected/running badge. Failure provides a compact
+reconnect action in the same caption. Read-only names and empty caption areas remain
+draggable, with actions explicitly hit-testable in WindowChrome. Redis database selection
+and key creation occupy the body toolbar; name and configuration editing belong to the main window.
 The main window title bar is unchanged.
 
 `WorkspacePageLayout` provides the shared content layout: a toolbar with a 56-pixel minimum height,
@@ -146,7 +150,7 @@ navigation and themes; the desktop workspace host opens actual instance pages in
 independent windows and retains the existing page registry and cleanup contracts.
 Module views must not recreate window chrome or duplicate the shared details layout.
 
-SSH exposes configuration editing in its shared workspace caption, followed by Tools and Agent. The shared wizard
+SSH exposes terminal tools, monitoring and Agent through its shared workspace caption. The shared wizard
 permits provider changes within the saved type: SSH permits route changes on the separate
 method-selection page and retains common target fields. Types independently declare
 their save-location step. Editing preserves the instance ID, protected configuration storage and current

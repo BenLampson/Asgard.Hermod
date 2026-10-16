@@ -1,10 +1,10 @@
 namespace Asgard.Hermod.ObjectStorage.UI.ViewModels;
 
-/// <summary>无持久 TCP 会话的对象存储以实际请求结果判断连接，失效只弹一次且不自动重放写入。</summary>
+/// <summary>无持久 TCP 会话的对象存储以实际请求结果判断连接；后续失效在标题内恢复，不自动重放写入。</summary>
 public sealed partial class ObjectStorageWorkspaceViewModel
 {
     private readonly Dispatcher? _connectionDispatcher = SynchronizationContext.Current is DispatcherSynchronizationContext ? Dispatcher.CurrentDispatcher : null;
-    /// <summary>初次访问、认证失败与后续失效共用连接弹窗。</summary>
+    /// <summary>初次访问与后续恢复共用状态模型，已有工作区的重试不覆盖正文。</summary>
     public WorkspaceConnectionViewModel Connection { get; } = new();
     /// <inheritdoc />
     public override WorkspaceConnectionViewModel ConnectionState => Connection;
@@ -43,7 +43,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
         int version = ++_bucketVersion;
         using var operation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token, cancellationToken);
         _bucketOperation?.Cancel(); _bucketOperation = operation;
-        Connection.Begin(operation.Cancel);
+        Connection.Begin(operation.Cancel, HasConnectedOnce);
         IsLoading = true; ReadError = "";
         try
         {

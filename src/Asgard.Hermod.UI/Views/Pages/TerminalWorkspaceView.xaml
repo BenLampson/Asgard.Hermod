@@ -14,11 +14,8 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <controls:WorkspaceHeader State="{Binding ConnectionState}" RetryCommand="{Binding RetryCommand}">
-            <controls:WorkspaceHeader.IdentityContent><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="40" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                <controls:IconView Kind="terminal" Width="28" Height="28" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Left" />
-                <StackPanel Grid.Column="1" VerticalAlignment="Center"><TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" /><TextBlock Text="{Binding Subtitle}" ToolTip="{Binding Subtitle}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" TextTrimming="CharacterEllipsis" /></StackPanel>
-            </Grid></controls:WorkspaceHeader.IdentityContent>
-            <controls:WorkspaceHeader.StatusContent><controls:StatusBadge Text="{Binding Status}" ShowIndicator="False"><controls:StatusBadge.Style><Style TargetType="controls:StatusBadge"><Setter Property="Tone" Value="{x:Static models:StatusTone.Muted}" /><Style.Triggers><DataTrigger Binding="{Binding IsRunning}" Value="True"><Setter Property="Tone" Value="{x:Static models:StatusTone.Success}" /></DataTrigger></Style.Triggers></Style></controls:StatusBadge.Style></controls:StatusBadge></controls:WorkspaceHeader.StatusContent>
+            <controls:WorkspaceHeader.IdentityContent><controls:WorkspaceIdentity Instance="{Binding Instance}" Endpoint="{Binding Subtitle}" Icon="terminal" /></controls:WorkspaceHeader.IdentityContent>
+            <controls:WorkspaceHeader.StatusContent><controls:StatusBadge Text="{Binding Status}" ShowIndicator="False" IsCaption="True"><controls:StatusBadge.Style><Style TargetType="controls:StatusBadge"><Setter Property="Tone" Value="{x:Static models:StatusTone.Muted}" /><Style.Triggers><DataTrigger Binding="{Binding IsRunning}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></controls:StatusBadge.Style></controls:StatusBadge></controls:WorkspaceHeader.StatusContent>
         </controls:WorkspaceHeader>
         <Border Grid.Row="1" Margin="0,18,0,0" Padding="12,9" CornerRadius="6"
                 Background="{DynamicResource DangerWeakBrush}">

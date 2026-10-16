@@ -131,7 +131,7 @@ public sealed partial class RedisWorkspaceViewModel : WorkspacePageViewModel
     {
         if (IsConnecting || IsClosed || Tabs.Any(tab => tab.IsBusy)) return;
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token, token);
-        IsConnecting = true; Error = ""; Connection.Begin(linked.Cancel); Refresh(); string connectionError = "";
+        IsConnecting = true; Error = ""; Connection.Begin(linked.Cancel, HasConnectedOnce); Refresh(); string connectionError = "";
         try
         {
             await ClearConnectionAsync(HasConnectedOnce);

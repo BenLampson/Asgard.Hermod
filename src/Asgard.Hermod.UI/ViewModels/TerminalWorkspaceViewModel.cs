@@ -19,17 +19,19 @@ public sealed class TerminalWorkspaceViewModel : WorkspacePageViewModel
         ArgumentNullException.ThrowIfNull(factory);
         _factory = factory;
         _dispatcher = Dispatcher.CurrentDispatcher;
-        Name = instance.Name;
+        Instance = instance;
         RetryCommand = new AsyncRelayCommand(_ => RetryAsync(), _ => CanRetry);
         StartSession();
     }
 
     /// <summary>实例名称。</summary>
-    public string Name { get; }
+    public string Name => Instance.Name;
+    /// <summary>只读标题复用主窗体的实例快照，不持有连接配置。</summary>
+    public InstanceItemViewModel Instance { get; }
     /// <summary>当前终端会话；关闭开始时同步变为 null。</summary>
     public TerminalSession? Session => IsClosed ? null : _session?.Terminal;
     /// <summary>当前 Shell 类型。</summary>
-    public string Subtitle => Text.Get("Local2") + (_session?.DisplayName ?? "Windows PowerShell");
+    public string Subtitle => Text.Format("LocalTerminalSubtitle", _session?.DisplayName ?? Text.Get("WindowsPowerShell"));
     /// <summary>进程状态或退出码。</summary>
     public string Status { get => _status; private set => SetProperty(ref _status, value); }
     /// <summary>可供用户阅读的启动或通信错误。</summary>
