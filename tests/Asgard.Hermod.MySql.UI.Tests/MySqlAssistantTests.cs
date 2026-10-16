@@ -109,7 +109,7 @@ public sealed class MySqlAssistantTests(WpfTestFixture fixture)
     });
 
     [Fact]
-    public Task Cancel_PreservesSuccessfulMessagesAndPromptThenDisposeClearsAndCancels() => fixture.RunOffscreenAsync(async () =>
+    public Task Cancel_RestoresQuestionExplicitlyAndDisposePreservesReadOnlyHistory() => fixture.RunOffscreenAsync(async () =>
     {
         var server = new TestMySql(); await using var tab = Query(server, new()); var client = new Model();
         using var assistant = new MySqlAssistantViewModel(tab, client) { Prompt = "First question" }; await assistant.SendCommand.ExecuteAsync();
@@ -117,17 +117,18 @@ public sealed class MySqlAssistantTests(WpfTestFixture fixture)
         client.Block(); assistant.Prompt = "Unsent follow-up";
         var cancelled = assistant.SendCommand.ExecuteAsync(); await client.Entered.Task;
         Assert.True(assistant.IsBusy); assistant.CancelCommand.Execute(null); await cancelled;
-        Assert.True(client.LastToken.IsCancellationRequested); Assert.False(assistant.IsBusy); Assert.Equal(2, assistant.Messages.Count); Assert.Equal("Unsent follow-up", assistant.Prompt);
+        Assert.True(client.LastToken.IsCancellationRequested); Assert.False(assistant.IsBusy); Assert.Equal(4, assistant.Messages.Count); Assert.Empty(assistant.Prompt);
+        assistant.RestoreDraftCommand.Execute(null); Assert.Equal("Unsent follow-up", assistant.Prompt);
 
         client.Block(); var disposed = assistant.SendCommand.ExecuteAsync(); await client.Entered.Task;
         assistant.Dispose(); await disposed;
-        Assert.True(client.LastToken.IsCancellationRequested); Assert.Empty(assistant.Messages); Assert.Equal("", assistant.Prompt); Assert.False(assistant.IsBusy);
+        Assert.True(client.LastToken.IsCancellationRequested); Assert.Equal(5, assistant.Messages.Count); Assert.True(assistant.IsSourceClosed); Assert.Equal("", assistant.Prompt); Assert.False(assistant.IsBusy);
         Assert.False(assistant.SendCommand.CanExecute(null)); Assert.False(assistant.ExecuteCommand.CanExecute(null)); Assert.Empty(server.ExecutedSql);
     });
 
     [Theory]
-    [InlineData("en", UiTheme.Light, 360)]
-    [InlineData("zh-Hans", UiTheme.Dark, 440)]
+    [InlineData("en", UiTheme.Light, 1120)]
+    [InlineData("zh-Hans", UiTheme.Dark, 640)]
     public Task AssistantView_UsesLocalizedControlsAndHasNoBindingErrors(string language, UiTheme theme, double width) => fixture.RunOffscreenAsync(async () =>
     {
         Text.SetApplicationCulture(CultureInfo.GetCultureInfo(language));

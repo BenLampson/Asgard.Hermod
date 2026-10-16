@@ -53,9 +53,10 @@ internal static class MarkdownDocumentBuilder
     }
 
     /// <summary>段落和标题共用行内样式，标题去除 Markdown 标记并保持层级字号。</summary>
-    private static Paragraph Paragraph(LeafBlock block, double size = 13, FontWeight? weight = null)
+    private static Paragraph Paragraph(LeafBlock block, double? size = null, FontWeight? weight = null)
     {
-        var paragraph = new Paragraph { Margin = new Thickness(0, 0, 0, 10), FontSize = size };
+        var paragraph = new Paragraph { Margin = new Thickness(0, 0, 0, 10) };
+        if (size is { } fontSize) paragraph.FontSize = fontSize;
         if (weight is { } fontWeight) paragraph.FontWeight = fontWeight;
         AppendInlines(paragraph.Inlines, block.Inline, 0);
         return paragraph;

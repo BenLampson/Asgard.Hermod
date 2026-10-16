@@ -14,7 +14,8 @@ public sealed class SshContainerLogWindow : HermodWindow
         Document = document; DataContext = document;
         SetBinding(TitleProperty, new Binding(nameof(SshContainerLogViewModel.Title)));
         Width = 1440; Height = 900; MinWidth = 980; MinHeight = 640;
-        WindowStartupLocation = WindowStartupLocation.CenterOwner; ShowInTaskbar = true;
+        WindowStartupLocation = WindowStartupLocation.CenterScreen; ShowInTaskbar = true; CaptionHeight = 48;
+        CaptionContent = new SshLogCaption { DataContext = document };
         Content = _view = new SshContainerLogView { DataContext = document };
     }
     /// <summary>固定文档身份，外部选中行不改变目标。</summary>

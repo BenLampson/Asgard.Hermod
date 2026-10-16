@@ -6,7 +6,10 @@ internal static partial class IconCatalog
     /// <summary>转换原始 SVG 的路径、圆形与圆角矩形，不重新绘制图标。</summary>
     private static void AddSshIcons()
     {
+        Geometries.TryAdd("paperclip", Create("m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"));
         Geometries.TryAdd("arrow-down-up", Create("m3 16 4 4 4-4", "M7 20V4", "m21 8-4-4-4 4", "M17 4v16"));
+        Geometries.TryAdd("cpu", Create("M12 20v2", "M12 2v2", "M17 20v2", "M17 2v2", "M2 12h2", "M2 17h2", "M2 7h2", "M20 12h2", "M20 17h2", "M20 7h2", "M7 20v2", "M7 2v2", "M6 4H18A2 2 0 0 1 20 6V18A2 2 0 0 1 18 20H6A2 2 0 0 1 4 18V6A2 2 0 0 1 6 4Z", "M9 8H15A1 1 0 0 1 16 9V15A1 1 0 0 1 15 16H9A1 1 0 0 1 8 15V9A1 1 0 0 1 9 8Z"));
+        Geometries.TryAdd("arrow-up-left", Create("M7 17V7h10", "M17 17 7 7"));
         Geometries.TryAdd("arrow-up", Create("m5 12 7-7 7 7", "M12 19V5"));
         Geometries.TryAdd("pause", Create("M15 3H18A1 1 0 0 1 19 4V20A1 1 0 0 1 18 21H15A1 1 0 0 1 14 20V4A1 1 0 0 1 15 3Z", "M6 3H9A1 1 0 0 1 10 4V20A1 1 0 0 1 9 21H6A1 1 0 0 1 5 20V4A1 1 0 0 1 6 3Z"));
         Geometries.TryAdd("unplug", Create("m19 5 3-3", "m2 22 3-3", "M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z", "M7.5 13.5 10 11", "M10.5 16.5 13 14", "m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"));

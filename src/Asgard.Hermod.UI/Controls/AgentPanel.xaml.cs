@@ -6,6 +6,23 @@ namespace Asgard.Hermod.UI.Controls;
 /// <summary>协议无关的聊天面板；仅管理布局、输入与滚动，所有业务操作交还模块命令。</summary>
 public partial class AgentPanel : UserControl
 {
+    /// <summary>来源对应的快捷提问，只填入草稿。</summary>
+    public static readonly DependencyProperty QuickPromptsProperty = DependencyProperty.Register(nameof(QuickPrompts), typeof(IEnumerable), typeof(AgentPanel));
+    /// <summary>快捷提问集合。</summary>
+    public IEnumerable? QuickPrompts { get => (IEnumerable?)GetValue(QuickPromptsProperty); set => SetValue(QuickPromptsProperty, value); }
+    /// <summary>来源对应的欢迎说明。</summary>
+    public static readonly DependencyProperty WelcomeDescriptionProperty = DependencyProperty.Register(nameof(WelcomeDescription), typeof(string), typeof(AgentPanel), new PropertyMetadata(""));
+    /// <summary>欢迎说明。</summary>
+    public string WelcomeDescription { get => (string)GetValue(WelcomeDescriptionProperty); set => SetValue(WelcomeDescriptionProperty, value); }
+    /// <summary>同一来源的对话历史，切换不发起任何业务操作。</summary>
+    public static readonly DependencyProperty ArchiveProperty = DependencyProperty.Register(nameof(Archive), typeof(AgentConversationArchive), typeof(AgentPanel));
+    /// <summary>当前来源的历史。</summary>
+    public AgentConversationArchive? Archive { get => (AgentConversationArchive?)GetValue(ArchiveProperty); set => SetValue(ArchiveProperty, value); }
+    private bool _composing;
+    /// <summary>来源已关闭时编辑区只读，历史仍可选择和复制。</summary>
+    public static readonly DependencyProperty IsSourceClosedProperty = DependencyProperty.Register(nameof(IsSourceClosed), typeof(bool), typeof(AgentPanel));
+    /// <summary>当前来源已关闭。</summary>
+    public bool IsSourceClosed { get => (bool)GetValue(IsSourceClosedProperty); set => SetValue(IsSourceClosedProperty, value); }
     /// <summary>模块保留所有权的消息集合。</summary>
     public static readonly DependencyProperty MessagesProperty = DependencyProperty.Register(nameof(Messages), typeof(IEnumerable), typeof(AgentPanel), new PropertyMetadata(null, OnMessagesChanged));
     /// <summary>模块声明消息和业务建议的绑定，外观由共享消息控件提供。</summary>
@@ -43,6 +60,9 @@ public partial class AgentPanel : UserControl
     public AgentPanel()
     {
         InitializeComponent();
+        SetCurrentValue(WelcomeDescriptionProperty, Text.Get("ChatWelcomeDescription"));
+        TextCompositionManager.AddPreviewTextInputStartHandler(PromptEditor, (_, _) => _composing = true);
+        TextCompositionManager.AddPreviewTextInputHandler(PromptEditor, (_, _) => _composing = false);
         Loaded += (_, _) => ObserveMessages();
         Unloaded += (_, _) => DetachMessages();
     }
@@ -110,9 +130,36 @@ public partial class AgentPanel : UserControl
     /// <summary>统一 Enter 发送、Shift+Enter 换行，并兼容原 SQL 的 Ctrl+Enter；只处理输入框中的按键。</summary>
     private void OnPromptKeyDown(object sender, KeyEventArgs args)
     {
+        if (_composing || args.Key == Key.ImeProcessed) return;
         if (args.Key != Key.Enter || Keyboard.Modifiers is not (ModifierKeys.None or ModifierKeys.Control) || !PromptEditor.IsKeyboardFocusWithin) return;
         args.Handled = true;
         // 已禁用的发送入口也消费 Enter，避免忙碌时意外向草稿插入换行。
         if (SendCommand?.CanExecute(null) == true) SendCommand.Execute(null);
+    }
+
+    private void OnViewportChanged(object sender, SizeChangedEventArgs args)
+    {
+        double inset = args.NewSize.Width < 800 ? 24 : 80;
+        ToolbarColumn.Margin = new(inset, 0, inset, 0); MessageColumn.Margin = new(inset, 28, inset, 28); ComposerColumn.Margin = new(inset, 12, inset, 14);
+    }
+    private void OnHistory(object sender, RoutedEventArgs args)
+    {
+        if (Archive?.CanSwitch != true || sender is not Button button) return;
+        var menu = new ContextMenu { PlacementTarget = button, MaxWidth = 420, MaxHeight = 480 };
+        foreach (var thread in Archive.Threads.Reverse())
+        {
+            var item = new MenuItem { Header = thread.Title, IsCheckable = true, IsChecked = ReferenceEquals(thread, Archive.ActiveThread) };
+            item.Click += (_, _) => { if (Archive.CanSwitch) Archive.ActiveThread = thread; };
+            menu.Items.Add(item);
+        }
+        button.ContextMenu = menu; menu.IsOpen = true;
+    }
+    private async void OnConfigureModel(object sender, RoutedEventArgs args)
+    {
+        if (TryFindResource(typeof(ISettingsEditor)) is ISettingsEditor settings) await settings.OpenAgentAsync();
+    }
+    private void OnQuickPrompt(object sender, RoutedEventArgs args)
+    {
+        if (!IsSourceClosed && sender is Button { DataContext: string prompt } && Prompt.Length == 0) { SetCurrentValue(PromptProperty, prompt); PromptEditor.Focus(); }
     }
 }

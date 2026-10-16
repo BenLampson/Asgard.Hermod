@@ -2,9 +2,9 @@
  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
  xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI"
  xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI">
- <controls:AgentPanel x:Name="ChatPanel" Messages="{Binding Messages}" Prompt="{Binding Prompt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MaxPromptLength="8000"
+ <controls:AgentPanel x:Name="ChatPanel" IsSourceClosed="{Binding IsSourceClosed}" Archive="{Binding Archive}" QuickPrompts="{Binding QuickPrompts}" WelcomeDescription="{loc:Loc ChatDbWelcome}" Messages="{Binding Messages}" Prompt="{Binding Prompt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MaxPromptLength="8000"
   Placeholder="{loc:Loc MySqlAssistantPrompt}" SendCommand="{Binding SendCommand}" CancelCommand="{Binding CancelCommand}"
-  ClearCommand="{Binding ClearCommand}" HideCommand="{Binding HideCommand}" IsBusy="{Binding IsBusy}" Error="{Binding Error}" Status="{loc:Loc MySqlAssistantThinking}">
+  ClearCommand="{Binding ClearCommand}" HideCommand="{Binding HideCommand}" IsBusy="{Binding IsBusy}" Error="{Binding Error}" Status="{Binding Status}">
   <controls:AgentPanel.ContextContent>
    <StackPanel>
     <TextBlock Text="{Binding ContextLabel}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
@@ -16,7 +16,7 @@
    </StackPanel>
   </controls:AgentPanel.ContextContent>
   <controls:AgentPanel.MessageTemplate><DataTemplate>
-   <controls:AgentMessageView Role="{Binding Role}" Body="{Binding Content}" IsUser="{Binding IsUser}" IsTool="{Binding IsTool}" Status="{Binding Status}">
+   <controls:AgentMessageView Role="{Binding Role}" Body="{Binding Content}" TimestampLabel="{Binding TimestampLabel}" IsUser="{Binding IsUser}" IsTool="{Binding IsTool}" Status="{Binding Status}" IsExpanded="{Binding IsExpanded, Mode=TwoWay}" IsAwaitingApproval="{Binding IsAwaitingApproval}" IsError="{Binding IsError}" ModelIdentity="{Binding ModelIdentity}" Elapsed="{Binding Elapsed}" RecoveryPrompt="{Binding RecoveryPrompt}" RestoreDraftCommand="{Binding DataContext.RestoreDraftCommand, RelativeSource={RelativeSource AncestorType=controls:AgentPanel}}">
     <controls:AgentMessageView.ActionsContent>
      <ItemsControl ItemsSource="{Binding SqlBlocks}"><ItemsControl.ItemTemplate><DataTemplate>
       <controls:AgentCodeSuggestion Code="{Binding Sql}" Caption="{loc:Loc MySqlAssistantSuggestion}"

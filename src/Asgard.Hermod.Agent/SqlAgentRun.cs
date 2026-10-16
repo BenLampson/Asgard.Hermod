@@ -23,7 +23,7 @@ internal static class SqlAgentRun
             token.ThrowIfCancellationRequested();
             bool final = stopped || step == 4 || messages.Sum(message => (long)message.Content.Length) > 130000;
             if (final) messages.Add(new(AgentRole.System, "No more queries are authorized for this task. Summarize observed results and uncertainty. Do not claim a rejected, failed, cancelled or unknown query succeeded. Do not retry it."));
-            var reply = await client.CompleteWithToolsAsync(messages, final ? [] : Tools, token);
+            var reply = await client.CompleteWithToolsAsync(messages, final ? [] : Tools, token).WaitAsync(token);
             token.ThrowIfCancellationRequested();
             if (reply.ToolCalls.Count == 0) { receive(reply); return reply; }
             if (final || reply.ToolCalls.Count != 1 || reply.Content.Length > 4000) throw Text.Exception("AgentInvalidResponse");

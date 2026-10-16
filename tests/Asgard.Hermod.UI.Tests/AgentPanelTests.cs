@@ -62,17 +62,17 @@ public sealed class AgentPanelTests(WpfTestFixture fixture)
             view.DataContext = model;
             System.Windows.Input.InputMethod.SetIsInputMethodEnabled(view, false);
             var panel = Assert.IsType<AgentPanel>(view.FindName("ChatPanel"));
-            foreach (double width in new[] { 480d, 320d })
+            foreach (double width in new[] { 1120d, 640d })
             {
                 await LayoutAsync(view, width);
-                var header = Assert.IsType<DockPanel>(panel.FindName("AgentHeader"));
-                Assert.Equal(50, Assert.IsType<Border>(header.Parent).ActualHeight);
+                var header = Assert.IsType<DockPanel>(panel.FindName("ToolbarColumn"));
+                Assert.Equal(48, Assert.IsType<Border>(header.Parent).ActualHeight);
                 var messages = WindowTestVisuals.Descendants<AgentMessageView>(view).ToArray();
                 Assert.Equal(2, messages.Length);
                 var user = Assert.Single(messages, message => message.IsUser);
                 var reply = Assert.Single(messages, message => !message.IsUser);
                 var bubble = Assert.IsType<Border>(user.FindName("MessageBubble"));
-                Assert.Equal(((SolidColorBrush)Application.Current.FindResource("AccentWeakBrush")).Color, Assert.IsType<SolidColorBrush>(bubble.Background).Color);
+                Assert.Equal(((SolidColorBrush)panel.FindResource("AppBackgroundBrush")).Color, Assert.IsType<SolidColorBrush>(bubble.Background).Color);
                 var literal = Assert.Single(WindowTestVisuals.Descendants<MarkdownView>(user));
                 Assert.False(literal.IsMarkdownEnabled);
                 Assert.Contains("## literal question", new TextRange(literal.Document.ContentStart, literal.Document.ContentEnd).Text);
@@ -81,12 +81,12 @@ public sealed class AgentPanelTests(WpfTestFixture fixture)
                 var send = Assert.IsType<Button>(panel.FindName("SendAction"));
                 Assert.True(send.TranslatePoint(new Point(send.ActualWidth, send.ActualHeight), composer).X <= composer.ActualWidth);
                 Assert.False(send.IsEnabled);
-                Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(header), text => text.Text == Text.Get("AgentPanelTitle"));
+                Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(header), text => text.Text == Text.Get("ChatConfigureModel"));
             }
             var prompt = Assert.IsType<TextBox>(panel.FindName("PromptEditor"));
             prompt.Text = "new draft";
             prompt.GetBindingExpression(TextBox.TextProperty)!.UpdateSource();
-            await LayoutAsync(view, 320);
+            await LayoutAsync(view, 640);
             Assert.Equal("new draft", model.Prompt);
             Assert.Equal(kind == "ssh" ? 16000 : 8000, prompt.MaxLength);
             Assert.Null(prompt.Template.FindName("FocusRing", prompt));
@@ -94,18 +94,21 @@ public sealed class AgentPanelTests(WpfTestFixture fixture)
             Assert.Equal(1, model.SendCount);
             Assert.Equal("new draft", model.Prompt);
             model.IsBusy = true;
-            await LayoutAsync(view, 320);
+            await LayoutAsync(view, 640);
             Assert.False(Assert.IsType<Button>(panel.FindName("SendAction")).IsEnabled);
             WindowTestVisuals.Invoke(Assert.Single(WindowTestVisuals.Descendants<Button>(panel), button => ReferenceEquals(button.Command, model.CancelCommand)));
             Assert.Equal(1, model.CancelCount);
             model.IsBusy = false;
-            await LayoutAsync(view, 320);
-            WindowTestVisuals.Invoke(Assert.Single(WindowTestVisuals.Descendants<Button>(panel), button => ReferenceEquals(button.Command, model.ClearCommand)));
-            Assert.Equal(1, model.ClearCount);
+            await LayoutAsync(view, 640);
+            WindowTestVisuals.Invoke(Assert.Single(WindowTestVisuals.Descendants<Button>(panel), button => ReferenceEquals(button.Command, model.Archive.NewCommand)));
+            Assert.Equal(2, model.Archive.Threads.Count);
+            Assert.Empty(model.Messages); Assert.Empty(model.Prompt);
+            model.Archive.ActiveThread = model.Archive.Threads[0]; await LayoutAsync(view, 640);
+            Assert.Equal(2, model.Messages.Count); Assert.Equal("new draft", model.Prompt);
             if (kind != "ssh")
             {
-                WindowTestVisuals.Invoke(Assert.IsType<Button>(panel.FindName("HideAgentButton")));
-                Assert.Equal(1, model.HideCount);
+                ((System.Windows.Controls.Primitives.ToggleButton)panel.FindName("ContextToggle")).IsChecked = true;
+                await LayoutAsync(view, 640);
                 Assert.Contains(WindowTestVisuals.Descendants<CheckBox>(panel), check => !check.IsEnabled);
             }
             else

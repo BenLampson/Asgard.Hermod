@@ -4396,4 +4396,52 @@ Result sample:
   <data name="SshInstanceElapsed" xml:space="preserve"><value>Instance connected {0:hh\:mm\:ss}</value></data>
   <data name="SshConsoleEnded" xml:space="preserve"><value>Ended</value></data>
   <data name="SshEndedConsole" xml:space="preserve"><value>Ended: {0}</value></data>
+  <data name="ChatPreparingContext" xml:space="preserve"><value>Preparing context…</value></data>
+  <data name="ChatWaitingModel" xml:space="preserve"><value>Waiting for the model…</value></data>
+  <data name="ChatReadingData" xml:space="preserve"><value>Reading data…</value></data>
+  <data name="ChatToolActivity" xml:space="preserve"><value>Tool activity</value></data>
+  <data name="ChatUserRole" xml:space="preserve"><value>You</value></data>
+  <data name="ChatActivityElapsed" xml:space="preserve"><value>{0:N0} ms</value></data>
+  <data name="ChatLogSelectionChanged" xml:space="preserve"><value>The log selection has changed. Select the text again before attaching it.</value></data>
+  <data name="ChatLogSelectionAttachment" xml:space="preserve"><value>Selection · {0:N0} characters · lines {1}–{2} · {3:g} · {4}</value></data>
+  <data name="ChatLogSnapshotAttachment" xml:space="preserve"><value>Snapshot · {0:N0} characters · lines {1}–{2} · {3:g} · {4}</value></data>
+  <data name="ChatContextIncomplete" xml:space="preserve"><value>Truncated</value></data>
+  <data name="ChatContextComplete" xml:space="preserve"><value>Complete</value></data>
+  <data name="ChatLogNoAttachment" xml:space="preserve"><value>Attach a snapshot or selection before sending.</value></data>
+  <data name="ChatLocateSource" xml:space="preserve"><value>Locate workspace</value></data>
+  <data name="ChatSourceClosed" xml:space="preserve"><value>The source is closed. Conversation history remains available.</value></data>
+  <data name="ChatHistory" xml:space="preserve"><value>History</value></data>
+  <data name="ChatRestoreDraft" xml:space="preserve"><value>Restore question</value></data>
+  <data name="ChatWelcome" xml:space="preserve"><value>Let's solve the problem.</value></data>
+  <data name="ChatSharingHint" xml:space="preserve"><value>Selected context will be shared with the current model when you send.</value></data>
+  <data name="ChatModel" xml:space="preserve"><value>Model</value></data>
+  <data name="ChatConfigureModel" xml:space="preserve"><value>Configure model</value></data>
+  <data name="ChatContextOptions" xml:space="preserve"><value>Context and execution options</value></data>
+  <data name="ChatLogAttachSnapshot" xml:space="preserve"><value>Attach snapshot</value></data>
+  <data name="ChatLogAttachSelection" xml:space="preserve"><value>Attach selection</value></data>
+  <data name="ChatDatabaseSource" xml:space="preserve"><value>{0} / {1} / {2}</value></data>
+  <data name="ChatSshSource" xml:space="preserve"><value>{0} / SSH / {1}</value></data>
+  <data name="MoreOptions" xml:space="preserve"><value>More options</value></data>
+  <data name="CopySelection" xml:space="preserve"><value>Copy selection</value></data>
+  <data name="SshFontIncrease" xml:space="preserve"><value>Increase font size</value></data>
+  <data name="SshFontDecrease" xml:space="preserve"><value>Decrease font size</value></data>
+  <data name="ReadOnly" xml:space="preserve"><value>Read only</value></data>
+  <data name="ChatWindowTitle" xml:space="preserve"><value>AI Assistant</value></data>
+  <data name="ChatAssistantName" xml:space="preserve"><value>Hermod</value></data>
+  <data name="ChatUserTime" xml:space="preserve"><value>{0} · {1:t}</value></data>
+  <data name="ChatWelcomeDescription" xml:space="preserve"><value>Start with the current workspace. Explore, understand and solve.
+You decide before execution.</value></data>
+  <data name="ChatDbWelcome" xml:space="preserve"><value>Start with the current database. Query, understand and optimize.
+You decide before execution.</value></data>
+  <data name="ChatDbPromptOne" xml:space="preserve"><value>Which table has the most rows?</value></data>
+  <data name="ChatDbPromptTwo" xml:space="preserve"><value>Explain the SQL in the editor</value></data>
+  <data name="ChatDbPromptThree" xml:space="preserve"><value>Help optimize a slow query</value></data>
+  <data name="ChatSshPromptOne" xml:space="preserve"><value>Check the current server's health</value></data>
+  <data name="ChatSshPromptTwo" xml:space="preserve"><value>Analyze the selected terminal output</value></data>
+  <data name="ChatSshPromptThree" xml:space="preserve"><value>Investigate a service failure</value></data>
+  <data name="ChatLogPromptOne" xml:space="preserve"><value>Summarize errors in this snapshot</value></data>
+  <data name="ChatLogPromptTwo" xml:space="preserve"><value>Explain the sequence around this failure</value></data>
+  <data name="ChatLogPromptThree" xml:space="preserve"><value>Suggest checks supported by this evidence</value></data>
+  <data name="AgentInvalidHistory" xml:space="preserve"><value>The conversation history cannot be restored.</value></data>
+  <data name="ChatContext" xml:space="preserve"><value>Context</value></data>
 </root>

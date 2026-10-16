@@ -1,0 +1,24 @@
+<UserControl x:Class="Asgard.Hermod.Ssh.UI.Views.SshLogCaption"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI" xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI"
+ xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework">
+ <UserControl.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="/Asgard.Hermod.Ssh.UI;component/Resources/SshDesign.xaml" /></ResourceDictionary.MergedDictionaries></ResourceDictionary></UserControl.Resources>
+ <Border Height="48" Background="{DynamicResource WorkspaceCaptionBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,0,0,1" Padding="16,0,8,0">
+  <DockPanel>
+   <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" shell:WindowChrome.IsHitTestVisibleInChrome="True">
+    <Button Click="OnAgent" Height="28" MinHeight="28" FontSize="12" Padding="8,0" Style="{StaticResource StandardButton}" ToolTip="{loc:Loc SshLogAiToggle}" AutomationProperties.Name="{loc:Loc SshLogAiToggle}" Margin="0,0,10,0"><StackPanel Orientation="Horizontal"><controls:IconView Kind="sparkles" Width="14" Height="14" Margin="0,0,6,0" /><TextBlock Text="{loc:Loc DatabaseSessionAgent}" /></StackPanel>
+     <Button.ContextMenu><ContextMenu><MenuItem Header="{loc:Loc ChatLogAttachSnapshot}" Click="OnAttachSnapshot" /><MenuItem Header="{loc:Loc ChatLogAttachSelection}" Click="OnAttachSelection" /></ContextMenu></Button.ContextMenu>
+    </Button>
+    <Button Command="{x:Static SystemCommands.MinimizeWindowCommand}" Style="{StaticResource IconButton}" Width="32" Height="28" MinHeight="28" ToolTip="{loc:Loc Minimize}" AutomationProperties.Name="{loc:Loc Minimize}"><controls:IconView Kind="minus" Width="14" Height="14" /></Button>
+    <Button Click="OnMaximize" Style="{StaticResource IconButton}" Width="32" Height="28" MinHeight="28" ToolTip="{loc:Loc Maximize}" AutomationProperties.Name="{loc:Loc Maximize}"><controls:IconView Kind="square" Width="14" Height="14" /></Button>
+    <Button Command="{x:Static SystemCommands.CloseWindowCommand}" Style="{StaticResource IconButton}" Width="32" Height="28" MinHeight="28" ToolTip="{loc:Loc Close}" AutomationProperties.Name="{loc:Loc Close}"><controls:IconView Kind="x" Width="14" Height="14" /></Button>
+   </StackPanel>
+   <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+    <controls:IconView Kind="file-text" Width="18" Height="18" Foreground="{DynamicResource AccentBrush}" Margin="0,0,10,0" />
+    <TextBlock Text="{Binding Container.Name}" FontSize="14" FontWeight="SemiBold" MaxWidth="260" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+    <TextBlock Text="{loc:Loc SshMonitorLogs}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="10,0" />
+    <TextBlock Text="{Binding Host}" ToolTip="{Binding Source}" FontSize="12" TextTrimming="CharacterEllipsis" MaxWidth="300" VerticalAlignment="Center" />
+   </StackPanel>
+  </DockPanel>
+ </Border>
+</UserControl>

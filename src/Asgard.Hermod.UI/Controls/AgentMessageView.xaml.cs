@@ -3,6 +3,39 @@ namespace Asgard.Hermod.UI.Controls;
 /// <summary>共享消息气泡；用户、助手与工具使用稳定来源标记，业务动作由模块插槽承载。</summary>
 public partial class AgentMessageView : UserControl
 {
+    /// <summary>显示消息冻结的创建时间。</summary>
+    public static readonly DependencyProperty TimestampLabelProperty = DependencyProperty.Register(nameof(TimestampLabel), typeof(string), typeof(AgentMessageView), new PropertyMetadata(""));
+    /// <summary>角色与时间的完整本地化模板。</summary>
+    public string TimestampLabel { get => (string)GetValue(TimestampLabelProperty); set => SetValue(TimestampLabelProperty, value); }
+    /// <summary>共享消息的 IsExpanded 展示状态。</summary>
+    public static readonly DependencyProperty IsExpandedProperty = DependencyProperty.Register(nameof(IsExpanded), typeof(bool), typeof(AgentMessageView), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, null, (sender, value) => ((AgentMessageView)sender).IsAwaitingApproval || (bool)value));
+    /// <summary>共享消息的 IsExpanded 状态。</summary>
+    public bool IsExpanded { get => (bool)GetValue(IsExpandedProperty); set => SetValue(IsExpandedProperty, value); }
+    /// <summary>共享消息的 IsAwaitingApproval 展示状态。</summary>
+    public static readonly DependencyProperty IsAwaitingApprovalProperty = DependencyProperty.Register(nameof(IsAwaitingApproval), typeof(bool), typeof(AgentMessageView), new PropertyMetadata(false, (sender, _) => sender.CoerceValue(IsExpandedProperty)));
+    /// <summary>共享消息的 IsAwaitingApproval 状态。</summary>
+    public bool IsAwaitingApproval { get => (bool)GetValue(IsAwaitingApprovalProperty); set => SetValue(IsAwaitingApprovalProperty, value); }
+    /// <summary>共享消息的 IsError 展示状态。</summary>
+    public static readonly DependencyProperty IsErrorProperty = DependencyProperty.Register(nameof(IsError), typeof(bool), typeof(AgentMessageView), new PropertyMetadata(false));
+    /// <summary>共享消息的 IsError 状态。</summary>
+    public bool IsError { get => (bool)GetValue(IsErrorProperty); set => SetValue(IsErrorProperty, value); }
+    /// <summary>共享消息的 ModelIdentity 展示状态。</summary>
+    public static readonly DependencyProperty ModelIdentityProperty = DependencyProperty.Register(nameof(ModelIdentity), typeof(string), typeof(AgentMessageView), new PropertyMetadata(""));
+    /// <summary>共享消息的 ModelIdentity 状态。</summary>
+    public string ModelIdentity { get => (string)GetValue(ModelIdentityProperty); set => SetValue(ModelIdentityProperty, value); }
+    /// <summary>共享消息的 Elapsed 展示状态。</summary>
+    public static readonly DependencyProperty ElapsedProperty = DependencyProperty.Register(nameof(Elapsed), typeof(string), typeof(AgentMessageView), new PropertyMetadata(""));
+    /// <summary>共享消息的 Elapsed 状态。</summary>
+    public string Elapsed { get => (string)GetValue(ElapsedProperty); set => SetValue(ElapsedProperty, value); }
+    /// <summary>共享消息的 RecoveryPrompt 展示状态。</summary>
+    public static readonly DependencyProperty RecoveryPromptProperty = DependencyProperty.Register(nameof(RecoveryPrompt), typeof(string), typeof(AgentMessageView), new PropertyMetadata(""));
+    /// <summary>共享消息的 RecoveryPrompt 状态。</summary>
+    public string RecoveryPrompt { get => (string)GetValue(RecoveryPromptProperty); set => SetValue(RecoveryPromptProperty, value); }
+    /// <summary>共享消息的 RestoreDraftCommand 展示状态。</summary>
+    public static readonly DependencyProperty RestoreDraftCommandProperty = DependencyProperty.Register(nameof(RestoreDraftCommand), typeof(ICommand), typeof(AgentMessageView), new PropertyMetadata(null));
+    /// <summary>共享消息的 RestoreDraftCommand 状态。</summary>
+    public ICommand? RestoreDraftCommand { get => (ICommand?)GetValue(RestoreDraftCommandProperty); set => SetValue(RestoreDraftCommandProperty, value); }
+
     /// <summary>本地化角色名称。</summary>
     public static readonly DependencyProperty RoleProperty = DependencyProperty.Register(nameof(Role), typeof(string), typeof(AgentMessageView), new PropertyMetadata(""));
     /// <summary>消息原文；用户与工具正文不解析 Markdown。</summary>

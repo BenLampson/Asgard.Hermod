@@ -58,9 +58,12 @@ row before applying changes in one transaction. Conflicts retain drafts. An
 unconfirmed dispatched write blocks retries until reconnect-and-verify resolves
 the outcome. SQL NULL, empty text and binary bytes remain distinct.
 
-The optional side assistant shares the separate Agent module and local system
-settings with MySQL. The caption Agent action restores a resizable split pane;
-its X hides it while retaining conversation, draft and width. The database explorer
+The optional independent assistant shares the separate Agent module and local system
+settings with MySQL. The caption Agent action restores a separate nonmodal window
+bound to its original script Session. Its X hides it while retaining conversation,
+draft, task and position. Switching the active Session cannot redirect an existing
+window. New conversation keeps a bounded in-memory history; source closure leaves
+history readable and disables new actions. The database explorer
 can be collapsed and restored while retaining expanded branches and selection.
 Conversations belong to script Sessions, including their
 object views. It receives PostgreSQL dialect and bounded metadata only for databases

@@ -84,7 +84,7 @@ public sealed class SshConsoleViewModel : ObservableObject, IAsyncDisposable
             await _dispatcher.InvokeAsync(() =>
             {
                 IsRunning = false; Error = _overflow ? Text.Get("SshInputOverflow") : failure is null ? "" : Text.Error(SshConnectionFactory.SafeError(failure));
-                OnPropertyChanged(nameof(Error)); OnPropertyChanged(nameof(IsReadOnly)); OnPropertyChanged(nameof(IsEnded)); Assistant.ConnectionChanged(); StateChanged?.Invoke(this, EventArgs.Empty);
+                OnPropertyChanged(nameof(Error)); OnPropertyChanged(nameof(IsReadOnly)); OnPropertyChanged(nameof(IsEnded)); Assistant.CloseSource(); StateChanged?.Invoke(this, EventArgs.Empty);
             });
 
         async Task ReadAsync()

@@ -13,7 +13,7 @@ namespace Asgard.Hermod.UI.Tests;
 [Collection(WpfTestCollection.Name)]
 public sealed class SshContainerLogTests(WpfTestFixture fixture)
 {
-    /// <summary>日志来源、工具栏、AI 分屏和搜索在两种语言与主题、窄宽尺寸下可用。</summary>
+    /// <summary>日志来源、48/40/24 区域及搜索在两种语言与主题、窄宽尺寸下可用。</summary>
     [Theory]
     [InlineData("en", UiTheme.Light)]
     [InlineData("en", UiTheme.Dark)]
@@ -28,31 +28,34 @@ public sealed class SshContainerLogTests(WpfTestFixture fixture)
         connection.Handler = (_, _) => Task.FromResult(new SshCommandResult(PreviewLog(), 0, false));
         using var document = new SshContainerLogViewModel(Container(), "root@prod-web-01:22", connection, client);
         using var view = new SshContainerLogView { DataContext = document };
-        var window = new SshContainerLogWindow(document);
+        var caption = new SshLogCaption { DataContext = document };
+        var root = new DockPanel(); DockPanel.SetDock(caption, Dock.Top); root.Children.Add(caption); root.Children.Add(view);
         try
         {
-            Assert.True(window.ShowInTaskbar); Assert.Equal(ResizeMode.CanResize, window.ResizeMode);
-            Assert.Equal(document.Title, window.Title); Assert.False(window.IsVisible); Assert.Empty(connection.Commands);
+            Assert.Empty(connection.Commands); Assert.Null(Window.GetWindow(view));
             await document.RefreshCommand.ExecuteAsync();
-            await LayoutAsync(view, 1440, 820);
-            var output = Assert.IsType<TextBox>(view.FindName("LogOutput"));
-            Capture(view, $"container-logs-initial-{language}-{theme}");
+            await LayoutAsync(root, 1440, 900);
+            var output = view.LogOutput;
+            Assert.Equal(48, caption.ActualHeight); Assert.Equal(40, ((Border)view.FindName("LogToolbar")).ActualHeight);
+            Assert.Equal(new Point(0, 88), ((CodeEditor)view.FindName("LogEditor")).TranslatePoint(new(), root));
+            Assert.Null(PresentationSource.FromVisual(root));
+            Capture(root, $"container-logs-initial-{language}-{theme}");
             Assert.Equal(document.LogText, output.Text); Assert.True(output.ActualWidth >= view.ActualWidth * 0.5, $"Reader width: {output.ActualWidth}"); Assert.True(output.ActualHeight >= view.ActualHeight * 0.6, $"Reader height: {output.ActualHeight}");
             Assert.True(output.IsReadOnly); Assert.Equal(Text.Get("SshLogTail500"), Assert.IsType<TextBlock>(((ComboBoxItem)Assert.IsType<ComboBox>(view.FindName("TailRange")).SelectedItem).Content).Text);
             var search = Assert.IsType<TextBox>(view.FindName("SearchInput")); search.Text = "ERROR";
             Assert.Equal("ERROR", output.SelectedText); Assert.Equal(Text.Format("SshSearchMatches", 1, 1), Assert.IsType<TextBlock>(view.FindName("MatchCount")).Text);
             search.Text = "no matching line"; Assert.Empty(output.SelectedText);
             search.Text = "ERROR";
-            document.Assistant.Prompt = "What failed?"; await document.Assistant.SendCommand.ExecuteAsync();
-            await LayoutAsync(view, 1440, 820); Capture(view, $"container-logs-{language}-{theme}");
-            document.IsAiOpen = false; await LayoutAsync(view, 1000, 640);
-            Assert.True(output.ActualWidth >= 900); Capture(view, $"container-logs-reading-{language}-{theme}");
-            document.IsAiOpen = true; await LayoutAsync(view, 1000, 640);
+            document.Assistant.PrepareAttachment(false); document.Assistant.Prompt = "What failed?"; await document.Assistant.SendCommand.ExecuteAsync();
+            await LayoutAsync(root, 1440, 900); Capture(root, $"container-logs-{language}-{theme}");
+            document.IsAiOpen = false; await LayoutAsync(root, 1080, 760);
+            Assert.True(output.ActualWidth >= 900); Capture(root, $"container-logs-reading-{language}-{theme}");
+            document.IsAiOpen = true; await LayoutAsync(root, 1080, 760);
             Assert.True(output.ActualWidth >= 450); Assert.True(output.ActualHeight >= 300);
-            Capture(view, $"container-logs-compact-{language}-{theme}");
+            Capture(root, $"container-logs-compact-{language}-{theme}");
             Assert.All(Application.Current.Windows.Cast<Window>(), item => Assert.False(item.IsVisible));
         }
-        finally { window.Close(); themes.SetTheme(UiTheme.Light); CultureInfo.CurrentUICulture = previous; CultureInfo.DefaultThreadCurrentUICulture = previousDefault; }
+        finally { themes.SetTheme(UiTheme.Light); CultureInfo.CurrentUICulture = previous; CultureInfo.DefaultThreadCurrentUICulture = previousDefault; }
     });
 
     /// <summary>独立文档使用完整 ID，刷新失败隐藏 stderr 且保留最后成功快照。</summary>
@@ -67,7 +70,7 @@ public sealed class SshContainerLogTests(WpfTestFixture fixture)
         await document.RefreshCommand.ExecuteAsync(); Assert.Equal(snapshot, document.LogText);
         Assert.Equal(Text.Get("SshMonitorLogFailed"), document.Status); Assert.DoesNotContain("password", document.Status);
         document.TailLines = -1; Assert.Equal(1000, document.TailLines);
-        document.Assistant.Prompt = "question"; await document.Assistant.SendCommand.ExecuteAsync();
+        Assert.True(document.Assistant.PrepareAttachment(false)); document.Assistant.Prompt = "question"; await document.Assistant.SendCommand.ExecuteAsync();
         Assert.Equal(Text.Get("AgentConfigurationRequired"), document.Assistant.Error);
     });
 
@@ -84,7 +87,7 @@ public sealed class SshContainerLogTests(WpfTestFixture fixture)
         await WpfTestFixture.DrainDispatcherAsync();
         Assert.Equal(snapshot, document.LogText); Assert.False(document.RefreshCommand.CanExecute(null));
         Assert.Equal(Text.Get("SshLogDisconnected"), document.Status);
-        document.Assistant.Prompt = "Analyze retained snapshot"; await document.Assistant.SendCommand.ExecuteAsync();
+        Assert.True(document.Assistant.PrepareAttachment(false)); document.Assistant.Prompt = "Analyze retained snapshot"; await document.Assistant.SendCommand.ExecuteAsync();
         Assert.Equal(2, document.Assistant.Messages.Count);
     });
 
@@ -97,11 +100,11 @@ public sealed class SshContainerLogTests(WpfTestFixture fixture)
         await document.RefreshCommand.ExecuteAsync();
         document.Assistant.UseSelection = true; document.Assistant.Prompt = "Why?";
         Assert.False(document.Assistant.SendCommand.CanExecute(null));
-        document.Assistant.Selection = "chosen ERROR old evidence";
+        document.Assistant.Selection = "[ERROR] Connection timed out after 30s"; document.Assistant.SelectionStart = document.LogText.IndexOf(document.Assistant.Selection, StringComparison.Ordinal); Assert.True(document.Assistant.PrepareAttachment(true));
         var reply = new TaskCompletionSource<AgentReply>(TaskCreationOptions.RunContinuationsAsynchronously); client.Pending = reply.Task;
         var analysis = document.Assistant.SendCommand.ExecuteAsync(); document.Assistant.Prompt = "new draft";
         using var data = JsonDocument.Parse(client.Requests[0][^1].Content);
-        Assert.Equal("chosen ERROR old evidence", data.RootElement.GetProperty("context").GetProperty("log").GetString());
+        Assert.Equal("[ERROR] Connection timed out after 30s", data.RootElement.GetProperty("context").GetProperty("log").GetString());
         connection.Handler = (_, _) => Task.FromResult(new SshCommandResult("new log", 0, false));
         await document.RefreshCommand.ExecuteAsync(); reply.SetResult(AgentReply.FromContent("Analysis of old evidence.")); await analysis;
         Assert.Equal("new draft", document.Assistant.Prompt); Assert.Equal("new log", document.LogText);
@@ -114,7 +117,7 @@ public sealed class SshContainerLogTests(WpfTestFixture fixture)
     {
         var connection = Connection(); var client = new Client(); using var document = new SshContainerLogViewModel(Container(), "host", connection, client);
         connection.Handler = (_, _) => Task.FromResult(new SshCommandResult(new string('x', 40000) + "tail evidence", 0, true));
-        await document.RefreshCommand.ExecuteAsync(); Assert.Contains(Text.Get("SshLogContextLimited"), document.Assistant.ContextLabel);
+        await document.RefreshCommand.ExecuteAsync(); Assert.True(document.Assistant.PrepareAttachment(false)); Assert.True(document.Assistant.Attachment!.IsTruncated);
         document.Assistant.Prompt = "analyze"; var late = new TaskCompletionSource<AgentReply>(TaskCreationOptions.RunContinuationsAsynchronously); client.Pending = late.Task;
         var pending = document.Assistant.SendCommand.ExecuteAsync();
         using var data = JsonDocument.Parse(client.Requests[0][^1].Content);

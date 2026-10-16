@@ -124,8 +124,13 @@ configured service. HTTPS is required except for loopback HTTP model services;
 redirects and automatic retries are disabled.
 
 Each script Session keeps its own assistant conversation, also used by its object
-views. The caption Agent action opens a resizable split pane. Its X only hides it,
-preserving the conversation, input draft and last width; the same action restores it.
+views. The caption Agent action opens a separate nonmodal window bound to that
+script Session. Its X hides it, preserving the conversation, draft, task and window
+position; repeated entry restores the same window. Other active Sessions do not
+redirect it. New conversation archives the current page in a bounded in-memory
+history. Closing the source retains readable messages and disables new actions.
+Accepted questions appear immediately and clear only their own draft. Failed
+questions can be restored explicitly without overwriting a newly edited draft.
 The database explorer can also be collapsed and restored without changing its
 expanded branches, selected object, Session scope or execution target.
 Sending a question reads bounded metadata only from its included databases

@@ -58,7 +58,7 @@ public sealed class MySqlAutomaticAgentTests(WpfTestFixture fixture)
         Assert.True(assistant.IsBusy); Assert.Single(server.ReadOnlyQueries);
         assistant.ExecutionMode = "manual"; Assert.True(assistant.IsAutomaticExecution); Assert.False(assistant.CanChangeExecutionMode);
         assistant.CancelCommand.Execute(null); await sending;
-        Assert.Single(client.Requests); Assert.Equal("keep draft", assistant.Prompt); Assert.False(assistant.IsBusy);
+        Assert.Single(client.Requests); Assert.Empty(assistant.Prompt); assistant.RestoreDraftCommand.Execute(null); Assert.Equal("keep draft", assistant.Prompt); Assert.False(assistant.IsBusy);
     });
 
     /// <summary>数据库在模型响应期间变化会废弃旧任务，旧查询不会打开自动执行连接。</summary>

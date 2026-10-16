@@ -68,4 +68,11 @@
     <Color x:Key="SshAccentColor">#2F6BE0</Color>
     <Color x:Key="SshSelectedColor">#EDF3FF</Color>
     <Color x:Key="SshCaptionColor">#EDF0F6</Color>
+    <Color x:Key="AgentBackgroundColor">#FFFFFF</Color>
+    <Color x:Key="AgentSoftColor">#F4F6FA</Color>
+    <Color x:Key="AgentLineColor">#E3E8EF</Color>
+    <Color x:Key="AgentInkColor">#1B2537</Color>
+    <Color x:Key="AgentMutedColor">#64748B</Color>
+    <Color x:Key="AgentAccentColor">#306BEA</Color>
+    <Color x:Key="AgentSelectedColor">#EDF3FF</Color>
 </ResourceDictionary>

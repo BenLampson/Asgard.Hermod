@@ -4396,4 +4396,52 @@ Session：{2}
   <data name="SshInstanceElapsed" xml:space="preserve"><value>实例连接 {0:hh\:mm\:ss}</value></data>
   <data name="SshConsoleEnded" xml:space="preserve"><value>已结束</value></data>
   <data name="SshEndedConsole" xml:space="preserve"><value>已结束：{0}</value></data>
+  <data name="ChatPreparingContext" xml:space="preserve"><value>正在准备上下文…</value></data>
+  <data name="ChatWaitingModel" xml:space="preserve"><value>正在等待模型回复…</value></data>
+  <data name="ChatReadingData" xml:space="preserve"><value>正在读取数据…</value></data>
+  <data name="ChatToolActivity" xml:space="preserve"><value>工具活动</value></data>
+  <data name="ChatUserRole" xml:space="preserve"><value>你</value></data>
+  <data name="ChatActivityElapsed" xml:space="preserve"><value>{0:N0} 毫秒</value></data>
+  <data name="ChatLogSelectionChanged" xml:space="preserve"><value>日志选区已变化，请重新选择后附加。</value></data>
+  <data name="ChatLogSelectionAttachment" xml:space="preserve"><value>选区 · {0:N0} 字符 · 第 {1}–{2} 行 · {3:g} · {4}</value></data>
+  <data name="ChatLogSnapshotAttachment" xml:space="preserve"><value>快照 · {0:N0} 字符 · 第 {1}–{2} 行 · {3:g} · {4}</value></data>
+  <data name="ChatContextIncomplete" xml:space="preserve"><value>已截断</value></data>
+  <data name="ChatContextComplete" xml:space="preserve"><value>完整</value></data>
+  <data name="ChatLogNoAttachment" xml:space="preserve"><value>发送前请明确附加快照或选区。</value></data>
+  <data name="ChatLocateSource" xml:space="preserve"><value>定位到工作区</value></data>
+  <data name="ChatSourceClosed" xml:space="preserve"><value>来源已关闭，可继续阅读对话历史。</value></data>
+  <data name="ChatHistory" xml:space="preserve"><value>历史记录</value></data>
+  <data name="ChatRestoreDraft" xml:space="preserve"><value>恢复问题</value></data>
+  <data name="ChatWelcome" xml:space="preserve"><value>一起，把问题解决。</value></data>
+  <data name="ChatSharingHint" xml:space="preserve"><value>发送时会将所选上下文交给当前模型。</value></data>
+  <data name="ChatModel" xml:space="preserve"><value>模型</value></data>
+  <data name="ChatConfigureModel" xml:space="preserve"><value>配置模型</value></data>
+  <data name="ChatContextOptions" xml:space="preserve"><value>上下文与执行选项</value></data>
+  <data name="ChatLogAttachSnapshot" xml:space="preserve"><value>附加快照</value></data>
+  <data name="ChatLogAttachSelection" xml:space="preserve"><value>附加选区</value></data>
+  <data name="ChatDatabaseSource" xml:space="preserve"><value>{0} / {1} / {2}</value></data>
+  <data name="ChatSshSource" xml:space="preserve"><value>{0} / SSH / {1}</value></data>
+  <data name="MoreOptions" xml:space="preserve"><value>更多操作</value></data>
+  <data name="CopySelection" xml:space="preserve"><value>复制选区</value></data>
+  <data name="SshFontIncrease" xml:space="preserve"><value>增大字体</value></data>
+  <data name="SshFontDecrease" xml:space="preserve"><value>减小字体</value></data>
+  <data name="ReadOnly" xml:space="preserve"><value>只读</value></data>
+  <data name="ChatWindowTitle" xml:space="preserve"><value>AI 助手</value></data>
+  <data name="ChatAssistantName" xml:space="preserve"><value>Hermod</value></data>
+  <data name="ChatUserTime" xml:space="preserve"><value>{0} · {1:t}</value></data>
+  <data name="ChatWelcomeDescription" xml:space="preserve"><value>从当前工作区开始，一起查询、理解和解决问题。
+执行前，由你决定。</value></data>
+  <data name="ChatDbWelcome" xml:space="preserve"><value>从当前数据库开始，一起查询、理解和优化。
+执行前，由你决定。</value></data>
+  <data name="ChatDbPromptOne" xml:space="preserve"><value>哪个表的数据最多？</value></data>
+  <data name="ChatDbPromptTwo" xml:space="preserve"><value>解释当前编辑器里的 SQL</value></data>
+  <data name="ChatDbPromptThree" xml:space="preserve"><value>帮我优化一个慢查询</value></data>
+  <data name="ChatSshPromptOne" xml:space="preserve"><value>检查当前服务器状态</value></data>
+  <data name="ChatSshPromptTwo" xml:space="preserve"><value>分析选中的终端输出</value></data>
+  <data name="ChatSshPromptThree" xml:space="preserve"><value>排查服务故障</value></data>
+  <data name="ChatLogPromptOne" xml:space="preserve"><value>总结快照中的错误</value></data>
+  <data name="ChatLogPromptTwo" xml:space="preserve"><value>解释故障前后的事件顺序</value></data>
+  <data name="ChatLogPromptThree" xml:space="preserve"><value>根据现有证据给出排查建议</value></data>
+  <data name="AgentInvalidHistory" xml:space="preserve"><value>无法恢复此对话历史。</value></data>
+  <data name="ChatContext" xml:space="preserve"><value>上下文</value></data>
 </root>

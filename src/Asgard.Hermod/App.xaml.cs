@@ -65,6 +65,8 @@ public partial class App : Application
             var languageStore = provider.GetRequiredService<ILanguagePreferenceStore>();
             Text.Initialize(languageStore.Load(), systemCulture);
             Text.SetApplicationCulture(Text.Culture);
+            Resources[typeof(Asgard.Hermod.UI.Services.IAgentWindowService)] = provider.GetRequiredService<Asgard.Hermod.UI.Services.IAgentWindowService>();
+            Resources[typeof(Asgard.Hermod.UI.Services.ISettingsEditor)] = provider.GetRequiredService<Asgard.Hermod.UI.Services.ISettingsEditor>();
             // AI 只恢复非敏感本机配置，API Key 每次启动均为空。
             try
             {

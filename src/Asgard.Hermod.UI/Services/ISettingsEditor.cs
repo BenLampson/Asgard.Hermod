@@ -7,4 +7,6 @@ public interface ISettingsEditor
     Task OpenAsync();
     /// <summary>从实例列表直接进入现有标签管理。</summary>
     Task OpenTagsAsync() => OpenAsync();
+    /// <summary>从独立助手直接进入模型配置。</summary>
+    Task OpenAgentAsync() => OpenAsync();
 }

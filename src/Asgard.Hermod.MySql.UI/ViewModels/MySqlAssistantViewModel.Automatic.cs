@@ -11,7 +11,7 @@ public sealed partial class MySqlAssistantViewModel
         get;
         set
         {
-            if (IsBusy || !SetProperty(ref field, value)) return;
+            if (_disposed || IsBusy || !SetProperty(ref field, value)) return;
             OnPropertyChanged(nameof(ExecutionMode));
         }
     }
@@ -28,7 +28,7 @@ public sealed partial class MySqlAssistantViewModel
         [new("manual", Text.Get("SqlAgentManual")), new("automatic", Text.Get("SqlAgentAutomatic"))];
 
     /// <summary>任务结束后才允许切换执行模式，防止中途扩张授权。</summary>
-    public bool CanChangeExecutionMode => !IsBusy;
+    public bool CanChangeExecutionMode => !IsBusy && !_disposed;
 
     private async Task SendAutomaticAsync()
     {
@@ -36,6 +36,7 @@ public sealed partial class MySqlAssistantViewModel
         string prompt = Prompt;
         using var pending = new CancellationTokenSource();
         _pending = pending; IsBusy = true; Error = ""; Refresh();
+        LastFailedPrompt = ""; Status = Text.Get("ChatPreparingContext"); AddMessage(new(prompt, true)); Prompt = "";
         try
         {
             long revision = _tab.ScopeRevision;
@@ -48,17 +49,19 @@ public sealed partial class MySqlAssistantViewModel
                     throw Text.Exception("MySqlAssistantContextChanged");
             }
             EnsureCurrent();
-            Messages.Add(new(prompt, true));
+            Status = Text.Get("ChatWaitingModel");
             await _conversation.RunAsync(prompt, context, async (query, token) =>
             {
                 EnsureCurrent();
                 var record = new MySqlAssistantMessage(Text.Format("SqlAgentStepQuery", query.Database, query.Sql), false, isTool: true);
-                record.Update(record.Content, "SqlAgentQueryRunning"); Messages.Add(record);
+                Status = Text.Get("ChatReadingData");
+                record.Update(record.Content, "SqlAgentQueryRunning"); AddMessage(record);
                 try
                 {
                     var result = await _tab.ExecuteAgentReadOnlyAsync(query, revision, identity, token);
                     EnsureCurrent();
                     record.Update(Text.Format("SqlAgentStepResult", query.Database, query.Sql, result.Output), result.Status == "completed" ? "SqlAgentQueryCompleted" : "SqlAgentQueryStopped");
+                    Status = Text.Get("ChatWaitingModel");
                     return result;
                 }
                 catch (OperationCanceledException) { record.Update(record.Content, "SqlAgentQueryStopped"); throw; }
@@ -72,13 +75,12 @@ public sealed partial class MySqlAssistantViewModel
             }, reply =>
             {
                 EnsureCurrent();
-                Messages.Add(new(reply.Content, false, reply.SqlBlocks.Select(sql => new MySqlAssistantSql(sql, context.Database, identity, revision)).ToArray()));
+                AddMessage(new(reply.Content, false, reply.SqlBlocks.Select(sql => new MySqlAssistantSql(sql, context.Database, identity, revision)).ToArray(), modelIdentity: reply.ModelIdentity));
             }, pending.Token);
             EnsureCurrent();
-            if (Prompt == prompt) Prompt = "";
         }
-        catch (OperationCanceledException) { if (!_disposed) Error = Text.Get("MySqlAssistantCancelled"); }
-        catch (Exception error) { if (!_disposed) Error = Text.Error(error, "AgentRequestFailed"); }
-        finally { _pending = null; IsBusy = false; if (_disposed) _conversation.Clear(); Refresh(); }
+        catch (OperationCanceledException) { if (!_disposed) AddFailure(prompt, Text.Get("MySqlAssistantCancelled")); }
+        catch (Exception error) { if (!_disposed) AddFailure(prompt, Text.Error(error, "AgentRequestFailed")); }
+        finally { _pending = null; IsBusy = false; Status = ""; if (_disposed) _conversation.Clear(); Refresh(); }
     }
 }

@@ -19,7 +19,7 @@ internal static class SshTroubleshootingRun
             ensureCurrent();
             bool final = stopped || step == MaximumSteps || messages.Sum(message => (long)message.Content.Length + message.ToolCalls.Sum(call => (long)call.Arguments.Length)) > 130000;
             if (final) messages.Add(new(AgentRole.System, "No more tools are authorized for this task. Summarize observed results, uncertainty and next steps. Never claim an unknown or denied action succeeded. Do not retry it."));
-            var reply = await client.CompleteWithToolsAsync(messages, final ? [] : SshAgentTools.Definitions, token);
+            var reply = await client.CompleteWithToolsAsync(messages, final ? [] : SshAgentTools.Definitions, token).WaitAsync(token);
             ensureCurrent();
             if (reply.ToolCalls.Count == 0)
             {

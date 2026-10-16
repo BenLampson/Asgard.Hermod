@@ -52,3 +52,6 @@ The execution-plan list-filter geometry preserves Lucide's three horizontal filt
 The scope picker's square-check.svg and matching WPF geometry use the Lucide source revision above.
 The SSH arrow-down-up.svg, arrow-up.svg, pause.svg and unplug.svg icons and matching WPF geometry use the Lucide source revision above.
 The history alias uses the official icons/history.svg from Lucide tag 0.468.0 (same ISC license).
+
+Agent cpu.svg, sparkles.svg and arrow-up-left.svg use the fixed Lucide source revision above; WPF geometry is converted directly from those SVG paths.
+Agent paperclip.svg and its WPF geometry use the same fixed Lucide source revision above.

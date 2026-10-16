@@ -9,6 +9,8 @@ internal sealed class AgentPanelTestModel : ObservableObject
     /// <summary>创建可观察的命令，便于验证共享控件没有代替模块执行业务。</summary>
     internal AgentPanelTestModel()
     {
+        Archive = new(Messages, () => Asgard.Hermod.Agent.AgentConversationSnapshot.Empty, _ => { }, () => Prompt, value => Prompt = value, () => IsBusy);
+        RestoreDraftCommand = new RelayCommand(_ => { });
         SendCommand = new RelayCommand(_ => SendCount++, _ => !IsBusy && !string.IsNullOrWhiteSpace(Prompt));
         CancelCommand = new RelayCommand(_ => CancelCount++, _ => IsBusy);
         ClearCommand = new RelayCommand(_ => ClearCount++);
@@ -17,6 +19,10 @@ internal sealed class AgentPanelTestModel : ObservableObject
         ExecuteCommand = new RelayCommand(value => Executed = value);
     }
 
+    public bool IsSourceClosed => false;
+    public IReadOnlyList<string> QuickPrompts { get; } = [];
+    public AgentConversationArchive Archive { get; }
+    public RelayCommand RestoreDraftCommand { get; }
     /// <summary>模块消息集合。</summary>
     public ObservableCollection<object> Messages { get; } = [];
     /// <summary>输入草稿随绑定变化。</summary>

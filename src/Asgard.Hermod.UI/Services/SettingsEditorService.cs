@@ -40,6 +40,8 @@ public sealed class SettingsEditorService : ISettingsEditor
     public Task OpenAsync() => OpenCategoryAsync("general");
     /// <inheritdoc />
     public Task OpenTagsAsync() => OpenCategoryAsync("tags");
+    /// <inheritdoc />
+    public Task OpenAgentAsync() => OpenCategoryAsync("agent");
     private async Task OpenCategoryAsync(string category)
     {
         SettingsWindow? window = null;

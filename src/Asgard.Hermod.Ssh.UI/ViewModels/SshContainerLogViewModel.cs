@@ -22,6 +22,10 @@ public sealed class SshContainerLogViewModel : ObservableObject, IDisposable
 
     /// <summary>用于复用窗口的完整容器 ID。</summary>
     public SshMonitorContainerItem Container { get; }
+    /// <summary>本次独立日志文档的稳定运行期身份。</summary>
+    public string Id { get; } = Guid.NewGuid().ToString("N");
+    /// <summary>最后成功读取的冻结证据，刷新失败时保留原值。</summary>
+    public SshLogSnapshot? Snapshot { get; private set; }
     /// <summary>公开主机标识，不含连接凭据。</summary>
     public string Host { get; }
     /// <summary>包含容器名称的本地化窗口标题。</summary>
@@ -38,14 +42,16 @@ public sealed class SshContainerLogViewModel : ObservableObject, IDisposable
     public bool IsTruncated { get; private set; }
     /// <summary>断线保留快照，但不复用旧连接读取。</summary>
     public bool IsConnected => _connection is not null && !_disposed;
+    /// <summary>读取期间固定行数选择，避免界面选择与当前快照请求不一致。</summary>
+    public bool CanChangeRange => IsConnected && !IsLoading;
     /// <summary>防止重复读取。</summary>
     public bool IsLoading { get; private set { if (SetProperty(ref field, value)) RefreshCommands(); } }
     /// <summary>安全状态或读取错误，失败时保留上一次快照。</summary>
     public string Status { get; private set => SetProperty(ref field, value); } = "";
     /// <summary>独立的日志分析会话。</summary>
     public SshLogAnalysisViewModel Assistant { get; }
-    /// <summary>AI 分屏默认展开，可收起释放阅读空间。</summary>
-    public bool IsAiOpen { get; set => SetProperty(ref field, value); } = true;
+    /// <summary>兼容旧展示偏好；独立日志阅读器不再以此占用正文宽度。</summary>
+    public bool IsAiOpen { get; set => SetProperty(ref field, value); }
     /// <summary>本地搜索不拼接远端命令。</summary>
     public string Search { get; set => SetProperty(ref field, value); } = "";
     /// <summary>长行折行只改变阅读外观。</summary>
@@ -71,6 +77,7 @@ public sealed class SshContainerLogViewModel : ObservableObject, IDisposable
             if (result.ExitCode != 0) throw Text.Exception("SshMonitorLogFailed");
             Assistant.Selection = "";
             LogText = result.Output; CapturedAt = DateTimeOffset.UtcNow; IsTruncated = result.Truncated;
+            Snapshot = new(Id, Host, Container.Id, Container.Name, Source, result.Output, CapturedAt.Value, lines, result.Truncated); OnPropertyChanged(nameof(Snapshot));
             OnPropertyChanged(nameof(CapturedAt)); OnPropertyChanged(nameof(IsTruncated));
             Assistant.Refresh();
             Status = Text.Format(result.Truncated ? "SshLogReadTruncated" : "SshLogReadComplete", lines, CapturedAt.Value.ToLocalTime());
@@ -87,7 +94,7 @@ public sealed class SshContainerLogViewModel : ObservableObject, IDisposable
         _revision++; _connection = null; _reading?.Cancel(); Status = Text.Get("SshLogDisconnected");
         OnPropertyChanged(nameof(IsConnected)); RefreshCommands();
     }
-    private void RefreshCommands() { RefreshCommand?.NotifyCanExecuteChanged(); CancelCommand?.NotifyCanExecuteChanged(); }
+    private void RefreshCommands() { OnPropertyChanged(nameof(CanChangeRange)); RefreshCommand?.NotifyCanExecuteChanged(); CancelCommand?.NotifyCanExecuteChanged(); }
     /// <summary>剪贴板或本地导出失败不展示系统路径及异常细节。</summary>
     public void ReportLocalError() => Status = Text.Get("SshLogLocalFailed");
     /// <inheritdoc />

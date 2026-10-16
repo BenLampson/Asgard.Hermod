@@ -9,8 +9,8 @@ internal static partial class IconCatalog
 {
     private static readonly Dictionary<string, Geometry> Geometries = new(StringComparer.OrdinalIgnoreCase)
     {
-        // 助手入口使用本地构造的星光几何，与公共线性图标尺寸一致。
-        ["sparkles"] = Create("M12 3L14.6 9.4L21 12L14.6 14.6L12 21L9.4 14.6L3 12L9.4 9.4Z", "M20 2V6M18 4H22"),
+        // 助手星光几何直接转换固定版本 Lucide SVG，与 Pencil 使用同一图标。
+        ["sparkles"] = Create("M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z", "M20 2v4", "M22 4h-4", "M2 20A2 2 0 1 0 6 20A2 2 0 1 0 2 20Z"),
         ["activity"] = Create(
             "M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"),
         ["app-window"] = Create(

@@ -50,22 +50,26 @@ pending verification dialog and does not save trust.
 
 ## SSH workspace
 
-The independent window retains Hermod's shared 72-pixel caption and 28-pixel
-status bar. Its caption exposes Edit configuration, Tools, Monitoring and Agent. There is
-no duplicate asset navigation. Terminal, Files and Port forwarding use the
-same verified connection and keep their content alive when switching sections.
-Both English and Simplified Chinese and the shared light/dark themes apply to
-all sections. Search, copy, paste, details and local font/display tools remain
-available. Multiline terminal paste still requires confirmation.
+The independent SSH window uses a 44-pixel caption and 28-pixel status bar.
+The caption exposes Monitoring and Agent. The 52-pixel instance tool rail opens
+Files (320 pixels), Port forwarding (480 pixels) or Transfers (360 pixels), while
+the 38-pixel console tab strip holds independent PTY consoles on one verified
+transport. Closing one console retains its output and does not stop instance
+tools, other shells, forwarding or transfers. Reconnect creates one new console
+and retains ended buffers without replaying input or restoring the old shell cwd.
 
-Agent opens as a right-hand `WorkspaceSplitView`, with a mouse- and
-keyboard-adjustable divider and an initial width of 420 pixels. The 50-pixel
-Agent header, separated context area, individual command previews and bottom
-composer follow the SSH design. Closing the pane keeps the conversation, draft,
-width and running task; replies never reopen it or steal terminal focus.
-Each workspace has an independent bounded conversation using the configured
-Chat Completions-compatible model. The model must support function tools for
-automatic troubleshooting. SQL assistants continue to use the text-only path.
+Agent opens a separate nonmodal window bound to the originating console.
+It defaults to 1120×1000, with a 44-pixel caption, 84-pixel source band,
+48-pixel conversation toolbar and 182-pixel minimum composer. Its body column is
+960 pixels at the default width, grows to 1120 on wide windows and uses 24-pixel
+side insets at 640 pixels. Closing only hides it; tasks, drafts, history and
+position survive. Repeated entry restores the same window. Source location and
+explicit terminal insertion return to the bound console. Source closure leaves
+messages readable while disabling new actions. The UI does not fabricate token
+streaming; it displays actual preparation, model, tool and approval phases.
+Tool evidence starts collapsed, and an active approval stays expanded.
+Each console has an independent bounded conversation using the configured model.
+The model must support function tools for automatic troubleshooting.
 
 Sending a troubleshooting request permits fixed read-only diagnostics: host and
 uptime, disk usage, memory, processes (without command-line arguments), listening
@@ -162,31 +166,32 @@ container clears its actions. Each open log window retains its original containe
 identity regardless of selection or monitoring section changes. Opening the same
 container again recalls its current window. Disconnect cancels outstanding reads
 and retains the last successful snapshot; after reconnecting, opening logs creates
-a document tied to the new connection. Closing the SSH workspace closes its log
-windows and cancels their requests.
+a document tied to the new connection. Closing the SSH workspace disconnects
+existing log documents but leaves their independent snapshot readers available.
 
-Each log window has a collapsible, resizable AI analysis pane with an independent
-conversation, using the configured model service. Nothing is sent until the user
-requests analysis. The user can attach the current snapshot or only selected text;
-an empty selected-text scope cannot silently become the entire log. Each request
-freezes its source, timestamp and evidence, so refresh cannot rewrite an ongoing
-analysis. The visible context label reports the actual size and incomplete input.
-At most the trailing 32,000 characters are sent per request. Previous raw logs
-are not retained in conversation history. Log analysis has no execution tools;
-model output cannot run commands. Responses use the shared selectable Markdown
-renderer. Safe configuration errors, cancellation, timeouts and read failures
-remain inside the log window. Existing server troubleshooting keeps its separate
-command confirmation flow.
+Each log window uses a 48-pixel caption, 40-pixel single-row toolbar and
+24-pixel status bar. The read-only text fills the remaining body; local search,
+selection, wrapping, copying, font adjustment and explicit file export do not
+alter the captured log. The Agent entry opens a separate log-bound conversation
+without reserving body space. It prepares a frozen snapshot attachment, or asks
+the user to choose snapshot versus a real nonempty selection. Preparing evidence
+never sends a model request. Each attachment records the original document,
+full container ID, capture time, requested lines, exact visible character/line
+range and truncation state. Refresh cannot change an attached draft or an active
+request. At most the trailing 32,000 characters are shared. Raw old logs are not
+retained in the model's question/answer history. Log analysis has no execution
+tools. A disconnected reader can still analyze its retained snapshot; closing
+the log document cancels analysis and leaves existing Agent history readable.
 
 Port forwarding listens only on `127.0.0.1` and reuses the same verified SSH
 client. Each forward has an explicit stop action. Disconnect, reconnect and
 workspace disposal release all forwarding handles. The application does not
 expose listening ports on external interfaces.
 
-New session continues to open an independent workspace window. Closing an active
-session asks for confirmation; cancel keeps it alive. Disconnect and remote exit
-retain read-only terminal output. Reconnect rereads the saved configuration and
-replaces the buffer only after successful connection; it never replays old input.
+New console creates an independent PTY tab in the same instance window.
+Closing an active console asks for confirmation; cancel keeps it alive.
+Disconnect and remote exit retain read-only terminal output. Reconnect rereads
+the saved configuration and creates one new shell without replaying old input.
 All SDK and configuration failures use safe localized errors.
 
 The portable protocol project uses Tmds.Ssh 0.26.0 (MIT). Its transitive API

@@ -34,7 +34,7 @@ public sealed class SshAgentComposerTests(WpfTestFixture fixture)
         System.Windows.Input.InputMethod.SetIsInputMethodEnabled(view, false);
         try
         {
-            await LayoutAsync(view, 420);
+            await LayoutAsync(view, 1120);
             var panel = Assert.IsType<AgentPanel>(view.FindName("ChatPanel"));
             var composer = Assert.IsType<Border>(panel.FindName("Composer"));
             var prompt = Assert.IsType<TextBox>(panel.FindName("PromptEditor"));
@@ -48,8 +48,8 @@ public sealed class SshAgentComposerTests(WpfTestFixture fixture)
             Assert.Equal(3, bubbles.Length);
             var userBubble = Assert.Single(bubbles, border => ReferenceEquals(border.DataContext, user));
             var toolBubble = Assert.Single(bubbles, border => ReferenceEquals(border.DataContext, tool));
-            Assert.Equal(((SolidColorBrush)Application.Current.FindResource("AccentWeakBrush")).Color, Assert.IsType<SolidColorBrush>(userBubble.Background).Color);
-            Assert.NotEqual(Assert.IsType<SolidColorBrush>(userBubble.Background).Color, Assert.IsType<SolidColorBrush>(toolBubble.Background).Color);
+            Assert.Equal(((SolidColorBrush)panel.FindResource("AppBackgroundBrush")).Color, Assert.IsType<SolidColorBrush>(userBubble.Background).Color);
+            Assert.NotEqual(Assert.IsType<SolidColorBrush>(userBubble.Background).Color, ((SolidColorBrush)panel.FindResource("SurfaceBrush")).Color);
             foreach (var body in WindowTestVisuals.Descendants<TextBox>(view).Where(editor => editor.IsReadOnly))
             {
                 Assert.True(body.Focusable);
@@ -66,22 +66,22 @@ public sealed class SshAgentComposerTests(WpfTestFixture fixture)
 
             prompt.Text = "first line\nsecond line";
             prompt.GetBindingExpression(TextBox.TextProperty)!.UpdateSource();
-            await LayoutAsync(view, 320);
+            await LayoutAsync(view, 640);
             Assert.Equal(prompt.Text, model.Prompt);
             Assert.Equal(Visibility.Collapsed, placeholder.Visibility);
             Assert.Equal(2, prompt.LineCount);
             model.Prompt = string.Join('\n', Enumerable.Repeat("long draft", 30));
-            await LayoutAsync(view, 320);
+            await LayoutAsync(view, 640);
             Assert.Equal(model.Prompt, prompt.Text);
-            Assert.InRange(prompt.ActualHeight, 48, 100);
+            Assert.InRange(prompt.ActualHeight, 58, 240);
             Assert.True(content.ScrollableHeight > 0);
             var send = Assert.IsType<Button>(panel.FindName("SendAction"));
             Assert.True(send.TranslatePoint(new Point(send.ActualWidth, send.ActualHeight), composer).X <= composer.ActualWidth);
             Capture(view, $"ssh-composer-draft-{language}-{theme}");
 
             model.Prompt = "";
-            await LayoutAsync(view, 420);
-            await LayoutAsync(view, 420);
+            await LayoutAsync(view, 1120);
+            await LayoutAsync(view, 1120);
             Assert.Empty(prompt.Text);
             Assert.Equal(Visibility.Visible, placeholder.Visibility);
         }

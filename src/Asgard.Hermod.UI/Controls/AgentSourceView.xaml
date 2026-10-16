@@ -1,0 +1,20 @@
+<UserControl x:Class="Asgard.Hermod.UI.Controls.AgentSourceView" x:Name="SourceRoot"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls" xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization"
+ Background="{DynamicResource SurfaceBrush}" SizeChanged="OnViewportChanged">
+ <UserControl.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/AgentDesign.xaml" /></ResourceDictionary.MergedDictionaries></ResourceDictionary></UserControl.Resources>
+ <Grid><Grid.RowDefinitions><RowDefinition Height="84" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+  <Border BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,0,0,1">
+   <Grid x:Name="SourceColumn" MaxWidth="1120" Margin="80,0">
+    <Grid.ColumnDefinitions><ColumnDefinition Width="48" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+    <Border Width="36" Height="36" CornerRadius="8" Background="{DynamicResource AccentWeakBrush}" HorizontalAlignment="Left"><controls:IconView Kind="{Binding Icon, ElementName=SourceRoot}" Width="16" Height="16" Foreground="{DynamicResource AccentBrush}" /></Border>
+    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+     <TextBlock Text="{Binding SourceTitle, ElementName=SourceRoot}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+     <TextBlock Text="{Binding SourceDetail, ElementName=SourceRoot}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,6,10,0" TextTrimming="CharacterEllipsis" />
+    </StackPanel>
+    <Button Grid.Column="2" x:Name="LocateButton" Click="OnLocate" Height="34" Padding="12,0" Style="{StaticResource StandardButton}" Content="{loc:Loc ChatLocateSource}" />
+   </Grid>
+  </Border>
+  <ContentControl x:Name="ConversationContent" Grid.Row="1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+ </Grid>
+</UserControl>

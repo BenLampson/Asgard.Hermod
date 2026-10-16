@@ -1,0 +1,13 @@
+<UserControl x:Class="Asgard.Hermod.Ssh.UI.Views.SshLogAssistantView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI" xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI">
+ <controls:AgentPanel x:Name="ChatPanel" IsSourceClosed="{Binding IsSourceClosed}" Archive="{Binding Archive}" QuickPrompts="{Binding QuickPrompts}" Messages="{Binding Messages}" Prompt="{Binding Prompt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+ Placeholder="{loc:Loc SshLogAsk}" SendCommand="{Binding SendCommand}" CancelCommand="{Binding CancelCommand}" IsBusy="{Binding IsBusy}" Error="{Binding Error}" Status="{Binding Status}">
+  <controls:AgentPanel.ContextContent><TextBlock Text="{Binding ContextLabel}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" /></controls:AgentPanel.ContextContent>
+  <controls:AgentPanel.MessageTemplate><DataTemplate>
+   <controls:AgentMessageView Role="{Binding Role}" Body="{Binding Content}" TimestampLabel="{Binding TimestampLabel}" IsUser="{Binding IsUser}" IsError="{Binding IsError}" ModelIdentity="{Binding ModelIdentity}" RecoveryPrompt="{Binding RecoveryPrompt}" RestoreDraftCommand="{Binding DataContext.RestoreDraftCommand, RelativeSource={RelativeSource AncestorType=controls:AgentPanel}}">
+    <controls:AgentMessageView.ActionsContent><TextBlock Text="{Binding Context}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,8,0,0" /></controls:AgentMessageView.ActionsContent>
+   </controls:AgentMessageView>
+  </DataTemplate></controls:AgentPanel.MessageTemplate>
+ </controls:AgentPanel>
+</UserControl>

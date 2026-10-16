@@ -31,6 +31,19 @@ public sealed class AgentConversation
     }
     /// <summary>返回当前成功对话的独立只读快照，不包含临时数据库上下文。</summary>
     public IReadOnlyList<AgentMessage> Messages { get { lock (_gate) return _messages.ToArray(); } }
+    /// <summary>保存独立历史页所需的成功消息与原范围标识。</summary>
+    public AgentConversationSnapshot Capture() { lock (_gate) return new(Array.AsReadOnly(_messages.ToArray()), _historyScope); }
+    /// <summary>仅空闲时恢复同一来源保存的历史；后续请求仍校验实际 Session 范围。</summary>
+    public void Restore(AgentConversationSnapshot snapshot)
+    {
+        ArgumentNullException.ThrowIfNull(snapshot);
+        lock (_gate)
+        {
+            if (_busy) throw Text.Exception("AgentBusy");
+            snapshot.Validate(_maxTurns * 2, MaximumHistoryCharacters);
+            _messages.Clear(); _messages.AddRange(snapshot.Messages); _historyScope = snapshot.ScopeId;
+        }
+    }
 
     /// <summary>将当前上下文只用于本次请求，失败或取消均不污染历史，也不会执行生成的 SQL。</summary>
     public Task<AgentReply> SendAsync(string prompt, AgentSqlContext context, CancellationToken cancellationToken = default)
@@ -73,7 +86,7 @@ public sealed class AgentConversation
                 request = prompt,
                 context = new { dialect, database = context.Database, databases = context.Databases, schema = context.Schema, sql = context.Sql, results = context.Results },
             })));
-            var reply = execute is null ? await _client.CompleteAsync(request, cancellationToken).ConfigureAwait(false)
+            var reply = execute is null ? await _client.CompleteAsync(request, cancellationToken).WaitAsync(cancellationToken).ConfigureAwait(false)
                 : await SqlAgentRun.RunAsync(_client, request, context, execute, receive!, cancellationToken).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
             lock (_gate)

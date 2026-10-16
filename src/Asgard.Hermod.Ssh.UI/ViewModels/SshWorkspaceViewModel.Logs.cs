@@ -2,7 +2,7 @@ using Asgard.Hermod.Agent;
 
 namespace Asgard.Hermod.Ssh.UI.ViewModels;
 
-/// <summary>日志文档属于工作区生命周期，每个容器及连接代次复用一个独立窗口。</summary>
+/// <summary>每个容器及连接代次复用一个日志文档；工作区关闭只断开来源，由独立阅读器释放文档。</summary>
 public sealed partial class SshWorkspaceViewModel
 {
     private readonly List<SshContainerLogViewModel> _logDocuments = [];
@@ -30,7 +30,7 @@ public sealed partial class SshWorkspaceViewModel
     private void DisposeLogs()
     {
         Monitor.ContainerLogsRequested -= OnContainerLogsRequested;
-        foreach (var document in _logDocuments) document.Dispose();
+        foreach (var document in _logDocuments) document.Disconnect();
         _logDocuments.Clear(); LogWindowRequested = null;
     }
 }

@@ -13,23 +13,41 @@ public sealed class SshAssistantViewModel : ObservableObject, IDisposable
     private readonly ISshWorkspaceDialogs _dialogs;
     private CancellationTokenSource? _pending;
     private bool _disposed;
+    private bool _sourceClosed;
     private long _revision;
 
     /// <summary>复用模型和已认证的 SSH 连接；连接凭据从不进入模型上下文。</summary>
     public SshAssistantViewModel(IAgentClient? client, Func<ISshWorkspaceConnection?> connection, Func<string> host, ISshWorkspaceDialogs dialogs)
     {
         _conversation = client is null ? null : new(client); _connection = connection; _host = host; _dialogs = dialogs;
-        SendCommand = new AsyncRelayCommand(_ => SendAsync(), _ => !_disposed && !IsBusy && !string.IsNullOrWhiteSpace(Prompt));
+        Archive = new(Messages, () => _conversation?.Capture() ?? AgentConversationSnapshot.Empty, snapshot => _conversation?.Restore(snapshot), () => Prompt, value => Prompt = value, () => IsBusy,
+            () => new Asgard.Hermod.UI.Models.AgentConversationFeedback(Error, LastFailedPrompt), state =>
+            {
+                var saved = state as Asgard.Hermod.UI.Models.AgentConversationFeedback ?? new();
+                Error = saved.Error; LastFailedPrompt = saved.FailedPrompt;
+            });
+        SendCommand = new AsyncRelayCommand(_ => SendAsync(), _ => !IsSourceClosed && !IsBusy && _connection() is not null && !string.IsNullOrWhiteSpace(Prompt));
+        RestoreDraftCommand = new RelayCommand(value => Prompt = value as string ?? LastFailedPrompt, value => !IsSourceClosed && !IsBusy && Prompt.Length == 0 && (value is string { Length: > 0 } || LastFailedPrompt.Length > 0));
         CancelCommand = new RelayCommand(_ => _pending?.Cancel(), _ => IsBusy);
-        ClearCommand = new RelayCommand(_ => { _conversation?.Clear(); Messages.Clear(); Error = ""; }, _ => !IsBusy && !_disposed);
+        ClearCommand = new RelayCommand(_ => { _conversation?.Clear(); Messages.Clear(); Error = ""; }, _ => !IsBusy && !IsSourceClosed);
         InsertCommand = new RelayCommand(value => { if (value is SshAssistantCommand item && IsCurrent(item)) InsertRequested?.Invoke(this, item.Command); }, value => value is SshAssistantCommand item && IsCurrent(item) && !IsBusy);
         ExecuteCommand = new AsyncRelayCommand(value => value is SshAssistantCommand item ? ExecuteAsync(item) : Task.CompletedTask, value => value is SshAssistantCommand item && IsCurrent(item) && !IsBusy);
     }
 
     /// <summary>用户明确填入终端，不添加回车。</summary>
     public event EventHandler<string>? InsertRequested;
+    /// <summary>快捷提问只填入草稿，仍需用户发送。</summary>
+    public IReadOnlyList<string> QuickPrompts { get; } = [Text.Get("ChatSshPromptOne"), Text.Get("ChatSshPromptTwo"), Text.Get("ChatSshPromptThree")];
     /// <summary>有界显示历史，工具步骤也计入上限。</summary>
     public ObservableCollection<SshAssistantMessage> Messages { get; } = [];
+    /// <summary>当前控制台的独立内存对话历史。</summary>
+    public AgentConversationArchive Archive { get; }
+    /// <summary>Shell 已结束或来源已关闭时停用新操作。</summary>
+    public bool IsSourceClosed => _disposed || _sourceClosed;
+    /// <summary>失败问题可恢复但不会盲目重试远端操作。</summary>
+    public string LastFailedPrompt { get; private set => SetProperty(ref field, value); } = "";
+    /// <summary>只恢复到空草稿，不覆盖下一条输入。</summary>
+    public RelayCommand RestoreDraftCommand { get; }
     /// <summary>收起后保留的草稿；发送期间新编辑的内容不会被清空。</summary>
     public string Prompt { get; set { if (SetProperty(ref field, value)) Refresh(); } } = "";
     /// <summary>用户明确附加的终端选区，最多八千字符。</summary>
@@ -55,7 +73,7 @@ public sealed class SshAssistantViewModel : ObservableObject, IDisposable
     /// <summary>确认后执行建议，再将结果回传模型。</summary>
     public AsyncRelayCommand ExecuteCommand { get; }
 
-    private bool IsCurrent(SshAssistantCommand item) => !_disposed && item.Revision == _revision && _connection() is not null;
+    private bool IsCurrent(SshAssistantCommand item) => !IsSourceClosed && item.Revision == _revision && _connection() is not null;
     private void EnsureCurrent(long revision, ISshWorkspaceConnection connection, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
@@ -81,12 +99,12 @@ public sealed class SshAssistantViewModel : ObservableObject, IDisposable
         if (IsBusy || _disposed) return;
         if (_connection() is not { } connection) { Error = Text.Get("SshWorkspaceUnavailable"); return; }
         long revision = _revision; string host = _host();
-        using var pending = new CancellationTokenSource(); _pending = pending; IsBusy = true; Error = ""; Status = Text.Get("SshAgentThinking");
+        using var pending = new CancellationTokenSource(); _pending = pending; IsBusy = true; Error = ""; LastFailedPrompt = ""; Status = Text.Get("ChatWaitingModel");
         try
         {
             string selected = IncludeOutput ? SelectedOutput : "";
             SshAgentToolResult? completed = null;
-            if (initialAction is null) Add(new(prompt, true, revision));
+            if (initialAction is null) { Add(new(prompt, true, revision)); accepted?.Invoke(); }
             else
             {
                 completed = await PerformActionAsync(initialAction, connection, host, revision, pending.Token);
@@ -97,11 +115,10 @@ public sealed class SshAssistantViewModel : ObservableObject, IDisposable
             if (_conversation is not null)
                 await _conversation.RunAsync(prompt, host, selected,
                     (action, token) => PerformActionAsync(action, connection, host, revision, token),
-                    reply => { EnsureCurrent(revision, connection, pending.Token); Add(new(reply.Content, false, revision, reply.ToolCalls.Count == 0)); }, pending.Token, initialAction, completed);
-            accepted?.Invoke();
+                    reply => { EnsureCurrent(revision, connection, pending.Token); Add(new(reply.Content, false, revision, reply.ToolCalls.Count == 0, modelIdentity: reply.ModelIdentity)); }, pending.Token, initialAction, completed);
         }
-        catch (OperationCanceledException) { if (!_disposed && revision == _revision) Error = Text.Get("SshAgentCanceled"); }
-        catch (Exception error) { if (!_disposed && revision == _revision) Error = Text.Error(error, "AgentRequestFailed"); }
+        catch (OperationCanceledException) { if (!IsSourceClosed && revision == _revision) AddFailure(initialAction is null ? prompt : "", Text.Get("SshAgentCanceled")); }
+        catch (Exception error) { if (!IsSourceClosed && revision == _revision) AddFailure(initialAction is null ? prompt : "", Text.Error(error, "AgentRequestFailed")); }
         finally { _pending = null; IsBusy = false; Status = ""; }
     }
 
@@ -143,16 +160,23 @@ public sealed class SshAssistantViewModel : ObservableObject, IDisposable
             record.Update(Text.Format("SshAgentStepFailure", action.Command, safe), "SshAgentOutcomeUnknown");
             return new("unknown", safe, StopActions: true);
         }
-        finally { if (!_disposed && revision == _revision) Status = Text.Get("SshAgentThinking"); }
+        finally { if (!IsSourceClosed && revision == _revision) Status = Text.Get("ChatWaitingModel"); }
     }
 
     private void Add(SshAssistantMessage message) { Messages.Add(message); while (Messages.Count > 48) Messages.RemoveAt(0); }
+    private void AddFailure(string prompt, string error) { Error = error; LastFailedPrompt = prompt; Add(new(error, false, _revision, false, isError: true, recoveryPrompt: prompt)); }
     private void Refresh()
     {
         SendCommand?.NotifyCanExecuteChanged(); CancelCommand?.NotifyCanExecuteChanged(); ClearCommand?.NotifyCanExecuteChanged(); InsertCommand?.NotifyCanExecuteChanged(); ExecuteCommand?.NotifyCanExecuteChanged();
+        RestoreDraftCommand?.NotifyCanExecuteChanged(); Archive?.Refresh();
     }
     /// <summary>连接代次改变即取消旧操作并禁用旧建议，保留可见消息和草稿。</summary>
     public void ConnectionChanged() { _revision++; _pending?.Cancel(); _conversation?.Clear(); SelectedOutput = ""; OnPropertyChanged(nameof(ContextLabel)); Refresh(); }
     /// <inheritdoc />
-    public void Dispose() { _disposed = true; _pending?.Cancel(); InsertRequested = null; Refresh(); }
+    public void Dispose() { CloseSource(); _disposed = true; InsertRequested = null; Refresh(); }
+    /// <summary>来源结束仅撤销操作；窗口中已经显示的记录与草稿继续保留。</summary>
+    public void CloseSource()
+    {
+        if (_sourceClosed) return; Archive.CloseSource(); _sourceClosed = true; _pending?.Cancel(); _revision++; _conversation?.Clear(); OnPropertyChanged(nameof(IsSourceClosed)); Refresh();
+    }
 }

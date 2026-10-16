@@ -49,5 +49,15 @@ public sealed class MarkdownView : RichTextBox
     private void RefreshDocument()
     {
         Document = MarkdownDocumentBuilder.Build(Source ?? "", IsMarkdownEnabled);
+        Document.FontSize = FontSize;
+        Document.FontFamily = FontFamily;
+        Document.LineHeight = FontSize * (IsMarkdownEnabled ? 1.75 : 1.7);
+    }
+    /// <summary>正文随阅读组件字号变化，代码块自身的独立字号不受影响。</summary>
+    protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs args)
+    {
+        base.OnPropertyChanged(args);
+        if (args.Property == FontSizeProperty && Document is { } document) { document.FontSize = FontSize; document.LineHeight = FontSize * (IsMarkdownEnabled ? 1.75 : 1.7); }
+        if (args.Property == FontFamilyProperty && Document is { } current) current.FontFamily = FontFamily;
     }
 }

@@ -25,7 +25,6 @@ public partial class SshWorkspaceView
     {
         if (args.PropertyName == nameof(SshWorkspaceViewModel.IsMonitorOpen)) UpdateMonitorLayout();
         if (args.PropertyName == nameof(SshWorkspaceViewModel.ActiveSection)) UpdateToolboxLayout();
-        if (args.PropertyName == nameof(SshWorkspaceViewModel.Assistant)) UpdateAssistantSubscription();
         if (args.PropertyName == nameof(SshWorkspaceViewModel.ActiveConsole)) ConfigureTools();
     }
 

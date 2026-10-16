@@ -3,77 +3,117 @@ using Asgard.Hermod.Agent;
 
 namespace Asgard.Hermod.Ssh.UI.ViewModels;
 
-/// <summary>日志专用对话，分析全部快照或用户选区，不自动发送，不具备远端执行权限。</summary>
+/// <summary>只分析明确附加的冻结日志，不自动发送，不具备远端执行权限。</summary>
 public sealed class SshLogAnalysisViewModel : ObservableObject, IDisposable
 {
     private readonly LogAnalysisConversation? _conversation;
     private readonly SshContainerLogViewModel _document;
     private CancellationTokenSource? _pending;
     private bool _disposed;
-
-    /// <summary>与终端助手使用相同模型配置，但拥有独立对话和上下文。</summary>
+    /// <summary>与终端共享模型配置，但拥有独立历史与证据。</summary>
     public SshLogAnalysisViewModel(IAgentClient? client, SshContainerLogViewModel document)
     {
         _conversation = client is null ? null : new(client); _document = document;
-        SendCommand = new AsyncRelayCommand(_ => SendAsync(), _ => !_disposed && !IsBusy && Prompt.Trim().Length > 0 && ContextText.Length > 0);
+        Archive = new(Messages, () => _conversation?.Capture() ?? AgentConversationSnapshot.Empty, state => _conversation?.Restore(state),
+            () => Prompt, value => Prompt = value, () => IsBusy, () => new Asgard.Hermod.UI.Models.AgentConversationFeedback(Error, LastFailedPrompt, Attachment), value =>
+            {
+                var saved = value as Asgard.Hermod.UI.Models.AgentConversationFeedback ?? new();
+                Attachment = saved.Attachment as SshLogAttachment; Error = saved.Error; LastFailedPrompt = saved.FailedPrompt;
+            });
+        SendCommand = new AsyncRelayCommand(_ => SendAsync(), _ => !_disposed && !IsBusy && Prompt.Trim().Length > 0 && Attachment?.Text.Length > 0);
         CancelCommand = new RelayCommand(_ => _pending?.Cancel(), _ => IsBusy);
         ClearCommand = new RelayCommand(_ => { _conversation?.Clear(); Messages.Clear(); Error = ""; }, _ => !IsBusy && !_disposed);
-        AnalyzeCommand = new AsyncRelayCommand(_ => { Prompt = Text.Get("SshLogAnalyzePrompt"); return SendAsync(); }, _ => !_disposed && !IsBusy && ContextText.Length > 0);
+        AnalyzeCommand = new AsyncRelayCommand(_ => { if (PrepareAttachment(UseSelection) && Prompt.Length == 0) Prompt = Text.Get("SshLogAnalyzePrompt"); return Task.CompletedTask; },
+            _ => !_disposed && _document.Snapshot is not null && (!UseSelection || Selection.Length > 0));
+        RestoreDraftCommand = new RelayCommand(value => Prompt = value as string ?? LastFailedPrompt,
+            value => !_disposed && !IsBusy && Prompt.Length == 0 && !string.IsNullOrEmpty(value as string ?? LastFailedPrompt));
     }
-
-    /// <summary>窗口内独立的有界对话。</summary>
+    /// <summary>快捷提问只准备草稿。</summary>
+    public IReadOnlyList<string> QuickPrompts { get; } = [Text.Get("ChatLogPromptOne"), Text.Get("ChatLogPromptTwo"), Text.Get("ChatLogPromptThree")];
+    /// <summary>有界消息，关闭来源仍保留。</summary>
     public ObservableCollection<SshLogAnalysisMessage> Messages { get; } = [];
-    /// <summary>发送期间用户新写的草稿不会被清空。</summary>
+    /// <summary>仅清空已经接受的问题，允许编辑下一条。</summary>
     public string Prompt { get; set { if (SetProperty(ref field, value)) Refresh(); } } = "";
-    /// <summary>由日志阅读器的真实文本选区更新。</summary>
+    /// <summary>当前真实选区。</summary>
     public string Selection { get; set { if (SetProperty(ref field, value)) Refresh(); } } = "";
-    /// <summary>用户可选择只发送选区；空选区不会悄悄改为整个日志。</summary>
+    /// <summary>选区在显示正文中的起点。</summary>
+    public int SelectionStart { get; set; }
+    /// <summary>验证 WPF 换行规范化后的真实选区。</summary>
+    public string? DisplayedText { get; set; }
+    /// <summary>空选区不会回退为整个日志。</summary>
     public bool UseSelection { get; set { if (SetProperty(ref field, value)) Refresh(); } }
-    private string ContextText => UseSelection ? Selection : _document.LogText;
-    /// <summary>实际发送字符数与截断状态可见。</summary>
-    public string ContextLabel => Text.Format(UseSelection ? "SshLogSelectedContext" : "SshLogSnapshotContext",
-        Math.Min(ContextText.Length, LogAnalysisConversation.ContextLimit)) +
-        (ContextText.Length > LogAnalysisConversation.ContextLimit || !UseSelection && _document.IsTruncated ? " " + Text.Get("SshLogContextLimited") : "");
-    /// <summary>进行中的请求可取消。</summary>
+    /// <summary>刷新不会改变已经明确附加的证据。</summary>
+    public SshLogAttachment? Attachment { get; private set { if (SetProperty(ref field, value)) Refresh(); } }
+    /// <summary>实际范围、采集时间与截断状态。</summary>
+    public string ContextLabel => Attachment?.Summary ?? Text.Get("ChatLogNoAttachment");
+    /// <summary>同一来源的历史。</summary>
+    public AgentConversationArchive Archive { get; }
+    /// <summary>关闭文档禁止请求；断线仍能分析已有快照。</summary>
+    public bool IsSourceClosed => _disposed;
+    /// <summary>当前请求状态。</summary>
     public bool IsBusy { get; private set { if (SetProperty(ref field, value)) Refresh(); } }
-    /// <summary>模型错误经过共享安全资源翻译。</summary>
+    /// <summary>真实处理阶段。</summary>
+    public string Status { get; private set => SetProperty(ref field, value); } = "";
+    /// <summary>安全错误。</summary>
     public string Error { get; private set => SetProperty(ref field, value); } = "";
-    /// <summary>发送显式问题。</summary>
+    /// <summary>失败问题可显式恢复，不覆盖草稿。</summary>
+    public string LastFailedPrompt { get; private set; } = "";
+    /// <summary>发送问题。</summary>
     public AsyncRelayCommand SendCommand { get; }
-    /// <summary>一键分析仍由用户显式触发。</summary>
+    /// <summary>准备附件与草稿，不自动发送。</summary>
     public AsyncRelayCommand AnalyzeCommand { get; }
-    /// <summary>停止请求。</summary>
+    /// <summary>取消请求。</summary>
     public RelayCommand CancelCommand { get; }
-    /// <summary>清空当前日志窗口的对话。</summary>
+    /// <summary>清空当前对话。</summary>
     public RelayCommand ClearCommand { get; }
-
-    private async Task SendAsync()
+    /// <summary>恢复失败问题。</summary>
+    public RelayCommand RestoreDraftCommand { get; }
+    /// <summary>从成功快照冻结证据；选区已变化时拒绝分享。</summary>
+    public bool PrepareAttachment(bool selection)
     {
-        if (_disposed || IsBusy || ContextText.Length == 0) return;
-        if (_conversation is null) { Error = Text.Get("AgentConfigurationRequired"); return; }
-        string prompt = Prompt, context = ContextText, label = ContextLabel;
-        bool incomplete = context.Length > LogAnalysisConversation.ContextLimit || _document.IsTruncated;
-        if (context.Length > LogAnalysisConversation.ContextLimit) context = context[^LogAnalysisConversation.ContextLimit..];
-        using var pending = new CancellationTokenSource(TimeSpan.FromMinutes(2)); _pending = pending;
-        IsBusy = true; Error = ""; Add(new(prompt, true, label));
+        if (_disposed || _document.Snapshot is not { } snapshot) return false;
         try
         {
-            var reply = await _conversation.SendAsync(prompt, _document.Source, context, _document.CapturedAt, incomplete, pending.Token);
-            if (_disposed) return;
-            Add(new(reply.Content, false, label)); if (Prompt == prompt) Prompt = "";
+            if (selection && Selection.Length == 0) throw Text.Exception("ChatLogSelectionChanged");
+            Attachment = SshLogAttachment.Freeze(snapshot, selection ? Selection : null, selection ? SelectionStart : 0, selection ? DisplayedText : null);
+            Error = ""; return true;
         }
-        catch (OperationCanceledException) { if (!_disposed) Error = Text.Get("SshAgentCanceled"); }
-        catch (Exception error) { if (!_disposed) Error = Text.Error(error, "AgentRequestFailed"); }
-        finally { _pending = null; IsBusy = false; }
+        catch (Exception error) { Error = Text.Error(error, "ChatLogSelectionChanged"); return false; }
     }
-
+    private async Task SendAsync()
+    {
+        if (_disposed || IsBusy || Attachment is not { Text.Length: > 0 } attachment || string.IsNullOrWhiteSpace(Prompt)) return;
+        if (_conversation is null) { Error = Text.Get("AgentConfigurationRequired"); return; }
+        string prompt = Prompt;
+        using var pending = new CancellationTokenSource(TimeSpan.FromMinutes(2)); _pending = pending;
+        IsBusy = true; Error = ""; LastFailedPrompt = ""; Status = Text.Get("ChatWaitingModel");
+        Add(new(prompt, true, attachment.Summary, attachment: attachment)); Prompt = "";
+        try
+        {
+            var reply = await _conversation.SendAsync(prompt, attachment.Source, attachment.Text, attachment.CapturedAt, attachment.IsTruncated, pending.Token,
+                new(attachment.DocumentId, attachment.Host, attachment.ContainerId, attachment.RequestedLines, attachment.StartCharacter, attachment.EndCharacter, attachment.FromLine, attachment.ToLine, attachment.IsSelection));
+            if (!_disposed) Add(new(reply.Content, false, attachment.Summary, modelIdentity: reply.ModelIdentity, attachment: attachment));
+        }
+        catch (OperationCanceledException) { if (!_disposed) Failed(Text.Get("SshAgentCanceled")); }
+        catch (Exception error) { if (!_disposed) Failed(Text.Error(error, "AgentRequestFailed")); }
+        finally { _pending = null; Status = ""; IsBusy = false; }
+        void Failed(string error)
+        {
+            Error = error; LastFailedPrompt = prompt;
+            Add(new(error, false, attachment.Summary, isError: true, recoveryPrompt: prompt, attachment: attachment));
+        }
+    }
     private void Add(SshLogAnalysisMessage message) { Messages.Add(message); while (Messages.Count > 24) Messages.RemoveAt(0); }
-    /// <summary>新快照改变将要发送的范围，不改写已经显示的对话。</summary>
+    /// <summary>刷新命令，不更换冻结附件。</summary>
     public void Refresh()
     {
         OnPropertyChanged(nameof(ContextLabel)); SendCommand?.NotifyCanExecuteChanged(); AnalyzeCommand?.NotifyCanExecuteChanged();
-        CancelCommand?.NotifyCanExecuteChanged(); ClearCommand?.NotifyCanExecuteChanged();
+        CancelCommand?.NotifyCanExecuteChanged(); ClearCommand?.NotifyCanExecuteChanged(); RestoreDraftCommand?.NotifyCanExecuteChanged(); Archive?.Refresh();
     }
     /// <inheritdoc />
-    public void Dispose() { _disposed = true; _pending?.Cancel(); _conversation?.Clear(); }
+    public void Dispose()
+    {
+        if (_disposed) return;
+        Archive.CloseSource(); _disposed = true; _pending?.Cancel(); _conversation?.Clear(); OnPropertyChanged(nameof(IsSourceClosed)); Refresh();
+    }
 }

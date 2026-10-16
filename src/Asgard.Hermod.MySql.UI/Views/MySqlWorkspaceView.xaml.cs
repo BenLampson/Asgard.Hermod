@@ -23,7 +23,6 @@ public partial class MySqlWorkspaceView : UserControl
     private void ShowTab()
     {
         // 分屏收起时保留同一助手视图与会话，只更新当前 Session 的绑定。
-        AssistantPanel.DataContext = _model?.Assistant;
         if (_model is null) return;
         foreach (var stale in _views.Keys.Where(tab => !_model.Tabs.Contains(tab)).ToArray()) _views.Remove(stale);
         if (_model.ActiveTab is not { } tab) { TabHost.Content = null; return; }
@@ -83,5 +82,19 @@ public partial class MySqlWorkspaceView : UserControl
         if ((Keyboard.Modifiers & ModifierKeys.Control) == 0) return;
         if (args.Key == Key.W) { if (TabHost.Content is MySqlTabView current && !current.CommitInput()) return; args.Handled = true; await _model.CloseTabCommand.ExecuteAsync(_model.ActiveTab); }
         if (args.Key == Key.Tab && _model.Tabs.Count > 0) { args.Handled = true; int index = _model.ActiveTab is null ? 0 : _model.Tabs.IndexOf(_model.ActiveTab); _model.ActiveTab = _model.Tabs[(index + ((Keyboard.Modifiers & ModifierKeys.Shift) == 0 ? 1 : -1) + _model.Tabs.Count) % _model.Tabs.Count]; }
+    }
+
+    /// <summary>固定来源 Session，其他窗口和活动页签不会重定向已有助手。</summary>
+    private void OnOpenAgent(object sender, RoutedEventArgs args)
+    {
+        if (_model is not { ActiveSession: { } session, Assistant: { } assistant } model || TryFindResource(typeof(IAgentWindowService)) is not IAgentWindowService windows) return;
+        var origin = Window.GetWindow(this);
+        windows.Open(new(session, assistant, Text.Format("ChatDatabaseSource", model.Name, "MySQL", session.Header), model.Endpoint, "brand-mysql",
+            () => new MySqlAssistantView(), () =>
+            {
+                if (assistant.IsSourceClosed || !model.Sessions.Contains(session)) return;
+                model.ActiveSession = session;
+                if (origin is not null) { if (origin.WindowState == WindowState.Minimized) origin.WindowState = WindowState.Normal; origin.Show(); origin.Activate(); }
+            }, () => assistant.IsSourceClosed));
     }
 }

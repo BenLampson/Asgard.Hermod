@@ -8,7 +8,6 @@ namespace Asgard.Hermod.Ssh.UI.Views;
 public partial class SshWorkspaceView : UserControl, IDisposable
 {
     private SshWorkspaceViewModel? _model;
-    private SshAssistantViewModel? _subscribedAssistant;
     private bool _disposed;
 
     /// <summary>缓存视图切换不会释放会话，真正关闭时由内容宿主调用 Dispose。</summary>
@@ -29,11 +28,10 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     {
         if (_model is not null) _model.LogWindowRequested -= OnLogWindowRequested;
         CloseLogWindows();
-        if (_subscribedAssistant is not null) _subscribedAssistant.InsertRequested -= OnAgentInsert;
+        foreach (var assistant in _openedAssistants) assistant.InsertRequested -= OnAgentInsert; _openedAssistants.Clear();
         if (_model is not null) _model.PropertyChanged -= OnWorkspacePropertyChanged;
         _model = args.NewValue as SshWorkspaceViewModel;
         if (_model is not null) _model.LogWindowRequested += OnLogWindowRequested;
-        UpdateAssistantSubscription();
         if (_model is not null) _model.PropertyChanged += OnWorkspacePropertyChanged;
         ConfigureTools();
         UpdateLayoutMode();
@@ -163,7 +161,7 @@ public partial class SshWorkspaceView : UserControl, IDisposable
         CloseLogWindows();
         StopMonitorResizeTracking();
         StopToolboxResizeTracking();
-        if (_subscribedAssistant is not null) _subscribedAssistant.InsertRequested -= OnAgentInsert;
+        foreach (var assistant in _openedAssistants) assistant.InsertRequested -= OnAgentInsert; _openedAssistants.Clear();
         if (_model is not null) _model.PropertyChanged -= OnWorkspacePropertyChanged;
         SessionTools.Close(false);
         if (SessionTools.ContextMenu is { } toolsMenu) { toolsMenu.IsOpen = false; toolsMenu.Items.Clear(); }

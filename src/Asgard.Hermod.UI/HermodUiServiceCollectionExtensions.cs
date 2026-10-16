@@ -13,6 +13,7 @@ public static class HermodUiServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(owner);
         ArgumentNullException.ThrowIfNull(resources);
+        services.TryAddSingleton<IAgentWindowService, AgentWindowService>();
         services.TryAddSingleton<IInstanceEditor>(provider => new InstanceEditorService(owner,
             provider.GetRequiredService<IInstanceProviderRegistry>(),
             provider.GetRequiredService<IInstanceConfigurationService>(), provider.GetService<IAccountService>(), provider.GetService<IConfigurationSyncService>(),

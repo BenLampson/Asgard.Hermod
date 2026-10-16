@@ -30,7 +30,7 @@
    <controls:WorkspaceHeader.StatusContent><controls:StatusBadge Style="{DynamicResource WorkspaceHeaderSecondaryStatus}" Text="{Binding Instance.EnvironmentLabel}" Tone="{Binding Instance.EnvironmentTone}" ShowIndicator="False" IsCaption="True" /></controls:WorkspaceHeader.StatusContent>
    <controls:WorkspaceHeader.ActionsContent><StackPanel x:Name="CaptionActions" Orientation="Horizontal" VerticalAlignment="Center">
     <controls:WorkspaceTools x:Name="CaptionTools" Items="{Binding Tools}" VerticalAlignment="Center" Margin="0,0,8,0" />
-    <Button x:Name="AgentAction" Command="{Binding ToggleAssistantCommand}" Height="28" FontWeight="Normal" FontSize="12" Padding="9,0" ToolTip="{loc:Loc DatabaseSessionAgentHint}" ToolTipService.ShowOnDisabled="True" AutomationProperties.Name="{loc:Loc DatabaseSessionAgent}">
+    <Button x:Name="AgentAction" Click="OnOpenAgent" Height="28" FontWeight="Normal" FontSize="12" Padding="9,0" ToolTip="{loc:Loc DatabaseSessionAgentHint}" ToolTipService.ShowOnDisabled="True" AutomationProperties.Name="{loc:Loc DatabaseSessionAgent}">
      <Button.Style><Style TargetType="Button" BasedOn="{StaticResource StandardButton}"><Style.Triggers><DataTrigger Binding="{Binding IsAssistantOpen}" Value="True"><Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" /><Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" /><Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" /></DataTrigger></Style.Triggers></Style></Button.Style>
      <StackPanel Orientation="Horizontal"><controls:IconView Kind="sparkles" Width="15" Height="15" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" /><TextBlock Text="{loc:Loc DatabaseSessionAgent}" Margin="7,0,0,0" VerticalAlignment="Center" /></StackPanel>
     </Button>
@@ -38,7 +38,7 @@
   </controls:WorkspaceHeader></controls:WorkspacePageLayout.Toolbar>
   <controls:WorkspacePageLayout.Notification><Border Background="{DynamicResource DangerWeakBrush}" Padding="20,10" Visibility="{Binding HasError, Converter={StaticResource Visible}}"><TextBlock Text="{Binding Error}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" /></Border></controls:WorkspacePageLayout.Notification>
   <controls:WorkspacePageLayout.StatusContent><DockPanel><TextBlock DockPanel.Dock="Right" Text="{Binding ActiveTab.StateLabel}" FontFamily="{DynamicResource UiFont}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" /><StackPanel Orientation="Horizontal"><controls:IconView Kind="shield-check" Width="12" Height="12" Foreground="{DynamicResource SuccessBrush}" Margin="0,0,10,0" /><TextBlock Text="{Binding ConnectionSummary}" FontFamily="{DynamicResource UiFont}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" /></StackPanel></DockPanel></controls:WorkspacePageLayout.StatusContent>
-  <controls:WorkspaceSplitView x:Name="AgentSplit" IsPaneOpen="{Binding IsAssistantOpen}" PaneWidth="{Binding AssistantWidth, Mode=TwoWay}">
+  <controls:WorkspaceSplitView x:Name="AgentSplit" IsPaneOpen="False" PaneWidth="{Binding AssistantWidth, Mode=TwoWay}">
    <controls:WorkspaceSplitView.MainContent>
   <Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
    <StackPanel>
@@ -80,7 +80,6 @@
    <controls:DatabaseSessionPicker Grid.Row="1" Visibility="{Binding IsCatalog, Converter={StaticResource Visible}}" />
   </Grid>
    </controls:WorkspaceSplitView.MainContent>
-   <controls:WorkspaceSplitView.PaneContent><views:PostgreSqlAssistantView x:Name="AssistantPanel" /></controls:WorkspaceSplitView.PaneContent>
   </controls:WorkspaceSplitView>
  </controls:WorkspacePageLayout>
 </UserControl>

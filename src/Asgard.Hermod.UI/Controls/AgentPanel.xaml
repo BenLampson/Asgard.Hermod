@@ -1,58 +1,67 @@
 <UserControl x:Class="Asgard.Hermod.UI.Controls.AgentPanel" x:Name="AgentRoot"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
-             xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization" PreviewKeyDown="OnPromptKeyDown">
-    <UserControl.Resources><BooleanToVisibilityConverter x:Key="Visible" /></UserControl.Resources>
-    <Border Background="{DynamicResource SurfaceBrush}">
-        <Grid>
-            <Grid.RowDefinitions><RowDefinition Height="50" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-            <Border BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,0,0,1" Padding="18,0">
-                <DockPanel x:Name="AgentHeader">
-                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                        <Button Command="{Binding ClearCommand, ElementName=AgentRoot}" Style="{StaticResource StandardButton}" Width="32" Height="32" Padding="0" ToolTip="{loc:Loc AgentNewConversation}" AutomationProperties.Name="{loc:Loc AgentNewConversation}" Margin="0,0,8,0"><controls:IconView Kind="plus" Width="15" Height="15" /></Button>
-                        <Button x:Name="HideAgentButton" Command="{Binding HideCommand, ElementName=AgentRoot}" Click="OnClose" Style="{StaticResource StandardButton}" Width="32" Height="32" Padding="0" ToolTip="{loc:Loc AgentHide}" AutomationProperties.Name="{loc:Loc AgentHide}"><controls:IconView Kind="x" Width="15" Height="15" /></Button>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center"><controls:IconView Kind="sparkles" Foreground="{DynamicResource AccentBrush}" Width="17" Height="17" Margin="0,0,8,0" /><TextBlock Text="{loc:Loc AgentPanelTitle}" FontSize="14" FontWeight="SemiBold" /></StackPanel>
-                </DockPanel>
-            </Border>
-            <Border Grid.Row="1" BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,0,0,1" Padding="18,12">
-                <ContentControl Content="{Binding ContextContent, ElementName=AgentRoot}" />
-            </Border>
-            <ScrollViewer x:Name="ConversationScroll" Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="18,14,18,0">
-                <ItemsControl ItemsSource="{Binding Messages, ElementName=AgentRoot}" ItemTemplate="{Binding MessageTemplate, ElementName=AgentRoot}" />
-            </ScrollViewer>
-            <StackPanel Grid.Row="3" Margin="18,8,18,8">
-                <TextBlock Text="{Binding Error, ElementName=AgentRoot}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
-                <TextBlock Text="{Binding Status, ElementName=AgentRoot}" Visibility="{Binding IsBusy, ElementName=AgentRoot, Converter={StaticResource Visible}}" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
-            </StackPanel>
-            <StackPanel Grid.Row="4" Margin="14,0,14,14">
-                <Border x:Name="Composer" BorderThickness="1" CornerRadius="8" Padding="12">
-                    <Border.Style><Style TargetType="Border">
-                        <Setter Property="BorderBrush" Value="{DynamicResource LineBrush}" />
-                        <Style.Triggers><DataTrigger Binding="{Binding IsKeyboardFocusWithin, ElementName=PromptEditor}" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" /></DataTrigger></Style.Triggers>
-                    </Style></Border.Style>
-                    <Grid>
-                        <Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-                        <Grid MinHeight="48">
-                            <TextBox x:Name="PromptEditor" Style="{StaticResource AgentTextBox}" Text="{Binding Prompt, ElementName=AgentRoot, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MinHeight="48" MaxHeight="100" AcceptsReturn="True" TextWrapping="Wrap" MaxLength="{Binding MaxPromptLength, ElementName=AgentRoot}" VerticalScrollBarVisibility="Auto" BorderThickness="0" Background="Transparent" Padding="0" AutomationProperties.Name="{Binding Placeholder, ElementName=AgentRoot}" />
-                            <TextBlock x:Name="PromptPlaceholder" Text="{Binding Placeholder, ElementName=AgentRoot}" IsHitTestVisible="False" Foreground="{DynamicResource TextMutedBrush}" FontSize="{Binding FontSize, ElementName=PromptEditor}" TextWrapping="Wrap"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding Text, ElementName=PromptEditor}" Value=""><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
-                        </Grid>
-                        <DockPanel Grid.Row="1" Margin="0,8,0,0">
-                            <Button x:Name="SendAction" DockPanel.Dock="Right" Command="{Binding SendCommand, ElementName=AgentRoot}" Style="{StaticResource PrimaryButton}" ToolTip="{loc:Loc AgentSend}" AutomationProperties.Name="{loc:Loc AgentSend}" Width="34" Height="32" Padding="0"><controls:IconView Kind="arrow-right" Width="15" Height="15" RenderTransformOrigin="0.5,0.5"><controls:IconView.RenderTransform><RotateTransform Angle="-90" /></controls:IconView.RenderTransform></controls:IconView></Button>
-                            <Button DockPanel.Dock="Right" Content="{loc:Loc AgentStop}" Command="{Binding CancelCommand, ElementName=AgentRoot}" Margin="0,0,8,0" Visibility="{Binding IsBusy, ElementName=AgentRoot, Converter={StaticResource Visible}}" />
-                            <Grid MinHeight="36">
-                                <ContentControl Content="{Binding ComposerOptions, ElementName=AgentRoot}" VerticalAlignment="Center" />
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding ComposerOptions, ElementName=AgentRoot}" Value="{x:Null}"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></StackPanel.Style>
-                                    <controls:IconView Kind="sparkles" Width="14" Height="14" Margin="0,0,7,0" Foreground="{DynamicResource TextMutedBrush}" /><TextBlock Text="{loc:Loc AgentPanelTitle}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
-                                </StackPanel>
-                            </Grid>
-                        </DockPanel>
-                    </Grid>
-                </Border>
-                <TextBlock Text="{loc:Loc AgentSendHint}" FontSize="10" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,10,0,0" />
-            </StackPanel>
-        </Grid>
-    </Border>
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls" xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization"
+ PreviewKeyDown="OnPromptKeyDown" SizeChanged="OnViewportChanged">
+ <UserControl.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/AgentDesign.xaml" /></ResourceDictionary.MergedDictionaries><BooleanToVisibilityConverter x:Key="Visible" /></ResourceDictionary></UserControl.Resources>
+ <Grid Background="{DynamicResource SurfaceBrush}">
+  <Grid.RowDefinitions><RowDefinition Height="48" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+  <Border BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,0,0,1">
+   <DockPanel x:Name="ToolbarColumn" MaxWidth="1120" Margin="80,0">
+    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+     <Button x:Name="HistoryPicker" Click="OnHistory" IsEnabled="{Binding Archive.CanSwitch, ElementName=AgentRoot}" Height="30" MinHeight="30" FontSize="11" FontWeight="Normal" Padding="7,0" Style="{StaticResource GhostButton}" ToolTip="{loc:Loc ChatHistory}" AutomationProperties.Name="{loc:Loc ChatHistory}" Margin="0,0,8,0"><StackPanel Orientation="Horizontal"><controls:IconView Kind="history" Width="14" Height="14" Margin="0,0,6,0" /><TextBlock Text="{loc:Loc ChatHistory}" /></StackPanel></Button>
+     <Button Command="{Binding Archive.NewCommand, ElementName=AgentRoot}" Style="{StaticResource GhostButton}" Height="30" MinHeight="30" Padding="7,0" FontSize="11" FontWeight="Normal"><StackPanel Orientation="Horizontal"><controls:IconView Kind="plus" Width="14" Height="14" Margin="0,0,6,0" /><TextBlock Text="{loc:Loc AgentNewConversation}" /></StackPanel></Button>
+    </StackPanel>
+    <Button Click="OnConfigureModel" FontWeight="Normal" Style="{StaticResource GhostButton}" Height="30" MinHeight="30" HorizontalAlignment="Left" Padding="0" ToolTip="{loc:Loc ChatConfigureModel}" AutomationProperties.Name="{loc:Loc ChatConfigureModel}"><StackPanel Orientation="Horizontal"><controls:IconView Kind="cpu" Width="14" Height="14" Margin="0,0,8,0" /><TextBlock Text="{loc:Loc ChatConfigureModel}" FontSize="12" /></StackPanel></Button>
+   </DockPanel>
+  </Border>
+  <ScrollViewer x:Name="ConversationScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+   <StackPanel x:Name="MessageColumn" MaxWidth="1120" Margin="80,28">
+    <Grid x:Name="Welcome" MinHeight="500">
+     <Grid.Style><Style TargetType="Grid"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding Items.Count, ElementName=ConversationItems}" Value="0"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></Grid.Style>
+     <StackPanel VerticalAlignment="Center" Margin="80,0">
+      <controls:IconView Kind="sparkles" Width="32" Height="32" Foreground="{DynamicResource AccentBrush}" Margin="0,0,0,22" HorizontalAlignment="Center" />
+      <TextBlock Text="{loc:Loc ChatWelcome}" FontSize="30" FontWeight="SemiBold" TextWrapping="Wrap" TextAlignment="Center" Margin="0,0,0,22" />
+      <TextBlock Text="{Binding WelcomeDescription, ElementName=AgentRoot}" FontSize="14" Foreground="{DynamicResource TextMutedBrush}" LineHeight="23.1" TextWrapping="Wrap" TextAlignment="Center" Margin="0,0,0,22" />
+      <ItemsControl ItemsSource="{Binding QuickPrompts, ElementName=AgentRoot}"><ItemsControl.ItemTemplate><DataTemplate>
+       <Button Click="OnQuickPrompt" Style="{StaticResource GhostButton}" Height="44" MinHeight="44" FontSize="13" FontWeight="Normal" HorizontalContentAlignment="Stretch" Padding="0">
+        <Button.Template><ControlTemplate TargetType="Button"><Border BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,0,0,1" Background="Transparent"><ContentPresenter VerticalAlignment="Center" /></Border></ControlTemplate></Button.Template>
+        <StackPanel Orientation="Horizontal"><controls:IconView Kind="arrow-up-left" Width="15" Height="15" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,9,0" /><TextBlock Text="{Binding}" /></StackPanel>
+       </Button>
+      </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+     </StackPanel>
+    </Grid>
+    <ItemsControl x:Name="ConversationItems" ItemsSource="{Binding Messages, ElementName=AgentRoot}" ItemTemplate="{Binding MessageTemplate, ElementName=AgentRoot}" />
+    <TextBlock Text="{loc:Loc ChatSourceClosed}" Visibility="{Binding IsSourceClosed, ElementName=AgentRoot, Converter={StaticResource Visible}}" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,12,0,12" />
+    <StackPanel Visibility="{Binding IsBusy, ElementName=AgentRoot, Converter={StaticResource Visible}}" Margin="0,8,0,18">
+     <TextBlock Text="{loc:Loc AgentPanelTitle}" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,8" />
+     <TextBlock Text="{Binding Status, ElementName=AgentRoot}" FontSize="13" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+    </StackPanel>
+    <TextBlock Text="{Binding Error, ElementName=AgentRoot}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding Items.Count, ElementName=ConversationItems}" Value="0"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+    <TextBlock Text="{loc:Loc ChatSharingHint}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,24,0,0" TextWrapping="Wrap" />
+   </StackPanel>
+  </ScrollViewer>
+  <StackPanel x:Name="ComposerColumn" Grid.Row="2" MaxWidth="1120" Margin="80,12,80,14" MinHeight="156">
+   <Border x:Name="Composer" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1" CornerRadius="12" Padding="14" MinHeight="128">
+    <Grid><Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+     <Grid MinHeight="58">
+      <TextBox x:Name="PromptEditor" IsReadOnly="{Binding IsSourceClosed, ElementName=AgentRoot}" Style="{StaticResource AgentTextBox}" Text="{Binding Prompt, ElementName=AgentRoot, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="14" MinHeight="58" MaxHeight="240" AcceptsReturn="True" TextWrapping="Wrap" MaxLength="{Binding MaxPromptLength, ElementName=AgentRoot}" VerticalScrollBarVisibility="Auto" BorderThickness="0" Background="Transparent" Padding="0" AutomationProperties.Name="{Binding Placeholder, ElementName=AgentRoot}" />
+      <TextBlock x:Name="PromptPlaceholder" Text="{Binding Placeholder, ElementName=AgentRoot}" Foreground="{DynamicResource TextMutedBrush}" FontSize="14" TextWrapping="Wrap" IsHitTestVisible="False"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding Text, ElementName=PromptEditor}" Value=""><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+     </Grid>
+     <DockPanel Grid.Row="1" Margin="0,10,0,0" MinHeight="30">
+      <Button x:Name="SendAction" DockPanel.Dock="Right" Command="{Binding SendCommand, ElementName=AgentRoot}" Style="{StaticResource PrimaryButton}" Width="30" Height="30" MinHeight="30" Padding="0" ToolTip="{loc:Loc AgentSend}" AutomationProperties.Name="{loc:Loc AgentSend}"><controls:IconView Kind="arrow-up" Width="14" Height="14" /></Button>
+      <Button DockPanel.Dock="Right" Content="{loc:Loc AgentStop}" Command="{Binding CancelCommand, ElementName=AgentRoot}" Margin="0,0,8,0" Height="30" MinHeight="30" Visibility="{Binding IsBusy, ElementName=AgentRoot, Converter={StaticResource Visible}}" />
+      <StackPanel Orientation="Horizontal">
+       <ToggleButton x:Name="ContextToggle" Height="30" Padding="0" Background="Transparent" BorderThickness="0" ToolTip="{loc:Loc ChatContextOptions}" AutomationProperties.Name="{loc:Loc ChatContextOptions}">
+        <ToggleButton.Template><ControlTemplate TargetType="ToggleButton"><Border Background="Transparent"><ContentPresenter VerticalAlignment="Center" /></Border></ControlTemplate></ToggleButton.Template>
+        <StackPanel Orientation="Horizontal"><controls:IconView Kind="plus" Width="17" Height="17" Margin="0,0,12,0" Foreground="{DynamicResource TextMutedBrush}" /><controls:IconView Kind="paperclip" Width="16" Height="16" Margin="0,0,7,0" Foreground="{DynamicResource TextMutedBrush}" /><TextBlock Text="{loc:Loc ChatContext}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" /></StackPanel>
+       </ToggleButton>
+       <ContentControl Content="{Binding ComposerOptions, ElementName=AgentRoot}" Margin="12,0,0,0" VerticalAlignment="Center" />
+      </StackPanel>
+     </DockPanel>
+     <ContentControl Grid.Row="2" Content="{Binding ContextContent, ElementName=AgentRoot}" Margin="0,12,0,0"><ContentControl.Style><Style TargetType="ContentControl"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding IsChecked, ElementName=ContextToggle}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></ContentControl.Style></ContentControl>
+    </Grid>
+   </Border>
+   <TextBlock Text="{loc:Loc AgentSendHint}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" Margin="0,10,0,0" TextWrapping="Wrap" />
+  </StackPanel>
+ </Grid>
 </UserControl>

@@ -51,7 +51,8 @@ public sealed class OpenAiCompatibleAgentClient(HttpClient client, AgentConfigur
             using var document = JsonDocument.Parse(body.GetBuffer().AsMemory(0, (int)body.Length));
             var reply = AgentChatProtocol.ReadReply(document.RootElement, tools);
             cancellationToken.ThrowIfCancellationRequested();
-            return reply;
+            string model = document.RootElement.TryGetProperty("model", out var returned) && returned.ValueKind == JsonValueKind.String ? returned.GetString() ?? "" : "";
+            return reply with { ModelIdentity = model.Length is > 0 and <= 200 && !model.Any(char.IsControl) ? model : options.Model };
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
         catch (OperationCanceledException) { throw Text.Exception("AgentTimedOut"); }

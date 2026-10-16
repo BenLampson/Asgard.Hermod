@@ -15,11 +15,18 @@ public sealed partial class PostgreSqlAssistantViewModel : ObservableObject, IDi
     {
         HideCommand = new RelayCommand(_ => hide?.Invoke());
         _tab = tab; _conversation = client is null ? null : new(client);
+        Archive = new(Messages, () => _conversation?.Capture() ?? AgentConversationSnapshot.Empty, snapshot => _conversation?.Restore(snapshot), () => Prompt, value => Prompt = value, () => IsBusy,
+            () => new Asgard.Hermod.UI.Models.AgentConversationFeedback(Error, LastFailedPrompt), state =>
+            {
+                var saved = state as Asgard.Hermod.UI.Models.AgentConversationFeedback ?? new();
+                Error = saved.Error; LastFailedPrompt = saved.FailedPrompt;
+            });
+        RestoreDraftCommand = new RelayCommand(value => Prompt = value as string ?? LastFailedPrompt, value => !_disposed && !IsBusy && Prompt.Length == 0 && (value is string { Length: > 0 } || LastFailedPrompt.Length > 0));
         SendCommand = new AsyncRelayCommand(_ => SendAsync(), _ => !IsBusy && !_disposed && !_tab.IsBusy && !_tab.IsManagingScope && _tab.ConnectionAvailable && !string.IsNullOrWhiteSpace(Prompt));
         CancelCommand = new RelayCommand(_ => _pending?.Cancel(), _ => IsBusy);
         InsertCommand = new RelayCommand(sql => { if (sql is PostgreSqlAssistantSql suggestion) _tab.InsertAssistantSql(suggestion.Sql); }, _ => !_disposed && _tab.IsQuery && !_tab.IsBusy);
         ExecuteCommand = new AsyncRelayCommand(sql => sql is PostgreSqlAssistantSql suggestion ? _tab.ExecuteAssistantSqlAsync(suggestion) : Task.CompletedTask, _ => !_disposed && _tab.CanRun && !IsBusy);
-        ClearCommand = new AsyncRelayCommand(async _ => { if (await _tab.ConfirmRemovalAsync("DatabaseSessionClearAi")) { _conversation?.Clear(); Messages.Clear(); Error = ""; } }, _ => !IsBusy);
+        ClearCommand = new AsyncRelayCommand(async _ => { if (await _tab.ConfirmRemovalAsync("DatabaseSessionClearAi")) { _conversation?.Clear(); Messages.Clear(); Error = ""; } }, _ => !IsBusy && !_disposed);
         _tab.PropertyChanged += OnTabChanged;
     }
 
@@ -28,12 +35,24 @@ public sealed partial class PostgreSqlAssistantViewModel : ObservableObject, IDi
 
     /// <summary>内存中的当前页签对话，关闭后清除。</summary>
     public ObservableCollection<PostgreSqlAssistantMessage> Messages { get; } = [];
+    /// <summary>快捷提问只填入草稿，仍需用户发送。</summary>
+    public IReadOnlyList<string> QuickPrompts { get; } = [Text.Get("ChatDbPromptOne"), Text.Get("ChatDbPromptTwo"), Text.Get("ChatDbPromptThree")];
+    /// <summary>同一 Session 的独立对话历史，来源关闭后仍可阅读。</summary>
+    public AgentConversationArchive Archive { get; }
+    /// <summary>来源关闭只撤销操作，不清除已显示记录。</summary>
+    public bool IsSourceClosed => _disposed;
+    /// <summary>当前请求的真实阶段，不模拟字符流。</summary>
+    public string Status { get; private set => SetProperty(ref field, value); } = "";
+    /// <summary>失败的问题可恢复到空草稿，不能覆盖用户正在写的下一条。</summary>
+    public string LastFailedPrompt { get; private set => SetProperty(ref field, value); } = "";
+    /// <summary>只恢复文字，不重复执行请求或 SQL。</summary>
+    public RelayCommand RestoreDraftCommand { get; }
     /// <summary>上下文显示真实数据库名。</summary>
     public string ContextLabel => Text.Format("DatabaseSessionAiContext", _tab.Name, string.Join(", ", _tab.Scope?.Databases.Select(item => item.Name) ?? [_tab.DatabaseContext]));
     /// <summary>范围变化后不发送旧范围结果。</summary>
     public bool CanShareResults => _tab.CanShareResults;
     /// <summary>用户发送的问题。</summary>
-    public string Prompt { get; set { if (SetProperty(ref field, value)) SendCommand?.NotifyCanExecuteChanged(); } } = "";
+    public string Prompt { get; set { if (SetProperty(ref field, value)) { SendCommand?.NotifyCanExecuteChanged(); RestoreDraftCommand?.NotifyCanExecuteChanged(); } } } = "";
     /// <summary>用户可排除编辑器原文。</summary>
     public bool IncludeSql { get; set => SetProperty(ref field, value); } = true;
     /// <summary>默认不发送业务数据，用户明确选择后仅发送有限样本。</summary>
@@ -60,22 +79,22 @@ public sealed partial class PostgreSqlAssistantViewModel : ObservableObject, IDi
         if (_conversation is null) { Error = Text.Get("AgentConfigurationRequired"); return; }
         string prompt = Prompt;
         using var pending = new CancellationTokenSource(); _pending = pending; IsBusy = true; Error = ""; Refresh();
+        LastFailedPrompt = ""; Status = Text.Get("ChatPreparingContext"); AddMessage(new(prompt, true)); Prompt = "";
         try
         {
             long revision = _tab.ScopeRevision;
             var context = await _tab.ReadAssistantContextAsync(IncludeSql, IncludeResults, pending.Token);
             if (revision != _tab.ScopeRevision) throw Text.Exception("PostgreSqlAssistantContextChanged");
             var sessionIdentity = _tab.AssistantSessionIdentity;
+            Status = Text.Get("ChatWaitingModel");
             var reply = await _conversation.SendAsync(prompt, context, pending.Token);
             if (_disposed) return;
             if (revision != _tab.ScopeRevision) throw Text.Exception("PostgreSqlAssistantContextChanged");
-            Messages.Add(new(prompt, true)); Messages.Add(new(reply.Content, false,
-                reply.SqlBlocks.Select(sql => new PostgreSqlAssistantSql(sql, context.Database, sessionIdentity, revision)).ToArray()));
-            if (Prompt == prompt) Prompt = "";
+            AddMessage(new(reply.Content, false, reply.SqlBlocks.Select(sql => new PostgreSqlAssistantSql(sql, context.Database, sessionIdentity, revision)).ToArray(), modelIdentity: reply.ModelIdentity));
         }
-        catch (OperationCanceledException) { if (!_disposed) Error = Text.Get("PostgreSqlAssistantCancelled"); }
-        catch (Exception error) { if (!_disposed) Error = Text.Error(error, "AgentRequestFailed"); }
-        finally { _pending = null; IsBusy = false; if (_disposed) _conversation.Clear(); Refresh(); }
+        catch (OperationCanceledException) { if (!_disposed) AddFailure(prompt, Text.Get("PostgreSqlAssistantCancelled")); }
+        catch (Exception error) { if (!_disposed) AddFailure(prompt, Text.Error(error, "AgentRequestFailed")); }
+        finally { _pending = null; IsBusy = false; Status = ""; if (_disposed) _conversation.Clear(); Refresh(); }
     }
 
     private void OnTabChanged(object? sender, PropertyChangedEventArgs args)
@@ -87,12 +106,15 @@ public sealed partial class PostgreSqlAssistantViewModel : ObservableObject, IDi
         OnPropertyChanged(nameof(CanChangeExecutionMode));
         OnPropertyChanged(nameof(ContextLabel)); OnPropertyChanged(nameof(CanShareResults)); SendCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged();
         InsertCommand.NotifyCanExecuteChanged(); ExecuteCommand.NotifyCanExecuteChanged(); ClearCommand.NotifyCanExecuteChanged();
+        RestoreDraftCommand.NotifyCanExecuteChanged(); Archive.Refresh();
     }
+    private void AddMessage(PostgreSqlAssistantMessage message) { Messages.Add(message); while (Messages.Count > 48) Messages.RemoveAt(0); }
+    private void AddFailure(string prompt, string error) { Error = error; LastFailedPrompt = prompt; AddMessage(new(error, false, isError: true, recoveryPrompt: prompt)); }
     /// <inheritdoc />
     public void Dispose()
     {
         if (_disposed) return;
-        _disposed = true; _pending?.Cancel(); _tab.PropertyChanged -= OnTabChanged; Messages.Clear(); Prompt = "";
+        Archive.CloseSource(); _disposed = true; _pending?.Cancel(); _tab.PropertyChanged -= OnTabChanged; OnPropertyChanged(nameof(IsSourceClosed)); Refresh();
         if (!IsBusy) _conversation?.Clear();
     }
 }

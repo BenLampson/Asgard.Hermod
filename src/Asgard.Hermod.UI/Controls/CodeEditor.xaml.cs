@@ -3,6 +3,22 @@ namespace Asgard.Hermod.UI.Controls;
 /// <summary>纯文本编辑和只读代码预览共用行号与滚动，格式解释仍由调用模块负责。</summary>
 public partial class CodeEditor : UserControl
 {
+    /// <summary>日志阅读使用满幅表面、二十三 DIP 行高，仍保留原生连续选区。</summary>
+    public static readonly DependencyProperty IsLogReaderProperty = DependencyProperty.Register(nameof(IsLogReader), typeof(bool), typeof(CodeEditor), new PropertyMetadata(false, (target, _) => ((CodeEditor)target).ApplyLogLayout()));
+    /// <summary>独立日志阅读器排版。</summary>
+    public bool IsLogReader { get => (bool)GetValue(IsLogReaderProperty); set => SetValue(IsLogReaderProperty, value); }
+    /// <summary>只读原生文本，用于本地选区、搜索和字体调整。</summary>
+    public TextBox TextInputControl => Input;
+    private void ApplyLogLayout()
+    {
+        if (EditorFrame is null || !IsLogReader) return;
+        EditorFrame.CornerRadius = new(0); EditorFrame.BorderThickness = new(0);
+        EditorFrame.SetResourceReference(Border.BackgroundProperty, "DatabaseEditorBrush");
+        GutterColumn.Width = new(68); Input.Margin = new(-2, 0, 0, 0); Input.Padding = new(0, 14, 16, 14);
+        if (LineNumbers.Parent is Border gutter) gutter.Padding = new(0, 14, 16, 0);
+        LineNumbers.FontSize = 11; LineNumbers.LineHeight = 23; LineNumbers.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
+        TextBlock.SetLineHeight(Input, 23); TextBlock.SetLineStackingStrategy(Input, LineStackingStrategy.BlockLineHeight);
+    }
     /// <summary>SQL 工作区使用无圆角满幅代码表面与二十四 DIP 行高。</summary>
     public static readonly DependencyProperty IsSqlWorkspaceProperty = DependencyProperty.Register(nameof(IsSqlWorkspace), typeof(bool), typeof(CodeEditor), new PropertyMetadata(false, (target, _) => ((CodeEditor)target).ApplySqlLayout()));
     /// <summary>是否采用 SQL 母组件的代码排版。</summary>
@@ -64,7 +80,19 @@ public partial class CodeEditor : UserControl
         int count = Input.LineCount;
         if (count < 1) { LineNumbers.Text = ""; return; }
         first = Math.Min(first, count - 1); last = Math.Min(last, count - 1);
-        LineNumbers.Text = string.Join(Environment.NewLine, Enumerable.Range(first + 1, Math.Min(200, last - first + 1)).Select(number => number.ToString(System.Globalization.CultureInfo.InvariantCulture)));
+        if (IsLogReader && Input.TextWrapping != TextWrapping.NoWrap)
+        {
+            var numbers = new List<string>();
+            for (int line = first; line <= last && numbers.Count < 200; line++)
+            {
+                int start = Input.GetCharacterIndexFromLineIndex(line);
+                // 自动折行的续行不伪造新的快照行号；原始字符与选区保持不变。
+                numbers.Add(start == 0 || Input.Text[start - 1] == '\n'
+                    ? (1 + Input.Text.AsSpan(0, start).Count('\n')).ToString(System.Globalization.CultureInfo.InvariantCulture) : "");
+            }
+            LineNumbers.Text = string.Join(Environment.NewLine, numbers);
+        }
+        else LineNumbers.Text = string.Join(Environment.NewLine, Enumerable.Range(first + 1, Math.Min(200, last - first + 1)).Select(number => number.ToString(System.Globalization.CultureInfo.InvariantCulture)));
         var rect = Input.GetRectFromCharacterIndex(Input.GetCharacterIndexFromLineIndex(first));
         LineNumbers.RenderTransform = new TranslateTransform(0, IsSqlWorkspace ? first * 24 - Input.VerticalOffset : rect.IsEmpty ? 0 : rect.Y - Input.Padding.Top);
     }
