@@ -388,7 +388,8 @@
                   "content": "主操作",
                   "lineHeight": 1.4,
                   "fontFamily": "Noto Sans SC",
-                  "fontSize": 12
+                  "fontSize": 12,
+                  "fontWeight": "normal"
                 },
                 {
                   "type": "icon",
@@ -2264,6 +2265,7 @@
                       "type": "frame",
                       "id": "hEIYc",
                       "name": "共用分页栏 · 布局排版",
+                      "context": "示例 page_size=6、page=1、total_count=12；按钮和实际条数由同一成功响应产生。翻页失败保留原页和重试目标，不提前改变页号。",
                       "width": "fill_container",
                       "height": 36,
                       "gap": 10,
@@ -2290,6 +2292,8 @@
                           "type": "icon",
                           "id": "QJWsI",
                           "name": "chevron-left 图标",
+                          "context": "第一页：上一页禁用；运行时提供本地化名称。",
+                          "opacity": 0.35,
                           "width": 16,
                           "height": 16,
                           "icon": "chevron-left",
@@ -2302,8 +2306,8 @@
                           "ref": "qqsmi",
                           "name": "1",
                           "height": 32,
-                          "fill": "$rq-bg",
-                          "stroke": "$rq-line",
+                          "fill": "$rq-selected",
+                          "stroke": "$rq-accent",
                           "strokeWidth": 1,
                           "descendants": {
                             "jHsOl": {
@@ -2355,7 +2359,7 @@
                           "strokeWidth": 1,
                           "descendants": {
                             "jHsOl": {
-                              "content": "每页 50 条",
+                              "content": "每页 6 条",
                               "fill": "$rq-ink"
                             },
                             "lWZCW": {
@@ -4699,10 +4703,11 @@
                   "type": "frame",
                   "id": "ZEDsV",
                   "name": "RabbitMQ 协议内容槽",
+                  "context": "沿用现有确认页，完整显示保存说明；小高度时内容滚动，底部操作栏固定。",
                   "width": "fill_container",
                   "height": "fill_container",
                   "layout": "vertical",
-                  "gap": 14,
+                  "gap": 12,
                   "children": [
                     {
                       "type": "frame",
@@ -9562,6 +9567,7 @@
       "x": 1560,
       "y": 2920,
       "name": "11 · 获取消息 / 明确重新入队与消费移除",
+      "context": "获取页显示冻结快照的获取时间，暂停本页自动读取；切换显示编码、复制和导出均只处理当前快照，不重新获取。",
       "theme": {
         "mode": "light"
       },
@@ -10225,7 +10231,7 @@
                               "id": "ezNss",
                               "name": "快照只读。复制和导出只处理当前获取结果。",
                               "fill": "$rq-muted",
-                              "content": "快照只读。复制和导出只处理当前获取结果。",
+                              "content": "快照只读；复制与导出仅包含本次已获取的正文。截断时明确标注“预览”，不能恢复未获取部分。",
                               "fontFamily": "Noto Sans SC",
                               "fontSize": 12,
                               "fontWeight": "normal"
@@ -10297,7 +10303,12 @@
           "type": "ref",
           "ref": "vGi7G",
           "name": "共享状态栏",
-          "width": "fill_container"
+          "width": "fill_container",
+          "descendants": {
+            "kEygl": {
+              "content": "获取于 14:32:08 · 仅手动获取"
+            }
+          }
         }
       ]
     },
@@ -14288,7 +14299,7 @@
               "fill": "$rq-muted",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "队列可能同时被其他消费者处理，实际取出的数量可能少于 10 条。",
+              "content": "实际数量可能少于 10 条。每条最多返回 64 KiB 预览；确认移除的是整条消息，未返回的正文也无法恢复。",
               "lineHeight": 1.6,
               "fontFamily": "Noto Sans SC",
               "fontSize": 13,
@@ -16524,7 +16535,7 @@
                           "id": "Stnpc",
                           "name": "实例级管理 · administrator",
                           "fill": "$rq-muted",
-                          "content": "实例级管理 · administrator",
+                          "content": "/production · 策略管理 · policymaker / administrator",
                           "fontFamily": "Noto Sans SC",
                           "fontSize": 12,
                           "fontWeight": "normal"
@@ -17127,7 +17138,7 @@
                           "fill": "$rq-warning",
                           "textGrowth": "fixed-width",
                           "width": "fill_container",
-                          "content": "策略会影响匹配的现有对象。保存前展示匹配范围与定义变更；参数支持以当前服务端为准。",
+                          "content": "同一对象只应用最高优先级的普通策略，定义不会合并。示例中优先级 10 的 orders-retention 覆盖优先级 5 的 orders-dead-letter；后者的死信配置不会叠加。",
                           "lineHeight": 1.6,
                           "fontFamily": "Noto Sans SC",
                           "fontSize": 12,
@@ -18881,6 +18892,9 @@
             "O30Dy": {
               "content": "Production"
             },
+            "CQAvi": {
+              "content": "Connected"
+            },
             "WfMmM": {
               "content": "Edit connection"
             }
@@ -20070,7 +20084,7 @@
                           "strokeWidth": 1,
                           "descendants": {
                             "jHsOl": {
-                              "content": "50 per page",
+                              "content": "6 per page",
                               "fill": "$rq-ink"
                             },
                             "lWZCW": {
@@ -24492,7 +24506,7 @@
                       "context": "连接已断开，此远程操作禁用。",
                       "descendants": {
                         "jHsOl": {
-                          "content": "自动刷新 5 秒",
+                          "content": "自动刷新已暂停",
                           "fill": "$rq-ink"
                         },
                         "lWZCW": {
@@ -25471,7 +25485,7 @@
                           "strokeWidth": 1,
                           "descendants": {
                             "jHsOl": {
-                              "content": "每页 50 条",
+                              "content": "每页 6 条",
                               "fill": "$rq-ink"
                             },
                             "lWZCW": {
@@ -26933,7 +26947,7 @@
                   "fill": "$rq-warning",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "本次将把 max-length 从 50000 改为 100000。保存后策略会应用于匹配的现有队列。",
+                  "content": "max-length：50000 → 100000。该策略优先级 10，将覆盖同范围优先级 5 的 orders-dead-letter；需要同时生效的参数应合并到本策略。",
                   "lineHeight": 1.6,
                   "fontFamily": "Noto Sans SC",
                   "fontSize": 12,
@@ -28186,7 +28200,7 @@
                   "fill": "$rq-ink",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "连接成功，但此账号没有可访问的虚拟主机。",
+                  "content": "连接成功，但当前账号没有可浏览的虚拟主机。",
                   "lineHeight": 1.6,
                   "fontFamily": "Noto Sans SC",
                   "fontSize": 13,
@@ -28199,7 +28213,7 @@
                   "fill": "$rq-muted",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "提供编辑连接；不打开空的队列页面。",
+                  "content": "连接测试仍可通过并保存。管理员可进入实例管理创建虚拟主机或设置权限；其他账号保留重新加载与编辑连接。",
                   "lineHeight": 1.6,
                   "fontFamily": "Noto Sans SC",
                   "fontSize": 12,
@@ -28220,9 +28234,10 @@
                   "fill": "$rq-bg",
                   "stroke": "$rq-line",
                   "strokeWidth": 1,
+                  "context": "仅对具备实例管理权限的账号显示；其他账号显示重新加载。",
                   "descendants": {
                     "jHsOl": {
-                      "content": "重新加载",
+                      "content": "进入实例管理",
                       "fill": "$rq-ink"
                     }
                   }
@@ -28906,7 +28921,7 @@
                   "fill": "$rq-ink",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "18–20 消费、清空与删除\n26 英文深色\n27 紧凑工作区\n28 使用中断线\n29–33 管理表单与关闭连接\n34 反馈状态 / 35 交互交付约定",
+                  "content": "18–20 消费、清空与删除\n26 英文深色 / 27 紧凑工作区\n28 使用中断线\n29–33 管理表单与关闭连接\n34 反馈状态 / 35 交互交付约定\n37 管理员无虚拟主机\n38 主题权限 / 39 删除虚拟主机\n40 英文深色截断消息预览",
                   "lineHeight": 2.5,
                   "fontFamily": "Noto Sans SC",
                   "fontSize": 16,
@@ -29125,7 +29140,7 @@
               "fill": "$rq-ink",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "单击只选择行，底部操作更新；双击打开详情。搜索与刷新保留仍存在的选择。选中项消失或被过滤时清除远程操作目标。分页从服务端读取；排序与数字比较不使用显示文本。",
+              "content": "单击选择、双击详情；搜索与刷新保留仍存在的选择，消失或被过滤时清除远程操作目标。页号、范围、每页条数和总数使用同一成功响应；翻页失败重试原目标。接口不支持分页时使用有界快照与明确的本地分页，不伪造全量总数。",
               "lineHeight": 1.7,
               "fontFamily": "Noto Sans SC",
               "fontSize": 14,
@@ -29167,7 +29182,7 @@
               "fill": "$rq-ink",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "默认取出后重新入队；这是投递操作，不承诺无副作用。每次显式请求 1–100 条，每条正文预览上限 64KiB，截断需可见。消费并移除要求确认；不持续订阅、不自动再次获取。",
+              "content": "默认取出后重新入队；这是投递操作，不承诺无副作用。每次显式请求 1–100 条，正文预览每条最多 64 KiB。获取页冻结快照，标明获取时间且仅手动获取；截断标明原始大小、返回大小和复制/导出预览。消费确认说明会移除整条消息，包括未返回正文；不自动再次获取。",
               "lineHeight": 1.7,
               "fontFamily": "Noto Sans SC",
               "fontSize": 14,
@@ -29251,7 +29266,7 @@
               "fill": "$rq-ink",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "新建队列、交换机和绑定均保留失败表单。声明属性不提供虚假的直接修改入口。清空只移除 Ready；删除队列默认带 if-empty 和 if-unused 保护。删除虚拟主机说明全部子资源和消息影响。",
+              "content": "创建失败保留表单；声明属性不提供虚假的直接修改入口。清空只移除 Ready；队列删除默认 if-empty 与 if-unused。删除虚拟主机需独立确认范围、子资源及消息；输入框初始为空、精确匹配后才能确认。绑定删除使用服务端 properties_key，确认显示来源、目标、路由键和类型化参数，不能只按路由键识别。",
               "lineHeight": 1.7,
               "fontFamily": "Noto Sans SC",
               "fontSize": 14,
@@ -29293,7 +29308,7 @@
               "fill": "$rq-ink",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "角色标签与虚拟主机资源权限独立。仅按服务端授权显示能力；缺少监控权限不阻断已有资源管理。权限、角色与策略更新需展示目标和变化；敏感凭据不出现在列表、错误或 Agent 上下文。",
+              "content": "角色标签和资源权限分别判断。认证与管理 API 通过即可保存，无可浏览虚拟主机不判为连接失败；管理员仍能创建虚拟主机、用户与授权。策略按 policymaker 或 administrator 能力开放，不把整个管理入口只绑定 administrator。monitoring 不自动授予队列写权限。列表、错误和 Agent 上下文不携带凭据。",
               "lineHeight": 1.7,
               "fontFamily": "Noto Sans SC",
               "fontSize": 14,
@@ -29335,7 +29350,7 @@
               "fill": "$rq-ink",
               "textGrowth": "fixed-width",
               "width": "fill_container",
-              "content": "读取刷新失败保留快照并标出最后成功时间。连接中断在标题栏显示状态和重新连接，暂停写入与自动刷新。重连后重取权限和对象，不重放发布、清空、删除或权限修改。",
+              "content": "读取失败保留快照和最后成功时间。连接中断暂停写入与自动刷新；重连只重取权限和对象。发布、获取消息（含重新入队）、清空、删除及权限修改均不自动重放；断线、超时或取消后未收到确定响应时显示结果未知，保留输入并由用户核对。",
               "lineHeight": 1.7,
               "fontFamily": "Noto Sans SC",
               "fontSize": 14,
@@ -32560,6 +32575,1906 @@
               }
             }
           ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "XtW90",
+      "x": 4400,
+      "y": 9060,
+      "name": "37 · 无可浏览虚拟主机 / 管理员仍可管理实例",
+      "context": "认证与管理 API 成功后允许保存和打开。无资源权限不影响管理员的实例级管理；非管理员显示重新加载和编辑连接。",
+      "theme": {
+        "mode": "light"
+      },
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$rq-bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "S7p1V1",
+          "type": "ref",
+          "ref": "J9THt",
+          "name": "共享实例标题栏",
+          "width": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "NOXIc",
+          "name": "工作区主体",
+          "width": "fill_container",
+          "height": "fill_container",
+          "children": [
+            {
+              "id": "paqDP",
+              "type": "ref",
+              "ref": "znJZr",
+              "name": "共享对象工具箱",
+              "height": "fill_container",
+              "descendants": {
+                "X7Ad2": {
+                  "opacity": 0.5,
+                  "context": "无可浏览虚拟主机，选择器禁用。"
+                },
+                "X7Ad2/YQurq": {
+                  "content": "暂无可浏览虚拟主机"
+                },
+                "C5u3tk": {
+                  "opacity": 0.5
+                },
+                "h6PPyw": {
+                  "opacity": 0.45,
+                  "fill": "$rq-soft"
+                },
+                "WYyyp": {
+                  "fill": "$rq-ink"
+                },
+                "juorM": {
+                  "opacity": 0.45,
+                  "fill": "$rq-soft"
+                },
+                "Z58Qc3": {
+                  "fill": "$rq-ink"
+                },
+                "QLXzC": {
+                  "content": "—"
+                },
+                "HXPos": {
+                  "opacity": 0.45,
+                  "fill": "$rq-soft"
+                },
+                "aDBfN": {
+                  "fill": "$rq-ink"
+                },
+                "cNIJy": {
+                  "content": "—"
+                },
+                "N12qX": {
+                  "opacity": 0.45,
+                  "fill": "$rq-soft"
+                },
+                "wNWMN": {
+                  "fill": "$rq-ink"
+                },
+                "mvrfA": {
+                  "content": "—"
+                },
+                "DX1kS": {
+                  "opacity": 0.45,
+                  "fill": "$rq-soft"
+                },
+                "l8GeP9": {
+                  "fill": "$rq-ink"
+                },
+                "XHxSi": {
+                  "content": "—"
+                },
+                "b8g3yj": {
+                  "opacity": 0.45,
+                  "fill": "$rq-soft"
+                },
+                "KJOvM": {
+                  "fill": "$rq-ink"
+                },
+                "Kizut": {
+                  "content": "—"
+                },
+                "SpRoY": {
+                  "fill": "$rq-selected"
+                },
+                "i5Lcr2": {
+                  "fill": "$rq-accent"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "v1BNJ",
+              "name": "页面内容槽",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "qXbnp",
+                  "name": "页面标题与主操作",
+                  "width": "fill_container",
+                  "height": 70,
+                  "gap": 12,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "syvCD",
+                      "name": "页面身份",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "q6gCis",
+                          "name": "管理",
+                          "fill": "$rq-ink",
+                          "content": "管理",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 18,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "mupEs",
+                          "name": "实例级管理 · administrator",
+                          "fill": "$rq-muted",
+                          "content": "实例级管理 · 无可浏览虚拟主机",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "fOtv1",
+                      "type": "ref",
+                      "ref": "qqsmi",
+                      "name": "刷新",
+                      "fill": "$rq-bg",
+                      "stroke": "$rq-line",
+                      "strokeWidth": 1,
+                      "descendants": {
+                        "jHsOl": {
+                          "content": "刷新",
+                          "fill": "$rq-ink"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qauSC",
+                  "name": "对象页标签",
+                  "width": "fill_container",
+                  "height": 38,
+                  "stroke": "$rq-line",
+                  "strokeWidth": {
+                    "bottom": 1
+                  },
+                  "gap": 24,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "QG3MF",
+                      "name": "标签 / 虚拟主机",
+                      "height": "fill_container",
+                      "stroke": "$rq-accent",
+                      "strokeWidth": {
+                        "bottom": 2
+                      },
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Z11xk",
+                          "name": "虚拟主机",
+                          "fill": "$rq-accent",
+                          "content": "虚拟主机",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "nYfl1",
+                      "name": "标签 / 用户",
+                      "height": "fill_container",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "BSqdD",
+                          "name": "用户",
+                          "fill": "$rq-muted",
+                          "content": "用户",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "NTtCa",
+                      "name": "标签 / 权限",
+                      "height": "fill_container",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "TAWul",
+                          "name": "权限",
+                          "fill": "$rq-muted",
+                          "content": "权限",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "uDz12",
+                      "name": "标签 / 策略",
+                      "height": "fill_container",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "EiAxJ",
+                          "name": "策略",
+                          "fill": "$rq-muted",
+                          "content": "策略",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "HptvY",
+                  "name": "无可浏览虚拟主机 / 保留实例管理",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": 32,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "A2M7M",
+                      "name": "虚拟主机空状态",
+                      "width": 32,
+                      "height": 32,
+                      "icon": "network",
+                      "library": "lucide",
+                      "fill": "$rq-muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "UnFJj",
+                      "name": "空状态标题",
+                      "fill": "$rq-ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "尚无可浏览的虚拟主机",
+                      "lineHeight": 1.6,
+                      "textAlign": "center",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 20,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "UjsMU",
+                      "name": "连接成功说明",
+                      "fill": "$rq-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "连接已建立。你仍可创建虚拟主机、管理用户或设置资源权限。",
+                      "lineHeight": 1.6,
+                      "textAlign": "center",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "I5zGv",
+                      "name": "管理员恢复入口",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "id": "HV4QJ",
+                          "type": "ref",
+                          "ref": "qqsmi",
+                          "name": "新建虚拟主机",
+                          "fill": "$rq-action",
+                          "stroke": "$rq-line",
+                          "strokeWidth": 0,
+                          "descendants": {
+                            "jHsOl": {
+                              "content": "新建虚拟主机",
+                              "fill": "#FFFFFF"
+                            }
+                          }
+                        },
+                        {
+                          "id": "POOwa",
+                          "type": "ref",
+                          "ref": "qqsmi",
+                          "name": "设置权限",
+                          "fill": "$rq-bg",
+                          "stroke": "$rq-line",
+                          "strokeWidth": 1,
+                          "descendants": {
+                            "jHsOl": {
+                              "content": "设置权限",
+                              "fill": "$rq-ink"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "Z5pG1",
+                      "name": "授权后恢复说明",
+                      "fill": "$rq-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "授权后重新加载；只在取得相应资源权限后进入队列与交换机页面。",
+                      "lineHeight": 1.6,
+                      "textAlign": "center",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "jyWSA",
+                  "x": 0,
+                  "y": 780,
+                  "name": "底部选择操作栏",
+                  "enabled": false,
+                  "width": 1208,
+                  "height": 48,
+                  "fill": "$rq-soft",
+                  "stroke": "$rq-line",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "gap": 8,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "W0GQs",
+                      "name": "已选择 /production",
+                      "fill": "$rq-muted",
+                      "content": "已选择 /production",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "SW2Wo",
+                      "name": "弹性间隔",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "id": "ISojJ",
+                      "type": "ref",
+                      "ref": "qqsmi",
+                      "name": "进入工作区",
+                      "fill": "$rq-bg",
+                      "stroke": "$rq-line",
+                      "strokeWidth": 1,
+                      "descendants": {
+                        "jHsOl": {
+                          "content": "进入工作区",
+                          "fill": "$rq-ink"
+                        }
+                      }
+                    },
+                    {
+                      "id": "qNYyl",
+                      "type": "ref",
+                      "ref": "qqsmi",
+                      "name": "编辑",
+                      "fill": "$rq-bg",
+                      "stroke": "$rq-line",
+                      "strokeWidth": 1,
+                      "descendants": {
+                        "jHsOl": {
+                          "content": "编辑",
+                          "fill": "$rq-ink"
+                        }
+                      }
+                    },
+                    {
+                      "id": "S4VGPD",
+                      "type": "ref",
+                      "ref": "qqsmi",
+                      "name": "删除虚拟主机",
+                      "fill": "$rq-bg",
+                      "stroke": "$rq-line",
+                      "strokeWidth": 1,
+                      "descendants": {
+                        "jHsOl": {
+                          "content": "删除虚拟主机",
+                          "fill": "$rq-ink"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "Yw708",
+          "type": "ref",
+          "ref": "vGi7G",
+          "name": "共享状态栏",
+          "width": "fill_container",
+          "descendants": {
+            "Gusb4": {
+              "content": "RabbitMQ 4.x · HTTPS 已验证 · 实例级管理"
+            },
+            "kEygl": {
+              "content": "已连接 · 资源权限尚未配置"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "dCmL6",
+      "x": 5940,
+      "y": 9060,
+      "name": "38 · 主题权限 / 路由键规则与资源权限区分",
+      "context": "用户、虚拟主机和主题交换机组成固定目标。Write 与 Read 分别校验发布和绑定路由键；保存只改此目标的主题权限，不替代资源权限。保留服务端未知变量和正则原文。",
+      "clip": true,
+      "width": 640,
+      "height": 760,
+      "fill": "$rq-bg",
+      "cornerRadius": 8,
+      "stroke": "$rq-line",
+      "strokeWidth": 1,
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "SBeXl",
+          "type": "ref",
+          "ref": "haX1c",
+          "name": "共享子窗口标题栏",
+          "width": "fill_container",
+          "descendants": {
+            "xGNr8": {
+              "content": "设置主题权限"
+            }
+          }
+        },
+        {
+          "type": "frame",
+          "id": "zOLMa",
+          "name": "弹窗内容槽",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 24,
+          "children": [
+            {
+              "type": "frame",
+              "id": "zYfYf",
+              "name": "用户 字段",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 7,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Cf2vh",
+                  "name": "用户",
+                  "fill": "$rq-ink",
+                  "content": "用户",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "id": "vRCw1",
+                  "type": "ref",
+                  "ref": "A4LJ1F",
+                  "name": "用户 输入",
+                  "width": "fill_container",
+                  "descendants": {
+                    "YQurq": {
+                      "content": "orders-app",
+                      "fill": "$rq-ink"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "H4gic",
+              "name": "虚拟主机 字段",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 7,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "M9fIz9",
+                  "name": "虚拟主机",
+                  "fill": "$rq-ink",
+                  "content": "虚拟主机",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "id": "Z62bG",
+                  "type": "ref",
+                  "ref": "A4LJ1F",
+                  "name": "虚拟主机 输入",
+                  "width": "fill_container",
+                  "descendants": {
+                    "YQurq": {
+                      "content": "/production",
+                      "fill": "$rq-ink"
+                    },
+                    "W45V3X": {
+                      "enabled": true
+                    },
+                    "B9I9V": {
+                      "icon": "chevron-down"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Hy60N",
+              "name": "Configure · 配置权限 字段",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 7,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "g9KhVg",
+                  "name": "Configure · 配置权限",
+                  "fill": "$rq-ink",
+                  "content": "主题交换机",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "id": "QgxEo",
+                  "type": "ref",
+                  "ref": "A4LJ1F",
+                  "name": "Configure · 配置权限 输入",
+                  "width": "fill_container",
+                  "descendants": {
+                    "YQurq": {
+                      "content": "orders.events",
+                      "fill": "$rq-ink"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "BF1iz",
+              "name": "Write · 写入权限 字段",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 7,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "nv2Xv",
+                  "name": "Write · 写入权限",
+                  "fill": "$rq-ink",
+                  "content": "Write · 发布路由键",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "id": "N7rJYb",
+                  "type": "ref",
+                  "ref": "A4LJ1F",
+                  "name": "Write · 写入权限 输入",
+                  "width": "fill_container",
+                  "descendants": {
+                    "YQurq": {
+                      "content": "^orders[.].*",
+                      "fill": "$rq-ink"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "yNbog",
+              "name": "Read · 读取权限 字段",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 7,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "mroHB",
+                  "name": "Read · 读取权限",
+                  "fill": "$rq-ink",
+                  "content": "Read · 绑定路由键",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "id": "UBrYv",
+                  "type": "ref",
+                  "ref": "A4LJ1F",
+                  "name": "Read · 读取权限 输入",
+                  "width": "fill_container",
+                  "descendants": {
+                    "YQurq": {
+                      "content": "^orders[.].*",
+                      "fill": "$rq-ink"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "kZXib",
+              "name": "提示 / 将替换 orders-app 在 /production 的上述三项资源权限。模式按资源名称匹配，.* 表示全部资源。",
+              "width": "fill_container",
+              "fill": "$rq-warning-soft",
+              "cornerRadius": 5,
+              "gap": 9,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "kXcJm",
+                  "name": "info 图标",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "info",
+                  "library": "lucide",
+                  "fill": "$rq-warning"
+                },
+                {
+                  "type": "text",
+                  "id": "SXQiE",
+                  "name": "将替换 orders-app 在 /production 的上述三项资源权限。模式按资源名称匹配，.* 表示全部资源。",
+                  "fill": "$rq-warning",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "将替换 orders-app 在 /production 的 orders.events 主题权限。这里匹配路由键；仍需具备对应的资源读写权限。",
+                  "lineHeight": 1.6,
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "id": "gQfeZ",
+              "type": "ref",
+              "ref": "qqsmi",
+              "enabled": false,
+              "name": "主题权限设置…",
+              "fill": "$rq-bg",
+              "stroke": "$rq-line",
+              "strokeWidth": 1,
+              "descendants": {
+                "jHsOl": {
+                  "content": "主题权限设置…",
+                  "fill": "$rq-ink"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "OtgLq",
+          "name": "固定确认操作栏",
+          "width": "fill_container",
+          "height": 60,
+          "fill": "$rq-soft",
+          "stroke": "$rq-line",
+          "strokeWidth": {
+            "top": 1
+          },
+          "gap": 8,
+          "padding": [
+            0,
+            24
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Q2PY4",
+              "name": "弹性间隔",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "id": "sGLxh",
+              "type": "ref",
+              "ref": "qqsmi",
+              "name": "取消",
+              "fill": "$rq-bg",
+              "stroke": "$rq-line",
+              "strokeWidth": 1,
+              "descendants": {
+                "jHsOl": {
+                  "content": "取消",
+                  "fill": "$rq-ink"
+                }
+              }
+            },
+            {
+              "id": "m8Wco",
+              "type": "ref",
+              "ref": "qqsmi",
+              "name": "保存权限",
+              "fill": "$rq-action",
+              "strokeWidth": 0,
+              "descendants": {
+                "jHsOl": {
+                  "content": "保存主题权限",
+                  "fill": "#FFFFFF"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "y5IN7F",
+      "x": 6680,
+      "y": 9060,
+      "name": "39 · 删除虚拟主机 / 完整范围与名称确认",
+      "context": "确认框初始为空，精确匹配原始虚拟主机名称才启用删除；不自动填入。固定实例与虚拟主机目标，执行中禁止重复提交，未知结果不重试。成功后清除该范围的对象和远程操作目标，返回实例管理。",
+      "clip": true,
+      "width": 620,
+      "height": 600,
+      "fill": "$rq-bg",
+      "cornerRadius": 8,
+      "stroke": "$rq-line",
+      "strokeWidth": 1,
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "sBH2X",
+          "type": "ref",
+          "ref": "haX1c",
+          "name": "共享子窗口标题栏",
+          "width": "fill_container",
+          "descendants": {
+            "xGNr8": {
+              "content": "删除虚拟主机"
+            }
+          }
+        },
+        {
+          "type": "frame",
+          "id": "PvWdi",
+          "name": "弹窗内容槽",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 24,
+          "children": [
+            {
+              "type": "text",
+              "id": "zskws",
+              "name": "orders.created",
+              "fill": "$rq-ink",
+              "content": "/production",
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 20,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "VXXzi",
+              "name": "Production RabbitMQ · /production",
+              "fill": "$rq-muted",
+              "content": "Production RabbitMQ · 实例级管理",
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "F2WPW",
+              "name": "提示 / 将删除队列、关联绑定和其中的消息。删除不可撤销。",
+              "width": "fill_container",
+              "fill": "$rq-red-soft",
+              "cornerRadius": 5,
+              "gap": 9,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "p8Jkl",
+                  "name": "circle-alert 图标",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "circle-alert",
+                  "library": "lucide",
+                  "fill": "$rq-red"
+                },
+                {
+                  "type": "text",
+                  "id": "HvjSN",
+                  "name": "将删除队列、关联绑定和其中的消息。删除不可撤销。",
+                  "fill": "$rq-red",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "将删除此虚拟主机及其中全部队列、交换机、绑定和消息，并中断该虚拟主机的客户端连接。此操作无法撤销。",
+                  "lineHeight": 1.6,
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "nGJ19",
+              "x": 24,
+              "y": 161,
+              "name": "共用删除保护复选框组",
+              "enabled": false,
+              "width": 572,
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "NndRq",
+                  "name": "仅在队列为空时删除",
+                  "width": "fill_container",
+                  "height": 24,
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "hfAjl",
+                      "name": "仅在队列为空时删除 选中框",
+                      "width": 16,
+                      "height": 16,
+                      "fill": "$rq-action",
+                      "cornerRadius": 3,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "CenFd",
+                          "name": "check 图标",
+                          "width": 12,
+                          "height": 12,
+                          "icon": "check",
+                          "library": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "v9uBe",
+                      "name": "仅在队列为空时删除",
+                      "fill": "$rq-ink",
+                      "content": "仅在队列为空时删除",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "QA3go",
+                  "name": "仅在没有消费者时删除",
+                  "width": "fill_container",
+                  "height": 24,
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "mymy6",
+                      "name": "仅在没有消费者时删除 选中框",
+                      "width": 16,
+                      "height": 16,
+                      "fill": "$rq-action",
+                      "cornerRadius": 3,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "QM3oW",
+                          "name": "check 图标",
+                          "width": 12,
+                          "height": 12,
+                          "icon": "check",
+                          "library": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "ADt9u",
+                      "name": "仅在没有消费者时删除",
+                      "fill": "$rq-ink",
+                      "content": "仅在没有消费者时删除",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "ntcr7",
+              "name": "服务端会再次检查条件；条件不满足时保留队列。取消保护条件会扩大影响。",
+              "fill": "$rq-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "最近采样：12 个队列、8 个交换机、24 个连接。实际范围以执行时为准；该操作不受队列“为空／未使用”保护条件限制。",
+              "lineHeight": 1.6,
+              "fontFamily": "Noto Sans SC",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "v2JSj",
+              "name": "输入队列名称以继续 字段",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 7,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "J9xxw",
+                  "name": "输入队列名称以继续",
+                  "fill": "$rq-ink",
+                  "content": "输入完整虚拟主机名称以继续",
+                  "fontFamily": "Noto Sans SC",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "id": "f9LtE",
+                  "type": "ref",
+                  "ref": "A4LJ1F",
+                  "context": "占位提示；初始值为空。",
+                  "name": "输入队列名称以继续 输入",
+                  "width": "fill_container",
+                  "descendants": {
+                    "YQurq": {
+                      "content": "输入 /production",
+                      "fill": "$rq-muted"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "tgNXZ",
+          "name": "固定确认操作栏",
+          "width": "fill_container",
+          "height": 60,
+          "fill": "$rq-soft",
+          "stroke": "$rq-line",
+          "strokeWidth": {
+            "top": 1
+          },
+          "gap": 8,
+          "padding": [
+            0,
+            24
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "vrQf1",
+              "name": "弹性间隔",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "id": "smiPN",
+              "type": "ref",
+              "ref": "qqsmi",
+              "name": "取消",
+              "fill": "$rq-bg",
+              "stroke": "$rq-line",
+              "strokeWidth": 1,
+              "descendants": {
+                "jHsOl": {
+                  "content": "取消",
+                  "fill": "$rq-ink"
+                }
+              }
+            },
+            {
+              "id": "YAo2k",
+              "type": "ref",
+              "ref": "qqsmi",
+              "opacity": 0.4,
+              "context": "初始禁用；只有用户输入精确匹配 /production 才启用。",
+              "name": "删除队列",
+              "fill": "$rq-red",
+              "strokeWidth": 0,
+              "descendants": {
+                "jHsOl": {
+                  "content": "删除虚拟主机",
+                  "fill": "#FFFFFF"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "O5yzW",
+      "x": 7400,
+      "y": 9060,
+      "name": "40 · English dark / Truncated message snapshot",
+      "context": "同一获取页的正文截断状态。正文编辑器展示已返回64 KiB快照的开头，原始payload_bytes为98304；复制/导出标为预览。编码切换只转换本地字节；不得再次POST get来补全同一消息。消息获取期间禁止重复提交，结果未知不自动重试。",
+      "theme": {
+        "mode": "dark"
+      },
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$rq-bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "GP600",
+          "type": "ref",
+          "ref": "J9THt",
+          "name": "共享实例标题栏",
+          "width": "fill_container",
+          "descendants": {
+            "O30Dy": {
+              "content": "Production"
+            },
+            "CQAvi": {
+              "content": "Connected"
+            },
+            "WfMmM": {
+              "content": "Edit connection"
+            }
+          }
+        },
+        {
+          "type": "frame",
+          "id": "UpKMk",
+          "name": "工作区主体",
+          "width": "fill_container",
+          "height": "fill_container",
+          "children": [
+            {
+              "id": "ZAYb9",
+              "type": "ref",
+              "ref": "znJZr",
+              "name": "共享对象工具箱",
+              "height": "fill_container",
+              "descendants": {
+                "r4RwII": {
+                  "content": "Object explorer"
+                },
+                "gS7mU": {
+                  "content": "Virtual host"
+                },
+                "C5u3tk/YQurq": {
+                  "content": "Search this virtual host…"
+                },
+                "h6PPyw": {
+                  "fill": "$rq-soft"
+                },
+                "WYyyp": {
+                  "content": "Overview",
+                  "fill": "$rq-ink"
+                },
+                "juorM": {
+                  "fill": "$rq-selected"
+                },
+                "Z58Qc3": {
+                  "content": "Queues",
+                  "fill": "$rq-accent"
+                },
+                "HXPos": {
+                  "fill": "$rq-soft"
+                },
+                "aDBfN": {
+                  "content": "Exchanges",
+                  "fill": "$rq-ink"
+                },
+                "N12qX": {
+                  "fill": "$rq-soft"
+                },
+                "wNWMN": {
+                  "content": "Bindings",
+                  "fill": "$rq-ink"
+                },
+                "DX1kS": {
+                  "fill": "$rq-soft"
+                },
+                "l8GeP9": {
+                  "content": "Connections",
+                  "fill": "$rq-ink"
+                },
+                "b8g3yj": {
+                  "fill": "$rq-soft"
+                },
+                "KJOvM": {
+                  "content": "Channels",
+                  "fill": "$rq-ink"
+                },
+                "SpRoY": {
+                  "fill": "$rq-soft"
+                },
+                "i5Lcr2": {
+                  "content": "Administration",
+                  "fill": "$rq-ink"
+                },
+                "yHnu9": {
+                  "content": "Resources available to this account"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "HusSu",
+              "name": "页面内容槽",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "cfdPZ",
+                  "name": "页面标题与主操作",
+                  "width": "fill_container",
+                  "height": 70,
+                  "gap": 12,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "V6rNfi",
+                      "name": "页面身份",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "FSzfO",
+                          "name": "orders.created / 获取消息",
+                          "fill": "$rq-ink",
+                          "content": "orders.created / Get messages",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 18,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Yu0gn",
+                          "name": "/production · 取出操作会影响队列投递",
+                          "fill": "$rq-muted",
+                          "content": "/production · Fetching messages affects queue delivery",
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "xoUit",
+                      "type": "ref",
+                      "ref": "qqsmi",
+                      "name": "返回详情",
+                      "fill": "$rq-bg",
+                      "stroke": "$rq-line",
+                      "strokeWidth": 1,
+                      "descendants": {
+                        "jHsOl": {
+                          "content": "Back to details",
+                          "fill": "$rq-ink"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "v3hOi9",
+                  "name": "内容区域",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": 20,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qgHIj",
+                      "name": "获取配置",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "pw5dB",
+                          "name": "最多获取（1–100） 字段",
+                          "width": 150,
+                          "layout": "vertical",
+                          "gap": 7,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "K8pv7f",
+                              "name": "最多获取（1–100）",
+                              "fill": "$rq-ink",
+                              "content": "Maximum count (1–100)",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "id": "qJE99",
+                              "type": "ref",
+                              "ref": "A4LJ1F",
+                              "name": "最多获取（1–100） 输入",
+                              "width": "fill_container",
+                              "descendants": {
+                                "YQurq": {
+                                  "content": "10",
+                                  "fill": "$rq-ink"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "CFiRO",
+                          "name": "确认方式 字段",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 7,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "aHI5Y",
+                              "name": "确认方式",
+                              "fill": "$rq-ink",
+                              "content": "Acknowledgement",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "id": "W5M3y",
+                              "type": "ref",
+                              "ref": "A4LJ1F",
+                              "name": "确认方式 输入",
+                              "width": "fill_container",
+                              "descendants": {
+                                "YQurq": {
+                                  "content": "Fetch and requeue",
+                                  "fill": "$rq-ink"
+                                },
+                                "W45V3X": {
+                                  "enabled": true
+                                },
+                                "B9I9V": {
+                                  "icon": "chevron-down"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Qc8pu",
+                          "name": "正文显示 字段",
+                          "width": 190,
+                          "layout": "vertical",
+                          "gap": 7,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "p5Yfg9",
+                              "name": "正文显示",
+                              "fill": "$rq-ink",
+                              "content": "Payload display",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "id": "RuIgr",
+                              "type": "ref",
+                              "ref": "A4LJ1F",
+                              "name": "正文显示 输入",
+                              "width": "fill_container",
+                              "descendants": {
+                                "YQurq": {
+                                  "content": "Auto / Base64",
+                                  "fill": "$rq-ink"
+                                },
+                                "W45V3X": {
+                                  "enabled": true
+                                },
+                                "B9I9V": {
+                                  "icon": "chevron-down"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "ZCmR5",
+                          "type": "ref",
+                          "ref": "qqsmi",
+                          "name": "获取消息",
+                          "fill": "$rq-action",
+                          "strokeWidth": 0,
+                          "descendants": {
+                            "jHsOl": {
+                              "content": "Get messages",
+                              "fill": "#FFFFFF"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "HvFo5",
+                      "name": "提示 / 重新入队仍会触发投递，可能影响消息顺序和 redelivered 标记。不会持续消费，也不会自动再次获取。",
+                      "width": "fill_container",
+                      "fill": "$rq-warning-soft",
+                      "cornerRadius": 5,
+                      "gap": 9,
+                      "padding": 12,
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "jaOz6",
+                          "name": "info 图标",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "info",
+                          "library": "lucide",
+                          "fill": "$rq-warning"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Fb69N",
+                          "name": "重新入队仍会触发投递，可能影响消息顺序和 redelivered 标记。不会持续消费，也不会自动再次获取。",
+                          "fill": "$rq-warning",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Requeueing can affect message order and the redelivered flag. Messages are fetched only when you request them.",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Noto Sans SC",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "KHtp3",
+                      "name": "本次获取 3 条 · 14:32:08 · 正文每条最多显示 64 KiB",
+                      "fill": "$rq-muted",
+                      "content": "3 messages fetched · 14:32:08 · Message #1: 64 KiB preview of a 96 KiB payload",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "JPE26",
+                      "name": "消息列表与只读正文",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "G419Fd",
+                          "name": "获取结果快照",
+                          "width": 280,
+                          "height": "fill_container",
+                          "layout": "vertical",
+                          "gap": 8,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "hKovm",
+                              "name": "消息 1",
+                              "width": "fill_container",
+                              "fill": "$rq-selected",
+                              "cornerRadius": 5,
+                              "stroke": "$rq-line",
+                              "strokeWidth": 1,
+                              "layout": "vertical",
+                              "gap": 8,
+                              "padding": 12,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "OMGIE",
+                                  "name": "#1    evt_29814",
+                                  "fill": "$rq-ink",
+                                  "content": "#1 · evt_29814",
+                                  "fontFamily": "Noto Sans SC",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "PIok4",
+                                  "name": "orders.created · 284 B",
+                                  "fill": "$rq-muted",
+                                  "content": "orders.created · 96 KiB",
+                                  "fontFamily": "Noto Sans SC",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "EbyzP",
+                                  "name": "redelivered: true",
+                                  "fill": "$rq-muted",
+                                  "content": "redelivered: true",
+                                  "fontFamily": "Noto Sans SC",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "S3U8H",
+                              "name": "消息 2",
+                              "width": "fill_container",
+                              "fill": "$rq-bg",
+                              "cornerRadius": 5,
+                              "stroke": "$rq-line",
+                              "strokeWidth": 1,
+                              "layout": "vertical",
+                              "gap": 8,
+                              "padding": 12,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "K8uJ6V",
+                                  "name": "#2    evt_29815",
+                                  "fill": "$rq-ink",
+                                  "content": "#2 · evt_29815",
+                                  "fontFamily": "Noto Sans SC",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "A2GomD",
+                                  "name": "orders.created · 312 B",
+                                  "fill": "$rq-muted",
+                                  "content": "orders.created · 312 B",
+                                  "fontFamily": "Noto Sans SC",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "CRf8p",
+                                  "name": "redelivered: true",
+                                  "fill": "$rq-muted",
+                                  "content": "redelivered: true",
+                                  "fontFamily": "Noto Sans SC",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "GmcN9",
+                              "name": "消息 3",
+                              "width": "fill_container",
+                              "fill": "$rq-bg",
+                              "cornerRadius": 5,
+                              "stroke": "$rq-line",
+                              "strokeWidth": 1,
+                              "layout": "vertical",
+                              "gap": 8,
+                              "padding": 12,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "JNuN4",
+                                  "name": "#3    evt_29816",
+                                  "fill": "$rq-ink",
+                                  "content": "#3 · evt_29816",
+                                  "fontFamily": "Noto Sans SC",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "YwegB",
+                                  "name": "orders.created · 296 B",
+                                  "fill": "$rq-muted",
+                                  "content": "orders.created · 296 B",
+                                  "fontFamily": "Noto Sans SC",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "SzdBi",
+                                  "name": "redelivered: true",
+                                  "fill": "$rq-muted",
+                                  "content": "redelivered: true",
+                                  "fontFamily": "Noto Sans SC",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Z9nWCP",
+                          "name": "只读消息详情",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "layout": "vertical",
+                          "gap": 12,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "VKg7X",
+                              "name": "正文工具",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "o5EoX",
+                                  "name": "消息 #1",
+                                  "fill": "$rq-ink",
+                                  "content": "Message #1 · Truncated preview",
+                                  "fontFamily": "Noto Sans SC",
+                                  "fontSize": 14,
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "PDGFw",
+                                  "name": "弹性间隔",
+                                  "width": "fill_container",
+                                  "height": 1
+                                },
+                                {
+                                  "id": "Mq3V4",
+                                  "type": "ref",
+                                  "ref": "qqsmi",
+                                  "name": "复制正文",
+                                  "fill": "$rq-bg",
+                                  "stroke": "$rq-line",
+                                  "strokeWidth": 1,
+                                  "descendants": {
+                                    "jHsOl": {
+                                      "content": "Copy preview",
+                                      "fill": "$rq-ink"
+                                    }
+                                  }
+                                },
+                                {
+                                  "id": "O6oWN",
+                                  "type": "ref",
+                                  "ref": "qqsmi",
+                                  "name": "导出",
+                                  "fill": "$rq-bg",
+                                  "stroke": "$rq-line",
+                                  "strokeWidth": 1,
+                                  "descendants": {
+                                    "jHsOl": {
+                                      "content": "Export preview",
+                                      "fill": "$rq-ink"
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "soJtF",
+                              "name": "对象页标签",
+                              "width": "fill_container",
+                              "height": 38,
+                              "stroke": "$rq-line",
+                              "strokeWidth": {
+                                "bottom": 1
+                              },
+                              "gap": 24,
+                              "padding": [
+                                0,
+                                20
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "G43PL",
+                                  "name": "标签 / 正文",
+                                  "height": "fill_container",
+                                  "stroke": "$rq-accent",
+                                  "strokeWidth": {
+                                    "bottom": 2
+                                  },
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "dEaLW",
+                                      "name": "正文",
+                                      "fill": "$rq-accent",
+                                      "content": "Payload",
+                                      "fontFamily": "Noto Sans SC",
+                                      "fontSize": 13,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "vEjYs",
+                                  "name": "标签 / 属性",
+                                  "height": "fill_container",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "u1BdK",
+                                      "name": "属性",
+                                      "fill": "$rq-muted",
+                                      "content": "Properties",
+                                      "fontFamily": "Noto Sans SC",
+                                      "fontSize": 13,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "UiuSM",
+                                  "name": "标签 / Headers",
+                                  "height": "fill_container",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "OukAa",
+                                      "name": "Headers",
+                                      "fill": "$rq-muted",
+                                      "content": "Headers",
+                                      "fontFamily": "Noto Sans SC",
+                                      "fontSize": 13,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "tOdwa",
+                              "name": "消息正文只读编辑器",
+                              "width": "fill_container",
+                              "height": "fill_container",
+                              "fill": "$rq-editor",
+                              "stroke": "$rq-line",
+                              "strokeWidth": 1,
+                              "padding": 16,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "J2ij0",
+                                  "name": "{\n  \"event_id\": \"evt_29814\",\n  \"event_type\": \"orders.created\",\n  \"order_id\": \"ORD-20261016-001\",\n  \"amount\": 129.00,\n  \"currency\": \"CNY\"\n}",
+                                  "fill": "$rq-ink",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "{\n  \"event_id\": \"evt_29814\",\n  \"event_type\": \"orders.created\",\n  \"order_id\": \"ORD-20261016-001\",\n  \"amount\": 129.00,\n  \"currency\": \"CNY\"\n}",
+                                  "lineHeight": 1.8,
+                                  "fontFamily": "JetBrains Mono",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "CN865",
+                              "name": "快照只读。复制和导出只处理当前获取结果。",
+                              "fill": "$rq-warning",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Truncated: only 64 KiB of 96 KiB was returned. Copy and export contain this preview only; no additional fetch is performed.",
+                              "fontFamily": "Noto Sans SC",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "gPqap",
+                  "name": "底部选择操作栏",
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "$rq-soft",
+                  "stroke": "$rq-line",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "gap": 8,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Tft8O",
+                      "name": "3 条消息已重新入队 · 保留本次快照",
+                      "fill": "$rq-muted",
+                      "content": "3 messages requeued · Snapshot retained",
+                      "fontFamily": "Noto Sans SC",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "N0iBW",
+                      "name": "弹性间隔",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "id": "ZwO35",
+                      "type": "ref",
+                      "ref": "qqsmi",
+                      "name": "清除本地快照",
+                      "fill": "$rq-bg",
+                      "stroke": "$rq-line",
+                      "strokeWidth": 1,
+                      "descendants": {
+                        "jHsOl": {
+                          "content": "Clear local snapshot",
+                          "fill": "$rq-ink"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "MxgKq",
+          "type": "ref",
+          "ref": "vGi7G",
+          "name": "共享状态栏",
+          "width": "fill_container",
+          "descendants": {
+            "Gusb4": {
+              "content": "RabbitMQ 4.x · Verified HTTPS · /production"
+            },
+            "kEygl": {
+              "content": "Fetched 14:32:08 · Manual fetch only"
+            }
+          }
         }
       ]
     }
