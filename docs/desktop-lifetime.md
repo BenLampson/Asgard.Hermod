@@ -21,6 +21,13 @@ dialog services resolve the active work window; exit preflight supplies an expli
 owner. Main-window activation finds the effective thread modal chain, including
 dialogs owned by independent work windows.
 
+Settings uses one independent, nonmodal window with its own taskbar entry.
+Opening Settings again restores and focuses that window without changing its
+selected page. Tag and model settings shortcuts reuse it and select their target
+page. Requests during initialization share one load and window. Closing Settings
+releases its model subscriptions; application exit also cancels pending loading
+and prevents a late settings window from appearing.
+
 The main window's close button and Alt+F4 ask whether to hide to the notification
 area or exit Hermod. Asking is enabled by default. Cancel, Escape and closing the
 question leave all windows and preferences unchanged. Unless “Do not ask again”

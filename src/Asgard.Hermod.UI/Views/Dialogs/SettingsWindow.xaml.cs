@@ -3,7 +3,7 @@ using Asgard.Hermod.UI.Controls;
 namespace Asgard.Hermod.UI.Views.Dialogs;
 
 /// <summary>系统设置宿主，使用通用窗体标题和独立标签管理面板。</summary>
-public partial class SettingsWindow : HermodDialog
+public partial class SettingsWindow : HermodWindow
 {
     private readonly SettingsViewModel _model;
 
