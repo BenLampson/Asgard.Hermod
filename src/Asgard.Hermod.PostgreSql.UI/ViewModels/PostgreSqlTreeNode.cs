@@ -35,6 +35,23 @@ public sealed class PostgreSqlTreeNode : ObservableObject
     public Thickness RowInset => new(VisualIndent, 0, 0, 0);
     /// <summary>服务器返回的元数据说明。</summary>
     public string Detail => Object.Detail;
+    /// <summary>整行共用名称与说明提示；只在展示层解释关系类型码，保留原始元数据供检索。</summary>
+    public string Hint
+    {
+        get
+        {
+            string detail = (Object.Kind, Object.Detail) switch
+            {
+                (PostgreSqlObjectKind.Table, "r") => Text.Get("PostgreSqlOrdinaryTable"),
+                (PostgreSqlObjectKind.Table, "p") => Text.Get("PostgreSqlPartitionedTable"),
+                (PostgreSqlObjectKind.Table, "f") => Text.Get("PostgreSqlForeignTable"),
+                (PostgreSqlObjectKind.View, "v") => Text.Get("PostgreSqlRelationView"),
+                (PostgreSqlObjectKind.View, "m") => Text.Get("PostgreSqlMaterializedView"),
+                _ => Detail
+            };
+            return detail.Length == 0 ? Label : Text.Format("DatabaseObjectHint", Label, detail);
+        }
+    }
     /// <summary>按真实对象类型选择的公共图标。</summary>
     public string Icon => Object.Kind switch
     {

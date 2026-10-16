@@ -4963,4 +4963,10 @@ SQL：
   <data name="RabbitMqSearchVhostPlaceholder" xml:space="preserve"><value>搜索当前虚拟主机…</value></data>
   <data name="ExitPreparationFailedTitle" xml:space="preserve"><value>无法开始退出</value></data>
   <data name="ExitPreparationFailed" xml:space="preserve"><value>检查工作窗口的关闭状态时发生错误。Hermod 尚未退出，你可以继续使用或重试退出。</value></data>
+  <data name="DatabaseObjectHint" xml:space="preserve"><value>{0}&#10;{1}</value></data>
+  <data name="PostgreSqlOrdinaryTable" xml:space="preserve"><value>普通表</value></data>
+  <data name="PostgreSqlPartitionedTable" xml:space="preserve"><value>分区表</value></data>
+  <data name="PostgreSqlForeignTable" xml:space="preserve"><value>外部表</value></data>
+  <data name="PostgreSqlRelationView" xml:space="preserve"><value>视图</value></data>
+  <data name="PostgreSqlMaterializedView" xml:space="preserve"><value>物化视图</value></data>
 </root>

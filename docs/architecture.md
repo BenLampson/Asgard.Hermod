@@ -506,6 +506,10 @@ visible focus treatment. WPF test hosts use the desktop application's selection
 rendering switch and verify rendered text above opaque selection backgrounds.
 Module tab title hints use the WPF tooltip service with a bounded hover duration;
 focus does not manually open a popup. Complete titles remain in automation names.
+Shared tooltips use dynamic foreground, background and border resources, including
+when an existing hint survives a theme change. Long names wrap within 480 DIP.
+PostgreSQL object rows expose one name-and-detail hint; relation kind codes are
+localized only for presentation, while original metadata remains unchanged.
 SSH, object storage, MySQL and Redis share `WorkspaceConnectionOverlay` and its
 presentation state for the first connection, failures and unexpected disconnections.
 `WorkspacePageLayout` reserves an overlay slot spanning the existing page rows;

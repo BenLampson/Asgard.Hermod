@@ -4963,4 +4963,10 @@ Address: {2}</value></data>
   <data name="RabbitMqSearchVhostPlaceholder" xml:space="preserve"><value>Search this virtual host…</value></data>
   <data name="ExitPreparationFailedTitle" xml:space="preserve"><value>Unable to start exiting</value></data>
   <data name="ExitPreparationFailed" xml:space="preserve"><value>Hermod could not check whether the work windows can close. The application remains open. You can continue working or try exiting again.</value></data>
+  <data name="DatabaseObjectHint" xml:space="preserve"><value>{0}&#10;{1}</value></data>
+  <data name="PostgreSqlOrdinaryTable" xml:space="preserve"><value>Ordinary table</value></data>
+  <data name="PostgreSqlPartitionedTable" xml:space="preserve"><value>Partitioned table</value></data>
+  <data name="PostgreSqlForeignTable" xml:space="preserve"><value>Foreign table</value></data>
+  <data name="PostgreSqlRelationView" xml:space="preserve"><value>View</value></data>
+  <data name="PostgreSqlMaterializedView" xml:space="preserve"><value>Materialized view</value></data>
 </root>
