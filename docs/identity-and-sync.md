@@ -184,6 +184,14 @@ associations, malformed envelopes and excessive payloads before storage. Unknown
 server/SDK errors use safe localized desktop messages; raw response messages are
 never shown.
 
+Schema version 3 adds nullable `sync_configuration.agent_models_json` for the
+separately encrypted model-profile collection. An omitted field from an older
+client preserves the stored envelope; an encrypted empty collection explicitly
+clears the profiles. The desktop requires the API to acknowledge the exact
+uploaded envelope before advancing its baseline. A schema-2 server cannot
+acknowledge these profiles, so the desktop retains local changes and reports a
+synchronization failure until the server is upgraded.
+
 The desktop and API must be upgraded together for the detailed protocol. The
 October 13 production deployment below includes the detailed API; older desktop
 clients remain compatible until their account migrates to detailed storage.
@@ -242,6 +250,36 @@ rollback container is retained for this deployment. Automated approval review
 blocked removal of the two local verification databases and protected snapshot
 under `artifacts/production-sync-probe/data`; those ignored local files still
 require manual cleanup. They are not used by the running service.
+
+### Current production deployment: October 17, 2026
+
+At 00:10 (Asia/Shanghai), the API was upgraded to
+`asgard-hermod:0.1.0-20261017-model-sync-r1`, built from server source at commit
+`9e751be059df5b56f90efe90b1f4f115ee657735`. Its image digest is
+`sha256:a48993cdefaab401cd8a8ec5ac4c26ca45149e89be883491ac269231c6689885`;
+the Linux payload archive SHA-256 is
+`25125a777981a335c7e822f3a19113db01e977ed85b8550f8067e8a74d180e4d`.
+The image was built on MD-Core and was not published to a registry.
+
+Startup migrated the production SQLite database from schema 2 to schema 3.
+Integrity checks passed before and after migration; the existing one account
+configuration, eight instances and three tags remained. HTTPS `/health` returned
+200, and unauthenticated `/api/sync/configuration` returned 401, with ordinary TLS
+certificate validation enabled. The Release solution build, formatting check,
+all 59 synchronization tests and Linux publish passed before deployment. The
+solution build used a separate output directory because the desktop was running.
+
+After deployment, the already-running desktop automatically uploaded a model
+configuration envelope, observed in the previously empty new column. A read-only
+comparison against the stopped-database backup confirmed that all existing
+instance and tag rows, account ownership and password-protection envelopes were
+unchanged. The new container remained running with zero restarts.
+
+The stopped-database backup and previous configuration are retained under
+`/root/deploy/hermod/backups/20261017-model-sync-r1`; the previous image is also
+retained. Restoring that database would discard subsequent writes, so preserve
+new cloud data before any rollback. Current non-secret deployment and verification
+metadata are recorded in `/root/deploy/hermod/release.json`.
 
 ## Verification
 
