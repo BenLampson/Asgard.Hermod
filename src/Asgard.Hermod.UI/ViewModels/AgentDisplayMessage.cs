@@ -10,13 +10,15 @@ public class AgentDisplayMessage : ObservableObject, IAgentDisplayMessage
     /// <summary>保存原文、来源和生成时模型身份，不读取当前模型选择。</summary>
     public AgentDisplayMessage(string content, bool isUser, bool isTool = false, bool isError = false, string recoveryPrompt = "", string modelIdentity = "", AgentApprovalRequest? approval = null)
     {
-        Content = content; IsUser = isUser; IsTool = isTool; IsError = isError; RecoveryPrompt = recoveryPrompt; ModelIdentity = modelIdentity;
+        OriginalContent = content; Content = content; IsUser = isUser; IsTool = isTool; IsError = isError; RecoveryPrompt = recoveryPrompt; ModelIdentity = modelIdentity;
         Approval = approval;
         if (approval is not null) approval.PropertyChanged += (_, args) => { if (args.PropertyName == nameof(AgentApprovalRequest.IsPending)) OnPropertyChanged(nameof(IsAwaitingApproval)); };
         if (isTool) _elapsed = new();
     }
     /// <summary>用户、模型和工具原文不翻译。</summary>
     public string Content { get; protected set => SetProperty(ref field, value); }
+    /// <summary>完整原文，不因建议代码被移入独立动作卡而丢失围栏或命令。</summary>
+    public string OriginalContent { get; protected set => SetProperty(ref field, value); }
     /// <summary>稳定的用户来源标记。</summary>
     public bool IsUser { get; }
     /// <summary>工具步骤不能被提取为新的执行建议。</summary>
@@ -73,7 +75,7 @@ public class AgentDisplayMessage : ObservableObject, IAgentDisplayMessage
     /// <summary>更新原对象，不改变用户已经选择的展开状态。</summary>
     protected void UpdateMessage(string content, string statusKey)
     {
-        Content = content; _statusKey = statusKey;
+        OriginalContent = content; Content = content; _statusKey = statusKey;
         if (statusKey is "SqlAgentQueryRunning" or "SshAgentExecuting" or "ChatActionExecuting") _elapsed?.Start();
         if (statusKey is not ("SqlAgentQueryRunning" or "SshAgentAwaitingApproval" or "SshAgentExecuting" or "ChatAwaitingApproval" or "ChatActionExecuting")) _elapsed?.Stop();
         OnPropertyChanged(nameof(Status)); OnPropertyChanged(nameof(IsAwaitingApproval)); OnPropertyChanged(nameof(Elapsed)); OnPropertyChanged(nameof(ActivityTitle)); OnPropertyChanged(nameof(ActivityTone)); OnPropertyChanged(nameof(ActivityIcon));
