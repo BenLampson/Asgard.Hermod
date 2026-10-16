@@ -48,8 +48,9 @@
     <SolidColorBrush x:Key="WorkspaceInkBrush" Color="#E6ECF5" />
     <SolidColorBrush x:Key="WorkspaceMutedBrush" Color="#9DAAC0" />
     <SolidColorBrush x:Key="WorkspaceLineBrush" Color="#303B4E" />
-    <SolidColorBrush x:Key="MySqlBrandBrush" Color="#80BED8" />
-    <SolidColorBrush x:Key="PostgreSqlBrandBrush" Color="#8CAEDD" />
+    <!-- 小尺寸品牌路径含细线和字样，夜间用高亮蓝色保留实际像素对比度。 -->
+    <SolidColorBrush x:Key="MySqlBrandBrush" Color="#9AD8EF" />
+    <SolidColorBrush x:Key="PostgreSqlBrandBrush" Color="#B3D1FF" />
     <Color x:Key="DbBackgroundColor">#161D28</Color>
     <Color x:Key="DbSoftColor">#1D2634</Color>
     <Color x:Key="DbLineColor">#303B4E</Color>

@@ -9,6 +9,12 @@ sorting. Pagination fits the available height, with at most nine rows per page.
 At narrow widths the account button retains its avatar, tooltip, accessibility
 name and keyboard focus while its text folds away.
 
+MySQL and PostgreSQL marks use 24-DIP icons inside the existing 34-DIP table
+tiles. Shared `IconView` rendering selects each database's theme-specific brand
+brush, including when an existing view changes theme, and slightly strengthens
+fine paths at small sizes. Dark-theme brand colors retain visible contrast after
+antialiasing; light-theme brand colors remain unchanged.
+
 `MainNavigationTabs` and `MainNavigationTabChrome` are public shared UI controls.
 Their resource dictionary owns the selection template: top rounded corners,
 outward bottom flares, no outline or inner scroll viewer, and the same background

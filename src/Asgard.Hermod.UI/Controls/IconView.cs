@@ -1,14 +1,33 @@
 namespace Asgard.Hermod.UI.Controls;
 
 /// <summary>
-/// 绘制内置官方品牌资源或 Lucide 几何；只有通用图标继承主题前景色。
+/// 绘制内置品牌资源或 Lucide 几何；数据库品牌使用主题配色，通用图标继承前景色。
 /// </summary>
 public sealed class IconView : Control
 {
     /// <summary>图标名称，对应内置品牌标识或 Pencil 的 Lucide 图标名。</summary>
     public static readonly DependencyProperty KindProperty = DependencyProperty.Register(
         nameof(Kind), typeof(string), typeof(IconView),
-        new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.AffectsRender));
+        new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.AffectsRender, OnKindChanged));
+
+    /// <summary>独立动态资源会在换肤时触发重绘，不受调用方的通用图标颜色覆盖。</summary>
+    private static readonly DependencyProperty DatabaseBrandBrushProperty = DependencyProperty.Register(
+        "DatabaseBrandBrush", typeof(Brush), typeof(IconView),
+        new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
+
+    /// <summary>数据库标识在所有入口统一选择主题品牌色，切换到通用图标时清除旧资源。</summary>
+    private static void OnKindChanged(DependencyObject target, DependencyPropertyChangedEventArgs args)
+    {
+        var icon = (IconView)target;
+        string? key = args.NewValue switch
+        {
+            "brand-mysql" => "MySqlBrandBrush",
+            "brand-postgresql" => "PostgreSqlBrandBrush",
+            _ => null
+        };
+        if (key is not null) icon.SetResourceReference(DatabaseBrandBrushProperty, key);
+        else icon.ClearValue(DatabaseBrandBrushProperty);
+    }
 
     /// <summary>绑定主题资源键后使用动态资源，使文件类型颜色随换肤更新。</summary>
     public static readonly DependencyProperty ForegroundResourceKeyProperty = DependencyProperty.Register(
@@ -73,7 +92,10 @@ public sealed class IconView : Control
             double brandScale = Math.Min(ActualWidth, ActualHeight) / 24d;
             drawingContext.PushTransform(new MatrixTransform(brandScale, 0, 0, brandScale,
                 (ActualWidth - 24 * brandScale) / 2, (ActualHeight - 24 * brandScale) / 2));
-            drawingContext.DrawGeometry(Foreground, null, databaseBrand);
+            var brush = (Brush?)GetValue(DatabaseBrandBrushProperty) ?? Foreground;
+            // 小尺寸填充路径的细线不足一个像素，轻微加粗避免抗锯齿后融入背景。
+            var outline = brandScale <= 1 ? new Pen(brush, 0.5) { LineJoin = PenLineJoin.Round } : null;
+            drawingContext.DrawGeometry(brush, outline, databaseBrand);
             drawingContext.Pop();
             return;
         }
