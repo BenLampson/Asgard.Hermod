@@ -73,14 +73,14 @@ overlay is open. Cancellation disposes late sessions instead of activating them.
 
 ## Database catalog and script Sessions
 
-The instance window is a database catalog, without an implicit query document.
+The instance connects in the main window before its work window opens. Database selection and all script Sessions stay in that same work window.
 One fully loaded database can be used directly. With multiple databases, users
-choose the scope or explicitly select all, then open a script Session workspace.
+choose the scope or explicitly select all, then enter a script Session in place. New Session uses the same picker; cancel returns to the previous Session.
 Every Session is fixed to one instance, has independent SQL, execution history,
 results, transaction state and AI conversation, and retains at least one database.
 Object views belong to their script Session; Return to script preserves their drafts.
 
-Scope chips show included databases. Add databases lists only the current instance,
+A single database scope popup manages included databases. Add databases lists only the current instance,
 keeps included rows read-only and preserves the execution target. One eligible
 candidate is used directly; multiple candidates start unselected. Removing a chip
 always confirms the exact instance, Session, database and effects. It closes that
@@ -93,7 +93,7 @@ The SQL execution target is separate from scope. A unique target is fixed; multi
 targets start unselected and execution remains disabled until the user chooses.
 Tree selection never changes it. Adding a database does not switch it. Database
 switches retain draft and transaction guards and open a fresh physical connection.
-Browse databases returns to the catalog without closing existing Sessions.
+Closing the last Session returns to the in-window picker.
 
 ## Completion and execution plans
 

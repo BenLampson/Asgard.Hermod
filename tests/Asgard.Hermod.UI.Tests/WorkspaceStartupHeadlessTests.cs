@@ -5,6 +5,19 @@ namespace Asgard.Hermod.UI.Tests;
 public sealed class WorkspaceStartupHeadlessTests(WpfTestFixture fixture)
 {
     [Fact]
+    public Task PendingSuccess_ActivatesOnlyAfterConnectionAndCoalescesRepeatedOpens() => fixture.RunOffscreenAsync(async () =>
+    {
+        var pending = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var factory = new Pages { Pending = pending.Task, Succeed = true };
+        await using var workspace = new WorkspaceViewModel(new Source(), new Terminals(), factory);
+        int activations = 0; workspace.PageActivated += _ => activations++;
+        workspace.OpenInstance(new(Source.Instance)); workspace.OpenInstance(new(Source.Instance));
+        Assert.Equal(0, activations); Assert.True(workspace.IsOpening); Assert.Equal(1, factory.Created);
+        pending.SetResult(); await workspace.InitializePageAsync(factory.Last!); await WpfTestFixture.DrainDispatcherAsync();
+        Assert.Equal(1, activations); Assert.False(workspace.IsOpening); Assert.True(factory.Last!.HasConnectedOnce);
+        workspace.OpenInstance(new(Source.Instance)); Assert.Equal(2, activations); Assert.Equal(1, factory.Created);
+    });
+    [Fact]
     public Task SynchronousFailure_RemovesPageBeforeActivationAndReportsSafeError() => fixture.RunOffscreenAsync(async () =>
     {
         var factory = new Pages();
@@ -57,21 +70,22 @@ public sealed class WorkspaceStartupHeadlessTests(WpfTestFixture fixture)
         Assert.Empty(registry.Keys.Cast<object>());
     });
 
-    private sealed class StartupPage(Task? pending) : WorkspacePageViewModel("startup", "Instance", "database", "instance")
+    private sealed class StartupPage(Task? pending, bool succeed) : WorkspacePageViewModel("startup", "Instance", "database", "instance")
     {
         public override WorkspaceConnectionViewModel ConnectionState { get; } = new();
         internal int Starts, Releases;
         public override async Task InitializeAsync(CancellationToken cancellationToken = default)
         {
             Starts++; if (pending is not null) await pending;
+            if (succeed) { HasConnectedOnce = true; ConnectionState.Finish(); return; }
             ConnectionState.Finish(Asgard.Hermod.Abstractions.Localization.Text.Error(new IOException("private password")));
         }
         protected override ValueTask ReleaseAsync() { Releases++; return ValueTask.CompletedTask; }
     }
     private sealed class Pages : IInstanceWorkspaceFactory
     {
-        internal Task? Pending; internal StartupPage? Last; internal int Created;
-        public WorkspacePageViewModel CreatePage(InstanceItemViewModel instance) { Created++; return Last = new(Pending); }
+        internal Task? Pending; internal StartupPage? Last; internal int Created; internal bool Succeed;
+        public WorkspacePageViewModel CreatePage(InstanceItemViewModel instance) { Created++; return Last = new(Pending, Succeed); }
     }
     private sealed class Source : IWorkspaceDataSource
     {

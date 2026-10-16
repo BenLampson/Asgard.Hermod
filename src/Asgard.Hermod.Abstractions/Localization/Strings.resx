@@ -4225,4 +4225,5 @@ Exit code: {1}
 
 Result sample:
 {2}</value></data>
+  <data name="WorkspaceOpeningInstance" xml:space="preserve"><value>Connecting to {0}…</value></data>
 </root>

@@ -45,6 +45,7 @@ public sealed partial class PostgreSqlWorkspaceViewModel
     public RelayCommand ReturnToScriptCommand { get; private set; } = null!;
     private void InitializeSessionCommands()
     {
+        CancelDatabasePickerCommand = new RelayCommand(_ => SetDatabasePicker(false), _ => CanCancelDatabasePicker);
         ShowSessionHistoryCommand = new RelayCommand(_ => { if (ActiveSession is { } session) { ActiveTab = session; session.IsHistoryOpen = !session.IsHistoryOpen; } }, _ => ActiveSession is not null);
         ReturnToScriptCommand = new RelayCommand(_ => ActiveTab = ActiveSession, _ => ActiveSession is not null && ActiveTab != ActiveSession);
         OpenSessionCommand = new AsyncRelayCommand(_ => OpenSelectedSessionAsync(), _ => IsConnected && !IsManagingDatabases && (HasSingleCatalogDatabase || DatabaseChoices.Any(item => item.IsSelected)));
@@ -93,24 +94,31 @@ public sealed partial class PostgreSqlWorkspaceViewModel
         ToggleAssistantCommand?.NotifyCanExecuteChanged(); ShowSessionHistoryCommand.NotifyCanExecuteChanged(); ReturnToScriptCommand.NotifyCanExecuteChanged();
         AddSessionDatabaseCommand.NotifyCanExecuteChanged(); RemoveSessionDatabaseCommand.NotifyCanExecuteChanged();
     }
+    private bool _selectingDatabases;
+    /// <summary>取消新 Session 的选库只回到原会话，不修改其范围与执行目标。</summary>
+    public RelayCommand CancelDatabasePickerCommand { get; private set; } = null!;
+    /// <summary>已有会话时才显示返回入口。</summary>
+    public bool CanCancelDatabasePicker => Sessions.Count > 0;
+    private void SetDatabasePicker(bool selecting)
+    {
+        _selectingDatabases = selecting;
+        foreach (string name in new[] { nameof(IsCatalog), nameof(IsDatabaseFocused), nameof(CanCancelDatabasePicker), nameof(NavigationTitle) }) OnPropertyChanged(name);
+        RefreshSessionNavigation();
+        CancelDatabasePickerCommand.NotifyCanExecuteChanged();
+    }
     private Task OpenSelectedSessionAsync()
     {
         var selected = DatabaseChoices.Where(item => HasSingleCatalogDatabase || item.IsSelected).Select(item => item.Identity).ToArray();
-        if (selected.Length > 0)
-        {
-            string context = "postgresql.session:" + Guid.NewGuid().ToString("N");
-            RequestWorkspace(context, () => new PostgreSqlWorkspaceViewModel(_instance, _configurations, _sessionFactory, _editor, _dialogs, null, _agentClient, selected, context));
-        }
+        if (selected.Length > 0) CreateSession(selected);
         return Task.CompletedTask;
     }
     private async Task StartSessionAsync()
     {
-        if (IsCatalog) { await OpenSelectedSessionAsync(); return; }
         if (!await LoadDatabaseCatalogAsync()) return;
         var candidates = DatabaseChoices.Select(item => item.Identity).ToArray();
-        var selected = candidates.Length == 1 && Tree?.Root.HasMore == false ? candidates
-            : await _dialogs.SelectSessionDatabasesAsync(_instance.Name, Endpoint, Text.Format("DatabaseSessionName", _queryNumber + 1), candidates, []);
-        if (selected is { Count: > 0 }) CreateSession(selected);
+        if (candidates.Length == 1 && Tree?.Root.HasMore == false) { CreateSession(candidates); return; }
+        foreach (var choice in DatabaseChoices) choice.IsSelected = false;
+        SetDatabasePicker(true);
     }
     private PostgreSqlTabViewModel? CreateSession(IReadOnlyList<DatabaseIdentity> databases)
     {
@@ -118,7 +126,7 @@ public sealed partial class PostgreSqlWorkspaceViewModel
         var scope = new DatabaseSessionScope(InstanceId!, Text.Format("DatabaseSessionName", ++_queryNumber), databases);
         var tab = CreateTab(scope.SessionName, scope.ExecutionTarget, PostgreSqlObjectKind.Root);
         tab.InitializeScope(scope); tab.PropertyChanged += (_, args) => { if (args.PropertyName is nameof(tab.ScopeRevision) or nameof(tab.IsBusy)) RefreshSessionNavigation(); };
-        tab.Documents.Add(tab); Sessions.Add(tab); Tabs.Add(tab); ActiveTab = tab; return tab;
+        tab.Documents.Add(tab); Sessions.Add(tab); Tabs.Add(tab); ActiveTab = tab; SetDatabasePicker(false); return tab;
     }
     private async Task AddSessionDatabasesAsync()
     {

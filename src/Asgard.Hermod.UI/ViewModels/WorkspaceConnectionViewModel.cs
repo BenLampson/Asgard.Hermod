@@ -4,6 +4,7 @@ namespace Asgard.Hermod.UI.ViewModels;
 public sealed class WorkspaceConnectionViewModel : ObservableObject
 {
     private Action? _cancel;
+    private bool _inlineRecovery;
     /// <summary>创建取消和关闭动作，不持有协议连接。</summary>
     public WorkspaceConnectionViewModel()
     {
@@ -32,18 +33,18 @@ public sealed class WorkspaceConnectionViewModel : ObservableObject
     /// <summary>关闭失败浮层，保留错误状态及外部重试入口。</summary>
     public RelayCommand DismissCommand { get; }
     /// <summary>模块开始连接时绑定本次取消动作并清除上次错误。</summary>
-    public void Begin(Action cancel)
-    { _cancel = cancel; IsConnecting = true; IsCancelling = false; IsDisconnected = false; IsOpen = true; Error = ""; Refresh(); }
+    public void Begin(Action cancel, bool inlineRecovery = false)
+    { _inlineRecovery = inlineRecovery; _cancel = cancel; IsConnecting = true; IsCancelling = false; IsDisconnected = false; IsOpen = !inlineRecovery; Error = ""; Refresh(); }
     /// <summary>成功或取消隐藏浮层；失败留在同一位置展示安全说明。</summary>
     public void Finish(string error = "")
-    { _cancel = null; IsConnecting = false; IsCancelling = false; IsDisconnected = false; Error = error; IsOpen = HasError; Refresh(); }
+    { _cancel = null; IsConnecting = false; IsCancelling = false; IsDisconnected = false; Error = error; IsOpen = HasError && !_inlineRecovery; Refresh(); }
     /// <summary>连接中断时复用失败弹窗；关闭后同一次失效不会被后续失败请求再次打开。</summary>
     public void Disconnected(string error)
     {
         if (IsDisconnected) return;
         _cancel = null; IsConnecting = false; IsCancelling = false; IsDisconnected = true;
         Error = error.Length == 0 ? Text.Get("WorkspaceConnectionInterruptedHint") : error;
-        IsOpen = true; Refresh();
+        _inlineRecovery = true; IsOpen = false; Refresh();
     }
     private void Refresh()
     {

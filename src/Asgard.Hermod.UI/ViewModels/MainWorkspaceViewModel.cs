@@ -103,6 +103,9 @@ public sealed class MainWorkspaceViewModel : ObservableObject, IDisposable
     /// <summary>概览没有筛选表单，空状态不能要求调整不存在的筛选条件。</summary>
     public string EmptyText => Text.Get(IsOverview ? "MainRecentEmpty" : "MainEmptyList");
     /// <summary>错误仅用共享安全消息呈现。</summary>
+    public bool IsOpening => _workspace.IsOpening;
+    public string OpeningText => _workspace.OpeningText;
+    public RelayCommand CancelOpenCommand => _workspace.CancelOpenCommand;
     public string Error => _workspace.OpenError.Length > 0 ? _workspace.OpenError : _error.Length > 0 ? _error : _catalog.OperationError;
     /// <summary>无错误时不占正文高度。</summary>
     public Visibility ErrorVisibility => Error.Length == 0 ? Visibility.Collapsed : Visibility.Visible;
@@ -206,7 +209,10 @@ public sealed class MainWorkspaceViewModel : ObservableObject, IDisposable
     }
     private void OnHistoryChanged(object? sender, PropertyChangedEventArgs args) { if (args.PropertyName == nameof(HomeWorkspaceViewModel.HasRecentInstances)) RefreshRows(); }
     private void OnWorkspaceChanged(object? sender, PropertyChangedEventArgs args)
-    { if (args.PropertyName == nameof(WorkspaceViewModel.OpenError)) { OnPropertyChanged(nameof(Error)); OnPropertyChanged(nameof(ErrorVisibility)); } }
+    {
+        if (args.PropertyName is nameof(WorkspaceViewModel.IsOpening) or nameof(WorkspaceViewModel.OpeningText)) { OnPropertyChanged(nameof(IsOpening)); OnPropertyChanged(nameof(OpeningText)); }
+        if (args.PropertyName == nameof(WorkspaceViewModel.OpenError)) { OnPropertyChanged(nameof(Error)); OnPropertyChanged(nameof(ErrorVisibility)); }
+    }
     /// <inheritdoc />
     public void Dispose()
     {

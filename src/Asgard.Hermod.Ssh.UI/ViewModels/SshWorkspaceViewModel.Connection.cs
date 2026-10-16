@@ -12,7 +12,7 @@ public sealed partial class SshWorkspaceViewModel
         if (IsClosed) return;
         _connecting?.Dispose();
         _connecting = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token, cancellationToken);
-        Connection.Begin(_connecting.Cancel);
+        Connection.Begin(_connecting.Cancel, HasConnectedOnce);
         _phase = SshWorkspacePhase.Connecting; Error = ""; ErrorCode = ""; Refresh();
         ISshConnection? opened = null;
         try

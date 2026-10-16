@@ -4225,4 +4225,5 @@ Session：{2}
 
 结果样本：
 {2}</value></data>
+  <data name="WorkspaceOpeningInstance" xml:space="preserve"><value>正在连接 {0}…</value></data>
 </root>

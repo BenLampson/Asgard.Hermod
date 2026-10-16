@@ -141,5 +141,9 @@
   <Popup x:Name="TagFilterPopup" PlacementTarget="{Binding ElementName=TagFilterButton}" Placement="Bottom" AllowsTransparency="True" StaysOpen="False" Opened="OnTagPopupOpened" Closed="OnTagPopupClosed">
    <controls:TagTreePicker x:Name="TagPicker" />
   </Popup>
+  <Border Grid.RowSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="24,24,24,48" Padding="16,10" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1" CornerRadius="6">
+   <Border.Style><Style TargetType="Border"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding IsOpening}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></Border.Style>
+   <DockPanel><Button DockPanel.Dock="Right" Content="{loc:Loc Cancel}" Command="{Binding CancelOpenCommand}" Margin="16,0,0,0" /><TextBlock Text="{Binding OpeningText}" VerticalAlignment="Center" /></DockPanel>
+  </Border>
  </Grid>
 </UserControl>

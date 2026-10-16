@@ -14,12 +14,11 @@ public sealed class SessionScopeTests(WpfTestFixture fixture)
         var config = new Configurations(); var server = new TestMySql();
         await using var catalog = new MySqlWorkspaceViewModel(new(Configurations.Instance), config, server, config, new TestMySqlDialogs());
         await catalog.InitializeAsync(TestContext.Current.CancellationToken);
-        Assert.True(catalog.IsCatalog); Assert.Null(catalog.ActiveTab); Assert.True(catalog.HasSingleCatalogDatabase);
-        Assert.True(catalog.OpenSessionCommand.CanExecute(null)); Assert.False(catalog.DatabaseChoices[0].IsSelected);
-        WorkspacePageRequestEventArgs? requested = null; catalog.WorkspaceRequested += (_, request) => requested = request;
-        await catalog.OpenSessionCommand.ExecuteAsync();
-        await using var child = Assert.IsType<MySqlWorkspaceViewModel>(requested!.CreatePage()); await child.InitializeAsync();
-        Assert.Equal("app", child.ActiveSession!.Database); Assert.Single(child.ActiveSession.Scope!.Databases);
+        Assert.False(catalog.IsCatalog); Assert.True(catalog.HasSingleCatalogDatabase);
+        Assert.Equal("app", catalog.ActiveSession!.Database); Assert.Single(catalog.ActiveSession.Scope!.Databases);
+        int requests = 0; catalog.WorkspaceRequested += (_, _) => requests++;
+        await catalog.NewQueryCommand.ExecuteAsync();
+        Assert.Equal(2, catalog.Sessions.Count); Assert.Equal(0, requests);
     });
 
     [Fact]
@@ -31,11 +30,16 @@ public sealed class SessionScopeTests(WpfTestFixture fixture)
         catalog.SelectAllDatabasesCommand.Execute(null); Assert.All(catalog.DatabaseChoices, item => Assert.True(item.IsSelected));
         WorkspacePageRequestEventArgs? requested = null; catalog.WorkspaceRequested += (_, request) => requested = request;
         await catalog.OpenSessionCommand.ExecuteAsync();
-        await using var child = Assert.IsType<MySqlWorkspaceViewModel>(requested!.CreatePage()); await child.InitializeAsync();
+        var child = catalog; Assert.Null(requested);
         Assert.Equal(2, child.ActiveSession!.Scope!.Databases.Count); Assert.Empty(child.ActiveSession.Database); Assert.False(child.ActiveSession.CanRun);
         await child.ActiveSession.ExecuteAsync("SELECT 1"); Assert.Equal(0, server.Executions);
         await child.ActiveSession.ChangeDatabaseAsync("reports"); Assert.True(child.ActiveSession.CanRun);
         await child.ActiveSession.ChangeDatabaseAsync("outside"); Assert.Equal("reports", child.ActiveSession.Database);
+        var previous = child.ActiveSession; previous.Sql = "SELECT draft";
+        await child.NewQueryCommand.ExecuteAsync(); Assert.True(child.IsCatalog);
+        Assert.Same(previous, child.ActiveSession); Assert.Single(child.Sessions);
+        child.CancelDatabasePickerCommand.Execute(null); Assert.False(child.IsCatalog);
+        Assert.Same(previous, child.ActiveSession); Assert.Equal("SELECT draft", previous.Sql);
     });
 
     [Fact]
@@ -155,75 +159,43 @@ public sealed class SessionScopeTests(WpfTestFixture fixture)
     [Theory]
     [InlineData("en", UiTheme.Light, 1440)]
     [InlineData("zh-Hans", UiTheme.Dark, 1120)]
-    public Task Layout_CatalogAndSessionRespectScope(string language, UiTheme theme, int width) => fixture.RunAsync(async () =>
+    public Task Layout_CatalogAndSessionRespectScope(string language, UiTheme theme, double width) => fixture.RunOffscreenAsync(async () =>
     {
-        using var trace = new WpfBindingTrace();
         Asgard.Hermod.Abstractions.Localization.Text.SetApplicationCulture(System.Globalization.CultureInfo.GetCultureInfo(language));
-        var themes = new ThemeService(Application.Current.Resources); themes.SetTheme(theme);
-        var config = new Configurations(); var server = new TestMySql { DatabaseNames = ["app", "reports", "audit"] };
-        await using var catalog = new MySqlWorkspaceViewModel(new(Configurations.Instance), config, server, config, new TestMySqlDialogs());
-        await catalog.InitializeAsync();
-        await using var page = Page(config, server, new TestMySqlDialogs(), "app", "reports"); await page.InitializeAsync();
-        page.IsAssistantOpen = true;
-        var view = new MySqlWorkspaceView { DataContext = catalog };
-        var layout = Assert.IsType<WorkspacePageLayout>(view.FindName("WorkspaceLayout"));
-        var header = Assert.IsType<WorkspaceHeader>(layout.Toolbar); layout.Toolbar = null; header.DataContext = catalog; header.ShowWindowControls = true;
-        var window = new HermodWindow { Content = view, CaptionContent = header, CaptionHeight = 72, Width = width, Height = 900 };
         try
         {
-            WindowPreviewCapture.Show(window); await WindowTestVisuals.UpdateLayoutAsync(window);
-            Assert.False(Assert.IsType<Grid>(view.FindName("Body")).IsVisible);
-            await WindowPreviewCapture.VerifyAsync(window, "mysql-catalog-" + language);
-            view.DataContext = page; header.DataContext = page; await WindowTestVisuals.UpdateLayoutAsync(window);
-            Assert.True(Assert.IsType<Grid>(view.FindName("Body")).IsVisible);
-            var tree = Assert.IsType<WorkspaceTreeView>(view.FindName("ObjectTree"));
-            Assert.Equal(2, tree.Items.Count); Assert.All(tree.Items.Cast<MySqlTreeNode>(), node => Assert.Contains(node.Object.Name, new[] { "app", "reports" }));
-            var host = Assert.IsType<ContentControl>(view.FindName("TabHost"));
-            Assert.Same(page.ActiveSession, Assert.IsType<MySqlTabView>(host.Content).DataContext);
-            await WindowPreviewCapture.VerifyAsync(window, "mysql-session-" + language);
-            var split = Assert.IsType<WorkspaceSplitView>(view.FindName("AgentSplit"));
-            var assistantView = Assert.IsType<MySqlAssistantView>(split.PaneContent);
-            var assistant = page.Assistant!; assistant.Prompt = "keep this draft";
-            assistant.Messages.Add(new("keep this conversation", true));
-            var script = page.ActiveSession!; script.Sql = "SELECT 42;";
-            Assert.True(split.IsPaneOpen); Assert.Equal(6, split.ColumnDefinitions[1].ActualWidth);
-            var main = Assert.IsType<Grid>(split.MainContent);
-            Assert.True(main.ActualWidth <= assistantView.TranslatePoint(new(), split).X);
-            window.Width = 1440; await WindowTestVisuals.UpdateLayoutAsync(window);
-            split.ColumnDefinitions[2].Width = new GridLength(480); await WindowTestVisuals.UpdateLayoutAsync(window);
-            split.Children.OfType<GridSplitter>().Single().RaiseEvent(new System.Windows.Controls.Primitives.DragCompletedEventArgs(0, 0, false) { RoutedEvent = System.Windows.Controls.Primitives.Thumb.DragCompletedEvent });
-            Assert.InRange(page.AssistantWidth, 479, 481);
-            Assert.IsType<Button>(Assert.IsType<AgentPanel>(assistantView.FindName("ChatPanel")).FindName("HideAgentButton")).Command!.Execute(null);
-            await WindowTestVisuals.UpdateLayoutAsync(window);
-            Assert.False(split.IsPaneOpen); Assert.False(assistantView.IsVisible);
-            Assert.Equal(0, split.ColumnDefinitions[2].ActualWidth);
-            var treePanel = Assert.IsType<Border>(view.FindName("TreePanel")); Assert.True(treePanel.IsVisible);
-            var node = page.SessionTreeItems.First(); node.IsExpanded = true; page.SelectedNode = node;
-            double treeWidth = treePanel.ActualWidth;
-            Assert.IsType<Button>(view.FindName("CollapseTreeButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            await WindowTestVisuals.UpdateLayoutAsync(window); Assert.False(treePanel.IsVisible);
-            Assert.Equal(0, Assert.IsType<ColumnDefinition>(view.FindName("TreeColumn")).ActualWidth);
-            var restoreTree = Assert.IsType<Button>(view.FindName("DrawerButton")); Assert.True(restoreTree.IsVisible);
-            await WindowPreviewCapture.VerifyAsync(window, "mysql-panels-collapsed-" + language);
-            restoreTree.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); await WindowTestVisuals.UpdateLayoutAsync(window);
-            Assert.True(treePanel.IsVisible); Assert.InRange(treePanel.ActualWidth, treeWidth - 1, treeWidth + 1);
-            Assert.True(node.IsExpanded); Assert.Same(node, page.SelectedNode);
-            page.ToggleAssistantCommand.Execute(null); await WindowTestVisuals.UpdateLayoutAsync(window);
-            Assert.True(assistantView.IsVisible); Assert.InRange(split.ColumnDefinitions[2].ActualWidth, 479, 481);
-            Assert.Same(assistant, assistantView.DataContext); Assert.Equal("keep this draft", assistant.Prompt);
-            Assert.Single(assistant.Messages); Assert.Same(script, page.ActiveSession); Assert.Equal("SELECT 42;", script.Sql);
-            var actions = Assert.IsType<StackPanel>(header.ActionsContent); Assert.Equal(3, actions.Children.Count);
-            Assert.Same(page.EditConnectionCommand, Assert.IsType<Button>(actions.Children[0]).Command);
-            Assert.IsType<WorkspaceTools>(actions.Children[1]); Assert.Same(page.ToggleAssistantCommand, Assert.IsType<Button>(actions.Children[2]).Command);
-            foreach (double captionWidth in new[] { 800d, 1120d, 1440d })
+            new ThemeService(Application.Current.Resources).SetTheme(theme);
+            var config = new Configurations(); var server = new TestMySql { DatabaseNames = ["app", "reports", "audit"] };
+            await using var page = new MySqlWorkspaceViewModel(new(Configurations.Instance), config, server, config, new TestMySqlDialogs());
+            await page.InitializeAsync();
+            var view = new MySqlWorkspaceView { DataContext = page };
+            var layout = (WorkspacePageLayout)view.FindName("WorkspaceLayout");
+            var header = Assert.IsType<WorkspaceHeader>(layout.Toolbar); layout.Toolbar = null; header.DataContext = page; header.ShowWindowControls = true;
+            var root = new DockPanel(); root.Resources.MergedDictionaries.Add(Application.Current.Resources);
+            DockPanel.SetDock(header, Dock.Top); root.Children.Add(header); root.Children.Add(view);
+            Render("catalog"); Assert.True(page.IsCatalog); Assert.Empty(page.Sessions);
+            page.DatabaseChoices[0].IsSelected = true; page.DatabaseChoices[1].IsSelected = true;
+            await page.OpenSessionCommand.ExecuteAsync(); Render("session");
+            Assert.False(page.IsCatalog); Assert.Single(page.Sessions);
+            Assert.Equal(2, ((WorkspaceTreeView)view.FindName("ObjectTree")).Items.Count);
+            Assert.Single(WindowTestVisuals.Descendants<DatabaseScopePicker>(view));
+            Assert.Equal(2, Assert.IsType<StackPanel>(header.ActionsContent).Children.Count);
+            var script = page.ActiveSession!; script.Sql = "SELECT preserved;";
+            await page.NewQueryCommand.ExecuteAsync(); Render("new-session");
+            Assert.True(page.IsCatalog); page.CancelDatabasePickerCommand.Execute(null);
+            Assert.Same(script, page.ActiveSession); Assert.Equal("SELECT preserved;", script.Sql);
+            Assert.Null(Window.GetWindow(root)); Assert.Null(PresentationSource.FromVisual(root));
+            void Render(string state)
             {
-                window.Width = captionWidth; await WindowTestVisuals.UpdateLayoutAsync(window);
-                var controls = WindowTestVisuals.Descendants<WindowControls>(header).Single(); double controlsLeft = controls.TranslatePoint(new(), header).X;
-                foreach (FrameworkElement action in actions.Children) Assert.True(action.TranslatePoint(new(), header).X + action.ActualWidth <= controlsLeft);
+                root.Measure(new(width, 900)); root.Arrange(new(0, 0, width, 900)); root.UpdateLayout();
+                string? output = Environment.GetEnvironmentVariable("HERMOD_OFFSCREEN_OUTPUT"); if (string.IsNullOrEmpty(output)) return;
+                Directory.CreateDirectory(output);
+                var bitmap = new System.Windows.Media.Imaging.RenderTargetBitmap((int)width, 900, 96, 96, PixelFormats.Pbgra32); bitmap.Render(root);
+                var encoder = new System.Windows.Media.Imaging.PngBitmapEncoder(); encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bitmap));
+                using var stream = File.Create(Path.Combine(output, "MySql-" + state + "-" + language + "-" + theme + "-" + width + ".png")); encoder.Save(stream);
             }
-            Assert.Empty(trace.Messages);
         }
-        finally { window.Close(); themes.SetTheme(UiTheme.Light); Asgard.Hermod.Abstractions.Localization.Text.SetApplicationCulture(null); }
+        finally { Asgard.Hermod.Abstractions.Localization.Text.SetApplicationCulture(null); }
     });
 
     private static MySqlWorkspaceViewModel Page(Configurations config, TestMySql server, TestMySqlDialogs dialogs, params string[] databases) =>

@@ -27,7 +27,7 @@ public sealed class ConnectionLifecycleHeadlessTests(WpfTestFixture fixture)
         await page.OpenObjectAsync(new(MySqlObjectKind.Table, "users", "app")); var table = page.ActiveTab!;
         var grid = table.SelectedResult!; var row = grid.Rows[0]; await table.PrepareCellAsync(grid, row, row.Cells[1]); row.Cells[1].Apply("kept draft");
         var previous = server.Sessions.ToArray(); previous[0].Disconnect();
-        Assert.False(page.IsConnected); Assert.False(query.CanRun); Assert.True(page.Connection.IsOpen);
+        Assert.False(page.IsConnected); Assert.False(query.CanRun); Assert.False(page.Connection.IsOpen);
         page.Connection.DismissCommand.Execute(null); Assert.False(page.NewQueryCommand.CanExecute(null));
         await page.ReconnectCommand.ExecuteAsync();
         Assert.True(page.IsConnected); Assert.True(page.HasConnectedOnce); Assert.Null(page.InitialConnectionFailure);

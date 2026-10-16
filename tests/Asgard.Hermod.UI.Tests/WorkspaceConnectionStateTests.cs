@@ -20,7 +20,7 @@ public sealed class WorkspaceConnectionStateTests
     public void Disconnected_IsDismissibleAndCoalescesRepeatedFailures()
     {
         var state = new WorkspaceConnectionViewModel(); state.Disconnected("");
-        Assert.True(state.IsDisconnected); Assert.True(state.IsOpen);
+        Assert.True(state.IsDisconnected); Assert.False(state.IsOpen);
         Assert.Equal(Text.Get("WorkspaceConnectionInterrupted"), state.Title);
         Assert.Equal(Text.Get("WorkspaceConnectionInterruptedHint"), state.Detail);
         state.DismissCommand.Execute(null); state.Disconnected("ignored repeated failure");
@@ -31,9 +31,9 @@ public sealed class WorkspaceConnectionStateTests
     [Fact]
     public void Retry_ReplacesOldFailureWithCurrentConnectionResult()
     {
-        var state = new WorkspaceConnectionViewModel(); state.Disconnected("old failure"); state.Begin(() => { });
+        var state = new WorkspaceConnectionViewModel(); state.Disconnected("old failure"); state.Begin(() => { }, inlineRecovery: true);
         Assert.False(state.IsDisconnected); Assert.False(state.HasError); Assert.True(state.IsConnecting);
-        state.Finish("safe failure"); Assert.True(state.IsOpen); Assert.False(state.IsDisconnected);
+        state.Finish("safe failure"); Assert.False(state.IsOpen); Assert.False(state.IsDisconnected);
         Assert.Equal(Text.Get("WorkspaceConnectionFailed"), state.Title); Assert.Equal("safe failure", state.Detail);
     }
 }

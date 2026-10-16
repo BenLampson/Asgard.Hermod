@@ -4,6 +4,13 @@ namespace Asgard.Hermod.UI.ViewModels;
 public sealed partial class WorkspaceViewModel
 {
     private readonly Dictionary<WorkspacePageViewModel, Task> _initializations = [];
+    private readonly HashSet<WorkspacePageViewModel> _pendingActivations = [];
+    /// <summary>首次连接留在主窗体，尚未创建工作窗口。</summary>
+    public bool IsOpening => _pendingActivations.Count > 0;
+    /// <summary>进度只包含安全实例名称。</summary>
+    public string OpeningText => IsOpening ? Text.Format("WorkspaceOpeningInstance", _pendingActivations.First().Header) : "";
+    /// <summary>取消当前显示的首次连接，迟到返回仍由模块释放。</summary>
+    public RelayCommand CancelOpenCommand => field ??= new(_ => _pendingActivations.FirstOrDefault()?.ConnectionState?.CancelCommand.Execute(null));
     /// <summary>失败说明只包含实例显示名称和已经脱敏、本地化的原因。</summary>
     public string OpenError { get; private set; } = "";
 
@@ -11,11 +18,21 @@ public sealed partial class WorkspaceViewModel
     {
         if (page.IsClosed || IsExitPending || _disposeStarted) return;
         OpenError = ""; OnPropertyChanged(nameof(OpenError));
-        _ = InitializePageAsync(page);
-        // 同步失败可能已经移除了页面，不能在之后重新创建幽灵窗口。
-        if (!page.IsClosed && Tabs.Contains(page) && !IsExitPending && _disposeTask is null)
-            PageActivated?.Invoke(page);
+        if (_pendingActivations.Add(page)) _ = ActivateInitializedPageAsync(page);
     }
+    private async Task ActivateInitializedPageAsync(WorkspacePageViewModel page)
+    {
+        RefreshOpening();
+        try
+        {
+            await InitializePageAsync(page);
+            if (!page.IsClosed && Tabs.Contains(page) && !IsExitPending && !_disposeStarted &&
+                (page.HasConnectedOnce || page.InitialConnectionFailure is null)) PageActivated?.Invoke(page);
+        }
+        finally { _pendingActivations.Remove(page); RefreshOpening(); }
+    }
+    private void RefreshOpening()
+    { OnPropertyChanged(nameof(IsOpening)); OnPropertyChanged(nameof(OpeningText)); }
     /// <summary>重复打开共享同一初始化任务；窗口关闭与迟到返回都不会重新添加页面。</summary>
     public Task InitializePageAsync(WorkspacePageViewModel page)
     {
