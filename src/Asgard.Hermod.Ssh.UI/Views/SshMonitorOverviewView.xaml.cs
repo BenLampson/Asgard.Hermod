@@ -8,6 +8,12 @@ public partial class SshMonitorOverviewView : UserControl
     {
         InitializeComponent();
         // 横向滚动容器会无限测量子级，必须用视口约束星号表格列和三等分曲线。
-        SizeChanged += (_, _) => OverviewContent.Width = Math.Max(840, ActualWidth - 48);
+        SizeChanged += (_, _) => ConstrainContent();
+    }
+    private void OnOverviewScrollChanged(object sender, ScrollChangedEventArgs args) { if (args.ViewportWidthChange != 0) ConstrainContent(); }
+    private void ConstrainContent()
+    {
+        double width = OverviewViewport.ViewportWidth > 0 ? OverviewViewport.ViewportWidth : ActualWidth;
+        OverviewContent.Width = Math.Max(840, width - 48);
     }
 }

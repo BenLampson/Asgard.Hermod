@@ -6,7 +6,7 @@ namespace Asgard.Hermod.Ssh.UI.Views;
 /// <summary>监测分屏记忆用户高度，窗口变小时始终保留可输入的终端区域。</summary>
 public partial class SshWorkspaceView
 {
-    private double _monitorHeight = 580;
+    private double _monitorHeight = 572;
     private bool _updatingMonitorLayout;
 
     /// <summary>原生分隔器的键盘调整也会修改行高，使用同一监听记住请求高度。</summary>
@@ -24,6 +24,9 @@ public partial class SshWorkspaceView
     private void OnWorkspacePropertyChanged(object? sender, PropertyChangedEventArgs args)
     {
         if (args.PropertyName == nameof(SshWorkspaceViewModel.IsMonitorOpen)) UpdateMonitorLayout();
+        if (args.PropertyName == nameof(SshWorkspaceViewModel.ActiveSection)) UpdateToolboxLayout();
+        if (args.PropertyName == nameof(SshWorkspaceViewModel.Assistant)) UpdateAssistantSubscription();
+        if (args.PropertyName == nameof(SshWorkspaceViewModel.ActiveConsole)) ConfigureTools();
     }
 
     /// <summary>窗口缩放只限制当前高度，不覆盖用户上次拖动的高度。</summary>
@@ -36,7 +39,7 @@ public partial class SshWorkspaceView
     private void UpdateMonitorLayout()
     {
         if (MonitorRow is null || SshBodyGrid is null) return;
-        double maximum = Math.Max(0, SshBodyGrid.ActualHeight - 44 - 120 - 8);
+        double maximum = Math.Max(0, SshBodyGrid.ActualHeight - 38 - 120 - 8);
         _updatingMonitorLayout = true;
         try
         {

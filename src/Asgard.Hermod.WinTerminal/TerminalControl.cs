@@ -14,6 +14,14 @@ public sealed partial class TerminalControl : Control, IDisposable
         nameof(IsReadOnly), typeof(bool), typeof(TerminalControl), new PropertyMetadata(false));
     /// <summary>宿主按连接状态控制输入。</summary>
     public bool IsReadOnly { get => (bool)GetValue(IsReadOnlyProperty); set => SetValue(IsReadOnlyProperty, value); }
+    /// <summary>宿主可指定设计行高，NaN 保留现有终端的字体行距行为。</summary>
+    public static readonly DependencyProperty LineHeightProperty = DependencyProperty.Register(nameof(LineHeight), typeof(double), typeof(TerminalControl), new PropertyMetadata(double.NaN));
+    /// <summary>显式 DIP 行高，终端网格使用同一度量。</summary>
+    public double LineHeight { get => (double)GetValue(LineHeightProperty); set => SetValue(LineHeightProperty, value); }
+    /// <summary>远端 PTY 缩小时保留移出的顶部行；本机 ConPTY 默认继续由系统重排。</summary>
+    public static readonly DependencyProperty PreserveOutputOnResizeProperty = DependencyProperty.Register(nameof(PreserveOutputOnResize), typeof(bool), typeof(TerminalControl), new PropertyMetadata(false));
+    /// <summary>控制远端缓冲区缩小是否转入本机历史。</summary>
+    public bool PreserveOutputOnResize { get => (bool)GetValue(PreserveOutputOnResizeProperty); set => SetValue(PreserveOutputOnResizeProperty, value); }
     /// <summary>发送粘贴之前通知宿主，可用于多行确认。</summary>
     public event EventHandler<TerminalPasteEventArgs>? PreviewPaste;
 
@@ -31,6 +39,7 @@ public sealed partial class TerminalControl : Control, IDisposable
     private long _renderedRevision = -1;
     private bool _fontConfigured;
     private bool _disposed;
+    private bool _changingSession;
 
     /// <summary>获取或设置显示会话；设置为 null 时解除事件订阅。</summary>
     public TerminalSession? Session
@@ -85,18 +94,21 @@ public sealed partial class TerminalControl : Control, IDisposable
         var control = (TerminalControl)sender;
         control.ResetInputState();
         if (control._session is { } oldSession)
+        {
+            control.SaveViewState(oldSession);
             oldSession.BufferUpdated -= control.OnBufferUpdated;
+        }
+        control._changingSession = true;
         control._session = (TerminalSession?)args.NewValue;
         if (control._session is { } newSession)
             newSession.BufferUpdated += control.OnBufferUpdated;
-        control._selection = null;
-        control._scrollOffset = 0;
-        control._searchQuery = "";
-        control._searchIndex = -1;
+        control.RestoreViewState(control._session);
         control._renderedRevision = -1;
         control._fontConfigured = false;
+        control._changingSession = false;
         control.ConfigureRenderer();
         control.ResizeToBounds();
+        control._renderedRevision = control._session?.Revision ?? -1;
         // SSH 连接完成时会在布局尚未稳定前替换会话；下一轮布局再次同步真实 PTY 尺寸。
         if (control._session is { IsDisposed: false } session)
             control.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
@@ -135,12 +147,12 @@ public sealed partial class TerminalControl : Control, IDisposable
     protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs args)
     {
         base.OnPropertyChanged(args);
-        if (_renderer is null || _disposed)
+        if (_renderer is null || _disposed || _changingSession)
             return;
         if (args.Property == IsReadOnlyProperty)
             ResetInputState();
         if (args.Property == FontFamilyProperty || args.Property == FontSizeProperty
-            || args.Property == ForegroundProperty || args.Property == BackgroundProperty)
+            || args.Property == ForegroundProperty || args.Property == BackgroundProperty || args.Property == LineHeightProperty)
         {
             _fontConfigured = false;
             ConfigureRenderer();
@@ -167,6 +179,7 @@ public sealed partial class TerminalControl : Control, IDisposable
         RemoveHandler(TextCompositionManager.PreviewTextInputEvent,
             new TextCompositionEventHandler(OnPreviewTextInputRouted));
         Session = null;
+        _viewStates.Clear();
         _renderer.Dispose();
         ScreenUpdated = null;
         PreviewPaste = null;

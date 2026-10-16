@@ -6,14 +6,26 @@ namespace Asgard.Hermod.Ssh.UI.ViewModels;
 /// <summary>工作区的文件、监测、转发和助手只共享连接，不共享交互 PTY 的字节流。</summary>
 public sealed partial class SshWorkspaceViewModel
 {
+    private IAgentClient? _agentClient;
+    private SshAssistantViewModel _emptyAssistant = null!;
     /// <summary>默认收起的 Agent，显隐不影响实例状态。</summary>
     public bool IsAgentOpen { get; set => SetProperty(ref field, value); }
     /// <summary>从标题栏显式打开监测，收起时不占终端高度。</summary>
     public bool IsMonitorOpen { get; set => SetProperty(ref field, value); }
     /// <summary>功能区的稳定 ID。</summary>
-    public string ActiveSection { get; set { if (SetProperty(ref field, value)) { OnPropertyChanged(nameof(IsTerminalSection)); OnPropertyChanged(nameof(IsFilesSection)); OnPropertyChanged(nameof(IsForwardSection)); } } } = "terminal";
+    public string ActiveSection { get; set { if (value is "terminal" or "files" or "forward" or "transfers" && SetProperty(ref field, value)) foreach (string property in new[] { nameof(IsTerminalSection), nameof(IsFilesSection), nameof(IsForwardSection), nameof(IsTransfersSection), nameof(IsToolboxOpen), nameof(ToolboxTitle) }) OnPropertyChanged(property); } } = "terminal";
     /// <summary>终端可视状态。</summary>
-    public bool IsTerminalSection => ActiveSection == "terminal";
+    public bool IsTerminalSection => HasActiveConsole;
+    /// <summary>实例工具箱显隐与控制台内容互不替换。</summary>
+    public bool IsToolboxOpen => ActiveSection != "terminal";
+    /// <summary>独立传输任务面板。</summary>
+    public bool IsTransfersSection => ActiveSection == "transfers";
+    /// <summary>当前工具箱标题。</summary>
+    public string ToolboxTitle => Text.Get(ActiveSection switch { "files" => "SshFilesTitle", "forward" => "SshForwardTitle", _ => "SshFilesTransfers" });
+    /// <summary>再次点击当前工具只收起面板，任务继续。</summary>
+    public AsyncRelayCommand ToggleToolboxCommand { get; private set; } = null!;
+    /// <summary>收起不停止实例任务。</summary>
+    public RelayCommand CollapseToolboxCommand { get; private set; } = null!;
     /// <summary>文件可视状态。</summary>
     public bool IsFilesSection => ActiveSection == "files";
     /// <summary>转发可视状态。</summary>
@@ -23,7 +35,7 @@ public sealed partial class SshWorkspaceViewModel
     /// <summary>当前连接监测。</summary>
     public SshMonitorViewModel Monitor { get; } = new();
     /// <summary>独立于 SQL 助手的 SSH 对话。</summary>
-    public SshAssistantViewModel Assistant { get; private set; } = null!;
+    public SshAssistantViewModel Assistant => ActiveConsole?.Assistant ?? _emptyAssistant;
     /// <summary>显式开关 Agent。</summary>
     public RelayCommand ToggleAgentCommand { get; private set; } = null!;
     /// <summary>显式开关监测详情。</summary>
@@ -42,15 +54,27 @@ public sealed partial class SshWorkspaceViewModel
     public string RemoteForwardPort { get; set => SetProperty(ref field, value); } = "80";
     /// <summary>安全转发错误。</summary>
     public string ForwardError { get; private set => SetProperty(ref field, value); } = "";
+    /// <summary>新建转发表单只在实例工具箱中展开。</summary>
+    public bool IsAddingForward { get; set => SetProperty(ref field, value); }
+    /// <summary>用户可选的规则名称不翻译。</summary>
+    public string ForwardName { get; set => SetProperty(ref field, value); } = "";
+    /// <summary>打开新建规则，不创建通道。</summary>
+    public RelayCommand ShowForwardEditorCommand { get; private set; } = null!;
+    /// <summary>取消新建只收起表单。</summary>
+    public RelayCommand CancelForwardEditorCommand { get; private set; } = null!;
 
     private void InitializeWorkspace(IAgentClient? client)
     {
         Files = new(() => IsConnected ? _connection as ISshWorkspaceConnection : null, _dialogs);
-        Assistant = new(client, () => IsConnected ? _connection as ISshWorkspaceConnection : null, () => RemoteIdentity, _dialogs);
+        _agentClient = client; _emptyAssistant = new(client, () => null, () => RemoteIdentity, _dialogs);
         InitializeLogs(client);
-        ToggleAgentCommand = new RelayCommand(_ => IsAgentOpen = !IsAgentOpen);
+        ToggleAgentCommand = new RelayCommand(_ => IsAgentOpen = !IsAgentOpen, _ => HasActiveConsole && !IsClosed);
         ToggleMonitorCommand = new RelayCommand(_ => IsMonitorOpen = !IsMonitorOpen);
+        ToggleToolboxCommand = new AsyncRelayCommand(async value => { if (value is not string section || section is not ("files" or "forward" or "transfers")) return; ActiveSection = ActiveSection == section ? "terminal" : section; if (IsFilesSection && Files.Entries.Count == 0) await Files.RefreshCommand.ExecuteAsync(); }, _ => !IsClosed);
+        CollapseToolboxCommand = new RelayCommand(_ => ActiveSection = "terminal");
         AddForwardCommand = new AsyncRelayCommand(_ => AddForwardAsync(), _ => IsConnected);
+        ShowForwardEditorCommand = new RelayCommand(_ => IsAddingForward = true, _ => IsConnected);
+        CancelForwardEditorCommand = new RelayCommand(_ => IsAddingForward = false);
         StopForwardCommand = new RelayCommand(value => { if (value is SshForwardItem item) { item.Dispose(); Forwards.Remove(item); } });
     }
 
@@ -64,14 +88,14 @@ public sealed partial class SshWorkspaceViewModel
                 || !int.TryParse(RemoteForwardPort, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out int remote)) throw Text.Exception("SshForwardInvalid");
             var handle = await connection.ForwardAsync(local, ForwardHost, remote, _lifetime.Token);
             if (!IsConnected || !ReferenceEquals(connection, _connection)) { handle.Dispose(); return; }
-            Forwards.Add(new(Text.Format("SshForwardEndpoints", local, ForwardHost, remote), handle));
+            Forwards.Add(new(Text.Format("SshForwardEndpoints", local, ForwardHost, remote), handle, local, ForwardHost, remote, ForwardName)); IsAddingForward = false; ForwardName = "";
         }
         catch (Exception error) { ForwardError = Text.Error(error, "SshForwardFailed"); }
     }
 
     private async Task StopWorkspaceOperationsAsync()
     {
-        Files.Cancel(); Assistant.ConnectionChanged(); DisconnectLogs();
+        Files.Cancel(); _emptyAssistant.ConnectionChanged(); foreach (var console in Consoles) console.Assistant.ConnectionChanged(); DisconnectLogs();
         foreach (var forward in Forwards) forward.Dispose(); Forwards.Clear();
         await Monitor.StopAsync();
     }

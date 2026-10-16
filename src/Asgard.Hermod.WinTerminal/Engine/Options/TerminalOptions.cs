@@ -15,6 +15,8 @@ public sealed class TerminalOptions
     public int ScrollbackMaxLines { get; set; } = 10000;
     /// <summary>行高倍率。</summary>
     public double LineHeight { get; set; } = 1.0;
+    /// <summary>宿主明确指定的 DIP 单元格高度；空值继续使用原字体行高倍率。</summary>
+    public double? CellHeight { get; set; }
     /// <summary>字体回退列表。</summary>
     public string[]? FontFallback { get; set; }
     /// <summary>粗体使用亮色开关。</summary>
@@ -32,6 +34,7 @@ public sealed class TerminalOptions
         DefaultBackground = DefaultBackground,
         ScrollbackMaxLines = ScrollbackMaxLines,
         LineHeight = LineHeight,
+        CellHeight = CellHeight,
         FontFallback = FontFallback,
         BoldAsBright = BoldAsBright,
         AllowOSCColorQueries = AllowOSCColorQueries,

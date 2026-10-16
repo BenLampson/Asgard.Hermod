@@ -12,7 +12,9 @@ public sealed class SshTransferItem(string name, bool upload) : ObservableObject
     /// <summary>进度展示。</summary>
     public string Progress => Text.Format("SshTransferBytes", Bytes);
     /// <summary>状态资源键独立于显示文字。</summary>
-    public string StatusKey { get; set { if (SetProperty(ref field, value)) OnPropertyChanged(nameof(Status)); } } = "SshTransferRunning";
+    public string StatusKey { get; set { if (SetProperty(ref field, value)) { OnPropertyChanged(nameof(Status)); OnPropertyChanged(nameof(IsRunning)); } } } = "SshTransferRunning";
+    /// <summary>未知总长度时只显示真实字节和不定进度。</summary>
+    public bool IsRunning => StatusKey == "SshTransferRunning";
     /// <summary>本地化状态。</summary>
     public string Status => Text.Get(StatusKey);
 }

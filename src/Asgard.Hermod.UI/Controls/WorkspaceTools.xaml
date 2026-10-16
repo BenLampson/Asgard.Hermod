@@ -5,17 +5,18 @@
              xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization">
     <Grid>
         <Button x:Name="ToolsTrigger" Click="OnToggleClick"
-                      Height="28" MinHeight="28" FontWeight="Normal" FontSize="12" Padding="9,0" ToolTip="{loc:Loc WorkspaceTools}"
-                      AutomationProperties.Name="{loc:Loc WorkspaceTools}">
+                      Height="28" MinHeight="28" FontWeight="Normal" FontSize="12" Padding="9,0" ToolTip="{Binding Label, ElementName=ToolsRoot, TargetNullValue={loc:Loc WorkspaceTools}}"
+                      AutomationProperties.Name="{Binding Label, ElementName=ToolsRoot, TargetNullValue={loc:Loc WorkspaceTools}}">
             <Button.Style><Style TargetType="Button" BasedOn="{StaticResource StandardButton}"><Style.Triggers>
+                <DataTrigger Binding="{Binding IsFlat, ElementName=ToolsRoot}" Value="True"><Setter Property="BorderThickness" Value="0" /><Setter Property="Background" Value="Transparent" /></DataTrigger>
                 <DataTrigger Binding="{Binding IsOpen, ElementName=ToolsRoot}" Value="True">
                     <Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" />
                     <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
                     <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                 </DataTrigger>
             </Style.Triggers></Style></Button.Style>
-            <StackPanel Orientation="Horizontal"><controls:IconView Kind="wrench" Width="15" Height="15" />
-                <TextBlock Text="{loc:Loc WorkspaceTools}" Margin="7,0,0,0" />
+            <StackPanel Orientation="Horizontal"><controls:IconView Kind="{Binding Icon, ElementName=ToolsRoot}" Width="15" Height="15" />
+                <TextBlock Text="{Binding Label, ElementName=ToolsRoot, TargetNullValue={loc:Loc WorkspaceTools}}" Margin="7,0,0,0" />
             </StackPanel>
         </Button>
         <Popup x:Name="ToolsPopup" IsOpen="{Binding IsOpen, ElementName=ToolsRoot, Mode=TwoWay}"
@@ -28,7 +29,7 @@
                     <DockPanel Margin="0,0,0,12">
                         <Button DockPanel.Dock="Right" Click="OnCloseClick" Style="{StaticResource IconButton}"
                                 ToolTip="{loc:Loc Close}" AutomationProperties.Name="{loc:Loc Close}"><controls:IconView Kind="x" Width="14" Height="14" /></Button>
-                        <TextBlock Text="{loc:Loc WorkspaceSessionTools}" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding Label, ElementName=ToolsRoot, TargetNullValue={loc:Loc WorkspaceSessionTools}}" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" />
                     </DockPanel>
                     <Grid Grid.Row="1" Margin="0,0,0,10">
                         <TextBox x:Name="ToolFilter" TextChanged="OnFilterChanged" Height="36" MinHeight="36" FontFamily="{DynamicResource UiFont}" FontSize="13" VerticalContentAlignment="Center" Padding="10,0,34,0"

@@ -15,12 +15,15 @@ public partial class SshWorkspaceView
         _decreaseFont = new RelayCommand(_ => ResizeFont(-1), _ => !_disposed && TerminalView.FontSize > 9);
         SessionTools.Items = new WorkspaceTool[]
         {
+            new("copy", Text.Get("SshCopySelection"), "copy", new RelayCommand(_ => TerminalView.CopySelection()), Text.Get("WorkspaceTerminalTools")),
+            new("paste", Text.Get("SshPaste"), "clipboard", new RelayCommand(_ => TerminalView.Paste(), _ => _model?.IsReadOnly == false), Text.Get("WorkspaceTerminalTools")),
             new("search", Text.Get("SshSearchOutput"), "search", new RelayCommand(_ => OpenSearch()),
                 Text.Get("WorkspaceTerminalTools"), Text.Get("SshSearchShortcut"), false),
             new("font", Text.Get("SshAdjustFont"), "type", new RelayCommand(_ => OpenFontMenu()),
                 Text.Get("WorkspaceDisplayTools"), Text.Format("SshTerminalFontSizeValue", TerminalView.FontSize), false),
             new("clear", Text.Get("SshClearDisplay"), "eraser", new RelayCommand(_ => TerminalView.ClearDisplay()), Text.Get("WorkspaceDisplayTools")),
             new("details", Text.Get("SshConnectionDetails"), "panel-right", _model?.ToggleDetailsCommand ?? new RelayCommand(_ => { }, _ => false), Text.Get("WorkspaceConnectionTools")),
+            new("disconnect", Text.Get("SshDisconnect"), "unplug", _model?.DisconnectCommand ?? new AsyncRelayCommand(_ => Task.CompletedTask, _ => false), Text.Get("WorkspaceConnectionTools")),
         };
     }
 
@@ -28,6 +31,7 @@ public partial class SshWorkspaceView
     private void ResizeFont(int delta)
     {
         TerminalView.FontSize = Math.Clamp(TerminalView.FontSize + delta, 9, 28);
+        TerminalView.LineHeight = TerminalView.FontSize * 1.7;
         _increaseFont?.NotifyCanExecuteChanged(); _decreaseFont?.NotifyCanExecuteChanged(); TerminalView.Focus();
         SessionTools.Items = SessionTools.Items?.Select(tool => tool.Id == "font"
             ? tool with { Hint = Text.Format("SshTerminalFontSizeValue", TerminalView.FontSize) } : tool).ToArray();

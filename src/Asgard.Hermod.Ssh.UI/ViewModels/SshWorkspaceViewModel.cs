@@ -1,10 +1,9 @@
 using System.Globalization;
-using System.Threading.Channels;
 using Asgard.Hermod.Ssh.UI.Services;
 
 namespace Asgard.Hermod.Ssh.UI.ViewModels;
 
-/// <summary>独立拥有 SSH 会话与终端缓冲区，切换标签页不会释放连接。</summary>
+/// <summary>实例窗口拥有共享 SSH 传输、实例工具和独立控制台集合，切换标签不重建连接。</summary>
 public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
 {
     private readonly IInstanceConfigurationService _configurations;
@@ -19,12 +18,10 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
     private CancellationTokenSource? _connecting;
     private CancellationTokenSource? _ioCancellation;
     private ISshConnection? _connection;
-    private TerminalSession _terminal = new();
-    private Channel<ReadOnlyMemory<byte>>? _input;
     private Task? _connectTask;
     private Task? _runTask;
+    private Task _consoleOpenTask = Task.CompletedTask;
     private bool _initialized;
-    private bool _inputOverflow;
     private bool _disconnectRequested;
     private DateTime _connectedAt;
     private SshConnectionOptions? _profile;
@@ -42,7 +39,8 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
         CancelConnectionCommand = Connection.CancelCommand;
         ToggleDetailsCommand = new RelayCommand(_ => IsDetailsOpen = !IsDetailsOpen, _ => !IsClosed);
         EditConnectionCommand = new AsyncRelayCommand(_ => EditAsync(), _ => !IsClosed && !IsConnecting);
-        NewSessionCommand = new RelayCommand(_ => RequestNewSession(), _ => !IsClosed);
+        NewSessionCommand = new AsyncRelayCommand(_ => _consoleOpenTask = AddConsoleAsync(), _ => IsConnected && !IsCreatingConsole && !IsClosed);
+        CloseConsoleCommand = new AsyncRelayCommand(item => CloseConsoleAsync(item as SshConsoleViewModel), item => !IsClosed && item is SshConsoleViewModel console && Consoles.Contains(console));
         _clock = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Background,
             (_, _) => OnPropertyChanged(nameof(Elapsed)), _dispatcher);
         _clock.Stop();
@@ -56,7 +54,7 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
     /// <summary>标题改名与侧栏共用安全元数据对象。</summary>
     public InstanceItemViewModel Instance => _instance;
     /// <summary>连接完成后替换缓冲区，失败时保留原输出；关闭时解绑。</summary>
-    public TerminalSession? Session => IsClosed ? null : _terminal;
+    public TerminalSession? Session => IsClosed ? null : ActiveConsole?.Session;
     /// <summary>稳定状态决定命令与输入。</summary>
     public SshWorkspacePhase Phase => _phase;
     /// <summary>连接中显示进度并允许取消。</summary>
@@ -70,7 +68,7 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
     /// <summary>终止状态保留输出和重连入口。</summary>
     public bool IsEnded => _phase is SshWorkspacePhase.Disconnected or SshWorkspacePhase.Failed;
     /// <summary>保持终端选择与复制功能，但拒绝断线后的输入。</summary>
-    public bool IsReadOnly => IsClosed || !IsConnected;
+    public bool IsReadOnly => IsClosed || !IsConnected || ActiveConsole?.IsReadOnly != false;
     /// <summary>共享状态徽标文案。</summary>
     public string Status => Text.Get(IsConnecting ? "SshConnecting" : IsConnected ? "SshConnected" : "SshDisconnected");
     /// <summary>连接状态的共享语义色。</summary>
@@ -102,9 +100,9 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
     /// <summary>状态栏的路径标签。</summary>
     public string RouteLabel => Text.Get(_profile?.Route switch { SshIds.Jump => "SshViaJump", SshIds.Proxy => "SshViaProxy", _ => "SshDirectRoute" });
     /// <summary>连接存活时间只用于 UI，不存储为协议时间。</summary>
-    public string Elapsed => IsConnected ? Text.Format("SshSessionElapsed", DateTime.UtcNow - _connectedAt) : Text.Get("SshSessionEnded");
+    public string Elapsed => IsConnected ? Text.Format("SshInstanceElapsed", DateTime.UtcNow - _connectedAt) : Text.Get("SshSessionEnded");
     /// <summary>实际网格尺寸。</summary>
-    public string GridSize => _terminal.Buffer.Columns.ToString(CultureInfo.InvariantCulture) + " × " + _terminal.Buffer.Rows.ToString(CultureInfo.InvariantCulture);
+    public string GridSize => ActiveConsole?.GridSize ?? "";
     /// <summary>按需展开的连接详情。</summary>
     public bool IsDetailsOpen { get; set => SetProperty(ref field, value); }
     /// <summary>保存成功的短暂提示不触碰当前连接与终端焦点。</summary>
@@ -119,8 +117,8 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
     public RelayCommand ToggleDetailsCommand { get; }
     /// <summary>编辑通过公共实例编辑器，下次连接生效。</summary>
     public AsyncRelayCommand EditConnectionCommand { get; }
-    /// <summary>由外壳创建新的外层页签。</summary>
-    public RelayCommand NewSessionCommand { get; }
+    /// <summary>在当前实例连接上新增独立 PTY 标签。</summary>
+    public AsyncRelayCommand NewSessionCommand { get; }
 
     /// <inheritdoc />
     public override Task InitializeAsync(CancellationToken cancellationToken = default)
@@ -131,7 +129,7 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
     }
     /// <inheritdoc />
     public override Task<bool> RequestCloseAsync() => IsConnecting || IsConnected
-        ? _dialogs.ConfirmCloseAsync(Name) : Task.FromResult(true);
+        ? _dialogs.ConfirmInstanceCloseAsync(Name, Consoles.Count, Forwards.Count, Files.Transfers.Count(item => item.IsRunning)) : Task.FromResult(true);
 
     /// <summary>重新读取保存后的配置，旧会话结束后再创建新会话。</summary>
     private Task StartReconnectAsync() => _connectTask = ConnectAsync();
@@ -159,9 +157,10 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
     {
         foreach (string name in new[] { nameof(Phase), nameof(IsConnecting), nameof(IsConnected), nameof(IsReadOnly), nameof(IsEnded), nameof(Status),
             nameof(Tone), nameof(RemoteIdentity), nameof(HostEndpoint), nameof(UserName), nameof(ConnectingTitle), nameof(Error), nameof(ErrorCode),
-            nameof(EndedMessage), nameof(HostKeys), nameof(RouteDescription), nameof(RouteLabel), nameof(Elapsed), nameof(GridSize) }) OnPropertyChanged(name);
+            nameof(EndedMessage), nameof(HostKeys), nameof(RouteDescription), nameof(RouteLabel), nameof(Elapsed), nameof(GridSize), nameof(ActiveConsoleLabel) }) OnPropertyChanged(name);
         ReconnectCommand.NotifyCanExecuteChanged(); DisconnectCommand.NotifyCanExecuteChanged(); CancelConnectionCommand.NotifyCanExecuteChanged();
         AddForwardCommand?.NotifyCanExecuteChanged();
+        ShowForwardEditorCommand?.NotifyCanExecuteChanged();
         EditConnectionCommand.NotifyCanExecuteChanged(); NewSessionCommand.NotifyCanExecuteChanged(); ToggleDetailsCommand.NotifyCanExecuteChanged();
     }
 }

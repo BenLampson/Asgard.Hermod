@@ -60,4 +60,12 @@
     <Color x:Key="DbSuccessColor">#1A8262</Color>
     <Color x:Key="DbWarningColor">#9B681B</Color>
     <Color x:Key="DbDangerColor">#BA4251</Color>
+    <Color x:Key="SshBackgroundColor">#FFFFFF</Color>
+    <Color x:Key="SshSoftColor">#F5F7FB</Color>
+    <Color x:Key="SshLineColor">#E3E8F0</Color>
+    <Color x:Key="SshInkColor">#171C24</Color>
+    <Color x:Key="SshMutedColor">#64748B</Color>
+    <Color x:Key="SshAccentColor">#2F6BE0</Color>
+    <Color x:Key="SshSelectedColor">#EDF3FF</Color>
+    <Color x:Key="SshCaptionColor">#EDF0F6</Color>
 </ResourceDictionary>

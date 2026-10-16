@@ -39,7 +39,7 @@ public sealed class TerminalRenderer : IDisposable
     {
         _options = options;
         _emSize = emSize;
-        _glyphs.Configure(family, emSize, options.LineHeight, options.FontFallback);
+        _glyphs.Configure(family, emSize, options.LineHeight, options.FontFallback, options.CellHeight);
         _brushes.Clear();
     }
 

@@ -7,6 +7,22 @@ internal sealed partial class SshConnection(SshClient client, RemoteProcess shel
     IReadOnlyList<TrustedHostKey> hostKeys) : ISshWorkspaceConnection
 {
     private int _disposed;
+    private readonly SshConsoleConnection _initialConsole = new(shell);
+    /// <inheritdoc />
+    public ISshConsoleConnection InitialConsole => _initialConsole;
+    /// <inheritdoc />
+    public CancellationToken Disconnected => client.Disconnected;
+    /// <inheritdoc />
+    public async Task<ISshConsoleConnection> OpenConsoleAsync(int columns, int rows, CancellationToken cancellationToken = default)
+    {
+        ObjectDisposedException.ThrowIf(Volatile.Read(ref _disposed) != 0, this);
+        var process = await client.ExecuteShellAsync(new ExecuteOptions { AllocateTerminal = true, TerminalType = "xterm-256color", TerminalSize = new(columns, rows) }, cancellationToken).ConfigureAwait(false);
+        if (Volatile.Read(ref _disposed) != 0 || cancellationToken.IsCancellationRequested)
+        {
+            process.Dispose(); cancellationToken.ThrowIfCancellationRequested(); throw new ObjectDisposedException(nameof(SshConnection));
+        }
+        return new SshConsoleConnection(process);
+    }
     /// <inheritdoc />
     public IReadOnlyList<TrustedHostKey> HostKeys { get; } = hostKeys;
     /// <inheritdoc />
@@ -25,7 +41,7 @@ internal sealed partial class SshConnection(SshClient client, RemoteProcess shel
     public async ValueTask DisposeAsync()
     {
         if (Interlocked.Exchange(ref _disposed, 1) != 0) return;
-        try { shell.Dispose(); }
+        try { await _initialConsole.DisposeAsync().ConfigureAwait(false); }
         finally
         {
             client.Dispose();

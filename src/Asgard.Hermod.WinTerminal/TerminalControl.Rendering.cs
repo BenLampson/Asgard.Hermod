@@ -24,6 +24,7 @@ public sealed partial class TerminalControl
     /// <summary>读取或修改会话颜色时持有缓冲锁，防止和后台 OSC 指令并发。</summary>
     private void ConfigureOptions(TerminalOptions options)
     {
+        options.CellHeight = double.IsFinite(LineHeight) && LineHeight > 0 ? LineHeight : null;
         if (Foreground is SolidColorBrush fg)
             options.DefaultForeground = TerminalColor.FromArgb(fg.Color.A, fg.Color.R, fg.Color.G, fg.Color.B);
         if (Background is SolidColorBrush bg)
@@ -60,7 +61,14 @@ public sealed partial class TerminalControl
             return;
         int columns = Math.Clamp((int)(ActualWidth / _renderer.CellWidth), 10, 1000);
         int rows = Math.Clamp((int)(ActualHeight / _renderer.CellHeight), 3, 1000);
-        session.Resize(columns, rows);
+        lock (session.Buffer.SyncRoot)
+        {
+            int before = session.Buffer.ScrollbackCount;
+            session.Resize(columns, rows, pushScrollback: PreserveOutputOnResize);
+            if (PreserveOutputOnResize && _scrollOffset > 0) _scrollOffset = Math.Max(0, _scrollOffset + session.Buffer.ScrollbackCount - before);
+            // 网格调整本身不使同一份历史上的选区失效；后续真实输出仍按版本撤销旧选区。
+            if (_selection is not null) _renderedRevision = session.Revision;
+        }
     }
 
     /// <summary>窗口连续缩放时合并远端 PTY 尺寸通知。</summary>

@@ -6,6 +6,18 @@ namespace Asgard.Hermod.UI.Controls;
 /// <summary>类型无关的工具入口，负责筛选、可滚动浮层与焦点恢复；动作由工作区提供。</summary>
 public partial class WorkspaceTools : UserControl
 {
+    /// <summary>模块可指定入口文案，空值使用共享工具资源。</summary>
+    public static readonly DependencyProperty LabelProperty = DependencyProperty.Register(nameof(Label), typeof(string), typeof(WorkspaceTools));
+    /// <summary>模块可指定官方图标名。</summary>
+    public static readonly DependencyProperty IconProperty = DependencyProperty.Register(nameof(Icon), typeof(string), typeof(WorkspaceTools), new PropertyMetadata("wrench"));
+    /// <summary>可选本地化入口文案。</summary>
+    public string? Label { get => (string?)GetValue(LabelProperty); set => SetValue(LabelProperty, value); }
+    /// <summary>入口的稳定图标标识。</summary>
+    public string Icon { get => (string)GetValue(IconProperty); set => SetValue(IconProperty, value); }
+    /// <summary>正文选项栏使用透明无边框入口，默认保持标题栏按钮外观。</summary>
+    public static readonly DependencyProperty IsFlatProperty = DependencyProperty.Register(nameof(IsFlat), typeof(bool), typeof(WorkspaceTools), new PropertyMetadata(false));
+    /// <summary>使用正文紧凑选项入口。</summary>
+    public bool IsFlat { get => (bool)GetValue(IsFlatProperty); set => SetValue(IsFlatProperty, value); }
     /// <summary>注册工具列表；支持可观察集合的动态扩展。</summary>
     public static readonly DependencyProperty ItemsProperty = DependencyProperty.Register(
         nameof(Items), typeof(IEnumerable<WorkspaceTool>), typeof(WorkspaceTools), new PropertyMetadata(null, OnItemsChanged));

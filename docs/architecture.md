@@ -537,3 +537,28 @@ and export always use the full original text. Running a plan does not replace qu
 results or their elapsed time; a subsequent failed request retains the previous plan
 with an explicit previous-result label. Offscreen WPF tests measure actual geometry
 and bindings without constructing desktop windows.
+
+## SSH instance and console ownership
+
+One SSH window owns one authenticated transport. `ISshConsoleConnection` owns only
+one remote PTY; disposing it cannot dispose the shared client, SFTP, forwarding or
+other Shell channels. The factory establishes the transport and first Shell before
+the main shell opens the work window. Further consoles use that same transport.
+The SDK's transport-disconnected token is observed independently of Shell EOF.
+
+Each `SshConsoleViewModel` owns its terminal buffer, bounded input queue, I/O loops
+and assistant. Switching consoles does not replay input or reset Shell state.
+Closing the last console is allowed and leaves instance tools running. Whole-window
+close confirmation states the counts of consoles, forwards and active transfers.
+Transport loss stops every old PTY and revokes tool permissions while retaining
+all old buffers for reading. Explicit reconnect creates one new Shell and does not
+attempt to restore old processes, working directories or commands.
+
+The SSH layout uses a 44-pixel caption, 52-pixel instance-tool rail, independently
+resizable toolboxes and a 38-pixel console strip. Monitoring occupies a separate
+580-pixel region including its 8-pixel divider. A weak per-buffer view-state cache
+preserves selection, local search, scroll position and font settings. Remote terminal
+resizing moves removed top rows into local history, while local ConPTY retains its
+existing system-reflow behavior. Explicit terminal line height and PTY grid sizing
+use the same DIP metrics. Offscreen layout tests cover both languages and themes,
+toolbox expansion, multiple consoles and the zero-console state.

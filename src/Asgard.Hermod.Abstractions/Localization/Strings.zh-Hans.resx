@@ -4366,4 +4366,34 @@ Session：{2}
   <data name="DatabaseScopePendingAdd" xml:space="preserve"><value>待加入</value></data>
   <data name="DatabaseScopePendingRemove" xml:space="preserve"><value>待移除</value></data>
   <data name="DatabaseScopeApply" xml:space="preserve"><value>应用范围</value></data>
+  <data name="SshConsoleUnavailable" xml:space="preserve"><value>此 SSH 连接不支持新增控制台。</value></data>
+  <data name="SshConsoleName" xml:space="preserve"><value>控制台 {0}</value></data>
+  <data name="SshConsoleNew" xml:space="preserve"><value>新增控制台</value></data>
+  <data name="SshConsoleOptions" xml:space="preserve"><value>终端选项</value></data>
+  <data name="SshConsoleCreating" xml:space="preserve"><value>正在创建新控制台…</value></data>
+  <data name="SshConsoleCreateFailed" xml:space="preserve"><value>无法创建新控制台，其他控制台仍可使用。</value></data>
+  <data name="SshActiveConsole" xml:space="preserve"><value>当前：{0}</value></data>
+  <data name="SshNoConsole" xml:space="preserve"><value>无活动控制台</value></data>
+  <data name="SshNoConsoleHint" xml:space="preserve"><value>新增控制台以启动一个新 Shell。实例文件、转发、传输和监测仍可使用。</value></data>
+  <data name="SshCloseConsoleTitle" xml:space="preserve"><value>关闭控制台</value></data>
+  <data name="SshCloseConsoleConfirm" xml:space="preserve"><value>关闭控制台</value></data>
+  <data name="SshCloseConsoleImpact" xml:space="preserve"><value>关闭 {1} 的 {0}？它的 Shell 和正在执行的前台命令会结束。其他控制台、转发、传输和实例监测会继续运行。</value></data>
+  <data name="SshCloseInstanceTitle" xml:space="preserve"><value>关闭 SSH 实例窗口</value></data>
+  <data name="SshCloseInstanceImpact" xml:space="preserve"><value>关闭 {0}？这将结束 SSH 连接、{1} 个控制台、{2} 个端口转发、{3} 个活动传输和实例监测。</value></data>
+  <data name="SshInstanceTools" xml:space="preserve"><value>实例</value></data>
+  <data name="SshToolFiles" xml:space="preserve"><value>文件</value></data>
+  <data name="SshToolForward" xml:space="preserve"><value>转发</value></data>
+  <data name="SshToolTransfers" xml:space="preserve"><value>传输</value></data>
+  <data name="SshCollapseToolbox" xml:space="preserve"><value>收起实例工具箱</value></data>
+  <data name="SshInstanceMonitor" xml:space="preserve"><value>实例监测</value></data>
+  <data name="SshForwardNew" xml:space="preserve"><value>新建转发</value></data>
+  <data name="SshForwardName" xml:space="preserve"><value>规则名称（可选）</value></data>
+  <data name="SshForwardRuleName" xml:space="preserve"><value>端口 {0} 的转发</value></data>
+  <data name="SshForwardLocalOnly" xml:space="preserve"><value>仅监听本机回环地址</value></data>
+  <data name="SshForwardOwnership" xml:space="preserve"><value>转发属于当前 SSH 实例。切换或关闭控制台不会停止规则；关闭实例窗口才会停止转发。</value></data>
+  <data name="SshTransferOwnership" xml:space="preserve"><value>传输属于当前 SSH 实例。切换或关闭控制台不会中断任务；关闭实例窗口会取消活动传输。</value></data>
+  <data name="SshFilesEntryCount" xml:space="preserve"><value>{0} 个项目</value></data>
+  <data name="SshInstanceElapsed" xml:space="preserve"><value>实例连接 {0:hh\:mm\:ss}</value></data>
+  <data name="SshConsoleEnded" xml:space="preserve"><value>已结束</value></data>
+  <data name="SshEndedConsole" xml:space="preserve"><value>已结束：{0}</value></data>
 </root>

@@ -4366,4 +4366,34 @@ Result sample:
   <data name="DatabaseScopePendingAdd" xml:space="preserve"><value>Pending addition</value></data>
   <data name="DatabaseScopePendingRemove" xml:space="preserve"><value>Pending removal</value></data>
   <data name="DatabaseScopeApply" xml:space="preserve"><value>Apply scope</value></data>
+  <data name="SshConsoleUnavailable" xml:space="preserve"><value>This SSH connection does not support additional consoles.</value></data>
+  <data name="SshConsoleName" xml:space="preserve"><value>Console {0}</value></data>
+  <data name="SshConsoleNew" xml:space="preserve"><value>New console</value></data>
+  <data name="SshConsoleOptions" xml:space="preserve"><value>Terminal options</value></data>
+  <data name="SshConsoleCreating" xml:space="preserve"><value>Creating a new console…</value></data>
+  <data name="SshConsoleCreateFailed" xml:space="preserve"><value>The new console could not be created. Other consoles remain available.</value></data>
+  <data name="SshActiveConsole" xml:space="preserve"><value>Current: {0}</value></data>
+  <data name="SshNoConsole" xml:space="preserve"><value>No active console</value></data>
+  <data name="SshNoConsoleHint" xml:space="preserve"><value>Create a console to start a new Shell. Instance files, forwarding, transfers and monitoring remain available.</value></data>
+  <data name="SshCloseConsoleTitle" xml:space="preserve"><value>Close console</value></data>
+  <data name="SshCloseConsoleConfirm" xml:space="preserve"><value>Close console</value></data>
+  <data name="SshCloseConsoleImpact" xml:space="preserve"><value>Close {0} on {1}? Its Shell and running foreground command will end. Other consoles, forwarding, transfers and instance monitoring will continue.</value></data>
+  <data name="SshCloseInstanceTitle" xml:space="preserve"><value>Close SSH instance window</value></data>
+  <data name="SshCloseInstanceImpact" xml:space="preserve"><value>Close {0}? This ends the SSH connection, {1} consoles, {2} port forwards, {3} active transfers and instance monitoring.</value></data>
+  <data name="SshInstanceTools" xml:space="preserve"><value>Instance</value></data>
+  <data name="SshToolFiles" xml:space="preserve"><value>Files</value></data>
+  <data name="SshToolForward" xml:space="preserve"><value>Forward</value></data>
+  <data name="SshToolTransfers" xml:space="preserve"><value>Transfers</value></data>
+  <data name="SshCollapseToolbox" xml:space="preserve"><value>Collapse instance toolbox</value></data>
+  <data name="SshInstanceMonitor" xml:space="preserve"><value>Instance monitor</value></data>
+  <data name="SshForwardNew" xml:space="preserve"><value>New forward</value></data>
+  <data name="SshForwardName" xml:space="preserve"><value>Rule name (optional)</value></data>
+  <data name="SshForwardRuleName" xml:space="preserve"><value>Forward on port {0}</value></data>
+  <data name="SshForwardLocalOnly" xml:space="preserve"><value>Listening on the local loopback address only</value></data>
+  <data name="SshForwardOwnership" xml:space="preserve"><value>Forwarding belongs to this SSH instance. Switching or closing consoles keeps these rules running; closing the instance stops them.</value></data>
+  <data name="SshTransferOwnership" xml:space="preserve"><value>Transfers belong to this SSH instance. Switching or closing consoles keeps tasks running. Closing the instance cancels active transfers.</value></data>
+  <data name="SshFilesEntryCount" xml:space="preserve"><value>{0} entries</value></data>
+  <data name="SshInstanceElapsed" xml:space="preserve"><value>Instance connected {0:hh\:mm\:ss}</value></data>
+  <data name="SshConsoleEnded" xml:space="preserve"><value>Ended</value></data>
+  <data name="SshEndedConsole" xml:space="preserve"><value>Ended: {0}</value></data>
 </root>

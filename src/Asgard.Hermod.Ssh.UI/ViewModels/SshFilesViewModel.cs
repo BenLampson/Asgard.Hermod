@@ -45,7 +45,9 @@ public sealed class SshFilesViewModel : ObservableObject, IDisposable
     /// <summary>文件操作与传输不重叠。</summary>
     public bool IsBusy { get; private set { if (SetProperty(ref field, value)) RefreshCommands(); } }
     /// <summary>安全错误，不回显 SDK 文案。</summary>
-    public string Error { get; private set => SetProperty(ref field, value); } = "";
+    public string Error { get; private set { if (SetProperty(ref field, value)) OnPropertyChanged(nameof(PanelStatus)); } } = "";
+    /// <summary>窄工具箱状态行优先显示安全错误，正常时只统计真实列表。</summary>
+    public string PanelStatus => Error.Length > 0 ? Error : Text.Format("SshFilesEntryCount", Entries.Count);
     /// <summary>刷新目录。</summary>
     public AsyncRelayCommand RefreshCommand { get; }
     /// <summary>返回上级。</summary>
@@ -79,6 +81,7 @@ public sealed class SshFilesViewModel : ObservableObject, IDisposable
         token.ThrowIfCancellationRequested();
         if (path != Path) return;
         Entries.Clear(); foreach (var item in entries) Entries.Add(item);
+        OnPropertyChanged(nameof(PanelStatus));
     }
 
     private async Task RunAsync(Func<CancellationToken, Task> action)

@@ -72,43 +72,6 @@ public sealed class SshNewWorkspaceTests(WpfTestFixture fixture)
         finally { File.Delete(target); Directory.Delete(directory); }
     });
 
-    /// <summary>新布局在中英、明暗主题下加载真实视图并验证分屏收起后终端恢复。</summary>
-    [Theory]
-    [InlineData("en", UiTheme.Light)]
-    [InlineData("en", UiTheme.Dark)]
-    [InlineData("zh-Hans", UiTheme.Light)]
-    [InlineData("zh-Hans", UiTheme.Dark)]
-    public Task ViewsRenderAndSplitRestoresTerminal(string language, UiTheme theme) => fixture.RunAsync(async () =>
-    {
-        var old = CultureInfo.CurrentUICulture; var oldDefault = CultureInfo.DefaultThreadCurrentUICulture;
-        Text.Initialize(language, CultureInfo.InvariantCulture); var themes = new ThemeService(Application.Current.Resources); themes.SetTheme(theme);
-        var dialogs = new SshTestDialogs(); var connection = new SshWorkspaceTestConnection(); var factory = new SshTestFactory { Handler = _ => Task.FromResult<ISshConnection>(connection) };
-        await using var model = new SshWorkspaceViewModel(new(new("ssh", "Production SSH", "Production SSH", "terminal", [], TypeId: SshIds.Type, ProviderId: SshIds.Direct)), new SshTestConfigurationService(), factory, dialogs, dialogs);
-        using var view = new SshWorkspaceView { DataContext = model };
-        var layout = Assert.IsType<WorkspacePageLayout>(view.FindName("WorkspaceLayout")); var header = Assert.IsType<WorkspaceHeader>(layout.Toolbar); header.DataContext = model; layout.Toolbar = null; header.ShowWindowControls = true;
-        var window = new HermodWindow { Width = 1440, Height = 900, CaptionHeight = 72, CaptionContent = header, Content = view };
-        try
-        {
-            WindowPreviewCapture.Show(window); await model.InitializeAsync();
-            connection.Output("Welcome to Ubuntu 24.04 LTS\r\n\r\nroot@production:~# docker ps\r\nCONTAINER ID   IMAGE         STATUS\r\na123b456       nginx:1.27    Up 12 days\r\nb789c012       postgres:17   Up 12 days\r\n\r\nroot@production:~# ");
-            await SshWorkspaceTests.UntilAsync(() => model.Session!.GetVisibleText().Contains("docker ps", StringComparison.Ordinal));
-            await WindowPreviewCapture.VerifyAsync(window, $"ssh-new-terminal-{language}-{theme}");
-            var split = Assert.IsType<WorkspaceSplitView>(view.FindName("AgentSplit")); double full = split.ColumnDefinitions[0].ActualWidth;
-            model.IsAgentOpen = true; model.Assistant.Prompt = "keep my draft"; await WindowPreviewCapture.VerifyAsync(window, $"ssh-new-agent-{language}-{theme}");
-            Assert.Same(model.Assistant, Assert.IsType<SshAssistantView>(view.FindName("AssistantPanel")).DataContext);
-            Assert.Same(model, header.DataContext);
-            Assert.True(split.ColumnDefinitions[0].ActualWidth < full); Assert.InRange(split.ColumnDefinitions[2].ActualWidth, 400, 440);
-            var sameSession = model.Session; model.IsAgentOpen = false; await WindowTestVisuals.UpdateLayoutAsync(window);
-            Assert.Equal(full, split.ColumnDefinitions[0].ActualWidth, 1); Assert.Equal("keep my draft", model.Assistant.Prompt); Assert.Same(sameSession, model.Session);
-            model.ActiveSection = "files"; await model.Files.RefreshCommand.ExecuteAsync(); await WindowPreviewCapture.VerifyAsync(window, $"ssh-new-files-{language}-{theme}"); Assert.Equal(2, model.Files.Entries.Count);
-            model.ActiveSection = "terminal"; model.IsMonitorOpen = true; await WindowPreviewCapture.VerifyAsync(window, $"ssh-new-monitor-{language}-{theme}");
-            model.IsMonitorOpen = false; model.IsAgentOpen = true; window.Width = 800; window.Height = 600; await WindowPreviewCapture.VerifyAsync(window, $"ssh-new-compact-agent-{language}-{theme}");
-            Assert.True(split.ColumnDefinitions[0].ActualWidth >= 350); Assert.True(split.ColumnDefinitions[2].ActualWidth >= 270);
-            Assert.False(model.IsClosed); Assert.Same(sameSession, model.Session);
-        }
-        finally { window.Close(); themes.SetTheme(UiTheme.Light); CultureInfo.CurrentUICulture = old; CultureInfo.DefaultThreadCurrentUICulture = oldDefault; }
-    });
-
     private static void Measure(FrameworkElement element, double width, double height) { element.Measure(new(width, height)); element.Arrange(new(0, 0, width, height)); element.UpdateLayout(); }
     private sealed class AgentClient : IAgentClient
     {

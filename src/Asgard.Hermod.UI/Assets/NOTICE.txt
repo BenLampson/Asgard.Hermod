@@ -50,4 +50,5 @@ Brand names and logos remain the property of their respective owners.
 Database toolbar and output icons: message-square, git-branch, save and scan-search use the Lucide source revision above.
 The execution-plan list-filter geometry preserves Lucide's three horizontal filter strokes on its 24x24 canvas.
 The scope picker's square-check.svg and matching WPF geometry use the Lucide source revision above.
+The SSH arrow-down-up.svg, arrow-up.svg, pause.svg and unplug.svg icons and matching WPF geometry use the Lucide source revision above.
 The history alias uses the official icons/history.svg from Lucide tag 0.468.0 (same ISC license).

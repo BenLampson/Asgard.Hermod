@@ -154,5 +154,5 @@ public sealed class SshAssistantViewModel : ObservableObject, IDisposable
     /// <summary>连接代次改变即取消旧操作并禁用旧建议，保留可见消息和草稿。</summary>
     public void ConnectionChanged() { _revision++; _pending?.Cancel(); _conversation?.Clear(); SelectedOutput = ""; OnPropertyChanged(nameof(ContextLabel)); Refresh(); }
     /// <inheritdoc />
-    public void Dispose() { _disposed = true; _pending?.Cancel(); InsertRequested = null; }
+    public void Dispose() { _disposed = true; _pending?.Cancel(); InsertRequested = null; Refresh(); }
 }

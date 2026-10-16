@@ -6,6 +6,7 @@ namespace Asgard.Hermod.UI.Tests;
 internal sealed class WpfBindingTrace : TraceListener
 {
     private readonly SourceLevels _previous;
+    private readonly System.Text.StringBuilder _pending = new();
     internal List<string> Messages { get; } = [];
     internal WpfBindingTrace()
     {
@@ -14,8 +15,8 @@ internal sealed class WpfBindingTrace : TraceListener
         PresentationTraceSources.DataBindingSource.Switch.Level = SourceLevels.Warning;
         PresentationTraceSources.DataBindingSource.Listeners.Add(this);
     }
-    public override void Write(string? message) { if (message is not null) Messages.Add(message); }
-    public override void WriteLine(string? message) { if (message is not null) Messages.Add(message); }
+    public override void Write(string? message) { if (message is not null) _pending.Append(message); }
+    public override void WriteLine(string? message) { _pending.Append(message); if (_pending.Length > 0) Messages.Add(_pending.ToString()); _pending.Clear(); }
     protected override void Dispose(bool disposing)
     {
         PresentationTraceSources.DataBindingSource.Listeners.Remove(this);

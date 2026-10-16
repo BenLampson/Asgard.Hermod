@@ -53,7 +53,7 @@ public sealed class GlyphCache : IDisposable
     public GlyphTypeface Primary => _primary ?? throw new InvalidOperationException("GlyphCache not configured.");
 
     /// <summary>按字体、尺寸和选项重建渲染配置。</summary>
-    public void Configure(string family, double emSize, double lineHeight, IReadOnlyList<string>? fallback)
+    public void Configure(string family, double emSize, double lineHeight, IReadOnlyList<string>? fallback, double? cellHeight = null)
     {
         _fallbacks.Clear();
         _cache.Clear();
@@ -71,7 +71,7 @@ public sealed class GlyphCache : IDisposable
             }
         }
 
-        MeasureMetrics(lineHeight);
+        MeasureMetrics(lineHeight, cellHeight);
     }
 
     /// <summary>处理 ResolveTypeface 对应的终端协议或渲染逻辑。</summary>
@@ -92,7 +92,7 @@ public sealed class GlyphCache : IDisposable
     }
 
     /// <summary>处理 MeasureMetrics 对应的终端协议或渲染逻辑。</summary>
-    private void MeasureMetrics(double lineHeight)
+    private void MeasureMetrics(double lineHeight, double? cellHeight)
     {
         GlyphTypeface tf = Primary;
         _scale = _emSize;
@@ -106,6 +106,12 @@ public sealed class GlyphCache : IDisposable
         _strikePos = tf.StrikethroughPosition * _scale;
         _ascent = Math.Clamp(tf.Baseline * _scale, 0, int.MaxValue);
         _cellHeight = Math.Ceiling(lineSpacing * _scale * Math.Max(0.5, lineHeight));
+        if (cellHeight is > 0 && double.IsFinite(cellHeight.Value))
+        {
+            _cellHeight = Math.Max(_emSize, cellHeight.Value);
+            // 与 WPF BlockLineHeight 一样，把显式行高超出的行距放在首行基线之前。
+            _ascent += Math.Max(0, _cellHeight - lineSpacing * _scale);
+        }
         _underlineThickness = Math.Max(1, tf.UnderlineThickness * _scale);
         _strikeThickness = Math.Max(1, tf.StrikethroughThickness * _scale);
     }
