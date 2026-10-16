@@ -17,7 +17,7 @@
                     <ColumnDefinition Width="14" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Image Source="{Binding Icon, RelativeSource={RelativeSource AncestorType=Window}}"
+                <Image Source="{DynamicResource HermodCaptionIcon}"
                        Width="14" Height="14" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality" />
                 <TextBlock Grid.Column="1" Text="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}"
                            FontFamily="{DynamicResource UiFont}" FontSize="12" FontWeight="SemiBold"

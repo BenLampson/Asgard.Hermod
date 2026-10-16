@@ -13,7 +13,7 @@ public sealed class BrandIconThemeTests(WpfTestFixture fixture)
     [InlineData(UiTheme.Light, 36, 50, 71, 163, 101, 28)]
     [InlineData(UiTheme.Dark, 233, 226, 212, 214, 167, 96)]
     public Task ThemeLogo_HasTransparentBackgroundAndDistinctPalette(
-        UiTheme theme, byte red, byte green, byte blue, byte accentRed, byte accentGreen, byte accentBlue) => fixture.RunAsync(() =>
+        UiTheme theme, byte red, byte green, byte blue, byte accentRed, byte accentGreen, byte accentBlue) => fixture.RunOffscreenAsync(() =>
     {
         var themes = new ThemeService(Application.Current.Resources);
         try
@@ -28,8 +28,15 @@ public sealed class BrandIconThemeTests(WpfTestFixture fixture)
                 Assert.Equal(0, pixels[(y * logo.PixelWidth + x) * 4 + 3]);
             Assert.True(ContainsColor(pixels, red, green, blue));
             Assert.True(ContainsColor(pixels, accentRed, accentGreen, accentBlue));
-            var icon = Assert.IsAssignableFrom<BitmapSource>(Application.Current.Resources["HermodWindowIcon"]);
+            var icon = Assert.IsAssignableFrom<BitmapFrame>(Application.Current.Resources["HermodWindowIcon"]);
             Assert.Equal(0, ReadPixels(icon)[3]);
+            // ICO 的 16px 帧经过重采样；在最大帧的实色内部检查原始配色。
+            var iconPixels = ReadPixels(icon.Decoder!.Frames.MaxBy(frame => frame.PixelWidth)!);
+            // 系统任务栏始终使用深蓝版，应用内标题仍按自身背景切换配色。
+            Assert.True(ContainsColor(iconPixels, 36, 50, 71));
+            Assert.False(ContainsColor(iconPixels, 233, 226, 212));
+            var caption = Assert.IsAssignableFrom<BitmapFrame>(Application.Current.Resources["HermodCaptionIcon"]);
+            Assert.True(ContainsColor(ReadPixels(caption.Decoder!.Frames.MaxBy(frame => frame.PixelWidth)!), red, green, blue));
         }
         finally
         {
@@ -67,7 +74,7 @@ public sealed class BrandIconThemeTests(WpfTestFixture fixture)
                 VerifyNativeIcon(dialog, 1);
                 Assert.Same(Application.Current.Resources["HermodLogo"], Assert.IsType<Image>(title.FindName("BrandLogo")).Source);
                 var caption = Assert.Single(WindowTestVisuals.Descendants<HermodTitleBar>(dialog));
-                Assert.Same(icon, Assert.Single(WindowTestVisuals.Descendants<Image>(caption)).Source);
+                Assert.Same(Application.Current.Resources["HermodCaptionIcon"], Assert.Single(WindowTestVisuals.Descendants<Image>(caption)).Source);
                 if (previousIcon is not null) Assert.NotSame(previousIcon, icon);
                 previousIcon = icon;
                 await WindowPreviewCapture.VerifyAsync(owner, $"brand-shell-{theme}");
