@@ -12,7 +12,7 @@ internal static class AgentChatProtocol
         {
             ["model"] = model,
             ["messages"] = messages.Select(Message).ToArray(),
-            ["stream"] = false,
+            ["stream"] = true,
             ["store"] = false,
         };
         if (tools is not null)

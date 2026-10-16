@@ -49,16 +49,16 @@ public sealed class AgentConversation
     }
 
     /// <summary>将当前上下文只用于本次请求，失败或取消均不污染历史，也不会执行生成的 SQL。</summary>
-    public Task<AgentReply> SendAsync(string prompt, AgentSqlContext context, CancellationToken cancellationToken = default)
-        => SendCoreAsync(prompt, context, null, null, cancellationToken);
+    public Task<AgentReply> SendAsync(string prompt, AgentSqlContext context, CancellationToken cancellationToken = default, Func<AgentStreamUpdate, CancellationToken, ValueTask>? stream = null)
+        => SendCoreAsync(prompt, context, null, null, cancellationToken, stream);
 
     /// <summary>自动模式仅开放服务器只读查询，并把有界工具结果交回模型继续分析。</summary>
     public Task<AgentReply> RunAsync(string prompt, AgentSqlContext context,
-        Func<SqlAgentQuery, CancellationToken, Task<SqlAgentResult>> execute, Action<AgentReply> receive, CancellationToken cancellationToken = default)
-        => SendCoreAsync(prompt, context, execute, receive, cancellationToken);
+        Func<SqlAgentQuery, CancellationToken, Task<SqlAgentResult>> execute, Action<AgentReply> receive, CancellationToken cancellationToken = default, Func<AgentStreamUpdate, CancellationToken, ValueTask>? stream = null)
+        => SendCoreAsync(prompt, context, execute, receive, cancellationToken, stream);
 
     private async Task<AgentReply> SendCoreAsync(string prompt, AgentSqlContext context,
-        Func<SqlAgentQuery, CancellationToken, Task<SqlAgentResult>>? execute, Action<AgentReply>? receive, CancellationToken cancellationToken)
+        Func<SqlAgentQuery, CancellationToken, Task<SqlAgentResult>>? execute, Action<AgentReply>? receive, CancellationToken cancellationToken, Func<AgentStreamUpdate, CancellationToken, ValueTask>? stream)
     {
         using var modelTask = ModelSession?.BeginTask(cancellationToken);
         cancellationToken = modelTask?.Token ?? cancellationToken;
@@ -92,8 +92,8 @@ public sealed class AgentConversation
                 request = prompt,
                 context = new { dialect, database = context.Database, databases = context.Databases, schema = context.Schema, sql = context.Sql, results = context.Results },
             })));
-            var reply = execute is null ? await requestClient.CompleteAsync(request, cancellationToken).WaitAsync(cancellationToken).ConfigureAwait(false)
-                : await SqlAgentRun.RunAsync(requestClient, request, context, execute, receive!, cancellationToken).ConfigureAwait(false);
+            var reply = execute is null ? await requestClient.CompleteStreamingAsync(request, null, stream, cancellationToken).WaitAsync(cancellationToken).ConfigureAwait(false)
+                : await SqlAgentRun.RunAsync(requestClient, request, context, execute, receive!, cancellationToken, stream).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
             lock (_gate)
             {

@@ -14,7 +14,7 @@ internal static class SqlAgentRun
 
     /// <summary>工具结果只属于本次任务；最多四次查询，未知结果或拒绝后只允许总结。</summary>
     internal static async Task<AgentReply> RunAsync(IAgentClient client, List<AgentMessage> messages, AgentSqlContext context,
-        Func<SqlAgentQuery, CancellationToken, Task<SqlAgentResult>> execute, Action<AgentReply> receive, CancellationToken token)
+        Func<SqlAgentQuery, CancellationToken, Task<SqlAgentResult>> execute, Action<AgentReply> receive, CancellationToken token, Func<AgentStreamUpdate, CancellationToken, ValueTask>? stream)
     {
         var ids = new HashSet<string>(StringComparer.Ordinal);
         bool stopped = false;
@@ -23,14 +23,14 @@ internal static class SqlAgentRun
             token.ThrowIfCancellationRequested();
             bool final = stopped || step == 4 || messages.Sum(message => (long)message.Content.Length) > 130000;
             if (final) messages.Add(new(AgentRole.System, "No more queries are authorized for this task. Summarize observed results and uncertainty. Do not claim a rejected, failed, cancelled or unknown query succeeded. Do not retry it."));
-            var reply = await client.CompleteWithToolsAsync(messages, final ? [] : Tools, token).WaitAsync(token);
+            var reply = await client.CompleteStreamingAsync(messages, final ? [] : Tools, stream, token).WaitAsync(token);
             token.ThrowIfCancellationRequested();
             if (reply.ToolCalls.Count == 0) { receive(reply); return reply; }
             if (final || reply.ToolCalls.Count != 1 || reply.Content.Length > 4000) throw Text.Exception("AgentInvalidResponse");
             var call = reply.ToolCalls[0];
             if (string.IsNullOrWhiteSpace(call.Id) || call.Id.Length > 128 || !ids.Add(call.Id)) throw Text.Exception("AgentInvalidResponse");
             var query = Parse(call, context);
-            if (!string.IsNullOrWhiteSpace(reply.Content)) receive(reply);
+            if (reply.Content.Length > 0 || reply.Thinking.Length > 0) receive(reply);
             messages.Add(new(AgentRole.Assistant, reply.Content) { ToolCalls = reply.ToolCalls });
             var result = await execute(query, token);
             token.ThrowIfCancellationRequested();

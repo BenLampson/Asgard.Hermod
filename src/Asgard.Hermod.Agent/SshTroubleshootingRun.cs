@@ -10,7 +10,7 @@ internal static class SshTroubleshootingRun
     /// <summary>完整保留当前任务的工具关联，任务结束后由外层只保存用户请求和最终分析。</summary>
     internal static async Task<AgentReply> RunAsync(IAgentClient client, List<AgentMessage> messages,
         Func<SshAgentAction, CancellationToken, Task<SshAgentToolResult>> execute, Action<AgentReply> receive,
-        Action ensureCurrent, CancellationToken token, bool allowActions)
+        Action ensureCurrent, CancellationToken token, bool allowActions, Func<AgentStreamUpdate, CancellationToken, ValueTask>? stream)
     {
         var callIds = new HashSet<string>(StringComparer.Ordinal);
         bool stopped = !allowActions;
@@ -19,7 +19,7 @@ internal static class SshTroubleshootingRun
             ensureCurrent();
             bool final = stopped || step == MaximumSteps || messages.Sum(message => (long)message.Content.Length + message.ToolCalls.Sum(call => (long)call.Arguments.Length)) > 130000;
             if (final) messages.Add(new(AgentRole.System, "No more tools are authorized for this task. Summarize observed results, uncertainty and next steps. Never claim an unknown or denied action succeeded. Do not retry it."));
-            var reply = await client.CompleteWithToolsAsync(messages, final ? [] : SshAgentTools.Definitions, token).WaitAsync(token);
+            var reply = await client.CompleteStreamingAsync(messages, final ? [] : SshAgentTools.Definitions, stream, token).WaitAsync(token);
             ensureCurrent();
             if (reply.ToolCalls.Count == 0)
             {
@@ -31,7 +31,7 @@ internal static class SshTroubleshootingRun
             if (string.IsNullOrWhiteSpace(call.Id) || call.Id.Length > 128 || !callIds.Add(call.Id)) throw Text.Exception("AgentInvalidResponse");
             // 模型输出的所有参数在显示执行前校验；自由文本代码块从不进入此通道。
             var action = SshAgentTools.Parse(call);
-            if (!string.IsNullOrWhiteSpace(reply.Content)) receive(reply);
+            if (reply.Content.Length > 0 || reply.Thinking.Length > 0) receive(reply);
             messages.Add(new(AgentRole.Assistant, reply.Content) { ToolCalls = reply.ToolCalls });
             var result = await execute(action, token);
             ensureCurrent();

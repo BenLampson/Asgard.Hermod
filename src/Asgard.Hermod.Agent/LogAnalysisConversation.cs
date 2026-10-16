@@ -33,7 +33,7 @@ public sealed class LogAnalysisConversation(IAgentClient client)
         "You have no execution tools. Never claim to have run commands or changed the server. Do not request secrets.";
 
     /// <summary>每次发送冻结当前来源和文本；后续刷新不改变进行中的分析。</summary>
-    public async Task<AgentReply> SendAsync(string prompt, string source, string log, DateTimeOffset? capturedAt, bool incomplete, CancellationToken token, LogEvidenceRange? range = null)
+    public async Task<AgentReply> SendAsync(string prompt, string source, string log, DateTimeOffset? capturedAt, bool incomplete, CancellationToken token, LogEvidenceRange? range = null, Func<AgentStreamUpdate, CancellationToken, ValueTask>? stream = null)
     {
         using var modelTask = ModelSession?.BeginTask(token);
         token = modelTask?.Token ?? token;
@@ -52,7 +52,7 @@ public sealed class LogAnalysisConversation(IAgentClient client)
         try
         {
             messages.Add(new(AgentRole.User, JsonSerializer.Serialize(new { request = prompt, context = new { source, capturedAt, incomplete, range, log } })));
-            var reply = await (modelTask?.Client ?? client).CompleteAsync(messages, token).WaitAsync(token);
+            var reply = await (modelTask?.Client ?? client).CompleteStreamingAsync(messages, null, stream, token).WaitAsync(token);
             token.ThrowIfCancellationRequested();
             if (reply.Content.Length > 64000 || reply.ToolCalls.Count > 0) throw Text.Exception("AgentInvalidResponse");
             lock (_gate)

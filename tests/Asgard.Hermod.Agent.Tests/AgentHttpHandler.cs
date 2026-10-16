@@ -1,5 +1,7 @@
 using System.Net;
+using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace Asgard.Hermod.Agent.Tests;
 
@@ -19,10 +21,28 @@ internal sealed class AgentHttpHandler : HttpMessageHandler
         if (BeforeResponse is not null) await BeforeResponse(cancellationToken);
         return new(Status)
         {
-            Content = new StringContent(Response ?? JsonSerializer.Serialize(new
+            Content = new StringContent(ToSse(Response ?? JsonSerializer.Serialize(new
             {
                 choices = new[] { new { finish_reason = "stop", message = new { role = "assistant", content = "Try this.\n```sql\nSELECT 1;\n```" } } },
-            }))
+            })), Encoding.UTF8, "text/event-stream")
         };
+    }
+    private static string ToSse(string response)
+    {
+        try
+        {
+            var root = JsonNode.Parse(response);
+            if (root?["choices"] is JsonArray choices)
+                foreach (var item in choices.OfType<JsonObject>())
+                {
+                    item["index"] = 0;
+                    var delta = item["message"]?.DeepClone(); item.Remove("message"); item["delta"] = delta;
+                    if (delta is JsonObject message && message["tool_calls"] is JsonArray calls)
+                        for (int i = 0; i < calls.Count; i++) if (calls[i] is JsonObject call) call["index"] = i;
+                }
+            response = root?.ToJsonString() ?? response;
+        }
+        catch (JsonException) { }
+        return $"data: {response}\n\ndata: [DONE]\n\n";
     }
 }

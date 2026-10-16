@@ -34,16 +34,16 @@ public sealed class SshAgentConversation(IAgentClient client)
         "If tools are unavailable, provide proposed commands in explicit bash fenced code blocks, keeping independent actions separate.";
 
     /// <summary>兼容纯文本建议，不开放工具；仅本次明确选择的终端选区随请求发送。</summary>
-    public Task<AgentReply> SendAsync(string prompt, string host, string selectedOutput, CancellationToken cancellationToken)
-        => SendCoreAsync(prompt, host, selectedOutput, null, null, cancellationToken);
+    public Task<AgentReply> SendAsync(string prompt, string host, string selectedOutput, CancellationToken cancellationToken, Func<AgentStreamUpdate, CancellationToken, ValueTask>? stream = null)
+        => SendCoreAsync(prompt, host, selectedOutput, null, null, cancellationToken, stream: stream);
 
     /// <summary>工具结果只在当前排障任务内回传，后续任务仅保留请求和最终分析。</summary>
     public Task<AgentReply> RunAsync(string prompt, string host, string selectedOutput,
-        Func<SshAgentAction, CancellationToken, Task<SshAgentToolResult>> execute, Action<AgentReply> receive, CancellationToken cancellationToken, SshAgentAction? completedAction = null, SshAgentToolResult? completedResult = null)
-        => SendCoreAsync(prompt, host, selectedOutput, execute, receive, cancellationToken, completedAction, completedResult);
+        Func<SshAgentAction, CancellationToken, Task<SshAgentToolResult>> execute, Action<AgentReply> receive, CancellationToken cancellationToken, SshAgentAction? completedAction = null, SshAgentToolResult? completedResult = null, Func<AgentStreamUpdate, CancellationToken, ValueTask>? stream = null)
+        => SendCoreAsync(prompt, host, selectedOutput, execute, receive, cancellationToken, completedAction, completedResult, stream);
 
     private async Task<AgentReply> SendCoreAsync(string prompt, string host, string selectedOutput,
-        Func<SshAgentAction, CancellationToken, Task<SshAgentToolResult>>? execute, Action<AgentReply>? receive, CancellationToken cancellationToken, SshAgentAction? completedAction = null, SshAgentToolResult? completedResult = null)
+        Func<SshAgentAction, CancellationToken, Task<SshAgentToolResult>>? execute, Action<AgentReply>? receive, CancellationToken cancellationToken, SshAgentAction? completedAction = null, SshAgentToolResult? completedResult = null, Func<AgentStreamUpdate, CancellationToken, ValueTask>? stream = null)
     {
         using var modelTask = ModelSession?.BeginTask(cancellationToken);
         cancellationToken = modelTask?.Token ?? cancellationToken;
@@ -66,8 +66,8 @@ public sealed class SshAgentConversation(IAgentClient client)
         try
         {
             EnsureCurrent();
-            var reply = execute is null ? await requestClient.CompleteAsync(messages, cancellationToken).WaitAsync(cancellationToken)
-                : await SshTroubleshootingRun.RunAsync(requestClient, messages, execute, receive!, EnsureCurrent, cancellationToken, completedResult?.StopActions != true);
+            var reply = execute is null ? await requestClient.CompleteStreamingAsync(messages, null, stream, cancellationToken).WaitAsync(cancellationToken)
+                : await SshTroubleshootingRun.RunAsync(requestClient, messages, execute, receive!, EnsureCurrent, cancellationToken, completedResult?.StopActions != true, stream);
             EnsureCurrent();
             if (reply.Content.Length > 64000) throw Text.Exception("AgentInvalidResponse");
             lock (_gate)

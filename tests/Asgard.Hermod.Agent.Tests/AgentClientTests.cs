@@ -42,7 +42,7 @@ public sealed class AgentClientTests
         Assert.Equal(expected, handler.Endpoints[0]!.AbsoluteUri); Assert.Equal("private-key", handler.Keys[0]);
         using var body = JsonDocument.Parse(handler.Bodies[0]); var root = body.RootElement;
         Assert.Equal("user-selected-model", root.GetProperty("model").GetString());
-        Assert.False(root.GetProperty("store").GetBoolean()); Assert.False(root.GetProperty("stream").GetBoolean());
+        Assert.False(root.GetProperty("store").GetBoolean()); Assert.True(root.GetProperty("stream").GetBoolean());
         Assert.Equal("user", root.GetProperty("messages")[0].GetProperty("role").GetString());
         Assert.DoesNotContain("private-key", handler.Bodies[0]); Assert.False(root.TryGetProperty("tools", out _));
         Assert.Equal("SELECT 1;", Assert.Single(reply.SqlBlocks));
