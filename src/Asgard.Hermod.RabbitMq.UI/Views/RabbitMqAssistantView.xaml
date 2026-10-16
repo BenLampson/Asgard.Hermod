@@ -12,7 +12,7 @@
         </c:AgentPanel.ContextContent>
         <c:AgentPanel.MessageTemplate>
             <DataTemplate>
-                <c:AgentMessageView Body="{Binding Content}" CopyText="{Binding Content}" IsUser="{Binding IsUser}" />
+                <c:AgentMessageView Thinking="{Binding Thinking}" IsStreaming="{Binding IsStreaming}" Body="{Binding Content}" CopyText="{Binding Content}" IsUser="{Binding IsUser}" />
             </DataTemplate>
         </c:AgentPanel.MessageTemplate>
     </c:AgentPanel>

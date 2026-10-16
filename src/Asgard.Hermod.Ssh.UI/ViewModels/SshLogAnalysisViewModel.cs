@@ -87,18 +87,19 @@ public sealed class SshLogAnalysisViewModel : ObservableObject, IDisposable
         if (_disposed || IsBusy || Attachment is not { Text.Length: > 0 } attachment || string.IsNullOrWhiteSpace(Prompt)) return;
         if (_conversation is null) { Error = Text.Get("AgentConfigurationRequired"); return; }
         string prompt = Prompt;
-        using var pending = new CancellationTokenSource(TimeSpan.FromMinutes(2)); _pending = pending;
+        using var responseStream = new AgentResponseStream<SshLogAnalysisMessage>(() => new("", false, attachment.Summary, attachment: attachment) { Question = prompt }, Add);
+        using var pending = new CancellationTokenSource(); _pending = pending;
         IsBusy = true; Error = ""; LastFailedPrompt = ""; Status = Text.Get("ChatWaitingModel");
         Add(new(prompt, true, attachment.Summary, attachment: attachment)); Prompt = "";
         try
         {
             var reply = await _conversation.SendAsync(prompt, attachment.Source, attachment.Text, attachment.CapturedAt, attachment.IsTruncated, pending.Token,
-                new(attachment.DocumentId, attachment.Host, attachment.ContainerId, attachment.RequestedLines, attachment.StartCharacter, attachment.EndCharacter, attachment.FromLine, attachment.ToLine, attachment.IsSelection));
-            if (!_disposed) Add(new(reply.Content, false, attachment.Summary, modelIdentity: reply.ModelIdentity, attachment: attachment) { Question = prompt });
+                new(attachment.DocumentId, attachment.Host, attachment.ContainerId, attachment.RequestedLines, attachment.StartCharacter, attachment.EndCharacter, attachment.FromLine, attachment.ToLine, attachment.IsSelection), responseStream.ReceiveAsync);
+            if (!_disposed) responseStream.Complete(new(reply.Content, false, attachment.Summary, modelIdentity: reply.ModelIdentity, attachment: attachment) { Question = prompt }, reply);
         }
         catch (OperationCanceledException) { if (!_disposed) Failed(Text.Get("SshAgentCanceled")); }
         catch (Exception error) { if (!_disposed) Failed(Text.Error(error, "AgentRequestFailed")); }
-        finally { _pending = null; Status = ""; IsBusy = false; }
+        finally { responseStream.Dispose(); _pending = null; Status = ""; IsBusy = false; }
         void Failed(string error)
         {
             Error = error; LastFailedPrompt = prompt;

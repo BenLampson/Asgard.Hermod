@@ -4976,4 +4976,10 @@ SQL：
   <data name="ChatSqlExecutionResult" xml:space="preserve"><value>{0}
 {1}
 {2}</value></data>
+  <data name="AgentThinking" xml:space="preserve"><value>思考中</value></data>
+  <data name="AgentThinkingElapsed" xml:space="preserve"><value>{0} 秒</value></data>
+  <data name="AgentThinkingCompleted" xml:space="preserve"><value>已思考 {0} 秒</value></data>
+  <data name="AgentThinkingInterrupted" xml:space="preserve"><value>思考已中断</value></data>
+  <data name="AgentThinkingExpand" xml:space="preserve"><value>展开思考内容</value></data>
+  <data name="AgentThinkingCollapse" xml:space="preserve"><value>收起思考内容</value></data>
 </root>

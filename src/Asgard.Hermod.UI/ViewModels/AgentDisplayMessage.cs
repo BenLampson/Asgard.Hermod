@@ -3,7 +3,7 @@ using System.Diagnostics;
 namespace Asgard.Hermod.UI.ViewModels;
 
 /// <summary>共享消息阅读状态；工具正文默认折叠，更新状态不重建消息对象。</summary>
-public class AgentDisplayMessage : ObservableObject, IAgentDisplayMessage
+public partial class AgentDisplayMessage : ObservableObject, IAgentDisplayMessage
 {
     private readonly Stopwatch? _elapsed;
     private string _statusKey = "";
@@ -34,7 +34,7 @@ public class AgentDisplayMessage : ObservableObject, IAgentDisplayMessage
     /// <summary>反馈只保留在当前内存消息，归档切换仍复用同一对象，不向服务器发送。</summary>
     public AgentMessageFeedback Feedback { get; set => SetProperty(ref field, value); }
     /// <summary>生成时的模型协议身份；后续选择不会重写它。</summary>
-    public string ModelIdentity { get; }
+    public string ModelIdentity { get; protected set => SetProperty(ref field, value); }
     /// <summary>实际消息创建时间，不用示例时间填充。</summary>
     public DateTimeOffset CreatedAt { get; } = DateTimeOffset.Now;
     /// <summary>用户消息身份与时间使用完整翻译模板。</summary>

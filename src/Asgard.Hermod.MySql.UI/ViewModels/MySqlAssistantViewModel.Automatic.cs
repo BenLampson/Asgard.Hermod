@@ -36,6 +36,7 @@ public sealed partial class MySqlAssistantViewModel
         string prompt = Prompt;
         using var pending = new CancellationTokenSource();
         _pending = pending; IsBusy = true; Error = ""; Refresh();
+        using var responseStream = new AgentResponseStream<MySqlAssistantMessage>(() => new("", false) { Question = prompt }, AddMessage);
         LastFailedPrompt = ""; Status = Text.Get("ChatPreparingContext"); AddMessage(new(prompt, true)); Prompt = "";
         try
         {
@@ -79,12 +80,12 @@ public sealed partial class MySqlAssistantViewModel
             }, reply =>
             {
                 EnsureCurrent();
-                AddMessage(new(reply.Content, false, reply.SqlBlocks.Select(sql => new MySqlAssistantSql(sql, context.Database, identity, revision)).ToArray(), modelIdentity: reply.ModelIdentity) { Question = prompt });
-            }, taskToken);
+                responseStream.Complete(new(reply.Content, false, reply.SqlBlocks.Select(sql => new MySqlAssistantSql(sql, context.Database, identity, revision)).ToArray(), modelIdentity: reply.ModelIdentity) { Question = prompt }, reply);
+            }, taskToken, responseStream.ReceiveAsync);
             EnsureCurrent();
         }
         catch (OperationCanceledException) { if (!_disposed) AddFailure(prompt, Text.Get("MySqlAssistantCancelled")); }
         catch (Exception error) { if (!_disposed) AddFailure(prompt, Text.Error(error, "AgentRequestFailed")); }
-        finally { _pending = null; IsBusy = false; Status = ""; if (_disposed) _conversation.Clear(); Refresh(); }
+        finally { responseStream.Dispose(); _pending = null; IsBusy = false; Status = ""; if (_disposed) _conversation.Clear(); Refresh(); }
     }
 }

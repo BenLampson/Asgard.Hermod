@@ -10,12 +10,13 @@ public partial class AgentPanel
     private static bool CanGroup(object message) => message is AgentDisplayMessage { IsTool: true, IsUser: false, IsError: false, Approval: null, IsAwaitingApproval: false, RecoveryPrompt.Length: 0 };
     private void ProjectMessages()
     {
+        UpdateStreamingState();
         object[] source = Messages?.Cast<object>().ToArray() ?? [];
         var activities = source.OfType<AgentDisplayMessage>().ToHashSet(ReferenceEqualityComparer.Instance);
         foreach (var stale in _activityMessages.Where(message => !activities.Contains(message)).ToArray())
-        { PropertyChangedEventManager.RemoveHandler(stale, OnActivityEligibilityChanged, nameof(AgentDisplayMessage.IsAwaitingApproval)); _activityMessages.Remove(stale); }
+        { PropertyChangedEventManager.RemoveHandler(stale, OnActivityEligibilityChanged, ""); _activityMessages.Remove(stale); }
         foreach (var message in source.OfType<AgentDisplayMessage>())
-            if (_activityMessages.Add(message)) PropertyChangedEventManager.AddHandler(message, OnActivityEligibilityChanged, nameof(AgentDisplayMessage.IsAwaitingApproval));
+            if (_activityMessages.Add(message)) PropertyChangedEventManager.AddHandler(message, OnActivityEligibilityChanged, "");
         var desired = new List<AgentConversationItem>();
         for (int index = 0; index < source.Length;)
         {
@@ -59,11 +60,16 @@ public partial class AgentPanel
         foreach (object stale in _individualItems.Keys.Where(key => !retained.Contains(key)).ToArray()) _individualItems.Remove(stale);
         foreach (var stale in _activityItems.Keys.Where(key => !desired.Any(item => item.IsGroup && ReferenceEquals(((AgentActivityGroup)item.Message).Messages[0], key))).ToArray()) _activityItems.Remove(stale);
     }
-    private void OnActivityEligibilityChanged(object? sender, PropertyChangedEventArgs args) => ProjectMessages();
+    private void OnActivityEligibilityChanged(object? sender, PropertyChangedEventArgs args)
+    {
+        if (args.PropertyName is nameof(AgentDisplayMessage.IsAwaitingApproval) or nameof(AgentDisplayMessage.ModelIdentity)) ProjectMessages();
+        if (args.PropertyName == nameof(AgentDisplayMessage.IsStreaming)) UpdateStreamingState();
+        if (args.PropertyName is nameof(AgentDisplayMessage.Content) or nameof(AgentDisplayMessage.Thinking)) FollowStream();
+    }
     private static AgentDisplayMessage? OriginalMessage(AgentConversationItem item) => item.Message is AgentActivityGroup group ? group.Messages.FirstOrDefault() : item.Message as AgentDisplayMessage;
     private void DetachActivityMessages()
     {
-        foreach (var message in _activityMessages) PropertyChangedEventManager.RemoveHandler(message, OnActivityEligibilityChanged, nameof(AgentDisplayMessage.IsAwaitingApproval));
+        foreach (var message in _activityMessages) PropertyChangedEventManager.RemoveHandler(message, OnActivityEligibilityChanged, "");
         _activityMessages.Clear();
     }
 }

@@ -105,6 +105,7 @@ public sealed class SshAssistantViewModel : ObservableObject, IDisposable
         if (IsBusy || _disposed) return;
         if (_connection() is not { } connection) { Error = Text.Get("SshWorkspaceUnavailable"); return; }
         long revision = _revision; string host = _host();
+        using var responseStream = new AgentResponseStream<SshAssistantMessage>(() => new("", false, revision, extractCommands: false) { Question = initialAction is null ? prompt : "" }, Add);
         using var pending = new CancellationTokenSource(); _pending = pending; IsBusy = true; Error = ""; LastFailedPrompt = ""; Status = Text.Get("ChatWaitingModel");
         try
         {
@@ -123,11 +124,11 @@ public sealed class SshAssistantViewModel : ObservableObject, IDisposable
             if (_conversation is not null)
                 await _conversation.RunAsync(prompt, host, selected,
                     (action, token) => PerformActionAsync(action, connection, host, revision, token),
-                    reply => { EnsureCurrent(revision, connection, taskToken); Add(new(reply.Content, false, revision, reply.ToolCalls.Count == 0, modelIdentity: reply.ModelIdentity) { Question = initialAction is null ? prompt : "" }); }, taskToken, initialAction, completed);
+                    reply => { EnsureCurrent(revision, connection, taskToken); responseStream.Complete(new(reply.Content, false, revision, reply.ToolCalls.Count == 0, modelIdentity: reply.ModelIdentity) { Question = initialAction is null ? prompt : "" }, reply); }, taskToken, initialAction, completed, responseStream.ReceiveAsync);
         }
         catch (OperationCanceledException) { if (!IsSourceClosed && revision == _revision) AddFailure(initialAction is null ? prompt : "", Text.Get("SshAgentCanceled")); }
         catch (Exception error) { if (!IsSourceClosed && revision == _revision) AddFailure(initialAction is null ? prompt : "", Text.Error(error, "AgentRequestFailed")); }
-        finally { _pending = null; IsBusy = false; Status = ""; }
+        finally { responseStream.Dispose(); _pending = null; IsBusy = false; Status = ""; }
     }
 
     private async Task<SshAgentToolResult> PerformActionAsync(SshAgentAction action, ISshWorkspaceConnection connection, string host, long revision, CancellationToken token)

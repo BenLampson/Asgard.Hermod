@@ -4976,4 +4976,10 @@ Address: {2}</value></data>
   <data name="ChatSqlExecutionResult" xml:space="preserve"><value>{0}
 {1}
 {2}</value></data>
+  <data name="AgentThinking" xml:space="preserve"><value>Thinking</value></data>
+  <data name="AgentThinkingElapsed" xml:space="preserve"><value>{0}s</value></data>
+  <data name="AgentThinkingCompleted" xml:space="preserve"><value>Thought for {0}s</value></data>
+  <data name="AgentThinkingInterrupted" xml:space="preserve"><value>Thinking interrupted</value></data>
+  <data name="AgentThinkingExpand" xml:space="preserve"><value>Expand thinking</value></data>
+  <data name="AgentThinkingCollapse" xml:space="preserve"><value>Collapse thinking</value></data>
 </root>

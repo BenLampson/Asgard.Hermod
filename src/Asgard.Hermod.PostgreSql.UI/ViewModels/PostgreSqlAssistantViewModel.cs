@@ -83,6 +83,7 @@ public sealed partial class PostgreSqlAssistantViewModel : ObservableObject, IDi
         if (_conversation is null) { Error = Text.Get("AgentConfigurationRequired"); return; }
         string prompt = Prompt;
         using var pending = new CancellationTokenSource(); _pending = pending; IsBusy = true; Error = ""; Refresh();
+        using var responseStream = new AgentResponseStream<PostgreSqlAssistantMessage>(() => new("", false) { Question = prompt }, AddMessage);
         LastFailedPrompt = ""; Status = Text.Get("ChatPreparingContext"); AddMessage(new(prompt, true)); Prompt = "";
         try
         {
@@ -93,14 +94,14 @@ public sealed partial class PostgreSqlAssistantViewModel : ObservableObject, IDi
             if (revision != _tab.ScopeRevision) throw Text.Exception("PostgreSqlAssistantContextChanged");
             var sessionIdentity = _tab.AssistantSessionIdentity;
             Status = Text.Get("ChatWaitingModel");
-            var reply = await _conversation.SendAsync(prompt, context, taskToken);
+            var reply = await _conversation.SendAsync(prompt, context, taskToken, responseStream.ReceiveAsync);
             if (_disposed) return;
             if (revision != _tab.ScopeRevision) throw Text.Exception("PostgreSqlAssistantContextChanged");
-            AddMessage(new(reply.Content, false, reply.SqlBlocks.Select(sql => new PostgreSqlAssistantSql(sql, context.Database, sessionIdentity, revision)).ToArray(), modelIdentity: reply.ModelIdentity) { Question = prompt });
+            responseStream.Complete(new(reply.Content, false, reply.SqlBlocks.Select(sql => new PostgreSqlAssistantSql(sql, context.Database, sessionIdentity, revision)).ToArray(), modelIdentity: reply.ModelIdentity) { Question = prompt }, reply);
         }
         catch (OperationCanceledException) { if (!_disposed) AddFailure(prompt, Text.Get("PostgreSqlAssistantCancelled")); }
         catch (Exception error) { if (!_disposed) AddFailure(prompt, Text.Error(error, "AgentRequestFailed")); }
-        finally { _pending = null; IsBusy = false; Status = ""; if (_disposed) _conversation.Clear(); Refresh(); }
+        finally { responseStream.Dispose(); _pending = null; IsBusy = false; Status = ""; if (_disposed) _conversation.Clear(); Refresh(); }
     }
 
     private void OnTabChanged(object? sender, PropertyChangedEventArgs args)

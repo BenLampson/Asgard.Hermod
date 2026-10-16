@@ -22,7 +22,7 @@ public sealed class AgentMessageActivityHeadlessTests(WpfTestFixture fixture)
                 view.SetBinding(property, new Binding(property == AgentMessageView.BodyProperty ? nameof(AgentDisplayMessage.Content) : property.Name));
             message.SetStatus("SqlAgentQueryRunning"); await Layout();
             Assert.Equal("running", view.ActivityTone); Assert.Equal("loader-circle", view.ActivityIcon);
-            var toggle = Assert.Single(WindowTestVisuals.Descendants<ToggleButton>(view)); Assert.Equal(32, toggle.ActualHeight);
+            var toggle = Assert.Single(WindowTestVisuals.Descendants<ToggleButton>(view), button => button.Name == "ToolToggle"); Assert.Equal(32, toggle.ActualHeight);
             message.SetStatus("SqlAgentQueryCompleted"); await Layout(); Assert.False(message.IsExpanded);
             Assert.Equal("success", view.ActivityTone); Assert.Equal("circle-check", view.ActivityIcon); Assert.Equal(32, toggle.ActualHeight);
             Assert.Equal(message.Status, toggle.ToolTip); Assert.NotEmpty(message.Elapsed);
