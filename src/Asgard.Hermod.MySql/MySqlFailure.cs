@@ -1,11 +1,18 @@
 using System.Security.Authentication;
 using Asgard.Hermod.Abstractions.Localization;
+using Asgard.Hermod.Abstractions.Models;
 
 namespace Asgard.Hermod.MySql;
 
 /// <summary>只向 UI 传递稳定错误和允许公开的数字错误码。</summary>
 public sealed class MySqlFailure(string key, string code, params object?[] arguments) : Exception(Text.Get(key)), ILocalizedError
 {
+    /// <summary>失败语句在本次执行文本中的位置；没有协议位置时只标记语句起点。</summary>
+    public SqlErrorLocation? Location { get; private init; }
+    private int? ServerPosition { get; init; }
+    /// <summary>仅将当前执行范围和经过验证的协议数字映射为位置，不解析服务器消息原文。</summary>
+    public MySqlFailure AtStatement(string document, int start, int length, int statement) => new(ResourceKey, Code, ResourceArguments)
+    { ServerPosition = ServerPosition, Location = SqlErrorLocation.InStatement(document, start, length, statement, ServerPosition) };
     /// <summary>供共享资源渲染的稳定错误键。</summary>
     public string ResourceKey { get; } = key;
     /// <summary>仅包含允许公开的错误参数。</summary>

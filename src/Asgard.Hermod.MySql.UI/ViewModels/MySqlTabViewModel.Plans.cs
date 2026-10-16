@@ -37,6 +37,7 @@ public sealed partial class MySqlTabViewModel
             try { result = await ExecuteTrackedAsync(session, command, analyze ? "analyze" : "explain", token, statements[0].Sql); }
             catch { OutputView = "messages"; throw; }
             if (result.Failure is null && ExecutionTraces.FirstOrDefault()?.Plan is { } snapshotPlan) Plan = new(snapshotPlan);
+            SetOutputMessages(result, null);
             Error = result.Failure is null ? "" : Text.Error(result.Failure, "MySqlCommandFailed");
             Message = Text.Get(analyze ? "MySqlAnalyzeResultHint" : "MySqlExplainResultHint");
             Status = Text.Format("MySqlExecutionStatus", result.Outcomes.Count, result.Elapsed.TotalMilliseconds);

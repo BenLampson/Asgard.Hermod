@@ -15,6 +15,7 @@ internal sealed class TestMySql : IMySqlSessionFactory
         new(1, "name", "VARCHAR(100)", typeof(string), true, "app", "users", "name", false, true), new(2, "profile", "JSON", typeof(string), true, "app", "users", "profile", false, true),
         new(3, "payload", "BLOB", typeof(byte[]), true, "app", "users", "payload", false, true)];
     internal List<(string Database, string Table, int Offset, int Size, string Filter)> PageReads { get; } = [];
+    internal Func<string, MySqlExecution>? ExecutionResult;
     internal Func<int, int, string, MySqlResult>? PageResult;
     internal List<(string Sql, string Database)> ExecutedSql { get; } = [];
     internal List<(string Sql, string Database)> ReadOnlyQueries { get; } = [];
@@ -70,6 +71,7 @@ internal sealed class TestMySql : IMySqlSessionFactory
         {
             if (server.ExecuteError is { } error) throw error;
             server.ExecutedSql.Add((sql, database)); server.Executions++; if (server.BlockedQuery is { } blocked) { if (server.IgnoreQueryCancellation) await blocked.Task; else await blocked.Task.WaitAsync(token); }
+            if (server.ExecutionResult is { } produce) return produce(sql);
             return new([server.Result()], [new(1, 0, true)], null, server.Elapsed, State);
         }
         public async Task<MySqlExecution> ExecuteReadOnlyAsync(string sql, string database, CancellationToken token = default)
@@ -125,7 +127,8 @@ internal sealed class TestMySqlDialogs : IMySqlWorkspaceDialogs
     public Task<bool> ConfirmAssistantSqlAsync(string sql, string database) { AssistantSqlConfirmations.Add((sql, database)); return Task.FromResult(AssistantSqlAllowed); }
     public Task<string?> SaveQueryAsync(string sql, string? path, CancellationToken token) => Task.FromResult<string?>("query.sql");
     public Task<string?> OpenQueryAsync(CancellationToken token) => Task.FromResult<string?>(null);
-    public Task<string?> ExportAsync(MySqlGridViewModel grid, CancellationToken token) => Task.FromResult<string?>(null);
+    internal MySqlGridViewModel? ExportedGrid;
+    public Task<string?> ExportAsync(MySqlGridViewModel grid, CancellationToken token) { ExportedGrid = grid; return Task.FromResult<string?>(null); }
     public Task ShowConflictAsync(MySqlConflict conflict) { Conflicts++; return Task.CompletedTask; }
     public Task EditFieldAsync(MySqlFieldEditorViewModel field) { Fields++; return FieldOpened?.Invoke(field) ?? Task.CompletedTask; }
 }

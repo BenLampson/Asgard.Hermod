@@ -4622,4 +4622,19 @@ SQL：
   <data name="DatabaseObjectOutcomeUnknown" xml:space="preserve"><value>保存结果未知，请先核对数据再继续。</value></data>
   <data name="DatabaseObjectUndoChanges" xml:space="preserve"><value>撤销修改</value></data>
   <data name="DatabaseObjectSaveChanges" xml:space="preserve"><value>保存修改</value></data>
+  <data name="DatabaseMessageTime" xml:space="preserve"><value>时间</value></data>
+  <data name="DatabaseMessageStatus" xml:space="preserve"><value>状态</value></data>
+  <data name="DatabaseMessagePosition" xml:space="preserve"><value>位置</value></data>
+  <data name="DatabaseMessageText" xml:space="preserve"><value>消息</value></data>
+  <data name="DatabaseMessageSucceeded" xml:space="preserve"><value>成功</value></data>
+  <data name="DatabaseMessageFailed" xml:space="preserve"><value>失败</value></data>
+  <data name="DatabaseMessageLine" xml:space="preserve"><value>第 {0} 行</value></data>
+  <data name="DatabaseMessageStatement" xml:space="preserve"><value>语句 {0}</value></data>
+  <data name="DatabaseMessageNoPosition" xml:space="preserve"><value>—</value></data>
+  <data name="DatabaseMessageExactPosition" xml:space="preserve"><value>定位服务器报告的精确位置。</value></data>
+  <data name="DatabaseMessageStatementStart" xml:space="preserve"><value>定位失败语句起点。服务器没有报告精确位置。</value></data>
+  <data name="DatabaseMessageLocateFooter" xml:space="preserve"><value>编辑器与草稿已保留 · 可定位第 {0} 行</value></data>
+  <data name="DatabaseMessagePreservedFooter" xml:space="preserve"><value>编辑器与草稿已保留</value></data>
+  <data name="DatabaseMessagePositionSafety" xml:space="preserve"><value>位置仅适用于执行时的原文稿；编辑文稿后，旧位置将不可定位。</value></data>
+  <data name="DatabaseMessageErrorCount" xml:space="preserve"><value>{0:N0} 条错误</value></data>
 </root>

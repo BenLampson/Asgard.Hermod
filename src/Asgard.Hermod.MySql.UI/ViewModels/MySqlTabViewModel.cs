@@ -61,7 +61,7 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
     /// <summary>按真实对象类型选择的公共图标。</summary>
     public string Icon => IsQuery ? "file-code" : Kind switch { MySqlObjectKind.View => "eye", MySqlObjectKind.Procedure => "workflow", MySqlObjectKind.Function => "square-function", MySqlObjectKind.Event => "clock-3", _ => "table-2" };
     /// <summary>当前 SQL 文稿，与表格草稿独立。</summary>
-    public string Sql { get; set { if (SetProperty(ref field, value)) DraftChanged(); } } = "";
+    public string Sql { get; set { if (SetProperty(ref field, value)) { DraftChanged(); LocateMessageCommand.NotifyCanExecuteChanged(); OnPropertyChanged(nameof(OutputFooterText)); } } } = "";
     /// <summary>SQL 文件内容尚未保存。</summary>
     public bool IsDocumentDirty => IsQuery && Sql != _savedSql;
     /// <summary>结果中存在待提交字段。</summary>
@@ -142,8 +142,8 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
         using var pending = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
         _pending = pending; _completion = new(TaskCreationOptions.RunContinuationsAsynchronously); IsBusy = true; Error = ""; Refresh();
         try { await operation(pending.Token); }
-        catch (OperationCanceledException) when (pending.IsCancellationRequested) { Error = Text.Get("MySqlQueryCancelled"); }
-        catch (Exception error) { Error = Text.Error(error, "MySqlCommandFailed"); }
+        catch (OperationCanceledException) when (pending.IsCancellationRequested) { Error = Text.Get("MySqlQueryCancelled"); if (IsQuery) SetMessageFailure(Error); }
+        catch (Exception error) { Error = Text.Error(error, "MySqlCommandFailed"); if (IsQuery) { SetMessageFailure(Error); OutputView = "messages"; } }
         finally { if (IsQuery && HasError) OutputView = "messages"; IsBusy = false; _pending = null; _completion.TrySetResult(); Refresh(); }
     }
     private async Task<IMySqlSession> SessionAsync(CancellationToken token)
@@ -191,12 +191,13 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
         if (target != Database || revision != ScopeRevision || !CanRun) return;
         await RunAsync(token => ExecuteCoreAsync(sql, token));
     }
-    private async Task ExecuteCoreAsync(string sql, CancellationToken token, Action? dispatched = null)
+    private async Task ExecuteCoreAsync(string sql, CancellationToken token, Action? dispatched = null, Asgard.Hermod.UI.Models.SqlDocumentAnchor? anchor = null)
     {
         if (sql.Length == 0) return;
         var session = await SessionAsync(token);
         token.ThrowIfCancellationRequested(); dispatched?.Invoke();
         var execution = await ExecuteTrackedAsync(session, sql, "query", token);
+        SetOutputMessages(execution, anchor ?? (string.Equals(Sql, sql, StringComparison.Ordinal) ? new(Sql, 0) : null));
         _completionMetadata.Clear();
         if (Scope is null) Database = session.CurrentDatabase;
         SetResults(execution.Results, execution.Elapsed);
@@ -222,7 +223,7 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
     {
         foreach (string property in new[] { nameof(IsBusy), nameof(CanRun), nameof(Error), nameof(HasError), nameof(Message), nameof(HasMessage), nameof(Status), nameof(StateLabel), nameof(OutcomeUnknown), nameof(EditHint), nameof(Header), nameof(Database), nameof(DatabaseContext) }) OnPropertyChanged(property);
         foreach (var command in new[] { RefreshCommand, ExecuteCommand, SaveDocumentCommand, SaveChangesCommand, VerifyCommand, PreviousCommand, NextCommand }) command.NotifyCanExecuteChanged();
-        CancelCommand.NotifyCanExecuteChanged(); RestoreTraceCommand.NotifyCanExecuteChanged(); RevertCommand.NotifyCanExecuteChanged(); DraftChanged();
+        LocateMessageCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged(); RestoreTraceCommand.NotifyCanExecuteChanged(); RevertCommand.NotifyCanExecuteChanged(); DraftChanged();
         RefreshStructure();
         RefreshPaging();
         RefreshObjectPresentation();

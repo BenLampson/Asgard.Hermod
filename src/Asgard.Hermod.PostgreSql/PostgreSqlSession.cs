@@ -82,6 +82,7 @@ internal sealed partial class PostgreSqlSession(NpgsqlConnection connection, Npg
                 if (!outcomes.Any(outcome => outcome.Statement == ordinal + 1)) outcomes.Add(new(ordinal + 1, 0, false));
                 failure = previewStopped ? new("PostgreSqlPreviewStopped", "POSTGRESQL_PREVIEW_LIMIT")
                     : token.IsCancellationRequested ? new("PostgreSqlQueryCancelled", "POSTGRESQL_CANCELLED") : PostgreSqlFailure.Safe(error);
+                failure = failure.AtStatement(sql, statements[ordinal].Start, statements[ordinal].Length, ordinal + 1);
                 break;
             }
         }

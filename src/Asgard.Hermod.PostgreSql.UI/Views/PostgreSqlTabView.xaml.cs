@@ -11,13 +11,13 @@ public partial class PostgreSqlTabView : UserControl
     public PostgreSqlTabView()
     {
         InitializeComponent(); DataContextChanged += (_, _) => Attach(); Loaded += (_, _) => Attach();
-        Unloaded += (_, _) => { if (_model is not null) { _model.PropertyChanged -= OnChanged; _model.InsertSqlRequested = null; } _model = null; };
+        Unloaded += (_, _) => { if (_model is not null) { _model.PropertyChanged -= OnChanged; _model.InsertSqlRequested = null; _model.LocateSqlRequested = null; } _model = null; };
     }
     private CodeEditor CurrentEditor => SqlWorkspace.Editor;
     private void Attach()
     {
-        if (_model is not null) { _model.PropertyChanged -= OnChanged; _model.InsertSqlRequested = null; }
-        _model = DataContext as PostgreSqlTabViewModel; if (_model is not null) { _model.PropertyChanged += OnChanged; _model.CommitInputRequested = CommitInput; _model.InsertSqlRequested = CurrentEditor.InsertText; }
+        if (_model is not null) { _model.PropertyChanged -= OnChanged; _model.InsertSqlRequested = null; _model.LocateSqlRequested = null; }
+        _model = DataContext as PostgreSqlTabViewModel; if (_model is not null) { _model.PropertyChanged += OnChanged; _model.CommitInputRequested = CommitInput; _model.InsertSqlRequested = CurrentEditor.InsertText; _model.LocateSqlRequested = CurrentEditor.SelectCharacter; }
         ShowResult();
     }
     private void OnChanged(object? sender, PropertyChangedEventArgs args)
@@ -58,7 +58,7 @@ public partial class PostgreSqlTabView : UserControl
     private async Task RunAsync(bool all)
     {
         if (_model is null || !CommitInput()) return;
-        await _model.ExecuteScopeAsync(CurrentEditor.SelectedText, CurrentEditor.CaretIndex, all);
+        await _model.ExecuteScopeAsync(CurrentEditor.SelectedText, CurrentEditor.CaretIndex, all, CurrentEditor.SelectionStart);
     }
     private async void OnRun(object sender, RoutedEventArgs args) => await RunAsync(false);
     private async void OnRunAll(object sender, RoutedEventArgs args) => await RunAsync(true);
@@ -72,9 +72,14 @@ public partial class PostgreSqlTabView : UserControl
     private async void OnSqlTargetChanged(object sender, SelectionChangedEventArgs args)
     { if (_model is not null && SqlWorkspace.SelectedDatabase is { } database && database != _model.Database) await _model.ChangeDatabaseAsync(database); }
     private async void OnExportSqlOutput(object sender, RoutedEventArgs args)
-    { if (_model is not null) await _model.ExportAsync(); }
+    { if (_model is not null) await _model.ExportOutputAsync(); }
     private void OnCopySqlOutput(object sender, RoutedEventArgs args)
     {
+        if (_model?.IsMessagesOutput == true)
+        {
+            try { Clipboard.SetText(_model.MessageCopyText); } catch (System.Runtime.InteropServices.ExternalException) { _model.ReportClipboardFailure(); }
+            return;
+        }
         if (_model?.SelectedResult?.Result is not { } result) return;
         string text = string.Join("\t", result.Columns.Select(column => column.Name)) + Environment.NewLine +
             string.Join(Environment.NewLine, result.Rows.Select(row => string.Join("\t", row.Select(value => Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture)))));

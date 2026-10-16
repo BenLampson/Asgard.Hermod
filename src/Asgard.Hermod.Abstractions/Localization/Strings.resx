@@ -4622,4 +4622,19 @@ Address: {2}</value></data>
   <data name="DatabaseObjectOutcomeUnknown" xml:space="preserve"><value>Save outcome unknown. Verify the rows before continuing.</value></data>
   <data name="DatabaseObjectUndoChanges" xml:space="preserve"><value>Undo changes</value></data>
   <data name="DatabaseObjectSaveChanges" xml:space="preserve"><value>Save changes</value></data>
+  <data name="DatabaseMessageTime" xml:space="preserve"><value>Time</value></data>
+  <data name="DatabaseMessageStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="DatabaseMessagePosition" xml:space="preserve"><value>Position</value></data>
+  <data name="DatabaseMessageText" xml:space="preserve"><value>Message</value></data>
+  <data name="DatabaseMessageSucceeded" xml:space="preserve"><value>Succeeded</value></data>
+  <data name="DatabaseMessageFailed" xml:space="preserve"><value>Failed</value></data>
+  <data name="DatabaseMessageLine" xml:space="preserve"><value>Line {0}</value></data>
+  <data name="DatabaseMessageStatement" xml:space="preserve"><value>Statement {0}</value></data>
+  <data name="DatabaseMessageNoPosition" xml:space="preserve"><value>—</value></data>
+  <data name="DatabaseMessageExactPosition" xml:space="preserve"><value>Locate the position reported by the server.</value></data>
+  <data name="DatabaseMessageStatementStart" xml:space="preserve"><value>Locate the start of the failed statement. The server did not report an exact position.</value></data>
+  <data name="DatabaseMessageLocateFooter" xml:space="preserve"><value>Editor and draft preserved · Locate line {0}</value></data>
+  <data name="DatabaseMessagePreservedFooter" xml:space="preserve"><value>Editor and draft preserved</value></data>
+  <data name="DatabaseMessagePositionSafety" xml:space="preserve"><value>Locations apply only to the unchanged document that was executed. Editing the document disables old locations.</value></data>
+  <data name="DatabaseMessageErrorCount" xml:space="preserve"><value>{0:N0} error(s)</value></data>
 </root>

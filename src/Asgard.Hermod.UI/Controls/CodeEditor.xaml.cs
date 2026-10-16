@@ -58,6 +58,16 @@ public partial class CodeEditor : UserControl
     public int MaxLength { get => (int)GetValue(MaxLengthProperty); set => SetValue(MaxLengthProperty, value); }
     /// <summary>提供 SQL 等调用方的选区范围，不解释编辑器文本。</summary>
     public string SelectedText => Input.SelectedText;
+    /// <summary>完整文稿中的选区起点，用于发送范围与错误位置映射。</summary>
+    public int SelectionStart => Input.SelectionStart;
+    /// <summary>显式定位只移动选择与滚动，不插入代码或执行；纯离屏挂载不请求键盘焦点。</summary>
+    public void SelectCharacter(int index)
+    {
+        if (index < 0 || index > Input.Text.Length) return;
+        Input.Select(index, index < Input.Text.Length ? char.IsHighSurrogate(Input.Text[index]) && index + 1 < Input.Text.Length && char.IsLowSurrogate(Input.Text[index + 1]) ? 2 : 1 : 0);
+        RevealCharacter(index);
+        if (Window.GetWindow(this) is not null) Input.Focus();
+    }
     /// <summary>光标字符位置由调用方定位当前语句。</summary>
     public int CaretIndex => Input.CaretIndex;
     /// <summary>按真实字符矩形定位日志命中，自定义行高不依赖默认字体的行号估算。</summary>

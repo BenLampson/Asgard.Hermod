@@ -32,13 +32,15 @@ public sealed partial class MySqlTabViewModel
     /// <summary>新连接配置只供下一次显式读取或执行，不自动重放 SQL。</summary>
     public void RebindConnection(InstanceConnectionOptions options) { _options = options; var endpoint = MySqlSessionOptions.Parse(options); Endpoint = Text.Format("MySqlEndpoint", endpoint.Host, endpoint.Port); SetConnectionAvailability(true); }
     /// <summary>光标语句定位使用服务器模式，不改变用户完整文稿。</summary>
-    public async Task ExecuteScopeAsync(string selection, int caret, bool all)
+    public async Task ExecuteScopeAsync(string selection, int caret, bool all, int selectionStart = -1)
     {
         if (!CanRun || CommitInputRequested?.Invoke() == false || !await ResolveDataDraftAsync()) return;
         string snapshot = Sql;
         await RunAsync(async token =>
         {
-            string sql;
+            string sql; Asgard.Hermod.UI.Models.SqlDocumentAnchor? anchor = null;
+            if (all) anchor = new(snapshot, 0);
+            else if (selectionStart >= 0 && selectionStart <= snapshot.Length - selection.Length && snapshot.AsSpan(selectionStart, selection.Length).SequenceEqual(selection)) anchor = new(snapshot, selectionStart);
             if (all) sql = snapshot;
             else if (selection.Length > 0) sql = selection;
             else
@@ -48,8 +50,9 @@ public sealed partial class MySqlTabViewModel
                 var current = statements.FirstOrDefault(statement => caret >= statement.Start && caret <= statement.Start + statement.Length)
                     ?? (caret >= snapshot.TrimEnd().Length ? statements.LastOrDefault() : null);
                 sql = current is null ? "" : current.Delimiter == ";" ? current.Sql : "DELIMITER " + current.Delimiter + Environment.NewLine + current.Sql + current.Delimiter;
+                if (current is not null) anchor = new(snapshot, current.Start + snapshot.AsSpan(current.Start, current.Length).Length - snapshot.AsSpan(current.Start, current.Length).TrimStart().Length, current.Delimiter == ";" ? 0 : ("DELIMITER " + current.Delimiter + Environment.NewLine).Length);
             }
-            await ExecuteCoreAsync(sql, token);
+            await ExecuteCoreAsync(sql, token, anchor: anchor);
         });
     }
     /// <summary>确认草稿和事务后变更此查询的数据库上下文。</summary>

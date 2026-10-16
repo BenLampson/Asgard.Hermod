@@ -20,13 +20,15 @@ public sealed partial class MySqlTabViewModel
     /// <summary>计划为空时显示本地化入口说明。</summary>
     public bool HasPlan => Plan is not null;
     /// <summary>请求耗时与当前输出相符，不套用另一个结果的耗时。</summary>
-    public string OutputRequestSummary => IsPlanOutput ? Plan?.RequestTime ?? "" : IsResultsOutput ? QuerySummary : "";
+    public string OutputRequestSummary => IsPlanOutput ? Plan?.RequestTime ?? "" : IsResultsOutput ? QuerySummary : IsMessagesOutput && HasError ? Text.Format("DatabaseMessageErrorCount", 1) : "";
     /// <summary>计划保留底部阅读提示，但不重复结果操作。</summary>
-    public bool IsOutputFooterVisible => IsResultsOutput || IsPlanOutput;
+    public bool IsOutputFooterVisible => IsResultsOutput || IsPlanOutput || IsMessagesOutput;
+    /// <summary>结果和消息各自可以复制或导出当前本地输出。</summary>
+    public bool IsOutputActionsVisible => IsResultsOutput || IsMessagesOutput;
     /// <summary>互斥输出的底部说明。</summary>
-    public string OutputFooterText => IsPlanOutput ? Plan?.FooterHint ?? Text.Get("PlanNoPlan") : OutputSummary;
+    public string OutputFooterText => IsMessagesOutput ? MessageFooter : IsPlanOutput ? Plan?.FooterHint ?? Text.Get("PlanNoPlan") : OutputSummary;
     /// <summary>状态说明与当前输出匹配。</summary>
-    public string OutputFooterHint => IsPlanOutput ? Plan?.MetricNotice ?? Text.Get("PlanNoPlanHint") : EditHint;
+    public string OutputFooterHint => IsMessagesOutput ? Text.Get("DatabaseMessagePositionSafety") : IsPlanOutput ? Plan?.MetricNotice ?? Text.Get("PlanNoPlanHint") : EditHint;
     /// <summary>本地化的四个输出入口，行为只比较稳定 ID。</summary>
     public IReadOnlyList<DatabaseOutputOption> OutputViews { get; } = [
         new("results", Text.Get("DatabaseOutputResults"), "table-2"), new("messages", Text.Get("DatabaseOutputMessages"), "message-square"),
@@ -37,7 +39,7 @@ public sealed partial class MySqlTabViewModel
         get; set
         {
             if (value is not ("results" or "messages" or "plan" or "history") || !SetProperty(ref field, value)) return;
-            foreach (string name in new[] { nameof(IsResultsOutput), nameof(IsMessagesOutput), nameof(IsPlanOutput), nameof(IsHistoryOutput), nameof(IsHistoryOpen), nameof(IsOutputFooterVisible), nameof(OutputRequestSummary), nameof(OutputFooterText), nameof(OutputFooterHint) }) OnPropertyChanged(name);
+            foreach (string name in new[] { nameof(IsResultsOutput), nameof(IsMessagesOutput), nameof(IsPlanOutput), nameof(IsHistoryOutput), nameof(IsHistoryOpen), nameof(IsOutputFooterVisible), nameof(IsOutputActionsVisible), nameof(OutputRequestSummary), nameof(OutputFooterText), nameof(OutputFooterHint) }) OnPropertyChanged(name);
         }
     } = "results";
     /// <summary>显示结果。</summary>

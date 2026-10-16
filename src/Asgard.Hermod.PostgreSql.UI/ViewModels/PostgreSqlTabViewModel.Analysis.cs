@@ -33,6 +33,7 @@ public sealed partial class PostgreSqlTabViewModel
             try { execution = await ExecuteTrackedAsync(session, sql, true, token); }
             catch { OutputView = "messages"; throw; }
             if (execution.Failure is null && ExecutionTraces.FirstOrDefault()?.Plan is { } snapshotPlan) Plan = new(snapshotPlan);
+            SetOutputMessages(execution, null);
             Error = execution.Failure is null ? "" : Text.Error(execution.Failure, "PostgreSqlCommandFailed");
             Message = execution.Failure is null ? Text.Get("PostgreSqlExplainComplete") : "";
             Status = Text.Format("PostgreSqlExecutionStatus", execution.Outcomes.Count, execution.Elapsed.TotalMilliseconds);

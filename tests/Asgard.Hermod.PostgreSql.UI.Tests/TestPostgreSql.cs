@@ -13,6 +13,7 @@ internal sealed class TestPostgreSql : IPostgreSqlSessionFactory
         new(1, "name", "VARCHAR(100)", typeof(string), true, "app", "users", "name", false, true), new(2, "profile", "JSON", typeof(string), true, "app", "users", "profile", false, true),
         new(3, "payload", "BLOB", typeof(byte[]), true, "app", "users", "payload", false, true)];
     internal List<(string Database, string Table, int Offset, int Size, string Filter)> PageReads { get; } = [];
+    internal Func<string, PostgreSqlExecution>? ExecutionResult;
     internal Func<int, int, string, PostgreSqlResult>? PageResult { get; set; }
     internal List<(string Sql, string Database)> ExecutedSql { get; } = [];
     internal List<(string Sql, string Database)> ReadOnlyQueries { get; } = [];
@@ -72,6 +73,7 @@ internal sealed class TestPostgreSql : IPostgreSqlSessionFactory
         public async Task<PostgreSqlExecution> ExecuteAsync(string sql, string database, CancellationToken token = default)
         {
             server.ExecutedSql.Add((sql, database)); server.Executions++; if (server.BlockedQuery is { } blocked) { if (server.IgnoreQueryCancellation) await blocked.Task; else await blocked.Task.WaitAsync(token); }
+            if (server.ExecutionResult is { } produce) return produce(sql);
             return new([server.Result()], [new(1, 0, true)], null, TimeSpan.FromMilliseconds(2), State);
         }
         public async Task<PostgreSqlExecution> ExecuteReadOnlyAsync(string sql, string database, CancellationToken token = default)
@@ -127,7 +129,8 @@ internal sealed class TestPostgreSqlDialogs : IPostgreSqlWorkspaceDialogs
     public Task<bool> ConfirmAssistantSqlAsync(string sql, string database) { AssistantConfirmations++; return AssistantConfirmation?.Invoke() ?? Task.FromResult(false); }
     public Task<string?> SaveQueryAsync(string sql, string? path, CancellationToken token) => Task.FromResult<string?>("query.sql");
     public Task<string?> OpenQueryAsync(CancellationToken token) => Task.FromResult<string?>(null);
-    public Task<string?> ExportAsync(PostgreSqlGridViewModel grid, CancellationToken token) => Task.FromResult<string?>(null);
+    internal PostgreSqlGridViewModel? ExportedGrid;
+    public Task<string?> ExportAsync(PostgreSqlGridViewModel grid, CancellationToken token) { ExportedGrid = grid; return Task.FromResult<string?>(null); }
     public Task ShowConflictAsync(PostgreSqlConflict conflict) { Conflicts++; return Task.CompletedTask; }
     public Task EditFieldAsync(PostgreSqlFieldEditorViewModel field) { Fields++; return FieldOpened?.Invoke(field) ?? Task.CompletedTask; }
 }

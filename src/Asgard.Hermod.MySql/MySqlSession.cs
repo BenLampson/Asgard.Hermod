@@ -91,6 +91,7 @@ internal sealed partial class MySqlSession(MySqlConnection connection, MySqlSess
                 if (!outcomes.Any(outcome => outcome.Statement == ordinal + 1)) outcomes.Add(new(ordinal + 1, 0, false));
                 failure = previewStopped ? new("MySqlPreviewStopped", "MYSQL_PREVIEW_LIMIT")
                     : token.IsCancellationRequested ? new("MySqlQueryCancelled", "MYSQL_CANCELLED") : MySqlFailure.Safe(error);
+                failure = failure.AtStatement(sql, statements[ordinal].Start, statements[ordinal].Length, ordinal + 1);
                 break;
             }
         }
