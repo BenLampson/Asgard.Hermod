@@ -77,14 +77,19 @@ The package is unsigned and intended for Store submission, not direct installati
 The personal repository currently has only `BenLampson` as a write-capable user.
 GitHub's Release UI has no per-branch publishing restriction. The active
 **Release tags via main workflow** tag ruleset therefore restricts creation and
-updates of all tags to the GitHub Actions app. Human accounts cannot create a
+updates of all tags to deploy keys. The only write deploy key is **Hermod main
+release tags**; its private key is stored as `RELEASE_TAG_SSH_KEY` in the
+main-only `release` environment, not in repository-wide secrets or source files.
+The workflow pushes the verified main commit with this key, then creates the
+Release using the built-in token and `--verify-tag`. Human accounts cannot create a
 new tag from `dev` through Git, the API or the Release UI. Existing tags must
 already point to commits merged into `main`; version `v1.0.0` satisfies this
 condition. Use the main-only workflow above for new releases.
 
 Keep write access limited to the owner. Repository administrators can change
-these settings, and write-capable workflows can change tags, so adding
-collaborators, integrations or release workflows requires reviewing this policy.
+these settings, so adding collaborators, write deploy keys, integrations or
+release workflows requires reviewing this policy. A rehearsal verifies the SSH
+push credentials with `git push --dry-run` and creates no remote tag.
 
 `.github/CODEOWNERS` assigns every file to `@BenLampson`. Branch protection for
 `main` and `dev` requires one approval from the code owner and dismisses stale
