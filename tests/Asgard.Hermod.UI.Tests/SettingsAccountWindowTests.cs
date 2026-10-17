@@ -36,17 +36,17 @@ public sealed class SettingsAccountWindowTests(WpfTestFixture fixture)
             WindowTestVisuals.Invoke(navigation);
             await WindowPreviewCapture.VerifyAsync(window, $"settings-account-{language}-{theme}");
             Assert.True(model.IsAccountSelected);
-            Assert.Equal("hermod-admin", Assert.IsType<TextBlock>(window.FindName("SettingsAccountName")).Text);
-            Assert.Equal(Text.Get("SyncCloudWorkspace"), Assert.IsType<TextBlock>(window.FindName("SettingsWorkspaceName")).Text);
-            Assert.Equal(Text.Get("SignedIn"), Assert.IsType<TextBlock>(window.FindName("SettingsAccountStatus")).Text);
-            var manage = Assert.IsType<Button>(window.FindName("ManageAccountButton"));
+            Assert.Equal("hermod-admin", AccountName(window).Text);
+            Assert.Equal(Text.Get("SyncCloudWorkspace"), model.WorkspaceName);
+            Assert.Equal(Text.Get("SignedIn"), Assert.IsType<TextBlock>(WindowTestVisuals.Named(window, "SettingsAccountStatus")).Text);
+            var manage = Assert.IsType<Button>(WindowTestVisuals.Named(window, "ManageAccountButton"));
             WindowTestVisuals.Invoke(manage);
             Assert.Equal(1, opens);
 
             accounts.Username = "second-account-with-a-long-username-for-layout";
             await Task.Run(() => accounts.SignInAsync());
             await WindowTestVisuals.UpdateLayoutAsync(window);
-            Assert.Equal(accounts.Username, Assert.IsType<TextBlock>(window.FindName("SettingsAccountName")).Text);
+            Assert.Equal(accounts.Username, AccountName(window).Text);
             window.Width = 800; window.Height = 540;
             await WindowPreviewCapture.VerifyAsync(window, $"settings-account-small-{language}-{theme}");
             var frame = WindowTestVisuals.Frame(window);
@@ -56,8 +56,8 @@ public sealed class SettingsAccountWindowTests(WpfTestFixture fixture)
 
             await Task.Run(() => accounts.SignOutAsync());
             await WindowTestVisuals.UpdateLayoutAsync(window);
-            Assert.Equal(Text.Get("NotSignedIn"), Assert.IsType<TextBlock>(window.FindName("SettingsAccountStatus")).Text);
-            Assert.Equal(Text.Get("LocalWorkspace"), Assert.IsType<TextBlock>(window.FindName("SettingsWorkspaceName")).Text);
+            Assert.Equal(Text.Get("NotSignedIn"), Assert.IsType<TextBlock>(WindowTestVisuals.Named(window, "SettingsAccountStatus")).Text);
+            Assert.Equal(Text.Get("LocalWorkspace"), model.WorkspaceName);
             Assert.True(manage.IsEnabled);
             int notifications = 0;
             model.PropertyChanged += (_, _) => notifications++;
@@ -112,7 +112,7 @@ public sealed class SettingsAccountWindowTests(WpfTestFixture fixture)
                     model.SelectCategoryCommand.Execute(model.Categories.Single(category => category.Id == "account"));
                     Assert.True(model.IsAccountSelected);
                     phase = 1;
-                    settings.Dispatcher.InvokeAsync(() => WindowTestVisuals.Invoke(Assert.IsType<Button>(settings.FindName("ManageAccountButton"))));
+                    settings.Dispatcher.InvokeAsync(() => WindowTestVisuals.Invoke(Assert.IsType<Button>(WindowTestVisuals.Named(settings, "ManageAccountButton"))));
                 }
                 else
                 {
@@ -144,4 +144,7 @@ public sealed class SettingsAccountWindowTests(WpfTestFixture fixture)
         }
         finally { timer.Stop(); account?.Close(); settings?.Close(); }
     });
+    /// <summary>设置内容已拆为嵌套视图，通过真实绑定查找账号展示，不依赖旧宿主名称作用域。</summary>
+    private static TextBlock AccountName(Window window) => Assert.Single(WindowTestVisuals.Descendants<TextBlock>(window),
+        text => BindingOperations.GetBinding(text, TextBlock.TextProperty)?.Path?.Path == nameof(SettingsViewModel.AccountName));
 }
