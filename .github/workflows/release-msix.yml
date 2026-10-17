@@ -31,7 +31,7 @@ jobs:
     runs-on: windows-2025
     timeout-minutes: 30
     permissions:
-      # 只有检查通过后才使用内置令牌创建标签及 Release，无需个人访问令牌。
+      # 内置令牌管理 Release；受 main 环境限制的专用部署密钥负责创建标签。
       contents: write
     defaults:
       run:
@@ -87,6 +87,23 @@ jobs:
           compression-level: 0
           retention-days: 30
 
+      - name: Configure main-only release tag credentials
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          # 保留刚生成的安装包；凭据由官方 checkout 在作业结束时清理。
+          clean: false
+          ssh-key: ${{ secrets.RELEASE_TAG_SSH_KEY }}
+          persist-credentials: true
+
+      - name: Verify release key without creating a tag
+        if: ${{ !inputs.publish }}
+        run: |
+          $probeRef = "refs/tags/release-access-check-$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
+          git push --dry-run origin "$($env:GITHUB_SHA):$probeRef"
+          if ($LASTEXITCODE -ne 0) { throw 'Release tag credentials could not be verified.' }
+
       - name: Publish Release from verified main commit
         if: ${{ inputs.publish }}
         env:
@@ -98,6 +115,8 @@ jobs:
           # 打包期间 main 可能前进；再次确认该提交仍属于 main，且不覆盖已有版本。
           & ./tools/Test-ReleaseSource.ps1 -ReleaseTag $env:RELEASE_TAG -RequireNewTag | Out-Null
           $packagePath = "artifacts/msix/Asgard.Hermod_$($env:PACKAGE_VERSION)_x64.msix"
+          git push origin "$($env:GITHUB_SHA):refs/tags/$($env:RELEASE_TAG)"
+          if ($LASTEXITCODE -ne 0) { throw 'Release tag creation failed.' }
           gh release create $env:RELEASE_TAG $packagePath `
-            --target $env:GITHUB_SHA --title $env:RELEASE_TAG --generate-notes
+            --verify-tag --target $env:GITHUB_SHA --title $env:RELEASE_TAG --generate-notes
           if ($LASTEXITCODE -ne 0) { throw 'Release publication failed.' }
