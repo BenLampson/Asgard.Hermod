@@ -54,6 +54,11 @@ public sealed class ServerCompositionTests
             using var scope = app.Services.CreateScope();
             Assert.NotNull(scope.ServiceProvider.GetRequiredService<CurrentHermodUser>());
             Assert.NotNull(scope.ServiceProvider.GetRequiredService<WorkspaceSyncApplicationService>());
+            Assert.IsType<Asgard.Hermod.Server.Services.HeimdallAccountRegistrationService>(scope.ServiceProvider.GetRequiredService<IAccountRegistrationService>());
+            var registration = app.Services.GetRequiredService<IOptionsMonitor<Asgard.Heimdall.Client.HeimdallClientOptions>>().Get("hermod-registration");
+            Assert.Equal("heimdall.users.create", registration.Scope); Assert.Equal("heimdall-users-api", registration.Audience);
+            var credentials = await app.Services.GetRequiredService<Asgard.Heimdall.Client.IHeimdallCredentialProvider>().GetAsync("hermod-registration", TestContext.Current.CancellationToken);
+            Assert.Equal("server", credentials.ClientId);
             using var client = app.Services.GetRequiredService<Asgard.Heimdall.Client.HeimdallClientFactory>().Create("hermod-directory");
             Assert.True(File.Exists(databasePath));
             var jwt = app.Services.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(JwtBearerDefaults.AuthenticationScheme);

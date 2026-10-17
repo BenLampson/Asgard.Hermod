@@ -4984,4 +4984,58 @@ SQL：
   <data name="AgentThinkingCollapse" xml:space="preserve"><value>收起思考内容</value></data>
   <data name="ChatSuggestionExpand" xml:space="preserve"><value>展开</value></data>
   <data name="ChatSuggestionCollapse" xml:space="preserve"><value>收起</value></data>
+  <data xml:space="preserve" name="RegistrationTitle">
+    <value>注册账号</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationExplanation">
+    <value>注册 Hermod 账号后即可同步配置。注册完成后，请通过浏览器登录。</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationUsername">
+    <value>用户名</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationEmail">
+    <value>邮箱</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationPassword">
+    <value>账号密码</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationConfirmPassword">
+    <value>确认密码</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationPasswordHelp">
+    <value>请输入 12–128 个字符。这是账号登录密码；配置同步使用独立密码。</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationInProgress">
+    <value>正在创建账号……</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationSucceeded">
+    <value>账号已创建，现在可以通过浏览器登录。</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationInvalidUsername">
+    <value>请输入不超过 255 个字符且不含控制字符的用户名。</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationInvalidEmail">
+    <value>请输入有效邮箱地址，长度不能超过 255 个字符。</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationInvalidPassword">
+    <value>请输入 12–128 个字符的账号密码。</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationPasswordMismatch">
+    <value>两次输入的密码不一致，请重新输入。</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationInvalidRequest">
+    <value>注册资料无效，请检查后重试。</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationConflict">
+    <value>该用户名或邮箱已注册，请登录或使用其他资料。</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationRateLimited">
+    <value>注册请求过于频繁，请等待一分钟后重试。</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationUnavailable">
+    <value>账号注册暂不可用，请稍后重试。</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationOutcomeUnknown">
+    <value>暂时无法确认账号是否已创建。请先尝试登录，再决定是否重新注册。</value>
+  </data>
 </root>

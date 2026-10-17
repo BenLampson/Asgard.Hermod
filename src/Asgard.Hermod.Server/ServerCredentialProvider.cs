@@ -7,7 +7,7 @@ public sealed class ServerCredentialProvider(IOptionsMonitor<HermodServerOptions
     public ValueTask<HeimdallClientCredentials> GetAsync(string name, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        if (name != "hermod-directory") throw new ArgumentOutOfRangeException(nameof(name));
+        if (name is not ("hermod-directory" or "hermod-registration")) throw new ArgumentOutOfRangeException(nameof(name));
         var value = options.CurrentValue;
         return ValueTask.FromResult(new HeimdallClientCredentials(value.ServiceClientId, value.ServiceClientSecret, value.ServiceCredentialVersion));
     }

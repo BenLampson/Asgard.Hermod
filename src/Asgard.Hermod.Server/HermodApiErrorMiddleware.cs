@@ -14,9 +14,12 @@ public sealed class HermodApiErrorMiddleware(RequestDelegate next)
         catch (Exception error) when (!context.Response.HasStarted)
         {
             int status = error is HermodApiException business ? business.StatusCode
+                : error is BadHttpRequestException requestError ? requestError.StatusCode
                 : error is HeimdallClientException or HttpRequestException ? 503
                 : error.Data["Hermod.ResourceKey"] is not null ? 400 : 500;
-            string message = error is HermodApiException known ? Text.Get(known.ResourceKey) : Text.Error(error, "SyncRequestFailed");
+            string message = error is HermodApiException known ? Text.Get(known.ResourceKey)
+                : error is BadHttpRequestException ? Text.Get(context.Request.Path == "/api/account/register" ? "RegistrationInvalidRequest" : "SyncSnapshotInvalid")
+                : Text.Error(error, "SyncRequestFailed");
             context.Response.Clear(); context.Response.StatusCode = status;
             context.Response.Headers["Cache-Control"] = "no-store";
             await context.Response.WriteAsJsonAsync(Response.Fail<object>(status, message), context.RequestAborted);

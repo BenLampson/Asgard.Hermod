@@ -1,3 +1,5 @@
+using Asgard.Hermod.Abstractions.Services;
+using Asgard.Hermod.Server.Services;
 using Asgard.PluginSdk;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
@@ -18,8 +20,10 @@ public sealed class HermodServerPlugin : PluginBase
     {
         var services = context.Services;
         services.AddHttpContextAccessor();
-        services.Configure<ApiBehaviorOptions>(options => options.InvalidModelStateResponseFactory = _ =>
-            new BadRequestObjectResult(Response.Fail<object>(400, Text.Get("SyncSnapshotInvalid"))));
+        services.Configure<ApiBehaviorOptions>(options => options.InvalidModelStateResponseFactory = action =>
+            new BadRequestObjectResult(Response.Fail<object>(400, Text.Get(action.HttpContext.Request.Path == "/api/account/register"
+                ? "RegistrationInvalidRequest" : "SyncSnapshotInvalid"))));
+        services.AddAccountRegistrationRateLimiting();
         services.AddOptions<HermodServerOptions>().BindConfiguration("hermodServer")
             .Validate(options => options.IsValid(), "Hermod server configuration is invalid.").ValidateOnStart();
         services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
@@ -46,7 +50,16 @@ public sealed class HermodServerPlugin : PluginBase
             options.Authority = server.Authority; options.ApiBaseUrl = server.IdentityApiBaseUrl;
             options.TenantId = server.TenantId; options.ApplicationId = server.ApplicationId;
         });
+        services.AddHeimdallClient("hermod-registration", _ => { });
+        services.AddOptions<HeimdallClientOptions>("hermod-registration").Configure<IConfiguration>((options, configuration) =>
+        {
+            var server = configuration.GetSection("hermodServer").Get<HermodServerOptions>()!;
+            options.Authority = server.Authority; options.ApiBaseUrl = server.IdentityApiBaseUrl;
+            options.TenantId = server.TenantId; options.ApplicationId = server.ApplicationId;
+            options.Scope = "heimdall.users.create"; options.Audience = "heimdall-users-api";
+        });
         services.AddSingleton<IHeimdallCredentialProvider, ServerCredentialProvider>();
+        services.AddScoped<IAccountRegistrationService, HeimdallAccountRegistrationService>();
         services.AddSingleton<ICloudWorkspaceRepository, SqliteCloudWorkspaceRepository>();
         services.AddScoped<IUserAccessVerifier, HeimdallUserAccessVerifier>();
         services.AddScoped<CurrentHermodUser>();
@@ -63,6 +76,7 @@ public sealed class HermodServerPlugin : PluginBase
     protected override Task OnConfigureMiddlewareAsync(IPluginMiddlewareConfigurationContext context, CancellationToken cancellationToken)
     {
         context.App.UseMiddleware<HermodApiErrorMiddleware>();
+        context.App.UseRateLimiter();
         return Task.CompletedTask;
     }
 }

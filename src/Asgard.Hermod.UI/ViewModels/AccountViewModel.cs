@@ -9,17 +9,20 @@ public sealed class AccountViewModel : ObservableObject, IAsyncDisposable
     private Task _operation = Task.CompletedTask;
     private string _message = "";
     private bool _isBusy;
+    private readonly bool _registrationAvailable;
 
     /// <summary>注入公共服务，不读取令牌或数据库。</summary>
     public AccountViewModel(IAccountService accounts, IWorkspaceSyncService sync, Func<bool, string?> requestPassword,
         IConfigurationSyncService? automatic = null,
-        Func<IReadOnlyList<ConfigurationConflict>, IReadOnlyDictionary<string, bool>?>? requestMerge = null)
+        Func<IReadOnlyList<ConfigurationConflict>, IReadOnlyDictionary<string, bool>?>? requestMerge = null,
+        Func<Task<bool>>? requestRegistration = null)
     {
         ArgumentNullException.ThrowIfNull(accounts);
         ArgumentNullException.ThrowIfNull(sync);
         ArgumentNullException.ThrowIfNull(requestPassword);
         _accounts = accounts;
         _automatic = automatic;
+        _registrationAvailable = requestRegistration is not null;
         SignInCommand = new AsyncRelayCommand(_ => RunAsync(async () =>
         {
             await accounts.SignInAsync(_lifetime.Token);
@@ -29,6 +32,10 @@ public sealed class AccountViewModel : ObservableObject, IAsyncDisposable
             else await automatic.SynchronizeAsync(_lifetime.Token);
         }, "LoginSucceeded"), _ => !IsBusy && !_lifetime.IsCancellationRequested);
         SignOutCommand = new AsyncRelayCommand(_ => RunAsync(() => accounts.SignOutAsync(_lifetime.Token), "SignedOut"), _ => !IsBusy && IsSignedIn && !_lifetime.IsCancellationRequested);
+        RegisterCommand = new AsyncRelayCommand(async _ =>
+        {
+            if (await requestRegistration!()) await SignInCommand.ExecuteAsync();
+        }, _ => HasRegistration && !IsBusy && !_lifetime.IsCancellationRequested);
         UploadCommand = new AsyncRelayCommand(_ => RunAsync(() => SynchronizeAsync(false), "SyncUploadSucceeded"), _ => CanSync);
         DownloadCommand = new AsyncRelayCommand(_ => RunAsync(() => SynchronizeAsync(true), "SyncDownloadSucceeded"), _ => CanSync);
         CancelCommand = new RelayCommand(_ => _lifetime.Cancel(), _ => IsBusy);
@@ -78,6 +85,10 @@ public sealed class AccountViewModel : ObservableObject, IAsyncDisposable
     public string Username => _accounts.Account?.Username ?? Text.Get("NotSignedIn");
     /// <summary>当前登录状态。</summary>
     public bool IsSignedIn => _accounts.Account is not null;
+    /// <summary>未登录时展示普通账号注册入口。</summary>
+    public bool HasRegistration => _registrationAvailable && !IsSignedIn;
+    /// <summary>打开注册表单，不自动提交登录。</summary>
+    public AsyncRelayCommand RegisterCommand { get; }
     /// <summary>登录后明确提供切换账号，避免继续显示登录按钮造成状态歧义。</summary>
     public string SignInButtonText => Text.Get(IsSignedIn ? "SwitchAccount" : "SignInToYourAccount");
     /// <summary>账号窗口同时显示用户名与认证状态。</summary>
@@ -136,12 +147,14 @@ public sealed class AccountViewModel : ObservableObject, IAsyncDisposable
     {
         OnPropertyChanged(nameof(Username)); OnPropertyChanged(nameof(IsSignedIn));
         OnPropertyChanged(nameof(SignInButtonText)); OnPropertyChanged(nameof(AccountStatus));
+        OnPropertyChanged(nameof(HasRegistration));
         RefreshCommands();
     }
     /// <summary>互斥状态统一更新所有按钮。</summary>
     private void RefreshCommands()
     {
         SignInCommand.NotifyCanExecuteChanged(); SignOutCommand.NotifyCanExecuteChanged();
+        RegisterCommand.NotifyCanExecuteChanged();
         UploadCommand.NotifyCanExecuteChanged(); DownloadCommand.NotifyCanExecuteChanged(); CancelCommand.NotifyCanExecuteChanged();
         EnableSyncCommand.NotifyCanExecuteChanged(); SyncNowCommand.NotifyCanExecuteChanged();
         ForgetSyncPasswordCommand.NotifyCanExecuteChanged(); MergeCommand.NotifyCanExecuteChanged();

@@ -1,7 +1,7 @@
 # Heimdall identity and workspace synchronization
 
 Hermod signs in through the system browser using the official
-`Asgard.Heimdall.Client` 5.5.3 SDK, Authorization Code and S256 PKCE. The desktop
+`Asgard.Heimdall.Client` 5.6.0 SDK, Authorization Code and S256 PKCE. The desktop
 is a public native client and has no client secret. Passwords, MFA and account
 selection remain on Heimdall's hosted pages.
 
@@ -129,7 +129,44 @@ secret were generated cryptographically; the local provisioning copy is protecte
 with current-user DPAPI at
 `%LOCALAPPDATA%\Asgard\Hermod\provisioning-secrets.dpapi`, outside the repository.
 Use Heimdall's authorized account management to provision additional users or
-reset the initial account's password. Hermod does not implement account creation.
+reset the initial account's password. Hermod's account window also offers **Create
+account** for ordinary users, using the separate server-side provisioning flow below.
+
+## Account registration
+
+Signed-out users can choose **Create account** in **Account and synchronization**.
+The form collects a username, email and 12–128 character account password, with a
+local password confirmation. This account password is separate from the configuration
+synchronization password. Neither registration password field is persisted locally;
+both are cleared after each submission and when the dialog is disposed. Registration
+does not sign in or replace a session. The user explicitly chooses **Sign in to your
+account** to continue through the existing browser OIDC flow.
+
+The desktop sends a single HTTPS `POST /api/account/register` to Hermod. The public
+API accepts only `username`, `email` and `password`, rejects unknown fields and limits
+requests to 8 KiB and twenty registration attempts per minute across the instance.
+Successful responses contain only the normalized username. Validation, duplicate
+accounts, rate limits and unavailable provisioning are rendered with shared English
+and Chinese resources; raw Heimdall responses and exceptions never reach the UI.
+Uncertain network results disable resubmission and advise trying sign-in first.
+Neither the desktop HTTP pipeline nor the official SDK automatically retries creation.
+
+The API uses `HeimdallClientFactory.CreateUserProvisioning("hermod-registration")`
+from the official server SDK. This named client requests only `heimdall.users.create`
+with audience `heimdall-users-api`. The existing `hermod-directory` client continues
+to request only `heimdall.directory.read` with its own audience and Token cache. Both
+read the existing server credential through `IHeimdallCredentialProvider`; no service
+secret is shipped to the desktop or included in the image or publish payload.
+
+Before enabling the flow in production, explicitly grant the registered server Client
+the provisioning scope, configure a Tenant role with `isUserDefault=true` and
+`isDefault=false` in the current application Manifest, and synchronize the tenant
+application. For Hermod, the ordinary role is `hermod.user` with only `hermod.sync`.
+Heimdall determines ownership and roles from its verified service Token and current
+application RBAC; the registration request cannot supply those fields. A missing or
+disabled role, scope or binding fails closed. There is no separate Hermod registration
+switch or registration credential: deploying the API exposes this constrained public
+entry point, and the existing private `.env` supplies its service credential.
 
 The executable loads desktop settings from `identity` in `app.yaml`, with
 `HERMOD_` environment and command-line overrides. `identity.apiServerAddress` is
@@ -140,7 +177,7 @@ the issuer address.
 
 ## Resource API
 
-All endpoints require a verified user Bearer token from the registered desktop
+Current-account and synchronization endpoints require a verified user Bearer token from the registered desktop
 client and the exact configured tenant/application. The server rejects service
 tokens and performs a fresh, authenticated Heimdall directory permission check
 using its separate server client. Disabled users, missing permission and directory
@@ -148,6 +185,7 @@ failures fail closed. No caller-provided tenant or user identity determines stor
 
 | Method | Route | Result |
 | --- | --- | --- |
+| POST | `/api/account/register` | Public, rate-limited ordinary account creation; normalized username, without credentials or user Token |
 | GET | `/api/me` | Current stable identity and JWT username |
 | GET | `/api/sync/configuration` | Collection revision, individually versioned instances/tags, encrypted password verification envelope, UTC update time; legacy ciphertext when awaiting migration |
 | PUT | `/api/sync/configuration` | Atomically commit the complete merged collection when collection and entry versions match |
@@ -216,6 +254,11 @@ Asgard host settings and do not decrypt user workspace snapshots. Persist `/data
 and give its host directory to UID 1654. The service joins the existing
 `CoreServer` network with alias `hermod`; port 5086 is not published to the host.
 Nginx terminates TLS through [the domain configuration](../Docker/server/hermod.mudou.tech.conf).
+
+The server secret is injected at container runtime through that private `.env`, never
+through a Docker build argument, image layer, source file or desktop setting. Keep
+`HERMODSERVER__SERVICECREDENTIALVERSION` synchronized with deliberate secret rotations;
+the named SDK clients then stop reusing the previous version's cached Tokens.
 
 The production directory is `/root/deploy/hermod` on MD-Core (`47.109.145.141`).
 Its container is `asgard-hermod-starter`, with persistent data in `data/hermod-sync.db`.

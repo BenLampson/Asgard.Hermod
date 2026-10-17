@@ -28,6 +28,7 @@ public static class HermodIdentityServiceCollectionExtensions
             timeProvider: provider.GetRequiredService<HeimdallServerClock>()));
         services.AddSingleton<ILoginBrowser, LoopbackLoginBrowser>();
         services.AddSingleton<IAccountService, HeimdallAccountService>();
+        services.AddSingleton<IAccountRegistrationService, AccountRegistrationService>();
         services.AddHttpClient("hermod.sync", client =>
         {
             client.BaseAddress = new Uri(options.ApiBaseUrl.TrimEnd('/') + "/");

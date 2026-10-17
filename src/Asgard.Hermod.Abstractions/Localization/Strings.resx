@@ -4984,4 +4984,58 @@ Address: {2}</value></data>
   <data name="AgentThinkingCollapse" xml:space="preserve"><value>Collapse thinking</value></data>
   <data name="ChatSuggestionExpand" xml:space="preserve"><value>Expand</value></data>
   <data name="ChatSuggestionCollapse" xml:space="preserve"><value>Collapse</value></data>
+  <data xml:space="preserve" name="RegistrationTitle">
+    <value>Create account</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationExplanation">
+    <value>Create a Hermod account to synchronize your configurations. After registration, sign in through your browser.</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationUsername">
+    <value>Username</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationEmail">
+    <value>Email</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationPassword">
+    <value>Account password</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationConfirmPassword">
+    <value>Confirm password</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationPasswordHelp">
+    <value>Use 12–128 characters. This is your account password; configuration synchronization uses a separate password.</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationInProgress">
+    <value>Creating your account…</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationSucceeded">
+    <value>Your account has been created. You can now sign in through your browser.</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationInvalidUsername">
+    <value>Enter a username of up to 255 characters without control characters.</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationInvalidEmail">
+    <value>Enter a valid email address of up to 255 characters.</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationInvalidPassword">
+    <value>Enter an account password of 12–128 characters.</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationPasswordMismatch">
+    <value>The passwords do not match. Enter them again.</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationInvalidRequest">
+    <value>Check the registration details and try again.</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationConflict">
+    <value>This username or email is already registered. Sign in or use different details.</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationRateLimited">
+    <value>Too many registration requests. Wait a minute and try again.</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationUnavailable">
+    <value>Account registration is temporarily unavailable. Try again later.</value>
+  </data>
+  <data xml:space="preserve" name="RegistrationOutcomeUnknown">
+    <value>We could not confirm whether your account was created. Try signing in before submitting another registration.</value>
+  </data>
 </root>

@@ -47,7 +47,8 @@ hermodServer:
   applicationId: "083f96e2-a9d7-4300-9386-f7ef470d2378"
   desktopClientId: "8d793a47-0790-4a1d-a535-4382e32bc1c7"
   serviceClientId: "34c7b580-1f77-4753-b7f5-654b856170fb"
-  # 必须通过 HERMODSERVER__SERVICECLIENTSECRET 提供；桌面配置不得包含此密钥。
+  # 目录读取与普通用户注册共用此服务凭据，仅在容器运行时通过私有环境配置注入。
+  # Client 需显式授予 heimdall.directory.read 和 heimdall.users.create；不写入镜像或桌面。
   serviceClientSecret: ""
   serviceCredentialVersion: "1"
   databasePath: "hermod-sync.db"

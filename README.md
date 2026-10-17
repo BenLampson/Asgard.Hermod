@@ -25,6 +25,8 @@ Home shows the instance overview, workspace introduction and quick actions, then
 six recently opened instances. Settings → About shows the application version,
 author, open-source license and project repository without a collapsed section.
 
+Ordinary accounts can be created from the account window through the Hermod server;
+service credentials remain exclusively in the server's private deployment configuration.
 Heimdall browser sign-in enables automatic configuration synchronization after
 one-time password setup. Configuration details are stored individually; credentials
 remain encrypted. Independent changes merge automatically and conflicts can be

@@ -33,6 +33,8 @@ internal sealed class ApiTestHost : IAsyncDisposable
     };
     /// <summary>在线目录测试边界。</summary>
     public TestUserAccessVerifier Verifier { get; } = new();
+    /// <summary>注册 API 的隔离上游服务。</summary>
+    public TestAccountRegistrationService Registration { get; } = new();
     /// <summary>实际 HTTP 客户端。</summary>
     public HttpClient Client { get; private set; } = null!;
     /// <summary>同步客户端工厂取得独立可释放 HTTP 客户端。</summary>
@@ -45,9 +47,14 @@ internal sealed class ApiTestHost : IAsyncDisposable
         builder.Services.AddSingleton(Microsoft.Extensions.Options.Options.Create(Options));
         builder.Services.AddSingleton<ICloudWorkspaceRepository, SqliteCloudWorkspaceRepository>();
         builder.Services.AddSingleton<IUserAccessVerifier>(Verifier);
+        builder.Services.AddSingleton<IAccountRegistrationService>(Registration);
+        builder.Services.AddAccountRegistrationRateLimiting();
         builder.Services.AddScoped<CurrentHermodUser>(); builder.Services.AddScoped<WorkspaceSyncApplicationService>();
         builder.Services.AddHttpContextAccessor(); builder.Services.AddAsgardAspNetCore(); builder.Services.AddAsgardContext();
-        builder.Services.AddControllers().AddApplicationPart(typeof(AccountController).Assembly);
+        builder.Services.AddControllers().AddApplicationPart(typeof(AccountController).Assembly)
+            .ConfigureApiBehaviorOptions(options => options.InvalidModelStateResponseFactory = _ =>
+                new Microsoft.AspNetCore.Mvc.BadRequestObjectResult(Asgard.Abstractions.AspNetCore.Model.Response.Fail<object>(400,
+                    Asgard.Hermod.Abstractions.Localization.Text.Get("RegistrationInvalidRequest"))));
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
         {
             options.MapInboundClaims = false;
@@ -65,7 +72,7 @@ internal sealed class ApiTestHost : IAsyncDisposable
             };
         });
         _app = builder.Build(); _app.UseAuthentication(); _app.UseAsgardTenant();
-        _app.UseMiddleware<HermodApiErrorMiddleware>(); _app.UseAuthorization(); _app.MapControllers();
+        _app.UseMiddleware<HermodApiErrorMiddleware>(); _app.UseRateLimiter(); _app.UseAuthorization(); _app.MapControllers();
         _app.Services.GetRequiredService<ICloudWorkspaceRepository>().Initialize();
         await _app.StartAsync(); Client = _app.GetTestClient();
     }

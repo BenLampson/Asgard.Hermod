@@ -4,7 +4,7 @@ namespace Asgard.Hermod.UI.Services;
 
 /// <summary>模态账号窗口关闭后等待取消完成，不能遗留回环监听。</summary>
 public sealed class AccountEditorService(Func<Window?> owner, IAccountService accounts, IWorkspaceSyncService sync,
-    IConfigurationSyncService? automatic = null) : IAccountEditor
+    IConfigurationSyncService? automatic = null, IAccountRegistrationService? registration = null) : IAccountEditor
 {
     /// <inheritdoc />
     public Task OpenAsync() => ShowAsync(false, owner());
@@ -18,10 +18,18 @@ public sealed class AccountEditorService(Func<Window?> owner, IAccountService ac
     {
         AccountWindow? window = null;
         await using var model = new AccountViewModel(accounts, sync, download => RequestPassword(window!, download, automatic is not null), automatic,
-            conflicts => RequestMerge(window!, conflicts));
+            conflicts => RequestMerge(window!, conflicts), registration is null ? null : () => RequestRegistrationAsync(window!));
         window = new AccountWindow(model) { Owner = ownerWindow };
         if (signIn) window.Loaded += (_, _) => model.SignInCommand.Execute(null);
         window.ShowDialog();
+    }
+
+    /// <summary>等待注册窗口请求取消完成；返回值只表示用户是否明确选择登录。</summary>
+    private async Task<bool> RequestRegistrationAsync(Window ownerWindow)
+    {
+        await using var model = new AccountRegistrationViewModel(registration!);
+        var dialog = new AccountRegistrationWindow(model) { Owner = ownerWindow };
+        return dialog.ShowDialog() == true;
     }
 
     /// <summary>只在用户点击同步后索取密码；返回后立即清除弹窗状态，不在账号页保留秘密。</summary>

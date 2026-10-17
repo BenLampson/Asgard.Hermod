@@ -31,7 +31,8 @@ public static class HermodUiServiceCollectionExtensions
         services.TryAddSingleton<IInstanceWorkspaceFactory, InstanceWorkspaceFactory>();
         if (services.Any(service => service.ServiceType == typeof(IAccountService)))
             services.TryAddSingleton<IAccountEditor>(provider => new AccountEditorService(owner,
-                provider.GetRequiredService<IAccountService>(), provider.GetRequiredService<IWorkspaceSyncService>(), provider.GetService<IConfigurationSyncService>()));
+                provider.GetRequiredService<IAccountService>(), provider.GetRequiredService<IWorkspaceSyncService>(), provider.GetService<IConfigurationSyncService>(),
+                provider.GetService<IAccountRegistrationService>()));
         services.TryAddSingleton<IThemeService>(provider => new ThemeService(resources,
             provider.GetService<IThemePreferenceStore>()));
         return services;

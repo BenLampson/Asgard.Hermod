@@ -19,7 +19,9 @@
                 <TextBlock Text="{Binding AccountStatus}" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,12" />
                 <WrapPanel Margin="0,0,0,22">
                     <Button x:Name="SignInButton" Content="{Binding SignInButtonText}" Command="{Binding SignInCommand}" MinWidth="140" Margin="0,0,12,0" />
-                    <Button Content="{loc:Loc SignOut}" Command="{Binding SignOutCommand}" MinWidth="100" />
+                    <Button Content="{loc:Loc SignOut}" Command="{Binding SignOutCommand}" MinWidth="100" Margin="0,0,12,0" />
+                    <Button x:Name="RegisterButton" Content="{loc:Loc RegistrationTitle}" Command="{Binding RegisterCommand}" MinWidth="100"
+                        Visibility="{Binding HasRegistration, Converter={StaticResource AccountBooleanVisibility}}" />
                 </WrapPanel>
                 <StackPanel Visibility="{Binding HasAutomaticSync, Converter={StaticResource AccountBooleanVisibility}}">
                     <TextBlock Text="{loc:Loc SyncAutomaticExplanation}" TextWrapping="Wrap" Margin="0,0,0,16" />
