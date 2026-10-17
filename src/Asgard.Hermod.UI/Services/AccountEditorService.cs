@@ -7,20 +7,19 @@ public sealed class AccountEditorService(Func<Window?> owner, IAccountService ac
     IConfigurationSyncService? automatic = null, IAccountRegistrationService? registration = null) : IAccountEditor
 {
     /// <inheritdoc />
-    public Task OpenAsync() => ShowAsync(false, owner());
+    public Task OpenAsync() => ShowAsync(owner());
     /// <inheritdoc />
-    public Task OpenAsync(Window? ownerWindow) => ShowAsync(false, ownerWindow);
+    public Task OpenAsync(Window? ownerWindow) => ShowAsync(ownerWindow);
     /// <inheritdoc />
-    public Task OpenForSignInAsync() => ShowAsync(true, owner());
+    public Task OpenForSignInAsync() => ShowAsync(owner());
 
-    /// <summary>本地模式入口在窗口可取消之后启动浏览器，已登录入口只展示账号与同步。</summary>
-    private async Task ShowAsync(bool signIn, Window? ownerWindow)
+    /// <summary>先让用户选择登录或注册，只有明确点击登录才启动浏览器。</summary>
+    private async Task ShowAsync(Window? ownerWindow)
     {
         AccountWindow? window = null;
         await using var model = new AccountViewModel(accounts, sync, download => RequestPassword(window!, download, automatic is not null), automatic,
             conflicts => RequestMerge(window!, conflicts), registration is null ? null : () => RequestRegistrationAsync(window!));
         window = new AccountWindow(model) { Owner = ownerWindow };
-        if (signIn) window.Loaded += (_, _) => model.SignInCommand.Execute(null);
         window.ShowDialog();
     }
 

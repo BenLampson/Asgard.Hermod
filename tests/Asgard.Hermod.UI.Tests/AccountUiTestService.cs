@@ -13,6 +13,8 @@ internal sealed class AccountUiTestService : IAccountService, IWorkspaceSyncServ
     public int Uploads { get; private set; }
     /// <summary>记录实际恢复次数。</summary>
     public int Downloads { get; private set; }
+    /// <summary>记录用户明确发起的登录次数。</summary>
+    public int SignIns { get; private set; }
     /// <summary>模拟异步同步边界的失败、取消和重试，不访问真实云端。</summary>
     public Func<string, CancellationToken, Task>? SyncAction { get; set; }
     /// <inheritdoc />
@@ -20,6 +22,7 @@ internal sealed class AccountUiTestService : IAccountService, IWorkspaceSyncServ
     /// <inheritdoc />
     public Task SignInAsync(CancellationToken cancellationToken = default)
     {
+        SignIns++;
         Account = new("sub", "tenant", "app", Username); AccountChanged?.Invoke(this, EventArgs.Empty); return Task.CompletedTask;
     }
     /// <inheritdoc />

@@ -13,7 +13,10 @@ workspace ownership use stable identifiers, independently of the displayed name.
 ## Desktop behavior
 
 Open **Account and synchronization** from the title bar account menu. The same management window
-is available from **Settings → Account**. Settings show the current verified
+is available from **Settings → Account**. Opening the window does not start browser
+authentication. Signed-out users can choose **Sign in to your account** or
+**Register account**; only an explicit sign-in action opens the browser.
+Settings show the current verified
 username, sign-in status and workspace ownership, updating when the account
 changes. Signed-in accounts show **Cloud workspace** even when synchronization
 still needs a password or is offline; this label does not report sync success.
