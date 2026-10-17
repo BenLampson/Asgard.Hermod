@@ -44,6 +44,23 @@ public sealed class TerminalSessionTests
         Assert.InRange(session.Decoder.State.CursorY, 0, 11);
     }
 
+    /// <summary>远端终端缩小时，移出当前屏幕的输出仍可从历史中完整读取。</summary>
+    [Fact]
+    public void Resize_RemoteOutputRemainsInHistoryWhenViewportBecomesEmpty()
+    {
+        using var session = new TerminalSession(80, 24);
+        session.FeedOutput("Connected\r\n你好 Hermod\r\n$ "u8);
+        Assert.Contains("你好 Hermod", session.GetVisibleText());
+
+        session.Resize(80, 12, pushScrollback: true);
+
+        Assert.Empty(session.GetVisibleText());
+        Assert.Contains("Connected", session.GetAllText());
+        Assert.Contains("你好 Hermod", session.GetAllText());
+        session.Resize(80, 24, pushScrollback: true);
+        Assert.Contains("你好 Hermod", session.GetAllText());
+    }
+
     /// <summary>释放可重复执行，释放后的读写和调整尺寸都明确失败。</summary>
     [Fact]
     public void DisposedSession_RejectsFurtherOperations()
