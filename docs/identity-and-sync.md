@@ -117,9 +117,9 @@ system time are not changed.
 | Desktop scopes | `openid profile offline_access hermod.sync` |
 | API audience | `hermod-api` |
 | Server client | `34c7b580-1f77-4753-b7f5-654b856170fb`, confidential |
-| Server grant / scope | `client_credentials` / `heimdall.directory.read` |
-| Server audience | `heimdall-directory-api` |
-| Application permission / default role | `hermod.sync` / `hermod.user` |
+| Server grant / scopes | `client_credentials` / `heimdall.directory.read`, `heimdall.users.create` |
+| Separate server audiences | `heimdall-directory-api`, `heimdall-users-api` |
+| Application permission / ordinary default role | `hermod.sync` / `hermod.user` |
 | Resource API | `https://hermod.mudou.tech` |
 
 The tenant, active RSA signing key, application manifest version 1 and both
@@ -388,13 +388,21 @@ C# SDK service-token validation, failure classification, no POST retries and rea
 English/Chinese window layouts. A separate actual Yggdrasil/Kestrel process confirmed
 the same HTTP input and authentication boundaries before deployment.
 
-Account creation is **not yet declared activated**: production approval of the
-Heimdall Client scope and ordinary-default role remains pending in the coordinated
-Heimdall task. No production registration account was created. A separate official
-SDK probe is staged to validate a genuine provisioning Token and an invalid-email
-request returning 400 after that configuration is approved; it does not create a user.
-Until then service authorization failures return safe 503 responses. Deployment and
-verification metadata are recorded in `/root/deploy/hermod/release.json`.
+Production identity configuration was approved and applied at 12:53. Manifest v2
+marks `hermod.user` as `isDefault=false`, `isUserDefault=true`, retaining only
+`hermod.sync`. The tenant application is Enabled and synchronized to v2 with
+authorization version 1. The existing confidential server Client explicitly has both
+directory-read and user-create scopes; its default scope remains directory-read,
+and its secret and desktop OIDC registration were not changed.
+
+At 12:53:49, a separate official C# SDK 5.6.0 probe validated a genuine provisioning
+Token, including signature, issuer, audience, service type, scope and tenant/application
+binding. An invalid-email create request then returned HTTP 400. No production user
+was created. The public API checks, zero restarts and unchanged business-table hashes
+were reconfirmed. Successful creation is covered by Hermod's local signed-protocol
+tests and Heimdall 5.6.0's isolated real-image acceptance, rather than a production
+test account. Deployment and verification metadata are recorded in
+`/root/deploy/hermod/release.json`.
 
 ## Verification
 

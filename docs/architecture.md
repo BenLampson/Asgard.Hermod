@@ -23,8 +23,8 @@ storage and owns application startup and shutdown.
 | `Asgard.Hermod.UI` | WPF shell, shared controls, configuration and tag dialogs, workspace factory | Shared contracts, terminal, DI abstractions |
 | `Asgard.Hermod.Persistence.Sqlite` | SQLite configuration, migrations, repository, local instance and tag services | Shared contracts, Asgard.Core, FreeSql SQLite |
 | `Asgard.Hermod.Security.Windows` | Windows current-user DPAPI protection | Shared contracts, ProtectedData, DI abstractions |
-| `Asgard.Hermod.Identity` | Heimdall desktop login, protected sessions, automatic configuration synchronization and conflict merging | Shared contracts, official Heimdall SDK |
-| `Asgard.Hermod.Server` | Independent sync API plugin, online identity checks and encrypted server persistence | Shared contracts, identity module, Asgard PluginSdk, Microsoft.Data.Sqlite |
+| `Asgard.Hermod.Identity` | Heimdall desktop login, account registration transport, protected sessions, automatic configuration synchronization and conflict merging | Shared contracts, official Heimdall SDK |
+| `Asgard.Hermod.Server` | Independent sync and ordinary-account registration API plugin, online identity checks and encrypted server persistence | Shared contracts, identity module, Asgard PluginSdk, Microsoft.Data.Sqlite |
 | `Asgard.Hermod.Server.Starter` | Yggdrasil API composition and process lifetime | Sync API plugin |
 | `Asgard.Hermod.WinTerminal` | VT engine, rendering, WPF terminal control, ConPTY connections and local session adapter | Windows desktop framework |
 | `Asgard.Hermod.Ssh` | Verified SSH transport, PTY, SFTP, bounded exec, Linux monitoring and loopback forwarding | Shared contracts, Tmds.Ssh, DI abstractions |
