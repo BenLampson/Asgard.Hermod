@@ -44,7 +44,7 @@ jobs:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
           if ($env:RELEASE_TAG -notmatch '^v(\d+)\.(\d+)\.(\d+)$') {
-            throw 'Release tags must use vMajor.Minor.Patch, for example v0.1.1.'
+            throw 'Release tags must use vMajor.Minor.Patch, for example v1.0.1.'
           }
           $packageVersion = $env:RELEASE_TAG.Substring(1) + '.0'
           "package_version=$packageVersion" >> $env:GITHUB_OUTPUT
@@ -56,7 +56,7 @@ jobs:
         run: dotnet format Asgard.Hermod.slnx --verify-no-changes --no-restore
 
       - name: Run tests
-        run: dotnet test --solution Asgard.Hermod.slnx --configuration Release --no-build
+        run: dotnet test --solution Asgard.Hermod.slnx --configuration Release --no-build --max-parallel-test-modules 1
 
       - name: Build x64 MSIX
         env:

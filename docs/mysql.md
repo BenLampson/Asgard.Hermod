@@ -197,9 +197,8 @@ Do not point it at a production server.
 WPF tests exercise both languages/themes, resizing, actual inline editing, fixed
 row headers, horizontal scrolling, cached views, field windows, conflicts and
 unknown-outcome recovery. `HERMOD_UI_PREVIEW_DIR` optionally saves PNG previews;
-previews and test certificates are ignored and are not committed. Editable database
-designs live in `design/DBWindow.pen`, treated as binary and accessed through
-Pencil tools without copies in audit or test directories.
+previews and test certificates are ignored and are not committed. Shared database
+resources and WPF behavior tests define the maintained UI.
 
 
 The production Agent keeps its task busy while an approval is pending. Review and

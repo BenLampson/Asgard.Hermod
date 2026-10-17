@@ -17,7 +17,7 @@ These public values were assigned by Partner Center and must match the manifest:
 
 The Store display name is `Asgard Hermod`. The package declares English and
 Simplified Chinese; the application still selects its language through the shared
-localization services. The initial package version is `0.1.0.0`. Increment the
+localization services. The initial public package version is `1.0.0.0`. Increment the
 version for each submission and keep the fourth component at zero, as required
 by the Store. The initial minimum Windows build is `10.0.19045.0`.
 
@@ -50,8 +50,8 @@ credentials.
 
 For repeatable builds, `.github/workflows/release-msix.yml` runs on a Windows
 GitHub-hosted runner only when the repository owner publishes a GitHub Release.
-Create a Release with a tag such as `v0.1.1` and select **Publish release**. The
-workflow checks out that tag, converts it to package version `0.1.1.0`, runs the
+Create a Release with a tag such as `v1.0.1` and select **Publish release**. The
+workflow checks out that tag, converts it to package version `1.0.1.0`, runs the
 build/format/test gates, builds the x64 package, and attaches it to that existing
 Release. Tag pushes, draft Releases, edits and manual dispatch do not trigger
 packaging. Published prereleases do trigger packaging. Only the owner may rerun
@@ -87,13 +87,15 @@ powershell.exe -NoProfile -File packaging/Asgard.Hermod/Build-Msix.ps1
 
 The script publishes a self-contained, untrimmed x64 application, retains the
 Chinese satellite resources, derives package icons from the existing brand PNG,
-and packs the output with manifest validation enabled. No separately installed
+includes the project license, copyright notices, privacy policy and the retained
+upstream terminal license, and packs the output with manifest validation enabled.
+No separately installed
 .NET Desktop Runtime is required on the user's machine.
 
 To select a version or build a separate ARM64 package:
 
 ```powershell
-powershell.exe -NoProfile -File packaging/Asgard.Hermod/Build-Msix.ps1 -PackageVersion 0.1.1.0
+powershell.exe -NoProfile -File packaging/Asgard.Hermod/Build-Msix.ps1 -PackageVersion 1.0.1.0
 powershell.exe -NoProfile -File packaging/Asgard.Hermod/Build-Msix.ps1 -Architecture arm64
 ```
 

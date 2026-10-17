@@ -107,7 +107,7 @@ Run the repository checks from `dev` before submitting code:
 ```powershell
 dotnet build Asgard.Hermod.slnx -c Release
 dotnet format Asgard.Hermod.slnx --verify-no-changes --no-restore
-dotnet test --solution Asgard.Hermod.slnx --configuration Release --no-build
+dotnet test --solution Asgard.Hermod.slnx --configuration Release --no-build --max-parallel-test-modules 1
 ```
 
 ## Support, privacy and security

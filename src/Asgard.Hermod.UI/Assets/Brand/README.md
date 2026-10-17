@@ -1,7 +1,6 @@
 # Hermod application icons
 
-Selected concept: **01 — Winged Helm**, from the main application design, now
-maintained in `design/Hermod-NewVersion.pen`.
+The Winged Helm icon is maintained in the `hermod-logo.svg` vector master.
 Every shipped icon has a transparent background; only the helmet and crest are drawn.
 
 | Asset | Purpose | Primary / accent |
@@ -32,7 +31,7 @@ To regenerate all four raster files from the vector master, run from the reposit
 root on Windows with Python and Pillow installed:
 
 ```powershell
-powershell.exe -NoProfile -STA -Command "& ([scriptblock]::Create((Get-Content -LiteralPath 'design/export-brand-icons.ps1' -Raw -Encoding UTF8)))"
+powershell.exe -NoProfile -STA -File tools/Export-BrandIcons.ps1
 ```
 
 The script renders SVG path geometry with WPF on a transparent canvas, then uses

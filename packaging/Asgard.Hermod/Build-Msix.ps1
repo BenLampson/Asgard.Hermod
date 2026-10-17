@@ -15,7 +15,7 @@ if (-not $PackageVersion) {
     $PackageVersion = $manifest.Package.Identity.Version
 }
 if ($PackageVersion -notmatch '^\d+\.\d+\.\d+\.0$') {
-    throw 'Use a four-part package version with a zero final component, for example 0.1.0.0.'
+    throw 'Use a four-part package version with a zero final component, for example 1.0.0.0.'
 }
 $parsedVersion = [version] $PackageVersion
 if ($parsedVersion.Major -eq 0 -and $parsedVersion.Minor -eq 0 -and $parsedVersion.Build -eq 0) {
@@ -56,6 +56,17 @@ if ($LASTEXITCODE -ne 0) {
 if (-not (Test-Path -LiteralPath (Join-Path $stagingDirectory 'zh-Hans/Asgard.Hermod.Abstractions.resources.dll'))) {
     throw 'The Simplified Chinese satellite resources are missing from the publish output.'
 }
+
+# 安装包保留项目许可、隐私政策和派生终端代码的上游许可，避免仅在源码仓库中提供声明。
+foreach ($document in @('LICENSE', 'NOTICE', 'THIRD-PARTY-NOTICES.md', 'PRIVACY.md')) {
+    Copy-Item -LiteralPath (Join-Path $repositoryRoot $document) -Destination (Join-Path $stagingDirectory $document)
+}
+$terminalNoticeDirectory = Join-Path $stagingDirectory 'Licenses/WinTerminal'
+New-Item -ItemType Directory -Path (Join-Path $terminalNoticeDirectory 'licenses') -Force | Out-Null
+Copy-Item -LiteralPath (Join-Path $repositoryRoot 'src/Asgard.Hermod.WinTerminal/THIRD-PARTY-NOTICES.md') `
+    -Destination (Join-Path $terminalNoticeDirectory 'THIRD-PARTY-NOTICES.md')
+Copy-Item -LiteralPath (Join-Path $repositoryRoot 'src/Asgard.Hermod.WinTerminal/licenses/VirtualTerminal.LICENSE.txt') `
+    -Destination (Join-Path $terminalNoticeDirectory 'licenses/VirtualTerminal.LICENSE.txt')
 
 $manifest.Package.Identity.Version = $PackageVersion
 $manifest.Package.Identity.ProcessorArchitecture = $Architecture

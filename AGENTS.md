@@ -18,7 +18,7 @@
 ## Repository conventions
 
 - Work directly on `dev` unless the user explicitly requests otherwise. Keep only `dev` and `main` as local branches; do not create task branches or worktrees without an explicit request.
-- Keep Pencil sources split by responsibility under `design/`: `Hermod-NewVersion.pen` for the main application, `DBWindow.pen` for database workspaces, and `SSHWindow.pen` for SSH workspaces. Edit the relevant source directly; do not merge them into a single file or create temporary design copies. Treat `.pen` as binary and access its contents only through Pencil tools. Never copy them into temporary build, review or commit-check directories, and never text-diff or text-merge them.
+- Maintain the UI in its XAML, shared resources and behavior tests. Do not add retired design drafts, temporary plans, screenshots or rendered design exports to the repository. Keep shipped icons and other application assets in their owning modules.
 
 - Use .NET 10 / C# 14, UTF-8 and CRLF, following `.editorconfig`. Document public APIs and non-obvious behavior with Chinese comments.
 - Respect the existing module boundaries: shared contracts/resources in Abstractions, WPF presentation in UI modules, persistence in Persistence.Sqlite, provider protocols in provider modules, application composition in the executable.

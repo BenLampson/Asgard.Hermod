@@ -7,7 +7,7 @@
   <!-- 商店分配的公开标识必须保持一致；版本第四段由商店保留，始终为零。 -->
   <Identity Name="32960BenLampson.AsgardHermod"
             Publisher="CN=7BDCFD81-1900-42BB-9976-ED316E4C3A15"
-            Version="0.1.0.0"
+            Version="1.0.0.0"
             ProcessorArchitecture="x64" />
   <Properties>
     <DisplayName>Asgard Hermod</DisplayName>

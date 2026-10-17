@@ -50,18 +50,8 @@ ScaffoldingReadMe.txt
 output/playwright/
 output/ssh-monitor-preview/
 
-# Design screenshots and rendered exports are local review artifacts.
-/design/previews/
-/design/exports/
-/design/**/*.png
-/design/**/*.jpg
-/design/**/*.jpeg
-/design/**/*.webp
-/design/**/*.gif
-/design/**/*.bmp
-/design/**/*.tif
-/design/**/*.tiff
-/design/**/*.avif
+# Retired design drafts and generated previews are not release sources.
+/design/
 
 # Others
 # 本地 SQLite 数据及事务辅助文件

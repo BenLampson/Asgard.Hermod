@@ -109,7 +109,7 @@ requeue and remove modes both create frozen snapshots. Previews contain at most
 do not expose destructive HTTP retrieval or purge. Server role tags govern
 administration, while resource permissions separately govern vhost browsing.
 Administrators without resource permissions can still manage users and vhosts.
-The visual source is `design/RabbitMQ.pen`; headless WPF layout tests verify its
+Headless WPF layout tests verify the RabbitMQ workspace's
 44px title bar, table sizing, themes, compact layout and bindings without opening
 application windows.
 
@@ -332,7 +332,7 @@ Every value is parameterized, identifiers are quoted, and statements, subqueries
 functions are rejected. Paging/filter changes reuse save/discard/cancel for cell drafts.
 SQL documents retain independent execution databases and expose current/selection and
 whole-document execution through the shared split Run button. Database captions, Session strips, document tabs,
-SQL editor and output use the scoped tokens from `DBWindow.pen`. `DatabaseSqlWorkspace`
+SQL editor and output use shared database resource tokens. `DatabaseSqlWorkspace`
 provides the 48-DIP toolbar, a resizable editor and one mutually exclusive output slot
 for results, safe messages, complete plan text and recent execution history. Plans retain
 the previous query results and their request duration. Restoring history only restores
@@ -736,8 +736,9 @@ a Window or a PresentationSource. Physical 3840x2160 output is verified at both
 3840x2160 DIP / 100% and 1920x1080 DIP / 200%; new visual subtrees are laid out
 before DPI propagation. Window caption clicks dispatch the original routed
 commands only when an actual owner exists, preserving the existing Closing
-preflight while making detached captions inspectable. See [visual alignment
-checks](visual-alignment.md) for coverage and validation limits.
+preflight while making detached captions inspectable. See the [desktop lifecycle
+verification guide](desktop-lifetime.md#verification) for interactive acceptance
+requirements and validation limits.
 
 
 Expanded database tool evidence uses `DatabaseAgentEvidenceViewModel` and the

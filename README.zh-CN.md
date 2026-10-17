@@ -96,7 +96,7 @@ dotnet run --project src/Asgard.Hermod --configuration Release --no-build
 ```powershell
 dotnet build Asgard.Hermod.slnx -c Release
 dotnet format Asgard.Hermod.slnx --verify-no-changes --no-restore
-dotnet test --solution Asgard.Hermod.slnx --configuration Release --no-build
+dotnet test --solution Asgard.Hermod.slnx --configuration Release --no-build --max-parallel-test-modules 1
 ```
 
 ## 支持、隐私与安全
