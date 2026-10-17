@@ -46,7 +46,10 @@ public sealed class ConnectionInputFocusTests(WpfTestFixture fixture)
         { Opacity = 0, ShowInTaskbar = false };
         try
         {
+            // 本组通过合成文本验证字段生命周期，不让开发机输入法把候选提交混入逐字断言。
+            InputMethod.SetIsInputMethodEnabled(window, false);
             window.Show();
+            window.Activate(); await WindowInteractionNativeMethods.DrainNativeMessagesAsync();
             wizard.NextCommand.Execute(null);
             await WindowTestVisuals.UpdateLayoutAsync(window);
             foreach (string key in new[] { "name", type == "storage" ? "accessKeyId" : "host", "port", "user" })
@@ -85,11 +88,16 @@ public sealed class ConnectionInputFocusTests(WpfTestFixture fixture)
             }
             var secret = Assert.Single(WindowTestVisuals.Descendants<SecretInput>(window), item => item.IsVisible);
             var password = Assert.IsType<PasswordBox>(secret.Template.FindName("PART_Editor", secret));
+            window.Activate();
             Assert.True(password.Focus());
+            // 密码编辑器切换分区后还会收到原生焦点及输入法关闭通知，先完成建立焦点的过程再开始连续输入。
+            await WindowInteractionNativeMethods.DrainNativeMessagesAsync();
+            Assert.True(password.IsKeyboardFocused, WindowInteractionNativeMethods.DescribeFocus(window, password));
             foreach (char character in "s12345")
             {
                 TypeCharacter(character);
                 await WindowTestVisuals.UpdateLayoutAsync(window);
+                Assert.True(password.IsKeyboardFocused, WindowInteractionNativeMethods.DescribeFocus(window, password));
                 Assert.Same(password, Keyboard.FocusedElement);
                 Assert.Same(window, Window.GetWindow(password));
             }
@@ -127,7 +135,9 @@ public sealed class ConnectionInputFocusTests(WpfTestFixture fixture)
         { Opacity = 0, ShowInTaskbar = false };
         try
         {
+            InputMethod.SetIsInputMethodEnabled(window, false);
             window.Show();
+            window.Activate(); await WindowInteractionNativeMethods.DrainNativeMessagesAsync();
             wizard.NextCommand.Execute(null);
             await WindowTestVisuals.UpdateLayoutAsync(window);
             var content = Assert.IsAssignableFrom<FrameworkElement>(
@@ -181,7 +191,9 @@ public sealed class ConnectionInputFocusTests(WpfTestFixture fixture)
         { Opacity = 0, ShowInTaskbar = false };
         try
         {
+            InputMethod.SetIsInputMethodEnabled(window, false);
             window.Show();
+            window.Activate(); await WindowInteractionNativeMethods.DrainNativeMessagesAsync();
             wizard.NextCommand.Execute(null);
             await WindowTestVisuals.UpdateLayoutAsync(window);
             object adapter = Assert.Single(WindowTestVisuals.Descendants<InstanceConnectionWizardContent>(window)).InformationContent is FrameworkElement view

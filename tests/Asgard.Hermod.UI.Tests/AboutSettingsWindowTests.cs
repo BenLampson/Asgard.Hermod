@@ -15,15 +15,19 @@ public sealed class AboutSettingsWindowTests(WpfTestFixture fixture)
     public Task About_ProvidesVersionLicenseAuthorAndExplicitRepositoryAction(string language, UiTheme theme) => fixture.RunAsync(async () =>
     {
         Text.SetApplicationCulture(CultureInfo.GetCultureInfo(language)); var themes = new ThemeService(Application.Current.Resources); themes.SetTheme(theme);
-        using var model = new SettingsViewModel(new TagManagementTestService(), new TagDialogTestService());
+        using var model = new SettingsViewModel(new TagManagementTestService(), new TagDialogTestService(), new LanguagePreferenceTestStore());
         var window = new SettingsWindow(model);
         try
         {
             WindowPreviewCapture.Show(window); await WindowTestVisuals.UpdateLayoutAsync(window);
+            var general = model.Categories.Single(category => category.Id == "general");
+            var navigation = Assert.Single(WindowTestVisuals.Descendants<Button>(window), button => ReferenceEquals(button.CommandParameter, general));
+            WindowTestVisuals.Invoke(navigation); await WindowTestVisuals.UpdateLayoutAsync(window);
             var category = model.Categories.Single(category => category.Id == "about");
             var entry = Assert.Single(WindowTestVisuals.Descendants<Button>(window), button => ReferenceEquals(button.CommandParameter, category));
-            Assert.True(entry.IsEnabled); WindowTestVisuals.Invoke(entry); await WindowTestVisuals.UpdateLayoutAsync(window);
-            var about = Assert.IsType<AboutSettingsView>(window.FindName("AboutContent")); Assert.True(about.IsVisible); Assert.True(model.IsAboutSelected);
+            entry.BringIntoView(); await WindowTestVisuals.UpdateLayoutAsync(window);
+            Assert.True(entry.IsEnabled); Assert.True(entry.IsVisible); WindowTestVisuals.Invoke(entry); await WindowTestVisuals.UpdateLayoutAsync(window);
+            var about = Assert.Single(WindowTestVisuals.Descendants<AboutSettingsView>(window)); Assert.True(about.IsVisible); Assert.True(model.IsAboutSelected);
             Assert.Equal(new HomeWorkspaceViewModel(_ => { }).Version, Assert.IsType<TextBlock>(about.FindName("AboutVersion")).Text);
             foreach (string key in new[] { "HomeAuthor", "HomeLicense", "HomeOpenSourceDescription" })
                 Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(about), block => block.Text == Text.Get(key) && block.IsVisible);
@@ -32,7 +36,7 @@ public sealed class AboutSettingsWindowTests(WpfTestFixture fixture)
             Assert.Equal("https", new Uri(address.Text).Scheme); Assert.Equal("github.com", new Uri(address.Text).Host);
             Assert.Empty(WindowTestVisuals.Descendants<Expander>(about));
             await WindowPreviewCapture.VerifyAsync(window, $"settings-about-{language}-{theme}");
-            window.Width = 760; window.Height = 540; await WindowPreviewCapture.VerifyAsync(window, $"settings-about-narrow-{language}-{theme}");
+            window.Width = window.MinWidth; window.Height = window.MinHeight; await WindowPreviewCapture.VerifyAsync(window, $"settings-about-narrow-{language}-{theme}");
             var scroll = Assert.Single(WindowTestVisuals.Descendants<ScrollViewer>(about), item => item.Parent is AboutSettingsView);
             Assert.Equal(0, scroll.ScrollableWidth); Assert.True(scroll.ScrollableHeight > 0); scroll.ScrollToBottom(); await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.True(WindowTestVisuals.ScreenBounds(open).Right <= WindowTestVisuals.ScreenBounds(about).Right + 1);

@@ -11,7 +11,7 @@ public sealed class RedisLifecycleStateTests
         await page.InitializeAsync(TestContext.Current.CancellationToken); page.DatabaseText = "4"; await page.QueryAsync();
         await page.OpenAsync(RedisKeyId.FromText("cache:key")); var tab = page.ActiveTab!;
         await tab.EditCommand.ExecuteAsync(); tab.EditorText = "kept draft"; int reads = session.Reads;
-        session.Disconnect(); Assert.False(page.IsConnected); Assert.False(tab.CanSave); Assert.True(page.Connection.IsOpen);
+        session.Disconnect(); Assert.False(page.IsConnected); Assert.False(tab.CanSave); Assert.True(page.Connection.IsDisconnected); Assert.False(page.Connection.IsOpen);
         page.Connection.DismissCommand.Execute(null); Assert.True(page.ReconnectCommand.CanExecute(null));
         await page.ReconnectCommand.ExecuteAsync();
         Assert.True(page.IsConnected); Assert.True(page.HasConnectedOnce); Assert.Same(tab, page.ActiveTab);

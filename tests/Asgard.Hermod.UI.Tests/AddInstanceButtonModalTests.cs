@@ -67,7 +67,19 @@ public sealed class AddInstanceButtonModalTests(WpfTestFixture fixture)
 
             for (int attempt = 1; attempt <= 2; attempt++)
             {
-                WindowTestVisuals.Invoke(button);
+                // 模态窗口返回与布局空闲不保证异步命令已结束，等待真实运行状态的完成通知。
+                var completed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+                System.ComponentModel.PropertyChangedEventHandler finished = (_, args) =>
+                {
+                    if (args.PropertyName == nameof(command.IsRunning) && !command.IsRunning) completed.TrySetResult();
+                };
+                command.PropertyChanged += finished;
+                try
+                {
+                    WindowTestVisuals.Invoke(button);
+                    await completed.Task.WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
+                }
+                finally { command.PropertyChanged -= finished; }
                 await WindowTestVisuals.UpdateLayoutAsync(window);
                 Assert.Null(command.LastException);
                 Assert.Equal(attempt, opened);

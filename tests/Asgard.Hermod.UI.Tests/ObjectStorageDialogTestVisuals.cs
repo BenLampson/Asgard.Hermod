@@ -35,9 +35,5 @@ internal static class ObjectStorageDialogTestVisuals
         Assert.Single(WindowTestVisuals.Descendants<Button>(window), button => ReferenceEquals(button.Command, command));
 
     /// <summary>外部关闭也必须经过共用标题栏的真实路由命令。</summary>
-    internal static Button CaptionClose(Window window)
-    {
-        var controls = Assert.Single(WindowTestVisuals.Descendants<WindowControls>(window));
-        return Assert.Single(WindowTestVisuals.Descendants<Button>(controls), button => button.Command == SystemCommands.CloseWindowCommand);
-    }
+    internal static Button CaptionClose(Window window) => WindowTestVisuals.CaptionButton(window, "CloseButton");
 }

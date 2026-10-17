@@ -4,7 +4,7 @@ using Asgard.Hermod.MySql;
 
 namespace Asgard.Hermod.MySql.Tests;
 
-/// <summary>真实 WPF 选中项回写参与关闭流程，防止模型测试掩盖空白内容回归。</summary>
+/// <summary>真实 WPF 选中项回写参与 Session 关闭，最后一个 Session 关闭后返回选库页面。</summary>
 [Collection(WpfTestCollection.Name)]
 public sealed class TabClosingTests(WpfTestFixture fixture)
 {
@@ -12,7 +12,7 @@ public sealed class TabClosingTests(WpfTestFixture fixture)
     [Theory]
     [InlineData("en", UiTheme.Light)]
     [InlineData("zh-Hans", UiTheme.Dark)]
-    public Task ClosingTabs_KeepsSelectedContentAndShowsEmptyGuide(string language, UiTheme theme) => fixture.RunAsync(async () =>
+    public Task ClosingSessions_KeepsSelectedContentAndReturnsToDatabasePicker(string language, UiTheme theme) => fixture.RunAsync(async () =>
     {
         using var trace = new WpfBindingTrace(); var previous = CultureInfo.CurrentUICulture;
         Text.SetApplicationCulture(CultureInfo.GetCultureInfo(language));
@@ -39,10 +39,12 @@ public sealed class TabClosingTests(WpfTestFixture fixture)
             var tree = model.Tree; int opens = server.Opens;
             await model.CloseTabCommand.ExecuteAsync(third); await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.Null(model.ActiveTab); Assert.Null(host.Content); Assert.False(tabs.IsVisible);
-            Assert.True(Assert.IsType<StackPanel>(view.FindName("EmptyTabs")).IsVisible); Assert.Same(tree, model.Tree); Assert.True(model.IsConnected);
-            await WindowPreviewCapture.VerifyAsync(window, $"mysql-no-tabs-{language}-{theme}");
+            Assert.False(Assert.IsType<StackPanel>(view.FindName("EmptyTabs")).IsVisible);
+            Assert.True(model.IsCatalog); Assert.True(Assert.Single(WindowTestVisuals.Descendants<DatabaseSessionPicker>(view)).IsVisible);
+            Assert.Empty(model.Sessions); Assert.Same(tree, model.Tree); Assert.True(model.IsConnected);
+            await WindowPreviewCapture.VerifyAsync(window, $"mysql-session-picker-{language}-{theme}");
             model.NewQueryCommand.Execute(null); await WindowTestVisuals.UpdateLayoutAsync(window);
-            Assert.True(tabs.IsVisible); Assert.Same(model.ActiveTab, Assert.IsType<MySqlTabView>(host.Content).DataContext); Assert.Equal(opens, server.Opens);
+            Assert.False(model.IsCatalog); Assert.True(tabs.IsVisible); Assert.Same(model.ActiveTab, Assert.IsType<MySqlTabView>(host.Content).DataContext); Assert.Equal(opens, server.Opens);
             Assert.Empty(trace.Messages);
         }
         finally { window.Close(); themes.SetTheme(UiTheme.Light); Text.SetApplicationCulture(null); CultureInfo.CurrentUICulture = previous; }

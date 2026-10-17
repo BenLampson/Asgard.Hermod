@@ -10,7 +10,7 @@ namespace Asgard.Hermod.UI.Tests;
 [Collection(WpfTestCollection.Name)]
 public sealed partial class ApplicationProcessTests
 {
-    /// <summary>真实宿主打开终端，隐藏唤回，拒绝第二份数据库初始化，取消退出后继续运行并正常重启。</summary>
+    /// <summary>失败初连回到实例列表；真实终端支持隐藏唤回、取消退出和重启，不创建第二份数据库。</summary>
     [Fact]
     public async Task RealApplication_HideRecallCancelExitAndRestart()
     {
@@ -34,12 +34,9 @@ public sealed partial class ApplicationProcessTests
             await UntilAsync(() => { primary.Refresh(); main = primary.MainWindowHandle; return main != 0 && IsWindowVisible(main); });
             var root = AutomationElement.FromHandle(main);
             Assert.Equal("Asgard Hermod", root.Current.Name);
-            await OpenSavedInstanceAsync(primary.Id, root, main);
-            AutomationElement? saved = null;
-            await UntilAsync(() => (saved = Windows(primary.Id).FirstOrDefault(window => window.Current.Name == "Acceptance database")) is not null);
-            nint savedHandle = new(saved!.Current.NativeWindowHandle);
-            await OpenSavedInstanceAsync(primary.Id, root, main);
-            Assert.Single(Windows(primary.Id), window => window.Current.Name == "Acceptance database");
+            await OpenUnavailableInstanceAndReturnToListAsync(primary.Id, root, main);
+            await OpenUnavailableInstanceAndReturnToListAsync(primary.Id, root, main);
+            Assert.DoesNotContain(Windows(primary.Id), window => window.Current.Name.Contains("Acceptance database", StringComparison.Ordinal));
             await InvokeReadyAsync(primary.Id, () => root.FindFirst(TreeScope.Descendants, new AndCondition(
                 new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button),
                 new PropertyCondition(AutomationElement.NameProperty, "Local terminal"))));
@@ -48,11 +45,11 @@ public sealed partial class ApplicationProcessTests
             nint workHandle = new(work!.Current.NativeWindowHandle);
             PostMessage(main, 0x0010, 0, 0);
             await ChooseMainCloseAsync(primary.Id, "Cancel");
-            Assert.True(IsWindowVisible(main)); Assert.True(IsWindowVisible(workHandle)); Assert.True(IsWindowVisible(savedHandle));
+            Assert.True(IsWindowVisible(main)); Assert.True(IsWindowVisible(workHandle));
             PostMessage(main, 0x0010, 0, 0);
             await ChooseMainCloseAsync(primary.Id, "Hide main window to notification area");
             await UntilAsync(() => !IsWindowVisible(main)); Assert.True(IsWindowVisible(workHandle));
-            Assert.True(IsWindowVisible(savedHandle));
+            Assert.DoesNotContain(Windows(primary.Id), window => window.Current.Name.Contains("Acceptance database", StringComparison.Ordinal));
             string duplicateDatabase = Path.Combine(storage.DirectoryPath, "must-not-create", "secondary.db");
             using (var duplicate = Start(duplicateDatabase, storage.DirectoryPath))
             {
@@ -97,7 +94,7 @@ public sealed partial class ApplicationProcessTests
         }
     }
 
-    private static async Task OpenSavedInstanceAsync(int processId, AutomationElement root, nint main)
+    private static async Task OpenUnavailableInstanceAndReturnToListAsync(int processId, AutomationElement root, nint main)
     {
         var row = await WaitReadyAsync(processId, () =>
         {
@@ -111,9 +108,15 @@ public sealed partial class ApplicationProcessTests
             "保存实例行获得实际焦点");
         Assert.True(PostMessage(main, 0x0100, 0x0D, 0x001C0001));
         Assert.True(PostMessage(main, 0x0101, 0x0D, unchecked((nint)0xC01C0001)));
-        // 只发送一次打开动作；等待工作窗口真正激活，复用断言也不会抢在排队的 Enter 之前。
-        await UntilAsync(() => Windows(processId).Any(window => window.Current.Name == "Acceptance database"
-            && window.Current.NativeWindowHandle == GetForegroundWindow()), "保存实例工作窗口激活");
+        // 隔离配置指向未运行的数据库；新版首次连接失败留在主窗体，不能创建空工作窗口。
+        await WaitReadyAsync(processId, () => root.FindFirst(TreeScope.Descendants,
+            new PropertyCondition(AutomationElement.AutomationIdProperty, "RetryConnection")), InvokePattern.Pattern);
+        Assert.DoesNotContain(Windows(processId), window => window.Current.Name.Contains("Acceptance database", StringComparison.Ordinal));
+        await InvokeReadyAsync(processId, () => root.FindFirst(TreeScope.Descendants, new AndCondition(
+            new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button),
+            new PropertyCondition(AutomationElement.NameProperty, "Back to instances"))));
+        await UntilAsync(() => root.FindFirst(TreeScope.Descendants,
+            new PropertyCondition(AutomationElement.AutomationIdProperty, "RetryConnection")) is null, "失败连接反馈关闭并返回实例列表");
     }
 
     private static Process Start(string database, string directory)

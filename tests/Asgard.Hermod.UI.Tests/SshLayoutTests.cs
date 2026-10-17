@@ -83,7 +83,7 @@ public sealed class SshLayoutTests(WpfTestFixture fixture)
     [Theory]
     [InlineData("en", UiTheme.Light)]
     [InlineData("zh-Hans", UiTheme.Dark)]
-    public Task TerminalDetailsResizeAndKeyboardSearch(string language, UiTheme theme) => fixture.RunAsync(async () =>
+    public Task TerminalDetailsResizeAndSearchPreserveOutput(string language, UiTheme theme) => fixture.RunAsync(async () =>
     {
         var previous = CultureInfo.CurrentUICulture;
         var previousDefault = CultureInfo.DefaultThreadCurrentUICulture;
@@ -101,11 +101,12 @@ public sealed class SshLayoutTests(WpfTestFixture fixture)
             var terminal = Assert.IsType<TerminalControl>(view.FindName("TerminalView"));
             var layout = Assert.IsType<WorkspacePageLayout>(view.FindName("WorkspaceLayout"));
             Assert.False(layout.IsCompact);
-            Assert.Equal(72, WindowTestVisuals.Named(layout, "PART_Toolbar").ActualHeight);
+            Assert.Equal(56, WindowTestVisuals.Named(layout, "PART_Toolbar").ActualHeight);
             Assert.Equal(28, WindowTestVisuals.Named(layout, "PART_StatusBar").ActualHeight);
             Assert.Equal(300, WindowTestVisuals.Named(layout, "PART_Details").ActualWidth);
             Assert.True(terminal.ActualWidth > 500); Assert.False(terminal.IsReadOnly);
-            var search = Assert.IsType<Button>(view.FindName("SearchAction")); search.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            var tools = Assert.IsType<WorkspaceTools>(view.FindName("SessionTools"));
+            tools.Items!.Single(item => item.Id == "search").Command.Execute(null);
             var input = Assert.IsType<TextBox>(view.FindName("SearchInput")); input.Text = "你好";
             await WindowTestVisuals.UpdateLayoutAsync(window); Assert.True(input.IsVisible);
             await SshWorkspaceTests.UntilAsync(() => terminal.GetSelectedText() == "你好");
@@ -113,9 +114,10 @@ public sealed class SshLayoutTests(WpfTestFixture fixture)
             await WindowPreviewCapture.VerifyAsync(window, $"ssh-terminal-search-{language}-{theme}");
             window.Width = 680; window.Height = 540; await WindowPreviewCapture.VerifyAsync(window, $"ssh-terminal-narrow-{language}-{theme}");
             Assert.True(layout.IsCompact);
-            Assert.Equal(WindowTestVisuals.Named(layout, "PART_Body").ActualWidth, terminal.ActualWidth + 40, 2);
+            // 窄屏详情使用浮层，终端正文扣除功能栏与左右内边距后仍占满剩余宽度。
+            Assert.Equal(WindowTestVisuals.Named(layout, "PART_Body").ActualWidth, terminal.ActualWidth + 52 + 40, 2);
             Assert.True(terminal.ActualWidth > 560); Assert.False(Assert.IsType<Button>(view.FindName("CopyAction")).IsVisible);
-            Assert.True(Assert.IsType<Button>(view.FindName("MoreAction")).IsVisible);
+            Assert.True(tools.IsVisible);
             await model.DisconnectCommand.ExecuteAsync(); await WindowPreviewCapture.VerifyAsync(window, $"ssh-terminal-ended-{language}-{theme}");
             Assert.True(terminal.IsReadOnly); Assert.Contains("你好 Hermod", model.Session!.GetVisibleText());
         }

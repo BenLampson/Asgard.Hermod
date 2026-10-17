@@ -29,7 +29,7 @@ public sealed class TagDialogWindowTests
             await ModalWindowTestInteraction.ShowAsync(window, async () =>
             {
                 await WindowTestVisuals.UpdateLayoutAsync(window);
-                Assert.Single(WindowTestVisuals.Descendants<HermodTitleBar>(window));
+                Assert.Single(WindowTestVisuals.Descendants<SettingsCaption>(window));
                 var region = model.Tags.Rows.Single(node => node.Id == "region");
                 var select = Assert.Single(WindowTestVisuals.Descendants<Button>(window), button => ReferenceEquals(button.Command, region.SelectCommand));
                 WindowTestVisuals.Invoke(select);

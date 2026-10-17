@@ -4,12 +4,12 @@ using Text = Asgard.Hermod.Abstractions.Localization.Text;
 
 namespace Asgard.Hermod.UI.Tests;
 
-/// <summary>覆盖 SSH 与无持久 TCP 会话的存储初连、失效和取消，使用真实浮层布局且不访问外部服务。</summary>
+/// <summary>初次连接使用浮层，已有工作区断线保留正文和标题栏重连入口，不访问外部服务。</summary>
 [Collection(WpfTestCollection.Name)]
 public sealed class RemoteConnectionFeedbackTests(WpfTestFixture fixture)
 {
     [Fact]
-    public Task Ssh_ConnectingFailureAndDisconnectionUseOverlayWithStableBody() => fixture.RunAsync(async () =>
+    public Task Ssh_InitialConnectionUsesOverlayAndDisconnectionKeepsBodyWithInlineRecovery() => fixture.RunAsync(async () =>
     {
         var pending = new TaskCompletionSource<ISshConnection>(TaskCreationOptions.RunContinuationsAsynchronously);
         var factory = new SshTestFactory { Handler = _ => pending.Task };
@@ -26,10 +26,9 @@ public sealed class RemoteConnectionFeedbackTests(WpfTestFixture fixture)
             var connection = new SshTestConnection(); pending.SetResult(connection); await opening;
             connection.Output("history"); await SshWorkspaceTests.UntilAsync(() => model.Session!.GetVisibleText().Contains("history", StringComparison.Ordinal));
             connection.End(); await SshWorkspaceTests.UntilAsync(() => model.Connection.IsDisconnected);
-            Assert.True(model.Connection.IsOpen); Assert.Contains("history", model.Session!.GetVisibleText());
+            Assert.False(model.Connection.IsOpen); Assert.True(model.Connection.HasError); Assert.True(model.ReconnectCommand.CanExecute(null)); Assert.Contains("history", model.Session!.GetVisibleText());
             await WindowTestVisuals.UpdateLayoutAsync(window); Assert.Equal(size, layout.RenderSize);
             await WindowPreviewCapture.VerifyAsync(window, "ssh-common-connection-interrupted");
-            model.Connection.DismissCommand.Execute(null);
             factory.Handler = _ => throw new IOException("password=hidden-secret"); await model.ReconnectCommand.ExecuteAsync();
             Assert.True(model.Connection.HasError); Assert.DoesNotContain("hidden-secret", model.Connection.Error);
             Assert.Contains("history", model.Session!.GetVisibleText());
@@ -67,19 +66,26 @@ public sealed class RemoteConnectionFeedbackTests(WpfTestFixture fixture)
     [InlineData("AuthenticationFailed", true)]
     [InlineData("ServiceUnavailable", true)]
     [InlineData("AccessDenied", false)]
-    public Task Storage_RequestFailurePreservesRowsAndOnlyConnectionErrorsUsePopup(string code, bool disconnected) => fixture.RunAsync(async () =>
+    public Task Storage_RequestFailurePreservesRowsAndOnlyConnectionErrorsUseInlineRecovery(string code, bool disconnected) => fixture.RunAsync(async () =>
     {
         var service = new ObjectStorageTestService { ListObjectsHandler = (_, _, _, _, _, _) => Task.FromResult(new ObjectStoragePage([new("kept.txt", false, 42)])) };
         await using var model = ObjectStorageWorkspaceNavigationTests.Create(service);
         await model.InitializeAsync();
+        Assert.True(model.IsInitialized); Assert.False(model.Connection.IsConnecting);
         service.ListObjectsHandler = (_, _, _, _, _, _) => throw ObjectStorageException.FromResource("AuthenticationFailedEditTheInstanceConnectionCredentials", code);
         await model.RefreshAsync(); await WpfTestFixture.DrainDispatcherAsync();
-        Assert.Equal("kept.txt", Assert.Single(model.Entries).Key); Assert.Equal(disconnected, model.Connection.IsDisconnected);
-        Assert.Equal(disconnected, model.Connection.IsOpen);
+        Assert.Equal("kept.txt", Assert.Single(model.Entries).Key);
+        Assert.Equal(disconnected, model.Connection.IsDisconnected);
+        Assert.False(model.Connection.IsOpen);
         if (disconnected)
         {
             Assert.Equal(Text.Get("WorkspaceConnectionInterrupted"), model.Connection.Title); Assert.Equal("", model.DisplayReadError);
-            model.Connection.DismissCommand.Execute(null); await model.RefreshAsync(); await WpfTestFixture.DrainDispatcherAsync(); Assert.False(model.Connection.IsOpen);
+            Assert.True(model.Connection.HasError); Assert.True(model.ReconnectCommand.CanExecute(null));
+            await model.RefreshAsync(); await WpfTestFixture.DrainDispatcherAsync(); Assert.False(model.Connection.IsOpen);
+            service.ListObjectsHandler = (_, _, _, _, _, _) => Task.FromResult(new ObjectStoragePage([new("kept.txt", false, 42)]));
+            await model.ReconnectCommand.ExecuteAsync();
+            Assert.False(model.Connection.IsDisconnected); Assert.False(model.Connection.HasError); Assert.False(model.Connection.IsOpen);
+            Assert.Equal("kept.txt", Assert.Single(model.Entries).Key);
         }
         else Assert.NotEmpty(model.DisplayReadError);
     });

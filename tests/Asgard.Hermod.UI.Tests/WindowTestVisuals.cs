@@ -30,6 +30,13 @@ internal static class WindowTestVisuals
     internal static FrameworkElement Caption(HermodWindow window) =>
         Assert.IsAssignableFrom<FrameworkElement>(window.Template.FindName("PART_Caption", window));
 
+    /// <summary>按共享标题栏的稳定名称找到真实按钮，点击仍经过窗口的关闭或缩放边界。</summary>
+    internal static Button CaptionButton(Window window, string name)
+    {
+        var controls = Assert.Single(Descendants<WindowControls>(window));
+        return Assert.IsType<Button>(controls.FindName(name));
+    }
+
     /// <summary>获取通用模板中的底部槽，验证子窗动作区不会挤入主体。</summary>
     internal static FrameworkElement Footer(HermodWindow window) =>
         Assert.IsAssignableFrom<FrameworkElement>(window.Template.FindName("PART_Footer", window));

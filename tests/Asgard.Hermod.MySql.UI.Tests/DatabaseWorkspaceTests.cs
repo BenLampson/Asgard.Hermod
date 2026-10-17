@@ -36,44 +36,47 @@ public sealed class DatabaseWorkspaceTests(WpfTestFixture fixture)
         finally { window.Close(); themes.SetTheme(UiTheme.Light); Text.SetApplicationCulture(null); CultureInfo.CurrentUICulture = previous; }
     });
 
-    /// <summary>点击数据库产生可去重的请求，子窗口连接和对象分组直接属于该库。</summary>
+    /// <summary>同窗 Session 使用独立执行连接，返回选库和打开另一库均保留旧文稿。</summary>
     [Fact]
-    public Task OpenDatabase_CreatesFocusedPageWithIndependentConnectionAndPreservesDrafts() => fixture.RunOffscreenAsync(async () =>
+    public Task OpenDatabase_CreatesInWindowSessionsWithIndependentConnectionsAndPreservesDrafts() => fixture.RunOffscreenAsync(async () =>
     {
-        var server = new TestMySql(); var configuration = new Configuration(); var dialogs = new TestMySqlDialogs();
+        var server = new TestMySql { DatabaseNames = ["app", "reporting"] }; var configuration = new Configuration(); var dialogs = new TestMySqlDialogs();
         await using var browser = new MySqlWorkspaceViewModel(new(Configuration.Instance), configuration, server, configuration, dialogs);
         await browser.InitializeAsync(TestContext.Current.CancellationToken);
-        WorkspacePageRequestEventArgs? request = null; browser.WorkspaceRequested += (_, value) => request = value;
-        await browser.OpenAsync(browser.Tree!.Root.Children[0]);
-        Assert.StartsWith("mysql.session:", request!.ContextId);
-        await using var focused = Assert.IsType<MySqlWorkspaceViewModel>(request.CreatePage());
-        await focused.InitializeAsync(TestContext.Current.CancellationToken);
-        Assert.Equal(2, server.Opens); Assert.Equal("app", focused.FocusedDatabase);
-        Assert.Equal(MySqlObjectKind.Database, focused.NavigationRoot!.Object.Kind);
-        Assert.Contains(focused.NavigationRoot.Children, node => node.Object.Kind == MySqlObjectKind.Tables);
-        Assert.DoesNotContain(focused.NavigationRoot.Children, node => node.Object.Kind == MySqlObjectKind.Database);
-        var query = focused.ActiveTab!; Assert.Equal("app", query.Database); query.Sql = "SELECT pending";
-        Assert.False(await focused.RequestCloseAsync()); Assert.Equal("SELECT pending", query.Sql);
-        await browser.DisposeAsync(); Assert.True(focused.IsConnected); Assert.Contains(query, focused.Tabs);
-        focused.UpdateInstanceMetadata(Configuration.Instance with { Name = "Renamed" });
-        Assert.Equal(Text.Format("DatabaseSessionWorkspaceTitle", "Renamed"), focused.Header);
+        int requests = 0; browser.WorkspaceRequested += (_, _) => requests++;
+        var tree = browser.Tree!; Assert.True(browser.IsCatalog);
+        await browser.OpenAsync(tree.Root.Children.Single(node => node.Object.Name == "app"));
+        var first = Assert.Single(browser.Sessions); Assert.Same(first, browser.ActiveTab); Assert.Equal("app", first.Database);
+        await first.ExecuteAsync("SELECT 1"); first.Sql = "SELECT pending";
+        Assert.Equal(2, server.Opens); Assert.Equal("app", Assert.Single(browser.SessionTreeItems).Object.Name);
+        browser.BrowseDatabasesCommand.Execute(null); Assert.True(browser.IsCatalog);
+        await browser.OpenAsync(tree.Root.Children.Single(node => node.Object.Name == "reporting"));
+        var second = browser.ActiveSession!; Assert.NotSame(first, second); Assert.Equal("reporting", second.Database);
+        await second.ExecuteAsync("SELECT 2");
+        Assert.Equal(3, server.Opens); Assert.Equal(2, browser.Sessions.Count); Assert.Equal(0, requests);
+        Assert.Same(tree, browser.Tree); Assert.Equal("SELECT pending", first.Sql); Assert.Contains(first, browser.Tabs);
+        Assert.False(await browser.RequestCloseAsync()); Assert.True(browser.IsConnected);
+        Assert.Equal(new[] { "app", "reporting" }, server.ExecutedSql.Select(item => item.Database));
+        browser.UpdateInstanceMetadata(Configuration.Instance with { Name = "Renamed" });
+        Assert.Equal(Text.Format("DatabaseSessionWorkspaceTitle", "Renamed"), browser.Header);
     });
 
-    /// <summary>跨库文稿与切换执行上下文不改变窗口的固定数据库或其他文稿。</summary>
+    /// <summary>新 Session 继承范围，取消选库回到原文稿，不新建工作窗口或丢失草稿。</summary>
     [Fact]
-    public Task FocusedWindow_NewQueriesKeepTheirOwnDatabaseAndReturnToInstanceBrowser() => fixture.RunOffscreenAsync(async () =>
+    public Task Sessions_KeepTheirDatabaseAndCancelPickerWithoutLosingDrafts() => fixture.RunOffscreenAsync(async () =>
     {
         var configuration = new Configuration();
         await using var focused = new MySqlWorkspaceViewModel(new(Configuration.Instance), configuration, new TestMySql(), configuration, new TestMySqlDialogs(), "app");
         await focused.InitializeAsync(TestContext.Current.CancellationToken);
-        var first = focused.ActiveTab!; await first.ChangeDatabaseAsync("reporting");
+        var first = focused.ActiveTab!; await first.ChangeDatabaseAsync("reporting"); first.Sql = "SELECT pending";
         var second = focused.NewQuery()!; Assert.Equal("app", second.Database); Assert.Equal("app", first.Database);
-        await focused.NewQueryCommand.ExecuteAsync(); Assert.Equal("app", focused.ActiveTab!.Database);
-        Assert.Equal("app", focused.FocusedDatabase); Assert.Equal("app", focused.NavigationRoot!.Object.Name);
-        WorkspacePageRequestEventArgs? request = null; focused.WorkspaceRequested += (_, value) => request = value;
-        focused.BrowseDatabasesCommand.Execute(null); Assert.NotNull(request); Assert.Null(request.ContextId);
-        await using var browser = Assert.IsType<MySqlWorkspaceViewModel>(request.CreatePage());
-        Assert.False(browser.IsDatabaseFocused); Assert.Null(browser.WorkspaceContextId);
+        Assert.NotSame(first.Scope, second.Scope);
+        int requests = 0; focused.WorkspaceRequested += (_, _) => requests++;
+        focused.BrowseDatabasesCommand.Execute(null); Assert.True(focused.IsCatalog);
+        Assert.Equal(2, focused.Sessions.Count); Assert.Equal("SELECT pending", first.Sql);
+        focused.CancelDatabasePickerCommand.Execute(null);
+        Assert.False(focused.IsCatalog); Assert.Same(second, focused.ActiveTab);
+        Assert.Equal("app", Assert.Single(focused.SessionTreeItems).Object.Name); Assert.Equal(0, requests);
     });
 
     private sealed class Configuration : IInstanceConfigurationService, IInstanceEditor

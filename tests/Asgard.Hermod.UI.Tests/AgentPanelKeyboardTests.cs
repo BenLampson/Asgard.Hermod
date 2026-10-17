@@ -31,8 +31,9 @@ public sealed class AgentPanelKeyboardTests(WpfTestFixture fixture)
         try
         {
             window.Show(); await WindowTestVisuals.UpdateLayoutAsync(window);
+            window.Activate(); await WindowInteractionNativeMethods.DrainNativeMessagesAsync();
             var toggle = (System.Windows.Controls.Primitives.ToggleButton)card.FindName("SuggestionToggle");
-            Assert.True(toggle.Focus()); await PressEnterAsync(window, ModifierKeys.None); Assert.False(card.IsExpanded);
+            Assert.True(toggle.Focus(), WindowInteractionNativeMethods.DescribeFocus(window, toggle)); await PressEnterAsync(window, ModifierKeys.None); Assert.False(card.IsExpanded);
             await WindowInteractionNativeMethods.PressKeyAsync(window, 0x20); await WindowTestVisuals.UpdateLayoutAsync(window); Assert.True(card.IsExpanded);
             window.Width = 360; await WindowTestVisuals.UpdateLayoutAsync(window);
             var code = (TextBox)card.FindName("SuggestionCode"); Assert.True(code.ActualHeight > 180); Assert.True(scroll.ScrollableHeight > 0);

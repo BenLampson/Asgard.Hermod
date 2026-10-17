@@ -93,6 +93,10 @@ without logging off or restarting the workstation.
 ## Verification
 
 Use Release builds and run these sequentially on Windows with Explorer available.
+Load the built-in US English keyboard layout before running desktop suites. Test
+threads select that layout without changing the UI culture or saved language
+preference; synthetic IME candidate and Unicode assertions remain enabled. This
+keeps third-party input method hooks out of deterministic input tests.
 These tests create real windows and can activate them even when screenshots use
 transparent windows. Run desktop suites only after the user explicitly confirms
 the desktop is available; stop them immediately when the user resumes computer use.
@@ -114,7 +118,9 @@ Focused xUnit v3 cases:
   readiness, repeat activation, committed-exit handoff and crash recovery. The probe
   executable only uses isolated instance names and never starts application services.
 - `ApplicationProcessTests`: launches the real desktop executable with isolated
-  SQLite and `HERMOD_TEMPORARY_DIRECTORY`, opens a real PowerShell work window via
+  SQLite and `HERMOD_TEMPORARY_DIRECTORY`, verifies that an unavailable saved
+  database reports its first connection failure in the main window without
+  creating an empty workspace, returns to the instance list, then opens a real PowerShell work window via
   UI Automation, cancels the first close question, hides without remembering and is
   asked again, remembers hiding, proves the secondary's database is never created,
   cancels and accepts tray exit, and restarts with the saved close behavior.

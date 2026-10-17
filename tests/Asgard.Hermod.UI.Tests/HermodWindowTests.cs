@@ -64,8 +64,9 @@ public sealed class HermodWindowTests
             var controls = Assert.Single(WindowTestVisuals.Descendants<WindowControls>(caption));
             var buttons = WindowTestVisuals.Descendants<Button>(controls).Where(item => item.IsVisible).ToArray();
             Assert.Equal(2, buttons.Length);
-            Assert.Single(buttons, button => button.Command == SystemCommands.MinimizeWindowCommand);
-            var close = Assert.Single(buttons, button => button.Command == SystemCommands.CloseWindowCommand);
+            Assert.Contains(WindowTestVisuals.CaptionButton(dialog, "MinimizeButton"), buttons);
+            var close = WindowTestVisuals.CaptionButton(dialog, "CloseButton");
+            Assert.Contains(close, buttons);
 
             Rect frameBounds = WindowTestVisuals.ScreenBounds(WindowTestVisuals.Frame(dialog));
             Rect captionBounds = WindowTestVisuals.ScreenBounds(caption);
@@ -157,9 +158,7 @@ public sealed class HermodWindowTests
             Rect originalContent = WindowTestVisuals.ScreenBounds(content);
             for (int cycle = 0; cycle < 2; cycle++)
             {
-                var controls = Assert.Single(WindowTestVisuals.Descendants<WindowControls>(WindowTestVisuals.Caption(window)));
-                var maximize = Assert.Single(WindowTestVisuals.Descendants<Button>(controls), item =>
-                    item.Command == SystemCommands.MaximizeWindowCommand || item.Command == SystemCommands.RestoreWindowCommand);
+                var maximize = WindowTestVisuals.CaptionButton(window, "MaximizeButton");
                 WindowTestVisuals.Invoke(maximize);
                 await WindowTestVisuals.UpdateLayoutAsync(window);
 

@@ -264,12 +264,7 @@ public sealed class NewInstanceDialogTests
     }
 
     /// <summary>通过共用标题栏发出用户实际的关闭命令。</summary>
-    private static Button FindCaptionClose(NewInstanceWindow dialog)
-    {
-        var controls = Assert.Single(WindowTestVisuals.Descendants<WindowControls>(dialog));
-        return Assert.Single(WindowTestVisuals.Descendants<Button>(controls),
-            button => button.Command == SystemCommands.CloseWindowCommand);
-    }
+    private static Button FindCaptionClose(NewInstanceWindow dialog) => WindowTestVisuals.CaptionButton(dialog, "CloseButton");
 
     /// <summary>模态用例共享相同的无网络服务边界。</summary>
     private static NewInstanceViewModel CreateModel() => new(
