@@ -119,7 +119,8 @@ public sealed class SshLayoutTests(WpfTestFixture fixture)
             Assert.True(terminal.ActualWidth > 560); Assert.False(Assert.IsType<Button>(view.FindName("CopyAction")).IsVisible);
             Assert.True(tools.IsVisible);
             await model.DisconnectCommand.ExecuteAsync(); await WindowPreviewCapture.VerifyAsync(window, $"ssh-terminal-ended-{language}-{theme}");
-            Assert.True(terminal.IsReadOnly); Assert.Contains("你好 Hermod", model.Session!.GetVisibleText());
+            // 缩小网格后，早期输出可能已转入历史；保留检查应覆盖历史与当前屏幕。
+            Assert.True(terminal.IsReadOnly); Assert.Contains("你好 Hermod", model.Session!.GetAllText());
         }
         finally { window.Close(); themes.SetTheme(UiTheme.Light); CultureInfo.CurrentUICulture = previous; CultureInfo.DefaultThreadCurrentUICulture = previousDefault; }
     });
