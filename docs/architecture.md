@@ -195,6 +195,9 @@ selection, diagnostics and connection generation checks remain in their modules.
 Inline approval cards freeze the full command and target, are single use and
 become invalid on cancellation, source changes or reconnection. Cancellation
 after dispatch records an unknown outcome without retrying the operation.
+The first lazy execution connection retains its Session generation, so running
+one SQL suggestion does not invalidate other suggestions from the same reply.
+Explicit disconnection, reconnection and scope changes still invalidate them.
 
 Model profiles belong to the active workspace snapshot. SQLite stores the entire
 profile collection under `agent.models` using Windows user protection; corrupt

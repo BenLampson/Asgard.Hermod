@@ -1,6 +1,6 @@
 namespace Asgard.Hermod.PostgreSql.UI.ViewModels;
 
-/// <summary>SQL 建议绑定生成时的数据库和物理会话，防止切库或重连后误用旧目标。</summary>
+/// <summary>SQL 建议绑定生成时的数据库和连接代次，防止切库或重连后误用旧目标。</summary>
 public sealed class PostgreSqlAssistantSql
 {
     internal PostgreSqlAssistantSql(string sql, string database, object? sessionIdentity, long scopeRevision = 0)

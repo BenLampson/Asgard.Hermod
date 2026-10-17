@@ -160,7 +160,8 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
                 var options = new InstanceConnectionOptions { TypeId = _options.TypeId, ProviderId = _options.ProviderId, Parameters = parameters };
                 var session = await _factory.OpenAsync(options, token);
                 if (_disposed || !ConnectionAvailable || token.IsCancellationRequested) { await session.DisposeAsync(); token.ThrowIfCancellationRequested(); throw Text.Exception("MySqlConnectionFailed"); }
-                _session = session; _assistantContextIdentity = new();
+                // 首次惰性建连沿用当前代次，不能使同一次回复的其余 SQL 建议失效。
+                _session = session;
             }
             if (!_session.IsConnected) throw new MySqlFailure("MySqlConnectionFailed", "MYSQL_CONNECTION");
             return _session;

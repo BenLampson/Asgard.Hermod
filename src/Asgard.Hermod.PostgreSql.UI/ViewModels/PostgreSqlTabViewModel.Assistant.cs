@@ -8,7 +8,7 @@ public sealed partial class PostgreSqlTabViewModel
 {
     /// <summary>视图通过原生编辑器插入文本，保留光标、选区和撤销历史。</summary>
     public Action<string>? InsertSqlRequested { get; set; }
-    /// <summary>建议绑定原物理会话，重连和切库会使旧建议的执行资格失效。</summary>
+    /// <summary>建议绑定当前连接代次；首次建连保持代次，断开、重连和切库使旧建议失效。</summary>
     private object _assistantContextIdentity = new();
     internal object AssistantSessionIdentity => _assistantContextIdentity;
 

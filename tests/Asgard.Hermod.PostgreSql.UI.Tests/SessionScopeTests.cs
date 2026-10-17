@@ -146,6 +146,46 @@ public sealed class SessionScopeTests(WpfTestFixture fixture)
         dialogs.ActionAllowed = true; await assistant.ClearCommand.ExecuteAsync(); Assert.Empty(assistant.Messages);
     });
 
+    /// <summary>首次惰性建连不能使同一回复的其他建议失效；显式重连仍须拒绝旧建议。</summary>
+    [Theory]
+    [InlineData(0, true)]
+    [InlineData(1, true)]
+    [InlineData(2, true)]
+    [InlineData(0, false)]
+    [InlineData(1, false)]
+    [InlineData(2, false)]
+    public Task AiSuggestionsRemainExecutableInAnyOrderUntilReconnect(int first, bool inline) => fixture.RunOffscreenAsync(async () =>
+    {
+        string[] queries = ["SELECT 1 AS first_value;", "SELECT 2 AS second_value ORDER BY second_value;", "WITH top_table AS (SELECT 3 AS third_value)\r\nSELECT third_value FROM top_table;"];
+        var config = new Configurations(); var server = new TestPostgreSql();
+        var dialogs = new TestPostgreSqlDialogs { AssistantConfirmation = () => Task.FromResult(true) };
+        await using var page = Page(config, server, dialogs, "app"); await page.InitializeAsync();
+        var session = page.ActiveSession!;
+        string content = string.Join('\n', queries.Select(sql => "```sql\n" + sql + "\n```"));
+        using var assistant = new PostgreSqlAssistantViewModel(session, new ReplyClient(content), useInlineApproval: inline) { Prompt = "Suggest three queries" };
+        await assistant.SendCommand.ExecuteAsync(); var suggestions = assistant.Messages[^1].SqlBlocks;
+        Assert.Equal(queries, suggestions.Select(item => item.Sql)); Assert.Empty(server.ExecutedSql);
+        foreach (int index in Enumerable.Range(0, 3).Select(offset => (first + offset) % 3).Append(first))
+        {
+            var suggestion = suggestions[index]; int count = server.ExecutedSql.Count;
+            var running = assistant.ExecuteCommand.ExecuteAsync(suggestion);
+            if (inline)
+            {
+                var approval = Assert.IsType<AgentApprovalRequest>(assistant.PendingApproval);
+                Assert.Equal(queries[index], approval.Code); Assert.Equal(count, server.ExecutedSql.Count);
+                approval.ApproveCommand.Execute(null);
+            }
+            await running;
+            Assert.Equal(count + 1, server.ExecutedSql.Count); Assert.Equal((queries[index], "app"), server.ExecutedSql[^1]);
+            Assert.False(session.HasError); Assert.Null(assistant.ExecuteCommand.LastException);
+            Assert.Equal(queries, suggestions.Select(item => item.Sql));
+        }
+        await page.ReconnectCommand.ExecuteAsync(); int executed = server.ExecutedSql.Count;
+        await assistant.ExecuteCommand.ExecuteAsync(suggestions[first]); Assert.Equal(executed, server.ExecutedSql.Count);
+        Assert.Null(assistant.PendingApproval); Assert.True(session.HasError);
+
+    });
+
     [Fact]
     public Task ObjectViewsShareOwnerAiAndClosingCleanSessionStillNeedsConfirmation() => fixture.RunOffscreenAsync(async () =>
     {
@@ -271,9 +311,9 @@ public sealed class SessionScopeTests(WpfTestFixture fixture)
 
     private static PostgreSqlWorkspaceViewModel Page(Configurations config, TestPostgreSql server, TestPostgreSqlDialogs dialogs, params string[] databases) =>
         new(new(Configurations.Instance), config, server, config, dialogs, initialDatabases: databases.Select(name => new DatabaseIdentity(Configurations.Instance.Id, name)).ToArray());
-    private sealed class ReplyClient : IAgentClient
+    private sealed class ReplyClient(string? content = null) : IAgentClient
     {
-        public Task<AgentReply> CompleteAsync(IReadOnlyList<AgentMessage> messages, CancellationToken cancellationToken = default) => Task.FromResult(AgentReply.FromContent("```sql\nSELECT 3;\n```"));
+        public Task<AgentReply> CompleteAsync(IReadOnlyList<AgentMessage> messages, CancellationToken cancellationToken = default) => Task.FromResult(AgentReply.FromContent(content ?? "```sql\nSELECT 3;\n```"));
     }
     private sealed class Configurations : IInstanceConfigurationService, IInstanceEditor
     {

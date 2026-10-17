@@ -162,7 +162,8 @@ public sealed partial class PostgreSqlTabViewModel : ObservableObject, IAsyncDis
                 // 提供方可能在取消后才完成连接；迟到连接不能覆盖关闭或重连状态。
                 if (_disposed || !ConnectionAvailable || token.IsCancellationRequested)
                 { await opened.DisposeAsync(); token.ThrowIfCancellationRequested(); throw Text.Exception("PostgreSqlConnectionFailed"); }
-                _session = opened; _assistantContextIdentity = new();
+                // 首次惰性建连沿用当前代次，不能使同一次回复的其余 SQL 建议失效。
+                _session = opened;
             }
             if (!_session.IsConnected) throw new PostgreSqlFailure("PostgreSqlConnectionFailed", "POSTGRESQL_CONNECTION");
             return _session;
