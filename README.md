@@ -112,6 +112,9 @@ Read the [architecture](docs/architecture.md), [roadmap](docs/roadmap.md), and [
 
 Use [GitHub Issues](https://github.com/BenLampson/Asgard.Hermod/issues) for bugs and feature requests. Follow the [Code of Conduct](CODE_OF_CONDUCT.md). For vulnerabilities, see [SECURITY.md](SECURITY.md).
 
+See the bilingual [Privacy Policy](PRIVACY.md) for local use without a Hermod account,
+optional cloud synchronization, remote connections, AI requests and data deletion contacts.
+
 ## License
 
 Licensed under the [Apache License 2.0](LICENSE).

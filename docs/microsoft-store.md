@@ -21,6 +21,25 @@ localization services. The initial package version is `0.1.0.0`. Increment the
 version for each submission and keep the fourth component at zero, as required
 by the Store. The initial minimum Windows build is `10.0.19045.0`.
 
+## Privacy policy URL
+
+The English and Simplified Chinese privacy policy is maintained together in
+[`PRIVACY.md`](../PRIVACY.md). It explains that local use does not require a
+Hermod account, that workspace configurations stay local without signing in,
+and that cloud configuration synchronization requires signing in and setting a
+synchronization password. Remote connections and AI requests still send the data
+needed for those operations to the services selected by the user.
+
+In Partner Center, choose **Provide a privacy policy URL** and enter:
+
+<https://github.com/BenLampson/Asgard.Hermod/blob/dev/PRIVACY.md>
+
+The repository and this document must remain public so customers and certification
+reviewers can read the policy without signing in. Publish updates to `dev` before
+submitting changes to the Store, and keep the policy aligned with the submitted
+application's data handling behavior. Privacy requests go to
+`cn.benlampson@gmail.com`.
+
 ## Build
 
 For repeatable builds, `.github/workflows/release-msix.yml` runs on a Windows
