@@ -10,7 +10,7 @@
     <ProjectReference Include="../Asgard.Hermod.Agent/Asgard.Hermod.Agent.csproj" />
     <InternalsVisibleTo Include="Asgard.Hermod.UI.Tests" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.12" />
-    <PackageReference Include="Markdig" Version="1.4.0" />
+    <PackageReference Include="Markdig" Version="1.4.1" />
     <ProjectReference Include="..\Asgard.Hermod.Abstractions\Asgard.Hermod.Abstractions.csproj" />
     <ProjectReference Include="..\Asgard.Hermod.WinTerminal\Asgard.Hermod.WinTerminal.csproj" />
     <Resource Include="Assets\Fonts\*.ttf" />
