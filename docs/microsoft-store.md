@@ -32,13 +32,19 @@ needed for those operations to the services selected by the user.
 
 In Partner Center, choose **Provide a privacy policy URL** and enter:
 
-<https://github.com/BenLampson/Asgard.Hermod/blob/dev/PRIVACY.md>
+<https://github.com/BenLampson/Asgard.Hermod/blob/main/PRIVACY.md>
 
 The repository and this document must remain public so customers and certification
-reviewers can read the policy without signing in. Publish updates to `dev` before
-submitting changes to the Store, and keep the policy aligned with the submitted
-application's data handling behavior. Privacy requests go to
+reviewers can read the policy without signing in. Maintain policy changes on
+`dev` and publish the updated document to `main` before submitting changes to the
+Store. Keep the policy aligned with the submitted application's data handling
+behavior. Privacy requests go to
 `cn.benlampson@gmail.com`.
+
+For **Website**, use <https://github.com/BenLampson/Asgard.Hermod>. For **Support
+contact info**, use `cn.benlampson@gmail.com`. The public [support guide](../SUPPORT.md)
+collects the same contacts and explains how to report a problem without exposing
+credentials.
 
 ## Build
 
