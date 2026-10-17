@@ -1,0 +1,18 @@
+Asgard Hermod
+Copyright 2026 BenLampson and contributors.
+
+Original project work is licensed under the Apache License, Version 2.0.
+The complete license is provided in LICENSE.
+
+This product includes terminal engine and rendering code adapted from
+VirtualTerminal by Rikitav Tim4ik, licensed under the Apache License, Version 2.0.
+Upstream attribution, the imported revision, modification notices and the
+upstream license are retained in src/Asgard.Hermod.WinTerminal/.
+
+Bundled icons, fonts, provider branding and other third-party components retain
+their respective licenses, copyright notices and trademark rights.
+See THIRD-PARTY-NOTICES.md and the component-specific notices for details.
+
+These notices are informational and do not modify any license terms.
+
+Project: https://github.com/BenLampson/Asgard.Hermod
