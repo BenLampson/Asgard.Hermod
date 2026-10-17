@@ -1,3 +1,5 @@
+using Asgard.Hermod.Ssh;
+
 namespace Asgard.Hermod.RabbitMq;
 
 /// <summary>只检查认证、版本和可见虚拟主机，不声明、发布或消费资源。</summary>
@@ -5,6 +7,18 @@ public sealed class RabbitMqInstanceProvider(string route, IRabbitMqSessionFacto
 {
     /// <inheritdoc />
     public InstanceProviderDescriptor Descriptor { get; } = RabbitMqProfile.Descriptor(route);
+    /// <summary>在测试与保存之前导入隧道私钥，沿用 SSH 的文件限制与已有凭据加密同步。</summary>
+    public async Task<InstanceConnectionOptions> PrepareConnectionAsync(InstanceConnectionOptions options, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (options.ProviderId != route) throw Text.Exception("RabbitMqConfigurationInvalid");
+        var parsed = RabbitMqSessionOptions.Parse(options);
+        if (!parsed.UsesSsh) return parsed.Connection;
+        var ssh = await SshConnectionPreparation.PrepareAsync(parsed.SshConnection, cancellationToken).ConfigureAwait(false);
+        var values = new Dictionary<string, string>(parsed.Connection.Parameters, StringComparer.Ordinal);
+        foreach (var pair in ssh.Parameters) values["ssh." + pair.Key] = pair.Value;
+        return new() { TypeId = options.TypeId, ProviderId = options.ProviderId, Parameters = values };
+    }
     /// <inheritdoc />
     public async Task<InstanceConnectionTestResult> TestConnectionAsync(InstanceConnectionOptions options, CancellationToken cancellationToken = default)
     {
