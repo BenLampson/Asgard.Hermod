@@ -56,7 +56,10 @@ jobs:
         run: dotnet format Asgard.Hermod.slnx --verify-no-changes --no-restore
 
       - name: Run tests
-        run: dotnet test --solution Asgard.Hermod.slnx --configuration Release --no-build --max-parallel-test-modules 1
+        # 原生窗口布局需要足够大的交互桌面，不能依赖托管镜像的默认小分辨率。
+        run: |
+          & ./tools/Initialize-DesktopTestEnvironment.ps1
+          dotnet test --solution Asgard.Hermod.slnx --configuration Release --no-build --max-parallel-test-modules 1
 
       - name: Build x64 MSIX
         env:

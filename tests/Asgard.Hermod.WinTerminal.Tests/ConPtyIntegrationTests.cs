@@ -59,8 +59,9 @@ public sealed class ConPtyIntegrationTests
     {
         using var session = new TerminalSession();
         string shell = Path.Combine(Environment.SystemDirectory, "WindowsPowerShell", "v1.0", "powershell.exe");
+        // 测试生产者显式输出 UTF-8；英语 Windows 的默认 OEM 编码无法表示中文，不能把源头的问号归因于终端解码。
         await using var connection = ConPtyConnection.Start(session,
-            $"\"{shell}\" -NoLogo -NoProfile -NonInteractive -Command \"[Console]::Write('中文终端'); exit 9\"");
+            $"\"{shell}\" -NoLogo -NoProfile -NonInteractive -Command \"[Console]::OutputEncoding=[Text.UTF8Encoding]::new($false); [Console]::Write('中文终端'); exit 9\"");
         Assert.Equal(9, await connection.Completion.WaitAsync(TimeSpan.FromSeconds(20), TestContext.Current.CancellationToken));
         Assert.Contains("中文终端", session.GetAllText());
     }

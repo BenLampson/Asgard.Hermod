@@ -97,6 +97,10 @@ Load the built-in US English keyboard layout before running desktop suites. Test
 threads select that layout without changing the UI culture or saved language
 preference; synthetic IME candidate and Unicode assertions remain enabled. This
 keeps third-party input method hooks out of deterministic input tests.
+Native layout cases require a desktop of at least 1600x1000 logical pixels. The
+release workflow prepares a supported display mode on its temporary CI machine
+with `tools/Initialize-DesktopTestEnvironment.ps1`; it does not change a personal
+desktop. Use its `-CheckOnly` option to verify a local test environment.
 These tests create real windows and can activate them even when screenshots use
 transparent windows. Run desktop suites only after the user explicitly confirms
 the desktop is available; stop them immediately when the user resumes computer use.
