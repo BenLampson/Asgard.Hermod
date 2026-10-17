@@ -28,6 +28,14 @@ Existing path-based configurations remain compatible; edit, test and save on a
 device with the file to import them. Imported content is masked in the wizard.
 Windows Agent keys remain device-local and are never copied.
 
+RabbitMQ's SSH connection uses the same private-key import before testing and
+saving. Its `ssh.key` content and `ssh.passphrase`, together with the RabbitMQ
+password, stay inside the encrypted cloud configuration. On another device,
+unlock account synchronization with the same synchronization password; no copy of
+the original key file is needed. Existing RabbitMQ configurations that only saved
+a key path must be edited, tested and saved once on a device where that file exists.
+The new device still verifies the SSH host fingerprint independently.
+
 The default port is 22 and the connection timeout is 15 seconds. The test opens
 and closes an actual interactive PTY through the same protocol factory as the
 workspace. Saving remains blocked until the current configuration passes.

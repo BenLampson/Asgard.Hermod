@@ -97,7 +97,11 @@ putting their protocol behavior into these shared controls.
 
 RabbitMQ uses the Management plugin's HTTP API, not an AMQP consumer. Direct HTTP,
 verified HTTPS and SSH-routed connections share the existing protected credential
-storage and SSH host trust. Requests have bounded bodies and timeouts and never
+storage and SSH host trust. Before testing or saving an SSH-routed MQ connection,
+the provider uses the shared SSH preparation service to import the private key.
+The verified content, including an optional passphrase, travels inside the existing
+encrypted configuration envelope; another device does not need the original file.
+Requests have bounded bodies and timeouts and never
 retry automatically. An interrupted write reports an unknown outcome and blocks
 resubmitting that draft. Message retrieval runs only after an explicit action;
 requeue and remove modes both create frozen snapshots. Previews contain at most

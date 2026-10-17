@@ -6,5 +6,7 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1"><PrivateAssets>all</PrivateAssets></PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="10.0.12" />
     <ProjectReference Include="..\..\src\Asgard.Hermod.Server\Asgard.Hermod.Server.csproj" />
+    <ProjectReference Include="..\..\src\Asgard.Hermod.Core\Asgard.Hermod.Core.csproj" />
+    <ProjectReference Include="..\..\src\Asgard.Hermod.RabbitMq\Asgard.Hermod.RabbitMq.csproj" />
   </ItemGroup>
 </Project>
