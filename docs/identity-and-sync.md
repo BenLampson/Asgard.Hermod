@@ -251,7 +251,7 @@ blocked removal of the two local verification databases and protected snapshot
 under `artifacts/production-sync-probe/data`; those ignored local files still
 require manual cleanup. They are not used by the running service.
 
-### Current production deployment: October 17, 2026
+### Model configuration deployment: October 17, 2026
 
 At 00:10 (Asia/Shanghai), the API was upgraded to
 `asgard-hermod:0.1.0-20261017-model-sync-r1`, built from server source at commit
@@ -280,6 +280,44 @@ The stopped-database backup and previous configuration are retained under
 retained. Restoring that database would discard subsequent writes, so preserve
 new cloud data before any rollback. Current non-secret deployment and verification
 metadata are recorded in `/root/deploy/hermod/release.json`.
+
+### Current production deployment: October 17, 2026, 10:29
+
+After the desktop card and SQL fixes were committed and pushed, the API was
+redeployed from commit `f7626de345c8927e2b924fdce503ff0e199fa180`. The Linux
+payload was published from a source export of that commit, with no uncommitted
+workspace files included. The production image is
+`asgard-hermod:0.1.0-20261017-sync-f7626de`, content digest
+`sha256:0633a24a27765b928775573198ce2505fc73ed21afcb935a03360e653ad06051`.
+The transferred payload archive SHA-256 is
+`7ba8f82993196806cb9fc8af7c5edc3f5bd2152edc66da99525c660ac71590c1`.
+The image was built on MD-Core and was not published to a registry.
+
+This deployment retains schema 3 and the existing cloud synchronization
+protocol. MQ SSH private-key file import is implemented in the desktop; the
+server stores its encrypted credential envelope. Existing path-only MQ
+configurations must be tested and saved once using the updated desktop on the
+device that has the original key file, then synchronized.
+
+The Release Linux publish and all 60 synchronization tests passed. Before
+replacement, the existing service was stopped and its SQLite database was
+backed up through SQLite's backup API. Integrity checks passed and complete
+business-table hashes matched before and after replacement: one account
+configuration, nine instances and three tags remained unchanged. Both the
+server-side reverse-proxy checks and an external HTTPS check returned 200 for
+`/health` and 401 for unauthenticated `/api/sync/configuration`. The checks used
+an explicit address override for the domain while retaining normal TLS
+certificate validation; they do not verify public DNS resolution. The new
+container was running with zero restarts.
+
+The database backup and previous environment, Compose configuration and release
+record are retained under
+`/root/deploy/hermod/backups/20261017-sync-f7626de`, with access restricted to
+root. The previous `20261017-model-sync-r1` image is retained for rollback. The
+current non-secret release metadata, including source commit, image identity,
+payload checksum and database verification hashes, is recorded in
+`/root/deploy/hermod/release.json`. Roll back the image/configuration first;
+restoring the database backup would discard subsequent synchronization writes.
 
 ## Verification
 
