@@ -324,7 +324,7 @@ retained. Restoring that database would discard subsequent writes, so preserve
 new cloud data before any rollback. Current non-secret deployment and verification
 metadata are recorded in `/root/deploy/hermod/release.json`.
 
-### Current production deployment: October 17, 2026, 10:29
+### Synchronization deployment: October 17, 2026, 10:29
 
 After the desktop card and SQL fixes were committed and pushed, the API was
 redeployed from commit `f7626de345c8927e2b924fdce503ff0e199fa180`. The Linux
@@ -361,6 +361,40 @@ current non-secret release metadata, including source commit, image identity,
 payload checksum and database verification hashes, is recorded in
 `/root/deploy/hermod/release.json`. Roll back the image/configuration first;
 restoring the database backup would discard subsequent synchronization writes.
+
+### Current production deployment: October 17, 2026, 12:52
+
+The registration API code was deployed to the existing MD-Core directory from commit
+`5e51d2fab04163625898a7b19cadc4a17ff3c1d8` as
+`asgard-hermod:0.1.0-20261017-registration-r1`. Its image ID is
+`sha256:ffb2903b71f8a7cc7c079d55d928bedef23be89bd1f85244a2a7297897862eea`;
+the transferred payload SHA-256 is
+`cdc8c14fe585afc1c934372ef951b1051bbd8a0668fdec3be89fe11dbec958f5`.
+The image was built on that server and was not published to a registry.
+
+The container is running with zero restarts. Verified HTTPS responses are health
+200, anonymous current-account and configuration access 401, invalid registration
+and role injection 400, and oversized registration 413. SQLite remains schema 3
+with integrity `ok`, one account configuration, nine instances and three tags.
+All four business tables have identical content hashes before and after replacement.
+The private environment, Compose file, volume, network and existing identity settings
+were retained; only the image selection changed. The stopped-database backup,
+previous environment and previous image are retained under
+`/root/deploy/hermod/backups/20261017-registration-r1` for recovery.
+
+Release build and the full formatting check passed. All 87 synchronization and
+registration tests and 38 related WPF/localization tests passed, including official
+C# SDK service-token validation, failure classification, no POST retries and real
+English/Chinese window layouts. A separate actual Yggdrasil/Kestrel process confirmed
+the same HTTP input and authentication boundaries before deployment.
+
+Account creation is **not yet declared activated**: production approval of the
+Heimdall Client scope and ordinary-default role remains pending in the coordinated
+Heimdall task. No production registration account was created. A separate official
+SDK probe is staged to validate a genuine provisioning Token and an invalid-email
+request returning 400 after that configuration is approved; it does not create a user.
+Until then service authorization failures return safe 503 responses. Deployment and
+verification metadata are recorded in `/root/deploy/hermod/release.json`.
 
 ## Verification
 
