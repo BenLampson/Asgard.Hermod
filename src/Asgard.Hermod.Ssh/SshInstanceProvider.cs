@@ -6,15 +6,8 @@ public sealed class SshInstanceProvider(string route, ISshConnectionFactory conn
     /// <inheritdoc />
     public InstanceProviderDescriptor Descriptor { get; } = SshProfile.Descriptor(route);
     /// <inheritdoc />
-    public async Task<InstanceConnectionOptions> PrepareConnectionAsync(InstanceConnectionOptions options, CancellationToken cancellationToken = default)
-    {
-        _ = SshConnectionOptions.Parse(options);
-        var values = new Dictionary<string, string>(options.Parameters, StringComparer.Ordinal);
-        foreach (string prefix in route == SshIds.Jump ? new[] { "", "jump." } : [""])
-            if (values.GetValueOrDefault(prefix + "auth") == SshIds.PrivateKey)
-                values[prefix + "key"] = await SshPrivateKey.ImportAsync(values[prefix + "key"], cancellationToken).ConfigureAwait(false);
-        return new() { TypeId = options.TypeId, ProviderId = options.ProviderId, Parameters = values };
-    }
+    public Task<InstanceConnectionOptions> PrepareConnectionAsync(InstanceConnectionOptions options, CancellationToken cancellationToken = default) =>
+        SshConnectionPreparation.PrepareAsync(options, cancellationToken);
     /// <inheritdoc />
     public async Task<InstanceConnectionTestResult> TestConnectionAsync(InstanceConnectionOptions options, CancellationToken cancellationToken = default)
     {
