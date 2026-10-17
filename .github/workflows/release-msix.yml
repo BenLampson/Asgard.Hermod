@@ -1,27 +1,37 @@
 name: Release MSIX
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Version tag from main, for example v1.0.1'
+        required: true
+        type: string
+      publish:
+        description: 'Publish a GitHub Release after all checks pass'
+        required: true
+        default: false
+        type: boolean
 
 permissions:
   contents: read
 
 concurrency:
-  group: msix-${{ github.ref }}
+  group: hermod-release-main
   cancel-in-progress: false
 
 jobs:
   package:
-    # 只有仓库所有者发布的 Release 才能触发打包；重新运行也必须由所有者执行。
+    # 仅允许所有者从 main 手动发布；环境规则另行限制分支，避免误选 dev。
     if: >-
-      github.event.release.author.login == github.repository_owner &&
+      github.ref == 'refs/heads/main' &&
       github.actor == github.repository_owner &&
       github.triggering_actor == github.repository_owner
+    environment: release
     runs-on: windows-2025
     timeout-minutes: 30
     permissions:
-      # 使用内置令牌向已发布的 Release 上传安装包，无需个人访问令牌。
+      # 只有检查通过后才使用内置令牌创建标签及 Release，无需个人访问令牌。
       contents: write
     defaults:
       run:
@@ -30,7 +40,8 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.event.release.tag_name }}
+          ref: ${{ github.sha }}
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Install .NET 10 SDK
@@ -38,15 +49,15 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
-      - name: Resolve package version
+      - name: Verify main source and resolve package version
         id: version
         env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_TAG: ${{ inputs.tag }}
+          PUBLISH_RELEASE: ${{ inputs.publish }}
         run: |
-          if ($env:RELEASE_TAG -notmatch '^v(\d+)\.(\d+)\.(\d+)$') {
-            throw 'Release tags must use vMajor.Minor.Patch, for example v1.0.1.'
-          }
-          $packageVersion = $env:RELEASE_TAG.Substring(1) + '.0'
+          $packageVersion = & ./tools/Test-ReleaseSource.ps1 `
+            -ReleaseTag $env:RELEASE_TAG `
+            -RequireNewTag:($env:PUBLISH_RELEASE -eq 'true')
           "package_version=$packageVersion" >> $env:GITHUB_OUTPUT
 
       - name: Build solution
@@ -76,13 +87,17 @@ jobs:
           compression-level: 0
           retention-days: 30
 
-      - name: Attach MSIX to published Release
+      - name: Publish Release from verified main commit
+        if: ${{ inputs.publish }}
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_TAG: ${{ inputs.tag }}
           PACKAGE_VERSION: ${{ steps.version.outputs.package_version }}
         run: |
+          # 打包期间 main 可能前进；再次确认该提交仍属于 main，且不覆盖已有版本。
+          & ./tools/Test-ReleaseSource.ps1 -ReleaseTag $env:RELEASE_TAG -RequireNewTag | Out-Null
           $packagePath = "artifacts/msix/Asgard.Hermod_$($env:PACKAGE_VERSION)_x64.msix"
-          gh release upload $env:RELEASE_TAG $packagePath --clobber
-          if ($LASTEXITCODE -ne 0) { throw 'Release asset upload failed.' }
+          gh release create $env:RELEASE_TAG $packagePath `
+            --target $env:GITHUB_SHA --title $env:RELEASE_TAG --generate-notes
+          if ($LASTEXITCODE -ne 0) { throw 'Release publication failed.' }

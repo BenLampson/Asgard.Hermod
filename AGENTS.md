@@ -18,6 +18,7 @@
 ## Repository conventions
 
 - Work directly on `dev` unless the user explicitly requests otherwise. Keep only `dev` and `main` as local branches; do not create task branches or worktrees without an explicit request.
+- Publish GitHub Releases only from `main` through the `Release MSIX` workflow. Merge validated changes from `dev` into `main` first. Do not create release tags from `dev` or replace a published version.
 - Maintain the UI in its XAML, shared resources and behavior tests. Do not add retired design drafts, temporary plans, screenshots or rendered design exports to the repository. Keep shipped icons and other application assets in their owning modules.
 
 - Use .NET 10 / C# 14, UTF-8 and CRLF, following `.editorconfig`. Document public APIs and non-obvious behavior with Chinese comments.

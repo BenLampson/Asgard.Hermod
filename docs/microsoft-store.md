@@ -48,27 +48,43 @@ credentials.
 
 ## Build
 
-For repeatable builds, `.github/workflows/release-msix.yml` runs on a Windows
-GitHub-hosted runner only when the repository owner publishes a GitHub Release.
-Create a Release with a tag such as `v1.0.1` and select **Publish release**. The
-workflow checks out that tag, converts it to package version `1.0.1.0`, runs the
-build/format/test gates, builds the x64 package, and attaches it to that existing
-Release. Tag pushes, draft Releases, edits and manual dispatch do not trigger
-packaging. Published prereleases do trigger packaging. Only the owner may rerun
-packaging. A failed build leaves the published Release without a new package;
-inspect Actions before downloading assets.
+Develop on `dev`, then merge the validated release changes into `main`. Only
+`main` may publish a GitHub Release. In **Actions → Release MSIX → Run workflow**:
 
-This automation uploads assets only. It does not log in to Partner Center or
+1. Select branch **main** and enter a new tag such as `v1.0.1`.
+2. Leave **Publish a GitHub Release after all checks pass** unchecked to run a
+   rehearsal. This builds an Actions artifact without creating a tag or Release.
+3. Check that option when ready to publish. The workflow converts the tag to
+   package version `1.0.1.0`, checks out the exact `main` commit selected for the
+   run, verifies it is still in remote `main`, then runs build/format/test gates
+   and creates the x64 package. Only after every gate passes does it create the
+   tag and Release together with the package and generated release notes.
+
+The owner must start or rerun the workflow. Selecting `dev` skips the release
+job. The `release` environment independently permits only branch `main`, with
+no tag deployment rules. `tools/Test-ReleaseSource.ps1` rejects another branch,
+an unmerged commit, an unexpected checkout or an existing publication tag. It
+rechecks the source immediately before publishing. A failed build creates no
+Release. Published Release events and tag pushes do not trigger this workflow,
+and existing release attachments are never overwritten by it.
+
+This automation publishes the GitHub Release. It does not log in to Partner Center or
 submit a Store update. Upload the generated `.msix` after reviewing the package.
 The package is unsigned and intended for Store submission, not direct installation.
 
 ## Repository access and review
 
 The personal repository currently has only `BenLampson` as a write-capable user.
-GitHub allows users with write access to manage Releases; the workflow's owner
-check restricts packaging, not the GitHub Release UI. Keep write access limited to
-the owner to retain owner-only Release publishing. Adding write collaborators or
-write-capable integrations would require reviewing this policy.
+GitHub's Release UI has no per-branch publishing restriction. The active
+**Release tags via main workflow** tag ruleset therefore restricts creation and
+updates of all tags to the GitHub Actions app. Human accounts cannot create a
+new tag from `dev` through Git, the API or the Release UI. Existing tags must
+already point to commits merged into `main`; version `v1.0.0` satisfies this
+condition. Use the main-only workflow above for new releases.
+
+Keep write access limited to the owner. Repository administrators can change
+these settings, and write-capable workflows can change tags, so adding
+collaborators, integrations or release workflows requires reviewing this policy.
 
 `.github/CODEOWNERS` assigns every file to `@BenLampson`. Branch protection for
 `main` and `dev` requires one approval from the code owner and dismisses stale

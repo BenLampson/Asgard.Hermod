@@ -12,6 +12,10 @@ Contributions to Asgard Hermod are welcome. English is the primary language for 
 6. For UI changes, launch the application and verify resizing and keyboard navigation. Attach screenshots to your pull request; do not commit screenshots, design previews, temporary plans, or rendered design exports. Maintain the UI in its XAML, resources and behavior tests.
 7. Describe the problem, resulting behavior, and verification performed in your pull request.
 
+Merge validated release changes into `main` before publishing. GitHub Releases
+are created only by the **Release MSIX** workflow running from `main`; `dev` is
+for development. See the [release and Store packaging guide](docs/microsoft-store.md#build).
+
 ## Conventions
 
 - Follow `.editorconfig`; use nullable reference types and C# 14.
