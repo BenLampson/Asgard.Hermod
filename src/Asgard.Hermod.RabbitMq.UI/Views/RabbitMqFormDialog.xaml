@@ -1,0 +1,22 @@
+<c:HermodDialog x:Class="Asgard.Hermod.RabbitMq.UI.Views.RabbitMqFormDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:c="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI" xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI" xmlns:views="clr-namespace:Asgard.Hermod.RabbitMq.UI.Views" Title="{Binding Title}" Width="{Binding Width}" Height="{Binding Height}">
+    <c:HermodDialog.FooterContent>
+        <c:DialogActionBar Height="60" Padding="24,0">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="{loc:Loc Cancel}" IsCancel="True" IsEnabled="{Binding CanClose}" Margin="0,0,10,0" />
+                <Button Content="{Binding Title}" Command="{Binding SubmitCommand}" IsDefault="True">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsDestructive}" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
+                                    <Setter Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+        </c:DialogActionBar>
+    </c:HermodDialog.FooterContent>
+    <views:RabbitMqFormView />
+</c:HermodDialog>

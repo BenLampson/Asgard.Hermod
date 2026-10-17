@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Asgard.Hermod.Abstractions\Asgard.Hermod.Abstractions.csproj" />
+    <PackageReference Include="Asgard.Heimdall.Client" Version="5.6.0" />
+    <PackageReference Include="Asgard.Core" Version="6.0.3" />
+    <EmbeddedResource Include="LoginCallback.html" LogicalName="Hermod.LoginCallback.html" />
+    <!-- 复用桌面品牌资产，不引入 WPF 程序集依赖。 -->
+    <EmbeddedResource Include="..\Asgard.Hermod.UI\Assets\Brand\hermod.png" LogicalName="Hermod.Logo.png" />
+    <InternalsVisibleTo Include="Asgard.Hermod.Sync.Tests" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,40 @@
+<UserControl x:Class="Asgard.Hermod.UI.Views.Shell.TitleBarView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization" xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
+ xmlns:chrome="clr-namespace:System.Windows.Shell;assembly=PresentationFramework" Height="42" SizeChanged="OnSizeChanged">
+
+ <Grid Background="{DynamicResource TitleBarBrush}" Margin="0">
+  <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+  <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,10,0">
+   <Image x:Name="BrandLogo" Source="{DynamicResource HermodLogo}" Width="22" Height="22" Stretch="Uniform" />
+   <TextBlock x:Name="BrandName" Text="{loc:Loc AsgardHermod}" FontSize="13" FontWeight="Bold" Margin="7,0,0,0" VerticalAlignment="Center" />
+  </StackPanel>
+  <controls:MainNavigationTabs x:Name="FixedTabs" Grid.Column="1" ItemsSource="{Binding Main.Navigation}" SelectedItem="{Binding Main.SelectedNavigation, Mode=TwoWay}"
+           HorizontalAlignment="Left" chrome:WindowChrome.IsHitTestVisibleInChrome="True" AutomationProperties.Name="{loc:Loc MainNavigation}" />
+  <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="6,0,12,0">
+   <controls:AccountMenu x:Name="Account" Margin="0,0,10,0" MaxWidth="190" chrome:WindowChrome.IsHitTestVisibleInChrome="True" />
+   <Button x:Name="ThemeButton" Width="26" Height="28" Padding="0" Margin="0,0,6,0" Command="{Binding ToggleThemeCommand}" chrome:WindowChrome.IsHitTestVisibleInChrome="True">
+    <Button.Style><Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+     <Setter Property="ToolTip" Value="{loc:Loc SwitchToDarkMode}" /><Setter Property="AutomationProperties.Name" Value="{loc:Loc SwitchToDarkMode}" />
+     <Style.Triggers><DataTrigger Binding="{Binding IsDarkTheme}" Value="True">
+      <Setter Property="ToolTip" Value="{loc:Loc SwitchToLightMode}" /><Setter Property="AutomationProperties.Name" Value="{loc:Loc SwitchToLightMode}" />
+     </DataTrigger></Style.Triggers>
+    </Style></Button.Style>
+    <controls:IconView Width="17" Height="17" Foreground="{DynamicResource TextMutedBrush}">
+     <controls:IconView.Style><Style TargetType="controls:IconView"><Setter Property="Kind" Value="moon" />
+      <Style.Triggers><DataTrigger Binding="{Binding IsDarkTheme}" Value="True"><Setter Property="Kind" Value="sun" /></DataTrigger></Style.Triggers>
+     </Style></controls:IconView.Style>
+    </controls:IconView>
+   </Button>
+   <Button x:Name="SettingsButton" Style="{DynamicResource IconButton}" Width="26" Height="28" Padding="0" Margin="0,0,6,0"
+           Command="{Binding OpenSettingsCommand}" ToolTip="{loc:Loc SystemSettings}" AutomationProperties.Name="{loc:Loc SystemSettings}" chrome:WindowChrome.IsHitTestVisibleInChrome="True">
+    <controls:IconView Kind="settings" Width="17" Height="17" Foreground="{DynamicResource TextMutedBrush}" />
+    <Button.ContextMenu><ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+     <MenuItem Header="{loc:Loc Theme}"><MenuItem Header="{loc:Loc Light}" Command="{Binding SetLightThemeCommand}" IsCheckable="True" IsChecked="{Binding IsLightTheme, Mode=OneWay}" /><MenuItem Header="{loc:Loc Dark}" Command="{Binding SetDarkThemeCommand}" IsCheckable="True" IsChecked="{Binding IsDarkTheme, Mode=OneWay}" /></MenuItem>
+     <Separator /><MenuItem Header="{loc:Loc LocalTerminal}" Command="{Binding OpenLocalTerminalCommand}" />
+    </ContextMenu></Button.ContextMenu>
+   </Button>
+   <controls:WindowControls chrome:WindowChrome.IsHitTestVisibleInChrome="True" />
+  </StackPanel>
+ </Grid>
+</UserControl>

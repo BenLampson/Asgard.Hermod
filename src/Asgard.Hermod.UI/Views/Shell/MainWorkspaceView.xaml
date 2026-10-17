@@ -1,0 +1,146 @@
+<UserControl x:Class="Asgard.Hermod.UI.Views.Shell.MainWorkspaceView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization" xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
+ xmlns:shell="clr-namespace:Asgard.Hermod.UI.Views.Shell" SizeChanged="OnSizeChanged">
+ <UserControl.Resources>
+  <Style x:Key="TableRow" TargetType="ListBoxItem">
+   <Setter Property="AutomationProperties.Name" Value="{Binding Instance.AccessibleName}" />
+   <Setter Property="HorizontalContentAlignment" Value="Stretch" /><Setter Property="Padding" Value="0" /><Setter Property="VerticalContentAlignment" Value="Stretch" /><Setter Property="Height" Value="{Binding DataContext.RowHeight, RelativeSource={RelativeSource AncestorType=shell:MainWorkspaceView}}" />
+   <Setter Property="FocusVisualStyle" Value="{DynamicResource RowKeyboardFocusVisual}" />
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
+    <Border x:Name="Row" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,0,0,1" Background="{DynamicResource SurfaceBrush}"><ContentPresenter VerticalAlignment="Stretch" /></Border>
+    <ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Row" Property="Background" Value="{DynamicResource AppBackgroundBrush}" /></Trigger>
+     <Trigger Property="IsSelected" Value="True"><Setter TargetName="Row" Property="Background" Value="{DynamicResource AccentWeakBrush}" /></Trigger>
+    </ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="TypeGlyph" TargetType="controls:IconView">
+   <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+   <Style.Triggers><DataTrigger Binding="{Binding Id}" Value="ssh"><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" /></DataTrigger>
+    <DataTrigger Binding="{Binding Id}" Value="storage"><Setter Property="Foreground" Value="{DynamicResource WarningBrush}" /></DataTrigger>
+   </Style.Triggers>
+  </Style>
+ </UserControl.Resources>
+ <Grid Background="{DynamicResource AppBackgroundBrush}">
+  <Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition Height="30" /></Grid.RowDefinitions>
+  <Grid Margin="24"><Grid.RowDefinitions><RowDefinition Height="64" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+   <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+    <Image Source="{DynamicResource HermodLogo}" Width="46" Height="46" Margin="0,0,14,0" Visibility="{Binding OverviewVisibility}" />
+    <StackPanel Grid.Column="1" VerticalAlignment="Center"><TextBlock Text="{Binding Title}" FontSize="24" FontWeight="Bold" />
+     <TextBlock Text="{Binding Description}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,6,0,0" />
+    </StackPanel>
+    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+     <Button Command="{Binding ManageTagsCommand}" Visibility="{Binding ListVisibility}" Margin="10,0,0,0" AutomationProperties.Name="{loc:Loc MainManageTags}">
+      <StackPanel Orientation="Horizontal"><controls:IconView Kind="tags" Width="15" Height="15" Margin="0,0,7,0" /><TextBlock Text="{loc:Loc MainManageTags}" /></StackPanel>
+     </Button>
+     <Button Command="{Binding OpenLocalTerminalCommand}" Visibility="{Binding OverviewVisibility}" Margin="10,0,0,0" AutomationProperties.Name="{loc:Loc LocalTerminal}">
+      <StackPanel Orientation="Horizontal"><controls:IconView Kind="terminal" Width="15" Height="15" Margin="0,0,7,0" /><TextBlock Text="{loc:Loc LocalTerminal}" /></StackPanel>
+     </Button>
+     <Button Command="{Binding AddInstanceCommand}" Margin="10,0,0,0" Style="{StaticResource PrimaryButton}" AutomationProperties.Name="{loc:Loc AddInstance}">
+      <StackPanel Orientation="Horizontal"><controls:IconView Kind="plus" Width="15" Height="15" Margin="0,0,7,0" Foreground="{DynamicResource InverseTextBrush}" /><TextBlock Text="{loc:Loc AddInstance}" /></StackPanel>
+     </Button>
+    </StackPanel>
+   </Grid>
+   <Grid Grid.Row="1" Margin="{Binding SectionMargin}">
+    <ItemsControl x:Name="TypeCards" ItemsSource="{Binding Types}" Visibility="{Binding OverviewVisibility}">
+     <ItemsControl.ItemsPanel><ItemsPanelTemplate><controls:MainTypeCardsPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+     <ItemsControl.ItemTemplate><DataTemplate>
+      <Button Height="94" Padding="18" HorizontalContentAlignment="Stretch" Command="{Binding DataContext.SelectNavigationCommand, RelativeSource={RelativeSource AncestorType=shell:MainWorkspaceView}}" CommandParameter="{Binding}" AutomationProperties.Name="{Binding Title}">
+       <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="40" /><ColumnDefinition Width="*" /><ColumnDefinition Width="24" /></Grid.ColumnDefinitions>
+        <Border Background="{DynamicResource AccentWeakBrush}" CornerRadius="8" Width="40" Height="40"><controls:IconView Kind="{Binding Icon}" Width="20" Height="20" Style="{StaticResource TypeGlyph}" /></Border>
+        <Grid Grid.Column="1" Margin="14,0,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+         <TextBlock Text="{Binding Title}" ToolTip="{Binding Title}" TextTrimming="CharacterEllipsis" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" /><TextBlock Grid.Column="1" Text="{Binding Count}" FontSize="24" FontWeight="SemiBold" />
+         <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Description}" ToolTip="{Binding Description}" TextTrimming="CharacterEllipsis" FontSize="11" FontWeight="Normal" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Bottom" />
+        </Grid>
+        <controls:IconView Grid.Column="2" Kind="chevron-right" Width="14" Height="14" HorizontalAlignment="Right" Foreground="{DynamicResource TextFaintBrush}" />
+       </Grid>
+      </Button>
+     </DataTemplate></ItemsControl.ItemTemplate>
+    </ItemsControl>
+    <Grid Visibility="{Binding ListVisibility}"><Grid.ColumnDefinitions><ColumnDefinition Width="370" /><ColumnDefinition Width="150" /><ColumnDefinition Width="150" /><ColumnDefinition Width="*" /><ColumnDefinition Width="155" /></Grid.ColumnDefinitions>
+     <Grid x:Name="SearchArea" Margin="0,0,12,0">
+      <TextBox x:Name="SearchInput" Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}" Padding="34,0,50,0" Height="36" AutomationProperties.Name="{loc:Loc MainSearch}" />
+      <controls:IconView Kind="search" Width="15" Height="15" HorizontalAlignment="Left" Margin="12,0,0,0" Foreground="{DynamicResource TextMutedBrush}" IsHitTestVisible="False" />
+      <TextBlock Text="{loc:Loc MainSearch}" Margin="35,0,48,0" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" IsHitTestVisible="False">
+       <TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding Query}" Value=""><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></TextBlock.Style>
+      </TextBlock>
+      <TextBlock Text="{loc:Loc MainSearchShortcut}" FontSize="10" Foreground="{DynamicResource TextFaintBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,0" IsHitTestVisible="False" />
+     </Grid>
+     <Button x:Name="TagFilterButton" Grid.Column="1" Height="36" Margin="0,0,12,0" HorizontalContentAlignment="Stretch" Padding="12,0" Click="OnTagFilterClick" AutomationProperties.Name="{Binding TagFilterLabel}">
+      <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="{Binding TagFilterLabel}" TextTrimming="CharacterEllipsis" /><controls:IconView Grid.Column="1" Kind="chevron-down" Width="13" Height="13" /></Grid>
+     </Button>
+     <ComboBox Grid.Column="2" Height="36" Margin="0,0,12,0" ItemsSource="{Binding Providers}" DisplayMemberPath="Label" SelectedItem="{Binding SelectedProvider}" AutomationProperties.Name="{loc:Loc MainAllProviders}" />
+     <ComboBox Grid.Column="4" Height="36" ItemsSource="{Binding SortOptions}" DisplayMemberPath="Label" SelectedItem="{Binding SelectedSort}" AutomationProperties.Name="{loc:Loc MainSort}" />
+    </Grid>
+   </Grid>
+   <Border x:Name="InstanceTable" Grid.Row="2" Style="{StaticResource PanelBorder}" ClipToBounds="True" SizeChanged="OnTableSizeChanged">
+    <Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+     <Grid Height="58" Margin="20,0" Visibility="{Binding OverviewVisibility}"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+      <TextBlock Text="{loc:Loc MainRecent}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" /><TextBlock Grid.Column="1" Text="{Binding RecentText}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="10,0,0,0" VerticalAlignment="Center" />
+      <Button Grid.Column="2" Style="{StaticResource IconButton}" Width="Auto" Padding="0" Command="{Binding SelectNavigationCommand}" CommandParameter="{Binding Navigation[1]}" AutomationProperties.Name="{loc:Loc MainViewAll}">
+       <StackPanel Orientation="Horizontal"><TextBlock Text="{loc:Loc MainViewAll}" FontSize="12" Foreground="{DynamicResource AccentTextBrush}" /><controls:IconView Kind="arrow-right" Width="14" Height="14" Margin="6,0,0,0" Foreground="{DynamicResource AccentBrush}" /></StackPanel>
+      </Button>
+     </Grid>
+     <Border Grid.Row="1" Background="{DynamicResource AppBackgroundBrush}" Height="{Binding HeaderHeight}" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,0,0,1">
+      <Grid Margin="20,0"><Grid.ColumnDefinitions><ColumnDefinition Width="{Binding NameColumnWidth}" /><ColumnDefinition Width="{Binding ProviderColumnWidth}" /><ColumnDefinition Width="*" /><ColumnDefinition Width="140" /><ColumnDefinition Width="32" /></Grid.ColumnDefinitions>
+       <TextBlock Text="{loc:Loc Instance}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" /><TextBlock Grid.Column="1" Text="{loc:Loc MainProvider}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
+       <TextBlock Grid.Column="2" Text="{loc:Loc TagsLabel}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" /><TextBlock Grid.Column="3" Text="{loc:Loc MainLastOpened}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" />
+      </Grid>
+     </Border>
+     <ListBox x:Name="InstanceRows" Grid.Row="2" ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow, Mode=TwoWay}" ItemContainerStyle="{StaticResource TableRow}" Background="Transparent" BorderThickness="0" Padding="0"
+              ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" MouseDoubleClick="OnRowDoubleClick" PreviewKeyDown="OnListKeyDown" AutomationProperties.Name="{loc:Loc MainInstanceTable}">
+      <ListBox.Template><ControlTemplate TargetType="ListBox"><ScrollViewer Focusable="False" Padding="0" CanContentScroll="False" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"><ItemsPresenter /></ScrollViewer></ControlTemplate></ListBox.Template>
+      <ListBox.ItemTemplate><DataTemplate>
+       <Grid Margin="20,0"><Grid.ColumnDefinitions>
+        <ColumnDefinition Width="{Binding DataContext.NameColumnWidth, RelativeSource={RelativeSource AncestorType=shell:MainWorkspaceView}}" /><ColumnDefinition Width="{Binding DataContext.ProviderColumnWidth, RelativeSource={RelativeSource AncestorType=shell:MainWorkspaceView}}" /><ColumnDefinition Width="*" /><ColumnDefinition Width="140" /><ColumnDefinition Width="32" />
+       </Grid.ColumnDefinitions>
+        <Grid Margin="0,0,12,0"><Grid.ColumnDefinitions><ColumnDefinition Width="34" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+         <Border Width="34" Height="34" CornerRadius="7" Background="{DynamicResource AppBackgroundBrush}" ToolTip="{Binding Instance.TypeHint}"><controls:IconView AutomationProperties.Name="{Binding Instance.TypeHint}" Kind="{Binding Instance.TypeIcon}"><controls:IconView.Style><Style TargetType="controls:IconView"><Setter Property="Width" Value="18" /><Setter Property="Height" Value="18" /><Setter Property="Foreground" Value="{DynamicResource AccentBrush}" /><Style.Triggers><DataTrigger Binding="{Binding Instance.Summary.TypeId}" Value="mysql"><Setter Property="Width" Value="24" /><Setter Property="Height" Value="24" /></DataTrigger><DataTrigger Binding="{Binding Instance.Summary.TypeId}" Value="postgresql"><Setter Property="Width" Value="24" /><Setter Property="Height" Value="24" /></DataTrigger><DataTrigger Binding="{Binding Instance.IsStorage}" Value="True"><Setter Property="Foreground" Value="{DynamicResource WarningBrush}" /></DataTrigger><DataTrigger Binding="{Binding Instance.Summary.TypeId}" Value="ssh"><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" /></DataTrigger></Style.Triggers></Style></controls:IconView.Style></controls:IconView></Border>
+         <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,0,0"><TextBlock Text="{Binding Instance.Name}" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" ToolTip="{Binding Instance.Name}" />
+          <TextBlock Text="{Binding Address}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}" Margin="0,5,0,0" TextTrimming="CharacterEllipsis" ToolTip="{Binding Address}" />
+         </StackPanel>
+        </Grid>
+        <Grid Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,0" ToolTip="{Binding ProviderHint}"><Grid.ColumnDefinitions><ColumnDefinition Width="24" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><controls:IconView Kind="{Binding ProviderIcon}" AutomationProperties.Name="{Binding ProviderHint}" ToolTip="{Binding ProviderHint}" Width="16" Height="16" HorizontalAlignment="Left" Foreground="{DynamicResource TextMutedBrush}" /><TextBlock Grid.Column="1" Text="{Binding ProviderName}" ToolTip="{Binding ProviderName}" FontSize="12" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" /></Grid>
+        <ItemsControl Grid.Column="2" ToolTip="{Binding TagsHint}" ItemsSource="{Binding Tags}" VerticalAlignment="Center" ClipToBounds="True" Margin="0,0,10,0"><ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+         <ItemsControl.ItemTemplate><DataTemplate><Border CornerRadius="4" Padding="8,4" Margin="0,0,6,0" ToolTip="{Binding Hint}"><Border.Style><Style TargetType="Border"><Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}" /><Style.Triggers><DataTrigger Binding="{Binding IsProduction}" Value="True"><Setter Property="Background" Value="{DynamicResource WarningWeakBrush}" /></DataTrigger></Style.Triggers></Style></Border.Style><TextBlock Text="{Binding Label}" FontSize="10"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" /><Style.Triggers><DataTrigger Binding="{Binding IsProduction}" Value="True"><Setter Property="Foreground" Value="{DynamicResource WarningBrush}" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock></Border></DataTemplate></ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <TextBlock Grid.Column="3" Text="{Binding OpenedAtText}" ToolTip="{Binding OpenedAtHint}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        <Button Grid.Column="4" x:Name="MoreButton" Style="{StaticResource IconButton}" Width="28" Height="28" Padding="0" HorizontalAlignment="Right" Click="OnMoreClick" AutomationProperties.Name="{loc:Loc MainMoreActions}">
+         <controls:IconView Kind="ellipsis" Width="16" Height="16" Foreground="{DynamicResource TextMutedBrush}" />
+         <Button.ContextMenu><ContextMenu MinWidth="236" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+          <MenuItem Header="{loc:Loc Open}" Tag="open" Click="OnMenuClick"><MenuItem.Icon><controls:IconView Kind="external-link" Width="16" Height="16" /></MenuItem.Icon></MenuItem>
+          <MenuItem Header="{loc:Loc EditInstanceDetails}" Tag="rename" Click="OnMenuClick"><MenuItem.Icon><controls:IconView Kind="text-cursor-input" Width="16" Height="16" /></MenuItem.Icon></MenuItem>
+          <Separator Margin="6,4" />
+          <MenuItem Header="{loc:Loc EditConnection}" Tag="edit" Click="OnMenuClick"><MenuItem.Icon><controls:IconView Kind="pencil" Width="16" Height="16" /></MenuItem.Icon></MenuItem>
+         </ContextMenu></Button.ContextMenu>
+        </Button>
+       </Grid>
+      </DataTemplate></ListBox.ItemTemplate>
+     </ListBox>
+     <TextBlock Grid.Row="2" Text="{Binding EmptyText}" Visibility="{Binding EmptyVisibility}" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+     <Border Grid.Row="3" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,1,0,0">
+      <Grid Margin="20,0" Height="{Binding FooterHeight}"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+       <TextBlock Text="{Binding RangeText}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Visibility="{Binding ListVisibility}" />
+       <TextBlock Text="{loc:Loc MainRecentLocalHint}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Visibility="{Binding OverviewVisibility}" />
+       <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,24,0" Visibility="{Binding ListVisibility}"><Button Command="{Binding PreviousPageCommand}" Style="{StaticResource IconButton}" Width="28" Height="28" AutomationProperties.Name="{loc:Loc PreviousPage}"><controls:IconView Kind="chevron-left" Width="14" Height="14" /></Button><TextBlock Text="{Binding PageText}" FontSize="11" VerticalAlignment="Center" Margin="8,0" MinWidth="50" TextAlignment="Center" /><Button Command="{Binding NextPageCommand}" Style="{StaticResource IconButton}" Width="28" Height="28" AutomationProperties.Name="{loc:Loc NextPage}"><controls:IconView Kind="chevron-right" Width="14" Height="14" /></Button></StackPanel>
+       <TextBlock Grid.Column="2" Text="{loc:Loc MainTableHint}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
+      </Grid>
+     </Border>
+    </Grid>
+   </Border>
+   <TextBlock Grid.Row="3" Text="{Binding Error}" Visibility="{Binding ErrorVisibility}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+  </Grid>
+  <Border x:Name="MainStatusBar" Grid.Row="1" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,1,0,0">
+   <Grid Margin="24,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="{Binding TotalText}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
+    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=shell:AppShellView}}">
+     <controls:IconView x:Name="MainSyncGlyph" Kind="{Binding MainSyncIcon}" Width="13" Height="13" Margin="0,0,6,0"><controls:IconView.Style><Style TargetType="controls:IconView"><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" /><Style.Triggers><DataTrigger Binding="{Binding SyncStatus}" Value="Synced"><Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" /></DataTrigger><DataTrigger Binding="{Binding SyncStatus}" Value="Failed"><Setter Property="Foreground" Value="{DynamicResource DangerBrush}" /></DataTrigger><DataTrigger Binding="{Binding SyncStatus}" Value="Conflict"><Setter Property="Foreground" Value="{DynamicResource WarningBrush}" /></DataTrigger><DataTrigger Binding="{Binding IsSignedIn}" Value="False"><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" /></DataTrigger></Style.Triggers></Style></controls:IconView.Style></controls:IconView>
+     <TextBlock x:Name="MainSyncText" Text="{Binding MainSyncLabel}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" ToolTip="{Binding SyncStatusText}" />
+    </StackPanel>
+   </Grid>
+  </Border>
+  <Popup x:Name="TagFilterPopup" PlacementTarget="{Binding ElementName=TagFilterButton}" Placement="Bottom" AllowsTransparency="True" StaysOpen="False" Opened="OnTagPopupOpened" Closed="OnTagPopupClosed">
+   <controls:TagTreePicker x:Name="TagPicker" />
+  </Popup>
+  <controls:MainConnectionFeedback x:Name="OpenFeedback" Grid.RowSpan="2" DataContext="{Binding OpenFeedback}"><controls:MainConnectionFeedback.Style><Style TargetType="controls:MainConnectionFeedback"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding DataContext, RelativeSource={RelativeSource Self}}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></controls:MainConnectionFeedback.Style></controls:MainConnectionFeedback>
+ </Grid>
+</UserControl>

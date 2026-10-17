@@ -1,0 +1,272 @@
+<UserControl x:Class="Asgard.Hermod.RabbitMq.UI.Views.RabbitMqWorkspaceView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:c="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI" xmlns:r="clr-namespace:Asgard.Hermod.RabbitMq.UI.Controls" xmlns:views="clr-namespace:Asgard.Hermod.RabbitMq.UI.Views" xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI" c:WorkspaceConnectionScope.State="{Binding Connection}" PreviewKeyDown="OnKeyDown" Background="{DynamicResource RabbitMqBackgroundBrush}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Resources/RabbitMqDesign.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <BooleanToVisibilityConverter x:Key="Visible" />
+            <Style TargetType="ListBoxItem">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+            </Style>
+            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                <Setter Property="FontFamily" Value="{DynamicResource UiFont}" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Foreground" Value="{DynamicResource RabbitMqInkBrush}" />
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <c:WorkspacePageLayout ToolbarMinHeight="44" StatusBarBackground="{DynamicResource RabbitMqSoftBrush}" Background="{DynamicResource RabbitMqBackgroundBrush}" IsOverlayOpen="{Binding Connection.IsOpen}">
+        <c:WorkspacePageLayout.Overlay>
+            <c:WorkspaceConnectionOverlay State="{Binding Connection}" TargetName="{Binding Instance.Name}" RetryCommand="{Binding ReconnectCommand}" CloseWorkspaceCommand="{Binding CloseWindowCommand}" />
+        </c:WorkspacePageLayout.Overlay>
+        <c:WorkspacePageLayout.Toolbar>
+            <c:WorkspaceHeader ShowWindowControls="True" State="{Binding Connection}" RetryCommand="{Binding ReconnectCommand}" EditCommand="{Binding EditConnectionCommand}">
+                <c:WorkspaceHeader.IdentityContent>
+                    <c:WorkspaceIdentity Instance="{Binding Instance}" Endpoint="{Binding Endpoint}" Icon="brand-rabbitmq" />
+                </c:WorkspaceHeader.IdentityContent>
+                <c:WorkspaceHeader.StatusContent>
+                    <c:StatusBadge Style="{DynamicResource WorkspaceHeaderSecondaryStatus}" Text="{Binding Instance.EnvironmentLabel}" Tone="{Binding Instance.EnvironmentTone}" ShowIndicator="False" IsCaption="True" />
+                </c:WorkspaceHeader.StatusContent>
+                <c:WorkspaceHeader.ActionsContent>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Command="{Binding EditConnectionCommand}" Style="{StaticResource RabbitMqButton}" Height="28" Padding="9,0" Margin="0,0,8,0">
+                            <StackPanel Orientation="Horizontal">
+                                <c:IconView Kind="sliders-horizontal" Width="15" Height="15" Margin="0,0,7,0" />
+                                <TextBlock Text="{loc:Loc EditConnection}" />
+                            </StackPanel>
+                        </Button>
+                        <Button Click="OnOpenAgent" Style="{StaticResource RabbitMqButton}" Height="28" Padding="9,0" FontSize="12" AutomationProperties.Name="{loc:Loc RabbitMqAgent}">
+                            <StackPanel Orientation="Horizontal">
+                                <c:IconView Kind="sparkles" Width="15" Height="15" Margin="0,0,7,0" />
+                                <TextBlock Text="{loc:Loc RabbitMqAgent}" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </c:WorkspaceHeader.ActionsContent>
+            </c:WorkspaceHeader>
+        </c:WorkspacePageLayout.Toolbar>
+        <c:WorkspacePageLayout.Notification>
+            <StackPanel>
+                <Border Padding="20,10" Background="{DynamicResource DangerWeakBrush}" Visibility="{Binding HasError, Converter={StaticResource Visible}}">
+                    <TextBlock Text="{Binding Error}" TextWrapping="Wrap" Foreground="{DynamicResource DangerBrush}" />
+                </Border>
+                <Border Padding="20,8" Background="{DynamicResource RabbitMqSelectedBrush}" Visibility="{Binding HasNotice, Converter={StaticResource Visible}}">
+                    <TextBlock Text="{Binding Notice}" TextWrapping="Wrap" />
+                </Border>
+            </StackPanel>
+        </c:WorkspacePageLayout.Notification>
+        <c:WorkspacePageLayout.StatusContent>
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Right" Text="{Binding UpdatedText}" FontSize="11" Foreground="{DynamicResource RabbitMqMutedBrush}" />
+                <TextBlock Text="{Binding Status}" FontSize="11" Foreground="{DynamicResource RabbitMqMutedBrush}" />
+            </DockPanel>
+        </c:WorkspacePageLayout.StatusContent>
+        <Grid Background="{DynamicResource RabbitMqBackgroundBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="{Binding ExplorerWidth}" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border Background="{DynamicResource RabbitMqSoftBrush}" BorderBrush="{DynamicResource RabbitMqLineBrush}" BorderThickness="0,0,1,0" ClipToBounds="True">
+                <StackPanel Margin="12">
+                    <StackPanel>
+                        <DockPanel Height="26">
+                            <Button DockPanel.Dock="Right" Command="{Binding ToggleExplorerCommand}" Style="{StaticResource IconButton}" Padding="0" MinHeight="20" Width="20" Height="20" ToolTip="{loc:Loc RabbitMqToggleExplorer}" AutomationProperties.Name="{loc:Loc RabbitMqToggleExplorer}">
+                                <c:IconView Kind="panel-left" />
+                            </Button>
+                            <TextBlock Text="{loc:Loc RabbitMqExplorer}" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </DockPanel>
+                        <TextBlock Text="{loc:Loc RabbitMqVhost}" Margin="0,12,0,7" />
+                        <ComboBox ItemsSource="{Binding Vhosts}" SelectedItem="{Binding SelectedVhost}" Height="36" IsEnabled="{Binding CanRead}" AutomationProperties.Name="{loc:Loc RabbitMqVhost}" />
+                        <views:RabbitMqSearchView Placeholder="{loc:Loc RabbitMqSearchVhostPlaceholder}" Height="36" Margin="0,12,0,12" />
+                    </StackPanel>
+                    <ListBox x:Name="NavigationList" Background="Transparent" BorderThickness="0" ItemsSource="{Binding Navigation}" SelectedValuePath="Resource" SelectedValue="{Binding NavigationResource, Mode=OneWay}" ItemContainerStyle="{StaticResource RabbitMqNavigationItem}" SelectionChanged="OnNavigate" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding Count}" FontSize="12" Foreground="{DynamicResource RabbitMqMutedBrush}" VerticalAlignment="Center" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <c:IconView Kind="{Binding Icon}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Margin="0,0,8,0" />
+                                        <TextBlock FontSize="13" Text="{Binding Label}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <TextBlock Text="{loc:Loc RabbitMqVisibleScope}" Foreground="{DynamicResource RabbitMqMutedBrush}" TextWrapping="Wrap" Margin="0,12,0,0" />
+                </StackPanel>
+            </Border>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="70" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Border BorderBrush="{DynamicResource RabbitMqLineBrush}" BorderThickness="0">
+                    <DockPanel Margin="20,0">
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button Content="{loc:Loc RabbitMqBackToList}" Command="{Binding BackCommand}" Style="{StaticResource RabbitMqButton}" Visibility="{Binding HasBack, Converter={StaticResource Visible}}" Margin="0,0,8,0" />
+                            <Button Content="{Binding CreateLabel}" Command="{Binding CreateCommand}" Style="{StaticResource RabbitMqPrimary}" Visibility="{Binding IsList, Converter={StaticResource Visible}}" />
+                            <Button Content="{loc:Loc RabbitMqRefresh}" Command="{Binding RefreshCommand}" Style="{StaticResource RabbitMqButton}" Visibility="{Binding HasHeaderRefresh, Converter={StaticResource Visible}}" />
+                        </StackPanel>
+                        <Button Command="{Binding ToggleExplorerCommand}" Style="{StaticResource RabbitMqButton}" Width="32" Padding="0" Margin="0,0,12,0" VerticalAlignment="Center" Visibility="{Binding IsExplorerClosed, Converter={StaticResource Visible}}" ToolTip="{loc:Loc RabbitMqToggleExplorer}" AutomationProperties.Name="{loc:Loc RabbitMqToggleExplorer}">
+                            <c:IconView Kind="panel-left" />
+                        </Button>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Title}" FontSize="20" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" ToolTip="{Binding Title}" />
+                            <TextBlock Text="{Binding Subtitle}" FontSize="11" Foreground="{DynamicResource RabbitMqMutedBrush}" Margin="0,3,0,0" />
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+                <Grid Grid.Row="1">
+                    <Grid Visibility="{Binding IsList, Converter={StaticResource Visible}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <StackPanel>
+                            <c:SegmentedSelector Style="{StaticResource RabbitMqTabs}" ItemsSource="{Binding AdministrationPages}" DisplayMemberPath="Label" SelectedValuePath="Resource" SelectedValue="{Binding AdministrationPage}" Visibility="{Binding IsAdministration, Converter={StaticResource Visible}}" Margin="20,12,20,0" AutomationProperties.Name="{loc:Loc RabbitMqAdministration}" />
+                            <DockPanel Margin="20,0" Height="48">
+                                <ComboBox DockPanel.Dock="Right" ItemsSource="{Binding AdministrationVhosts}" SelectedItem="{Binding AdministrationVhost}" Visibility="{Binding HasAdministrationScope, Converter={StaticResource Visible}}" Width="180" Height="32" Margin="10,0,0,0" AutomationProperties.Name="{loc:Loc RabbitMqVhost}" />
+                                <Button DockPanel.Dock="Right" Content="{loc:Loc RabbitMqRefresh}" Command="{Binding SearchCommand}" Style="{StaticResource RabbitMqButton}" />
+                                <ComboBox DockPanel.Dock="Right" ItemsSource="{Binding RefreshIntervals}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding RefreshInterval}" Width="180" Height="32" Margin="0,0,10,0" AutomationProperties.Name="{loc:Loc RabbitMqRefresh}" />
+                                <StackPanel Orientation="Horizontal">
+                                    <views:RabbitMqSearchView Height="36" Width="300" />
+                                    <ComboBox ItemsSource="{Binding TypeFilters}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding TypeFilter}" Width="130" Height="32" Margin="10,0" Visibility="{Binding HasTypeFilter, Converter={StaticResource Visible}}" AutomationProperties.Name="{loc:Loc RabbitMqType}" />
+                                </StackPanel>
+                            </DockPanel>
+                        </StackPanel>
+                        <r:RabbitMqTable x:Name="ResourceTable" Grid.Row="1" Height="{Binding ListTableHeight}" Margin="20,8,20,0" ItemsSource="{Binding Rows}" Schema="{Binding Columns}" SelectedItem="{Binding SelectedRow, Mode=TwoWay}" MouseDoubleClick="OnOpenRow" AutomationProperties.Name="{Binding Title}" />
+                        <TextBlock Grid.Row="1" Text="{Binding EmptyText}" Visibility="{Binding IsEmpty, Converter={StaticResource Visible}}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{DynamicResource RabbitMqMutedBrush}" TextWrapping="Wrap" MaxWidth="600" Margin="24" />
+                        <TextBlock Grid.Row="2" Text="{loc:Loc RabbitMqQueueLegend}" Foreground="{DynamicResource RabbitMqMutedBrush}" Margin="20,12,20,0" Visibility="{Binding HasQueueActions, Converter={StaticResource Visible}}" />
+                        <DockPanel Grid.Row="3" Height="36" VerticalAlignment="Top" Margin="20,12,20,0">
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                                <ComboBox ItemsSource="{Binding PageSizes}" SelectedItem="{Binding PageSize}" Width="72" Height="30" Margin="0,0,8,0" AutomationProperties.Name="{loc:Loc RabbitMqPageSize}" />
+                                <Button Command="{Binding PreviousCommand}" Style="{StaticResource RabbitMqButton}" Width="30" Padding="0" AutomationProperties.Name="{loc:Loc RabbitMqPrevious}">
+                                    <c:IconView Kind="chevron-left" />
+                                </Button>
+                                <TextBlock Text="{Binding PageText}" VerticalAlignment="Center" Margin="10,0" />
+                                <Button Command="{Binding NextCommand}" Style="{StaticResource RabbitMqButton}" Width="30" Padding="0" AutomationProperties.Name="{loc:Loc RabbitMqNext}">
+                                    <c:IconView Kind="chevron-right" />
+                                </Button>
+                            </StackPanel>
+                            <TextBlock Text="{Binding PagingHint}" VerticalAlignment="Center" FontSize="11" Foreground="{DynamicResource RabbitMqMutedBrush}" />
+                        </DockPanel>
+                    </Grid>
+                    <ScrollViewer Visibility="{Binding IsOverview, Converter={StaticResource Visible}}" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="20">
+                            <ContentControl Content="{Binding}" ContentTemplate="{StaticResource RabbitMqMetrics}" />
+                            <TextBlock Text="{loc:Loc RabbitMqResourceSummary}" FontSize="14" FontWeight="Medium" Margin="0,16,0,12" />
+                            <r:RabbitMqTable ItemsSource="{Binding SummaryRows}" Schema="{Binding SummaryColumns}" Height="218" />
+                            <TextBlock Text="{loc:Loc RabbitMqNodes}" FontSize="14" Margin="0,12" Visibility="{Binding HasNodes, Converter={StaticResource Visible}}" />
+                            <r:RabbitMqTable ItemsSource="{Binding Nodes}" Schema="{Binding NodeColumns}" Height="146" Visibility="{Binding HasNodes, Converter={StaticResource Visible}}" />
+                            <TextBlock Text="{loc:Loc RabbitMqMonitoringScope}" TextWrapping="Wrap" Foreground="{DynamicResource RabbitMqMutedBrush}" Margin="0,16,0,0" />
+                            <TextBlock Text="{Binding EmptyText}" Visibility="{Binding HasNoBrowseScope, Converter={StaticResource Visible}}" TextWrapping="Wrap" Margin="0,16,0,0" Foreground="{DynamicResource RabbitMqMutedBrush}" />
+                        </StackPanel>
+                    </ScrollViewer>
+                    <Grid Visibility="{Binding IsDetails, Converter={StaticResource Visible}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <c:SegmentedSelector Style="{StaticResource RabbitMqTabs}" ItemsSource="{Binding DetailTabs}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding DetailTab}" Margin="20,0" AutomationProperties.Name="{loc:Loc RabbitMqDetails}" />
+                        <ScrollViewer Grid.Row="1" Margin="20" VerticalScrollBarVisibility="Auto" Visibility="{Binding IsDetailOverview, Converter={StaticResource Visible}}">
+                            <StackPanel>
+                                <ContentControl Content="{Binding}" ContentTemplate="{StaticResource RabbitMqMetrics}" />
+                                <TextBlock Text="{loc:Loc RabbitMqRates}" FontSize="14" FontWeight="SemiBold" Margin="0,24,0,12" />
+                                <r:RabbitMqRateChart Snapshot="{Binding DetailChart}" Height="108" Visibility="{Binding HasChart, Converter={StaticResource Visible}}" />
+                                <TextBlock Text="{loc:Loc RabbitMqRateLegend}" Foreground="{DynamicResource RabbitMqMutedBrush}" Margin="0,8,0,20" />
+                                <r:RabbitMqTable ItemsSource="{Binding PropertyRows}" Schema="{Binding PropertyColumns}" Height="{Binding PropertiesHeight}" />
+                            </StackPanel>
+                        </ScrollViewer>
+                        <r:RabbitMqTable Grid.Row="1" Margin="20" ItemsSource="{Binding DetailRows}" Schema="{Binding DetailColumns}" Visibility="{Binding IsDetailTable, Converter={StaticResource Visible}}" />
+                        <TextBox Grid.Row="1" Margin="20" Text="{Binding DetailJson, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" FontFamily="{DynamicResource MonoFont}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="{DynamicResource RabbitMqEditorBrush}" Padding="16" Visibility="{Binding IsDetailArguments, Converter={StaticResource Visible}}" />
+                    </Grid>
+                    <Grid Visibility="{Binding IsMessages, Converter={StaticResource Visible}}" Margin="20,16">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <WrapPanel>
+                            <TextBlock Text="{loc:Loc RabbitMqGetCount}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                            <TextBox Text="{Binding GetCount, UpdateSourceTrigger=PropertyChanged}" Width="64" Height="32" MaxLength="3" Margin="0,0,12,0" AutomationProperties.Name="{loc:Loc RabbitMqGetCount}" />
+                            <ComboBox ItemsSource="{Binding GetModes}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding GetMode}" Width="240" Height="32" Margin="0,0,12,0" AutomationProperties.Name="{loc:Loc RabbitMqGetMode}" />
+                            <ComboBox ItemsSource="{Binding MessageEncodings}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding MessageEncoding}" Width="220" Height="32" Margin="0,0,12,0" AutomationProperties.Name="{loc:Loc RabbitMqEncoding}" />
+                            <Button Content="{loc:Loc RabbitMqGetMessages}" Command="{Binding GetCommand}" Style="{StaticResource RabbitMqPrimary}" />
+                        </WrapPanel>
+                        <Border Grid.Row="1" Background="{DynamicResource WarningWeakBrush}" CornerRadius="4" Padding="10" Margin="0,14,0,18">
+                            <StackPanel>
+                                <TextBlock Text="{loc:Loc RabbitMqGetHint}" TextWrapping="Wrap" Foreground="{DynamicResource RabbitMqMutedBrush}" />
+                                <TextBlock Text="{Binding Notice}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource RabbitMqMutedBrush}" />
+                            </StackPanel>
+                        </Border>
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="230" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ListBox ItemContainerStyle="{StaticResource RabbitMqMessageItem}" ItemsSource="{Binding Messages}" SelectedItem="{Binding SelectedMessage}" BorderBrush="{DynamicResource RabbitMqLineBrush}" BorderThickness="1" Background="{DynamicResource RabbitMqSoftBrush}" Margin="0,0,16,0">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="8,6">
+                                            <TextBlock Text="{Binding Label}" />
+                                            <TextBlock Text="{Binding Summary}" Foreground="{DynamicResource RabbitMqMutedBrush}" FontSize="11" Margin="0,5,0,0" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <TabControl Grid.Column="1">
+                                <TabItem Header="{loc:Loc RabbitMqPayload}">
+                                    <TextBox Text="{Binding Payload, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" FontFamily="{DynamicResource MonoFont}" Background="{DynamicResource RabbitMqEditorBrush}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="16" />
+                                </TabItem>
+                                <TabItem Header="{loc:Loc RabbitMqProperties}">
+                                    <TextBox Text="{Binding Properties, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" FontFamily="{DynamicResource MonoFont}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="16" />
+                                </TabItem>
+                                <TabItem Header="{loc:Loc RabbitMqHeaders}">
+                                    <TextBox Text="{Binding Headers, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" FontFamily="{DynamicResource MonoFont}" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="16" />
+                                </TabItem>
+                            </TabControl>
+                        </Grid>
+                        <StackPanel Grid.Row="3" Margin="0,12,0,0">
+                            <TextBlock Text="{Binding TruncationText}" Visibility="{Binding IsTruncated, Converter={StaticResource Visible}}" Foreground="{DynamicResource WarningBrush}" TextWrapping="Wrap" />
+                            <DockPanel Margin="0,10,0,0">
+                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                    <Button Content="{Binding CopyLabel}" Command="{Binding CopyCommand}" Style="{StaticResource RabbitMqButton}" Margin="0,0,8,0" />
+                                    <Button Content="{Binding ExportLabel}" Command="{Binding ExportCommand}" Style="{StaticResource RabbitMqButton}" Visibility="{Binding HasHeaderRefresh, Converter={StaticResource Visible}}" />
+                                </StackPanel>
+                                <TextBlock Text="{Binding SnapshotText}" Foreground="{DynamicResource RabbitMqMutedBrush}" VerticalAlignment="Center" />
+                            </DockPanel>
+                        </StackPanel>
+                    </Grid>
+                    <ProgressBar Height="3" IsIndeterminate="True" VerticalAlignment="Top" Visibility="{Binding IsBusy, Converter={StaticResource Visible}}" />
+                </Grid>
+                <Border Grid.Row="2" Height="48" Background="{DynamicResource RabbitMqSoftBrush}" BorderBrush="{DynamicResource RabbitMqLineBrush}" BorderThickness="0,1,0,0">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsOverview}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <DockPanel Margin="20,0">
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button Visibility="{Binding IsList, Converter={StaticResource Visible}}" Content="{loc:Loc RabbitMqDetails}" Command="{Binding OpenCommand}" Style="{StaticResource RabbitMqButton}" Margin="0,0,8,0" />
+                            <Button Content="{loc:Loc RabbitMqGetMessages}" Command="{Binding MessagesCommand}" Style="{StaticResource RabbitMqButton}" Margin="0,0,8,0" Visibility="{Binding HasQueueActions, Converter={StaticResource Visible}}" />
+                            <Button Content="{loc:Loc RabbitMqPublish}" Command="{Binding PublishCommand}" Style="{StaticResource RabbitMqButton}" Margin="0,0,8,0" Visibility="{Binding HasPublish, Converter={StaticResource Visible}}" />
+                            <Button Content="{loc:Loc RabbitMqPurgeQueue}" Command="{Binding PurgeCommand}" Style="{StaticResource RabbitMqButton}" Margin="0,0,8,0" Visibility="{Binding HasQueueActions, Converter={StaticResource Visible}}" />
+                            <Button Content="{loc:Loc RabbitMqEdit}" Command="{Binding EditCommand}" Style="{StaticResource RabbitMqButton}" Margin="0,0,8,0" Visibility="{Binding CanEdit, Converter={StaticResource Visible}}" />
+                            <Button Content="{Binding DeleteLabel}" Command="{Binding DeleteCommand}" Style="{StaticResource RabbitMqButton}" Foreground="{DynamicResource DangerBrush}" />
+                        </StackPanel>
+                        <TextBlock Text="{Binding SelectionText}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Foreground="{DynamicResource RabbitMqMutedBrush}" Margin="0,0,12,0" />
+                    </DockPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </c:WorkspacePageLayout>
+</UserControl>

@@ -6,8 +6,8 @@ A Windows desktop workspace for developers and operators. Manage SSH sessions,
 databases, message queues and object storage in one application, with optional
 AI assistance and configuration synchronization across devices.
 
-[Source code](https://github.com/BenLampson/Asgard.Hermod/tree/dev) ·
-[Documentation](https://github.com/BenLampson/Asgard.Hermod/tree/dev/docs) ·
+[Source code](https://github.com/BenLampson/Asgard.Hermod/tree/main) ·
+[Documentation](https://github.com/BenLampson/Asgard.Hermod/tree/main/docs) ·
 [Privacy policy](PRIVACY.md) · [Support](SUPPORT.md) ·
 [Apache License 2.0](LICENSE)
 
@@ -41,9 +41,10 @@ explains local storage, account services, synchronization and AI data handling.
 
 ## Availability and requirements
 
-Microsoft Store publication is being prepared. See
-[GitHub Releases](https://github.com/BenLampson/Asgard.Hermod/releases) for published
-downloads when available, or build the development version from source below.
+Version 1.0.0 has been submitted to Microsoft Store. Store availability follows
+certification and publication. [GitHub Releases](https://github.com/BenLampson/Asgard.Hermod/releases)
+contains release notes and the unsigned MSIX intended for Store submission.
+You can also build from source below.
 
 - Windows 10 version 22H2 (build 19045) or later, including Windows 11, for the
   current desktop package. WPF requires Windows.
@@ -59,13 +60,14 @@ from regional formatting.
 
 ## Build from source
 
-The current application source and detailed development documentation are on
-[`dev`](https://github.com/BenLampson/Asgard.Hermod/tree/dev). Install the .NET 10 SDK
-on Windows; the SDK selection policy is defined in `global.json` on that branch.
+[`main`](https://github.com/BenLampson/Asgard.Hermod/tree/main) contains the released
+source and documentation; [`dev`](https://github.com/BenLampson/Asgard.Hermod/tree/dev)
+is used for ongoing development. Releases are published only from `main`.
+Install the .NET 10 SDK on Windows; the SDK selection policy is in `global.json`.
 Visual Studio with the .NET desktop development workload is optional.
 
 ```powershell
-git clone --branch dev https://github.com/BenLampson/Asgard.Hermod.git
+git clone https://github.com/BenLampson/Asgard.Hermod.git
 cd Asgard.Hermod
 dotnet restore Asgard.Hermod.slnx
 dotnet build Asgard.Hermod.slnx -c Release --no-restore
@@ -75,29 +77,29 @@ dotnet run --project src/Asgard.Hermod --configuration Release --no-build
 Development builds keep local configuration in
 `%LOCALAPPDATA%\Asgard\Hermod\hermod.db`. Packaged installations can use Windows
 package-specific storage paths. See the
-[local storage guide](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/local-storage.md).
+[local storage guide](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/local-storage.md).
 
 For a framework-dependent publish, users need the .NET 10 Desktop Runtime. The
-[Microsoft Store packaging guide](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/microsoft-store.md)
+[Microsoft Store packaging guide](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/microsoft-store.md)
 describes self-contained MSIX builds, package identity and submission checks.
 
 ## Documentation
 
 | Topic | Guide |
 | --- | --- |
-| Architecture and project boundaries | [Module architecture](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/architecture.md) |
-| SSH, SFTP, monitoring and containers | [SSH workspaces](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/ssh.md) |
-| SQL workspaces | [MySQL](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/mysql.md), [PostgreSQL](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/postgresql.md) |
-| Cloud storage connections | [Object storage providers](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/object-storage-providers.md) |
-| Preview, external opening and temporary files | [File opening](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/file-opening.md), [storage settings](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/storage-settings.md) |
-| Accounts and cross-device configuration | [Identity and synchronization](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/identity-and-sync.md) |
-| Language selection and translations | [Localization](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/localization.md) |
-| Terminal embedding and upstream attribution | [Terminal component](https://github.com/BenLampson/Asgard.Hermod/blob/dev/src/Asgard.Hermod.WinTerminal/README.md) |
+| Architecture and project boundaries | [Module architecture](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/architecture.md) |
+| SSH, SFTP, monitoring and containers | [SSH workspaces](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/ssh.md) |
+| SQL workspaces | [MySQL](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/mysql.md), [PostgreSQL](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/postgresql.md) |
+| Cloud storage connections | [Object storage providers](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/object-storage-providers.md) |
+| Preview, external opening and temporary files | [File opening](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/file-opening.md), [storage settings](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/storage-settings.md) |
+| Accounts and cross-device configuration | [Identity and synchronization](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/identity-and-sync.md) |
+| Language selection and translations | [Localization](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/localization.md) |
+| Terminal embedding and upstream attribution | [Terminal component](https://github.com/BenLampson/Asgard.Hermod/blob/main/src/Asgard.Hermod.WinTerminal/README.md) |
 
 ## Contributing
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) and the
-[agent instructions](https://github.com/BenLampson/Asgard.Hermod/blob/dev/AGENTS.md)
+[agent instructions](https://github.com/BenLampson/Asgard.Hermod/blob/main/AGENTS.md)
 before changing the application. Repository documentation, issues and pull requests
 use English by default. Application-owned display text requires English and
 Simplified Chinese resources with English fallback.
@@ -107,7 +109,7 @@ Run the repository checks from `dev` before submitting code:
 ```powershell
 dotnet build Asgard.Hermod.slnx -c Release
 dotnet format Asgard.Hermod.slnx --verify-no-changes --no-restore
-dotnet test --solution Asgard.Hermod.slnx --configuration Release --no-build
+dotnet test --solution Asgard.Hermod.slnx --configuration Release --no-build --max-parallel-test-modules 1
 ```
 
 ## Support, privacy and security

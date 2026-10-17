@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>Asgard.Hermod.UI</RootNamespace>
+    <AssemblyName>Asgard.Hermod.UI</AssemblyName>
+    <Description>WPF presentation components for Asgard Hermod.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Asgard.Hermod.Agent/Asgard.Hermod.Agent.csproj" />
+    <InternalsVisibleTo Include="Asgard.Hermod.UI.Tests" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.12" />
+    <PackageReference Include="Markdig" Version="1.4.0" />
+    <ProjectReference Include="..\Asgard.Hermod.Abstractions\Asgard.Hermod.Abstractions.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.WinTerminal\Asgard.Hermod.WinTerminal.csproj" />
+    <Resource Include="Assets\Fonts\*.ttf" />
+    <Resource Include="Assets\Brand\hermod.ico" />
+    <Resource Include="Assets\Brand\hermod.png" />
+    <Resource Include="Assets\Brand\hermod-dark.ico" />
+    <Resource Include="Assets\Brand\hermod-dark.png" />
+    <Resource Include="Assets\Providers\*.png" />
+    <Resource Include="Assets\Providers\*.ico" />
+    <None Update="Assets\**\*.txt" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

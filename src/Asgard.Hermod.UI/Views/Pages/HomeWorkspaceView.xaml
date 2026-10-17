@@ -1,0 +1,159 @@
+<UserControl x:Class="Asgard.Hermod.UI.Views.Pages.HomeWorkspaceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization"
+             xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
+             Background="{DynamicResource AppBackgroundBrush}" SizeChanged="OnSizeChanged">
+    <UserControl.Resources>
+        <Style x:Key="SectionHeading" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        </Style>
+        <Style x:Key="MutedText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="LineHeight" Value="18" />
+        </Style>
+        <Style x:Key="HomeCard" TargetType="Border" BasedOn="{StaticResource PanelBorder}">
+            <Setter Property="CornerRadius" Value="10" />
+        </Style>
+        <Style x:Key="RecentCardText" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}"><Setter Property="TextOptions.TextFormattingMode" Value="Ideal" /><Setter Property="FontWeight" Value="Normal" /><Setter Property="TextTrimming" Value="CharacterEllipsis" /></Style>
+        <Style x:Key="RecentCardButton" TargetType="Button" BasedOn="{StaticResource StandardButton}">
+            <Setter Property="Height" Value="112" /><Setter Property="Padding" Value="16" /><Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}" /><Setter Property="BorderBrush" Value="{DynamicResource LineSoftBrush}" />
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Card" CornerRadius="8" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"><ContentPresenter Margin="{TemplateBinding Padding}" HorizontalAlignment="Stretch" VerticalAlignment="Center" /></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Card" Property="Background" Value="{DynamicResource AccentWeakBrush}" /><Setter TargetName="Card" Property="BorderBrush" Value="{DynamicResource AccentBrush}" /></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+        </Style>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                  Padding="24" Focusable="False">
+        <Grid MaxWidth="1200" HorizontalAlignment="Stretch"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+            <Border x:Name="IntroductionCard" Grid.Row="1" Padding="24" Margin="0,16,0,0" MinHeight="184" Style="{StaticResource HomeCard}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{loc:Loc HomeEyebrow}" Foreground="{DynamicResource AccentTextBrush}"
+                                   FontSize="12" FontWeight="SemiBold" />
+                        <WrapPanel Margin="0,8,0,8">
+                            <TextBlock Text="{loc:Loc HomeProductName}" FontSize="28" FontWeight="Bold" Margin="0,0,12,0" />
+                            <Border Background="{DynamicResource AppBackgroundBrush}" CornerRadius="4" Padding="8,4"
+                                    VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Version}" FontFamily="{DynamicResource MonoFont}"
+                                           FontSize="12" Foreground="{DynamicResource TextMutedBrush}" />
+                            </Border>
+                        </WrapPanel>
+                        <TextBlock Text="{loc:Loc HomeTagline}" FontSize="15" Foreground="{DynamicResource TextBodyBrush}"
+                                   TextWrapping="Wrap" Margin="0,0,0,6" />
+                        <TextBlock Text="{loc:Loc HomeDescription}" Style="{StaticResource MutedText}" />
+                        <WrapPanel Margin="0,8,0,0">
+                            <Button Command="{Binding AddInstanceCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,10,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <controls:IconView Kind="plus" Width="14" Height="14" Margin="0,0,7,0" />
+                                    <TextBlock Text="{loc:Loc AddInstance}" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                            <Button Command="{Binding OpenLocalTerminalCommand}" AutomationProperties.Name="{loc:Loc LocalTerminal}">
+                                <StackPanel Orientation="Horizontal">
+                                    <controls:IconView Kind="terminal" Width="14" Height="14" Margin="0,0,7,0" />
+                                    <TextBlock Text="{loc:Loc LocalTerminal}" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </WrapPanel>
+                    </StackPanel>
+                    <Image x:Name="HeroLogo" Grid.Column="1" Source="{DynamicResource HermodLogo}" Width="136" Height="136"
+                           Margin="24,0,0,0" VerticalAlignment="Center" AutomationProperties.Name="{loc:Loc Hermod}" />
+                </Grid>
+            </Border>
+
+            <StackPanel x:Name="OverviewSection" Grid.Row="0"><Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                <TextBlock Text="{loc:Loc HomeOverview}" Style="{StaticResource SectionHeading}" />
+                <TextBlock Grid.Column="1" Text="{Binding InstanceCount}" Style="{StaticResource MutedText}"
+                           VerticalAlignment="Center" Margin="12,0,0,0" />
+            </Grid>
+            <ItemsControl x:Name="TypeStatistics" ItemsSource="{Binding Types}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate><controls:HomeStatisticsPanel /></ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource HomeCard}" Padding="14" MinHeight="76"
+                                AutomationProperties.Name="{Binding Summary}">
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                <controls:IconView Kind="{Binding Icon}" Width="18" Height="18" Margin="0,0,12,0"
+                                                   Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Name}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" />
+                                    <TextBlock Text="{Binding Count}" FontSize="24" FontWeight="SemiBold" Margin="0,5,0,0" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl></StackPanel>
+
+            <Border x:Name="RecentCard" Grid.Row="2" Padding="18" Margin="0,16,0,0" MinHeight="184" Style="{StaticResource HomeCard}">
+                <StackPanel>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                        <TextBlock Text="{loc:Loc HomeRecent}" Style="{StaticResource SectionHeading}" />
+                        <TextBlock x:Name="RecentDescription" Grid.Column="1" Text="{loc:Loc HomeRecentDescription}"
+                                   Style="{StaticResource MutedText}" VerticalAlignment="Center" Margin="12,0,0,0" />
+                    </Grid>
+                    <Border Background="{DynamicResource AppBackgroundBrush}" CornerRadius="8" Padding="18" MinHeight="110">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasNoRecentInstances}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Grid VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <controls:IconView Kind="folder-open" Width="24" Height="24" Foreground="{DynamicResource TextFaintBrush}"
+                                               Margin="0,0,14,0" VerticalAlignment="Center" />
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="{loc:Loc HomeRecentEmpty}" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,0,0,6" />
+                                <TextBlock Text="{loc:Loc HomeRecentEmptyHint}" Style="{StaticResource MutedText}" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <ItemsControl x:Name="RecentItems" ItemsSource="{Binding RecentInstances}">
+                        <ItemsControl.ItemsPanel><ItemsPanelTemplate><controls:HomeRecentPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding DataContext.OpenRecentCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}" Style="{StaticResource RecentCardButton}"
+                                        AutomationProperties.Name="{Binding AccessibleName}" ToolTip="{Binding AccessibleName}">
+                                    <Grid><Grid.RowDefinitions><RowDefinition Height="40" /><RowDefinition Height="Auto" /></Grid.RowDefinitions><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                        <Grid Margin="0,0,8,0"><Grid.ColumnDefinitions><ColumnDefinition Width="52" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                            <Border Background="{DynamicResource AccentWeakBrush}" CornerRadius="8" Width="40" Height="40" HorizontalAlignment="Left"><controls:IconView Kind="{Binding Instance.TypeIcon}" Width="20" Height="20" Foreground="{DynamicResource AccentTextBrush}" /></Border>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center"><TextBlock Text="{Binding Instance.DisplayName}" Style="{StaticResource RecentCardText}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" /><TextBlock Text="{Binding Instance.TypeName}" Style="{StaticResource RecentCardText}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,5,0,0" /></StackPanel>
+                                        </Grid>
+                                        <controls:IconView Grid.Column="1" Kind="{Binding Instance.Icon}" Width="16" Height="16" Foreground="{DynamicResource TextMutedBrush}" ToolTip="{Binding Instance.ProviderHint}"><controls:IconView.Style><Style TargetType="controls:IconView"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding Instance.HasProviderIcon}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></controls:IconView.Style></controls:IconView>
+                                        <Grid Grid.Row="1" Grid.ColumnSpan="2" Height="16" Margin="0,12,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="18" /><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /></Grid.ColumnDefinitions>
+                                            <controls:IconView Kind="clock-3" Width="12" Height="12" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Left" />
+                                            <TextBlock x:Name="OpenedAt" Grid.Column="1" Text="{Binding OpenedAtText}" ToolTip="{Binding OpenedAtHint}" Style="{StaticResource RecentCardText}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
+                                            <controls:IconView Grid.Column="2" Kind="arrow-right" Width="16" Height="16" Foreground="{DynamicResource TextMutedBrush}" />
+                                        </Grid>
+                                    </Grid>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Grid.Row="3" Text="{Binding Message}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" Margin="0,12,0,0"
+                       AutomationProperties.LiveSetting="Polite" />
+        </Grid>
+    </ScrollViewer>
+</UserControl>

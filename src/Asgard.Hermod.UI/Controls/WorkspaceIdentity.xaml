@@ -1,0 +1,13 @@
+<UserControl x:Class="Asgard.Hermod.UI.Controls.WorkspaceIdentity" x:Name="Root"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls" FontFamily="{DynamicResource WorkspaceFont}">
+ <Grid VerticalAlignment="Center"><Grid.ColumnDefinitions><ColumnDefinition Width="22" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+  <controls:IconView Kind="{Binding Icon, ElementName=Root}" Width="22" Height="22" ><controls:IconView.Style><Style TargetType="controls:IconView"><Setter Property="Foreground" Value="{DynamicResource AccentBrush}" /><Style.Triggers><DataTrigger Binding="{Binding Icon, ElementName=Root}" Value="box"><Setter Property="Foreground" Value="{DynamicResource WarningBrush}" /></DataTrigger><DataTrigger Binding="{Binding Icon, ElementName=Root}" Value="brand-mysql"><Setter Property="Foreground" Value="{DynamicResource MySqlBrandBrush}" /></DataTrigger><DataTrigger Binding="{Binding Icon, ElementName=Root}" Value="brand-postgresql"><Setter Property="Foreground" Value="{DynamicResource PostgreSqlBrandBrush}" /></DataTrigger></Style.Triggers></Style></controls:IconView.Style></controls:IconView>
+  <TextBlock x:Name="InstanceName" Grid.Column="1" Text="{Binding Instance.Name, ElementName=Root}" ToolTip="{Binding Instance.Name, ElementName=Root}"
+   FontFamily="{DynamicResource WorkspaceFont}" Foreground="{DynamicResource WorkspaceInkBrush}" FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="8,0,0,0" MaxWidth="320" />
+  <TextBlock x:Name="Address" Grid.Column="2" Text="{Binding Endpoint, ElementName=Root}" ToolTip="{Binding Endpoint, ElementName=Root}"
+   FontFamily="{DynamicResource WorkspaceFont}" FontSize="11" Foreground="{DynamicResource WorkspaceMutedBrush}" VerticalAlignment="Center" Margin="10,0,0,0" MaxWidth="300" TextTrimming="CharacterEllipsis">
+   <TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers><DataTrigger Binding="{Binding IsCompact, RelativeSource={RelativeSource AncestorType=controls:WorkspaceHeader}}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></TextBlock.Style>
+  </TextBlock>
+ </Grid>
+</UserControl>

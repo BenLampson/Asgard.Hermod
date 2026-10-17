@@ -1,0 +1,146 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="ButtonStyles.xaml" />
+        <ResourceDictionary Source="SelectStyles.xaml" />
+        <ResourceDictionary Source="CheckBoxStyles.xaml" />
+        <ResourceDictionary Source="ScrollBarStyles.xaml" />
+        <ResourceDictionary Source="MenuStyles.xaml" />
+        <ResourceDictionary Source="ToolTipStyles.xaml" />
+        <ResourceDictionary Source="MainNavigationTabs.xaml" />
+        <ResourceDictionary Source="WorkspaceDataGrid.xaml" />
+        <ResourceDictionary Source="WorkspaceTreeView.xaml" />
+        <ResourceDictionary Source="TerminalControl.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    <!-- 纯内容宿主不作为操作项；其子控件仍可通过 Tab 访问。 -->
+    <Style TargetType="ContentControl">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+    </Style>
+    <!-- 字号、圆角和颜色对应 Pencil 的基础控件，动态颜色支持即时换肤。 -->
+    <Style TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{DynamicResource UiFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+    </Style>
+
+    <Style TargetType="TextBox">
+        <Setter Property="FontFamily" Value="{DynamicResource UiFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Foreground" Value="{DynamicResource TextBodyBrush}" />
+        <Setter Property="MinHeight" Value="36" />
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource LineBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CaretBrush" Value="{DynamicResource TextPrimaryBrush}" />
+        <!-- 文本选区使用实色底和白字，避免弱强调色叠加默认透明度后无法辨认。 -->
+        <Setter Property="SelectionBrush" Value="{DynamicResource ActionFillBrush}" />
+        <Setter Property="SelectionTextBrush" Value="{DynamicResource InverseTextBrush}" />
+        <Setter Property="SelectionOpacity" Value="1" />
+        <Setter Property="IsInactiveSelectionHighlightEnabled" Value="True" />
+        <Setter Property="Padding" Value="10,0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Validation.ErrorTemplate" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Grid>
+                        <Border x:Name="Chrome" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6" SnapsToDevicePixels="True">
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <!-- WPF 已将 TextBox.Padding 同步到内容宿主，不能再作为 Margin 叠加。 -->
+                                <ScrollViewer x:Name="PART_ContentHost"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                <controls:IconView x:Name="ErrorIcon" Grid.Column="1" Kind="circle-alert"
+                                                   Width="16" Height="16" Margin="0,0,10,0" Visibility="Collapsed"
+                                                   Foreground="{DynamicResource DangerBrush}" VerticalAlignment="Center" />
+                            </Grid>
+                        </Border>
+                        <!-- 2px 焦点层不参与测量，正文宽度与基线在聚焦前后保持一致。 -->
+                        <Border x:Name="FocusRing" CornerRadius="6" BorderThickness="2"
+                                BorderBrush="{DynamicResource AccentBrush}" Visibility="Collapsed"
+                                IsHitTestVisible="False" SnapsToDevicePixels="True" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource TextMutedBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                            <Setter TargetName="FocusRing" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="Validation.HasError" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
+                            <Setter TargetName="FocusRing" Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
+                            <Setter TargetName="ErrorIcon" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="controls:FormField.HasError" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
+                            <Setter TargetName="FocusRing" Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
+                            <Setter TargetName="ErrorIcon" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="FocusRing" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource LineBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsReadOnly" Value="True">
+                <Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}" />
+            </Trigger>
+            <Trigger Property="AcceptsReturn" Value="True">
+                <Setter Property="Padding" Value="10,8" />
+                <Setter Property="VerticalContentAlignment" Value="Top" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="{DynamicResource SidebarBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+            </Trigger>
+            <Trigger Property="controls:FormField.HasError" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource DangerBrush}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="SearchTextBox" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+        <!-- 搜索输入由外层搜索容器绘制边框，内部不重复绘制第二个焦点圈。 -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <ScrollViewer x:Name="PART_ContentHost"
+                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 组合输入区与只读建议由外层容器绘制边框，内部保留字体、选区和滚动行为。 -->
+    <Style x:Key="AgentTextBox" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+        <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TextBox">
+            <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+        </ControlTemplate></Setter.Value></Setter>
+    </Style>
+
+    <Style x:Key="PanelBorder" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource LineBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+    </Style>
+
+</ResourceDictionary>

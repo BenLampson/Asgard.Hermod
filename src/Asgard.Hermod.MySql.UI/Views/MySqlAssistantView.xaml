@@ -1,0 +1,32 @@
+<UserControl x:Class="Asgard.Hermod.MySql.UI.Views.MySqlAssistantView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI"
+ xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI">
+ <controls:AgentPanel ModelSession="{Binding ModelSession}" x:Name="ChatPanel" IsAwaitingApproval="{Binding PendingApproval.IsPending, FallbackValue=False}" IsSourceClosed="{Binding IsSourceClosed}" Archive="{Binding Archive}" QuickPrompts="{Binding QuickPrompts}" WelcomeDescription="{loc:Loc ChatDbWelcome}" Messages="{Binding Messages}" Prompt="{Binding Prompt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MaxPromptLength="8000"
+  Placeholder="{loc:Loc MySqlAssistantPrompt}" SendCommand="{Binding SendCommand}" CancelCommand="{Binding CancelCommand}"
+  ClearCommand="{Binding ClearCommand}" HideCommand="{Binding HideCommand}" IsBusy="{Binding IsBusy}" Error="{Binding Error}" Status="{Binding Status}">
+  <controls:AgentPanel.ContextContent>
+   <StackPanel>
+    <TextBlock Text="{Binding ContextLabel}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
+    <WrapPanel Margin="0,7,0,0">
+     <CheckBox Content="{loc:Loc MySqlAssistantIncludeSql}" IsChecked="{Binding IncludeSql}" Margin="0,0,12,7" />
+     <CheckBox Content="{loc:Loc MySqlAssistantIncludeResults}" IsChecked="{Binding IncludeResults}" IsEnabled="{Binding CanShareResults}" ToolTip="{loc:Loc DatabaseSessionResultScopeHint}" Margin="0,0,0,7" />
+    </WrapPanel>
+    <TextBlock Text="{loc:Loc MySqlAssistantPrivacy}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" />
+   </StackPanel>
+  </controls:AgentPanel.ContextContent>
+  <controls:AgentPanel.MessageTemplate><DataTemplate>
+   <controls:AgentMessageView Thinking="{Binding Thinking}" IsStreaming="{Binding IsStreaming}" Role="{Binding Role}" Body="{Binding Content}" CopyText="{Binding OriginalContent}" ToolEvidence="{Binding QueryEvidence}" Question="{Binding Question}" Feedback="{Binding Feedback, Mode=TwoWay}" TimestampLabel="{Binding TimestampLabel}" IsUser="{Binding IsUser}" IsTool="{Binding IsTool}" Status="{Binding Status}" ActivityTitle="{Binding ActivityTitle}" ActivityIcon="{Binding ActivityIcon}" ActivityTone="{Binding ActivityTone}" IsExpanded="{Binding IsExpanded, Mode=TwoWay}" Approval="{Binding Approval}" IsAwaitingApproval="{Binding IsAwaitingApproval}" IsError="{Binding IsError}" ModelIdentity="{Binding ModelIdentity}" Elapsed="{Binding Elapsed}" RecoveryPrompt="{Binding RecoveryPrompt}" RestoreDraftCommand="{Binding DataContext.RestoreDraftCommand, RelativeSource={RelativeSource AncestorType=controls:AgentPanel}}">
+    <controls:AgentMessageView.ActionsContent>
+     <ItemsControl ItemsSource="{Binding SqlBlocks}"><ItemsControl.ItemTemplate><DataTemplate>
+      <controls:AgentCodeSuggestion Code="{Binding Sql}" Execution="{Binding Execution}" IsExpanded="{Binding Execution.IsExpanded, Mode=TwoWay}" Caption="{loc:Loc MySqlAssistantSuggestion}"
+       InsertText="{loc:Loc MySqlAssistantInsert}" ExecuteText="{loc:Loc MySqlAssistantExecute}" CommandParameter="{Binding}"
+       InsertCommand="{Binding DataContext.InsertCommand, RelativeSource={RelativeSource AncestorType=controls:AgentPanel}}"
+       ExecuteCommand="{Binding DataContext.ExecuteCommand, RelativeSource={RelativeSource AncestorType=controls:AgentPanel}}" />
+     </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+    </controls:AgentMessageView.ActionsContent>
+   </controls:AgentMessageView>
+  </DataTemplate></controls:AgentPanel.MessageTemplate>
+  <controls:AgentPanel.ComposerOptions><controls:SegmentedSelector ItemsSource="{Binding ExecutionModes}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding ExecutionMode, Mode=TwoWay}" IsEnabled="{Binding CanChangeExecutionMode}" MaxWidth="200" HorizontalAlignment="Left" ToolTip="{loc:Loc SqlAgentModeHint}" AutomationProperties.Name="{loc:Loc SqlAgentExecutionMode}" /></controls:AgentPanel.ComposerOptions>
+ </controls:AgentPanel>
+</UserControl>

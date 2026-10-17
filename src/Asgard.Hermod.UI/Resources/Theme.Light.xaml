@@ -1,0 +1,98 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- 对应 Pencil 明亮主题；所有组件通过动态资源引用同一组语义颜色。 -->
+    <!-- 应用内标题标志随应用主题选择，系统任务栏固定使用深蓝品牌图标。 -->
+    <BitmapImage x:Key="HermodLogo" CacheOption="OnLoad"
+                 UriSource="pack://application:,,,/Asgard.Hermod.UI;component/Assets/Brand/hermod.png" />
+    <!-- ImageSource 转换器保留 ICO 的全部帧，原生窗口可选择合适的大、小图标。 -->
+    <ImageSource x:Key="HermodWindowIcon">pack://application:,,,/Asgard.Hermod.UI;component/Assets/Brand/hermod.ico</ImageSource>
+    <ImageSource x:Key="HermodCaptionIcon">pack://application:,,,/Asgard.Hermod.UI;component/Assets/Brand/hermod.ico</ImageSource>
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#F3F5F9" />
+    <SolidColorBrush x:Key="SidebarBrush" Color="#EDEFF4" />
+    <SolidColorBrush x:Key="TitleBarBrush" Color="#E4E8F0" />
+    <SolidColorBrush x:Key="TabInactiveBrush" Color="#DCE1EA" />
+    <SolidColorBrush x:Key="LineBrush" Color="#CFD5E0" />
+    <SolidColorBrush x:Key="LineSoftBrush" Color="#E5E9F0" />
+    <SolidColorBrush x:Key="ThemeTrackBrush" Color="#E5E9F0" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#171C24" />
+    <SolidColorBrush x:Key="TextBodyBrush" Color="#36404F" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="#5A6577" />
+    <SolidColorBrush x:Key="TextFaintBrush" Color="#8791A2" />
+    <SolidColorBrush x:Key="AccentBrush" Color="#2F6BE0" />
+    <SolidColorBrush x:Key="ActionFillBrush" Color="#2F6BE0" />
+    <SolidColorBrush x:Key="ActionHoverBrush" Color="#2459C2" />
+    <SolidColorBrush x:Key="AccentTextBrush" Color="#0B53A6" />
+    <SolidColorBrush x:Key="AccentWeakBrush" Color="#E4EDFE" />
+    <SolidColorBrush x:Key="SuccessBrush" Color="#16834E" />
+    <SolidColorBrush x:Key="SuccessWeakBrush" Color="#DFF6E9" />
+    <SolidColorBrush x:Key="WarningBrush" Color="#B54708" />
+    <SolidColorBrush x:Key="CodeObjectBrush" Color="#7757B7" />
+    <SolidColorBrush x:Key="WarningWeakBrush" Color="#FFF3DB" />
+    <SolidColorBrush x:Key="DangerBrush" Color="#D92D20" />
+    <SolidColorBrush x:Key="DangerWeakBrush" Color="#FCEAEA" />
+    <SolidColorBrush x:Key="InverseTextBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="WindowBorderBrush" Color="#9AA5B8" />
+    <SolidColorBrush x:Key="OnAccentSoftBrush" Color="#D9E5FF" />
+    <!-- Shell 的 ANSI 浅色字符需要深色底，以保持两种外壳主题下的可读性。 -->
+    <SolidColorBrush x:Key="TerminalSurfaceBrush" Color="#20252C" />
+    <SolidColorBrush x:Key="TerminalTextBrush" Color="#EAEEF5" />
+    <!-- 文件类别保留辨识色，深色主题提高对比度。 -->
+    <SolidColorBrush x:Key="FileVideoBrush" Color="#7956C5" />
+    <SolidColorBrush x:Key="FileAudioBrush" Color="#B44D99" />
+    <SolidColorBrush x:Key="FileDesignBrush" Color="#A56A16" />
+    <SolidColorBrush x:Key="FilePresentationBrush" Color="#C36728" />
+    <SolidColorBrush x:Key="FileCodeBrush" Color="#2E82A1" />
+    <SolidColorBrush x:Key="FileDataBrush" Color="#6970B9" />
+    <SolidColorBrush x:Key="WorkspaceCaptionBrush" Color="#EDF0F6" />
+    <SolidColorBrush x:Key="WorkspaceInkBrush" Color="#202B3C" />
+    <SolidColorBrush x:Key="WorkspaceMutedBrush" Color="#758297" />
+    <SolidColorBrush x:Key="WorkspaceLineBrush" Color="#E3E8F0" />
+    <SolidColorBrush x:Key="MySqlBrandBrush" Color="#4479A1" />
+    <SolidColorBrush x:Key="PostgreSqlBrandBrush" Color="#336791" />
+    <Color x:Key="DbBackgroundColor">#FFFFFF</Color>
+    <Color x:Key="DbSoftColor">#F5F7FB</Color>
+    <Color x:Key="DbLineColor">#E3E8F0</Color>
+    <Color x:Key="DbInkColor">#202B3C</Color>
+    <Color x:Key="DbMutedColor">#758297</Color>
+    <Color x:Key="DbAccentColor">#306BEA</Color>
+    <Color x:Key="DbSelectedColor">#EEF4FF</Color>
+    <Color x:Key="DbEditorColor">#FAFBFE</Color>
+    <Color x:Key="DbSuccessColor">#1A8262</Color>
+    <Color x:Key="DbWarningColor">#9B681B</Color>
+    <Color x:Key="DbDangerColor">#BA4251</Color>
+    <Color x:Key="SshBackgroundColor">#FFFFFF</Color>
+    <Color x:Key="SshSoftColor">#F5F7FB</Color>
+    <Color x:Key="SshLineColor">#E3E8F0</Color>
+    <Color x:Key="SshInkColor">#171C24</Color>
+    <Color x:Key="SshMutedColor">#64748B</Color>
+    <Color x:Key="SshAccentColor">#2F6BE0</Color>
+    <Color x:Key="SshSelectedColor">#EDF3FF</Color>
+    <Color x:Key="SshCaptionColor">#EDF0F6</Color>
+    <Color x:Key="AgentBackgroundColor">#FFFFFF</Color>
+    <Color x:Key="AgentSoftColor">#F4F6FA</Color>
+    <Color x:Key="AgentLineColor">#E3E8EF</Color>
+    <Color x:Key="AgentInkColor">#1B2537</Color>
+    <Color x:Key="AgentMutedColor">#64748B</Color>
+    <Color x:Key="AgentAccentColor">#306BEA</Color>
+    <Color x:Key="AgentSelectedColor">#EDF3FF</Color>
+    <Color x:Key="AgentSuccessColor">#13765A</Color>
+    <SolidColorBrush x:Key="LogBackgroundBrush" Color="#FAFBFD" />
+    <SolidColorBrush x:Key="LogInkBrush" Color="#344155" />
+    <SolidColorBrush x:Key="LogWarningBrush" Color="#B54708" />
+    <SolidColorBrush x:Key="LogErrorBrush" Color="#B42318" />
+    <SolidColorBrush x:Key="LogGutterBrush" Color="#8794A8" />
+    <SolidColorBrush x:Key="LogSelectionBrush" Color="#EDF3FF" />
+    <SolidColorBrush x:Key="LogSearchBackgroundBrush" Color="#F5F7FB" />
+    <Color x:Key="DbMetadataCodeColor">#34598E</Color>
+    <Color x:Key="DbMetadataBackgroundColor">#F7F9FC</Color>
+    <SolidColorBrush x:Key="RabbitMqBackgroundBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="RabbitMqSoftBrush" Color="#F5F7FB" />
+    <SolidColorBrush x:Key="RabbitMqEditorBrush" Color="#FAFBFE" />
+    <SolidColorBrush x:Key="RabbitMqLineBrush" Color="#E3E8F0" />
+    <SolidColorBrush x:Key="RabbitMqInkBrush" Color="#202B3C" />
+    <SolidColorBrush x:Key="RabbitMqMutedBrush" Color="#65758B" />
+    <SolidColorBrush x:Key="RabbitMqAccentBrush" Color="#306BEA" />
+    <SolidColorBrush x:Key="RabbitMqSelectedBrush" Color="#EEF4FF" />
+    <SolidColorBrush x:Key="RabbitMqSuccessBrush" Color="#1A8262" />
+</ResourceDictionary>

@@ -1,0 +1,78 @@
+<Solution>
+  <Folder Name="/src/Foundation/">
+    <Project Path="src/Asgard.Hermod.Abstractions/Asgard.Hermod.Abstractions.csproj" />
+    <Project Path="src/Asgard.Hermod.Core/Asgard.Hermod.Core.csproj" />
+  </Folder>
+  <Folder Name="/src/Desktop/">
+    <Project Path="src/Asgard.Hermod/Asgard.Hermod.csproj" />
+    <Project Path="src/Asgard.Hermod.UI/Asgard.Hermod.UI.csproj" />
+    <Project Path="src/Asgard.Hermod.WinTerminal/Asgard.Hermod.WinTerminal.csproj" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="src/Asgard.Hermod.Agent/Asgard.Hermod.Agent.csproj" />
+    <Project Path="src/Asgard.Hermod.Identity/Asgard.Hermod.Identity.csproj" />
+    <Project Path="src/Asgard.Hermod.Persistence.Sqlite/Asgard.Hermod.Persistence.Sqlite.csproj" />
+    <Project Path="src/Asgard.Hermod.Security.Windows/Asgard.Hermod.Security.Windows.csproj" />
+  </Folder>
+  <Folder Name="/src/MySQL/">
+    <Project Path="src/Asgard.Hermod.MySql/Asgard.Hermod.MySql.csproj" />
+    <Project Path="src/Asgard.Hermod.MySql.UI/Asgard.Hermod.MySql.UI.csproj" />
+  </Folder>
+  <Folder Name="/src/Redis/">
+    <Project Path="src/Asgard.Hermod.Redis/Asgard.Hermod.Redis.csproj" />
+    <Project Path="src/Asgard.Hermod.Redis.UI/Asgard.Hermod.Redis.UI.csproj" />
+  </Folder>
+  <Folder Name="/src/RabbitMQ/">
+    <Project Path="src/Asgard.Hermod.RabbitMq/Asgard.Hermod.RabbitMq.csproj" />
+    <Project Path="src/Asgard.Hermod.RabbitMq.UI/Asgard.Hermod.RabbitMq.UI.csproj" />
+  </Folder>
+  <Folder Name="/src/PostgreSQL/">
+    <Project Path="src/Asgard.Hermod.PostgreSql/Asgard.Hermod.PostgreSql.csproj" />
+    <Project Path="src/Asgard.Hermod.PostgreSql.UI/Asgard.Hermod.PostgreSql.UI.csproj" />
+  </Folder>
+  <Folder Name="/src/SSH/">
+    <Project Path="src/Asgard.Hermod.Ssh/Asgard.Hermod.Ssh.csproj" />
+    <Project Path="src/Asgard.Hermod.Ssh.UI/Asgard.Hermod.Ssh.UI.csproj" />
+  </Folder>
+  <Folder Name="/src/Object Storage/">
+    <Project Path="src/Asgard.Hermod.ObjectStorage.Abstractions/Asgard.Hermod.ObjectStorage.Abstractions.csproj" />
+    <Project Path="src/Asgard.Hermod.ObjectStorage/Asgard.Hermod.ObjectStorage.csproj" />
+    <Project Path="src/Asgard.Hermod.ObjectStorage.UI/Asgard.Hermod.ObjectStorage.UI.csproj" />
+  </Folder>
+  <Folder Name="/src/Object Storage/Providers/">
+    <Project Path="src/Asgard.Hermod.Providers.AliyunOss/Asgard.Hermod.Providers.AliyunOss.csproj" />
+    <Project Path="src/Asgard.Hermod.Providers.AwsS3/Asgard.Hermod.Providers.AwsS3.csproj" />
+    <Project Path="src/Asgard.Hermod.Providers.Minio/Asgard.Hermod.Providers.Minio.csproj" />
+    <Project Path="src/Asgard.Hermod.Providers.S3/Asgard.Hermod.Providers.S3.csproj" />
+    <Project Path="src/Asgard.Hermod.Providers.TencentCos/Asgard.Hermod.Providers.TencentCos.csproj" />
+    <Project Path="src/Asgard.Hermod.Providers.VolcengineTos/Asgard.Hermod.Providers.VolcengineTos.csproj" />
+  </Folder>
+  <Folder Name="/src/Server/">
+    <Project Path="src/Asgard.Hermod.Server/Asgard.Hermod.Server.csproj" />
+    <Project Path="src/Asgard.Hermod.Server.Starter/Asgard.Hermod.Server.Starter.csproj" />
+  </Folder>
+  <Folder Name="/tests/UI/">
+    <Project Path="tests/Asgard.Hermod.UI.Tests/Asgard.Hermod.UI.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Core/">
+    <Project Path="tests/Asgard.Hermod.Sync.Tests/Asgard.Hermod.Sync.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Modules/">
+    <Project Path="tests/Asgard.Hermod.RabbitMq.Tests/Asgard.Hermod.RabbitMq.Tests.csproj" />
+    <Project Path="tests/Asgard.Hermod.RabbitMq.UI.Tests/Asgard.Hermod.RabbitMq.UI.Tests.csproj" />
+    <Project Path="tests/Asgard.Hermod.Agent.Tests/Asgard.Hermod.Agent.Tests.csproj" />
+    <Project Path="tests/Asgard.Hermod.MySql.Tests/Asgard.Hermod.MySql.Tests.csproj" />
+    <Project Path="tests/Asgard.Hermod.MySql.UI.Tests/Asgard.Hermod.MySql.UI.Tests.csproj" />
+    <Project Path="tests/Asgard.Hermod.PostgreSql.Tests/Asgard.Hermod.PostgreSql.Tests.csproj" />
+    <Project Path="tests/Asgard.Hermod.PostgreSql.UI.Tests/Asgard.Hermod.PostgreSql.UI.Tests.csproj" />
+    <Project Path="tests/Asgard.Hermod.Redis.Tests/Asgard.Hermod.Redis.Tests.csproj" />
+    <Project Path="tests/Asgard.Hermod.Redis.UI.Tests/Asgard.Hermod.Redis.UI.Tests.csproj" />
+    <Project Path="tests/Asgard.Hermod.Ssh.Tests/Asgard.Hermod.Ssh.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Terminal/">
+    <Project Path="tests/Asgard.Hermod.WinTerminal.Tests/Asgard.Hermod.WinTerminal.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Probes/">
+    <Project Path="tests/Asgard.Hermod.LifetimeProbe/Asgard.Hermod.LifetimeProbe.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>Asgard.Hermod</RootNamespace>
+    <AssemblyName>Asgard.Hermod</AssemblyName>
+    <ApplicationIcon>..\Asgard.Hermod.UI\Assets\Brand\hermod.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Product>Asgard Hermod</Product>
+    <Description>Open-source Windows management terminal for the Asgard ecosystem.</Description>
+    <NeutralLanguage>en</NeutralLanguage>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="app.yaml" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <!-- 选区在文字底层绘制，使实色背景和 SelectionTextBrush 同时生效。 -->
+    <RuntimeHostConfigurationOption Include="Switch.System.Windows.Controls.Text.UseAdornerForTextboxSelectionRendering" Value="false" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Asgard.Hermod.Identity\Asgard.Hermod.Identity.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.UI\Asgard.Hermod.UI.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Core\Asgard.Hermod.Core.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Persistence.Sqlite\Asgard.Hermod.Persistence.Sqlite.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Security.Windows\Asgard.Hermod.Security.Windows.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.ObjectStorage\Asgard.Hermod.ObjectStorage.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.ObjectStorage.UI\Asgard.Hermod.ObjectStorage.UI.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Providers.AliyunOss\Asgard.Hermod.Providers.AliyunOss.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Providers.AwsS3\Asgard.Hermod.Providers.AwsS3.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Providers.TencentCos\Asgard.Hermod.Providers.TencentCos.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Providers.VolcengineTos\Asgard.Hermod.Providers.VolcengineTos.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Providers.Minio\Asgard.Hermod.Providers.Minio.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.WinTerminal\Asgard.Hermod.WinTerminal.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Ssh\Asgard.Hermod.Ssh.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Ssh.UI\Asgard.Hermod.Ssh.UI.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Redis\Asgard.Hermod.Redis.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Redis.UI\Asgard.Hermod.Redis.UI.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.MySql.UI\Asgard.Hermod.MySql.UI.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.PostgreSql.UI\Asgard.Hermod.PostgreSql.UI.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.RabbitMq.UI\Asgard.Hermod.RabbitMq.UI.csproj" />
+  </ItemGroup>
+</Project>

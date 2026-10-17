@@ -1,0 +1,13 @@
+<UserControl x:Class="Asgard.Hermod.UI.Controls.DatabaseScopePicker" x:Name="Root"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls" xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization">
+ <UserControl.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/DatabaseDesign.xaml" /></ResourceDictionary.MergedDictionaries></ResourceDictionary></UserControl.Resources>
+ <Grid>
+  <Button x:Name="Trigger" Command="{Binding OpenScopeEditorCommand}" Style="{StaticResource DatabaseToolbarButton}" Height="30" Padding="10,0" ToolTip="{loc:Loc DatabaseSessionScope}" AutomationProperties.Name="{loc:Loc DatabaseSessionScope}">
+   <StackPanel Orientation="Horizontal"><controls:IconView Kind="database" Width="14" Height="14" Foreground="{DynamicResource TextMutedBrush}" /><TextBlock Text="{Binding DatabaseScopeLabel}" FontSize="12" Margin="7,0" /><controls:IconView Kind="chevron-down" Width="12" Height="12" Foreground="{DynamicResource TextMutedBrush}" /></StackPanel>
+  </Button>
+  <Popup x:Name="ScopePopup" IsOpen="{Binding ScopeEditor.IsOpen, Mode=TwoWay}" PlacementTarget="{Binding ElementName=Trigger}" Placement="Bottom" StaysOpen="False" AllowsTransparency="True" VerticalOffset="11" Opened="OnPopupOpened">
+   <Border Padding="18" Background="Transparent"><controls:DatabaseScopeEditor x:Name="ScopeContent" DataContext="{Binding DataContext.ScopeEditor, ElementName=Root}" /></Border>
+  </Popup>
+ </Grid>
+</UserControl>

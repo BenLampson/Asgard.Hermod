@@ -1,0 +1,7 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <FontFamily x:Key="WorkspaceFont">pack://application:,,,/Asgard.Hermod.UI;component/Assets/Fonts/#Noto Sans SC</FontFamily>
+    <!-- 拉丁文字首先使用包内设计字体；Inter 与 Mono 没有中文字形，中文使用包内 Noto Sans SC。 -->
+    <FontFamily x:Key="UiFont">pack://application:,,,/Asgard.Hermod.UI;component/Assets/Fonts/#Inter, pack://application:,,,/Asgard.Hermod.UI;component/Assets/Fonts/#Noto Sans SC</FontFamily>
+    <FontFamily x:Key="MonoFont">pack://application:,,,/Asgard.Hermod.UI;component/Assets/Fonts/#JetBrains Mono, pack://application:,,,/Asgard.Hermod.UI;component/Assets/Fonts/#Noto Sans SC</FontFamily>
+</ResourceDictionary>

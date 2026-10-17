@@ -1,0 +1,30 @@
+services:
+  hermod:
+    image: ${HERMOD_SERVER_IMAGE:?Set an immutable Hermod server image}
+    container_name: asgard-hermod-starter
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      HERMODSERVER__DATABASEPATH: /data/hermod-sync.db
+      PLUGIN__DATADIRECTORY: /data/plugins
+      HOST__KESTREL__ENDPOINTS__HTTP__URL: http://0.0.0.0:5086
+    volumes:
+      - ./data:/data
+    networks:
+      CoreServer:
+        aliases:
+          - hermod
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+networks:
+  CoreServer:
+    external: true

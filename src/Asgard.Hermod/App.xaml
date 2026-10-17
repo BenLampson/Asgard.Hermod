@@ -1,0 +1,20 @@
+<Application x:Class="Asgard.Hermod.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             ShutdownMode="OnMainWindowClose">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.UI;component/Resources/Theme.Light.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.UI;component/Resources/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.UI;component/Resources/Styles.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.ObjectStorage.UI;component/Resources/WorkspacePages.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.Ssh.UI;component/Resources/WorkspacePages.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.Redis.UI;component/Resources/WorkspacePages.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.MySql.UI;component/Resources/WorkspacePages.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.PostgreSql.UI;component/Resources/WorkspacePages.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Asgard.Hermod.RabbitMq.UI;component/Resources/WorkspacePages.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

@@ -1,0 +1,73 @@
+<UserControl x:Class="Asgard.Hermod.UI.Controls.WorkspaceTools" x:Name="ToolsRoot"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
+             xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization">
+    <Grid>
+        <Button x:Name="ToolsTrigger" Click="OnToggleClick"
+                      Height="28" MinHeight="28" FontWeight="Normal" FontSize="12" Padding="9,0" ToolTip="{Binding Label, ElementName=ToolsRoot, TargetNullValue={loc:Loc WorkspaceTools}}"
+                      AutomationProperties.Name="{Binding Label, ElementName=ToolsRoot, TargetNullValue={loc:Loc WorkspaceTools}}">
+            <Button.Style><Style TargetType="Button" BasedOn="{StaticResource StandardButton}"><Style.Triggers>
+                <DataTrigger Binding="{Binding IsFlat, ElementName=ToolsRoot}" Value="True"><Setter Property="BorderThickness" Value="0" /><Setter Property="Background" Value="Transparent" /></DataTrigger>
+                <DataTrigger Binding="{Binding IsOpen, ElementName=ToolsRoot}" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                </DataTrigger>
+            </Style.Triggers></Style></Button.Style>
+            <StackPanel Orientation="Horizontal"><controls:IconView Kind="{Binding Icon, ElementName=ToolsRoot}" Width="15" Height="15" />
+                <TextBlock Text="{Binding Label, ElementName=ToolsRoot, TargetNullValue={loc:Loc WorkspaceTools}}" Margin="7,0,0,0" />
+            </StackPanel>
+        </Button>
+        <Popup x:Name="ToolsPopup" IsOpen="{Binding IsOpen, ElementName=ToolsRoot, Mode=TwoWay}"
+               PlacementTarget="{Binding ElementName=ToolsTrigger}" Placement="Bottom" VerticalOffset="8"
+               StaysOpen="False" AllowsTransparency="True" Opened="OnOpened" Closed="OnClosed">
+            <Border x:Name="ToolsPanel" Width="340" Padding="14" Background="{DynamicResource SurfaceBrush}"
+                    BorderBrush="{DynamicResource LineBrush}" BorderThickness="1" CornerRadius="8">
+                <Grid KeyboardNavigation.TabNavigation="Cycle" PreviewKeyDown="OnPopupKeyDown">
+                    <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                    <DockPanel Margin="0,0,0,12">
+                        <Button DockPanel.Dock="Right" Click="OnCloseClick" Style="{StaticResource IconButton}"
+                                ToolTip="{loc:Loc Close}" AutomationProperties.Name="{loc:Loc Close}"><controls:IconView Kind="x" Width="14" Height="14" /></Button>
+                        <TextBlock Text="{Binding Label, ElementName=ToolsRoot, TargetNullValue={loc:Loc WorkspaceSessionTools}}" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    </DockPanel>
+                    <Grid Grid.Row="1" Margin="0,0,0,10">
+                        <TextBox x:Name="ToolFilter" TextChanged="OnFilterChanged" Height="36" MinHeight="36" FontFamily="{DynamicResource UiFont}" FontSize="13" VerticalContentAlignment="Center" Padding="10,0,34,0"
+                                 ToolTip="{loc:Loc WorkspaceFindTool}" AutomationProperties.Name="{loc:Loc WorkspaceFindTool}" />
+                        <TextBlock Text="{loc:Loc WorkspaceFindTool}" Margin="11,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False" Foreground="{DynamicResource TextMutedBrush}">
+                            <TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=ToolFilter}" Value=""><Setter Property="Visibility" Value="Visible" /></DataTrigger>
+                            </Style.Triggers></Style></TextBlock.Style>
+                        </TextBlock>
+                        <controls:IconView Kind="search" Width="15" Height="15" HorizontalAlignment="Right" Margin="0,0,12,0" IsHitTestVisible="False" Foreground="{DynamicResource TextMutedBrush}" />
+                    </Grid>
+                    <ScrollViewer Grid.Row="2" MaxHeight="320" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <ItemsControl x:Name="ToolList" ItemsSource="{Binding FilteredTools, ElementName=ToolsRoot}">
+                            <ItemsControl.ItemTemplate><DataTemplate>
+                                <Button Command="{Binding Command}" Click="OnToolClick" Style="{StaticResource GhostButton}"
+                                        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" FontFamily="{DynamicResource UiFont}" FontSize="13" Height="44" Padding="10,0" Margin="0,1"
+                                        AutomationProperties.Name="{Binding Title}" ToolTip="{Binding Title}">
+                                    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="26" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                        <controls:IconView Kind="{Binding Icon}" Width="16" Height="16" VerticalAlignment="Center" />
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding Group}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"><TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers>
+                                                <DataTrigger Binding="{Binding Group}" Value=""><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+                                                <DataTrigger Binding="{Binding Group}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+                                            </Style.Triggers></Style></TextBlock.Style></TextBlock>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2" Text="{Binding Hint}" FontSize="10" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}" />
+                                    </Grid>
+                                </Button>
+                            </DataTemplate></ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                    <TextBlock x:Name="EmptyTools" Grid.Row="3" Text="{loc:Loc WorkspaceNoMatchingTools}" Foreground="{DynamicResource TextMutedBrush}" Margin="10,12" Visibility="Collapsed" />
+                    <Border Grid.Row="4" BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,1,0,0" Margin="0,12,0,0" Padding="0,12,0,0">
+                        <TextBlock Text="{loc:Loc WorkspaceToolsScope}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" />
+                    </Border>
+                </Grid>
+            </Border>
+        </Popup>
+    </Grid>
+</UserControl>

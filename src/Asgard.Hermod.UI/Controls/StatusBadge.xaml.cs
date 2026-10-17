@@ -1,0 +1,45 @@
+namespace Asgard.Hermod.UI.Controls;
+
+/// <summary>使用主题语义色显示服务或会话状态的紧凑徽标。</summary>
+public partial class StatusBadge : UserControl
+{
+    /// <summary>标题环境标签采用十八 DIP 高、十 DIP 字号与内容自适应宽度。</summary>
+    public static readonly DependencyProperty IsCaptionProperty = DependencyProperty.Register(nameof(IsCaption), typeof(bool), typeof(StatusBadge), new PropertyMetadata(false));
+    /// <summary>是否采用紧凑标题环境标签。</summary>
+    public bool IsCaption { get => (bool)GetValue(IsCaptionProperty); set => SetValue(IsCaptionProperty, value); }
+    /// <summary>类型标签与连接状态共用徽标，调用者可隐藏装饰性圆点。</summary>
+    public static readonly DependencyProperty ShowIndicatorProperty = DependencyProperty.Register(nameof(ShowIndicator), typeof(bool), typeof(StatusBadge), new PropertyMetadata(true));
+    /// <summary>是否显示装饰性状态圆点。</summary>
+    public bool ShowIndicator { get => (bool)GetValue(ShowIndicatorProperty); set => SetValue(ShowIndicatorProperty, value); }
+    /// <summary>声明状态说明的依赖属性。</summary>
+    public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
+        nameof(Text), typeof(string), typeof(StatusBadge), new PropertyMetadata(string.Empty));
+
+    /// <summary>声明状态色调的依赖属性。</summary>
+    public static readonly DependencyProperty ToneProperty = DependencyProperty.Register(
+        nameof(Tone), typeof(StatusTone), typeof(StatusBadge), new PropertyMetadata(StatusTone.Muted));
+
+    /// <summary>行内状态仅显示语义圆点和辅助文字，适用于内容页头。</summary>
+    public static readonly DependencyProperty IsInlineProperty = DependencyProperty.Register(
+        nameof(IsInline), typeof(bool), typeof(StatusBadge), new PropertyMetadata(false));
+
+    /// <summary>使用无背景的行内状态样式。</summary>
+    public bool IsInline { get => (bool)GetValue(IsInlineProperty); set => SetValue(IsInlineProperty, value); }
+
+    /// <summary>获取或设置面向用户的状态说明。</summary>
+    public string Text
+    {
+        get => (string)GetValue(TextProperty);
+        set => SetValue(TextProperty, value);
+    }
+
+    /// <summary>获取或设置语义色；主题切换时同步更新底色和文字。</summary>
+    public StatusTone Tone
+    {
+        get => (StatusTone)GetValue(ToneProperty);
+        set => SetValue(ToneProperty, value);
+    }
+
+    /// <summary>初始化设计中的圆点与文字布局。</summary>
+    public StatusBadge() => InitializeComponent();
+}

@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Asgard.Hermod.Agent.Tests" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.10.0" />
+    <ProjectReference Include="../Asgard.Hermod.Abstractions/Asgard.Hermod.Abstractions.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>Asgard.Hermod.WinTerminal</RootNamespace>
+    <AssemblyName>Asgard.Hermod.WinTerminal</AssemblyName>
+    <Description>Windows WPF terminal control and VT engine for Asgard Hermod.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Update="README.md" Pack="true" PackagePath="/" />
+    <None Update="THIRD-PARTY-NOTICES.md" Pack="true" PackagePath="/" />
+    <None Update="licenses\VirtualTerminal.LICENSE.txt" Pack="true" PackagePath="licenses/VirtualTerminal.LICENSE.txt" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,41 @@
+<UserControl x:Class="Asgard.Hermod.ObjectStorage.UI.Views.Pages.ObjectStorageView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI"
+             xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI"
+             xmlns:pages="clr-namespace:Asgard.Hermod.ObjectStorage.UI.Views.Pages"
+             Background="{DynamicResource SurfaceBrush}" FontFamily="{DynamicResource UiFont}">
+    <UserControl.Resources><BooleanToVisibilityConverter x:Key="DetailsVisible" /></UserControl.Resources>
+    <Grid>
+    <Grid x:Name="BrowserSurface" IsEnabled="{Binding IsConnectionInteractionEnabled}">
+        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+        <!-- 页头只使用安全摘要；在线状态由实际读取结果决定。 -->
+        <controls:WorkspaceHeader State="{Binding Connection}" RetryCommand="{Binding ReconnectCommand}" EditCommand="{Binding EditConnectionCommand}">
+            <controls:WorkspaceHeader.IdentityContent><controls:WorkspaceIdentity Instance="{Binding Instance}" Endpoint="{Binding Subtitle}" Icon="box" /></controls:WorkspaceHeader.IdentityContent>
+            <controls:WorkspaceHeader.StatusContent><controls:StatusBadge Style="{DynamicResource WorkspaceHeaderSecondaryStatus}" Text="{Binding Instance.EnvironmentLabel}" Tone="{Binding Instance.EnvironmentTone}" ShowIndicator="False" IsCaption="True" /></controls:WorkspaceHeader.StatusContent>
+
+        </controls:WorkspaceHeader>
+        <Grid Grid.Row="1" x:Name="BrowserPanels">
+            <Grid.ColumnDefinitions><ColumnDefinition x:Name="ListColumn" Width="*" /><ColumnDefinition x:Name="SplitterColumn" Width="6" /><ColumnDefinition x:Name="DetailsColumn" Width="278" /></Grid.ColumnDefinitions>
+            <pages:ObjectStorageListView />
+            <GridSplitter x:Name="DetailsSplitter" Grid.Column="1" Width="6" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                          ResizeDirection="Columns" ResizeBehavior="PreviousAndNext" ShowsPreview="False" Background="{DynamicResource LineSoftBrush}"
+                          KeyboardIncrement="16" DragIncrement="1" ToolTip="{loc:Loc ResizeObjectDetails}" AutomationProperties.Name="{loc:Loc ResizeObjectDetails}"
+                          Visibility="{Binding IsDetailsOpen, Converter={StaticResource DetailsVisible}}">
+                <GridSplitter.Template><ControlTemplate TargetType="GridSplitter">
+                    <Grid Background="Transparent">
+                        <Border Width="1" HorizontalAlignment="Center" Background="{TemplateBinding Background}" />
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Rectangle Width="2" Height="2" Fill="{DynamicResource TextMutedBrush}" Margin="0,2" />
+                            <Rectangle Width="2" Height="2" Fill="{DynamicResource TextMutedBrush}" Margin="0,2" />
+                            <Rectangle Width="2" Height="2" Fill="{DynamicResource TextMutedBrush}" Margin="0,2" />
+                        </StackPanel>
+                    </Grid>
+                </ControlTemplate></GridSplitter.Template>
+            </GridSplitter>
+            <pages:ObjectStorageDetailsView Grid.Column="2" Visibility="{Binding IsDetailsOpen, Converter={StaticResource DetailsVisible}}" />
+        </Grid>
+    </Grid>
+    <controls:WorkspaceConnectionOverlay CloseWorkspaceCommand="{Binding CloseWindowCommand}" State="{Binding Connection}" TargetName="{Binding Name}" RetryCommand="{Binding ReconnectCommand}" EditCommand="{Binding EditConnectionCommand}" Visibility="{Binding Connection.IsOpen, Converter={StaticResource DetailsVisible}}" Panel.ZIndex="100" />
+    </Grid>
+</UserControl>

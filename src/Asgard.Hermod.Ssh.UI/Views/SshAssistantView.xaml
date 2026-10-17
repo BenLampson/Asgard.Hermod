@@ -1,0 +1,28 @@
+<UserControl x:Class="Asgard.Hermod.Ssh.UI.Views.SshAssistantView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI"
+ xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI">
+ <controls:AgentPanel ModelSession="{Binding ModelSession}" x:Name="ChatPanel" IsAwaitingApproval="{Binding PendingApproval.IsPending, FallbackValue=False}" IsSourceClosed="{Binding IsSourceClosed}" Archive="{Binding Archive}" QuickPrompts="{Binding QuickPrompts}" Messages="{Binding Messages}" Prompt="{Binding Prompt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+  Placeholder="{loc:Loc SshAgentPrompt}" SendCommand="{Binding SendCommand}" CancelCommand="{Binding CancelCommand}" ClearCommand="{Binding ClearCommand}"
+  IsBusy="{Binding IsBusy}" Error="{Binding Error}" Status="{Binding Status}" CloseRequested="OnClose">
+  <controls:AgentPanel.ContextContent>
+   <StackPanel>
+    <TextBlock Text="{Binding ContextLabel}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
+    <WrapPanel Margin="0,7,0,0"><Button Content="{loc:Loc SshAgentAttachSelection}" Click="OnAttachSelection" Margin="0,0,8,7" /><CheckBox IsChecked="{Binding IncludeOutput}" Margin="0,0,0,7" VerticalAlignment="Center" ToolTip="{loc:Loc SshAgentIncludeSelection}"><TextBlock Text="{loc:Loc SshAgentIncludeSelectionShort}" TextWrapping="Wrap" /></CheckBox></WrapPanel>
+    <TextBlock Text="{loc:Loc SshAgentAutomationHint}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
+   </StackPanel>
+  </controls:AgentPanel.ContextContent>
+  <controls:AgentPanel.MessageTemplate><DataTemplate>
+   <controls:AgentMessageView Thinking="{Binding Thinking}" IsStreaming="{Binding IsStreaming}" Role="{Binding Role}" Body="{Binding Content}" CopyText="{Binding OriginalContent}" Question="{Binding Question}" Feedback="{Binding Feedback, Mode=TwoWay}" TimestampLabel="{Binding TimestampLabel}" IsUser="{Binding IsUser}" IsTool="{Binding IsTool}" Status="{Binding Status}" ActivityTitle="{Binding ActivityTitle}" ActivityIcon="{Binding ActivityIcon}" ActivityTone="{Binding ActivityTone}" IsExpanded="{Binding IsExpanded, Mode=TwoWay}" Approval="{Binding Approval}" IsAwaitingApproval="{Binding IsAwaitingApproval}" IsError="{Binding IsError}" ModelIdentity="{Binding ModelIdentity}" Elapsed="{Binding Elapsed}" RecoveryPrompt="{Binding RecoveryPrompt}" RestoreDraftCommand="{Binding DataContext.RestoreDraftCommand, RelativeSource={RelativeSource AncestorType=controls:AgentPanel}}">
+    <controls:AgentMessageView.ActionsContent>
+     <ItemsControl ItemsSource="{Binding Commands}"><ItemsControl.ItemTemplate><DataTemplate>
+      <controls:AgentCodeSuggestion Code="{Binding Command}" Caption="{loc:Loc SshAgentSuggestion}"
+       InsertText="{loc:Loc SshAgentInsert}" ExecuteText="{loc:Loc SshAgentExecute}" CommandParameter="{Binding}"
+       InsertCommand="{Binding DataContext.InsertCommand, RelativeSource={RelativeSource AncestorType=controls:AgentPanel}}"
+       ExecuteCommand="{Binding DataContext.ExecuteCommand, RelativeSource={RelativeSource AncestorType=controls:AgentPanel}}" />
+     </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+    </controls:AgentMessageView.ActionsContent>
+   </controls:AgentMessageView>
+  </DataTemplate></controls:AgentPanel.MessageTemplate>
+ </controls:AgentPanel>
+</UserControl>

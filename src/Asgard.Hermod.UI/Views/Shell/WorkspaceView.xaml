@@ -1,0 +1,14 @@
+<UserControl x:Class="Asgard.Hermod.UI.Views.Shell.WorkspaceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:shell="clr-namespace:Asgard.Hermod.UI.Views.Shell"
+             xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls">
+    <Grid Background="{DynamicResource AppBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <shell:WorkspaceTabStrip Height="36" Visibility="{Binding TabStripVisibility}" />
+        <controls:WorkspaceContentHost x:Name="ContentHost" Grid.Row="1" Page="{Binding DisplayedPage}" />
+    </Grid>
+</UserControl>

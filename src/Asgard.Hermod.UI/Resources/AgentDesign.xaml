@@ -1,0 +1,16 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+ <ResourceDictionary.MergedDictionaries><ResourceDictionary Source="ButtonStyles.xaml" /></ResourceDictionary.MergedDictionaries>
+ <FontFamily x:Key="UiFont">pack://application:,,,/Asgard.Hermod.UI;component/Assets/Fonts/#Noto Sans SC</FontFamily>
+ <SolidColorBrush x:Key="SurfaceBrush" Color="{DynamicResource AgentBackgroundColor}" />
+ <SolidColorBrush x:Key="AppBackgroundBrush" Color="{DynamicResource AgentSoftColor}" />
+ <SolidColorBrush x:Key="LineBrush" Color="{DynamicResource AgentLineColor}" />
+ <SolidColorBrush x:Key="TextPrimaryBrush" Color="{DynamicResource AgentInkColor}" />
+ <SolidColorBrush x:Key="TextBodyBrush" Color="{DynamicResource AgentInkColor}" />
+ <SolidColorBrush x:Key="TextMutedBrush" Color="{DynamicResource AgentMutedColor}" />
+ <SolidColorBrush x:Key="TextFaintBrush" Color="{DynamicResource AgentMutedColor}" />
+ <SolidColorBrush x:Key="AccentBrush" Color="{DynamicResource AgentAccentColor}" />
+ <SolidColorBrush x:Key="ActionFillBrush" Color="{DynamicResource AgentAccentColor}" />
+ <SolidColorBrush x:Key="AccentTextBrush" Color="{DynamicResource AgentAccentColor}" />
+ <SolidColorBrush x:Key="AccentWeakBrush" Color="{DynamicResource AgentSelectedColor}" />
+ <SolidColorBrush x:Key="AgentSuccessBrush" Color="{DynamicResource AgentSuccessColor}" />
+</ResourceDictionary>

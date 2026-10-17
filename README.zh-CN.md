@@ -5,8 +5,8 @@
 面向开发人员和运维人员的 Windows 桌面管理工具，在一个应用中管理 SSH、数据库、
 消息队列和对象存储，并提供可选的 AI 助手与跨设备配置同步。
 
-[源代码](https://github.com/BenLampson/Asgard.Hermod/tree/dev) ·
-[使用与开发文档](https://github.com/BenLampson/Asgard.Hermod/tree/dev/docs) ·
+[源代码](https://github.com/BenLampson/Asgard.Hermod/tree/main) ·
+[使用与开发文档](https://github.com/BenLampson/Asgard.Hermod/tree/main/docs) ·
 [隐私政策](PRIVACY.md) · [支持](SUPPORT.md) · [Apache 2.0 许可证](LICENSE)
 
 ## 功能
@@ -35,9 +35,9 @@
 
 ## 获取应用与运行要求
 
-目前正在准备 Microsoft Store 上架。发布后的下载可查看
-[GitHub Releases](https://github.com/BenLampson/Asgard.Hermod/releases)，
-也可以按照下文从源代码构建开发版本。
+1.0.0 已提交 Microsoft Store，商店可用时间取决于认证与发布进度。
+[GitHub Releases](https://github.com/BenLampson/Asgard.Hermod/releases)
+提供发布说明和用于商店提交的未签名 MSIX，也可以按照下文从源代码构建。
 
 - 当前桌面安装包要求 Windows 10 22H2（19045）及以上版本，包括 Windows 11。
   WPF 应用需要在 Windows 上运行。
@@ -50,13 +50,13 @@
 
 ## 从源代码构建
 
-当前应用源代码和详细开发文档位于
-[`dev`](https://github.com/BenLampson/Asgard.Hermod/tree/dev) 分支。
-请在 Windows 上安装 .NET 10 SDK；SDK 选择规则见该分支的 `global.json`。
+[`main`](https://github.com/BenLampson/Asgard.Hermod/tree/main) 保存正式发布的源代码和文档，
+[`dev`](https://github.com/BenLampson/Asgard.Hermod/tree/dev) 用于持续开发。
+Release 只能从 `main` 发布。请在 Windows 上安装 .NET 10 SDK；SDK 选择规则见 `global.json`。
 也可以使用安装了 .NET 桌面开发工作负载的 Visual Studio。
 
 ```powershell
-git clone --branch dev https://github.com/BenLampson/Asgard.Hermod.git
+git clone https://github.com/BenLampson/Asgard.Hermod.git
 cd Asgard.Hermod
 dotnet restore Asgard.Hermod.slnx
 dotnet build Asgard.Hermod.slnx -c Release --no-restore
@@ -65,29 +65,29 @@ dotnet run --project src/Asgard.Hermod --configuration Release --no-build
 
 开发版本将本地配置保存在 `%LOCALAPPDATA%\Asgard\Hermod\hermod.db`。
 打包安装的版本可能使用 Windows 为包分配的存储路径，详见
-[本地存储说明](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/local-storage.md)。
+[本地存储说明](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/local-storage.md)。
 
 依赖框架的发布版本要求安装 .NET 10 Desktop Runtime。
-[Microsoft Store 打包说明](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/microsoft-store.md)
+[Microsoft Store 打包说明](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/microsoft-store.md)
 介绍了包含运行时的 MSIX 构建、包标识及提交前检查。
 
 ## 文档
 
 | 主题 | 文档 |
 | --- | --- |
-| 架构与项目职责 | [模块架构](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/architecture.md) |
-| SSH、SFTP、监控与容器 | [SSH 工作区](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/ssh.md) |
-| SQL 工作区 | [MySQL](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/mysql.md)、[PostgreSQL](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/postgresql.md) |
-| 云存储连接 | [对象存储提供方](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/object-storage-providers.md) |
-| 预览、外部打开与临时文件 | [文件打开](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/file-opening.md)、[存储设置](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/storage-settings.md) |
-| 账号与跨设备配置 | [身份与同步](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/identity-and-sync.md) |
-| 语言选择与翻译 | [国际化](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/localization.md) |
-| 终端嵌入与来源声明 | [终端组件](https://github.com/BenLampson/Asgard.Hermod/blob/dev/src/Asgard.Hermod.WinTerminal/README.md) |
+| 架构与项目职责 | [模块架构](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/architecture.md) |
+| SSH、SFTP、监控与容器 | [SSH 工作区](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/ssh.md) |
+| SQL 工作区 | [MySQL](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/mysql.md)、[PostgreSQL](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/postgresql.md) |
+| 云存储连接 | [对象存储提供方](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/object-storage-providers.md) |
+| 预览、外部打开与临时文件 | [文件打开](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/file-opening.md)、[存储设置](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/storage-settings.md) |
+| 账号与跨设备配置 | [身份与同步](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/identity-and-sync.md) |
+| 语言选择与翻译 | [国际化](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/localization.md) |
+| 终端嵌入与来源声明 | [终端组件](https://github.com/BenLampson/Asgard.Hermod/blob/main/src/Asgard.Hermod.WinTerminal/README.md) |
 
 ## 参与开发
 
 修改应用前请阅读 [CONTRIBUTING.md](CONTRIBUTING.md) 和
-[代理开发规则](https://github.com/BenLampson/Asgard.Hermod/blob/dev/AGENTS.md)。
+[代理开发规则](https://github.com/BenLampson/Asgard.Hermod/blob/main/AGENTS.md)。
 仓库文档、Issue 和 Pull Request 默认使用英文。应用自身的界面文字需要提供英文和
 简体中文资源，并以英文作为回退。
 
@@ -96,7 +96,7 @@ dotnet run --project src/Asgard.Hermod --configuration Release --no-build
 ```powershell
 dotnet build Asgard.Hermod.slnx -c Release
 dotnet format Asgard.Hermod.slnx --verify-no-changes --no-restore
-dotnet test --solution Asgard.Hermod.slnx --configuration Release --no-build
+dotnet test --solution Asgard.Hermod.slnx --configuration Release --no-build --max-parallel-test-modules 1
 ```
 
 ## 支持、隐私与安全

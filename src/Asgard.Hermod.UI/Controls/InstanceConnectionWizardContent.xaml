@@ -1,0 +1,217 @@
+<UserControl x:Class="Asgard.Hermod.UI.Controls.InstanceConnectionWizardContent"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization"
+             xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
+             xmlns:models="clr-namespace:Asgard.Hermod.Abstractions.Models;assembly=Asgard.Hermod.Abstractions">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="WizardVisibility" />
+        <!-- 卡片共用正文滚动区域，列表内部不创建会吞掉滚轮的 ScrollViewer。 -->
+        <Style x:Key="WizardCardList" TargetType="ListBox">
+            <Setter Property="Focusable" Value="False" /><Setter Property="IsTabStop" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBox"><ItemsPresenter /></ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemsPanel">
+                <Setter.Value><ItemsPanelTemplate><StackPanel /></ItemsPanelTemplate></Setter.Value>
+            </Setter>
+        </Style>
+        <!-- 列表负责服务商选中同步，卡片复用全局选项外观。 -->
+        <Style x:Key="ProviderListItem" TargetType="ListBoxItem">
+            <Setter Property="Focusable" Value="False" /><Setter Property="IsTabStop" Value="False" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <ContentPresenter HorizontalAlignment="Stretch" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ConfirmationRow" TargetType="Border">
+            <Setter Property="BorderBrush" Value="{DynamicResource LineSoftBrush}" />
+            <Setter Property="BorderThickness" Value="0,0,0,1" />
+            <Setter Property="Padding" Value="0,12" />
+        </Style>
+        <Style x:Key="ConfirmationLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="ConfirmationValue" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </UserControl.Resources>
+    <StackPanel Margin="28" IsEnabled="{Binding IsInformationEditable}">
+        <TextBlock Text="{Binding StepTitle}" FontSize="24" FontWeight="SemiBold" />
+        <TextBlock Text="{Binding StepDescription}" FontSize="13" TextWrapping="Wrap"
+                   Foreground="{DynamicResource TextMutedBrush}" Margin="0,16,0,24" />
+        <controls:InstanceTypePicker ItemsSource="{Binding Products}" SelectedItem="{Binding SelectedProduct}" Visibility="{Binding IsProductStep, Converter={StaticResource WizardVisibility}}" AutomationProperties.Name="{loc:Loc InstanceChooseProduct}" />
+        <StackPanel x:Name="ProviderSelectionPage" Visibility="{Binding IsProviderStep, Converter={StaticResource WizardVisibility}}">
+            <ListBox x:Name="ProviderList" Style="{StaticResource WizardCardList}" ItemsSource="{Binding Providers}" SelectedItem="{Binding SelectedProvider}"
+                     IsEnabled="{Binding IsProviderSelectionEditable}"
+                     BorderThickness="0" Padding="0"
+                     Background="Transparent" ItemContainerStyle="{StaticResource ProviderListItem}"
+                     HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     AutomationProperties.Name="{Binding ProviderLabel}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <controls:SelectionCard Heading="{Binding Name}" Description="{Binding ProductName}"
+                                                Icon="{Binding Icon}" Height="74" GroupName="InstanceProvider"
+                                                Checked="OnProviderChecked" AutomationProperties.Name="{Binding Name}"
+                                                IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Mode=OneWay}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+        <StackPanel>
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsInformationStep}" Value="True" />
+                                <Condition Binding="{Binding InformationContent, RelativeSource={RelativeSource AncestorType=controls:InstanceConnectionWizardContent}}" Value="{x:Null}" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+            <controls:FormField Label="{loc:Loc InstanceName}" IsRequired="True" Error="{Binding NameError}" Margin="0,0,0,20">
+                <TextBox x:Name="NameInput" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Height="36" MaxLength="128"
+                         AutomationProperties.Name="{loc:Loc InstanceName}" />
+            </controls:FormField>
+            <ItemsControl ItemsSource="{Binding ConfigurationEditor.Fields}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <controls:InstanceConfigurationFieldEditor Margin="0,0,0,20" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+        <ContentControl Content="{Binding InformationContent, RelativeSource={RelativeSource AncestorType=controls:InstanceConnectionWizardContent}}"
+                        Visibility="{Binding IsInformationStep, Converter={StaticResource WizardVisibility}}" />
+        <StackPanel Visibility="{Binding IsTestStep, Converter={StaticResource WizardVisibility}}">
+            <Grid Margin="0,0,0,20">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="52" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                <controls:IconView Width="40" Height="40" VerticalAlignment="Top">
+                    <controls:IconView.Style>
+                        <Style TargetType="controls:IconView">
+                            <Setter Property="Kind" Value="circle-dashed" />
+                            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding TestState}" Value="{x:Static models:InstanceConnectionTestState.Succeeded}">
+                                    <Setter Property="Kind" Value="circle-check" />
+                                    <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding TestState}" Value="{x:Static models:InstanceConnectionTestState.Failed}">
+                                    <Setter Property="Kind" Value="circle-x" />
+                                    <Setter Property="Foreground" Value="{DynamicResource DangerBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </controls:IconView.Style>
+                </controls:IconView>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="{Binding TestHeading}" FontSize="18" FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding TestMessage}" Margin="0,8,0,0" TextWrapping="Wrap"
+                               Foreground="{DynamicResource TextMutedBrush}" AutomationProperties.LiveSetting="Polite" />
+                </StackPanel>
+            </Grid>
+            <ProgressBar IsIndeterminate="True" Height="4" Margin="0,0,0,20"
+                         Visibility="{Binding IsTesting, Converter={StaticResource WizardVisibility}}" />
+            <TextBlock Text="{Binding TestErrorCode}" FontFamily="{DynamicResource MonoFont}" Margin="0,0,0,16"
+                       Foreground="{DynamicResource DangerBrush}" Visibility="{Binding HasTestErrorCode, Converter={StaticResource WizardVisibility}}" />
+            <ItemsControl ItemsSource="{Binding TestChecks}" Margin="0,0,0,16">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,0,0,1" Padding="0,12">
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Right" Margin="16,0,0,0">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="{loc:Loc Failed2}" />
+                                            <Setter Property="Foreground" Value="{DynamicResource DangerBrush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSuccessful}" Value="True">
+                                                    <Setter Property="Text" Value="{loc:Loc Passed}" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <TextBlock Text="{Binding Name}" FontSize="13" TextWrapping="Wrap" />
+                            </DockPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock x:Name="ConnectionTestDescription" Text="{Binding TestDescription}"
+                       Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,0,0,16" />
+            <StackPanel Orientation="Horizontal">
+                <Button Content="{loc:Loc EditInformation}" Command="{Binding ModifyInformationCommand}" Height="32" Padding="14,0" Margin="0,0,10,0"
+                        Visibility="{Binding HasTestFailure, Converter={StaticResource WizardVisibility}}" />
+                <Button x:Name="StartTestButton" Content="{Binding TestActionLabel}" Command="{Binding TestConnectionCommand}"
+                        Height="32" Padding="14,0" Margin="0,0,10,0" />
+                <Button Content="{loc:Loc CancelTest}" Command="{Binding CancelTestCommand}" Height="32" Padding="14,0"
+                        Visibility="{Binding IsTesting, Converter={StaticResource WizardVisibility}}" />
+            </StackPanel>
+            <TextBlock Text="{loc:Loc TestAgainAfterChangingTheConnectionInformation}" Foreground="{DynamicResource TextMutedBrush}" Margin="0,24,0,0" />
+        </StackPanel>
+        <StackPanel Visibility="{Binding IsSaveLocationStep, Converter={StaticResource WizardVisibility}}">
+            <Border Padding="20" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1" CornerRadius="8">
+                <StackPanel>
+                    <TextBlock Text="{Binding SaveLocationLabel}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,8" />
+                    <TextBlock Text="{Binding SaveLocationDescription}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+        <StackPanel Visibility="{Binding IsConfirmationStep, Converter={StaticResource WizardVisibility}}">
+            <Border Style="{StaticResource ConfirmationRow}"><Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="136" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                <TextBlock Text="{loc:Loc InstanceName}" Style="{StaticResource ConfirmationLabel}" />
+                <TextBlock Grid.Column="1" Text="{Binding Name}" Style="{StaticResource ConfirmationValue}" />
+            </Grid></Border>
+            <Border Style="{StaticResource ConfirmationRow}"><Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="136" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                <TextBlock Text="{loc:Loc TypeProvider}" Style="{StaticResource ConfirmationLabel}" />
+                <TextBlock Grid.Column="1" Text="{Binding ProviderSummary}" Style="{StaticResource ConfirmationValue}" />
+            </Grid></Border>
+            <ItemsControl ItemsSource="{Binding VisibleFields}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource ConfirmationRow}"><Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="136" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <TextBlock Text="{Binding Label}" TextWrapping="Wrap" Style="{StaticResource ConfirmationLabel}" />
+                            <TextBlock Grid.Column="1" Text="{Binding ConfirmationValue}" Style="{StaticResource ConfirmationValue}" />
+                        </Grid></Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Border Style="{StaticResource ConfirmationRow}"><Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="136" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                <TextBlock Text="{loc:Loc ConnectionTest}" Style="{StaticResource ConfirmationLabel}" />
+                <TextBlock Grid.Column="1" Text="{Binding TestSummary}" Style="{StaticResource ConfirmationValue}" />
+            </Grid></Border>
+            <Border Style="{StaticResource ConfirmationRow}"><Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="136" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                <TextBlock Text="{loc:Loc SaveLocation}" Style="{StaticResource ConfirmationLabel}" />
+                <TextBlock Grid.Column="1" Text="{Binding SaveLocationLabel}" Style="{StaticResource ConfirmationValue}" />
+            </Grid></Border>
+            <controls:InstanceHostingProviderSelector x:Name="ConfirmationHostingProviderSelector" ProviderId="{Binding HostingProviderId}"
+                Visibility="{Binding HasHostingProviderSelection, Converter={StaticResource WizardVisibility}}" Margin="0,20,0,0" />
+            <controls:InstanceTagSelector x:Name="ConfirmationTagSelector" Model="{Binding TagSelection}" Margin="0,20,0,0" />
+            <TextBlock Text="{Binding ConfirmationHint}" Foreground="{DynamicResource TextMutedBrush}"
+                       TextWrapping="Wrap" Margin="0,24,0,0" />
+            <TextBlock Text="{Binding SaveError}" Foreground="{DynamicResource DangerBrush}" Margin="0,16,0,0"
+                       TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

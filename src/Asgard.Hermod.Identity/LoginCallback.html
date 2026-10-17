@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="{{LANG}}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="no-referrer">
+    <title>{{TITLE}} · {{BRAND}}</title>
+    <link rel="icon" href="data:image/png;base64,{{LOGO}}">
+    <style nonce="{{NONCE}}">
+        :root { color-scheme: dark; font-family: "Segoe UI", "Microsoft YaHei", sans-serif; }
+        * { box-sizing: border-box; }
+        body { margin: 0; min-height: 100svh; display: grid; place-items: center; padding: 28px 18px; color: #f1f3f2; background: radial-gradient(ellipse at 50% 0%, #203c3c 0%, #101a20 58%); }
+        main { width: 100%; max-width: 480px; padding: 42px 36px 32px; border: 1px solid #34464a; border-radius: 24px; background: #152328; box-shadow: 0 24px 80px #0004; text-align: center; }
+        .brand { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 36px; color: #e9e2d4; font-size: 21px; font-weight: 600; letter-spacing: 1px; }
+        .brand img { width: 54px; height: 54px; object-fit: contain; }
+        .status { width: 56px; height: 56px; margin: 0 auto 22px; display: grid; place-items: center; border-radius: 50%; background: #243f38; color: #9ed8b9; }
+        .status svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .warning { display: none; }
+        [data-state="failure"] .status { background: #44352d; color: #e6bc94; }
+        [data-state="failure"] .check, [data-state="received"] .check { display: none; }
+        [data-state="failure"] .warning, [data-state="received"] .warning { display: block; }
+        h1 { margin: 0 0 14px; font-size: 28px; line-height: 1.35; font-weight: 600; }
+        .description { margin: 0 auto 30px; color: #b7c5c6; font-size: 15px; line-height: 1.8; }
+        button { width: 100%; min-height: 46px; padding: 12px 20px; border: 0; border-radius: 10px; background: #d6a760; color: #1b211f; font: inherit; font-weight: 600; cursor: pointer; }
+        button:hover { background: #e4b978; }
+        button:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+        .help { margin: 18px 0 0; color: #8fa5a7; font-size: 13px; line-height: 1.6; }
+        #close-fallback { color: #e4bc88; }
+        @media (max-width: 420px) { main { padding: 32px 24px 26px; } h1 { font-size: 25px; } }
+        @media (prefers-reduced-motion: no-preference) { main { animation: appear 220ms ease-out; } @keyframes appear { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } } }
+    </style>
+</head>
+<body>
+    <main data-state="{{STATE}}" aria-labelledby="heading">
+        <div class="brand"><img src="data:image/png;base64,{{LOGO}}" alt=""><span>{{BRAND}}</span></div>
+        <div class="status" aria-hidden="true">
+            <svg class="check" viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"></path></svg>
+            <svg class="warning" viewBox="0 0 24 24"><path d="M12 7v6m0 4h.01"></path><circle cx="12" cy="12" r="10"></circle></svg>
+        </div>
+        <h1 id="heading">{{TITLE}}</h1>
+        <p class="description">{{DESCRIPTION}}</p>
+        <button id="close-page" type="button" autofocus>{{CLOSE}}</button>
+        <p class="help">{{CLOSE_HELP}}</p>
+        <p id="close-fallback" class="help" role="status" hidden>{{CLOSE_FALLBACK}}</p>
+    </main>
+    <script nonce="{{NONCE}}">
+        // 清除地址栏中的一次性协议字段，页面不读取或保存这些字段。
+        try { history.replaceState(null, '', location.pathname); } catch (_) { }
+        document.getElementById('close-page').addEventListener('click', () => {
+            try { window.close(); } catch (_) { }
+            setTimeout(() => { document.getElementById('close-fallback').hidden = false; }, 150);
+        });
+    </script>
+</body>
+</html>

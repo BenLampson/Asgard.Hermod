@@ -1,0 +1,48 @@
+<controls:HermodDialog x:Class="Asgard.Hermod.Redis.UI.Views.RedisCreateDialog"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls;assembly=Asgard.Hermod.UI" xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization;assembly=Asgard.Hermod.UI"
+ Title="{loc:Loc RedisNewKey}" Width="640" Height="720" MinWidth="540" MinHeight="560" ResizeMode="CanResize" Closing="OnClosing">
+ <controls:HermodDialog.Resources><BooleanToVisibilityConverter x:Key="Visible" /></controls:HermodDialog.Resources>
+ <controls:HermodDialog.FooterContent><controls:DialogActionBar><StackPanel Orientation="Horizontal">
+  <Button x:Name="InspectButton" Content="{loc:Loc RedisCreateInspect}" Visibility="{Binding CanInspect, Converter={StaticResource Visible}}" Click="OnInspect" Margin="0,0,10,0" />
+  <Button x:Name="CancelButton" Content="{loc:Loc Cancel}" IsCancel="True" IsEnabled="{Binding CanClose}" Margin="0,0,10,0" />
+  <Button x:Name="CreateButton" Content="{Binding SubmitLabel}" Style="{StaticResource PrimaryButton}" Command="{Binding SubmitCommand}" IsDefault="True" />
+ </StackPanel></controls:DialogActionBar></controls:HermodDialog.FooterContent>
+ <Grid Margin="24"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+  <StackPanel Margin="0,0,0,16"><TextBlock Text="{Binding TargetLabel}" TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8" />
+   <TextBlock Text="{Binding Error}" Visibility="{Binding HasError, Converter={StaticResource Visible}}" TextWrapping="Wrap" Foreground="{DynamicResource DangerBrush}" AutomationProperties.LiveSetting="Polite" />
+  </StackPanel>
+  <Grid Grid.Row="1" IsEnabled="{Binding IsEditable}" Margin="0,0,0,14"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="180" /></Grid.ColumnDefinitions>
+   <controls:FormField x:Name="KeyField" Label="{loc:Loc RedisKeyName}" IsRequired="True" Error="{Binding KeyError}" Margin="0,0,12,0">
+    <TextBox x:Name="KeyInput" Text="{Binding Key, UpdateSourceTrigger=PropertyChanged}" MaxLength="4096" AutomationProperties.Name="{loc:Loc RedisKeyName}" />
+   </controls:FormField>
+   <controls:FormField Grid.Column="1" Label="{loc:Loc RedisKeyType}" IsRequired="True">
+    <ComboBox x:Name="TypeInput" ItemsSource="{Binding Types}" SelectedItem="{Binding SelectedType, Mode=TwoWay}" AutomationProperties.Name="{loc:Loc RedisKeyType}" />
+   </controls:FormField>
+  </Grid>
+  <Grid Grid.Row="2" IsEnabled="{Binding IsEditable}"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+   <controls:SectionSelector x:Name="FormatInput" ItemsSource="{Binding Formats}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding Format, Mode=TwoWay}" Margin="0,0,0,14" AutomationProperties.Name="{loc:Loc RedisCreateValueFormat}" />
+   <controls:CodeEditor Grid.Row="1" x:Name="StringEditor" Text="{Binding EditorText, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="False" MaxLength="4194304" Visibility="{Binding IsString, Converter={StaticResource Visible}}" AutomationProperties.Name="{loc:Loc RedisEntryValue}" />
+   <DataGrid Grid.Row="1" x:Name="CollectionGrid" Style="{StaticResource WorkspaceDataGrid}" ItemsSource="{Binding Rows}" Visibility="{Binding IsCollection, Converter={StaticResource Visible}}"
+    AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="False" CanUserReorderColumns="False" HeadersVisibility="Column"
+    SelectionMode="Single" SelectionUnit="FullRow" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="{DynamicResource LineSoftBrush}"
+    Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1" FontFamily="{DynamicResource MonoFont}" FontSize="12" AutomationProperties.Name="{loc:Loc RedisCreateInitialRows}">
+    <DataGrid.Columns>
+     <DataGridTextColumn x:Name="NameColumn" Header="{loc:Loc RedisField}" Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Width="*" />
+     <DataGridTextColumn x:Name="ValueColumn" Header="{loc:Loc RedisEntryValue}" Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Width="*" />
+     <DataGridTextColumn x:Name="ScoreColumn" Header="{loc:Loc RedisScore}" Binding="{Binding Score, UpdateSourceTrigger=PropertyChanged}" Width="120" />
+    </DataGrid.Columns>
+   </DataGrid>
+   <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,12,0,0" Visibility="{Binding IsCollection, Converter={StaticResource Visible}}">
+    <Button Content="{loc:Loc RedisAddEntry}" Command="{Binding AddRowCommand}" Margin="0,0,8,0" />
+    <Button Content="{loc:Loc RedisRemoveEntry}" Command="{Binding RemoveRowCommand}" CommandParameter="{Binding SelectedItem, ElementName=CollectionGrid}" />
+   </StackPanel>
+  </Grid>
+  <StackPanel Grid.Row="3" Margin="0,16,0,0"><Grid IsEnabled="{Binding IsEditable}"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+   <controls:FormField Label="{loc:Loc RedisCreateExpiryMode}" Margin="0,0,12,0"><ComboBox ItemsSource="{Binding ExpiryModes}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding ExpiryMode, Mode=TwoWay}" AutomationProperties.Name="{loc:Loc RedisCreateExpiryMode}" /></controls:FormField>
+   <controls:FormField Grid.Column="1" Label="{loc:Loc RedisCreateExpirySeconds}" Error="{Binding ExpiryError}" Visibility="{Binding HasExpiry, Converter={StaticResource Visible}}">
+    <TextBox x:Name="ExpiryInput" Text="{Binding ExpirySeconds, UpdateSourceTrigger=PropertyChanged}" MaxLength="12" AutomationProperties.Name="{loc:Loc RedisCreateExpirySeconds}" />
+   </controls:FormField>
+  </Grid><TextBlock Text="{loc:Loc RedisCreateHint}" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,12,0,0" /></StackPanel>
+ </Grid>
+</controls:HermodDialog>

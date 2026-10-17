@@ -1,0 +1,99 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- 与明亮主题共享资源键，换肤只替换字典，不重建视图和会话。 -->
+    <!-- 透明底浅色标志随主题字典更新，现有窗口无需重建。 -->
+    <BitmapImage x:Key="HermodLogo" CacheOption="OnLoad"
+                 UriSource="pack://application:,,,/Asgard.Hermod.UI;component/Assets/Brand/hermod-dark.png" />
+    <!-- 任务栏背景不属于应用主题；固定使用深蓝版，避免浅金色图标在浅色任务栏中消失。 -->
+    <ImageSource x:Key="HermodWindowIcon">pack://application:,,,/Asgard.Hermod.UI;component/Assets/Brand/hermod.ico</ImageSource>
+    <!-- 应用内部深色标题栏继续使用浅色版，ICO 保留小尺寸图标帧。 -->
+    <ImageSource x:Key="HermodCaptionIcon">pack://application:,,,/Asgard.Hermod.UI;component/Assets/Brand/hermod-dark.ico</ImageSource>
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#303C4D" />
+    <SolidColorBrush x:Key="AppBackgroundBrush" Color="#252F3D" />
+    <SolidColorBrush x:Key="SidebarBrush" Color="#202C3B" />
+    <SolidColorBrush x:Key="TitleBarBrush" Color="#111820" />
+    <SolidColorBrush x:Key="TabInactiveBrush" Color="#111820" />
+    <SolidColorBrush x:Key="LineBrush" Color="#7B8EA8" />
+    <SolidColorBrush x:Key="LineSoftBrush" Color="#52647D" />
+    <SolidColorBrush x:Key="ThemeTrackBrush" Color="#252B34" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F5F8FD" />
+    <SolidColorBrush x:Key="TextBodyBrush" Color="#DBE4F1" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="#C2CEE0" />
+    <SolidColorBrush x:Key="TextFaintBrush" Color="#A8B8CE" />
+    <SolidColorBrush x:Key="AccentBrush" Color="#80B2FF" />
+    <SolidColorBrush x:Key="ActionFillBrush" Color="#3468CD" />
+    <SolidColorBrush x:Key="ActionHoverBrush" Color="#2C5DBA" />
+    <SolidColorBrush x:Key="AccentTextBrush" Color="#C4DCFF" />
+    <SolidColorBrush x:Key="AccentWeakBrush" Color="#3A567F" />
+    <SolidColorBrush x:Key="SuccessBrush" Color="#38C98E" />
+    <SolidColorBrush x:Key="SuccessWeakBrush" Color="#103324" />
+    <SolidColorBrush x:Key="WarningBrush" Color="#FFC58F" />
+    <SolidColorBrush x:Key="CodeObjectBrush" Color="#B99CF6" />
+    <SolidColorBrush x:Key="WarningWeakBrush" Color="#493625" />
+    <SolidColorBrush x:Key="DangerBrush" Color="#FF938D" />
+    <SolidColorBrush x:Key="DangerWeakBrush" Color="#542B2D" />
+    <SolidColorBrush x:Key="InverseTextBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="WindowBorderBrush" Color="#6F83A0" />
+    <SolidColorBrush x:Key="OnAccentSoftBrush" Color="#C2D4FF" />
+    <SolidColorBrush x:Key="TerminalSurfaceBrush" Color="#20252C" />
+    <SolidColorBrush x:Key="TerminalTextBrush" Color="#EAEEF5" />
+    <!-- 文件类别保留辨识色，深色主题提高对比度。 -->
+    <SolidColorBrush x:Key="FileVideoBrush" Color="#B59AF5" />
+    <SolidColorBrush x:Key="FileAudioBrush" Color="#E792CC" />
+    <SolidColorBrush x:Key="FileDesignBrush" Color="#D9AA5F" />
+    <SolidColorBrush x:Key="FilePresentationBrush" Color="#EBA06A" />
+    <SolidColorBrush x:Key="FileCodeBrush" Color="#71C2DE" />
+    <SolidColorBrush x:Key="FileDataBrush" Color="#A5A9EF" />
+    <SolidColorBrush x:Key="WorkspaceCaptionBrush" Color="#111824" />
+    <SolidColorBrush x:Key="WorkspaceInkBrush" Color="#E6ECF5" />
+    <SolidColorBrush x:Key="WorkspaceMutedBrush" Color="#9DAAC0" />
+    <SolidColorBrush x:Key="WorkspaceLineBrush" Color="#303B4E" />
+    <!-- 小尺寸品牌路径含细线和字样，夜间用高亮蓝色保留实际像素对比度。 -->
+    <SolidColorBrush x:Key="MySqlBrandBrush" Color="#9AD8EF" />
+    <SolidColorBrush x:Key="PostgreSqlBrandBrush" Color="#B3D1FF" />
+    <Color x:Key="DbBackgroundColor">#161D28</Color>
+    <Color x:Key="DbSoftColor">#1D2634</Color>
+    <Color x:Key="DbLineColor">#303B4E</Color>
+    <Color x:Key="DbInkColor">#E6ECF5</Color>
+    <Color x:Key="DbMutedColor">#9DAAC0</Color>
+    <Color x:Key="DbAccentColor">#86ACFF</Color>
+    <Color x:Key="DbSelectedColor">#253752</Color>
+    <Color x:Key="DbEditorColor">#141C29</Color>
+    <Color x:Key="DbSuccessColor">#70D9B0</Color>
+    <Color x:Key="DbWarningColor">#EAC27C</Color>
+    <Color x:Key="DbDangerColor">#FF9BAB</Color>
+    <Color x:Key="SshBackgroundColor">#1B2431</Color>
+    <Color x:Key="SshSoftColor">#141D29</Color>
+    <Color x:Key="SshLineColor">#303B4E</Color>
+    <Color x:Key="SshInkColor">#E8EEF6</Color>
+    <Color x:Key="SshMutedColor">#A5B2C7</Color>
+    <Color x:Key="SshAccentColor">#80B2FF</Color>
+    <Color x:Key="SshSelectedColor">#263C5C</Color>
+    <Color x:Key="SshCaptionColor">#111824</Color>
+    <Color x:Key="AgentBackgroundColor">#151A23</Color>
+    <Color x:Key="AgentSoftColor">#202734</Color>
+    <Color x:Key="AgentLineColor">#313A4A</Color>
+    <Color x:Key="AgentInkColor">#EDF1F7</Color>
+    <Color x:Key="AgentMutedColor">#A3AFC2</Color>
+    <Color x:Key="AgentAccentColor">#79A4FF</Color>
+    <Color x:Key="AgentSelectedColor">#253656</Color>
+    <Color x:Key="AgentSuccessColor">#79D7B3</Color>
+    <SolidColorBrush x:Key="LogBackgroundBrush" Color="#141B25" />
+    <SolidColorBrush x:Key="LogInkBrush" Color="#D7E0ED" />
+    <SolidColorBrush x:Key="LogWarningBrush" Color="#FFC58F" />
+    <SolidColorBrush x:Key="LogErrorBrush" Color="#FDA29B" />
+    <SolidColorBrush x:Key="LogGutterBrush" Color="#6E7F97" />
+    <SolidColorBrush x:Key="LogSelectionBrush" Color="#263C5C" />
+    <SolidColorBrush x:Key="LogSearchBackgroundBrush" Color="#141D29" />
+    <Color x:Key="DbMetadataCodeColor">#9CB9EA</Color>
+    <Color x:Key="DbMetadataBackgroundColor">#1B2431</Color>
+    <SolidColorBrush x:Key="RabbitMqBackgroundBrush" Color="#161D28" />
+    <SolidColorBrush x:Key="RabbitMqSoftBrush" Color="#1D2634" />
+    <SolidColorBrush x:Key="RabbitMqEditorBrush" Color="#141C29" />
+    <SolidColorBrush x:Key="RabbitMqLineBrush" Color="#303B4E" />
+    <SolidColorBrush x:Key="RabbitMqInkBrush" Color="#E6ECF5" />
+    <SolidColorBrush x:Key="RabbitMqMutedBrush" Color="#A9B7CC" />
+    <SolidColorBrush x:Key="RabbitMqAccentBrush" Color="#86ACFF" />
+    <SolidColorBrush x:Key="RabbitMqSelectedBrush" Color="#253752" />
+    <SolidColorBrush x:Key="RabbitMqSuccessBrush" Color="#70D9B0" />
+</ResourceDictionary>

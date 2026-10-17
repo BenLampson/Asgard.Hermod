@@ -1,0 +1,12 @@
+global using System.Data;
+global using System.Data.Common;
+global using System.Data.SQLite;
+global using System.Globalization;
+global using Asgard.Abstractions.Data;
+global using Asgard.Core.Data;
+global using Asgard.Core.SystemConfig;
+global using Asgard.Hermod.Abstractions.Models;
+global using Asgard.Hermod.Abstractions.Security;
+global using Asgard.Hermod.Abstractions.Services;
+global using Microsoft.Extensions.DependencyInjection;
+global using Text = Asgard.Hermod.Abstractions.Localization.Text;

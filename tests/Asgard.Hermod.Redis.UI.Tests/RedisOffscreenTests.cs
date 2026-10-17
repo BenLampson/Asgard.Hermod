@@ -1,0 +1,202 @@
+using System.Globalization;
+using System.Reflection;
+using System.Windows.Automation;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
+using Asgard.Hermod.Abstractions.Localization;
+using Asgard.Hermod.UI.Views.Shell;
+
+namespace Asgard.Hermod.Redis.Tests;
+
+/// <summary>无 HWND 回归：真实事件目标、共享元数据命令、主题及离屏对齐。</summary>
+[Collection(WpfTestCollection.Name)]
+public sealed class RedisOffscreenTests(WpfTestFixture fixture)
+{
+    [Fact]
+    public Task LeafClick_KeepsAncestorExpansionSelectionAndLoadedNodes() => fixture.RunOffscreenAsync(async () =>
+    {
+        var session = new RedisTestSession { Scan = (_, _, _) => Task.FromResult(new RedisScanPage("0", [RedisKeyId.FromText("cache:key")])) };
+        var configs = new RedisTestConfigurations();
+        await using var page = new RedisWorkspaceViewModel(new(configs.CurrentInstance), configs, session, configs, new RedisTestDialogs());
+        await page.InitializeAsync();
+        var group = Assert.Single(page.Tree!.Root.Children); group.IsExpanded = true;
+        await page.Tree.LoadAsync(group);
+        var leaf = Assert.Single(group.Children);
+        var view = new RedisWorkspaceView { DataContext = page }; Layout(view);
+        var tree = (WorkspaceTreeView)view.FindName("KeyTree");
+        var groupItem = Assert.IsAssignableFrom<TreeViewItem>(tree.ItemContainerGenerator.ContainerFromItem(group));
+        var leafItem = Assert.IsAssignableFrom<TreeViewItem>(groupItem.ItemContainerGenerator.ContainerFromItem(leaf));
+        leafItem.IsSelected = true;
+        int scans = session.Calls.Count;
+        Click(view, leafItem);
+        Assert.True(group.IsExpanded); Assert.Same(leaf, tree.SelectedItem);
+        Assert.Same(leaf, Assert.Single(group.Children)); Assert.Equal(scans, session.Calls.Count);
+        Assert.Same(leaf.Key, page.ActiveTab!.Key);
+        Assert.Null(tree.FocusVisualStyle); Assert.Null(leafItem.FocusVisualStyle);
+        Click(view, groupItem); Assert.False(group.IsExpanded);
+        Click(view, groupItem); Assert.True(group.IsExpanded);
+        Assert.Equal(scans, session.Calls.Count);
+    });
+
+    [Fact]
+    public Task RenameFromMainCatalog_UpdatesReadOnlyCaptionWithoutReopeningSession() => fixture.RunOffscreenAsync(async () =>
+    {
+        var configs = new RedisTestConfigurations(); var session = new RedisTestSession();
+        var factory = new InstanceWorkspaceFactory([new RedisPageProvider(configs, session, configs, new RedisTestDialogs())]);
+        await using var shell = new ShellViewModel(configs, configs, new RedisTestTerminalFactory(), new ThemeService(Application.Current.Resources), pageFactory: factory);
+        var instance = Assert.Single(shell.Sidebar.AllInstances); shell.Workspace.OpenInstance(instance);
+        var page = Assert.IsType<RedisWorkspaceViewModel>(shell.Workspace.SelectedTab); await page.InitializeAsync();
+        await page.OpenAsync(RedisKeyId.FromText("cache:key")); var tab = page.ActiveTab!;
+        await tab.EditCommand.ExecuteAsync(); tab.EditorText = "kept draft";
+        int reads = session.Reads, scans = session.Calls.Count;
+        var view = new RedisWorkspaceView { DataContext = page };
+        InstanceMetadataScope.SetRenameCommand(view, shell.Workspace.RenameInstanceCommand); Layout(view);
+        var identity = Assert.Single(Descendants<WorkspaceIdentity>(view));
+        Assert.Empty(Descendants<InstanceNameButton>(view));
+        await shell.Sidebar.RenameInstanceCommand.ExecuteAsync(instance);
+        Assert.Equal(1, configs.Renames); Assert.Equal("Renamed cache", instance.Name); Assert.Equal(instance.Name, page.Header);
+        Assert.Same(instance, identity.Instance); Assert.Same(tab, page.ActiveTab); Assert.True(tab.IsDirty);
+        Assert.Equal("kept draft", tab.EditorText); Assert.Equal(reads, session.Reads); Assert.Equal(scans, session.Calls.Count);
+        Assert.True(page.IsConnected);
+    });
+
+    [Theory]
+    [InlineData("en", UiTheme.Light)]
+    [InlineData("zh-Hans", UiTheme.Light)]
+    [InlineData("en", UiTheme.Dark)]
+    [InlineData("zh-Hans", UiTheme.Dark)]
+    public Task Chrome_AlignsAndUsesGlobalThemeWithoutWindows(string language, UiTheme theme) => fixture.RunOffscreenAsync(async () =>
+    {
+        Text.SetApplicationCulture(CultureInfo.GetCultureInfo(language));
+        try
+        {
+            var themes = new ThemeService(Application.Current.Resources); themes.SetTheme(theme);
+            var configs = new RedisTestConfigurations(); var session = new RedisTestSession();
+            await using var shell = new ShellViewModel(configs, configs, new RedisTestTerminalFactory(), themes);
+            await using var page = new RedisWorkspaceViewModel(new(configs.CurrentInstance), configs, session, configs, new RedisTestDialogs());
+            await page.InitializeAsync(); await page.OpenAsync(RedisKeyId.FromText("cache:key"));
+            var view = new RedisWorkspaceView { DataContext = page }; Layout(view);
+            var title = new TitleBarView { DataContext = shell }; Layout(title, 1320, 42);
+            var toggle = (Button)title.FindName("ThemeButton");
+            Assert.Same(shell.ToggleThemeCommand, toggle.Command);
+            Assert.Equal(Text.Get(theme == UiTheme.Light ? "SwitchToDarkMode" : "SwitchToLightMode"), AutomationProperties.GetName(toggle));
+            Assert.Equal(toggle.ToolTip, AutomationProperties.GetName(toggle));
+            var database = (ComboBox)view.FindName("DatabaseSelector");
+            var databaseField = (StackPanel)view.FindName("DatabaseField");
+            Assert.Equal(Orientation.Horizontal, databaseField.Orientation);
+            Assert.Equal(32, database.ActualHeight);
+            Assert.Null(FindAncestor<WorkspaceHeader>(database));
+            var layout = (WorkspacePageLayout)view.FindName("WorkspaceLayout");
+            var status = Assert.IsType<DockPanel>(layout.StatusContent);
+            var statusBar = (Border)layout.Template.FindName("PART_StatusBar", layout);
+            var presenter = Assert.IsType<ContentPresenter>(statusBar.Child);
+            Assert.Equal(VerticalAlignment.Center, presenter.VerticalAlignment);
+            Assert.All(status.Children.Cast<TextBlock>(), text => Assert.Equal(VerticalAlignment.Center, text.VerticalAlignment));
+            var tabs = (Asgard.Hermod.UI.Controls.WorkspaceTabStrip)view.FindName("KeyTabs");
+            Assert.Equal(view.FindResource("SurfaceBrush"), tabs.Background);
+            Assert.NotNull(tabs.ItemContainerStyle);
+            Assert.All(Descendants<SectionSelector>(view), selector => Assert.Equal(new Thickness(0), selector.BorderThickness));
+            Capture(view, $"redis-{language}-{theme}"); Capture(title, $"title-{language}-{theme}");
+            toggle.Command.Execute(null); Layout(view); Layout(title, 1320, 42);
+            Assert.Equal(theme != UiTheme.Dark, shell.IsDarkTheme);
+            Assert.Equal(view.FindResource("SurfaceBrush"), tabs.Background);
+            Assert.Equal(Text.Get(theme == UiTheme.Light ? "SwitchToLightMode" : "SwitchToDarkMode"), AutomationProperties.GetName(toggle));
+        }
+        finally { Text.SetApplicationCulture(null); }
+    });
+
+    private static void Click(RedisWorkspaceView view, TreeViewItem item)
+    {
+        var source = Descendants<ContentPresenter>(item).First();
+        var args = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left) { RoutedEvent = UIElement.MouseLeftButtonUpEvent, Source = source };
+        typeof(MouseButtonEventArgs).GetProperty(nameof(MouseButtonEventArgs.ClickCount))!.SetValue(args, 1);
+        typeof(RedisWorkspaceView).GetMethod("OnTreeClick", BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(view, [view, args]);
+    }
+
+    [Theory]
+    [InlineData("en", UiTheme.Light, 800)]
+    [InlineData("zh-Hans", UiTheme.Dark, 800)]
+    [InlineData("en", UiTheme.Dark, 1200)]
+    [InlineData("zh-Hans", UiTheme.Light, 1200)]
+    public Task HeaderTransfer_ReusesModuleElementsAndShowsRecoveryAfterDismiss(string language, UiTheme theme, double width) => fixture.RunOffscreenAsync(async () =>
+    {
+        Text.SetApplicationCulture(CultureInfo.GetCultureInfo(language));
+        try
+        {
+            new ThemeService(Application.Current.Resources).SetTheme(theme);
+            var configs = new RedisTestConfigurations(); var session = new RedisTestSession();
+            await using var page = new RedisWorkspaceViewModel(new(configs.CurrentInstance), configs, session, configs, new RedisTestDialogs());
+            await page.InitializeAsync();
+            using var host = new WorkspaceContentHost();
+            host.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("pack://application:,,,/Asgard.Hermod.Redis.UI;component/Resources/WorkspacePages.xaml") });
+            host.Page = page;
+            var view = Assert.IsType<RedisWorkspaceView>(host.Content); Layout(view, width);
+            var layout = (WorkspacePageLayout)view.FindName("WorkspaceLayout");
+            var original = Assert.IsType<WorkspaceHeader>(layout.Toolbar);
+            var header = Assert.IsType<WorkspaceHeader>(host.TakeHeader());
+            Assert.Same(original, header); Assert.Null(layout.Toolbar); Assert.Same(page, header.DataContext);
+            Assert.Same(page, view.DataContext); header.ShowWindowControls = true;
+            var caption = new Border { Child = header };
+            await WpfTestFixture.DrainDispatcherAsync(); Layout(caption, width, 44);
+            Assert.Equal(44, header.ActualHeight); Assert.Same(page.Instance, Descendants<WorkspaceIdentity>(header).Single().Instance);
+            Assert.Empty(Descendants<InstanceNameButton>(header)); Assert.Empty(Descendants<ComboBox>(header));
+            var database = (ComboBox)view.FindName("DatabaseSelector"); Assert.Equal(32, database.ActualHeight);
+            Assert.Equal("0", page.DatabaseText); Assert.Equal("0", database.SelectedValue); Assert.Same(page.Connection, header.State);
+            var windows = Descendants<WindowControls>(header).Single();
+            Assert.Equal(Visibility.Visible, windows.Visibility); Assert.True(windows.ActualWidth > 0);
+            var snapshot = header.ActionsContent;
+            Capture(header, $"workspace-header-{language}-{theme}-{width}");
+            session.Disconnect(); page.Connection.DismissCommand.Execute(null);
+            await WpfTestFixture.DrainDispatcherAsync(); Layout(caption, width, 44);
+            Assert.False(page.Connection.IsOpen);
+            Assert.True(page.Connection.HasError); Assert.True(page.Connection.IsDisconnected);
+            Assert.Contains(Descendants<TextBlock>(header), text => text.Text == page.Connection.Title);
+            var retry = Descendants<Button>(header).Single(button => ReferenceEquals(button.Command, page.ReconnectCommand));
+            Assert.Equal(Text.Get("WorkspaceConnectionRetry"), retry.Content);
+            Assert.Equal(Text.Get("WorkspaceConnectionRetry"), AutomationProperties.GetName(retry));
+            var edit = Descendants<Button>(header).Single(button => ReferenceEquals(button.Command, page.EditConnectionCommand));
+            Assert.Equal(Text.Get("WorkspaceConnectionEdit"), edit.Content); Assert.Equal(edit.Content, AutomationProperties.GetName(edit));
+            Assert.Equal(Visibility.Visible, ((FrameworkElement)VisualTreeHelper.GetParent(retry)).Visibility); Assert.True(retry.IsEnabled);
+            Capture(header, $"workspace-header-disconnected-{language}-{theme}-{width}");
+            await page.ReconnectCommand.ExecuteAsync(); Layout(caption, width, 44);
+            Assert.Same(snapshot, header.ActionsContent); Assert.True(page.IsConnected);
+        }
+        finally { Text.SetApplicationCulture(null); }
+    });
+    private static T? FindAncestor<T>(DependencyObject element) where T : DependencyObject
+    {
+        for (var parent = VisualTreeHelper.GetParent(element); parent is not null; parent = VisualTreeHelper.GetParent(parent))
+            if (parent is T match) return match;
+        return null;
+    }
+    private static void Layout(FrameworkElement view, double width = 1200, double height = 700)
+    {
+        // 离屏根不参与 Application.Windows 的资源广播，显式注册共享字典的视图所有者。
+        if (!view.Resources.MergedDictionaries.Contains(Application.Current.Resources))
+            view.Resources.MergedDictionaries.Add(Application.Current.Resources);
+        view.InvalidateMeasure(); view.InvalidateArrange();
+        view.Measure(new(width, height)); view.Arrange(new(0, 0, width, height)); view.UpdateLayout();
+        Assert.Null(PresentationSource.FromVisual(view)); Assert.Null(Window.GetWindow(view));
+    }
+    private static IEnumerable<T> Descendants<T>(DependencyObject root) where T : DependencyObject
+    {
+        for (int index = 0; index < VisualTreeHelper.GetChildrenCount(root); index++)
+        {
+            var child = VisualTreeHelper.GetChild(root, index);
+            if (child is T match) yield return match;
+            foreach (var matchChild in Descendants<T>(child)) yield return matchChild;
+        }
+    }
+    private static void Capture(FrameworkElement view, string name)
+    {
+        string? directory = Environment.GetEnvironmentVariable("HERMOD_OFFSCREEN_OUTPUT");
+        if (string.IsNullOrEmpty(directory)) return;
+        Directory.CreateDirectory(directory);
+        foreach (var element in Descendants<UIElement>(view)) element.InvalidateVisual();
+        view.InvalidateVisual(); view.UpdateLayout();
+        var bitmap = new RenderTargetBitmap((int)view.ActualWidth, (int)view.ActualHeight, 96, 96, PixelFormats.Pbgra32); bitmap.Render(view);
+        var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
+        using var output = File.Create(Path.Combine(directory, name + ".png")); encoder.Save(output);
+    }
+}

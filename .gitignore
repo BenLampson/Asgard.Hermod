@@ -8,6 +8,12 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/Dotnet.gitignore
 
 # Build results
+# IDE local state
+.vs/
+.idea/
+*.user
+*.suo
+
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
@@ -27,6 +33,8 @@ bld/
 project.lock.json
 project.fragment.lock.json
 artifacts/
+*.pfx
+*.p12
 
 # ASP.NET Scaffolding
 ScaffoldingReadMe.txt
@@ -38,8 +46,25 @@ ScaffoldingReadMe.txt
 
 # dotenv environment variables file
 .env
+.playwright-cli/
+output/playwright/
+output/ssh-monitor-preview/
+
+# Retired design drafts and generated previews are not release sources.
+/design/
 
 # Others
+# 本地 SQLite 数据及事务辅助文件
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite-journal
+# Windows 下 *.sqlite 也会匹配同名结尾的项目目录；只放行源码项目。
+!src/Asgard.Hermod.Persistence.Sqlite/
 ~$*
 *~
 CodeCoverage/

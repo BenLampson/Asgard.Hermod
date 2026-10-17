@@ -1,0 +1,33 @@
+<controls:HermodDialog x:Class="Asgard.Hermod.UI.Views.Dialogs.MessageDialog"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization"
+                      xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
+                      Width="620" SizeToContent="Height">
+    <controls:HermodDialog.InputBindings>
+        <KeyBinding Key="Escape" Command="{x:Static SystemCommands.CloseWindowCommand}" />
+    </controls:HermodDialog.InputBindings>
+    <controls:HermodDialog.FooterContent>
+        <controls:DialogActionBar>
+            <Button Content="{loc:Loc OK}" Style="{StaticResource PrimaryButton}" IsDefault="True"
+                    Height="32" MinWidth="72" FontSize="12" FontWeight="SemiBold"
+                    Padding="14,0" Click="OnDismissClick" />
+        </controls:DialogActionBar>
+    </controls:HermodDialog.FooterContent>
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <controls:IconView x:Name="StatusIcon" Kind="triangle-alert" Width="20" Height="20" Margin="0,0,10,0"
+                               Foreground="{DynamicResource DangerBrush}" />
+            <TextBlock x:Name="HeadingText" Text="{loc:Loc ActionFailed}" AutomationProperties.LiveSetting="Polite" FontSize="19" FontWeight="Bold" />
+        </StackPanel>
+        <ScrollViewer Grid.Row="1" Margin="0,16,0,0" MaxHeight="300"
+                      HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <TextBlock x:Name="MessageText" TextWrapping="Wrap" FontSize="12.5"
+                       Foreground="{DynamicResource TextBodyBrush}" />
+        </ScrollViewer>
+    </Grid>
+</controls:HermodDialog>

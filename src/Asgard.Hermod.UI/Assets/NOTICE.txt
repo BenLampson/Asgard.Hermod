@@ -1,0 +1,69 @@
+Hermod UI third-party asset notices
+
+Lucide icons
+Repository: https://github.com/lucide-icons/lucide
+Source revision: 70562c1ee1c4fdcf736fe97bc893fb8511927934
+Original SVG files: Assets/Icons/*.svg
+WPF geometry conversion: Controls/IconCatalog.cs
+Feature geometry conversion: Controls/IconCatalog.FeatureIcons.cs
+Object storage geometry conversion: Controls/IconCatalog.ObjectStorageIcons.cs
+File type geometry conversion: Controls/IconCatalog.FileTypeIcons.cs
+Redis workspace geometry conversion: Controls/IconCatalog.RedisIcons.cs
+MySQL object geometry conversion: Controls/IconCatalog.MySqlIcons.cs
+The design alias file-json uses the official file-braces.svg icon at the same revision.
+The design alias trash-2 uses the official trash.svg icon at the same revision.
+The design alias circle-help uses the official circle-question-mark.svg icon at the same revision.
+License: Assets/Licenses/Lucide.LICENSE.txt (ISC, including upstream Feather MIT notices)
+SVG paths are preserved. Circle, ellipse, line, and rectangle elements are converted
+to equivalent WPF geometry. The control preserves the 24x24 canvas, 2-unit strokes,
+round line caps, and round joins. No original icons were redrawn.
+
+Inter
+Repository: https://github.com/rsms/inter
+Release: v4.1
+Download: https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip
+Original files: extras/ttf/Inter-Regular.ttf, Inter-SemiBold.ttf, Inter-Bold.ttf
+Bundled files: Assets/Fonts/Inter-Regular.ttf, Inter-SemiBold.ttf, Inter-Bold.ttf
+License: Assets/Licenses/Inter.LICENSE.txt (SIL Open Font License 1.1)
+The static TTF files are bundled unchanged.
+
+JetBrains Mono
+Repository: https://github.com/JetBrains/JetBrainsMono
+Source revision: 19371302b95d218af43299bce79ddbddd0bc364d
+Original files: fonts/ttf/JetBrainsMono-Regular.ttf and fonts/ttf/JetBrainsMono-Medium.ttf
+Bundled files: Assets/Fonts/JetBrainsMono-Regular.ttf and Assets/Fonts/JetBrainsMono-Medium.ttf
+License: Assets/Licenses/JetBrainsMono.OFL.txt (SIL Open Font License 1.1)
+The static TTF files are bundled unchanged.
+
+Noto Sans SC
+Source: Windows font NotoSansSC-VF.ttf (Noto Sans SC, Adobe/Google, SIL OFL 1.1)
+Bundled files: Assets/Fonts/NotoSansSC-Regular.ttf, NotoSansSC-Medium.ttf and NotoSansSC-SemiBold-600.ttf
+Static 400/500/600 weight instances made with fontTools 4.63.0; full character map retained.
+Static family/style names are normalized; variable STAT metadata is removed from the fully pinned faces.
+License: Assets/Licenses/NotoSansSC.OFL.txt
+
+MySQL and PostgreSQL
+Source: Simple Icons SVG paths embedded in the current Pencil design components edWZ7/yNa5Y.
+Shared WPF fill geometry: Controls/DatabaseBrandCatalog.cs
+Brand names and logos remain the property of their respective owners.
+
+Database toolbar and output icons: message-square, git-branch, save and scan-search use the Lucide source revision above.
+The execution-plan list-filter geometry preserves Lucide's three horizontal filter strokes on its 24x24 canvas.
+The scope picker's square-check.svg and matching WPF geometry use the Lucide source revision above.
+The SSH arrow-down-up.svg, arrow-up.svg, pause.svg and unplug.svg icons and matching WPF geometry use the Lucide source revision above.
+The history alias uses the official icons/history.svg from Lucide tag 0.468.0 (same ISC license).
+
+Agent cpu.svg, sparkles.svg and arrow-up-left.svg use the fixed Lucide source revision above; WPF geometry is converted directly from those SVG paths.
+Agent paperclip.svg and its WPF geometry use the same fixed Lucide source revision above.
+Agent shield-alert.svg and its WPF geometry use the same fixed Lucide source revision above.
+The model editor plug.svg and its WPF geometry use the same fixed Lucide source revision above.
+The log reader corner-down-left.svg and its WPF geometry use the same fixed Lucide source revision above.
+The first-connection card circle-alert.svg and its WPF geometry use the same fixed Lucide source revision above.
+The answer toolbar rotate-ccw.svg, thumbs-up.svg and thumbs-down.svg use the same fixed Lucide source revision above; geometry is converted directly from those SVG paths.
+
+The database object footer undo-2.svg uses the same fixed Lucide source revision above; geometry is converted directly from its SVG paths.
+
+RabbitMQ navigation geometry conversion: Controls/IconCatalog.RabbitMq.cs (same Lucide revision above).
+RabbitMQ brand geometry: Controls/RabbitMqBrand.cs
+Source: https://www.rabbitmq.com/assets/files/rabbitmq-logo-e91cacd38fcef5219149bc5cfa10b384.svg
+The official orange mark is preserved; RabbitMQ is a trademark of Broadcom.

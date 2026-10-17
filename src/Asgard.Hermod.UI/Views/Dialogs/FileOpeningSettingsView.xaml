@@ -1,0 +1,58 @@
+<UserControl x:Class="Asgard.Hermod.UI.Views.Dialogs.FileOpeningSettingsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization">
+    <UserControl.Resources><BooleanToVisibilityConverter x:Key="FileRulesVisibility" /></UserControl.Resources>
+    <Grid Margin="28">
+        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+        <StackPanel>
+            <TextBlock Text="{loc:Loc FileOpening}" FontSize="24" FontWeight="SemiBold" />
+            <TextBlock Text="{loc:Loc FileOpeningDescription}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,24" />
+        </StackPanel>
+        <DockPanel Grid.Row="1" Margin="0,0,0,12">
+            <Button DockPanel.Dock="Right" Content="{loc:Loc AddFileRule}" Command="{Binding AddCommand}" Style="{StaticResource PrimaryButton}" />
+            <TextBlock Text="{loc:Loc ConfiguredFileRules}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center" />
+        </DockPanel>
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+            <Border Background="{DynamicResource AppBackgroundBrush}" Padding="12,8">
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="90" /><ColumnDefinition Width="*" /><ColumnDefinition Width="112" /></Grid.ColumnDefinitions>
+                    <TextBlock Text="{loc:Loc FileExtension}" />
+                    <TextBlock Grid.Column="1" Text="{loc:Loc FileProgram}" />
+                    <TextBlock Grid.Column="2" Text="{loc:Loc Actions}" />
+                </Grid>
+            </Border>
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <ItemsControl ItemsSource="{Binding Rules}">
+                    <ItemsControl.ItemTemplate><DataTemplate>
+                        <Border BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,0,0,1" Padding="12,14">
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="90" /><ColumnDefinition Width="*" /><ColumnDefinition Width="112" /></Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding Extension}" FontFamily="{DynamicResource MonoFont}" VerticalAlignment="Center" />
+                                <StackPanel Grid.Column="1" Margin="0,0,12,0">
+                                    <TextBlock Text="{Binding ProgramName}" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Text="{Binding ProgramPath}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" Margin="0,6,0,0" TextTrimming="CharacterEllipsis" ToolTip="{Binding ProgramPath}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Button Content="{loc:Loc Edit}" Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource GhostButton}" Padding="8,0" />
+                                    <Button Content="{loc:Loc Remove}" Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" Style="{StaticResource GhostButton}" Padding="8,0" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate></ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+            <TextBlock Grid.Row="1" Text="{loc:Loc NoFileRules}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="12,24" Visibility="{Binding IsEmpty, Converter={StaticResource FileRulesVisibility}}" IsHitTestVisible="False" />
+        </Grid>
+        <StackPanel Grid.Row="3" Margin="0,20,0,0">
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Content="{loc:Loc Refresh}" Command="{Binding ReloadCommand}" Style="{StaticResource GhostButton}" />
+                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" VerticalAlignment="Center" AutomationProperties.LiveSetting="Polite" />
+            </DockPanel>
+            <Border BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,1,0,0" Padding="0,12,0,0" Margin="0,12,0,0">
+                <TextBlock Text="{loc:Loc FileOpeningFallbackHint}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" />
+            </Border>
+        </StackPanel>
+    </Grid>
+</UserControl>

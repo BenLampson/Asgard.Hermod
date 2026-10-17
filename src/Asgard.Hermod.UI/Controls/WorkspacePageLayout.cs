@@ -1,0 +1,84 @@
+namespace Asgard.Hermod.UI.Controls;
+
+/// <summary>类型无关的内容页布局；工具栏、通知、正文、详情和状态栏均由模块提供。</summary>
+public class WorkspacePageLayout : ContentControl
+{
+    /// <summary>状态栏底色默认沿用共享主题，模块可按设计稿覆写。</summary>
+    public static readonly DependencyProperty StatusBarBackgroundProperty = DependencyProperty.Register(
+        nameof(StatusBarBackground), typeof(Brush), typeof(WorkspacePageLayout));
+    /// <summary>底部状态栏背景。</summary>
+    public Brush? StatusBarBackground { get => (Brush?)GetValue(StatusBarBackgroundProperty); set => SetValue(StatusBarBackgroundProperty, value); }
+    /// <summary>独立标题栏可使用 44px，常规页内工具栏默认保留 56px。</summary>
+    public static readonly DependencyProperty ToolbarMinHeightProperty = DependencyProperty.Register(
+        nameof(ToolbarMinHeight), typeof(double), typeof(WorkspacePageLayout), new PropertyMetadata(56d));
+    /// <summary>工具栏的最小高度，避免紧凑标题栏在容器中产生上下留白。</summary>
+    public double ToolbarMinHeight { get => (double)GetValue(ToolbarMinHeightProperty); set => SetValue(ToolbarMinHeightProperty, value); }
+    /// <summary>顶部工具栏插槽。</summary>
+    public static readonly DependencyProperty ToolbarProperty = DependencyProperty.Register(
+        nameof(Toolbar), typeof(object), typeof(WorkspacePageLayout));
+    /// <summary>正文上方的通知插槽。</summary>
+    public static readonly DependencyProperty NotificationProperty = DependencyProperty.Register(
+        nameof(Notification), typeof(object), typeof(WorkspacePageLayout));
+    /// <summary>覆盖页面的加载或对话框插槽，不改变正文尺寸。</summary>
+    public static readonly DependencyProperty OverlayProperty = DependencyProperty.Register(nameof(Overlay), typeof(object), typeof(WorkspacePageLayout));
+    /// <summary>打开覆盖层时暂停底层页面交互。</summary>
+    public static readonly DependencyProperty IsOverlayOpenProperty = DependencyProperty.Register(nameof(IsOverlayOpen), typeof(bool), typeof(WorkspacePageLayout));
+    /// <summary>按需展开的详情正文。</summary>
+    public static readonly DependencyProperty DetailsProperty = DependencyProperty.Register(
+        nameof(Details), typeof(object), typeof(WorkspacePageLayout));
+    /// <summary>底部状态栏插槽。</summary>
+    public static readonly DependencyProperty StatusContentProperty = DependencyProperty.Register(
+        nameof(StatusContent), typeof(object), typeof(WorkspacePageLayout));
+    /// <summary>详情显隐由调用者负责，不改变其业务状态。</summary>
+    public static readonly DependencyProperty IsDetailsOpenProperty = DependencyProperty.Register(
+        nameof(IsDetailsOpen), typeof(bool), typeof(WorkspacePageLayout), new PropertyMetadata(false));
+    /// <summary>宽窗口详情栏宽度，窄窗口使用同宽覆盖层。</summary>
+    public static readonly DependencyProperty DetailsWidthProperty = DependencyProperty.Register(
+        nameof(DetailsWidth), typeof(double), typeof(WorkspacePageLayout), new PropertyMetadata(300d));
+    /// <summary>低于此宽度时将详情切换为覆盖层，正文继续使用全部宽度。</summary>
+    public static readonly DependencyProperty CompactBreakpointProperty = DependencyProperty.Register(
+        nameof(CompactBreakpoint), typeof(double), typeof(WorkspacePageLayout), new PropertyMetadata(760d, OnBreakpointChanged));
+    private static readonly DependencyPropertyKey IsCompactPropertyKey = DependencyProperty.RegisterReadOnly(
+        nameof(IsCompact), typeof(bool), typeof(WorkspacePageLayout), new PropertyMetadata(true));
+    /// <summary>布局计算出的紧凑状态，供模块折叠次要操作。</summary>
+    public static readonly DependencyProperty IsCompactProperty = IsCompactPropertyKey.DependencyProperty;
+
+    /// <summary>从公共资源加载布局，不要求协议模块复制 Grid 或样式。</summary>
+    static WorkspacePageLayout()
+    {
+        DefaultStyleKeyProperty.OverrideMetadata(typeof(WorkspacePageLayout), new FrameworkPropertyMetadata(typeof(WorkspacePageLayout)));
+        // 展示容器不占焦点，内部输入和按钮继续按原生顺序参与导航。
+        FocusableProperty.OverrideMetadata(typeof(WorkspacePageLayout), new FrameworkPropertyMetadata(false));
+        IsTabStopProperty.OverrideMetadata(typeof(WorkspacePageLayout), new FrameworkPropertyMetadata(false));
+    }
+
+    /// <summary>尺寸变化只更新展示状态，终端或编辑器自行响应实际正文尺寸。</summary>
+    public WorkspacePageLayout() => SizeChanged += (_, _) => RefreshCompactState();
+
+    /// <summary>工具栏内容。</summary>
+    public object? Toolbar { get => GetValue(ToolbarProperty); set => SetValue(ToolbarProperty, value); }
+    /// <summary>通知内容。</summary>
+    public object? Notification { get => GetValue(NotificationProperty); set => SetValue(NotificationProperty, value); }
+    /// <summary>覆盖层内容。</summary>
+    public object? Overlay { get => GetValue(OverlayProperty); set => SetValue(OverlayProperty, value); }
+    /// <summary>覆盖层显隐与底层交互状态。</summary>
+    public bool IsOverlayOpen { get => (bool)GetValue(IsOverlayOpenProperty); set => SetValue(IsOverlayOpenProperty, value); }
+    /// <summary>详情内容。</summary>
+    public object? Details { get => GetValue(DetailsProperty); set => SetValue(DetailsProperty, value); }
+    /// <summary>状态栏内容。</summary>
+    public object? StatusContent { get => GetValue(StatusContentProperty); set => SetValue(StatusContentProperty, value); }
+    /// <summary>详情是否展开。</summary>
+    public bool IsDetailsOpen { get => (bool)GetValue(IsDetailsOpenProperty); set => SetValue(IsDetailsOpenProperty, value); }
+    /// <summary>详情栏宽度。</summary>
+    public double DetailsWidth { get => (double)GetValue(DetailsWidthProperty); set => SetValue(DetailsWidthProperty, value); }
+    /// <summary>紧凑模式断点。</summary>
+    public double CompactBreakpoint { get => (double)GetValue(CompactBreakpointProperty); set => SetValue(CompactBreakpointProperty, value); }
+    /// <summary>当前是否使用紧凑布局。</summary>
+    public bool IsCompact => (bool)GetValue(IsCompactProperty);
+
+    /// <summary>调用者调整断点后同步更新布局。</summary>
+    private static void OnBreakpointChanged(DependencyObject owner, DependencyPropertyChangedEventArgs args) =>
+        ((WorkspacePageLayout)owner).RefreshCompactState();
+    /// <summary>覆盖式详情不减少正文宽度，避免窄窗口挤没终端。</summary>
+    private void RefreshCompactState() => SetValue(IsCompactPropertyKey, ActualWidth < CompactBreakpoint);
+}

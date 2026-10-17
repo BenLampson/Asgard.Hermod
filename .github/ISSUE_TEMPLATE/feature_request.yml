@@ -1,0 +1,16 @@
+name: Feature request
+description: Propose an improvement to Hermod.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the desired outcome and any alternatives considered.
+    validations:
+      required: true

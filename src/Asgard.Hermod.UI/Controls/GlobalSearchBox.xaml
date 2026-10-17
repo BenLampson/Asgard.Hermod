@@ -1,0 +1,91 @@
+<UserControl x:Class="Asgard.Hermod.UI.Controls.GlobalSearchBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization"
+             xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls"
+             x:Name="SearchRoot" Unloaded="OnUnloaded">
+    <Grid>
+        <Border x:Name="SearchFrame" Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource LineBrush}" BorderThickness="1"
+                CornerRadius="5" Padding="9,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="13" />
+                    <ColumnDefinition Width="7" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <controls:IconView Kind="search" Width="13" Height="13"
+                                   Foreground="{DynamicResource TextFaintBrush}" />
+                <TextBox x:Name="SearchInput" Grid.Column="2"
+                         Text="{Binding GlobalSearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{DynamicResource SearchTextBox}" FontSize="12"
+                         AutomationProperties.Name="{loc:Loc SearchInstancesAndTags}"
+                         GotKeyboardFocus="OnSearchFocus" TextChanged="OnSearchTextChanged"
+                         PreviewKeyDown="OnPreviewKeyDown">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding OpenFirstSearchResultCommand}" />
+                    </TextBox.InputBindings>
+                </TextBox>
+                <TextBlock Grid.Column="2" Text="{loc:Loc SearchInstancesAndTags}"
+                           FontSize="12" VerticalAlignment="Center"
+                           Foreground="{DynamicResource TextFaintBrush}" IsHitTestVisible="False">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=SearchInput}" Value="">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+        </Border>
+        <!-- Popup 保留独立焦点作用域，点击结果时不会被输入框失焦提前关闭。 -->
+        <Popup x:Name="ResultsPopup" Placement="Bottom" PlacementTarget="{Binding ElementName=SearchFrame}"
+               VerticalOffset="5" StaysOpen="False" AllowsTransparency="True"
+               DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+            <Border Width="{Binding ActualWidth, ElementName=SearchRoot}" Padding="5"
+                    Background="{DynamicResource SurfaceBrush}" BorderThickness="1"
+                    BorderBrush="{DynamicResource LineBrush}" CornerRadius="6"
+                    PreviewKeyDown="OnPreviewKeyDown">
+                <Grid>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="260"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <ItemsControl ItemsSource="{Binding GlobalSearchResults}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Style="{DynamicResource SidebarItemButton}" Height="34"
+                                            Padding="8,0" HorizontalContentAlignment="Stretch"
+                                            Command="{Binding DataContext.OpenGlobalSearchResultCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding}" Click="OnResultClick">
+                                        <StackPanel Orientation="Horizontal">
+                                            <controls:IconView Kind="{Binding Icon}" Width="15" Height="15"
+                                                               Foreground="{DynamicResource TextMutedBrush}" />
+                                            <TextBlock Text="{Binding DisplayName}" FontSize="12"
+                                                       VerticalAlignment="Center" Margin="8,0,0,0" />
+                                        </StackPanel>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                    <TextBlock Text="{loc:Loc NoMatchingInstances}" Margin="8,8" FontSize="12"
+                               Foreground="{DynamicResource TextMutedBrush}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding GlobalSearchResults.Count}" Value="0">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+            </Border>
+        </Popup>
+    </Grid>
+</UserControl>
