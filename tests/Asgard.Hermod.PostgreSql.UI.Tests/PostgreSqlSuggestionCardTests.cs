@@ -49,8 +49,14 @@ public sealed class PostgreSqlSuggestionCardTests(WpfTestFixture fixture)
             Assert.Equal(Text.Get("ChatSqlExecuted"), ((TextBlock)card.FindName("ExecutionStatus")).Text);
             var execute = (Button)card.FindName("ExecuteAction"); Assert.Equal(Text.Get("ChatSqlRunAgain"), execute.Content); Assert.True(execute.IsEnabled);
             Assert.Contains("Alice", ((TextBox)card.FindName("ResultPreview")).Text); Capture("result");
+            ((System.Windows.Controls.Primitives.ToggleButton)card.FindName("SuggestionToggle")).IsChecked = false; await Layout();
+            Assert.False(suggestion.Execution.IsExpanded);
+            var thread = model.Archive.ActiveThread; model.Archive.NewCommand.Execute(null); model.Archive.ActiveThread = thread; await Layout();
+            card = Assert.Single(WindowTestVisuals.Descendants<AgentCodeSuggestion>(view)); Assert.False(card.IsExpanded);
+            Assert.Contains("Alice", ((TextBox)card.FindName("ResultPreview")).Text);
             var rerun = model.ExecuteCommand.ExecuteAsync(suggestion); await Layout();
-            Assert.Single(server.ExecutedSql); Assert.Equal(Visibility.Visible, approval.Visibility);
+            approval = (AgentApprovalCard)card.FindName("InlineApproval");
+            Assert.True(card.IsExpanded); Assert.Single(server.ExecutedSql); Assert.Equal(Visibility.Visible, approval.Visibility);
             model.PendingApproval!.RejectCommand.Execute(null); await rerun; await Layout();
             Assert.Single(server.ExecutedSql); Assert.Equal(count, model.Messages.Count); Assert.Empty(bindings.Messages);
             Assert.Null(Window.GetWindow(root)); Assert.Null(PresentationSource.FromVisual(root));

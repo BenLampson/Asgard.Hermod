@@ -35,7 +35,7 @@ public sealed class AgentThinkingHeadlessTests(WpfTestFixture fixture)
             var toggle = (ToggleButton)disclosure.FindName("ThinkingToggle"); Assert.Equal(32, toggle.ActualHeight);
             Assert.Equal(Text.Get("AgentThinkingExpand"), System.Windows.Automation.AutomationProperties.GetName(toggle));
             Capture(view, $"thinking-collapsed-{language}"); toggle.IsChecked = true; await Layout(); Assert.True(message.Thinking.IsExpanded);
-            var text = (TextBox)disclosure.FindName("ReasoningText"); Assert.True(text.IsReadOnly); Assert.Equal(240, text.MaxHeight); Assert.Equal(reasoning, text.Text);
+            var text = (TextBox)disclosure.FindName("ReasoningText"); Assert.True(text.IsReadOnly); Assert.True(double.IsPositiveInfinity(text.MaxHeight)); Assert.Equal(ScrollBarVisibility.Disabled, text.VerticalScrollBarVisibility); Assert.Equal(reasoning, text.Text);
             text.Select(0, 7);
             await client.Receive!(new("Review the result.\n```bash\nuname -a\n```", reasoning + "\nThe available evidence is incomplete.", false, TimeSpan.FromSeconds(4)), TestContext.Current.CancellationToken);
             await Layout(); Assert.Empty(message.Commands); Assert.Equal(7, text.SelectionLength); Assert.Equal(Text.Format("AgentThinkingCompleted", 4), message.Thinking.Header);

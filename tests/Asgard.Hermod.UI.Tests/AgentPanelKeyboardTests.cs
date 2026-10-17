@@ -20,6 +20,30 @@ public sealed class AgentPanelKeyboardTests(WpfTestFixture fixture)
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool SetKeyboardState(byte[] state);
 
+    /// <summary>建议卡片使用真实键盘路由展开与收起，窄窗缩放不引入内层纵向滚动。</summary>
+    [Fact]
+    public Task SuggestionCanBeCollapsedAndExpandedFromKeyboard() => fixture.RunAsync(async () =>
+    {
+        var card = new AgentCodeSuggestion { Caption = "test", Code = string.Join('\n', Enumerable.Repeat("SELECT 1;", 40)) };
+        var scroll = new ScrollViewer { Content = card, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
+        var window = new HermodWindow { Content = scroll, Width = 640, Height = 600, ShowInTaskbar = false, ShowActivated = true, Opacity = 0 };
+        InputMethod.SetIsInputMethodEnabled(window, false);
+        try
+        {
+            window.Show(); await WindowTestVisuals.UpdateLayoutAsync(window);
+            var toggle = (System.Windows.Controls.Primitives.ToggleButton)card.FindName("SuggestionToggle");
+            Assert.True(toggle.Focus()); await PressEnterAsync(window, ModifierKeys.None); Assert.False(card.IsExpanded);
+            await WindowInteractionNativeMethods.PressKeyAsync(window, 0x20); await WindowTestVisuals.UpdateLayoutAsync(window); Assert.True(card.IsExpanded);
+            window.Width = 360; await WindowTestVisuals.UpdateLayoutAsync(window);
+            var code = (TextBox)card.FindName("SuggestionCode"); Assert.True(code.ActualHeight > 180); Assert.True(scroll.ScrollableHeight > 0);
+            Assert.InRange(code.ExtentHeight - code.ViewportHeight, -1, 1);
+            scroll.ScrollToEnd(); await WindowTestVisuals.UpdateLayoutAsync(window);
+            var collapse = (Button)card.FindName("CollapseSuggestion"); Assert.True(collapse.Focus());
+            await PressEnterAsync(window, ModifierKeys.None); Assert.False(card.IsExpanded); Assert.True(toggle.IsKeyboardFocused);
+        }
+        finally { window.Close(); }
+    });
+
     /// <summary>Enter、Ctrl+Enter 和 Shift+Enter 共用实际路由；切换上下文及收起不丢草稿或抢焦点。</summary>
     [Theory]
     [InlineData("ssh")]

@@ -256,7 +256,13 @@ maps Markdig syntax into selectable native WPF documents. Headings, tables,
 lists, emphasis and code blocks follow the current theme and available width.
 User messages and tool output remain literal text. HTML, image loading and link
 navigation are disabled; rendering never dispatches commands. Shell and SQL
-suggestions retain their separate insertion and confirmation actions.
+suggestions retain their separate insertion and confirmation actions. Suggestion
+cards start expanded and can be collapsed from their header or footer after
+reading, retaining their caption and execution status. SQL suggestion expansion
+belongs to the original in-memory execution object and survives archive switching;
+a new approval expands its card. Read-only suggestions, results, approval code and
+thinking grow to their full height inside the conversation's vertical scroll area.
+Wide code and result blocks retain horizontal scrolling.
 Reconnection invalidates old
 suggestions and transport-bound tasks. See [SSH](ssh.md) for lifecycle and limits.
 

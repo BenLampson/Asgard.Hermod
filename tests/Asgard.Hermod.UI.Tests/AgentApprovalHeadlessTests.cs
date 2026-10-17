@@ -29,8 +29,9 @@ public sealed class AgentApprovalHeadlessTests(WpfTestFixture fixture)
             await Layout(); var evidence = Assert.Single(WindowTestVisuals.Descendants<AgentMessageView>(root), item => item.IsTool);
             Assert.True(evidence.IsExpanded); evidence.IsExpanded = false; Assert.True(evidence.IsExpanded);
             var card = Assert.Single(WindowTestVisuals.Descendants<AgentApprovalCard>(root), item => ReferenceEquals(item.DataContext, approval));
-            Assert.Equal(Visibility.Visible, card.Visibility); Assert.True(card.ActualHeight > 100); Assert.Equal(960, card.ActualWidth, 1);
+            Assert.Equal(Visibility.Visible, card.Visibility); Assert.True(card.ActualHeight > 100); Assert.Equal(evidence.ActualWidth, card.ActualWidth, 1);
             Assert.Equal(approval.Code, ((TextBox)card.FindName("OperationCode")).Text);
+            Assert.Equal(ScrollBarVisibility.Disabled, ((TextBox)card.FindName("OperationCode")).VerticalScrollBarVisibility);
             Assert.True(model.IsBusy); Assert.False(model.Archive.NewCommand.CanExecute(null));
             Capture(root, $"agent-approval-{language}-{theme}"); model.Prompt = "next draft";
             if (accept) approval.ApproveCommand.Execute(null); else approval.RejectCommand.Execute(null);

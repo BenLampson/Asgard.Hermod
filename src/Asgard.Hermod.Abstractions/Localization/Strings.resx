@@ -4982,4 +4982,6 @@ Address: {2}</value></data>
   <data name="AgentThinkingInterrupted" xml:space="preserve"><value>Thinking interrupted</value></data>
   <data name="AgentThinkingExpand" xml:space="preserve"><value>Expand thinking</value></data>
   <data name="AgentThinkingCollapse" xml:space="preserve"><value>Collapse thinking</value></data>
+  <data name="ChatSuggestionExpand" xml:space="preserve"><value>Expand</value></data>
+  <data name="ChatSuggestionCollapse" xml:space="preserve"><value>Collapse</value></data>
 </root>

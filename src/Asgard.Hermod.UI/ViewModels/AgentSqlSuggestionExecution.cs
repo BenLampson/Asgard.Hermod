@@ -8,6 +8,8 @@ namespace Asgard.Hermod.UI.ViewModels;
 public sealed class AgentSqlSuggestionExecution : ObservableObject
 {
     private readonly Stopwatch _elapsed = new();
+    /// <summary>阅读状态归属原建议，切换归档或更新结果不会重新展开已收起的卡片。</summary>
+    public bool IsExpanded { get; set => SetProperty(ref field, value); } = true;
     /// <summary>当前阶段只使用稳定枚举。</summary>
     public AgentSqlExecutionState State { get; private set; }
     /// <summary>本次单独授权的冻结目标，重跑会创建新请求。</summary>
@@ -44,6 +46,7 @@ public sealed class AgentSqlSuggestionExecution : ObservableObject
     /// <summary>准备新一轮，不继承旧审批权限或旧结果。</summary>
     public void Begin()
     {
+        IsExpanded = true;
         Approval = null; Result = ""; Output = ""; _elapsed.Reset();
         State = AgentSqlExecutionState.AwaitingApproval; Refresh();
     }

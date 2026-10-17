@@ -27,12 +27,16 @@ public sealed class DatabaseAgentEvidenceHeadlessTests(WpfTestFixture fixture)
             root.SetResourceReference(Border.BackgroundProperty, "SurfaceBrush"); using var trace = new WpfBindingTrace(); await Layout();
             var card = Assert.Single(WindowTestVisuals.Descendants<DatabaseAgentEvidenceView>(view)); var code = (TextBox)card.FindName("SqlEvidence");
             Assert.Equal(sql, code.Text); Assert.True(code.IsReadOnly); Assert.Equal(12, code.FontSize); Assert.False(((Button)card.FindName("ViewResult")).IsEnabled);
+            Assert.True(double.IsPositiveInfinity(code.MaxHeight)); Assert.Equal(ScrollBarVisibility.Disabled, code.VerticalScrollBarVisibility);
             const string output = "{\"columns\":[\"name\"],\"rows\":[[\"literal <Hyperlink>data</Hyperlink>\"]],\"sample\":true}";
             evidence.Complete(new("completed", output) { Metrics = new(3, 2, TimeSpan.FromMilliseconds(800), false) }); await Layout();
             Assert.True(((Button)card.FindName("ViewResult")).IsEnabled); Assert.Equal(Text.Format("ChatToolQueryMetrics", 3, 2, 800d), evidence.Summary);
             Assert.Equal(Visibility.Collapsed, ((StackPanel)card.FindName("ResultEvidence")).Visibility);
             ((Button)card.FindName("ViewResult")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); await Layout(); Assert.True(evidence.IsResultExpanded);
             var result = Assert.Single(WindowTestVisuals.Descendants<TextBox>(card), input => input.Text == output); Assert.True(result.IsReadOnly); Assert.Equal(output, result.Text);
+            Assert.True(double.IsPositiveInfinity(result.MaxHeight)); Assert.Equal(ScrollBarVisibility.Disabled, result.VerticalScrollBarVisibility);
+            ((Button)card.FindName("ViewResult")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); await Layout(); Assert.False(evidence.IsResultExpanded);
+            ((Button)card.FindName("ViewResult")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); await Layout(); Assert.True(evidence.IsResultExpanded);
             Assert.All(WindowTestVisuals.Descendants<MarkdownView>(view), markdown => Assert.Equal(Visibility.Collapsed, markdown.Visibility));
             Assert.True(code.ExtentWidth > code.ViewportWidth); Assert.Equal(30, ((Button)card.FindName("CopySql")).ActualHeight);
             evidence.Complete(new("completed", "late replacement")); Assert.Equal(output, evidence.Output); Assert.Equal(sql, evidence.Sql);
