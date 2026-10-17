@@ -22,6 +22,8 @@ internal sealed class RegistrationSdkProtocol : HttpMessageHandler
     };
     /// <summary>供给响应状态。</summary>
     public HttpStatusCode Status { get; set; } = HttpStatusCode.OK;
+    /// <summary>模拟 Client 尚未获得注册 Scope 时的 Token Endpoint 拒绝。</summary>
+    public HttpStatusCode TokenStatus { get; set; } = HttpStatusCode.OK;
     /// <summary>成功包络模拟错误的租户归属。</summary>
     public bool WrongTenant { get; set; }
     /// <summary>模拟创建已发出后的连接中断。</summary>
@@ -58,6 +60,7 @@ internal sealed class RegistrationSdkProtocol : HttpMessageHandler
             Assert.Equal(Options.ServiceClientId + ":" + Options.ServiceClientSecret, basic);
             var form = LoopbackLoginBrowser.ParseQuery(await request.Content!.ReadAsStringAsync(cancellationToken)).ToDictionary();
             Assert.Equal("client_credentials", form["grant_type"]); Assert.Equal("heimdall.users.create", form["scope"]);
+            if (TokenStatus != HttpStatusCode.OK) return Reply(new { error = "invalid_scope" }, TokenStatus);
             var claims = new[] { new Claim("sub", Options.ServiceClientId), new Claim("client_id", Options.ServiceClientId),
                 new Claim("tenant_id", Options.TenantId), new Claim("application_id", Options.ApplicationId),
                 new Claim("token_type", "BackendService"), new Claim("scope", "[\"heimdall.users.create\"]") };

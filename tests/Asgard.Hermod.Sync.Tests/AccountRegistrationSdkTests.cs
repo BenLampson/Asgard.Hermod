@@ -18,6 +18,20 @@ public sealed class AccountRegistrationSdkTests
         await service.RegisterAsync(Request(), TestContext.Current.CancellationToken);
         Assert.Equal(1, protocol.Tokens); Assert.Equal(2, protocol.Creations);
     }
+    /// <summary>尚未开通的服务授权属于服务不可用，不能要求用户修改正确的注册资料。</summary>
+    [Theory]
+    [InlineData(400)]
+    [InlineData(401)]
+    [InlineData(403)]
+    public async Task ServiceAuthorizationFailure_IsUnavailableBeforeUserCreation(int status)
+    {
+        using var protocol = new RegistrationSdkProtocol { TokenStatus = (HttpStatusCode)status };
+        await using var provider = Build(protocol);
+        var error = await Assert.ThrowsAsync<HermodApiException>(() => provider.GetRequiredService<IAccountRegistrationService>()
+            .RegisterAsync(Request(), TestContext.Current.CancellationToken));
+        Assert.Equal(503, error.StatusCode); Assert.Equal("RegistrationUnavailable", error.ResourceKey);
+        Assert.Equal(0, protocol.Creations);
+    }
     /// <summary>上游拒绝保留稳定状态，不泄漏其原始正文，也不自动重发 POST。</summary>
     [Theory]
     [InlineData(400, 400, "RegistrationInvalidRequest")]
