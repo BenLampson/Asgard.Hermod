@@ -9,6 +9,26 @@ namespace Asgard.Hermod.UI.Tests;
 [Collection(WpfTestCollection.Name)]
 public sealed class SshConsoleLifetimeHeadlessTests(WpfTestFixture fixture)
 {
+    /// <summary>关闭或断开会先释放 SDK；随后发生的 PTY 状态回调不能再读取其断线属性。</summary>
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public Task ClosingDoesNotReadTransportPropertiesAfterDisposal(bool disconnectFirst) => fixture.RunOffscreenAsync(async () =>
+    {
+        var connection = new SshWorkspaceTestConnection { RejectDisconnectedAfterDispose = true };
+        var model = SshWorkspaceTests.Create(Factory(connection));
+        try
+        {
+            await model.InitializeAsync(); await model.NewSessionCommand.ExecuteAsync();
+            if (disconnectFirst) await model.DisconnectCommand.ExecuteAsync();
+            await model.DisposeAsync(); await WpfTestFixture.DrainDispatcherAsync();
+            Assert.Equal(0, connection.DisposedTokenReads); Assert.Equal(1, connection.DisposeCount);
+            Assert.All(connection.Consoles, console => Assert.Equal(1, console.DisposeCount));
+            Assert.True(model.IsClosed);
+        }
+        finally { await model.DisposeAsync(); }
+    });
+
     [Fact]
     public Task ZeroConsoles_KeepForwardAndPendingFileTransferAlive() => fixture.RunOffscreenAsync(async () =>
     {

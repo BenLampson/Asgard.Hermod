@@ -46,5 +46,9 @@ public sealed class SshLiveWorkspaceTests
             foreach (string path in new[] { file, renamed }) { try { await connection.DeleteAsync(path, false, cleanup.Token); } catch (Exception) { } }
             await connection.DeleteAsync(directory, true, cleanup.Token);
         }
+        var disconnected = connection.Disconnected;
+        await connection.DisposeAsync();
+        Assert.Equal(disconnected, connection.Disconnected); Assert.True(disconnected.IsCancellationRequested);
+        await connection.DisposeAsync();
     }
 }

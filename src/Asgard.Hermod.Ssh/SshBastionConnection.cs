@@ -16,7 +16,7 @@ internal sealed class SshBastionConnection(ISshConnection transport, ISshConsole
     /// <inheritdoc />
     public IReadOnlyList<TrustedHostKey> HostKeys => transport.HostKeys;
     /// <inheritdoc />
-    public CancellationToken Disconnected => transport.Disconnected;
+    public CancellationToken Disconnected { get; } = transport.Disconnected;
     /// <inheritdoc />
     public ISshConsoleConnection InitialConsole => initial;
     /// <inheritdoc />

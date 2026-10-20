@@ -8,6 +8,18 @@ namespace Asgard.Hermod.Ssh.Tests;
 /// <summary>覆盖菜单型堡垒机的配置、分段提示符、独立工具选机和失败边界。</summary>
 public sealed class SshBastionTests
 {
+    /// <summary>菜单会话结束后，迟到的 UI 通知仍可读取缓存信号，而不访问已释放的网关。</summary>
+    [Fact]
+    public async Task DisconnectedSignalRemainsReadableAfterDispose()
+    {
+        var transport = new BastionTestConnection();
+        var connection = await SshBastionConnection.CreateAsync(transport, Options, TestContext.Current.CancellationToken);
+        var signal = connection.Disconnected; Assert.True(signal.CanBeCanceled);
+        await connection.DisposeAsync();
+        Assert.Equal(signal, connection.Disconnected); Assert.True(connection.Disconnected.IsCancellationRequested);
+        await connection.DisposeAsync();
+    }
+
     internal static SshConnectionOptions Options => SshConnectionOptions.Parse(Connection());
     private static InstanceConnectionOptions Connection(string selection = "2") => SshOptionsTests.Connection(SshIds.Bastion,
         new Dictionary<string, string> { ["host"] = "bastion.example", ["user"] = "tester", ["auth"] = SshIds.Agent, ["bastion.selection"] = selection });
