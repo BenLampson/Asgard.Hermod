@@ -27,11 +27,13 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     private void OnModelChanged(object sender, DependencyPropertyChangedEventArgs args)
     {
         if (_model is not null) _model.LogWindowRequested -= OnLogWindowRequested;
+        if (_model is not null) _model.DockerCommands.InsertRequested -= OnDockerInsert;
         CloseLogWindows();
         foreach (var assistant in _openedAssistants) assistant.InsertRequested -= OnAgentInsert; _openedAssistants.Clear();
         if (_model is not null) _model.PropertyChanged -= OnWorkspacePropertyChanged;
         _model = args.NewValue as SshWorkspaceViewModel;
         if (_model is not null) _model.LogWindowRequested += OnLogWindowRequested;
+        if (_model is not null) _model.DockerCommands.InsertRequested += OnDockerInsert;
         if (_model is not null) _model.PropertyChanged += OnWorkspacePropertyChanged;
         ConfigureTools();
         UpdateLayoutMode();
@@ -75,6 +77,7 @@ public partial class SshWorkspaceView : UserControl, IDisposable
         UpdateMonitorLayout();
         UpdateToolboxLayout();
         if (MonitorActionLabel is not null) MonitorActionLabel.Visibility = ActualWidth >= 1000 ? Visibility.Visible : Visibility.Collapsed;
+        if (DockerActionLabel is not null) DockerActionLabel.Visibility = ActualWidth >= 1150 ? Visibility.Visible : Visibility.Collapsed;
         FooterRoute.Visibility = FooterTerminalType.Visibility = ActualWidth >= 800 ? Visibility.Visible : Visibility.Collapsed;
 
         ResizeSearchOverlay();
@@ -157,6 +160,7 @@ public partial class SshWorkspaceView : UserControl, IDisposable
     public void Dispose()
     {
         if (_disposed) return; _disposed = true;
+        if (_model is not null) _model.DockerCommands.InsertRequested -= OnDockerInsert;
         if (_model is not null) _model.LogWindowRequested -= OnLogWindowRequested;
         CloseLogWindows();
         StopMonitorResizeTracking();

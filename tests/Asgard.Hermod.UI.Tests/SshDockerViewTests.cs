@@ -1,0 +1,149 @@
+using System.Diagnostics;
+using System.Globalization;
+using System.Windows.Media.Imaging;
+using Asgard.Hermod.Abstractions.Localization;
+using Asgard.Hermod.Ssh.UI.Services;
+using Asgard.Hermod.Ssh.UI.ViewModels;
+using Asgard.Hermod.Ssh.UI.Views;
+
+namespace Asgard.Hermod.UI.Tests;
+
+/// <summary>实际 XAML 的双语、双主题和宽窄布局验收，不把设计演示数据加入生产代码。</summary>
+[Collection(WpfTestCollection.Name)]
+public sealed class SshDockerViewTests(WpfTestFixture fixture)
+{
+    /// <summary>真实工作区中的页面切换保持可见内容，不被终端或监测空白层遮盖。</summary>
+    [Theory]
+    [InlineData(UiTheme.Dark)]
+    [InlineData(UiTheme.Light)]
+    public Task WorkspaceSwitchingKeepsTheManagementPageVisible(UiTheme theme) => fixture.RunOffscreenAsync(async () =>
+    {
+        var themes = new ThemeService(Application.Current.Resources); themes.SetTheme(theme);
+        var data = new SshMonitorTestData(); var connection = data.CreateConnection();
+        await using var model = SshWorkspaceTests.Create(new SshTestFactory { Handler = _ => Task.FromResult<Asgard.Hermod.Ssh.ISshConnection>(connection) });
+        using var view = new SshWorkspaceView { DataContext = model };
+        try
+        {
+            await model.InitializeAsync(); model.IsMonitorOpen = true;
+            for (int i = 0; i < 4; i++)
+            {
+                await model.ToggleDockerCommandsCommand.ExecuteAsync();
+                await Layout(view, 1388, 920);
+                var management = Assert.IsType<SshDockerCommandsView>(view.FindName("DockerCommandsView"));
+                Assert.Equal(model.IsDockerCommandsOpen ? Visibility.Visible : Visibility.Collapsed, management.Visibility);
+                if (model.IsDockerCommandsOpen)
+                {
+                    Assert.True(management.ActualWidth > 1000 && management.ActualHeight > 600);
+                    Assert.Same(model.DockerCommands, management.DataContext);
+                    model.DockerCommands.SelectedContainer = model.DockerCommands.Containers[1];
+                    await model.DockerCommands.ActionCommand.ExecuteAsync("logs");
+                    await Layout(view, 1388, 920);
+                    Assert.Equal(Visibility.Visible, management.Visibility);
+                    Assert.NotEmpty(Assert.IsType<TextBox>(management.FindName("ResultOutput")).Text);
+                    Capture(view, $"docker-workspace-{theme}");
+                }
+            }
+        }
+        finally { themes.SetTheme(UiTheme.Light); }
+    });
+
+    /// <summary>资源优先、直接动作、可选命令详情，双主题和窄屏保持稳定。</summary>
+    [Theory]
+    [InlineData("en", UiTheme.Light)]
+    [InlineData("en", UiTheme.Dark)]
+    [InlineData("zh-Hans", UiTheme.Light)]
+    [InlineData("zh-Hans", UiTheme.Dark)]
+    public Task CommandLibraryRendersAcrossLanguagesThemesAndWidths(string language, UiTheme theme) => fixture.RunOffscreenAsync(async () =>
+    {
+        var previous = Text.Culture; Text.Initialize(language, CultureInfo.InvariantCulture);
+        var themes = new ThemeService(Application.Current.Resources); themes.SetTheme(theme);
+        var errors = new Errors(); PresentationTraceSources.DataBindingSource.Listeners.Add(errors);
+        var connection = new SshMonitorTestData().CreateConnection();
+        using var model = new SshDockerCommandsViewModel(() => connection, () => "ops@md-core.example.com:22", new Dialogs(), () => true, (_, _) => Task.CompletedTask);
+        var view = new SshDockerCommandsView { DataContext = model };
+        try
+        {
+            await model.InitializeAsync();
+            Assert.Null(model.SelectedContainer);
+            Assert.False(Assert.IsType<Expander>(view.FindName("CommandDetails")).IsExpanded);
+            model.Select("logs", model.Containers[1]); await model.ActionCommand.ExecuteAsync("logs");
+            foreach (double width in new[] { 1388d, 1000d, 640d })
+            {
+                await Layout(view, width, 820);
+                var preview = Assert.IsType<TextBox>(view.FindName("CommandPreview")); var execute = Assert.IsType<Button>(view.FindName("LogsAction"));
+                Assert.True(preview.IsReadOnly); Assert.True(execute.IsEnabled); Assert.Equal(model.Preview, preview.Text);
+                var list = Assert.IsType<ListBox>(view.FindName("ContainerList"));
+                Assert.True(list.Focusable);
+                Assert.Equal(Visibility.Collapsed, Assert.IsType<Border>(view.FindName("EmptySelection")).Visibility);
+                var item = Assert.IsType<ListBoxItem>(list.ItemContainerGenerator.ContainerFromItem(model.SelectedContainer!));
+                var entry = Assert.IsType<Border>(item.Template.FindName("Entry", item));
+                Assert.Equal(new Thickness(1), entry.BorderThickness);
+                var bounds = item.RenderSize; var catalogSize = list.RenderSize;
+                list.SelectedItem = model.Containers[0]; await Layout(view, width, 820);
+                Assert.Equal(bounds, item.RenderSize); Assert.Equal(catalogSize, list.RenderSize);
+                Assert.Equal(new Thickness(1), entry.BorderThickness);
+                list.SelectedItem = model.Containers[1]; await Layout(view, width, 820);
+                var color = Assert.IsType<SolidColorBrush>(list.Background).Color;
+                Assert.True(theme != UiTheme.Dark || color.R < 80 && color.G < 80 && color.B < 80);
+                var search = Assert.IsType<TextBox>(view.FindName("OutputSearch")); search.Text = "health";
+                Assert.Equal("health", Assert.IsType<TextBox>(view.FindName("ResultOutput")).SelectedText); search.Text = "";
+                Inside(execute, view); Inside(Assert.IsType<Border>(view.FindName("OutputPanel")), view);
+                Capture(view, $"docker-commands-{language}-{theme}-{width}");
+            }
+            model.Select("compose-up", null); model.ProjectDirectory = "/srv/hermod";
+            Assert.IsType<Expander>(view.FindName("OtherResources")).IsExpanded = true;
+            await Layout(view, 1388, 820);
+            Assert.Contains("--no-build", model.Preview, StringComparison.Ordinal); Capture(view, $"docker-compose-{language}-{theme}");
+            Assert.Empty(errors.Messages);
+        }
+        finally { PresentationTraceSources.DataBindingSource.Listeners.Remove(errors); Text.Initialize(previous.Name, CultureInfo.InvariantCulture); themes.SetTheme(UiTheme.Light); }
+    });
+
+    /// <summary>资源字段、真实曲线与选择一致，日志、详情和命令入口均保留。</summary>
+    [Theory]
+    [InlineData("en", UiTheme.Light)]
+    [InlineData("en", UiTheme.Dark)]
+    [InlineData("zh-Hans", UiTheme.Light)]
+    [InlineData("zh-Hans", UiTheme.Dark)]
+    public Task ResourceMonitorUsesStructuredStatsAndRealCharts(string language, UiTheme theme) => fixture.RunOffscreenAsync(async () =>
+    {
+        var previous = Text.Culture; Text.Initialize(language, CultureInfo.InvariantCulture);
+        var themes = new ThemeService(Application.Current.Resources); themes.SetTheme(theme);
+        var errors = new Errors(); PresentationTraceSources.DataBindingSource.Listeners.Add(errors);
+        await using var model = new SshMonitorViewModel(); var connection = new SshMonitorTestData().CreateConnection();
+        var view = new SshMonitorDockerView { DataContext = model };
+        try
+        {
+            await model.StartAsync(connection); model.IsPaused = true; model.Section = "docker"; await model.RefreshDetailsCommand.ExecuteAsync();
+            model.SelectedContainer = model.Containers.First(c => c.Name == "hermod-api");
+            Assert.Equal(28.4, model.SelectedContainer.CpuPercent); Assert.Contains("428", model.ContainerMemory, StringComparison.Ordinal);
+            Assert.NotEmpty(model.ContainerCpuPoints); Assert.Null(model.SelectedContainer.ReceivedPerSecond);
+            await model.RefreshDetailsCommand.ExecuteAsync(); Assert.Equal(0, model.SelectedContainer!.ReceivedPerSecond);
+            foreach (double width in new[] { 1388d, 900d, 600d })
+            { await Layout(view, width, 700); Capture(view, $"docker-resources-{language}-{theme}-{width}"); }
+            Assert.Empty(errors.Messages);
+        }
+        finally { PresentationTraceSources.DataBindingSource.Listeners.Remove(errors); Text.Initialize(previous.Name, CultureInfo.InvariantCulture); themes.SetTheme(UiTheme.Light); }
+    });
+
+    private static async Task Layout(FrameworkElement view, double width, double height)
+    { view.Measure(new Size(width, height)); view.Arrange(new Rect(0, 0, width, height)); view.UpdateLayout(); await WpfTestFixture.DrainDispatcherAsync(); view.UpdateLayout(); }
+    private static void Inside(FrameworkElement child, FrameworkElement parent)
+    {
+        var at = child.TranslatePoint(new Point(), parent); Assert.True(child.ActualWidth > 0 && child.ActualHeight > 0);
+        Assert.True(at.X >= -1 && at.Y >= -1 && at.X + child.ActualWidth <= parent.ActualWidth + 1 && at.Y + child.ActualHeight <= parent.ActualHeight + 1);
+    }
+    private static void Capture(FrameworkElement view, string name)
+    {
+        string? directory = Environment.GetEnvironmentVariable("HERMOD_UI_PREVIEW_DIR"); if (directory is null) return;
+        Directory.CreateDirectory(directory); var bitmap = new RenderTargetBitmap((int)view.ActualWidth, (int)view.ActualHeight, 96, 96, PixelFormats.Pbgra32); bitmap.Render(view);
+        var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap)); using var stream = File.Create(Path.Combine(directory, name + ".png")); encoder.Save(stream);
+    }
+    private sealed class Dialogs : ISshWorkspaceDialogs { public Task<bool> ConfirmCloseAsync(string instanceName) => Task.FromResult(false); }
+    private sealed class Errors : TraceListener
+    {
+        internal List<string> Messages { get; } = [];
+        public override void Write(string? message) { if (message?.Contains("Error:", StringComparison.Ordinal) == true) Messages.Add(message); }
+        public override void WriteLine(string? message) => Write(message);
+    }
+}

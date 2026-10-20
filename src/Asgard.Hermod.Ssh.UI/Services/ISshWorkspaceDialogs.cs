@@ -11,6 +11,8 @@ public interface ISshWorkspaceDialogs
     Task<bool> ConfirmConsoleCloseAsync(string instanceName, string consoleName) => ConfirmCloseAsync(instanceName);
     /// <summary>命令执行或文件删除须明确确认，默认实现拒绝变更。</summary>
     Task<bool> ConfirmActionAsync(string title, string detail, string preview) => Task.FromResult(false);
+    /// <summary>Docker 确认随连接失效或用户取消关闭；默认测试适配器复用已有确认边界。</summary>
+    Task<bool> ConfirmDockerActionAsync(string title, string detail, string preview, CancellationToken token) => ConfirmActionAsync(title, detail, preview).WaitAsync(token);
     /// <summary>选择本机上传文件，取消返回空。</summary>
     string? ChooseUpload() => null;
     /// <summary>选择下载目标，由系统文件对话框确认覆盖。</summary>

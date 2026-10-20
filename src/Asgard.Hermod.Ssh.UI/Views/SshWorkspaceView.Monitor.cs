@@ -6,7 +6,7 @@ namespace Asgard.Hermod.Ssh.UI.Views;
 /// <summary>监测分屏记忆用户高度，窗口变小时始终保留可输入的终端区域。</summary>
 public partial class SshWorkspaceView
 {
-    private double _monitorHeight = 572;
+    private double _monitorHeight = 700;
     private bool _updatingMonitorLayout;
 
     /// <summary>原生分隔器的键盘调整也会修改行高，使用同一监听记住请求高度。</summary>

@@ -38,7 +38,7 @@ public sealed class SshMonitorContainerActionsTests(WpfTestFixture fixture)
             var actions = Assert.IsType<Border>(view.FindName("ContainerActionBar"));
             var logs = Assert.IsType<Button>(view.FindName("ViewContainerLogs"));
             var details = Assert.IsType<Button>(view.FindName("ViewContainerDetails"));
-            Assert.Equal(5, grid.Columns.Count); Assert.DoesNotContain(grid.Columns, c => c is DataGridTemplateColumn { CanUserSort: false });
+            Assert.Equal(7, grid.Columns.Count); Assert.DoesNotContain(grid.Columns, c => c is DataGridTemplateColumn { CanUserSort: false });
             Assert.DoesNotContain(WindowTestVisuals.Descendants<Button>(grid), b => ReferenceEquals(b.Command, model.ReadLogsCommand));
             Assert.False(logs.IsEnabled); Assert.False(details.IsEnabled);
             model.SelectedContainer = model.Containers[1]; await LayoutAsync(surface, 1440);

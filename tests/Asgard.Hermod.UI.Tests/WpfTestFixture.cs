@@ -3,10 +3,6 @@ namespace Asgard.Hermod.UI.Tests;
 /// <summary>在独立 STA Dispatcher 执行用例，并加载真实程序集资源。</summary>
 public sealed class WpfTestFixture : IAsyncLifetime
 {
-    /// <summary>只为当前测试线程选用已加载的系统英文布局，不加载第三方输入法或修改用户语言偏好。</summary>
-    [System.Runtime.InteropServices.DllImport("user32.dll")]
-    private static extern nint ActivateKeyboardLayout(nint layout, uint flags);
-
     private readonly TaskCompletionSource<Dispatcher> _ready = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly List<Exception> _unhandled = [];
     private readonly Thread _thread;
@@ -76,8 +72,7 @@ public sealed class WpfTestFixture : IAsyncLifetime
             AppContext.SetSwitch("Switch.System.Windows.Controls.Text.UseAdornerForTextboxSelectionRendering", false);
             var dispatcher = Dispatcher.CurrentDispatcher;
             SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(dispatcher));
-            // 合成输入依赖固定键盘布局；UI 文化与候选组合仍由各用例独立设置。
-            Assert.NotEqual(nint.Zero, ActivateKeyboardLayout(0x04090409, 0));
+            // 初始化只加载资源；离屏用例不能更改键盘布局或干预用户正在使用的桌面。
             _application = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
             foreach (string name in new[] { "Theme.Light", "Fonts", "Styles" })
             {

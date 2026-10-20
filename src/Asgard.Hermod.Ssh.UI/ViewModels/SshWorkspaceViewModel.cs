@@ -34,6 +34,7 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
     {
         Name = instance.Name; _configurations = configurations; _connections = connections; _editor = editor; _dialogs = dialogs;
         _instance = instance;
+        Monitor = new(_dockerEnvironmentReader);
         ReconnectCommand = new AsyncRelayCommand(_ => StartReconnectAsync(), _ => !IsClosed && IsEnded);
         DisconnectCommand = new AsyncRelayCommand(_ => DisconnectAsync(), _ => !IsClosed && IsConnected);
         CancelConnectionCommand = Connection.CancelCommand;
@@ -162,5 +163,6 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
         AddForwardCommand?.NotifyCanExecuteChanged();
         ShowForwardEditorCommand?.NotifyCanExecuteChanged();
         EditConnectionCommand.NotifyCanExecuteChanged(); NewSessionCommand.NotifyCanExecuteChanged(); ToggleDetailsCommand.NotifyCanExecuteChanged();
+        ToggleDockerCommandsCommand?.NotifyCanExecuteChanged();
     }
 }

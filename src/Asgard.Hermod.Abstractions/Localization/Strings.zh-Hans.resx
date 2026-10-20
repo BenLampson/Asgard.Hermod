@@ -5038,4 +5038,318 @@ SQL：
   <data xml:space="preserve" name="RegistrationOutcomeUnknown">
     <value>暂时无法确认账号是否已创建。请先尝试登录，再决定是否重新注册。</value>
   </data>
+  <data name="DockerLibrary" xml:space="preserve">
+    <value>Docker 管理</value>
+  </data>
+  <data name="DockerLibraryHint" xml:space="preserve">
+    <value>选择容器，再选择要让 Docker 做什么。</value>
+  </data>
+  <data name="DockerContainers" xml:space="preserve">
+    <value>容器列表</value>
+  </data>
+  <data name="DockerLogs" xml:space="preserve">
+    <value>查看日志</value>
+  </data>
+  <data name="DockerResources" xml:space="preserve">
+    <value>资源用量</value>
+  </data>
+  <data name="DockerDetails" xml:space="preserve">
+    <value>容器详情</value>
+  </data>
+  <data name="DockerStart" xml:space="preserve">
+    <value>启动容器</value>
+  </data>
+  <data name="DockerStop" xml:space="preserve">
+    <value>停止容器</value>
+  </data>
+  <data name="DockerRestart" xml:space="preserve">
+    <value>重启容器</value>
+  </data>
+  <data name="DockerImages" xml:space="preserve">
+    <value>镜像列表</value>
+  </data>
+  <data name="DockerPull" xml:space="preserve">
+    <value>拉取镜像</value>
+  </data>
+  <data name="DockerComposePs" xml:space="preserve">
+    <value>项目状态</value>
+  </data>
+  <data name="DockerComposeUp" xml:space="preserve">
+    <value>启动服务</value>
+  </data>
+  <data name="DockerComposeRestart" xml:space="preserve">
+    <value>重启服务</value>
+  </data>
+  <data name="DockerComposeLogs" xml:space="preserve">
+    <value>服务日志</value>
+  </data>
+  <data name="DockerGroupContainers" xml:space="preserve">
+    <value>容器</value>
+  </data>
+  <data name="DockerGroupImages" xml:space="preserve">
+    <value>镜像</value>
+  </data>
+  <data name="DockerGroupCompose" xml:space="preserve">
+    <value>Compose</value>
+  </data>
+  <data name="DockerInvalidParameters" xml:space="preserve">
+    <value>请检查操作参数，只能使用支持的参数值。</value>
+  </data>
+  <data name="DockerStatsUnavailable" xml:space="preserve">
+    <value>容器资源采样失败，之前的数值可能已过期；连续两次采样成功后恢复速率。</value>
+  </data>
+  <data name="DockerStatsUnsupported" xml:space="preserve">
+    <value>此 Docker CLI 不支持资源采样所需的结构化输出参数。</value>
+  </data>
+  <data name="DockerEnvironmentFailed" xml:space="preserve">
+    <value>无法识别 Docker 环境，请检查 SSH 账号、Docker 安装和访问权限。</value>
+  </data>
+  <data name="DockerDaemonUnavailable" xml:space="preserve">
+    <value>Docker 守护进程不可用，或此 SSH 账号没有访问权限。</value>
+  </data>
+  <data name="DockerComposeMissing" xml:space="preserve">
+    <value>此服务器上未检测到 Compose，请先安装 Compose 插件或 docker-compose 再使用此操作。</value>
+  </data>
+  <data name="DockerComposePathInvalid" xml:space="preserve">
+    <value>请输入远端项目绝对目录和 Compose 文件路径，路径不能包含控制字符。</value>
+  </data>
+  <data name="DockerImageInvalid" xml:space="preserve">
+    <value>请输入有效的镜像引用，按需包含标签或摘要。</value>
+  </data>
+  <data name="DockerDetectFirst" xml:space="preserve">
+    <value>请先检测 Docker 环境再使用这些操作。</value>
+  </data>
+  <data name="DockerDetect" xml:space="preserve">
+    <value>重新检测</value>
+  </data>
+  <data name="DockerDetecting" xml:space="preserve">
+    <value>正在检测 Docker 和 Compose…</value>
+  </data>
+  <data name="DockerDetectionCanceled" xml:space="preserve">
+    <value>Docker 环境检测已取消或超时。</value>
+  </data>
+  <data name="DockerEnvironmentReady" xml:space="preserve">
+    <value>已识别环境，请选择操作。</value>
+  </data>
+  <data name="DockerContainerReadFailed" xml:space="preserve">
+    <value>无法读取容器列表，请重新检测环境后选择目标。</value>
+  </data>
+  <data name="DockerAwaitingConfirmation" xml:space="preserve">
+    <value>等待操作确认…</value>
+  </data>
+  <data name="DockerRestartImpact" xml:space="preserve">
+    <value>要重启 {1} 上的容器“{0}”吗？容器将停止后重新启动，期间服务会短暂中断。</value>
+  </data>
+  <data name="DockerChangeImpact" xml:space="preserve">
+    <value>要在 {1} 上对“{2}”执行“{0}”吗？这会更改所选 Docker 资源。</value>
+  </data>
+  <data name="DockerDeclined" xml:space="preserve">
+    <value>已取消确认，未发送命令。</value>
+  </data>
+  <data name="DockerExecuting" xml:space="preserve">
+    <value>正在处理所选资源…</value>
+  </data>
+  <data name="DockerStartedInTerminal" xml:space="preserve">
+    <value>已在新控制台中启动日志跟踪，可在该控制台按 Ctrl+C 停止。</value>
+  </data>
+  <data name="DockerOutcomeUnknown" xml:space="preserve">
+    <value>命令已发送，但无法确认最终结果。请先检查服务器状态再决定是否再次执行；取消不会撤销远端变更。</value>
+  </data>
+  <data name="DockerCanceled" xml:space="preserve">
+    <value>操作已在发送命令前取消。</value>
+  </data>
+  <data name="DockerExecutionFailed" xml:space="preserve">
+    <value>命令执行失败，请检查 Docker 访问权限、目标及其状态。原始错误输出已隐藏。</value>
+  </data>
+  <data name="DockerFailedExit" xml:space="preserve">
+    <value>命令失败，退出码为 {0}。</value>
+  </data>
+  <data name="DockerResultSummary" xml:space="preserve">
+    <value>已在 {0} 完成 · 退出码 {1} · {2:F2} 秒 · {3} 行输出</value>
+  </data>
+  <data name="DockerCompleted" xml:space="preserve">
+    <value>操作已完成。</value>
+  </data>
+  <data name="DockerEnvironmentSummary" xml:space="preserve">
+    <value>CLI {0} · Engine {1} · Compose {2}</value>
+  </data>
+  <data name="DockerComposeUnavailable" xml:space="preserve">
+    <value>不可用</value>
+  </data>
+  <data name="DockerCompatibility" xml:space="preserve">
+    <value>基础操作使用当前 Docker CLI，Compose 入口：{0}。</value>
+  </data>
+  <data name="DockerReturnMonitor" xml:space="preserve">
+    <value>Docker 监控</value>
+  </data>
+  <data name="DockerSearch" xml:space="preserve">
+    <value>搜索操作</value>
+  </data>
+  <data name="DockerCatalogHint" xml:space="preserve">
+    <value>命令随 Hermod 更新。</value>
+  </data>
+  <data name="DockerTarget" xml:space="preserve">
+    <value>执行目标</value>
+  </data>
+  <data name="DockerContainer" xml:space="preserve">
+    <value>容器</value>
+  </data>
+  <data name="DockerImageReference" xml:space="preserve">
+    <value>镜像引用</value>
+  </data>
+  <data name="DockerProjectDirectory" xml:space="preserve">
+    <value>远端项目目录</value>
+  </data>
+  <data name="DockerProjectDirectoryHint" xml:space="preserve">
+    <value>使用服务器绝对路径，操作不继承终端当前目录。</value>
+  </data>
+  <data name="DockerComposeFile" xml:space="preserve">
+    <value>Compose 文件</value>
+  </data>
+  <data name="DockerService" xml:space="preserve">
+    <value>服务（可选）</value>
+  </data>
+  <data name="DockerServiceHint" xml:space="preserve">
+    <value>留空表示对项目中的所有服务执行操作。</value>
+  </data>
+  <data name="DockerTimeout" xml:space="preserve">
+    <value>优雅停止等待时间（1–300 秒）</value>
+  </data>
+  <data name="DockerTailLines" xml:space="preserve">
+    <value>最近日志行数</value>
+  </data>
+  <data name="DockerSince" xml:space="preserve">
+    <value>时间范围</value>
+  </data>
+  <data name="DockerSinceAll" xml:space="preserve">
+    <value>全部时间</value>
+  </data>
+  <data name="DockerSince10Minutes" xml:space="preserve">
+    <value>最近 10 分钟</value>
+  </data>
+  <data name="DockerSinceHour" xml:space="preserve">
+    <value>最近 1 小时</value>
+  </data>
+  <data name="DockerSinceDay" xml:space="preserve">
+    <value>最近 24 小时</value>
+  </data>
+  <data name="DockerTimestamps" xml:space="preserve">
+    <value>显示时间戳</value>
+  </data>
+  <data name="DockerFollow" xml:space="preserve">
+    <value>持续跟踪新日志</value>
+  </data>
+  <data name="DockerFollowHint" xml:space="preserve">
+    <value>持续跟踪将在新控制台中运行，可在该控制台按 Ctrl+C 停止。</value>
+  </data>
+  <data name="DockerChangeHint" xml:space="preserve">
+    <value>此操作会改变远端状态，执行前需要确认。Compose 启动使用已有镜像，不会构建镜像。</value>
+  </data>
+  <data name="DockerInsert" xml:space="preserve">
+    <value>插入终端</value>
+  </data>
+  <data name="DockerExecute" xml:space="preserve">
+    <value>执行</value>
+  </data>
+  <data name="DockerExecutionHint" xml:space="preserve">
+    <value>通过独立执行通道操作，结果显示在右侧；日志跟踪在新控制台中运行。</value>
+  </data>
+  <data name="DockerCopyCommand" xml:space="preserve">
+    <value>复制命令</value>
+  </data>
+  <data name="DockerPreview" xml:space="preserve">
+    <value>命令预览</value>
+  </data>
+  <data name="DockerResult" xml:space="preserve">
+    <value>操作结果</value>
+  </data>
+  <data name="DockerResultEmpty" xml:space="preserve">
+    <value>点击上方的具体操作，结果会显示在这里。</value>
+  </data>
+  <data name="DockerLocalActionFailed" xml:space="preserve">
+    <value>无法复制或导出输出，请检查本地剪贴板和文件访问权限。</value>
+  </data>
+  <data name="DockerNoValue" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="DockerMemoryValue" xml:space="preserve">
+    <value>{0} / {1}</value>
+  </data>
+  <data name="DockerRatePair" xml:space="preserve">
+    <value>{0} / {1}</value>
+  </data>
+  <data name="DockerMonitorEnvironment" xml:space="preserve">
+    <value>Engine {0} / Compose {1}</value>
+  </data>
+  <data name="DockerTrendTitle" xml:space="preserve">
+    <value>{0} · 资源趋势 · 最近 2 分钟</value>
+  </data>
+  <data name="DockerColumns" xml:space="preserve">
+    <value>显示列</value>
+  </data>
+  <data name="DockerContainerImage" xml:space="preserve">
+    <value>容器 / 镜像</value>
+  </data>
+  <data name="DockerStateHealth" xml:space="preserve">
+    <value>运行 / 健康</value>
+  </data>
+  <data name="DockerMemory" xml:space="preserve">
+    <value>内存用量 / 上限</value>
+  </data>
+  <data name="DockerNetwork" xml:space="preserve">
+    <value>网络接收 / 发送</value>
+  </data>
+  <data name="DockerBlockIo" xml:space="preserve">
+    <value>磁盘读 / 写</value>
+  </data>
+  <data name="DockerPids" xml:space="preserve">
+    <value>进程 / 线程</value>
+  </data>
+  <data name="DockerRestartShort" xml:space="preserve">
+    <value>重启</value>
+  </data>
+  <data name="DockerStopShort" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="DockerRateHint" xml:space="preserve">
+    <value>速率由连续采样估算，首次采样不显示速率。</value>
+  </data>
+  <data name="DockerCpuHint" xml:space="preserve">
+    <value>100% = 1 个逻辑 CPU</value>
+  </data>
+  <data name="DockerCpuTrend" xml:space="preserve">
+    <value>容器最近两分钟的 CPU 使用率</value>
+  </data>
+  <data name="DockerMemoryTrend" xml:space="preserve">
+    <value>容器最近两分钟的内存使用百分比</value>
+  </data>
+  <data name="DockerVersionUnsupported" xml:space="preserve">
+    <value>命令库支持 Docker CLI 20.10 及以上版本，当前版本较旧或无法识别。</value>
+  </data>
+  <data name="DockerComposeVersionUnsupported" xml:space="preserve">
+    <value>这些 Compose 命令模板需要 Compose 1.29 及以上版本。</value>
+  </data>
+  <data name="DockerSearchOutput" xml:space="preserve">
+    <value>搜索操作结果</value>
+  </data>
+  <data name="DockerRefreshResources" xml:space="preserve"><value>刷新容器</value></data>
+  <data name="DockerChooseContainer" xml:space="preserve"><value>1. 选择容器</value></data>
+  <data name="DockerChooseAction" xml:space="preserve"><value>2. 要对它做什么？</value></data>
+  <data name="DockerSelectFirst" xml:space="preserve"><value>先选择左侧的容器</value></data>
+  <data name="DockerSelectFirstHint" xml:space="preserve"><value>选好以后，可以查看日志和资源用量，也可以启动、停止或重启容器。</value></data>
+  <data name="DockerNoContainers" xml:space="preserve"><value>没有找到容器，可以刷新后重试。</value></data>
+  <data name="DockerActionsHint" xml:space="preserve"><value>已停止的容器可以启动。重启和停止会先说明影响，由你确认后执行。</value></data>
+  <data name="DockerLogOptions" xml:space="preserve"><value>日志选项</value></data>
+  <data name="DockerOtherResources" xml:space="preserve"><value>镜像与 Compose 项目</value></data>
+  <data name="DockerOtherResourcesHint" xml:space="preserve"><value>选择要执行的操作。Compose 项目需要指定服务器上的项目目录和配置文件。</value></data>
+  <data name="DockerAdvancedDetails" xml:space="preserve"><value>高级：命令详情</value></data>
+  <data name="DockerAdvancedHint" xml:space="preserve"><value>这里是可选的技术详情。直接使用上面的操作按钮即可，不需要阅读或编辑命令。</value></data>
+  <data name="DockerActionSucceeded" xml:space="preserve"><value>已完成对“{1}”的{0}操作。</value></data>
+  <data name="DockerActionTarget" xml:space="preserve"><value>{0} · {1} · {2}</value></data>
+  <data name="DockerStopImpact" xml:space="preserve"><value>要停止 {1} 上的容器“{0}”吗？停止后，服务将不可用，直到再次启动。</value></data>
+  <data name="DockerStartImpact" xml:space="preserve"><value>要启动 {1} 上的容器“{0}”吗？将按容器现有配置开始运行。</value></data>
+  <data name="DockerTargetPorts" xml:space="preserve"><value>端口映射</value></data>
+  <data name="DockerContainerSearch" xml:space="preserve"><value>搜索容器名称或镜像</value></data>
+  <data name="DockerHumanResultSummary" xml:space="preserve"><value>已在 {0} 完成，用时 {1:0.00} 秒。</value></data>
+  <data name="DockerRefreshAfterActionFailed" xml:space="preserve"><value>操作已完成，但刷新容器状态失败。请刷新列表查看当前状态，无需重复执行刚才的操作。</value></data>
 </root>

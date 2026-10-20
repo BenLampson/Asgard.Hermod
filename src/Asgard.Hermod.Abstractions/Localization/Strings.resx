@@ -5038,4 +5038,318 @@ Address: {2}</value></data>
   <data xml:space="preserve" name="RegistrationOutcomeUnknown">
     <value>We could not confirm whether your account was created. Try signing in before submitting another registration.</value>
   </data>
+  <data name="DockerLibrary" xml:space="preserve">
+    <value>Docker management</value>
+  </data>
+  <data name="DockerLibraryHint" xml:space="preserve">
+    <value>Select a container, then choose what you want Docker to do.</value>
+  </data>
+  <data name="DockerContainers" xml:space="preserve">
+    <value>Container list</value>
+  </data>
+  <data name="DockerLogs" xml:space="preserve">
+    <value>View logs</value>
+  </data>
+  <data name="DockerResources" xml:space="preserve">
+    <value>Resource usage</value>
+  </data>
+  <data name="DockerDetails" xml:space="preserve">
+    <value>Container details</value>
+  </data>
+  <data name="DockerStart" xml:space="preserve">
+    <value>Start container</value>
+  </data>
+  <data name="DockerStop" xml:space="preserve">
+    <value>Stop container</value>
+  </data>
+  <data name="DockerRestart" xml:space="preserve">
+    <value>Restart container</value>
+  </data>
+  <data name="DockerImages" xml:space="preserve">
+    <value>Image list</value>
+  </data>
+  <data name="DockerPull" xml:space="preserve">
+    <value>Pull image</value>
+  </data>
+  <data name="DockerComposePs" xml:space="preserve">
+    <value>Project status</value>
+  </data>
+  <data name="DockerComposeUp" xml:space="preserve">
+    <value>Start services</value>
+  </data>
+  <data name="DockerComposeRestart" xml:space="preserve">
+    <value>Restart services</value>
+  </data>
+  <data name="DockerComposeLogs" xml:space="preserve">
+    <value>Service logs</value>
+  </data>
+  <data name="DockerGroupContainers" xml:space="preserve">
+    <value>Containers</value>
+  </data>
+  <data name="DockerGroupImages" xml:space="preserve">
+    <value>Images</value>
+  </data>
+  <data name="DockerGroupCompose" xml:space="preserve">
+    <value>Compose</value>
+  </data>
+  <data name="DockerInvalidParameters" xml:space="preserve">
+    <value>Check the operation parameters. Only the supported values can be used.</value>
+  </data>
+  <data name="DockerStatsUnavailable" xml:space="preserve">
+    <value>Container resource sampling failed. Previous values may be out of date; rates will resume after two successful samples.</value>
+  </data>
+  <data name="DockerStatsUnsupported" xml:space="preserve">
+    <value>This Docker CLI does not support the required structured resource sampling options.</value>
+  </data>
+  <data name="DockerEnvironmentFailed" xml:space="preserve">
+    <value>Unable to identify the Docker environment. Check the SSH account, Docker installation and access.</value>
+  </data>
+  <data name="DockerDaemonUnavailable" xml:space="preserve">
+    <value>The Docker daemon is unavailable or this SSH account does not have access.</value>
+  </data>
+  <data name="DockerComposeMissing" xml:space="preserve">
+    <value>Compose is unavailable. Install the Compose plugin or docker-compose on this server before using this operation.</value>
+  </data>
+  <data name="DockerComposePathInvalid" xml:space="preserve">
+    <value>Enter an absolute remote project directory and a Compose file path without control characters.</value>
+  </data>
+  <data name="DockerImageInvalid" xml:space="preserve">
+    <value>Enter a valid image reference, including a tag or digest when needed.</value>
+  </data>
+  <data name="DockerDetectFirst" xml:space="preserve">
+    <value>Detect the Docker environment before using these operations.</value>
+  </data>
+  <data name="DockerDetect" xml:space="preserve">
+    <value>Detect again</value>
+  </data>
+  <data name="DockerDetecting" xml:space="preserve">
+    <value>Detecting Docker and Compose…</value>
+  </data>
+  <data name="DockerDetectionCanceled" xml:space="preserve">
+    <value>Docker environment detection was canceled or timed out.</value>
+  </data>
+  <data name="DockerEnvironmentReady" xml:space="preserve">
+    <value>Environment identified. Choose an operation to continue.</value>
+  </data>
+  <data name="DockerContainerReadFailed" xml:space="preserve">
+    <value>Unable to read the container list. Refresh the environment before selecting a target.</value>
+  </data>
+  <data name="DockerAwaitingConfirmation" xml:space="preserve">
+    <value>Waiting for operation confirmation…</value>
+  </data>
+  <data name="DockerRestartImpact" xml:space="preserve">
+    <value>Restart container {0} on {1}? Its service will be interrupted briefly while it stops and starts again.</value>
+  </data>
+  <data name="DockerChangeImpact" xml:space="preserve">
+    <value>Apply {0} on {1} to {2}? This changes the selected Docker resource.</value>
+  </data>
+  <data name="DockerDeclined" xml:space="preserve">
+    <value>Operation declined. No command was sent.</value>
+  </data>
+  <data name="DockerExecuting" xml:space="preserve">
+    <value>Working on the selected resource...</value>
+  </data>
+  <data name="DockerStartedInTerminal" xml:space="preserve">
+    <value>Log tracking started in a new console. Press Ctrl+C there to stop tracking.</value>
+  </data>
+  <data name="DockerOutcomeUnknown" xml:space="preserve">
+    <value>The command was dispatched, but its final outcome could not be confirmed. Check the server state before running it again; cancellation does not undo remote changes.</value>
+  </data>
+  <data name="DockerCanceled" xml:space="preserve">
+    <value>Operation canceled before dispatch.</value>
+  </data>
+  <data name="DockerExecutionFailed" xml:space="preserve">
+    <value>The command failed. Check Docker access, the target and its state. Raw error output is hidden.</value>
+  </data>
+  <data name="DockerFailedExit" xml:space="preserve">
+    <value>Command failed with exit code {0}.</value>
+  </data>
+  <data name="DockerResultSummary" xml:space="preserve">
+    <value>Completed on {0} · exit {1} · {2:F2} s · {3} output lines</value>
+  </data>
+  <data name="DockerCompleted" xml:space="preserve">
+    <value>Action completed.</value>
+  </data>
+  <data name="DockerEnvironmentSummary" xml:space="preserve">
+    <value>CLI {0} · Engine {1} · Compose {2}</value>
+  </data>
+  <data name="DockerComposeUnavailable" xml:space="preserve">
+    <value>Not available</value>
+  </data>
+  <data name="DockerCompatibility" xml:space="preserve">
+    <value>Base operations use the detected Docker CLI. Compose entry point: {0}.</value>
+  </data>
+  <data name="DockerReturnMonitor" xml:space="preserve">
+    <value>Docker monitoring</value>
+  </data>
+  <data name="DockerSearch" xml:space="preserve">
+    <value>Search operations</value>
+  </data>
+  <data name="DockerCatalogHint" xml:space="preserve">
+    <value>Commands are updated with Hermod.</value>
+  </data>
+  <data name="DockerTarget" xml:space="preserve">
+    <value>Execution target</value>
+  </data>
+  <data name="DockerContainer" xml:space="preserve">
+    <value>Container</value>
+  </data>
+  <data name="DockerImageReference" xml:space="preserve">
+    <value>Image reference</value>
+  </data>
+  <data name="DockerProjectDirectory" xml:space="preserve">
+    <value>Remote project directory</value>
+  </data>
+  <data name="DockerProjectDirectoryHint" xml:space="preserve">
+    <value>Use an absolute server path. The terminal's current directory is not inherited.</value>
+  </data>
+  <data name="DockerComposeFile" xml:space="preserve">
+    <value>Compose file</value>
+  </data>
+  <data name="DockerService" xml:space="preserve">
+    <value>Service (optional)</value>
+  </data>
+  <data name="DockerServiceHint" xml:space="preserve">
+    <value>Leave empty to target all services in the project.</value>
+  </data>
+  <data name="DockerTimeout" xml:space="preserve">
+    <value>Graceful stop timeout (1–300 seconds)</value>
+  </data>
+  <data name="DockerTailLines" xml:space="preserve">
+    <value>Recent log lines</value>
+  </data>
+  <data name="DockerSince" xml:space="preserve">
+    <value>Time range</value>
+  </data>
+  <data name="DockerSinceAll" xml:space="preserve">
+    <value>All available times</value>
+  </data>
+  <data name="DockerSince10Minutes" xml:space="preserve">
+    <value>Last 10 minutes</value>
+  </data>
+  <data name="DockerSinceHour" xml:space="preserve">
+    <value>Last hour</value>
+  </data>
+  <data name="DockerSinceDay" xml:space="preserve">
+    <value>Last 24 hours</value>
+  </data>
+  <data name="DockerTimestamps" xml:space="preserve">
+    <value>Show timestamps</value>
+  </data>
+  <data name="DockerFollow" xml:space="preserve">
+    <value>Follow new logs</value>
+  </data>
+  <data name="DockerFollowHint" xml:space="preserve">
+    <value>Following logs opens a new console. Stop it with Ctrl+C in that console.</value>
+  </data>
+  <data name="DockerChangeHint" xml:space="preserve">
+    <value>This operation changes remote state and requires confirmation. Compose startup uses existing images and never builds them.</value>
+  </data>
+  <data name="DockerInsert" xml:space="preserve">
+    <value>Insert into terminal</value>
+  </data>
+  <data name="DockerExecute" xml:space="preserve">
+    <value>Execute</value>
+  </data>
+  <data name="DockerExecutionHint" xml:space="preserve">
+    <value>Uses an independent exec channel. Results appear on the right; log following runs in a new console.</value>
+  </data>
+  <data name="DockerCopyCommand" xml:space="preserve">
+    <value>Copy command</value>
+  </data>
+  <data name="DockerPreview" xml:space="preserve">
+    <value>Command preview</value>
+  </data>
+  <data name="DockerResult" xml:space="preserve">
+    <value>Action result</value>
+  </data>
+  <data name="DockerResultEmpty" xml:space="preserve">
+    <value>Choose an action above. Its result will appear here.</value>
+  </data>
+  <data name="DockerLocalActionFailed" xml:space="preserve">
+    <value>Unable to copy or export the output. Check local clipboard and file access.</value>
+  </data>
+  <data name="DockerNoValue" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="DockerMemoryValue" xml:space="preserve">
+    <value>{0} / {1}</value>
+  </data>
+  <data name="DockerRatePair" xml:space="preserve">
+    <value>{0} / {1}</value>
+  </data>
+  <data name="DockerMonitorEnvironment" xml:space="preserve">
+    <value>Engine {0} / Compose {1}</value>
+  </data>
+  <data name="DockerTrendTitle" xml:space="preserve">
+    <value>{0} · Resource trends · Last 2 minutes</value>
+  </data>
+  <data name="DockerColumns" xml:space="preserve">
+    <value>Columns</value>
+  </data>
+  <data name="DockerContainerImage" xml:space="preserve">
+    <value>Container / Image</value>
+  </data>
+  <data name="DockerStateHealth" xml:space="preserve">
+    <value>State / Health</value>
+  </data>
+  <data name="DockerMemory" xml:space="preserve">
+    <value>Memory / Limit</value>
+  </data>
+  <data name="DockerNetwork" xml:space="preserve">
+    <value>Network receive / send</value>
+  </data>
+  <data name="DockerBlockIo" xml:space="preserve">
+    <value>Disk read / write</value>
+  </data>
+  <data name="DockerPids" xml:space="preserve">
+    <value>PIDs</value>
+  </data>
+  <data name="DockerRestartShort" xml:space="preserve">
+    <value>Restart</value>
+  </data>
+  <data name="DockerStopShort" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="DockerRateHint" xml:space="preserve">
+    <value>Rates are estimates from consecutive samples. The first sample has no rate.</value>
+  </data>
+  <data name="DockerCpuHint" xml:space="preserve">
+    <value>100% = one logical CPU</value>
+  </data>
+  <data name="DockerCpuTrend" xml:space="preserve">
+    <value>Container CPU usage over the last two minutes</value>
+  </data>
+  <data name="DockerMemoryTrend" xml:space="preserve">
+    <value>Container memory percentage over the last two minutes</value>
+  </data>
+  <data name="DockerVersionUnsupported" xml:space="preserve">
+    <value>The command library supports Docker CLI 20.10 or later. This version is older or could not be identified.</value>
+  </data>
+  <data name="DockerComposeVersionUnsupported" xml:space="preserve">
+    <value>These Compose templates require Compose 1.29 or later.</value>
+  </data>
+  <data name="DockerSearchOutput" xml:space="preserve">
+    <value>Search results</value>
+  </data>
+  <data name="DockerRefreshResources" xml:space="preserve"><value>Refresh containers</value></data>
+  <data name="DockerChooseContainer" xml:space="preserve"><value>1. Choose a container</value></data>
+  <data name="DockerChooseAction" xml:space="preserve"><value>2. What would you like to do?</value></data>
+  <data name="DockerSelectFirst" xml:space="preserve"><value>Choose a container on the left</value></data>
+  <data name="DockerSelectFirstHint" xml:space="preserve"><value>View logs and resource usage, or start, stop and restart the selected container.</value></data>
+  <data name="DockerNoContainers" xml:space="preserve"><value>No containers found. Refresh to try again.</value></data>
+  <data name="DockerActionsHint" xml:space="preserve"><value>Start is available for stopped containers. Restart and stop ask for confirmation before making changes.</value></data>
+  <data name="DockerLogOptions" xml:space="preserve"><value>Log options</value></data>
+  <data name="DockerOtherResources" xml:space="preserve"><value>Images and Compose projects</value></data>
+  <data name="DockerOtherResourcesHint" xml:space="preserve"><value>Choose an action below. Compose projects need their folder and configuration file on the server.</value></data>
+  <data name="DockerAdvancedDetails" xml:space="preserve"><value>Advanced: command details</value></data>
+  <data name="DockerAdvancedHint" xml:space="preserve"><value>These details are optional. Use the action buttons above without reading or editing commands.</value></data>
+  <data name="DockerActionSucceeded" xml:space="preserve"><value>{0} completed for {1}.</value></data>
+  <data name="DockerActionTarget" xml:space="preserve"><value>{0} · {1} · {2}</value></data>
+  <data name="DockerStopImpact" xml:space="preserve"><value>Stop container {0} on {1}? Its service will become unavailable until you start it again.</value></data>
+  <data name="DockerStartImpact" xml:space="preserve"><value>Start container {0} on {1}? The existing container will begin running with its current configuration.</value></data>
+  <data name="DockerTargetPorts" xml:space="preserve"><value>Published ports</value></data>
+  <data name="DockerContainerSearch" xml:space="preserve"><value>Search containers or images</value></data>
+  <data name="DockerHumanResultSummary" xml:space="preserve"><value>Completed on {0} in {1:0.00} seconds.</value></data>
+  <data name="DockerRefreshAfterActionFailed" xml:space="preserve"><value>The action completed, but the container list could not be refreshed. Refresh the list to check its current state; do not repeat the action.</value></data>
 </root>

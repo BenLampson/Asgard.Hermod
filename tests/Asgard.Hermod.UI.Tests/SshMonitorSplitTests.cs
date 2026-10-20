@@ -34,7 +34,7 @@ public sealed class SshMonitorSplitTests(WpfTestFixture fixture)
             var session = model.Session;
             model.ToggleMonitorCommand.Execute(null);
             await WindowPreviewCapture.VerifyAsync(window, $"ssh-monitor-split-{language}-{theme}");
-            Assert.True(panel.IsVisible); Assert.InRange(panel.ActualHeight, 400, 580);
+            Assert.True(panel.IsVisible); Assert.InRange(panel.ActualHeight, 600, 720);
             Assert.True(terminal.ActualHeight >= 80); Assert.True(terminal.ActualHeight < fullHeight - 300);
             var monitorRow = Assert.IsType<RowDefinition>(view.FindName("MonitorRow"));
             monitorRow.Height = new GridLength(360);

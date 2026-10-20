@@ -14,6 +14,15 @@ public sealed class WindowsSshWorkspaceDialogs(Func<Window?> owner) : ISshWorksp
     /// <inheritdoc />
     public Task<bool> ConfirmActionAsync(string title, string detail, string preview) => Task.FromResult(new ConfirmationDialog(title, detail, Text.Get("SshActionConfirm"), preview: preview) { Owner = owner() }.ShowDialog() == true);
     /// <inheritdoc />
+    public Task<bool> ConfirmDockerActionAsync(string title, string detail, string preview, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+        var dialog = new ConfirmationDialog(title, detail, title) { Owner = owner() };
+        using var canceled = token.Register(() => dialog.Dispatcher.BeginInvoke(() => { if (dialog.IsVisible) dialog.Close(); }));
+        bool accepted = dialog.ShowDialog() == true;
+        return Task.FromResult(accepted && !token.IsCancellationRequested);
+    }
+    /// <inheritdoc />
     public string? ChooseUpload()
     {
         var dialog = new Microsoft.Win32.OpenFileDialog { Multiselect = false };
