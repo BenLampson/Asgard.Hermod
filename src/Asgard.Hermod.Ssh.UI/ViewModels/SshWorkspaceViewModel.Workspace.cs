@@ -71,10 +71,10 @@ public sealed partial class SshWorkspaceViewModel
         InitializeDockerCommands();
         ToggleAgentCommand = new RelayCommand(_ => IsAgentOpen = !IsAgentOpen, _ => HasActiveConsole && !IsClosed);
         ToggleMonitorCommand = new RelayCommand(_ => { if (IsDockerCommandsOpen) { IsDockerCommandsOpen = false; IsMonitorOpen = true; } else IsMonitorOpen = !IsMonitorOpen; });
-        ToggleToolboxCommand = new AsyncRelayCommand(async value => { if (value is not string section || section is not ("files" or "forward" or "transfers")) return; ActiveSection = ActiveSection == section ? "terminal" : section; if (IsFilesSection && Files.Entries.Count == 0) await Files.RefreshCommand.ExecuteAsync(); }, _ => !IsClosed);
+        ToggleToolboxCommand = new AsyncRelayCommand(async value => { if (value is not string section || section is not ("files" or "forward" or "transfers") || !SupportsInstanceTools) return; ActiveSection = ActiveSection == section ? "terminal" : section; if (IsFilesSection && Files.Entries.Count == 0) await Files.RefreshCommand.ExecuteAsync(); }, _ => !IsClosed && SupportsInstanceTools);
         CollapseToolboxCommand = new RelayCommand(_ => ActiveSection = "terminal");
-        AddForwardCommand = new AsyncRelayCommand(_ => AddForwardAsync(), _ => IsConnected);
-        ShowForwardEditorCommand = new RelayCommand(_ => IsAddingForward = true, _ => IsConnected);
+        AddForwardCommand = new AsyncRelayCommand(_ => AddForwardAsync(), _ => IsConnected && SupportsInstanceTools);
+        ShowForwardEditorCommand = new RelayCommand(_ => IsAddingForward = true, _ => IsConnected && SupportsInstanceTools);
         CancelForwardEditorCommand = new RelayCommand(_ => IsAddingForward = false);
         StopForwardCommand = new RelayCommand(value => { if (value is SshForwardItem item) { item.Dispose(); Forwards.Remove(item); } });
     }

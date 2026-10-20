@@ -6,7 +6,7 @@ namespace Asgard.Hermod.Ssh;
 /// <summary>注册 SSH 协议；设备信任和交互由宿主选择。</summary>
 public static class SshServiceCollectionExtensions
 {
-    /// <summary>注册三种路径，不引用 WPF、SQLite 或可执行程序。</summary>
+    /// <summary>注册直连、跳板、交互式堡垒机和代理，不引用 WPF、SQLite 或可执行程序。</summary>
     public static IServiceCollection AddSsh(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
@@ -14,7 +14,7 @@ public static class SshServiceCollectionExtensions
         services.AddSingleton(new SshModuleRegistration());
         services.TryAddSingleton<ISshConnectionFactory, SshConnectionFactory>();
         services.TryAddSingleton<ISshTcpStreamFactory, SshTcpStreamFactory>();
-        foreach (string route in new[] { SshIds.Direct, SshIds.Jump, SshIds.Proxy })
+        foreach (string route in new[] { SshIds.Direct, SshIds.Jump, SshIds.Bastion, SshIds.Proxy })
             services.AddSingleton<IInstanceProvider>(provider => new SshInstanceProvider(route, provider.GetRequiredService<ISshConnectionFactory>()));
         return services;
     }

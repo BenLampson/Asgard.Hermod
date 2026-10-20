@@ -36,7 +36,10 @@ public sealed class SshConnectionFactory(IHostKeyTrustStore trust, ISshHostKeyPr
                     TerminalType = "xterm-256color",
                     TerminalSize = new(columns, rows),
                 }, cancellationToken).ConfigureAwait(false);
-                return new SshConnection(client, shell, bridge, verified.ToArray());
+                var connection = new SshConnection(client, shell, bridge, verified.ToArray());
+                return profile.Route == SshIds.Bastion
+                    ? await SshBastionConnection.CreateAsync(connection, profile, cancellationToken).ConfigureAwait(false)
+                    : connection;
             }
             catch (Exception) when (challenge is not null && !cancellationToken.IsCancellationRequested)
             {

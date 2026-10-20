@@ -5352,4 +5352,58 @@ SQL：
   <data name="DockerContainerSearch" xml:space="preserve"><value>搜索容器名称或镜像</value></data>
   <data name="DockerHumanResultSummary" xml:space="preserve"><value>已在 {0} 完成，用时 {1:0.00} 秒。</value></data>
   <data name="DockerRefreshAfterActionFailed" xml:space="preserve"><value>操作已完成，但刷新容器状态失败。请刷新列表查看当前状态，无需重复执行刚才的操作。</value></data>
+  <data name="CanContainOnlyDigits" xml:space="preserve">
+    <value>{0}只能包含数字。</value>
+  </data>
+  <data name="SshBastion" xml:space="preserve">
+    <value>交互式堡垒机</value>
+  </data>
+  <data name="SshBastionDescription" xml:space="preserve">
+    <value>登录堡垒机后，按配置的菜单编号进入服务器。</value>
+  </data>
+  <data name="SshBastionHost" xml:space="preserve">
+    <value>堡垒机地址</value>
+  </data>
+  <data name="SshBastionSelection" xml:space="preserve">
+    <value>服务器菜单编号</value>
+  </data>
+  <data name="SshBastionSelectionHint" xml:space="preserve">
+    <value>例如 1。每个终端和工具会话都会选择此编号；菜单变化后，请先更新编号再连接。</value>
+  </data>
+  <data name="SshBastionMenuPrompt" xml:space="preserve">
+    <value>堡垒机菜单提示符</value>
+  </data>
+  <data name="SshBastionMenuPromptHint" xml:space="preserve">
+    <value>Hermod 等待此提示符后才发送编号。火山堡垒机通常使用 [vbh]&gt;。</value>
+  </data>
+  <data name="SshBastionShellPrompt" xml:space="preserve">
+    <value>目标 Shell 提示符后缀（可选）</value>
+  </data>
+  <data name="SshBastionShellPromptHint" xml:space="preserve">
+    <value>留空时识别以 $ 或 # 结尾的提示符；其他 Shell 请填写实际后缀。</value>
+  </data>
+  <data name="SshBastionCapabilities" xml:space="preserve">
+    <value>终端、监控和 Docker 命令分别在独立会话中选择已保存的编号。工具需要目标服务器提供 POSIX Shell 和 base64。此连接方式暂不支持文件管理和端口转发。</value>
+  </data>
+  <data name="SshBastionRouteSummary" xml:space="preserve">
+    <value>通过 {0}，选择服务器编号 {1}</value>
+  </data>
+  <data name="SshBastionSelectionTimeout" xml:space="preserve">
+    <value>等待堡垒机菜单或目标 Shell 超时。请检查提示符设置、编号和连接超时。</value>
+  </data>
+  <data name="SshBastionSelectionFailed" xml:space="preserve">
+    <value>堡垒机未进入所选服务器。请检查菜单编号和访问权限后重新连接。</value>
+  </data>
+  <data name="SshBastionCommandFailed" xml:space="preserve">
+    <value>所选服务器未返回完整的工具结果。请检查其 Shell 和 base64 是否可用。已发送的命令可能已经执行，Hermod 未重试。</value>
+  </data>
+  <data name="SshBastionToolsUnsupported" xml:space="preserve">
+    <value>菜单型堡垒机连接暂不支持文件管理和端口转发。终端、监控和 Docker 命令使用所选服务器。</value>
+  </data>
+  <data name="SshBastionVerified" xml:space="preserve">
+    <value>堡垒机主机指纹已验证</value>
+  </data>
+  <data name="SshBastionSelectionVerified" xml:space="preserve">
+    <value>已按配置的菜单编号进入服务器</value>
+  </data>
 </root>

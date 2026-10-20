@@ -16,6 +16,7 @@ public sealed partial class SshWorkspaceViewModel
         {
             var options = await _configurations.GetConnectionAsync(InstanceId!, _connecting.Token) ?? throw Text.Exception("SshConnectionMissing");
             _profile = SshConnectionOptions.Parse(options); Refresh();
+            if (IsBastion) { ActiveSection = "terminal"; IsAddingForward = false; }
             int columns = Session?.Buffer.Columns ?? 80, rows = Session?.Buffer.Rows ?? 24;
             opened = await _connections.OpenAsync(options, columns, rows, _connecting.Token);
             if (IsClosed || _connecting.IsCancellationRequested) { await opened.DisposeAsync(); opened = null; _connecting.Token.ThrowIfCancellationRequested(); return; }

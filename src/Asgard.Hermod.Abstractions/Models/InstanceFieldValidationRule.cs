@@ -13,4 +13,6 @@ public enum InstanceFieldValidationRule
     ConnectionTimeout,
     /// <summary>主机名或 IP 地址，不接收 URL 或端口。</summary>
     Host,
+    /// <summary>只允许 ASCII 数字，保留输入中的前导零。</summary>
+    AsciiDigits,
 }

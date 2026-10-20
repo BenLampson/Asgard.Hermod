@@ -76,7 +76,17 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
     public StatusTone Tone => IsConnected ? StatusTone.Success : IsConnecting ? StatusTone.Accent
         : Phase == SshWorkspacePhase.Failed ? StatusTone.Danger : StatusTone.Warning;
     /// <summary>公开远程身份，不含密码、私钥内容或代理口令。</summary>
-    public string RemoteIdentity => _profile is null ? "" : _profile.Target.User + "@" + HostEndpoint;
+    public string RemoteIdentity => _profile is null ? "" : IsBastion ? RouteDescription : _profile.Target.User + "@" + HostEndpoint;
+    /// <summary>菜单编号表示所选目标，不把堡垒机身份伪装成目标服务器身份。</summary>
+    public bool IsBastion => _profile?.Route == SshIds.Bastion;
+    /// <summary>菜单会话未提供文件或 TCP 转发协议，工具不可向堡垒机直接发起请求。</summary>
+    public bool SupportsInstanceTools => !IsBastion;
+    /// <summary>不可用入口仍展示具体原因。</summary>
+    public string FilesToolHint => Text.Get(IsBastion ? "SshBastionToolsUnsupported" : "SshToolFiles");
+    /// <summary>转发入口的能力说明。</summary>
+    public string ForwardToolHint => Text.Get(IsBastion ? "SshBastionToolsUnsupported" : "SshToolForward");
+    /// <summary>传输入口的能力说明。</summary>
+    public string TransfersToolHint => Text.Get(IsBastion ? "SshBastionToolsUnsupported" : "SshToolTransfers");
     /// <summary>公开主机和端口，协议数字保持 invariant。</summary>
     public string HostEndpoint => _profile is null ? "" : _profile.Target.Host + ":" + _profile.Target.Port.ToString(CultureInfo.InvariantCulture);
     /// <summary>登录用户。</summary>
@@ -96,10 +106,11 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
     {
         SshIds.Jump => Text.Format("SshJumpRouteSummary", _profile.JumpHost!.Host, _profile.Target.Host),
         SshIds.Proxy => Text.Format("SshJumpRouteSummary", _profile.ProxyHost, _profile.Target.Host),
+        SshIds.Bastion => Text.Format("SshBastionRouteSummary", HostEndpoint, _profile.BastionSelection),
         _ => Text.Get("SshDirect"),
     };
     /// <summary>状态栏的路径标签。</summary>
-    public string RouteLabel => Text.Get(_profile?.Route switch { SshIds.Jump => "SshViaJump", SshIds.Proxy => "SshViaProxy", _ => "SshDirectRoute" });
+    public string RouteLabel => Text.Get(_profile?.Route switch { SshIds.Jump => "SshViaJump", SshIds.Bastion => "SshBastion", SshIds.Proxy => "SshViaProxy", _ => "SshDirectRoute" });
     /// <summary>连接存活时间只用于 UI，不存储为协议时间。</summary>
     public string Elapsed => IsConnected ? Text.Format("SshInstanceElapsed", DateTime.UtcNow - _connectedAt) : Text.Get("SshSessionEnded");
     /// <summary>实际网格尺寸。</summary>
@@ -157,10 +168,11 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
     private void Refresh()
     {
         foreach (string name in new[] { nameof(Phase), nameof(IsConnecting), nameof(IsConnected), nameof(IsReadOnly), nameof(IsEnded), nameof(Status),
-            nameof(Tone), nameof(RemoteIdentity), nameof(HostEndpoint), nameof(UserName), nameof(ConnectingTitle), nameof(Error), nameof(ErrorCode),
+            nameof(Tone), nameof(RemoteIdentity), nameof(IsBastion), nameof(SupportsInstanceTools), nameof(FilesToolHint), nameof(ForwardToolHint), nameof(TransfersToolHint), nameof(HostEndpoint), nameof(UserName), nameof(ConnectingTitle), nameof(Error), nameof(ErrorCode),
             nameof(EndedMessage), nameof(HostKeys), nameof(RouteDescription), nameof(RouteLabel), nameof(Elapsed), nameof(GridSize), nameof(ActiveConsoleLabel) }) OnPropertyChanged(name);
         ReconnectCommand.NotifyCanExecuteChanged(); DisconnectCommand.NotifyCanExecuteChanged(); CancelConnectionCommand.NotifyCanExecuteChanged();
         AddForwardCommand?.NotifyCanExecuteChanged();
+        ToggleToolboxCommand?.NotifyCanExecuteChanged();
         ShowForwardEditorCommand?.NotifyCanExecuteChanged();
         EditConnectionCommand.NotifyCanExecuteChanged(); NewSessionCommand.NotifyCanExecuteChanged(); ToggleDetailsCommand.NotifyCanExecuteChanged();
         ToggleDockerCommandsCommand?.NotifyCanExecuteChanged();

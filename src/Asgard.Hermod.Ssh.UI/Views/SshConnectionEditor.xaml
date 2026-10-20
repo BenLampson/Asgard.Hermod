@@ -43,7 +43,17 @@
    </Grid>
    <controls:InstanceConfigurationFieldEditor DataContext="{Binding ProxyDns}" Margin="0,0,0,14" />
   </StackPanel>
-  <Expander Header="{loc:Loc SshAdvanced}" Margin="0,4,0,14"><controls:InstanceConfigurationFieldEditor DataContext="{Binding Timeout}" Margin="0,10,0,0" /></Expander>
+  <StackPanel Visibility="{Binding IsBastion, Converter={StaticResource Visible}}">
+   <controls:InstanceConfigurationFieldEditor DataContext="{Binding BastionSelection}" Margin="0,0,0,14" />
+   <TextBlock Text="{loc:Loc SshBastionCapabilities}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,14" />
+  </StackPanel>
+  <Expander Header="{loc:Loc SshAdvanced}" Margin="0,4,0,14"><StackPanel>
+   <controls:InstanceConfigurationFieldEditor DataContext="{Binding Timeout}" Margin="0,10,0,0" />
+   <StackPanel Visibility="{Binding IsBastion, Converter={StaticResource Visible}}">
+    <controls:InstanceConfigurationFieldEditor DataContext="{Binding BastionMenuPrompt}" Margin="0,10,0,0" />
+    <controls:InstanceConfigurationFieldEditor DataContext="{Binding BastionShellPrompt}" Margin="0,10,0,0" />
+   </StackPanel>
+  </StackPanel></Expander>
   <TextBlock Text="{loc:Loc SshCredentialHint}" TextWrapping="Wrap" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" />
  </StackPanel>
 </UserControl>

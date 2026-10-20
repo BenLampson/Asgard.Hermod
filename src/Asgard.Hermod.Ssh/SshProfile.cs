@@ -5,9 +5,9 @@ public static class SshProfile
 {
     /// <summary>语言在宿主初始化后构造，因此不缓存翻译后的描述。</summary>
     public static InstanceProviderDescriptor Descriptor(string route) => new(route,
-        Text.Get(route switch { SshIds.Jump => "SshJump", SshIds.Proxy => "SshProxy", _ => "SshDirect" }),
-        Text.Get(route switch { SshIds.Jump => "SshJumpDescription", SshIds.Proxy => "SshProxyDescription", _ => "SshDirectDescription" }),
-        route == SshIds.Direct ? "server" : route == SshIds.Jump ? "route" : "network",
+        Text.Get(route switch { SshIds.Jump => "SshJump", SshIds.Bastion => "SshBastion", SshIds.Proxy => "SshProxy", _ => "SshDirect" }),
+        Text.Get(route switch { SshIds.Jump => "SshJumpDescription", SshIds.Bastion => "SshBastionDescription", SshIds.Proxy => "SshProxyDescription", _ => "SshDirectDescription" }),
+        route == SshIds.Direct ? "server" : route is SshIds.Jump or SshIds.Bastion ? "route" : "network",
         new(SshIds.Type, Text.Get("SshTypeName"), Text.Get("SshTypeDescription"), "terminal")
         {
             ProviderSelectionTitleResourceKey = "SshConnectionMethod",
@@ -25,6 +25,16 @@ public static class SshProfile
     {
         var fields = new List<InstanceConfigurationField>();
         AddHost(fields, "");
+        if (route == SshIds.Bastion)
+        {
+            fields[0] = fields[0] with { Label = Text.Get("SshBastionHost") };
+            fields.Add(new("bastion.selection", Text.Get("SshBastionSelection"), MaxLength: 9, ValidationRule: InstanceFieldValidationRule.AsciiDigits)
+            { Hint = Text.Get("SshBastionSelectionHint") });
+            fields.Add(new("bastion.menuPrompt", Text.Get("SshBastionMenuPrompt"), MaxLength: 128)
+            { DefaultValue = "[vbh]>", Hint = Text.Get("SshBastionMenuPromptHint") });
+            fields.Add(new("bastion.shellPrompt", Text.Get("SshBastionShellPrompt"), IsRequired: false, MaxLength: 128)
+            { Hint = Text.Get("SshBastionShellPromptHint") });
+        }
         if (route == SshIds.Jump) AddHost(fields, "jump.");
         if (route == SshIds.Proxy)
         {

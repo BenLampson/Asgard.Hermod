@@ -9,6 +9,8 @@ public static class SshIds
     public const string Direct = "ssh-direct";
     /// <summary>单跳 SSH 路径。</summary>
     public const string Jump = "ssh-jump";
+    /// <summary>登录堡垒机后按菜单编号选择目标。</summary>
+    public const string Bastion = "ssh-bastion";
     /// <summary>SOCKS5 或 HTTP CONNECT 代理路径。</summary>
     public const string Proxy = "ssh-proxy";
     /// <summary>密码认证。</summary>

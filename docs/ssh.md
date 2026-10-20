@@ -1,7 +1,7 @@
 # SSH connections
 
-SSH is an independent instance type. Its first page selects Direct, SSH jump host
-or TCP proxy, with Direct selected by default. Next opens a separate connection
+SSH is an independent instance type. Its first page selects Direct, SSH jump host,
+Interactive bastion or TCP proxy, with Direct selected by default. Next opens a separate connection
 information page. Testing and confirmation follow; automatic save location is
 shown at confirmation. Its four-step create and edit flows reuse the common type
 picker, connection wizard, field validation, connection test, encrypted settings
@@ -14,6 +14,7 @@ wizard and terminal workspace.
 | --- | --- |
 | Direct | Host, port and login identity |
 | SSH jump host | One jump host with its own port, user and authentication |
+| Interactive bastion | Bastion address, port and login identity, plus the server's numeric menu selection |
 | TCP proxy | SOCKS5 or HTTP CONNECT; optional username and password; local or remote DNS for SOCKS5 |
 
 Each SSH identity supports password, a local private-key file with optional
@@ -41,6 +42,40 @@ and closes an actual interactive PTY through the same protocol factory as the
 workspace. Saving remains blocked until the current configuration passes.
 Changing any connection field invalidates that result. The shared workflow
 derives device or account saving from sign-in state.
+
+## Interactive bastion sessions
+
+Use **Interactive bastion** for gateways that display a server-selection menu.
+Only one SSH login identity and the numeric selection are required; this is not
+the TCP-forwarding jump-host route. Set the bastion's actual SSH port.
+Advanced settings default the menu prompt to `[vbh]>` and
+recognize target shell prompts ending in `$` or `#`; other literal prompt suffixes
+can be configured. Hermod waits for the menu before sending the number once.
+It waits for the target shell before exposing the console. Rejected selections,
+closed sessions, cancellation and bounded startup timeouts fail without retrying
+another number or sending tool commands to the menu. Menu numbers can change:
+review the configured number when the gateway's asset list changes. This route
+does not independently verify the selected target's SSH fingerprint; host trust
+authenticates the bastion, and the gateway selects the target.
+
+Every new console and tool command opens its own PTY and repeats the configured
+selection. Monitoring and Docker commands therefore run in the selected server's
+POSIX shell, without injecting commands into the user's console. Command input
+and output use `base64` and random framing markers, preserving output bytes across
+terminal newline transformations. Both `sh` and `base64` must already be available
+on the target. No helper service, Python installation or gateway change is needed.
+Output is bounded to 64 KiB; commands are never automatically retried. A lost or
+malformed response after dispatch means the command may already have executed.
+
+File management, transfers and TCP port forwarding are unavailable for this route.
+Their entry points explain the limitation, and the protocol adapter rejects such
+requests rather than forwarding them to the bastion. MySQL-over-terminal relay
+is not implemented. Real gateway compatibility still requires verifying menu and
+shell prompts, multiple PTY channels, and command availability in that environment.
+
+The opt-in `SshBastionPtyTests` run against the local `debian:12` Docker image with
+networking disabled. Set `HERMOD_BASTION_PTY_TEST=1` when running the SSH tests to
+exercise real PTY echo, long commands, Unicode, exit status and output limits.
 
 ## Host identity
 

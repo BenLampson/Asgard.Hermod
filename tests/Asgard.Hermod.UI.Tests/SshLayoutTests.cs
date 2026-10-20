@@ -37,7 +37,7 @@ public sealed class SshLayoutTests(WpfTestFixture fixture)
         var themes = new ThemeService(Application.Current.Resources); themes.SetTheme(theme);
         try
         {
-            foreach (string route in new[] { SshIds.Direct, SshIds.Jump, SshIds.Proxy })
+            foreach (string route in new[] { SshIds.Direct, SshIds.Jump, SshIds.Bastion, SshIds.Proxy })
             {
                 using var model = SshWizardTests.Create(new(), new(), route);
                 var window = new NewInstanceWindow(model, [new SshConfigurationContentProvider()]);
@@ -64,7 +64,7 @@ public sealed class SshLayoutTests(WpfTestFixture fixture)
                         await WindowPreviewCapture.VerifyAsync(window, $"ssh-key-{language}-{theme}");
                         Assert.Contains(WindowTestVisuals.Descendants<Button>(window), button => button.IsVisible && Equals(button.Content, Text.Get("Browse")));
                     }
-                    else
+                    else if (route is SshIds.Jump or SshIds.Proxy)
                     {
                         var editor = Assert.Single(WindowTestVisuals.Descendants<SshConnectionEditor>(window));
                         var adapter = Assert.IsType<SshConnectionEditorViewModel>(editor.DataContext);

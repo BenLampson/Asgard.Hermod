@@ -5352,4 +5352,58 @@ Address: {2}</value></data>
   <data name="DockerContainerSearch" xml:space="preserve"><value>Search containers or images</value></data>
   <data name="DockerHumanResultSummary" xml:space="preserve"><value>Completed on {0} in {1:0.00} seconds.</value></data>
   <data name="DockerRefreshAfterActionFailed" xml:space="preserve"><value>The action completed, but the container list could not be refreshed. Refresh the list to check its current state; do not repeat the action.</value></data>
+  <data name="CanContainOnlyDigits" xml:space="preserve">
+    <value>{0} can contain only digits.</value>
+  </data>
+  <data name="SshBastion" xml:space="preserve">
+    <value>Interactive bastion</value>
+  </data>
+  <data name="SshBastionDescription" xml:space="preserve">
+    <value>Sign in to a bastion and select a server by its menu number.</value>
+  </data>
+  <data name="SshBastionHost" xml:space="preserve">
+    <value>Bastion address</value>
+  </data>
+  <data name="SshBastionSelection" xml:space="preserve">
+    <value>Server menu number</value>
+  </data>
+  <data name="SshBastionSelectionHint" xml:space="preserve">
+    <value>For example, 1. Every console and tool session selects this number. If the menu changes, update it before connecting.</value>
+  </data>
+  <data name="SshBastionMenuPrompt" xml:space="preserve">
+    <value>Bastion menu prompt</value>
+  </data>
+  <data name="SshBastionMenuPromptHint" xml:space="preserve">
+    <value>Hermod waits for this text before sending the number. Volcengine normally uses [vbh]&gt;.</value>
+  </data>
+  <data name="SshBastionShellPrompt" xml:space="preserve">
+    <value>Target shell prompt suffix (optional)</value>
+  </data>
+  <data name="SshBastionShellPromptHint" xml:space="preserve">
+    <value>Leave empty to recognize prompts ending in $ or #. Set the literal suffix for a different shell.</value>
+  </data>
+  <data name="SshBastionCapabilities" xml:space="preserve">
+    <value>Terminals, monitoring and Docker commands use separate sessions that each select the saved number. Tools require a POSIX shell and base64 on the selected server. File management and port forwarding are not available with this connection method.</value>
+  </data>
+  <data name="SshBastionRouteSummary" xml:space="preserve">
+    <value>Via {0}, server menu number {1}</value>
+  </data>
+  <data name="SshBastionSelectionTimeout" xml:space="preserve">
+    <value>Timed out waiting for the bastion menu or target shell. Check the prompt settings, number and connection timeout.</value>
+  </data>
+  <data name="SshBastionSelectionFailed" xml:space="preserve">
+    <value>The bastion did not open the selected server. Check the menu number and your access, then connect again.</value>
+  </data>
+  <data name="SshBastionCommandFailed" xml:space="preserve">
+    <value>The selected server did not return a complete tool response. Check that its shell and base64 are available. A dispatched command may already have run; it was not retried.</value>
+  </data>
+  <data name="SshBastionToolsUnsupported" xml:space="preserve">
+    <value>File management and port forwarding are not available for menu-based bastion connections. Terminal, monitoring and Docker commands use the selected server.</value>
+  </data>
+  <data name="SshBastionVerified" xml:space="preserve">
+    <value>Bastion host key verified</value>
+  </data>
+  <data name="SshBastionSelectionVerified" xml:space="preserve">
+    <value>Configured server menu selection completed</value>
+  </data>
 </root>
