@@ -60,6 +60,9 @@ jobs:
             -RequireNewTag:($env:PUBLISH_RELEASE -eq 'true')
           "package_version=$packageVersion" >> $env:GITHUB_OUTPUT
 
+      - name: Verify server release boundary
+        run: ./tools/Test-ServerReleasePolicy.ps1
+
       - name: Build solution
         run: dotnet build Asgard.Hermod.slnx -c Release
 

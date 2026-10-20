@@ -1,0 +1,133 @@
+name: Server Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Server version, for example v1.0.0; source must be merged into main'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hermod-server-image-main
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      github.actor == github.repository_owner &&
+      github.triggering_actor == github.repository_owner
+    environment: release
+    runs-on: windows-2025
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+      - name: Verify source and production boundary
+        env:
+          SERVER_VERSION: ${{ inputs.version }}
+        run: |
+          & ./tools/Test-ReleaseSource.ps1 -ReleaseTag $env:SERVER_VERSION
+          & ./tools/Test-ServerReleasePolicy.ps1
+      - name: Build solution
+        run: dotnet build Asgard.Hermod.slnx -c Release
+      - name: Verify formatting
+        run: dotnet format Asgard.Hermod.slnx --verify-no-changes --no-restore
+      - name: Run tests
+        run: |
+          & ./tools/Initialize-DesktopTestEnvironment.ps1
+          dotnet test --solution Asgard.Hermod.slnx -c Release --no-build --max-parallel-test-modules 1
+      - name: Publish Linux payload on hosted CI
+        run: dotnet publish src/Asgard.Hermod.Server.Starter -c Release -r linux-x64 --self-contained false -o artifacts/server-image/publish
+      - uses: actions/upload-artifact@v7
+        with:
+          name: server-publish-${{ github.sha }}
+          path: artifacts/server-image/publish/
+          if-no-files-found: error
+          retention-days: 7
+
+  image:
+    needs: validate
+    environment: release
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@v8
+        with:
+          name: server-publish-${{ github.sha }}
+          path: artifacts/server-image/publish
+      - name: Verify production boundary
+        shell: pwsh
+        run: ./tools/Test-ServerReleasePolicy.ps1
+      - name: Build and push Registry image on hosted CI
+        shell: pwsh
+        env:
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REGISTRY_USER: ${{ github.actor }}
+          SOURCE_REPOSITORY: ${{ github.repository }}
+          SOURCE_COMMIT: ${{ github.sha }}
+          SERVER_VERSION: ${{ inputs.version }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          $imageRepository = 'ghcr.io/' + $env:SOURCE_REPOSITORY.ToLowerInvariant() + '-server'
+          $tag = "$env:SERVER_VERSION-$env:SOURCE_COMMIT-$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
+          $image = "${imageRepository}:$tag"
+          Copy-Item Docker/server/Dockerfile artifacts/server-image/Dockerfile
+          $env:REGISTRY_TOKEN | docker login ghcr.io --username $env:REGISTRY_USER --password-stdin
+          try {
+            docker build --platform linux/amd64 `
+              --label "org.opencontainers.image.source=https://github.com/$env:SOURCE_REPOSITORY" `
+              --label "org.opencontainers.image.revision=$env:SOURCE_COMMIT" `
+              --label "org.opencontainers.image.version=$env:SERVER_VERSION" `
+              --tag $image artifacts/server-image
+            docker push $image
+            $digestReference = docker image inspect --format '{{index .RepoDigests 0}}' $image
+            $manifestDigest = ($digestReference -split '@')[-1]
+            if ($manifestDigest -cnotmatch '^sha256:[0-9a-f]{64}$') {
+              throw 'Registry manifest digest was not returned after pushing the image.'
+            }
+            $pinnedImage = "${image}@${manifestDigest}"
+            & ./tools/Test-ServerReleasePolicy.ps1 -ImageReference $pinnedImage -SourceCommit $env:SOURCE_COMMIT
+            @{
+              image = $pinnedImage
+              sourceCommit = $env:SOURCE_COMMIT
+              version = $env:SERVER_VERSION
+              ciRun = "$env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT"
+              registryPublished = $true
+            } | ConvertTo-Json | Set-Content artifacts/server-image-release.json -Encoding utf8
+            @(
+              ('Registry image: `{0}`' -f $pinnedImage)
+              ('Source commit: `{0}`' -f $env:SOURCE_COMMIT)
+              'No production connection or deployment was performed.'
+            ) | Add-Content $env:GITHUB_STEP_SUMMARY
+          } finally {
+            $PSNativeCommandUseErrorActionPreference = $false
+            docker logout ghcr.io *> $null
+          }
+      - uses: actions/upload-artifact@v7
+        with:
+          name: server-image-release-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/server-image-release.json
+          if-no-files-found: error
+          retention-days: 90

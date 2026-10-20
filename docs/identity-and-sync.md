@@ -243,12 +243,65 @@ The API runs independently of the desktop through `Asgard.Hermod.Server` and
 `Asgard.Hermod.Server.Starter`, using Yggdrasil and the shared response/identity
 contracts. It does not reference WPF or desktop SQLite persistence.
 
-Build the Linux payload, place it in a Docker build context's `publish` directory,
-and copy [the Dockerfile](../Docker/server/Dockerfile) alongside it:
+### Required release boundary
+
+**Never build on production MD-Core (`47.109.145.141`).** This includes assembling a
+Docker image from precompiled `publish/` output. Do not run `docker build`,
+`docker buildx build`, `dotnet build/publish`, dependency installation (`npm`, `pnpm`,
+`yarn`), compilation or tests there. Never upload or extract project source, source
+archives, publish payloads or Docker build contexts on production for release.
+SSH/SCP, remote Docker endpoints and remote builders must not bypass this rule.
+
+Build and test locally or on hosted CI, push the finished image to a Registry, then
+deploy that Registry image by manifest digest. The production operations are limited
+to backing up runtime data, pulling the image, switching runtime-only Compose and
+acceptance checks. Cleanup is separate work and requires its own authorization.
+
+### Prepare the image on hosted CI
+
+Merge validated source into `main` and manually run
+[Server Image](../.github/workflows/server-image.yml) from `main`, supplying a version
+such as `v1.0.0`. The owner-only workflow uses the existing `release` environment;
+retain that environment's main-only branch protection. It performs the Release
+solution build, formatting check and tests on a hosted Windows runner, publishes
+the Linux payload there, then assembles and pushes the image on a hosted Linux
+runner. The workflow has no production credentials, remote commands or deployment step.
+
+The target is `ghcr.io/benlampson/asgard.hermod-server`. A unique image tag contains
+the version, full source commit, workflow run ID and attempt. OCI labels record the
+source repository, revision and version. Each run produces `server-image-release.json`
+with the exact `registry/repository:version-commit-run-attempt@sha256:...` reference.
+The workflow requires GHCR package write access. Before the first deployment,
+configure production's read-only Registry access (or explicitly choose package
+visibility) separately; no existing Registry publication or production access is
+assumed. Local builds must satisfy the same checks, provenance and Registry contract
+and must use a local Docker daemon, never a production context or builder.
+
+### Deploy a prepared Registry image
+
+Before deployment, validate the downloaded release metadata locally:
 
 ```powershell
-dotnet publish src/Asgard.Hermod.Server.Starter -c Release -r linux-x64 --self-contained false -o artifacts/publish/server-linux-x64
+$release = Get-Content ./server-image-release.json -Raw | ConvertFrom-Json
+./tools/Test-ServerReleasePolicy.ps1 -ImageReference $release.image -SourceCommit $release.sourceCommit
 ```
+
+The policy check rejects local-only tags, missing version/commit/digest information,
+Compose build entries, self-hosted release runners and remote execution/transfer
+entry points under `.github/workflows`, `tools`, `packaging` and `Docker`. It is a
+repository guard, not a substitute for host permissions or review of ad hoc commands.
+Ignored historical `artifacts/` directories are evidence and must not be reused for release.
+
+Record the Registry reference, manifest digest and source commit in the production
+release metadata. An old locally built image ID is not a Registry manifest digest.
+Back up the live SQLite database through its backup API or while the service is
+stopped; preserve private configuration and the previous image reference for recovery.
+Set `HERMOD_SERVER_IMAGE` to the validated digest-pinned reference, pull it with
+`docker compose pull hermod`, and switch with `docker compose up -d --no-build hermod`.
+Verify HTTPS health 200, anonymous protected API 401, container status/restarts and
+database integrity/business-data preservation. Roll back by pulling the previous
+Registry digest and switching Compose; restoring an older database discards later
+writes and requires a separate data-recovery decision.
 
 Use [the Compose file](../Docker/server/compose.yaml) and an uncommitted mode-600
 `.env` containing `HERMOD_SERVER_IMAGE`, `HERMODSERVER__SERVICECLIENTSECRET`,
@@ -262,6 +315,58 @@ The server secret is injected at container runtime through that private `.env`, 
 through a Docker build argument, image layer, source file or desktop setting. Keep
 `HERMODSERVER__SERVICECREDENTIALVERSION` synchronized with deliberate secret rotations;
 the named SDK clients then stop reusing the previous version's cached Tokens.
+
+### Historical deployment evidence and outstanding production review
+
+The records below describe the previous process; they do **not** authorize repeating
+production builds. Before this correction, there was no server Registry publication
+workflow or checked-in server deployment script. This section instructed generating
+a `publish/` Docker context without constraining where image assembly occurred;
+the MSIX workflow only packaged the desktop. The retained release manifests and
+deployment records report images assembled on MD-Core, with no Registry publication.
+This explains the process gap; it does not establish that Registry publishing was
+technically unavailable.
+
+The production audit reported image builds on October 17 at approximately 00:10,
+10:29 and 12:51 (Asia/Shanghai); the registration deployment was recorded at 12:52.
+The Dockerfile uses `COPY publish/`, and the audit found no `.cs` or `.csproj` files
+in the production deployment directory. These were locally compiled payloads
+assembled into images on production, which the mandatory boundary now forbids.
+
+This local correction does not change the running image or remove evidence.
+Preserve `/root/deploy/hermod/release.json`, runtime data, private configuration and
+recovery material. Existing local-only recovery images also require a planned
+Registry-based replacement. No production cleanup, restart or deployment is part
+of this correction.
+
+### Subsequent maintenance audit and DNS status: October 17, 2026
+
+A separate, explicitly authorized production-maintenance audit reported removing
+unused source/build payloads, surplus images and BuildKit cache. It retained the
+Hermod `registration-r1`, `sync-f7626de` and `model-sync-r1` images. YAML/JSON
+configuration in release contexts was preserved in place; configuration extracted
+from archives was preserved under
+`/root/deploy/backups/maintenance-cleanup-20261017T120632Z/preserved-archive-config/`.
+The host audit reported unchanged IDs, start times, restart counts and mounts for
+all 14 running containers, and identical hashes for 1,081 protected existing files.
+These are the separate audit's results; this local documentation change performed
+no production operations. Do not upload replacement source or build contexts.
+
+That audit reported `http://hermod:5086/health` as Healthy and HTTPS health 200 when
+explicitly routing `hermod.mudou.tech:443` to `127.0.0.1` with normal certificate
+verification. Public hostname resolution on the production host failed, and a
+Windows direct connection also failed. The checks establish working service and
+TLS routing when DNS is bypassed; they do not establish working public DNS.
+
+The earliest integration commit, `d20e277` (October 12, 20:34 Asia/Shanghai), already
+configured `identity.apiServerAddress: "47.109.145.141"` and treated DNS propagation
+as a separate check. Later acceptance records likewise explicitly bypassed DNS.
+Thus public DNS has no successful acceptance record here; this is an existing
+verification gap. The evidence does **not** prove that the DNS record was never
+created, nor distinguish a missing authoritative record from resolver or proxy
+failure. Authoritative A/AAAA/CNAME queries and DNS-provider change history still
+require a separate read-only investigation. This correction does not authorize
+DNS, Nginx or service configuration changes.
 
 The production directory is `/root/deploy/hermod` on MD-Core (`47.109.145.141`).
 Its container is `asgard-hermod-starter`, with persistent data in `data/hermod-sync.db`.

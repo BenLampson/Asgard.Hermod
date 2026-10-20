@@ -1,6 +1,6 @@
 services:
   hermod:
-    image: ${HERMOD_SERVER_IMAGE:?Set an immutable Hermod server image}
+    image: ${HERMOD_SERVER_IMAGE:?Set a versioned Registry image pinned with @sha256 digest}
     container_name: asgard-hermod-starter
     restart: unless-stopped
     env_file:

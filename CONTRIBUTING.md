@@ -16,6 +16,14 @@ Merge validated release changes into `main` before publishing. GitHub Releases
 are created only by the **Release MSIX** workflow running from `main`; `dev` is
 for development. See the [release and Store packaging guide](docs/microsoft-store.md#build).
 
+Server images follow the [server release procedure](docs/identity-and-sync.md#docker-deployment).
+Build and test locally or on hosted CI, then push a uniquely versioned Registry image
+with its source commit recorded. Production MD-Core (`47.109.145.141`) may only back up
+runtime data, pull a digest-pinned Registry image, switch Compose and run acceptance
+checks. Never compile, install dependencies, test or build Docker images on production,
+even from precompiled output; never transfer source archives or build contexts there.
+The `Server Image` workflow prepares images without connecting to production.
+
 ## Conventions
 
 - Follow `.editorconfig`; use nullable reference types and C# 14.
