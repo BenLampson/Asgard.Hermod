@@ -41,13 +41,13 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 if ($RequireNewTag) {
-    git ls-remote --exit-code --tags origin "refs/tags/$ReleaseTag" | Out-Null
-    $tagExitCode = $LASTEXITCODE
-    if ($tagExitCode -eq 0) {
-        throw 'The release tag already exists. Use a new version instead of replacing it.'
-    }
-    if ($tagExitCode -ne 2) {
+    # 不使用 --exit-code；标签不存在是正常结果，不能向 Actions 遗留退出码 2。
+    $existingTag = git ls-remote --tags origin "refs/tags/$ReleaseTag"
+    if ($LASTEXITCODE -ne 0) {
         throw 'Could not check whether the release tag already exists.'
+    }
+    if ($existingTag) {
+        throw 'The release tag already exists. Use a new version instead of replacing it.'
     }
 }
 
