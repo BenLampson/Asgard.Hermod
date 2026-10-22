@@ -5,6 +5,13 @@ namespace Asgard.Hermod.Ssh.UI.Views;
 /// <summary>页面入口只切换展示与显式附加选区，模型回复不控制窗口显隐或焦点。</summary>
 public partial class SshWorkspaceView
 {
+    /// <summary>显式插入不附加回车，用户可在终端继续编辑。</summary>
+    private void OnDockerInsert(object? sender, string command)
+    {
+        if (_disposed || _model?.IsReadOnly != false) return;
+        _model.IsDockerCommandsOpen = false; TerminalView.PasteText(command); TerminalView.Focus();
+    }
+
     private void OnCloseMonitor(object? sender, EventArgs args)
     {
         if (_model is not null) _model.IsMonitorOpen = false;

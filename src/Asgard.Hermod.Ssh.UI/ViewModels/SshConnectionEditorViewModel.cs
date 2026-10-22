@@ -14,7 +14,15 @@ public sealed class SshConnectionEditorViewModel : InstanceConfigurationEditorVi
     /// <summary>展示目标与连接路径的整句摘要。</summary>
     public string RouteSummary => IsJump ? Text.Format("SshJumpRouteSummary", Field("jump.host").Value, Field("host").Value)
         : IsProxy ? Text.Format("SshJumpRouteSummary", Field("proxy.host").Value, Field("host").Value)
-        : Text.Get("SshDirect");
+        : IsBastion ? Text.Format("SshBastionRouteSummary", Host.Value, BastionSelection.Value) : Text.Get("SshDirect");
+    /// <summary>菜单型堡垒机只需一组登录身份和目标编号。</summary>
+    public bool IsBastion => Wizard.SelectedProvider?.Id == SshIds.Bastion;
+    /// <summary>每个会话都发送相同的已保存编号。</summary>
+    public InstanceConfigurationFieldViewModel BastionSelection => Field("bastion.selection");
+    /// <summary>编号发送前等待的菜单提示符。</summary>
+    public InstanceConfigurationFieldViewModel BastionMenuPrompt => Field("bastion.menuPrompt");
+    /// <summary>目标使用特殊提示符时的显式后缀。</summary>
+    public InstanceConfigurationFieldViewModel BastionShellPrompt => Field("bastion.shellPrompt");
     /// <summary>所选连接路径为跳板。</summary>
     public bool IsJump => Wizard.SelectedProvider?.Id == SshIds.Jump;
     /// <summary>所选连接路径为 TCP 代理。</summary>
@@ -80,7 +88,7 @@ public sealed class SshConnectionEditorViewModel : InstanceConfigurationEditorVi
     /// <summary>普通输入仅更新相关摘要，不重新通知整组字段绑定。</summary>
     protected override void OnFieldValueChanged(InstanceConfigurationFieldViewModel item)
     {
-        if (item.Key is "host" or "jump.host" or "proxy.host") OnPropertyChanged(nameof(RouteSummary));
+        if (item.Key is "host" or "jump.host" or "proxy.host" or "bastion.selection") OnPropertyChanged(nameof(RouteSummary));
         if (item.Key == Prefix + "auth") OnPropertyChanged(nameof(UsesAgent));
     }
     /// <summary>字段引用由协议标识决定，不在视图里比较翻译标签。</summary>
@@ -96,7 +104,7 @@ public sealed class SshConnectionEditorViewModel : InstanceConfigurationEditorVi
                 : [new("target", Text.Get("SshHost"))];
             OnPropertyChanged(nameof(Panes));
         }
-        foreach (string name in new[] { nameof(RouteSummary), nameof(IsJump), nameof(IsProxy), nameof(HasPanes), nameof(SelectedPane), nameof(IsTargetPane),
+        foreach (string name in new[] { nameof(RouteSummary), nameof(IsBastion), nameof(BastionSelection), nameof(BastionMenuPrompt), nameof(BastionShellPrompt), nameof(IsJump), nameof(IsProxy), nameof(HasPanes), nameof(SelectedPane), nameof(IsTargetPane),
             nameof(IsJumpPane), nameof(IsProxyPane), nameof(IsHostPane), nameof(Host), nameof(Port), nameof(User), nameof(Authentication),
             nameof(Password), nameof(KeyFile), nameof(Passphrase), nameof(UsesAgent), nameof(ProxyType), nameof(ProxyHost), nameof(ProxyPort),
             nameof(ProxyUser), nameof(ProxyPassword), nameof(ProxyDns), nameof(Timeout) }) OnPropertyChanged(name);

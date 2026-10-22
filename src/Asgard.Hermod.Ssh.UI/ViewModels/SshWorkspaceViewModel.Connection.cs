@@ -16,6 +16,7 @@ public sealed partial class SshWorkspaceViewModel
         {
             var options = await _configurations.GetConnectionAsync(InstanceId!, _connecting.Token) ?? throw Text.Exception("SshConnectionMissing");
             _profile = SshConnectionOptions.Parse(options); Refresh();
+            if (IsBastion) { ActiveSection = "terminal"; IsAddingForward = false; }
             int columns = Session?.Buffer.Columns ?? 80, rows = Session?.Buffer.Rows ?? 24;
             opened = await _connections.OpenAsync(options, columns, rows, _connecting.Token);
             if (IsClosed || _connecting.IsCancellationRequested) { await opened.DisposeAsync(); opened = null; _connecting.Token.ThrowIfCancellationRequested(); return; }
@@ -26,6 +27,7 @@ public sealed partial class SshWorkspaceViewModel
             _clock.Start(); Refresh(); Connection.Finish();
             _runTask = ObserveTransportAsync(opened, _ioCancellation);
             await Monitor.StartAsync(opened as ISshWorkspaceConnection);
+            if (IsDockerCommandsOpen) await DockerCommands.InitializeAsync();
         }
         catch (OperationCanceledException) when (_connecting.IsCancellationRequested || IsClosed)
         {
@@ -74,6 +76,7 @@ public sealed partial class SshWorkspaceViewModel
     {
         OnPropertyChanged(nameof(Session)); _clock.Stop(); _saveFeedbackTimer.Stop(); _lifetime.Cancel(); _connecting?.Cancel(); _ioCancellation?.Cancel();
         await StopWorkspaceOperationsAsync(); Files.Dispose(); DisposeLogs();
+        DockerCommands.Dispose();
         if (_connection is { } connection) await connection.DisposeAsync();
         if (_connectTask is not null) await _connectTask;
         if (_runTask is not null) await _runTask;

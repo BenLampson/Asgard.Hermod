@@ -16,9 +16,10 @@ public sealed class SshInstanceProvider(string route, ISshConnectionFactory conn
         {
             await using var connection = await connections.OpenAsync(options, 80, 24, cancellationToken).ConfigureAwait(false);
             var checks = connection.HostKeys.Select((_, index) => new InstanceConnectionCheck(
-                Text.Get(route == SshIds.Jump && index == 0 ? "SshJumpVerified" : "SshTargetVerified"), true)).ToList();
+                Text.Get(route == SshIds.Bastion ? "SshBastionVerified" : route == SshIds.Jump && index == 0 ? "SshJumpVerified" : "SshTargetVerified"), true)).ToList();
             checks.Add(new(Text.Get("SshAuthenticationVerified"), true));
             checks.Add(new(Text.Get("SshTerminalVerified"), true));
+            if (route == SshIds.Bastion) checks.Add(new(Text.Get("SshBastionSelectionVerified"), true));
             return new(true, Text.Get("SshTestPassed"), Checks: checks);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }

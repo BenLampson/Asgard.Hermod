@@ -29,6 +29,8 @@ public static class InstanceFieldValidation
         if (field.ValidationRule == InstanceFieldValidationRule.AsciiLettersAndDigits
             && !text.All(char.IsAsciiLetterOrDigit))
             return Text.Format("CanContainOnlyEnglishLettersAndDigits", field.Label);
+        if (field.ValidationRule == InstanceFieldValidationRule.AsciiDigits && !text.All(char.IsAsciiDigit))
+            return Text.Format("CanContainOnlyDigits", field.Label);
         return "";
     }
 

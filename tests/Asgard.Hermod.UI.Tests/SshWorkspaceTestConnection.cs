@@ -9,10 +9,23 @@ internal sealed class SshWorkspaceTestConnection : ISshWorkspaceConnection
     private readonly CancellationTokenSource _disconnected = new();
     internal List<SshTestConnection> Consoles { get; } = [];
     internal int DisposeCount { get; private set; }
+    internal bool RejectDisconnectedAfterDispose { get; init; }
+    internal int DisposedTokenReads { get; private set; }
     internal Exception? ConsoleError { get; set; }
     internal Func<CancellationToken, Task<ISshConsoleConnection>>? ConsoleHandler { get; set; }
     internal SshWorkspaceTestConnection() => Consoles.Add(_terminal);
-    public CancellationToken Disconnected => _disconnected.Token;
+    public CancellationToken Disconnected
+    {
+        get
+        {
+            if (RejectDisconnectedAfterDispose && DisposeCount > 0)
+            {
+                DisposedTokenReads++;
+                throw new ObjectDisposedException(nameof(SshWorkspaceTestConnection));
+            }
+            return _disconnected.Token;
+        }
+    }
     public ISshConsoleConnection InitialConsole => _terminal;
     public Task<ISshConsoleConnection> OpenConsoleAsync(int columns, int rows, CancellationToken cancellationToken = default)
     {

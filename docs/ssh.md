@@ -1,7 +1,7 @@
 # SSH connections
 
-SSH is an independent instance type. Its first page selects Direct, SSH jump host
-or TCP proxy, with Direct selected by default. Next opens a separate connection
+SSH is an independent instance type. Its first page selects Direct, SSH jump host,
+Interactive bastion or TCP proxy, with Direct selected by default. Next opens a separate connection
 information page. Testing and confirmation follow; automatic save location is
 shown at confirmation. Its four-step create and edit flows reuse the common type
 picker, connection wizard, field validation, connection test, encrypted settings
@@ -14,6 +14,7 @@ wizard and terminal workspace.
 | --- | --- |
 | Direct | Host, port and login identity |
 | SSH jump host | One jump host with its own port, user and authentication |
+| Interactive bastion | Bastion address, port and login identity, plus the server's numeric menu selection |
 | TCP proxy | SOCKS5 or HTTP CONNECT; optional username and password; local or remote DNS for SOCKS5 |
 
 Each SSH identity supports password, a local private-key file with optional
@@ -41,6 +42,40 @@ and closes an actual interactive PTY through the same protocol factory as the
 workspace. Saving remains blocked until the current configuration passes.
 Changing any connection field invalidates that result. The shared workflow
 derives device or account saving from sign-in state.
+
+## Interactive bastion sessions
+
+Use **Interactive bastion** for gateways that display a server-selection menu.
+Only one SSH login identity and the numeric selection are required; this is not
+the TCP-forwarding jump-host route. Set the bastion's actual SSH port.
+Advanced settings default the menu prompt to `[vbh]>` and
+recognize target shell prompts ending in `$` or `#`; other literal prompt suffixes
+can be configured. Hermod waits for the menu before sending the number once.
+It waits for the target shell before exposing the console. Rejected selections,
+closed sessions, cancellation and bounded startup timeouts fail without retrying
+another number or sending tool commands to the menu. Menu numbers can change:
+review the configured number when the gateway's asset list changes. This route
+does not independently verify the selected target's SSH fingerprint; host trust
+authenticates the bastion, and the gateway selects the target.
+
+Every new console and tool command opens its own PTY and repeats the configured
+selection. Monitoring and Docker commands therefore run in the selected server's
+POSIX shell, without injecting commands into the user's console. Command input
+and output use `base64` and random framing markers, preserving output bytes across
+terminal newline transformations. Both `sh` and `base64` must already be available
+on the target. No helper service, Python installation or gateway change is needed.
+Output is bounded to 64 KiB; commands are never automatically retried. A lost or
+malformed response after dispatch means the command may already have executed.
+
+File management, transfers and TCP port forwarding are unavailable for this route.
+Their entry points explain the limitation, and the protocol adapter rejects such
+requests rather than forwarding them to the bastion. MySQL-over-terminal relay
+is not implemented. Real gateway compatibility still requires verifying menu and
+shell prompts, multiple PTY channels, and command availability in that environment.
+
+The opt-in `SshBastionPtyTests` run against the local `debian:12` Docker image with
+networking disabled. Set `HERMOD_BASTION_PTY_TEST=1` when running the SSH tests to
+exercise real PTY echo, long commands, Unicode, exit status and output limits.
 
 ## Host identity
 
@@ -214,6 +249,19 @@ Run the normal Release build, formatting check and xUnit v3 solution tests.
 `SshLayoutTests` can export local previews with `HERMOD_UI_PREVIEW_DIR`; preview
 images are ignored and should not be committed.
 
+Docker management regressions use offscreen WPF controls and in-memory SSH
+responses by default. Optional `SshDockerLocalIntegrationTests` accept only
+`HERMOD_TEST_DOCKER_SSH_PORT`; the host is fixed to `127.0.0.1` and trust is kept
+in memory. Use a dedicated Docker-in-Docker engine with no host Docker socket or
+user directories mounted. Its disposable fixture provides user `tester` with
+password `hermod-test-only`, containers `hermod-ux-web`,
+`hermod-ux-unhealthy`, `hermod-ux-stopped`, and the project
+`/tmp/hermod-compose/compose.yaml`. Never point these tests at a user server.
+Remove the dedicated outer container and its anonymous volumes after testing.
+The optional native confirmation regression additionally requires
+`HERMOD_TEST_DOCKER_WINDOWS=1`; it uses fake connections, closes its windows and
+never changes keyboard layouts. Leave this unset while the desktop is in use.
+
 The network tests, including `SshLiveWorkspaceTests` for SFTP, exec, monitoring
 and local forwarding, require a dedicated local OpenSSH fixture. Configure
 `HERMOD_TEST_SSH_PORT`, `HERMOD_TEST_SSH_JUMP_PORT` and `HERMOD_TEST_SSH_KEY`.
@@ -239,3 +287,54 @@ Once a command has been dispatched, cancellation retains an unknown outcome and
 never retries it. The UI can stop waiting for an uncooperative command client
 without claiming that remote side effects were undone. Tool elapsed time starts
 at dispatch, excluding the time spent waiting for the user's review.
+
+## Docker resources and command library
+
+Open **Monitoring → Docker** for container state, health, CPU, memory use/limit,
+network receive/send rates, disk read/write rates and process/thread counts.
+Sampling uses bounded `docker stats --no-stream --no-trunc` JSON output on an
+independent exec channel. CPU follows Docker's logical-CPU convention and can
+exceed 100%. Rates are estimates derived from consecutive cumulative CLI counters;
+the first sample, a reset or a gap has no rate. Missing or stopped-container data
+is shown as unavailable rather than zero. Failures retain the last successful
+values with an explicit warning and leave gaps in the selected container's
+two-minute history. Pausing and reconnecting reset rate baselines. Small monitors
+prioritize the table; enlarge the panel to see both resource charts.
+
+The SSH caption and selected-container action bar open **Docker management**.
+Select a container, then click Logs, Resources, Details, Start, Restart or Stop.
+The page initially asks for a target rather than silently selecting the first
+container. A monitor shortcut preserves the selected full container ID.
+Stopped containers offer Start; running containers offer Restart and Stop.
+Logs run immediately, Resources returns to the monitor with the same container,
+and Details displays the structured identity and ports. Start, Restart and Stop
+ask for confirmation describing the target and effect, then run the chosen action
+without a second generic Execute step. Successful changes have a readable result.
+
+The library detects client/engine versions and prefers `docker compose`, falling
+back to detected `docker-compose`. Base command templates support Docker CLI 20.10+
+and Compose 1.29+. Older or unidentified versions are disabled with an explanation.
+Unsupported structured stats or missing Compose
+disable the corresponding operation with a localized explanation. Re-detection
+refreshes capabilities and the current container list.
+
+The built-in catalog covers container listing, bounded logs, one-shot stats,
+state details, start/stop/restart, images, image pulls, and Compose status,
+startup, restart and logs. Container commands use validated full IDs. Compose
+requires an explicit absolute remote project directory and configuration path;
+paths are shell-quoted, optional service names and image references are validated.
+Compose startup uses `up -d --no-build`, without implicit image assembly.
+
+Log options, image/Compose tools and advanced command details are collapsed by
+default. Users do not need to read a command to manage containers. Advanced details
+retain a read-only preview; **Insert into terminal** adds no return.
+Actions dispatch the generated plan on an independent channel with a
+two-minute timeout and 64 KiB output limit. Read-only operations require no change
+confirmation. Changes require explicit confirmation of the host, target and effect;
+confirmation and execution share a busy state and retain the same immutable plan. Disconnect, source closure
+and reconnect invalidate pending approval. A canceled or truncated dispatched
+operation reports an unknown outcome and is never retried automatically. Successful
+changes refresh monitoring and the library's container list. Log following opens a
+new independent PTY, where Ctrl+C stops following; it never appends a command to an
+existing shell's partial input. Results retain their executed command and target
+even after the form changes, and support local copying and explicit export.

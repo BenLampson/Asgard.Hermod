@@ -5,12 +5,18 @@ namespace Asgard.Hermod.Ssh;
 /// <summary>经共享规则校验的 SSH 参数；目标与跳板身份独立。</summary>
 public sealed class SshConnectionOptions
 {
-    /// <summary>直连、跳板或代理的稳定标识。</summary>
+    /// <summary>直连、SSH 跳板、菜单型堡垒机或代理的稳定标识。</summary>
     public required string Route { get; init; }
-    /// <summary>最终连接目标。</summary>
+    /// <summary>SSH 认证端点；菜单模式下是堡垒机，选中资产由菜单编号确定。</summary>
     public required SshHostOptions Target { get; init; }
     /// <summary>可选跳板机身份。</summary>
     public SshHostOptions? JumpHost { get; init; }
+    /// <summary>堡垒机菜单中的数字选择，不作为 Shell 命令拼接。</summary>
+    public string BastionSelection { get; init; } = "";
+    /// <summary>发送编号前必须等到此菜单提示符。</summary>
+    public string BastionMenuPrompt { get; init; } = "[vbh]>";
+    /// <summary>可选目标 Shell 提示符后缀；空值识别常见的美元符或井号。</summary>
+    public string BastionShellPrompt { get; init; } = "";
     /// <summary>单次网络连接超时，不包含用户核验指纹的等待。</summary>
     public int TimeoutSeconds { get; init; } = 15;
     /// <summary>代理协议。</summary>
@@ -30,7 +36,7 @@ public sealed class SshConnectionOptions
     public static SshConnectionOptions Parse(InstanceConnectionOptions connection)
     {
         ArgumentNullException.ThrowIfNull(connection);
-        if (connection.TypeId != SshIds.Type || connection.ProviderId is not (SshIds.Direct or SshIds.Jump or SshIds.Proxy))
+        if (connection.TypeId != SshIds.Type || connection.ProviderId is not (SshIds.Direct or SshIds.Jump or SshIds.Proxy or SshIds.Bastion))
             throw Text.Exception("SshConfigurationInvalid");
         var fields = SshProfile.Fields(connection.ProviderId);
         var values = new Dictionary<string, string>(StringComparer.Ordinal);
@@ -55,6 +61,9 @@ public sealed class SshConnectionOptions
             Route = connection.ProviderId,
             Target = Host(""),
             JumpHost = connection.ProviderId == SshIds.Jump ? Host("jump.") : null,
+            BastionSelection = values.GetValueOrDefault("bastion.selection", "").Trim(),
+            BastionMenuPrompt = values.GetValueOrDefault("bastion.menuPrompt", "[vbh]>").Trim(),
+            BastionShellPrompt = values.GetValueOrDefault("bastion.shellPrompt", "").Trim(),
             TimeoutSeconds = int.Parse(values["timeout"], CultureInfo.InvariantCulture),
             ProxyType = values.GetValueOrDefault("proxy.type", "socks5"),
             ProxyHost = values.GetValueOrDefault("proxy.host", ""),

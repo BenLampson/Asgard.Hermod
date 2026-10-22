@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
+using System.Windows.Input;
 using Asgard.Hermod.Abstractions.Localization;
 using Asgard.Hermod.Ssh;
 using Asgard.Hermod.Ssh.UI.Controls;
@@ -61,6 +62,26 @@ public sealed class SshMonitorViewTests(WpfTestFixture fixture)
                     var rootGrid = Assert.Single(grids);
                     Assert.Single(rootGrid.Items);
                     Assert.All(rootGrid.Columns, column => Assert.True(column.ActualWidth >= 30));
+                }
+                else if (section == "processes")
+                {
+                    var grid = Assert.Single(grids);
+                    grid.SelectedIndex = 0; grid.CurrentCell = new(grid.Items[0], grid.Columns[1]);
+                    grid.ScrollIntoView(grid.Items[0], grid.Columns[1]);
+                    await WindowTestVisuals.UpdateLayoutAsync(window);
+                    var cell = Assert.Single(WindowTestVisuals.Descendants<DataGridCell>(grid),
+                        item => ReferenceEquals(item.DataContext, grid.Items[0]) && item.Column == grid.Columns[1]);
+                    cell.Focus(); await WindowTestVisuals.UpdateLayoutAsync(window);
+                    Assert.True(cell.IsKeyboardFocusWithin); Assert.Null(cell.FocusVisualStyle);
+                    Assert.Equal(new Thickness(0), cell.BorderThickness); Assert.True(cell.IsSelected);
+                    Assert.Equal(((SolidColorBrush)cell.FindResource("AccentWeakBrush")).Color,
+                        Assert.IsType<SolidColorBrush>(cell.Background).Color);
+                    var source = Assert.IsAssignableFrom<PresentationSource>(PresentationSource.FromVisual(cell));
+                    cell.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, source, Environment.TickCount, Key.Down)
+                    { RoutedEvent = Keyboard.KeyDownEvent });
+                    await WindowTestVisuals.UpdateLayoutAsync(window);
+                    Assert.Equal(1, grid.SelectedIndex); Assert.True(ApplicationCommands.Copy.CanExecute(null, grid));
+                    await WindowPreviewCapture.VerifyAsync(window, $"ssh-monitor-processes-selected-{language}-{theme}");
                 }
             }
             model.Monitor.Section = "docker"; await model.Monitor.RefreshDetailsCommand.ExecuteAsync();

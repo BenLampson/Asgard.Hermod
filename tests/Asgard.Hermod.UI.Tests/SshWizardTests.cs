@@ -12,6 +12,7 @@ public sealed class SshWizardTests
     [InlineData(SshIds.Direct)]
     [InlineData(SshIds.Jump)]
     [InlineData(SshIds.Proxy)]
+    [InlineData(SshIds.Bastion)]
     public async Task AllRoutesSelectMethodBeforeConnectionInformation(string route)
     {
         var factory = new SshTestFactory(); var saves = new NewInstanceWizardTestConfigurationService();
@@ -65,7 +66,7 @@ public sealed class SshWizardTests
 
     internal static NewInstanceViewModel Create(SshTestFactory factory, NewInstanceWizardTestConfigurationService saves, string route = SshIds.Direct)
     {
-        var registry = new InstanceProviderRegistry(new[] { SshIds.Direct, SshIds.Jump, SshIds.Proxy }.Select(id => new SshInstanceProvider(id, factory)));
+        var registry = new InstanceProviderRegistry(new[] { SshIds.Direct, SshIds.Jump, SshIds.Bastion, SshIds.Proxy }.Select(id => new SshInstanceProvider(id, factory)));
         var model = new NewInstanceViewModel(registry, saves); model.SelectedType = Assert.Single(model.Types);
         model.SelectedProvider = model.Providers.Single(item => item.Id == route); return model;
     }
@@ -77,5 +78,6 @@ public sealed class SshWizardTests
         Field(model, "password").Value = "  test-only  ";
         if (route == SshIds.Jump) { Field(model, "jump.host").Value = "jump.example"; Field(model, "jump.user").Value = "jumper"; Field(model, "jump.auth").Value = SshIds.Agent; }
         if (route == SshIds.Proxy) Field(model, "proxy.host").Value = "proxy.example";
+        if (route == SshIds.Bastion) Field(model, "bastion.selection").Value = "2";
     }
 }

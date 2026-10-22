@@ -15,15 +15,18 @@ public sealed partial class SshMonitorViewModel : ObservableObject, IAsyncDispos
     private long _generation;
     private long _sectionRevision;
     private long _pauseRevision;
+    private readonly SshDockerEnvironmentReader _dockerEnvironmentReader;
 
     /// <summary>视图只绑定结构化集合；默认排序使用原始数值。</summary>
-    public SshMonitorViewModel()
+    public SshMonitorViewModel(SshDockerEnvironmentReader? dockerEnvironmentReader = null)
     {
+        _dockerEnvironmentReader = dockerEnvironmentReader ?? new();
         ProcessView = CollectionViewSource.GetDefaultView(Processes);
         ProcessView.SortDescriptions.Add(new(nameof(SshMonitorProcessItem.CpuPercent), ListSortDirection.Descending));
         ProcessView.Filter = value => value is SshMonitorProcessItem p && Matches(p.Name, p.User, p.Pid.ToString(CultureInfo.InvariantCulture));
         ContainerView = CollectionViewSource.GetDefaultView(Containers);
-        ContainerView.Filter = value => value is SshMonitorContainerItem c && Matches(c.Name, c.Image) && (ContainerState.Length == 0 || c.State == ContainerState);
+        ContainerView.Filter = value => value is SshMonitorContainerItem c && Matches(c.Name, c.Image, c.Id) && (ContainerState.Length == 0 || c.State == ContainerState);
+        ContainerView.SortDescriptions.Add(new(nameof(SshMonitorContainerItem.CpuPercent), ListSortDirection.Descending));
         MountView = CollectionViewSource.GetDefaultView(Mounts);
         MountView.SortDescriptions.Add(new(nameof(SshMonitorMountItem.UsedPercent), ListSortDirection.Descending));
         MountView.Filter = value => value is SshMonitorMountItem m && Matches(m.Path, m.Device);
@@ -38,6 +41,10 @@ public sealed partial class SshMonitorViewModel : ObservableObject, IAsyncDispos
         ViewContainerDetailsCommand = new RelayCommand(_ => IsContainerDetailsOpen = true, _ => IsCurrentContainer(SelectedContainer));
         CloseContainerDetailsCommand = new RelayCommand(_ => CloseContainerPane());
         ClearSearchCommand = new RelayCommand(_ => { Search = ""; ContainerState = ""; });
+        OpenDockerCommandsCommand = new RelayCommand(_ => DockerOperationRequested?.Invoke(this, "manage"), _ => _connection is not null);
+        StartContainerCommand = new RelayCommand(_ => DockerOperationRequested?.Invoke(this, "start"), _ => _connection is not null && IsCurrentContainer(SelectedContainer) && SelectedContainer?.State is "created" or "exited" or "dead");
+        RestartContainerCommand = new RelayCommand(_ => DockerOperationRequested?.Invoke(this, "restart"), _ => _connection is not null && IsCurrentContainer(SelectedContainer) && SelectedContainer?.IsRunning == true);
+        StopContainerCommand = new RelayCommand(_ => DockerOperationRequested?.Invoke(this, "stop"), _ => _connection is not null && IsCurrentContainer(SelectedContainer) && SelectedContainer?.IsRunning == true);
     }
 
     /// <summary>最近成功采样，失败时保留并显示更新时间与错误状态。</summary>
@@ -83,13 +90,14 @@ public sealed partial class SshMonitorViewModel : ObservableObject, IAsyncDispos
         {
             if (value is not ("overview" or "processes" or "docker" or "network" or "disks") || !SetProperty(ref field, value)) return;
             _sectionRevision++; CloseContainerPane(); Search = ""; SectionError = ""; Notify();
+            if (value != "docker") _requestedContainerId = null;
             if (IsPanelVisible) RefreshDetailsCommand.Execute(null);
         }
     } = "overview";
     /// <summary>收起时不自动读取额外详情。</summary>
     public bool IsPanelVisible { get; set { if (SetProperty(ref field, value) && value) RefreshDetailsCommand.Execute(null); } }
     /// <summary>恢复采样重建差分基线，避免跨暂停时长的虚假瞬时值。</summary>
-    public bool IsPaused { get; set { if (SetProperty(ref field, value)) { _pauseRevision++; if (!value) _reader = new(); Notify(); } } }
+    public bool IsPaused { get; set { if (SetProperty(ref field, value)) { _pauseRevision++; _dockerStats.Reset(); if (!value) _reader = new(); Notify(); } } }
     /// <summary>首次详情读取状态，刷新不遮住已有表格。</summary>
     public bool IsLoading { get; private set => SetProperty(ref field, value); }
     /// <summary>本地搜索不参与 shell。</summary>
@@ -104,6 +112,7 @@ public sealed partial class SshMonitorViewModel : ObservableObject, IAsyncDispos
         get; set
         {
             if (!SetProperty(ref field, value)) return;
+            if (value is not null) _requestedContainerId = null;
             if (value is null) IsContainerDetailsOpen = false;
             NotifyContainerSelection();
         }
@@ -118,6 +127,7 @@ public sealed partial class SshMonitorViewModel : ObservableObject, IAsyncDispos
     {
         await StopAsync(); _connection = connection; _reader = new(); Snapshot = null; History.Clear();
         Processes.Clear(); Containers.Clear(); SelectedContainer = null; Networks.Clear(); Mounts.Clear(); SelectedNetworkKey = "";
+        _dockerStats.Reset(); _containerHistory.Clear(); DockerEnvironment = null; _requestedContainerId = null;
         SelectedMount = null; IsLoading = false; _detailsUpdated = null; ContainerAvailability = SshContainerAvailability.Available;
         Reconcile(NetworkChoices, new[] { new SshMonitorNetworkChoice("", Text.Get("SshMonitorAllInterfaces")) }, n => n.Key);
         IsPaused = false; Error = connection is null ? Text.Get("SshMonitorUnavailable") : ""; SectionError = "";
@@ -131,19 +141,29 @@ public sealed partial class SshMonitorViewModel : ObservableObject, IAsyncDispos
     {
         try
         {
-            while (!token.IsCancellationRequested)
+            using var timer = new PeriodicTimer(TimeSpan.FromSeconds(5));
+            do
             {
                 if (!IsPaused) await RefreshAsync(false);
-                await Task.Delay(TimeSpan.FromSeconds(5), token);
             }
+            while (await timer.WaitForNextTickAsync(token));
         }
         catch (OperationCanceledException) when (token.IsCancellationRequested) { }
     }
 
     private async Task RefreshAsync(bool force)
     {
-        if (_connection is not { } connection || _sampling is null || !await _gate.WaitAsync(0)) return;
+        if (_connection is not { } connection || _sampling is not { } sampling) return;
         long generation = _generation, pauseRevision = _pauseRevision;
+        // 显式刷新等待当前只读采样结束，不能在首次打开或暂停时被无声丢弃。
+        try
+        {
+            if (force) await _gate.WaitAsync(sampling.Token);
+            else if (!await _gate.WaitAsync(0)) return;
+        }
+        catch (OperationCanceledException) { return; }
+        if (generation != _generation || !ReferenceEquals(connection, _connection) || sampling.IsCancellationRequested)
+        { _gate.Release(); return; }
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(_sampling.Token); timeout.CancelAfter(TimeSpan.FromSeconds(10));
         try
         {
@@ -176,7 +196,7 @@ public sealed partial class SshMonitorViewModel : ObservableObject, IAsyncDispos
     {
         _generation++; _sectionRevision++; _connection = null;
         var sampling = _sampling; var task = _task; _sampling = null; _task = null;
-        sampling?.Cancel(); CloseContainerPane();
+        sampling?.Cancel(); CloseContainerPane(); _requestedContainerId = null;
         if (task is not null) await task;
         sampling?.Dispose(); Error = Text.Get("SshMonitorUnavailable");
         RefreshDetailsCommand.NotifyCanExecuteChanged(); ReadLogsCommand.NotifyCanExecuteChanged(); Notify();

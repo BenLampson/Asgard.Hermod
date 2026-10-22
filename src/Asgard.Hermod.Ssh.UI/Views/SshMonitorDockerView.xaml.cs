@@ -18,7 +18,7 @@ public partial class SshMonitorDockerView : UserControl
             UpdateDetailsLayout();
         };
     }
-    private void OnModelChanged(object? sender, PropertyChangedEventArgs args) { if (args.PropertyName == nameof(SshMonitorViewModel.IsContainerPaneOpen)) UpdateDetailsLayout(); }
+    private void OnModelChanged(object? sender, PropertyChangedEventArgs args) { if (args.PropertyName is nameof(SshMonitorViewModel.IsContainerPaneOpen) or nameof(SshMonitorViewModel.HasSelectedContainer)) UpdateDetailsLayout(); }
     private void OnViewportChanged(object sender, SizeChangedEventArgs args) => UpdateDetailsLayout();
     private void UpdateDetailsLayout()
     {
@@ -27,9 +27,23 @@ public partial class SshMonitorDockerView : UserControl
         ContainerList.Visibility = open && compact ? Visibility.Collapsed : Visibility.Visible;
         DetailsColumn.Width = open ? compact ? new(1, GridUnitType.Star) : new(Math.Min(560, ActualWidth * 0.42)) : new(0);
         ContainerDetailsDrawer.Margin = new(open && !compact ? 16 : 0, 0, 0, 0);
-        bool stacked = ActualWidth < 650;
+        bool stacked = ActualWidth < 1000;
         Grid.SetRow(ContainerActions, stacked ? 1 : 0); Grid.SetColumn(ContainerActions, stacked ? 0 : 1);
         Grid.SetColumnSpan(ContainerIdentity, stacked ? 2 : 1); Grid.SetColumnSpan(ContainerActions, stacked ? 2 : 1);
         ContainerActions.Margin = new(0, stacked ? 8 : 0, 0, 0);
+        DockerEnvironmentLabel.Visibility = ActualWidth >= 1000 ? Visibility.Visible : Visibility.Collapsed;
+        ContainerSearch.Width = Math.Clamp(ActualWidth - 290, 100, 320);
+        ContainerTrendPanel.Visibility = _model?.HasSelectedContainer == true && ActualHeight >= 520 && !(open && compact) ? Visibility.Visible : Visibility.Collapsed;
+    }
+    private void OnColumns(object sender, RoutedEventArgs args)
+    {
+        var menu = new ContextMenu { PlacementTarget = (Button)sender };
+        foreach (var column in ContainerGrid.Columns.Skip(1))
+        {
+            var item = new MenuItem { Header = column.Header, IsCheckable = true, IsChecked = column.Visibility == Visibility.Visible };
+            item.Click += (_, _) => column.Visibility = item.IsChecked ? Visibility.Visible : Visibility.Collapsed;
+            menu.Items.Add(item);
+        }
+        menu.IsOpen = true;
     }
 }

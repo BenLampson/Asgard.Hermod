@@ -57,8 +57,9 @@ public sealed class SshPencilAlignmentHeadlessTests(WpfTestFixture fixture)
             model.Files.Transfers.Add(new("backup.sql", false) { Bytes = 42, StatusKey = "SshTransferCompleted" }); await model.ToggleToolboxCommand.ExecuteAsync("transfers"); Layout();
             Assert.Equal(360, ((ColumnDefinition)view.FindName("ToolboxColumn")).ActualWidth); Capture(root, $"ssh-transfers-{language}-{theme}-{width}"); model.CollapseToolboxCommand.Execute(null); Layout();
             model.IsMonitorOpen = true; Layout(); await WpfTestFixture.DrainDispatcherAsync(); Layout();
-            Assert.Equal(height - 608, ((GridSplitter)view.FindName("MonitorSplitter")).TranslatePoint(new(), root).Y);
-            Assert.Equal(572, ((Border)view.FindName("MonitorDetails")).ActualHeight); Capture(root, $"ssh-monitor-{language}-{theme}-{width}");
+            double expectedMonitor = Math.Min(700, height - 44 - 38 - 28 - 120 - 8);
+            Assert.Equal(height - 28 - 8 - expectedMonitor, ((GridSplitter)view.FindName("MonitorSplitter")).TranslatePoint(new(), root).Y);
+            Assert.Equal(expectedMonitor, ((Border)view.FindName("MonitorDetails")).ActualHeight); Capture(root, $"ssh-monitor-{language}-{theme}-{width}");
             foreach (string section in new[] { "overview", "processes", "docker", "network", "disks" })
             {
                 model.Monitor.Section = section; await model.Monitor.RefreshDetailsCommand.ExecuteAsync(); Layout(); await WpfTestFixture.DrainDispatcherAsync(); Layout();

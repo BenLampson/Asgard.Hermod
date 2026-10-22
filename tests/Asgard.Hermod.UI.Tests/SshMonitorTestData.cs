@@ -25,6 +25,8 @@ internal sealed class SshMonitorTestData
         if (command == SshMonitorDetailReader.ProcessCommand) return Task.FromResult(new SshCommandResult(Processes, 0, false));
         if (command == SshMonitorDetailReader.MountCommand) return Task.FromResult(new SshCommandResult(Mounts, 0, false));
         if (command == SshMonitorDetailReader.ContainerCommand) return Task.FromResult(new SshCommandResult(Containers, 0, false));
+        if (command == SshDockerEnvironment.ProbeCommand) return Task.FromResult(new SshCommandResult(DockerEnvironment, 0, false));
+        if (command.StartsWith("LC_ALL=C docker stats ", StringComparison.Ordinal)) return Task.FromResult(new SshCommandResult(DockerStats, 0, false));
         if (command.StartsWith("docker logs ", StringComparison.Ordinal)) return Task.FromResult(new SshCommandResult("2026-10-15T06:32:00Z [notice] nginx started\n203.0.113.8 GET /health 200\n", 0, false));
         return Task.FromResult(new SshCommandResult("", 1, false));
     }
@@ -78,4 +80,16 @@ internal sealed class SshMonitorTestData
         ("redis-cache", "redis:7-alpine", "running", "Up 18 days", "127.0.0.1:6379->6379/tcp"),
         ("backup-once", "postgres:17-alpine", "exited", "Exited (0) 2 hours ago", ""),
     }.Select((c, i) => JsonSerializer.Serialize(new { ID = new string((char)('a' + i), 64), Names = c.Item1, Image = c.Item2, State = c.Item3, Status = c.Item4, Ports = c.Item5 })));
+
+    internal const string DockerEnvironment = "__HERMOD_VERSION__\n{\"Client\":{\"Version\":\"27.5.1\"},\"Server\":{\"Version\":\"27.5.1\"}}\n__HERMOD_ACCESS__0\n__HERMOD_COMPOSE__plugin 2.32.4\n__HERMOD_STATS__\n--no-stream --no-trunc --format\n";
+    internal static string DockerStats => string.Join('\n', Enumerable.Range(0, 4).Select(i => JsonSerializer.Serialize(new
+    {
+        ID = new string((char)('a' + i), 64),
+        CPUPerc = i == 1 ? "28.4%" : "4.2%",
+        MemUsage = "428MiB / 1GiB",
+        MemPerc = "41.8%",
+        NetIO = "124kB / 36kB",
+        BlockIO = "2.4MB / 180kB",
+        PIDs = "24",
+    })));
 }

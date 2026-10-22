@@ -33,12 +33,14 @@ public sealed partial class SshWorkspaceViewModel
     private SshConsoleViewModel AddOpenedConsole(ISshConsoleConnection handle, int columns, int rows)
     {
         var owner = _connection; string host = RemoteIdentity; SshConsoleViewModel? console = null;
+        // 关闭会先释放传输、再收到 PTY 完成事件，不能在事件内重新访问 SDK 属性。
+        bool hasTransportSignal = owner?.Disconnected.CanBeCanceled == true;
         var assistant = new SshAssistantViewModel(_agentClient, () => console?.IsRunning == true && IsConnected && ReferenceEquals(owner, _connection) ? owner as ISshWorkspaceConnection : null, () => host, _dialogs, useInlineApproval: true);
         console = new(Text.Format("SshConsoleName", ++_consoleNumber), handle, assistant, columns, rows);
         console.StateChanged += (_, _) =>
         {
             // 旧单 Shell 适配器没有独立传输信号；生产连接只通过 Disconnected 判断实例断线。
-            if (!console.IsRunning && ReferenceEquals(owner, _connection) && owner?.Disconnected.CanBeCanceled == false) _ioCancellation?.Cancel();
+            if (!console.IsRunning && ReferenceEquals(owner, _connection) && !hasTransportSignal) _ioCancellation?.Cancel();
             if (ActiveConsole == console) Refresh();
         };
         Consoles.Add(console); ActiveConsole = console; console.Start(); CloseConsoleCommand.NotifyCanExecuteChanged(); return console;

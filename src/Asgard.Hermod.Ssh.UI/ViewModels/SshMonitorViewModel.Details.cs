@@ -34,10 +34,14 @@ public sealed partial class SshMonitorViewModel
                     SectionError = Text.Get(ContainerErrorKey);
                     return;
                 }
-                var containers = SshMonitorDetailReader.ParseContainers(result.Output).Select(c => new SshMonitorContainerItem(c)).ToArray();
-                string? selected = SelectedContainer?.Id;
+                var snapshots = SshMonitorDetailReader.ParseContainers(result.Output);
+                var resources = await ReadContainerResourcesAsync(connection, snapshots, generation, revision, token);
+                if (generation != _generation || revision != _sectionRevision) return;
+                var containers = snapshots.Select(c => new SshMonitorContainerItem(c, resources.GetValueOrDefault(c.Id))).ToArray();
+                string? selected = _requestedContainerId ?? SelectedContainer?.Id;
                 Reconcile(Containers, containers, c => c.Id);
                 SelectedContainer = Containers.FirstOrDefault(c => c.Id == selected);
+                _requestedContainerId = null;
                 ValidateContainerSelection();
             }
             else
@@ -54,7 +58,7 @@ public sealed partial class SshMonitorViewModel
                     SelectedMount = Mounts.FirstOrDefault(m => m.Device == selected?.Device && m.Path == selected.Path) ?? Mounts.OrderByDescending(m => m.UsedPercent).FirstOrDefault();
                 }
             }
-            _loadedSections.Add(section); SectionError = ""; _detailsUpdated = DateTimeOffset.UtcNow;
+            _loadedSections.Add(section); if (section != "docker") SectionError = ""; _detailsUpdated = DateTimeOffset.UtcNow;
         }
         catch (OperationCanceledException) when (generation != _generation || revision != _sectionRevision) { }
         catch (Exception error) { if (generation == _generation && revision == _sectionRevision) SectionError = Text.Error(error, "SshMonitorDetailUnavailable"); }

@@ -32,6 +32,8 @@ public sealed partial class SshMonitorViewModel
     {
         OnPropertyChanged(nameof(SelectedContainerName)); OnPropertyChanged(nameof(SelectedContainerSummary));
         ReadLogsCommand.NotifyCanExecuteChanged(); ViewContainerDetailsCommand.NotifyCanExecuteChanged(); NotifyContainerPane();
+        OpenDockerCommandsCommand?.NotifyCanExecuteChanged(); StartContainerCommand?.NotifyCanExecuteChanged(); RestartContainerCommand?.NotifyCanExecuteChanged(); StopContainerCommand?.NotifyCanExecuteChanged();
+        NotifyDockerResources();
     }
 
     private void NotifyContainerPane()

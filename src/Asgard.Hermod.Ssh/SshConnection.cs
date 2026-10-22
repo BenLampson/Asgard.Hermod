@@ -11,7 +11,8 @@ internal sealed partial class SshConnection(SshClient client, RemoteProcess shel
     /// <inheritdoc />
     public ISshConsoleConnection InitialConsole => _initialConsole;
     /// <inheritdoc />
-    public CancellationToken Disconnected => client.Disconnected;
+    // SDK 在释放后不允许再次读取属性；提前保存令牌供迟到的 Shell 完成通知使用。
+    public CancellationToken Disconnected { get; } = client.Disconnected;
     /// <inheritdoc />
     public async Task<ISshConsoleConnection> OpenConsoleAsync(int columns, int rows, CancellationToken cancellationToken = default)
     {

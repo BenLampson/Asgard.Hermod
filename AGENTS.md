@@ -25,3 +25,11 @@
 - Respect the existing module boundaries: shared contracts/resources in Abstractions, WPF presentation in UI modules, persistence in Persistence.Sqlite, provider protocols in provider modules, application composition in the executable.
 - Read `CONTRIBUTING.md` and the relevant architecture documentation. Preserve unrelated work already in the workspace; keep prerequisite changes separate from the requested feature commit.
 - Run the required build, formatting checks and meaningful xUnit v3 tests before committing.
+
+## Production deployment: mandatory build boundary
+
+- Never build on production MD-Core (`47.109.145.141`), including Docker image assembly from an already compiled `publish/` directory. Production must not run `docker build`, `docker buildx build`, `dotnet build/publish`, package installation (`npm`, `pnpm`, `yarn`), compilation or tests.
+- Never upload or extract project source, source archives, Docker build contexts or publish payloads on production for release. Do not bypass this boundary through SSH/SCP, remote Docker contexts, builders or ad hoc scripts.
+- Run checks and build images locally or on hosted CI. Push a uniquely versioned Registry image with its full source commit recorded in OCI labels and release metadata. Deploy only its Registry reference pinned to a `sha256` manifest digest; an image ID from a production build is not a Registry digest.
+- Production release operations are limited to backing up runtime data, pulling the Registry image, switching the runtime-only Compose configuration and acceptance checks. Preserve runtime secrets outside images. Retain evidence and recovery data; cleanup requires its own authorization.
+- Follow the [server release procedure](docs/identity-and-sync.md#docker-deployment). Run `tools/Test-ServerReleasePolicy.ps1` before release. Historical production-build records and ignored `artifacts/` directories are evidence, never release instructions or reusable deployment tooling.
