@@ -82,6 +82,10 @@ Your model API key is used to authenticate requests to the configured model serv
 
 ## 6. 信息接收方与保护 / Data Recipients and Protection
 
+应用启动后及运行期间会定期检查更新，也可从设置手动检查。商店安装版通过微软商店查询可用更新，应用通过 GitHub 的公开发布接口读取版本与更新说明。此类检查不发送连接配置、凭据、终端内容或 AI 对话；微软和 GitHub 会接收通信所需的 IP 地址等技术信息。
+
+The application periodically checks for updates after startup and while running; you can also check manually in settings. Store installations query Microsoft Store for update availability, and the application reads public version information and release notes from GitHub. These checks do not send connection configurations, credentials, terminal content or AI conversations. Microsoft and GitHub receive technical information, such as your IP address, needed for communication.
+
 信息仅在提供所选功能所需的范围内，由 Hermod 账号和同步服务、Heimdall 身份服务，以及您配置的远程服务或模型服务处理。网络服务会接收建立通信所需的 IP 地址等技术信息。
 
 Information is processed as needed to provide your selected features by Hermod account and synchronization services, the Heimdall identity service, and the remote or model services you configure. Network services receive technical information, such as your IP address, needed to establish communications.

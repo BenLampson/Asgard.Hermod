@@ -8,6 +8,25 @@ namespace Asgard.Hermod.WinTerminal.Tests;
 /// <summary>验证跨越 ANSI 彩色输出的选区背景连续、文字可读，取消后恢复原色。</summary>
 public sealed class TerminalSelectionRenderingTests
 {
+    /// <summary>SSH 的小数行高在各 DPI 下跨行选中时，空白背景也不能出现水平细缝。</summary>
+    [Theory]
+    [InlineData(1.0)]
+    [InlineData(1.25)]
+    [InlineData(1.5)]
+    [InlineData(2.0)]
+    public void FractionalLineHeightSelectionHasNoRowSeams(double scale) => WpfTestThread.Run(() =>
+    {
+        var options = CreateOptions(false);
+        options.CellHeight = 22.1;
+        using var session = new TerminalSession(72, 8, options);
+        using var renderer = new TerminalRenderer();
+        renderer.Configure("Consolas", 13, options);
+        var selected = Draw(renderer, session, new TerminalSelection(0, 0, 71, 7), options, scale);
+        int x = selected.PixelWidth / 2;
+        for (int y = 1; y < selected.PixelHeight - 1; y++)
+            Assert.Equal(ToColor(options.DefaultForeground), Pixel(selected, x, y));
+    });
+
     /// <summary>模拟 ls 彩色文件名与跨行拖选，浅色和深色主题都不能出现未高亮的缺口。</summary>
     [Theory]
     [InlineData(false, false)]
@@ -77,7 +96,7 @@ public sealed class TerminalSelectionRenderingTests
     };
 
     /// <summary>通过真实 WPF 绘制与像素栅格化检查背景，不使用渲染器内部配色函数。</summary>
-    private static RenderTargetBitmap Draw(TerminalRenderer renderer, TerminalSession session, TerminalSelection? selection, TerminalOptions options)
+    private static RenderTargetBitmap Draw(TerminalRenderer renderer, TerminalSession session, TerminalSelection? selection, TerminalOptions options, double scale = 1)
     {
         int width = (int)Math.Ceiling(session.Buffer.Columns * renderer.CellWidth);
         int height = (int)(session.Buffer.Rows * renderer.CellSize.Height);
@@ -88,11 +107,11 @@ public sealed class TerminalSelectionRenderingTests
             for (int row = 0; row < session.Buffer.Rows; row++)
             {
                 context.PushTransform(new TranslateTransform(0, row * renderer.CellSize.Height));
-                renderer.RenderRow(context, session.Buffer.GetRow(row), selection, row, 1);
+                renderer.RenderRow(context, session.Buffer.GetRow(row), selection, row, (float)scale);
                 context.Pop();
             }
         }
-        var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+        var bitmap = new RenderTargetBitmap((int)(width * scale), (int)(height * scale), 96 * scale, 96 * scale, PixelFormats.Pbgra32);
         bitmap.Render(visual);
         return bitmap;
     }

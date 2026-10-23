@@ -79,7 +79,6 @@
       </DockPanel></Border>
       <Grid Grid.Row="1" Background="{DynamicResource TerminalSurfaceBrush}">
 <Grid x:Name="TerminalSurface" Visibility="{Binding IsTerminalSection, Converter={StaticResource Visible}}" Background="{DynamicResource TerminalSurfaceBrush}" SizeChanged="OnTerminalSizeChanged">
-     <Border BorderThickness="1" IsHitTestVisible="False"><Border.Style><Style TargetType="Border"><Setter Property="BorderBrush" Value="Transparent" /><Style.Triggers><DataTrigger Binding="{Binding IsKeyboardFocusWithin, ElementName=TerminalView}" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" /></DataTrigger></Style.Triggers></Style></Border.Style></Border>
      <terminal:TerminalControl x:Name="TerminalView" Session="{Binding Session}" IsReadOnly="{Binding IsReadOnly}" PreserveOutputOnResize="True" Margin="20,16"
       FontFamily="{DynamicResource MonoFont}" FontSize="13" LineHeight="22.1" Background="{DynamicResource TerminalSurfaceBrush}" Foreground="{DynamicResource TerminalTextBrush}"
       AutomationProperties.Name="{loc:Loc SshTerminalLabel}" PreviewPaste="OnPreviewPaste" />

@@ -43,7 +43,8 @@ public sealed partial class SshWorkspaceViewModel
             if (!console.IsRunning && ReferenceEquals(owner, _connection) && !hasTransportSignal) _ioCancellation?.Cancel();
             if (ActiveConsole == console) Refresh();
         };
-        Consoles.Add(console); ActiveConsole = console; console.Start(); CloseConsoleCommand.NotifyCanExecuteChanged(); return console;
+        // ActiveConsole 会同步触发视图绑定和首次网格调整；先订阅 I/O，避免漏发 PTY 尺寸。
+        Consoles.Add(console); console.Start(); ActiveConsole = console; CloseConsoleCommand.NotifyCanExecuteChanged(); return console;
     }
     private async Task AddConsoleAsync()
     {

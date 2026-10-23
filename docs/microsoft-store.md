@@ -127,6 +127,32 @@ match your installation, pass `-MakeAppxPath` with the full path to the tool.
 
 ## Installation testing and submission
 
+### In-app update checks
+
+After the main window opens, Hermod checks for updates after ten seconds and
+then every six hours. Settings → Updates also provides a manual check.
+A confirmed update shows a blue download icon at the bottom left of the main
+window; it opens the same non-modal settings page without closing connections.
+
+Packaged installations query `StoreContext.GetAppAndOptionalStorePackageUpdatesAsync`.
+Only the current package family is considered. The API exposes the installed
+package, not the target version, so the page displays the installed MSIX version
+separately from GitHub's latest stable public release and its plain-text notes.
+Store certification and rollout can lag behind that public release. If release
+metadata is unavailable, a confirmed Store update remains visible. Unpackaged
+installations compare their assembly version with the public release instead.
+The packaging script sets assembly versions to the requested MSIX version.
+
+Checks have a time limit and are canceled on exit. Temporary failures preserve
+an already known update and show a safe retry message in settings. The only
+installation action is explicitly opening the official Store or GitHub page;
+Hermod never invokes download/install APIs or automatically restarts. Microsoft
+Store's own update settings remain controlled by Windows and the user.
+
+Verify the Store path with an older Store-installed package and an update
+available to that account. Offline tests cover metadata parsing, UI states and
+connection preservation; they cannot simulate Store entitlement or rollout.
+
 The generated package is unsigned. Microsoft Store signs the package when
 publishing it; no production signing certificate or private key is stored in the
 repository. For local installation, sign a copy using a trusted test certificate

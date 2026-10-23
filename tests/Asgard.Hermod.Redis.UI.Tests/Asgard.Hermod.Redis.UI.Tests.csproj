@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup><TargetFramework>net10.0-windows</TargetFramework><UseWPF>true</UseWPF><OutputType>Exe</OutputType><IsTestProject>true</IsTestProject><IsPackable>false</IsPackable></PropertyGroup>
+  <PropertyGroup><TargetFramework>net10.0-windows10.0.19041.0</TargetFramework><UseWPF>true</UseWPF><OutputType>Exe</OutputType><IsTestProject>true</IsTestProject><IsPackable>false</IsPackable></PropertyGroup>
   <ItemGroup>
     <Compile Include="../Asgard.Hermod.UI.Tests/WpfTestFixture.cs" Link="Shared/WpfTestFixture.cs" />
     <Compile Include="../Asgard.Hermod.UI.Tests/WindowInteractionNativeMethods.cs" Link="Shared/WindowInteractionNativeMethods.cs" />

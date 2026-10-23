@@ -58,7 +58,7 @@ public sealed class TerminalRenderer : IDisposable
             int first = Math.Max(0, rowIndex == range.StartY ? range.StartX : 0);
             int last = Math.Min(len - 1, rowIndex == range.EndY ? range.EndX : len - 1);
             if (last >= first)
-                drawingContext.DrawRectangle(Brush(_options.DefaultForeground), null,
+                DrawBackground(drawingContext, Brush(_options.DefaultForeground),
                     new Rect(first * cellW, 0, (last - first + 1) * cellW, cellH));
         }
         int col = 0;
@@ -73,13 +73,21 @@ public sealed class TerminalRenderer : IDisposable
             double x = runStart * cellW;
             (Color fg, Color bg) = ResolveColors(style, selected);
             if (!selected && (!style.BackgroundIsDefault || style.Inverse))
-                drawingContext.DrawRectangle(Brush(bg), null, new Rect(x, 0, (runEnd - runStart) * cellW, cellH));
+                DrawBackground(drawingContext, Brush(bg), new Rect(x, 0, (runEnd - runStart) * cellW, cellH));
             if (!style.Continuation)
             {
                 Color decoration = selected || style.Conceal || style.UnderlineColorIsDefault ? fg : style.UnderlineColor;
                 DrawGlyphRun(drawingContext, row, runStart, runEnd, x, baselineY, Brush(fg), Brush(decoration), style, pixelsPerDip);
             }
         }
+    }
+
+    /// <summary>只将背景边缘对齐设备像素，相邻行共用同一边界；文字仍保留抗锯齿。</summary>
+    private static void DrawBackground(DrawingContext context, Brush brush, Rect bounds)
+    {
+        context.PushGuidelineSet(new GuidelineSet([bounds.Left, bounds.Right], [bounds.Top, bounds.Bottom]));
+        context.DrawRectangle(brush, null, bounds);
+        context.Pop();
     }
 
     /// <summary>处理 DrawGlyphRun 对应的终端协议或渲染逻辑。</summary>

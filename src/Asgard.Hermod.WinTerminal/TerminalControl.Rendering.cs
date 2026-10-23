@@ -46,7 +46,7 @@ public sealed partial class TerminalControl
         ScreenUpdated?.Invoke(this, EventArgs.Empty);
     }
 
-    /// <summary>在尺寸防抖计时结束后通知会话。</summary>
+    /// <summary>合并窗口变化后发送最新尺寸，持续拖动不会推迟当前计时周期。</summary>
     private void OnResizeTick(object? sender, EventArgs args)
     {
         _resizeTimer.Stop();
@@ -77,8 +77,8 @@ public sealed partial class TerminalControl
         base.OnRenderSizeChanged(sizeInfo);
         if (_disposed)
             return;
-        _resizeTimer.Stop();
-        _resizeTimer.Start();
+        if (!_resizeTimer.IsEnabled)
+            _resizeTimer.Start();
     }
 
     /// <summary>绘制可见历史与屏幕行；和解析器共用缓冲区锁。</summary>

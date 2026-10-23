@@ -9,4 +9,6 @@ public interface ISettingsEditor
     Task OpenTagsAsync() => OpenAsync();
     /// <summary>从独立助手直接进入模型配置。</summary>
     Task OpenAgentAsync() => OpenAsync();
+    /// <summary>从更新提示直接进入版本和发布说明。</summary>
+    Task OpenUpdatesAsync() => OpenAsync();
 }

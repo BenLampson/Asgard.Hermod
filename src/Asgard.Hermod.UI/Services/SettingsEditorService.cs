@@ -18,6 +18,7 @@ public sealed class SettingsEditorService : ISettingsEditor, IDisposable, IAsync
     private readonly IAgentPreferenceStore? _agentPreferences;
     private readonly Agent.AgentModelCatalog? _modelCatalog;
     private readonly Agent.IAgentClient? _agentClient;
+    private readonly ApplicationUpdateViewModel? _updates;
     private readonly CancellationTokenSource _lifetime = new();
     private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
     private SettingsWindow? _window;
@@ -33,12 +34,14 @@ public sealed class SettingsEditorService : ISettingsEditor, IDisposable, IAsync
         IFileOpenRuleStore? fileRules = null, ITemporaryFileStorage? temporaryFiles = null,
         IAccountService? accounts = null, IAccountEditor? accountEditor = null, IMainWindowClosePreferenceStore? closePreferences = null,
         Agent.AgentConfiguration? agentConfiguration = null, IAgentPreferenceStore? agentPreferences = null,
-        Agent.AgentModelCatalog? modelCatalog = null, Agent.IAgentClient? agentClient = null)
+        Agent.AgentModelCatalog? modelCatalog = null, Agent.IAgentClient? agentClient = null,
+        ApplicationUpdateViewModel? updates = null)
     {
         ArgumentNullException.ThrowIfNull(getOwner);
         ArgumentNullException.ThrowIfNull(tags);
         ArgumentNullException.ThrowIfNull(languages);
         _getOwner = getOwner;
+        _updates = updates;
         _tags = tags;
         _languages = languages;
         _fileRules = fileRules;
@@ -56,6 +59,8 @@ public sealed class SettingsEditorService : ISettingsEditor, IDisposable, IAsync
     public Task OpenTagsAsync() => OpenCategoryAsync("tags");
     /// <inheritdoc />
     public Task OpenAgentAsync() => OpenCategoryAsync("agent");
+    /// <inheritdoc />
+    public Task OpenUpdatesAsync() => OpenCategoryAsync("updates");
     /// <summary>普通入口保留当前页；定向入口可更新尚在初始化的首个请求，不重复加载。</summary>
     private async Task OpenCategoryAsync(string? category)
     {
@@ -89,7 +94,7 @@ public sealed class SettingsEditorService : ISettingsEditor, IDisposable, IAsync
         var dialogs = new WindowsTagDialogService(() => window ?? _getOwner(), _tags);
         var storageDialogs = new WindowsStorageSettingsDialogs(() => window ?? _getOwner());
         var model = new SettingsViewModel(_tags, dialogs, _languages, _fileRules, _temporaryFiles, storageDialogs,
-            _accounts, _accountEditor is null ? null : () => _accountEditor.OpenAsync(window), _closePreferences, _agentConfiguration, _agentPreferences, _modelCatalog, _agentClient);
+            _accounts, _accountEditor is null ? null : () => _accountEditor.OpenAsync(window), _closePreferences, _agentConfiguration, _agentPreferences, _modelCatalog, _agentClient, _updates);
         try
         {
             await model.InitializeAsync(_lifetime.Token);
