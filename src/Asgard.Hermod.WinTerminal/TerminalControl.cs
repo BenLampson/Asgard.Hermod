@@ -59,6 +59,7 @@ public sealed partial class TerminalControl : Control, IDisposable
     static TerminalControl()
     {
         FocusableProperty.OverrideMetadata(typeof(TerminalControl), new FrameworkPropertyMetadata(true));
+        FocusVisualStyleProperty.OverrideMetadata(typeof(TerminalControl), new FrameworkPropertyMetadata(defaultValue: null));
         ClipToBoundsProperty.OverrideMetadata(typeof(TerminalControl), new FrameworkPropertyMetadata(true));
         FontFamilyProperty.OverrideMetadata(typeof(TerminalControl), new FrameworkPropertyMetadata(new FontFamily("Consolas")));
         FontSizeProperty.OverrideMetadata(typeof(TerminalControl), new FrameworkPropertyMetadata(14.0));
@@ -67,7 +68,7 @@ public sealed partial class TerminalControl : Control, IDisposable
         KeyboardNavigation.TabNavigationProperty.OverrideMetadata(typeof(TerminalControl), new FrameworkPropertyMetadata(KeyboardNavigationMode.None));
     }
 
-    /// <summary>创建绘制与尺寸防抖计时器；仅在 Loaded 后运行。</summary>
+    /// <summary>创建绘制与尺寸合并计时器；仅在 Loaded 后运行。</summary>
     public TerminalControl()
     {
         _renderTimer = new DispatcherTimer(DispatcherPriority.Background, Dispatcher)

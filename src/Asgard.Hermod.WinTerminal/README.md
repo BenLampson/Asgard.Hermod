@@ -134,6 +134,10 @@ input direction, queries, resizing, WPF rendering and reload, plus real cmd.exe 
 PowerShell processes, their working directory, final output, exit codes, and cleanup.
 The solution uses xUnit v3 and the .NET 10 Microsoft Testing Platform runner.
 
+Set `HERMOD_TERMINAL_PTY_TEST=1` to also test long input and Up/Down history
+navigation against a real Linux PTY using the existing local `debian:12` Docker
+image. The fixture has no network and removes only its own temporary container.
+
 This is the starting implementation. Complex grapheme/emoji shaping, IME candidate
 placement, accessibility, common full-screen application compatibility, and
 sustained high-output performance still need dedicated verification.
@@ -145,3 +149,8 @@ Local text selection starts only after the Windows drag threshold; a click clear
 Host-provided context menus use the shared Copy, Paste and SelectAll routed commands,
 including PreviewPaste confirmation. TUI mouse reporting keeps priority; Shift selects
 local text and opens the local menu.
+
+Viewport changes from window resizing or sidebar layout are coalesced into
+100 ms updates. A running resize timer is not postponed by later changes, so
+continuous dragging updates both the local grid and the remote PTY. The last
+pending update also applies the final size after dragging stops.

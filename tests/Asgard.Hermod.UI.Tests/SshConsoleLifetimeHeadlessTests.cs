@@ -9,6 +9,23 @@ namespace Asgard.Hermod.UI.Tests;
 [Collection(WpfTestCollection.Name)]
 public sealed class SshConsoleLifetimeHeadlessTests(WpfTestFixture fixture)
 {
+    /// <summary>显示新控制台会同步绑定并调整缓冲，PTY 订阅必须早于这次首屏布局。</summary>
+    [Fact]
+    public Task FirstSynchronousLayoutReachesRemotePty() => fixture.RunOffscreenAsync(async () =>
+    {
+        var factory = new SshTestFactory();
+        await using var model = SshWorkspaceTests.Create(factory);
+        using var terminal = new Asgard.Hermod.WinTerminal.TerminalControl();
+        terminal.Measure(new(1500, 650)); terminal.Arrange(new(0, 0, 1500, 650));
+        model.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(model.Session)) terminal.Session = model.Session;
+        };
+        await model.InitializeAsync();
+        Assert.True(model.Session!.Buffer.Columns > 100);
+        Assert.Equal((model.Session.Buffer.Columns, model.Session.Buffer.Rows), factory.Connections[0].Size);
+    });
+
     /// <summary>关闭或断开会先释放 SDK；随后发生的 PTY 状态回调不能再读取其断线属性。</summary>
     [Theory]
     [InlineData(false)]
