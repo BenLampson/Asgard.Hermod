@@ -4,7 +4,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
     <PackageReference Include="xunit.v3" Version="4.0.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1"><PrivateAssets>all</PrivateAssets></PackageReference>
-    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="10.0.12" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="10.0.13" />
     <ProjectReference Include="..\..\src\Asgard.Hermod.Server\Asgard.Hermod.Server.csproj" />
     <ProjectReference Include="..\..\src\Asgard.Hermod.Core\Asgard.Hermod.Core.csproj" />
     <ProjectReference Include="..\..\src\Asgard.Hermod.RabbitMq\Asgard.Hermod.RabbitMq.csproj" />
