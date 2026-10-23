@@ -50,6 +50,7 @@ public partial class App : Application
             services.AddPostgreSql();
             services.AddRabbitMq();
             services.AddSingleton<ITerminalSessionFactory, LocalTerminalSessionFactory>();
+            services.AddSingleton<IApplicationUpdateService>(_ => new Updates.WindowsApplicationUpdateService(() => MainWindow));
             services.AddHermodUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow, Resources);
             services.AddObjectStorageUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow);
             services.AddSshUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow);
@@ -90,6 +91,7 @@ public partial class App : Application
             window.ExitCommitted += _instance.BeginExit;
             MainWindow = window;
             window.Show();
+            provider.GetRequiredService<ApplicationUpdateViewModel>().Start();
             _instance.SetActivationHandler(() => Dispatcher.BeginInvoke(() => window.NotifyAlreadyRunning()));
             if (tray is null)
             {

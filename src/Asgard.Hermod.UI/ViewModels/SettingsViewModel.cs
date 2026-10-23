@@ -22,11 +22,13 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         ITemporaryFileStorage? temporaryFiles = null, IStorageSettingsDialogs? storageDialogs = null,
         IAccountService? accounts = null, Func<Task>? openAccount = null, IMainWindowClosePreferenceStore? closePreferences = null,
         Agent.AgentConfiguration? agentConfiguration = null, IAgentPreferenceStore? agentPreferences = null,
-        Agent.AgentModelCatalog? modelCatalog = null, Agent.IAgentClient? agentClient = null)
+        Agent.AgentModelCatalog? modelCatalog = null, Agent.IAgentClient? agentClient = null,
+        ApplicationUpdateViewModel? updates = null)
     {
         ArgumentNullException.ThrowIfNull(tags);
         ArgumentNullException.ThrowIfNull(dialogs);
         Tags = new TagManagementViewModel(tags, dialogs);
+        Updates = updates;
         _languageStore = languageStore;
         CloseSettings = closePreferences is null ? null : new(closePreferences);
         AgentSettings = modelCatalog is null && agentConfiguration is not null && agentPreferences is not null ? new(agentConfiguration, agentPreferences) : null;
@@ -48,6 +50,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
             new("account", Text.Get("AccountAndSync"), "user-round", accounts is not null && openAccount is not null),
             new("shortcuts", Text.Get("KeyboardShortcuts"), "keyboard", false),
             new("about", Text.Get("About"), "info", true),
+            new("updates", Text.Get("UpdatesTitle"), "download", updates is not null),
         ];
         PrimaryCategories = Categories.Where(category => category.Id is "general" or "appearance" or "agent" or "account").ToArray();
         AdditionalCategories = Categories.Where(category => category.Id is not ("general" or "appearance" or "agent" or "account")).ToArray();
@@ -127,6 +130,10 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
     public bool IsAccountSelected => SelectedCategory.Id == "account";
     /// <summary>关于页通过固定分类标识控制可见性。</summary>
     public bool IsAboutSelected => SelectedCategory.Id == "about";
+    /// <summary>更新详情使用独立的非模态设置分类。</summary>
+    public bool IsUpdatesSelected => SelectedCategory.Id == "updates";
+    /// <summary>应用级更新状态不随设置窗口关闭释放。</summary>
+    public ApplicationUpdateViewModel? Updates { get; }
     /// <summary>版本、作者、许可与源码入口统一归于关于页。</summary>
     public AboutViewModel About { get; } = new();
     /// <summary>只显示已验证的 JWT 用户名。</summary>
@@ -158,6 +165,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
             OnPropertyChanged(nameof(IsStorageSelected));
             OnPropertyChanged(nameof(IsAccountSelected));
             OnPropertyChanged(nameof(IsAboutSelected));
+            OnPropertyChanged(nameof(IsUpdatesSelected));
         }
     }
     /// <summary>可复用的标签管理状态。</summary>

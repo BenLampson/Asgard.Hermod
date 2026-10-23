@@ -49,7 +49,7 @@ $stagingDirectory = Join-Path $outputDirectory ('staging-' + [guid]::NewGuid().T
 New-Item -ItemType Directory -Path $stagingDirectory -Force | Out-Null
 $projectPath = Join-Path $repositoryRoot 'src/Asgard.Hermod/Asgard.Hermod.csproj'
 & dotnet publish $projectPath -c Release -r "win-$Architecture" --self-contained true `
-    -p:PublishSingleFile=false -p:PublishTrimmed=false -o $stagingDirectory
+    -p:PublishSingleFile=false -p:PublishTrimmed=false "-p:Version=$PackageVersion" -o $stagingDirectory
 if ($LASTEXITCODE -ne 0) {
     throw "dotnet publish failed with exit code $LASTEXITCODE."
 }

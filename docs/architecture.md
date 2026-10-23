@@ -51,7 +51,11 @@ Shared contracts, core services, SQLite persistence, and object storage contract
 operations and all storage connectors target `net10.0` without WPF. Presentation,
 terminal and DPAPI projects target `net10.0-windows`. No module references the
 application executable. Shared UI does not reference object storage, persistence
-or cloud connectors.
+or cloud connectors. The executable targets `net10.0-windows10.0.19041.0` for the
+official Windows Store update API. Update contracts and release snapshots live in
+Abstractions; the executable implements Store/GitHub reads, and shared UI owns the
+application-wide notification state and non-modal settings page. Update checks
+have no dependency on connection lifecycles and never install or restart.
 
 Password fields use the shared UI `SecretInput` control. It masks values by
 default and provides a localized eye button to show or hide the password.

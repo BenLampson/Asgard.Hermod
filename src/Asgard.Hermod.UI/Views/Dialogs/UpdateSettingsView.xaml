@@ -1,0 +1,24 @@
+<UserControl x:Class="Asgard.Hermod.UI.Views.Dialogs.UpdateSettingsView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization" Focusable="False">
+ <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+  <StackPanel Margin="32" MaxWidth="680">
+   <TextBlock Text="{loc:Loc UpdatesTitle}" FontSize="24" FontWeight="SemiBold" Margin="0,0,0,24" />
+   <Border Style="{StaticResource PanelBorder}" Padding="24" CornerRadius="10"><StackPanel>
+    <TextBlock x:Name="UpdateStatus" Text="{Binding Status}" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+    <TextBlock x:Name="InstalledVersion" Text="{Binding CurrentVersion}" FontFamily="{DynamicResource MonoFont}" Margin="0,16,0,8" TextWrapping="Wrap" />
+    <TextBlock x:Name="PublishedVersion" Text="{Binding PublishedVersion}" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" />
+    <TextBlock Text="{Binding ChannelHint}" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,16,0,0" />
+    <WrapPanel Margin="0,20,0,0">
+     <Button x:Name="CheckUpdates" Content="{loc:Loc UpdatesCheck}" Command="{Binding CheckCommand}" Style="{StaticResource PrimaryButton}" Margin="0,0,12,8" />
+     <Button x:Name="OpenDownload" Content="{Binding OpenDownloadLabel}" Command="{Binding OpenDownloadCommand}" Margin="0,0,0,8" />
+    </WrapPanel>
+    <TextBlock Text="{loc:Loc UpdatesNoRestart}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,0" />
+   </StackPanel></Border>
+   <TextBlock Text="{loc:Loc UpdatesNotesTitle}" FontSize="16" FontWeight="SemiBold" Margin="0,24,0,12" />
+   <TextBox x:Name="ReleaseNotes" Text="{Binding ReleaseNotes, Mode=OneWay}" IsReadOnly="True" TextWrapping="Wrap"
+       BorderThickness="0" Background="Transparent" Padding="0" MinHeight="0" VerticalScrollBarVisibility="Disabled"
+       AutomationProperties.Name="{loc:Loc UpdatesNotesTitle}" />
+  </StackPanel>
+ </ScrollViewer>
+</UserControl>

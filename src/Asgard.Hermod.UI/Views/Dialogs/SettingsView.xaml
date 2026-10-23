@@ -66,5 +66,6 @@
         <dialogs:AgentSettingsView Grid.Column="1" DataContext="{Binding AgentModels}"
             Visibility="{Binding DataContext.IsAgentSelected, RelativeSource={RelativeSource AncestorType=dialogs:SettingsView}, Converter={StaticResource SettingsBooleanVisibility}}" />
         <dialogs:AboutSettingsView x:Name="AboutContent" Grid.Column="1" DataContext="{Binding About}" Visibility="{Binding DataContext.IsAboutSelected, RelativeSource={RelativeSource AncestorType=dialogs:SettingsView}, Converter={StaticResource SettingsBooleanVisibility}}" />
+        <dialogs:UpdateSettingsView x:Name="UpdatesContent" Grid.Column="1" DataContext="{Binding Updates}" Visibility="{Binding DataContext.IsUpdatesSelected, RelativeSource={RelativeSource AncestorType=dialogs:SettingsView}, Converter={StaticResource SettingsBooleanVisibility}}" />
     </Grid>
 </UserControl>

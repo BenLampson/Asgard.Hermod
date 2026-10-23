@@ -131,7 +131,23 @@
    <TextBlock Grid.Row="3" Text="{Binding Error}" Visibility="{Binding ErrorVisibility}" Foreground="{DynamicResource DangerBrush}" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
   </Grid>
   <Border x:Name="MainStatusBar" Grid.Row="1" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,1,0,0">
-   <Grid Margin="24,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><TextBlock Text="{Binding TotalText}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
+   <Grid Margin="24,0"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+    <StackPanel Orientation="Horizontal">
+     <Button x:Name="UpdateAvailableButton" Width="24" Height="24" MinWidth="0" MinHeight="0" Padding="0" Margin="0,0,10,0"
+             DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=shell:AppShellView}}"
+             Command="{Binding OpenUpdatesCommand}" ToolTip="{loc:Loc UpdatesAvailableTooltip}" AutomationProperties.Name="{loc:Loc UpdatesAvailableTooltip}">
+      <Button.Style><Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+       <Setter Property="Visibility" Value="Collapsed" />
+       <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button">
+        <Border x:Name="Circle" Background="{TemplateBinding Background}" CornerRadius="12"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" /></Border>
+        <ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Circle" Property="Opacity" Value="0.8" /></Trigger><Trigger Property="IsPressed" Value="True"><Setter TargetName="Circle" Property="Opacity" Value="0.6" /></Trigger></ControlTemplate.Triggers>
+       </ControlTemplate></Setter.Value></Setter>
+       <Style.Triggers><DataTrigger Binding="{Binding Updates.HasUpdate}" Value="True"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers>
+      </Style></Button.Style>
+      <controls:IconView Kind="download" Width="14" Height="14" />
+     </Button>
+     <TextBlock Text="{Binding TotalText}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" />
+    </StackPanel>
     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=shell:AppShellView}}">
      <controls:IconView x:Name="MainSyncGlyph" Kind="{Binding MainSyncIcon}" Width="13" Height="13" Margin="0,0,6,0"><controls:IconView.Style><Style TargetType="controls:IconView"><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" /><Style.Triggers><DataTrigger Binding="{Binding SyncStatus}" Value="Synced"><Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" /></DataTrigger><DataTrigger Binding="{Binding SyncStatus}" Value="Failed"><Setter Property="Foreground" Value="{DynamicResource DangerBrush}" /></DataTrigger><DataTrigger Binding="{Binding SyncStatus}" Value="Conflict"><Setter Property="Foreground" Value="{DynamicResource WarningBrush}" /></DataTrigger><DataTrigger Binding="{Binding IsSignedIn}" Value="False"><Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" /></DataTrigger></Style.Triggers></Style></controls:IconView.Style></controls:IconView>
      <TextBlock x:Name="MainSyncText" Text="{Binding MainSyncLabel}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" ToolTip="{Binding SyncStatusText}" />

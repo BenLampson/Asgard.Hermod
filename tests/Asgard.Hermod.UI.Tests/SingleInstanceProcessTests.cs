@@ -65,7 +65,7 @@ public sealed class SingleInstanceProcessTests
         var root = new DirectoryInfo(AppContext.BaseDirectory);
         while (!File.Exists(Path.Combine(root.FullName, "Asgard.Hermod.slnx"))) root = root.Parent!;
         string configuration = AppContext.BaseDirectory.Contains("Release", StringComparison.Ordinal) ? "Release" : "Debug";
-        string path = Path.Combine(root.FullName, "tests", "Asgard.Hermod.LifetimeProbe", "bin", configuration, "net10.0-windows", "Asgard.Hermod.LifetimeProbe.exe");
+        string path = Path.Combine(root.FullName, "tests", "Asgard.Hermod.LifetimeProbe", "bin", configuration, "net10.0-windows10.0.19041.0", "Asgard.Hermod.LifetimeProbe.exe");
         var info = new ProcessStartInfo(path) { RedirectStandardInput = true, RedirectStandardOutput = true, RedirectStandardError = true, CreateNoWindow = true };
         info.ArgumentList.Add(scope);
         return Process.Start(info)!;

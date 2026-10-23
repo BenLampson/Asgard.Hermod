@@ -5406,4 +5406,61 @@ Address: {2}</value></data>
   <data name="SshBastionSelectionVerified" xml:space="preserve">
     <value>Configured server menu selection completed</value>
   </data>
+  <data name="UpdatesTitle" xml:space="preserve">
+    <value>Updates</value>
+  </data>
+  <data name="UpdatesCheck" xml:space="preserve">
+    <value>Check for updates</value>
+  </data>
+  <data name="UpdatesNotChecked" xml:space="preserve">
+    <value>Updates have not been checked yet.</value>
+  </data>
+  <data name="UpdatesChecking" xml:space="preserve">
+    <value>Checking for updates…</value>
+  </data>
+  <data name="UpdatesAvailable" xml:space="preserve">
+    <value>An update is available.</value>
+  </data>
+  <data name="UpdatesCurrent" xml:space="preserve">
+    <value>No updates are available for this installation.</value>
+  </data>
+  <data name="UpdatesCheckFailed" xml:space="preserve">
+    <value>Unable to check for updates. Check your network connection and try again.</value>
+  </data>
+  <data name="UpdatesOpenFailed" xml:space="preserve">
+    <value>Unable to open the download page. Please try again.</value>
+  </data>
+  <data name="UpdatesCurrentVersion" xml:space="preserve">
+    <value>Installed version: {0}</value>
+  </data>
+  <data name="UpdatesPublishedVersion" xml:space="preserve">
+    <value>Latest public release: {0}</value>
+  </data>
+  <data name="UpdatesReleaseUnavailable" xml:space="preserve">
+    <value>Public release information is not available yet.</value>
+  </data>
+  <data name="UpdatesNotesUnavailable" xml:space="preserve">
+    <value>Release notes are not available yet. Check again later or visit the download page.</value>
+  </data>
+  <data name="UpdatesStoreHint" xml:space="preserve">
+    <value>Availability is checked with Microsoft Store. The public release and its notes below are from GitHub; Store approval and rollout may take longer.</value>
+  </data>
+  <data name="UpdatesGitHubHint" xml:space="preserve">
+    <value>This unpackaged installation checks the latest stable release on GitHub.</value>
+  </data>
+  <data name="UpdatesOpenStore" xml:space="preserve">
+    <value>Open Microsoft Store</value>
+  </data>
+  <data name="UpdatesOpenGitHub" xml:space="preserve">
+    <value>Open releases</value>
+  </data>
+  <data name="UpdatesNoRestart" xml:space="preserve">
+    <value>Hermod only checks for updates. It will not install an update or restart itself. Save your work and close active connections before updating from the download page.</value>
+  </data>
+  <data name="UpdatesNotesTitle" xml:space="preserve">
+    <value>Public release notes</value>
+  </data>
+  <data name="UpdatesAvailableTooltip" xml:space="preserve">
+    <value>Update available — view version and release notes</value>
+  </data>
 </root>

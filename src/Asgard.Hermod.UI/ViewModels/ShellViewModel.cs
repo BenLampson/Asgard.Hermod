@@ -20,10 +20,14 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
         ITerminalSessionFactory terminalFactory, IThemeService themes,
         ISettingsEditor? settings = null, ITagManagementService? tags = null,
         IInstanceWorkspaceFactory? pageFactory = null, IAccountService? accounts = null, IAccountEditor? accountEditor = null,
-        IInstanceProviderRegistry? registry = null, IRecentInstanceStore? recentInstances = null, IConfigurationSyncService? sync = null)
+        IInstanceProviderRegistry? registry = null, IRecentInstanceStore? recentInstances = null, IConfigurationSyncService? sync = null,
+        ApplicationUpdateViewModel? updates = null)
     {
         ArgumentNullException.ThrowIfNull(themes);
         _themes = themes;
+        Updates = updates;
+        OpenUpdatesCommand = new AsyncRelayCommand(_ => settings?.OpenUpdatesAsync() ?? Task.CompletedTask,
+            _ => settings is not null && updates is not null);
         _accounts = accounts;
         _sync = sync;
         if (sync is not null) sync.Changed += OnSyncChanged;
@@ -150,6 +154,10 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     public RelayCommand OpenLocalTerminalCommand { get; }
     /// <summary>打开系统设置，共用账号菜单和标题栏入口。</summary>
     public AsyncRelayCommand OpenSettingsCommand { get; }
+    /// <summary>应用级更新状态与设置共用。</summary>
+    public ApplicationUpdateViewModel? Updates { get; }
+    /// <summary>打开非模态更新详情，不改变当前连接。</summary>
+    public AsyncRelayCommand OpenUpdatesCommand { get; }
     /// <summary>打开登录与同步窗口。</summary>
     public AsyncRelayCommand OpenAccountCommand { get; }
     /// <summary>用户菜单退出本应用，失败反馈仍为安全的本地化文案。</summary>

@@ -124,7 +124,7 @@ public sealed partial class ApplicationProcessTests
         var root = new DirectoryInfo(AppContext.BaseDirectory);
         while (!File.Exists(Path.Combine(root.FullName, "Asgard.Hermod.slnx"))) root = root.Parent!;
         string configuration = AppContext.BaseDirectory.Contains("Release", StringComparison.Ordinal) ? "Release" : "Debug";
-        string executable = Path.Combine(root.FullName, "src", "Asgard.Hermod", "bin", configuration, "net10.0-windows", "Asgard.Hermod.exe");
+        string executable = Path.Combine(root.FullName, "src", "Asgard.Hermod", "bin", configuration, "net10.0-windows10.0.19041.0", "Asgard.Hermod.exe");
         var info = new ProcessStartInfo(executable) { UseShellExecute = false };
         info.ArgumentList.Add("--database:connectionString=Data Source=" + database + ";Version=3;Pooling=False;");
         info.Environment["HERMOD_TEMPORARY_DIRECTORY"] = Path.Combine(directory, "file-cache");

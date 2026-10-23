@@ -14,6 +14,8 @@ public static class HermodUiServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(owner);
         ArgumentNullException.ThrowIfNull(resources);
         services.TryAddSingleton<IAgentWindowService, AgentWindowService>();
+        if (services.Any(service => service.ServiceType == typeof(IApplicationUpdateService)))
+            services.TryAddSingleton<ApplicationUpdateViewModel>();
         services.TryAddSingleton<IInstanceEditor>(provider => new InstanceEditorService(owner,
             provider.GetRequiredService<IInstanceProviderRegistry>(),
             provider.GetRequiredService<IInstanceConfigurationService>(), provider.GetService<IAccountService>(), provider.GetService<IConfigurationSyncService>(),
@@ -25,7 +27,7 @@ public static class HermodUiServiceCollectionExtensions
             provider.GetRequiredService<ITemporaryFileStorage>(),
             provider.GetService<IAccountService>(), provider.GetService<IAccountEditor>(), provider.GetService<IMainWindowClosePreferenceStore>(),
             provider.GetService<Agent.AgentConfiguration>(), provider.GetService<IAgentPreferenceStore>(),
-            provider.GetService<Agent.AgentModelCatalog>(), provider.GetService<Agent.IAgentClient>()));
+            provider.GetService<Agent.AgentModelCatalog>(), provider.GetService<Agent.IAgentClient>(), provider.GetService<ApplicationUpdateViewModel>()));
         services.TryAddSingleton<IFileOpenService>(provider => new WindowsFileOpenService(owner,
             provider.GetRequiredService<IFileOpenRuleStore>()));
         services.TryAddSingleton<IInstanceWorkspaceFactory, InstanceWorkspaceFactory>();
