@@ -14,10 +14,10 @@
       <Button Style="{StaticResource MonitorActionButton}" Command="{Binding RefreshDetailsCommand}" ToolTip="{loc:Loc SshFilesRefresh}" AutomationProperties.Name="{loc:Loc SshFilesRefresh}" Margin="0,0,8,0"><StackPanel Orientation="Horizontal"><controls:IconView Kind="refresh-cw" Width="14" Height="14" /><TextBlock x:Name="RefreshLabel" Text="{loc:Loc SshFilesRefresh}" Margin="6,0,0,0" /></StackPanel></Button>
       <Button Style="{StaticResource MonitorActionButton}" Click="OnClose" ToolTip="{loc:Loc SshMonitorCollapse}" AutomationProperties.Name="{loc:Loc SshMonitorCollapse}"><StackPanel Orientation="Horizontal"><controls:IconView Kind="chevron-down" Width="14" Height="14" /><TextBlock x:Name="CollapseLabel" Text="{loc:Loc SshMonitorCollapse}" Margin="6,0,0,0" /></StackPanel></Button>
      </StackPanel>
-     <StackPanel x:Name="MonitorHeading" DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,14,0"><controls:IconView Kind="activity" Width="16" Height="16" Foreground="{DynamicResource AccentBrush}" /><TextBlock Text="{loc:Loc SshInstanceMonitor}" FontSize="13" FontWeight="SemiBold" Margin="14,0,0,0" /></StackPanel>
+     <StackPanel x:Name="MonitorHeading" DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,14,0"><controls:IconView Kind="activity" Width="16" Height="16" Foreground="{DynamicResource AccentBrush}" /><TextBlock x:Name="MonitorTitle" Text="{loc:Loc SshInstanceMonitor}" FontSize="13" FontWeight="SemiBold" Margin="14,0,0,0" /></StackPanel>
      <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled" VerticalAlignment="Center">
       <controls:SectionSelector x:Name="MonitorSections" SelectedValue="{Binding Section, Mode=TwoWay}" SelectedValuePath="Tag" AutomationProperties.Name="{loc:Loc SshMonitorTitle}">
-       <ListBoxItem Tag="overview" Content="{loc:Loc SshMonitorOverview}" /><ListBoxItem Tag="processes" Content="{loc:Loc SshMonitorProcesses}" /><ListBoxItem Tag="docker" Content="{loc:Loc SshMonitorDocker}" /><ListBoxItem Tag="network" Content="{loc:Loc SshMonitorNetwork}" /><ListBoxItem Tag="disks" Content="{loc:Loc SshMonitorDisks}" />
+       <ListBoxItem Tag="overview" Content="{loc:Loc SshMonitorOverview}" /><ListBoxItem Tag="processes" Content="{loc:Loc SshMonitorProcesses}" /><ListBoxItem Tag="network" Content="{loc:Loc SshMonitorNetwork}" /><ListBoxItem Tag="disks" Content="{loc:Loc SshMonitorDisks}" />
       </controls:SectionSelector>
      </ScrollViewer>
     </DockPanel>

@@ -15,7 +15,7 @@ public sealed partial class SshWorkspaceViewModel
     /// <summary>功能区的稳定 ID。</summary>
     public string ActiveSection { get; set { if (value is "terminal" or "files" or "forward" or "transfers" && SetProperty(ref field, value)) foreach (string property in new[] { nameof(IsTerminalSection), nameof(IsFilesSection), nameof(IsForwardSection), nameof(IsTransfersSection), nameof(IsToolboxOpen), nameof(ToolboxTitle) }) OnPropertyChanged(property); } } = "terminal";
     /// <summary>终端可视状态。</summary>
-    public bool IsTerminalSection => HasActiveConsole && !IsDockerCommandsOpen;
+    public bool IsTerminalSection => HasActiveConsole && !IsDockerCommandsOpen && !IsKubernetesOpen;
     /// <summary>实例工具箱显隐与控制台内容互不替换。</summary>
     public bool IsToolboxOpen => ActiveSection != "terminal";
     /// <summary>独立传输任务面板。</summary>
@@ -69,8 +69,9 @@ public sealed partial class SshWorkspaceViewModel
         _agentClient = client; _emptyAssistant = new(client, () => null, () => RemoteIdentity, _dialogs);
         InitializeLogs(client);
         InitializeDockerCommands();
+        InitializeKubernetes();
         ToggleAgentCommand = new RelayCommand(_ => IsAgentOpen = !IsAgentOpen, _ => HasActiveConsole && !IsClosed);
-        ToggleMonitorCommand = new RelayCommand(_ => { if (IsDockerCommandsOpen) { IsDockerCommandsOpen = false; IsMonitorOpen = true; } else IsMonitorOpen = !IsMonitorOpen; });
+        ToggleMonitorCommand = new RelayCommand(_ => { if (IsDockerCommandsOpen || IsKubernetesOpen) { IsDockerCommandsOpen = false; IsKubernetesOpen = false; IsMonitorOpen = true; } else IsMonitorOpen = !IsMonitorOpen; });
         ToggleToolboxCommand = new AsyncRelayCommand(async value => { if (value is not string section || section is not ("files" or "forward" or "transfers") || !SupportsInstanceTools) return; ActiveSection = ActiveSection == section ? "terminal" : section; if (IsFilesSection && Files.Entries.Count == 0) await Files.RefreshCommand.ExecuteAsync(); }, _ => !IsClosed && SupportsInstanceTools);
         CollapseToolboxCommand = new RelayCommand(_ => ActiveSection = "terminal");
         AddForwardCommand = new AsyncRelayCommand(_ => AddForwardAsync(), _ => IsConnected && SupportsInstanceTools);
@@ -98,6 +99,8 @@ public sealed partial class SshWorkspaceViewModel
     {
         Files.Cancel(); _emptyAssistant.ConnectionChanged(); foreach (var console in Consoles) console.Assistant.ConnectionChanged(); DisconnectLogs();
         DockerCommands.ConnectionChanged();
+        Kubernetes.ConnectionChanged();
+        _dockerMonitorStarted = false; await DockerMonitor.StopAsync();
         foreach (var forward in Forwards) forward.Dispose(); Forwards.Clear();
         await Monitor.StopAsync();
     }

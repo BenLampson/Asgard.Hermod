@@ -222,8 +222,10 @@ freezes endpoint, model, key and display identity for its entire context/tool
 loop. Changing or deleting that profile, closing the source, or changing account
 cancels the frozen task without replay. Busy selection requires an inline stop
 confirmation and waits for the source task to exit before switching.
-The settings manager uses the 1020x800 frame with four primary navigation entries;
-existing tag/storage/file-opening/about settings remain reachable from General.
+The settings manager uses a 1020x800 frame with one left navigation list containing
+only implemented, available pages. General, AI, tags, storage, file opening, account
+and updates have direct entries; About is always last. Unimplemented appearance
+and keyboard-shortcut pages have no placeholder entries.
 The 660x800 profile editor never fills a saved key into its input. A fixed-length
 placeholder indicates a retained key, changing endpoint discards that retention,
 and explicit key clearing commits immediately. Each edit invalidates a real,
@@ -644,6 +646,20 @@ resizing moves removed top rows into local history, while local ConPTY retains i
 existing system-reflow behavior. Explicit terminal line height and PTY grid sizing
 use the same DIP metrics. Offscreen layout tests cover both languages and themes,
 toolbox expansion, multiple consoles and the zero-console state.
+
+Terminal selection uses a single visible outline across rows before drawing glyphs,
+so fractional line heights and parent layout offsets cannot expose internal row seams.
+Selection colors remain separate from the terminal buffer and ANSI state.
+
+Instance monitoring contains overview, processes, network and disks. Docker container
+resource monitoring is available inside Docker management with its own selection and
+sampling history; hiding it pauses sampling without changing the host monitor tab.
+The parallel kubectl management page detects the remote client and context names,
+then explicitly queries a selected context, namespace and resource type through SSH
+exec channels. It never changes kubeconfig or reads credentials. Pod logs are bounded;
+details and rollout status are explicit reads, and deployment restarts require a
+cancelable target confirmation. Disconnects revoke pending queries and approvals;
+late results cannot repopulate a different connection or resource scope.
 
 The shared `DatabaseExecutionHistory` reads the current Session's bounded memory
 traces through a local collection view. Its 42-DIP context bar, 360-DIP navigation

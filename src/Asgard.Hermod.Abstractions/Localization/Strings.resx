@@ -5463,4 +5463,106 @@ Address: {2}</value></data>
   <data name="UpdatesAvailableTooltip" xml:space="preserve">
     <value>Update available — view version and release notes</value>
   </data>
+  <data name="KubeTitle" xml:space="preserve">
+    <value>kubectl management</value>
+  </data>
+  <data name="KubeContext" xml:space="preserve">
+    <value>Context</value>
+  </data>
+  <data name="KubeNamespace" xml:space="preserve">
+    <value>Namespace</value>
+  </data>
+  <data name="KubeResource" xml:space="preserve">
+    <value>Resource type</value>
+  </data>
+  <data name="KubeStatus" xml:space="preserve">
+    <value>Status / ready</value>
+  </data>
+  <data name="KubeDetect" xml:space="preserve">
+    <value>Detect environment</value>
+  </data>
+  <data name="KubeDetectHint" xml:space="preserve">
+    <value>Detect kubectl on this SSH host to begin.</value>
+  </data>
+  <data name="KubeMissing" xml:space="preserve">
+    <value>kubectl was not found on this SSH host.</value>
+  </data>
+  <data name="KubeDetected" xml:space="preserve">
+    <value>kubectl {0} is installed.</value>
+  </data>
+  <data name="KubeNoContext" xml:space="preserve">
+    <value>No Kubernetes context is configured on this host.</value>
+  </data>
+  <data name="KubeReady" xml:space="preserve">
+    <value>Choose a context, namespace and resource type, then refresh.</value>
+  </data>
+  <data name="KubeRefreshHint" xml:space="preserve">
+    <value>Refresh to load resources in the selected scope.</value>
+  </data>
+  <data name="KubeLoaded" xml:space="preserve">
+    <value>Loaded {0} resources.</value>
+  </data>
+  <data name="KubeEmpty" xml:space="preserve">
+    <value>No resources loaded in this scope.</value>
+  </data>
+  <data name="KubeDescribe" xml:space="preserve">
+    <value>View details</value>
+  </data>
+  <data name="KubeRollout" xml:space="preserve">
+    <value>Rollout status</value>
+  </data>
+  <data name="KubeRestart" xml:space="preserve">
+    <value>Restart deployment</value>
+  </data>
+  <data name="KubeOutput" xml:space="preserve">
+    <value>kubectl output</value>
+  </data>
+  <data name="KubeRestartImpact" xml:space="preserve">
+    <value>Restart deployment {0} in namespace {1}, context {2}, on {3}? Its pods will be replaced according to the deployment strategy.</value>
+  </data>
+  <data name="KubeResultTarget" xml:space="preserve">
+    <value>Resource {0} · namespace {1} · context {2} · host {3}</value>
+  </data>
+  <data name="KubeRestarted" xml:space="preserve">
+    <value>Restart requested for deployment {0}.</value>
+  </data>
+  <data name="KubeCompleted" xml:space="preserve">
+    <value>Command completed.</value>
+  </data>
+  <data name="KubeWorking" xml:space="preserve">
+    <value>Working…</value>
+  </data>
+  <data name="KubeCanceled" xml:space="preserve">
+    <value>The request was canceled or timed out.</value>
+  </data>
+  <data name="KubeQueryFailed" xml:space="preserve">
+    <value>The kubectl request failed. Check the host configuration, cluster connectivity and access permissions.</value>
+  </data>
+  <data name="KubeInvalidParameters" xml:space="preserve">
+    <value>Choose a valid context, namespace and resource.</value>
+  </data>
+  <data name="KubeTooManyResources" xml:space="preserve">
+    <value>The resource response is incomplete or too large. Choose a smaller scope and refresh.</value>
+  </data>
+  <data name="KubeOutcomeUnknown" xml:space="preserve">
+    <value>The restart was dispatched, but its outcome could not be confirmed. Check the deployment status before trying again.</value>
+  </data>
+  <data name="KubeResource_pods" xml:space="preserve">
+    <value>Pods</value>
+  </data>
+  <data name="KubeResource_deployments" xml:space="preserve">
+    <value>Deployments</value>
+  </data>
+  <data name="KubeResource_services" xml:space="preserve">
+    <value>Services</value>
+  </data>
+  <data name="KubeResource_nodes" xml:space="preserve">
+    <value>Nodes</value>
+  </data>
+  <data name="KubeResource_namespaces" xml:space="preserve">
+    <value>Namespaces</value>
+  </data>
+  <data name="KubeResource_events" xml:space="preserve">
+    <value>Events</value>
+  </data>
 </root>

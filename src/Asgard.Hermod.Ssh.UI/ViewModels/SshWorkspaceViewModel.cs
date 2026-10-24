@@ -176,5 +176,7 @@ public sealed partial class SshWorkspaceViewModel : WorkspacePageViewModel
         ShowForwardEditorCommand?.NotifyCanExecuteChanged();
         EditConnectionCommand.NotifyCanExecuteChanged(); NewSessionCommand.NotifyCanExecuteChanged(); ToggleDetailsCommand.NotifyCanExecuteChanged();
         ToggleDockerCommandsCommand?.NotifyCanExecuteChanged();
+        ToggleKubernetesCommand?.NotifyCanExecuteChanged();
+        ShowDockerResourcesCommand?.NotifyCanExecuteChanged();
     }
 }

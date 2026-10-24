@@ -25,9 +25,11 @@ public sealed partial class SshWorkspaceViewModel
             HasConnectedOnce = true; HostKeys = opened.HostKeys; _phase = SshWorkspacePhase.Connected; _connectedAt = DateTime.UtcNow;
             AddOpenedConsole(opened.InitialConsole, columns, rows);
             _clock.Start(); Refresh(); Connection.Finish();
+            Kubernetes.ConnectionChanged();
             _runTask = ObserveTransportAsync(opened, _ioCancellation);
             await Monitor.StartAsync(opened as ISshWorkspaceConnection);
             if (IsDockerCommandsOpen) await DockerCommands.InitializeAsync();
+            if (IsKubernetesOpen) await Kubernetes.InitializeAsync();
         }
         catch (OperationCanceledException) when (_connecting.IsCancellationRequested || IsClosed)
         {
@@ -76,7 +78,7 @@ public sealed partial class SshWorkspaceViewModel
     {
         OnPropertyChanged(nameof(Session)); _clock.Stop(); _saveFeedbackTimer.Stop(); _lifetime.Cancel(); _connecting?.Cancel(); _ioCancellation?.Cancel();
         await StopWorkspaceOperationsAsync(); Files.Dispose(); DisposeLogs();
-        DockerCommands.Dispose();
+        DockerCommands.Dispose(); Kubernetes.Dispose();
         if (_connection is { } connection) await connection.DisposeAsync();
         if (_connectTask is not null) await _connectTask;
         if (_runTask is not null) await _runTask;

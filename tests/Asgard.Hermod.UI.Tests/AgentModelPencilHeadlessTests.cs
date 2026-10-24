@@ -59,8 +59,8 @@ public sealed class AgentModelPencilHeadlessTests(WpfTestFixture fixture)
             var rows = WindowTestVisuals.Descendants<Border>(list).Where(border => border.Height == 100).ToArray();
             Assert.Equal(3, rows.Length); Assert.All(rows, row => Assert.Equal(100, row.ActualHeight));
             Assert.Equal(120, rows[1].TranslatePoint(new(), root).Y - rows[0].TranslatePoint(new(), root).Y, 1);
-            Assert.Equal(new[] { "general", "appearance", "agent", "account" }, settings.PrimaryCategories.Select(category => category.Id));
-            Assert.Contains(settings.AdditionalCategories, category => category.Id == "tags");
+            Assert.Equal(new[] { "general", "agent", "tags", "about" }, settings.Categories.Select(category => category.Id));
+            Assert.Contains(settings.Categories, category => category.Id == "tags");
             Capture(root, $"model-settings-{language}-{theme}");
             using var editor = settings.AgentModels!.CreateEditor(runtime.Catalog.Current.Profiles[0]);
             var form = new AgentModelEditorView { DataContext = editor }; var title = new SettingsCaption { Title = editor.Title, IsEditor = true };
@@ -75,8 +75,8 @@ public sealed class AgentModelPencilHeadlessTests(WpfTestFixture fixture)
             using var session = runtime.Client.CreateSession(); var selector = new AgentModelSelector { Session = session };
             var choices = new AgentModelChoices { DataContext = selector }; await Layout(choices, 440, 310);
             Assert.Equal(3, selector.Choices.Count); Assert.True(selector.Choices[0].IsSelected); Capture(choices, $"model-choices-{language}-{theme}");
-            settings.SelectCategoryCommand.Execute(settings.AdditionalCategories.Single(category => category.Id == "tags"));
-            Assert.True(settings.IsTagsSelected); Assert.True(settings.IsGeneralNavigationSelected);
+            settings.SelectCategoryCommand.Execute(settings.Categories.Single(category => category.Id == "tags"));
+            Assert.True(settings.IsTagsSelected); Assert.False(settings.IsGeneralSelected);
             Assert.Empty(bindings.Messages); Assert.Null(Window.GetWindow(root)); Assert.Null(PresentationSource.FromVisual(root));
         }
         finally { Text.SetApplicationCulture(null); }
