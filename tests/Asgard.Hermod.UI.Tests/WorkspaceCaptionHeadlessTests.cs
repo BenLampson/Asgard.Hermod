@@ -8,6 +8,30 @@ namespace Asgard.Hermod.UI.Tests;
 [Collection(WpfTestCollection.Name)]
 public sealed class WorkspaceCaptionHeadlessTests(WpfTestFixture fixture)
 {
+    /// <summary>标题身份在重新承载或关闭后可独立排版，不产生迟到的祖先绑定错误污染下个页面。</summary>
+    [Fact]
+    public Task DetachedIdentityResetsCompactStateWithoutAncestorBindingErrors() => fixture.RunOffscreenAsync(async () =>
+    {
+        using var bindings = new WpfBindingTrace();
+        var identity = new WorkspaceIdentity { Endpoint = "example.test:22", Icon = "terminal" };
+        var header = new WorkspaceHeader { IdentityContent = identity };
+        var root = new Border { Child = header };
+        await Layout(root, 800);
+        var address = Assert.IsType<TextBlock>(identity.FindName("Address"));
+        Assert.Equal(Visibility.Collapsed, address.Visibility);
+        header.IdentityContent = null;
+        await Layout(root, 800);
+        var standalone = new Border { Child = identity };
+        await Layout(standalone, 1200);
+        Assert.Equal(Visibility.Visible, address.Visibility);
+        Assert.Empty(bindings.Messages);
+        static async Task Layout(FrameworkElement element, double width)
+        {
+            element.Measure(new(width, 44)); element.Arrange(new(0, 0, width, 44)); element.UpdateLayout();
+            await WpfTestFixture.DrainDispatcherAsync(); element.UpdateLayout();
+        }
+    });
+
     [Theory]
     [InlineData("en", UiTheme.Light, 1120, 96)]
     [InlineData("zh-Hans", UiTheme.Dark, 1600, 96)]
