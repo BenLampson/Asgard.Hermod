@@ -17,11 +17,13 @@ public class WorkspaceHeader : Control
     public static readonly DependencyProperty EditCommandProperty = DependencyProperty.Register(nameof(EditCommand), typeof(ICommand), typeof(WorkspaceHeader));
     /// <summary>只有外层工作窗口展示窗口按钮；嵌入式内容不重复显示。</summary>
     public static readonly DependencyProperty ShowWindowControlsProperty = DependencyProperty.Register(nameof(ShowWindowControls), typeof(bool), typeof(WorkspaceHeader));
-    private static readonly DependencyPropertyKey IsCompactPropertyKey = DependencyProperty.RegisterReadOnly(nameof(IsCompact), typeof(bool), typeof(WorkspaceHeader), new PropertyMetadata(false));
+    private static readonly DependencyPropertyKey IsCompactPropertyKey = DependencyProperty.RegisterAttachedReadOnly(nameof(IsCompact), typeof(bool), typeof(WorkspaceHeader), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.Inherits));
     /// <summary>模块可让次要状态让位，实际连接状态保持常驻。</summary>
     public static readonly DependencyProperty IsCompactProperty = IsCompactPropertyKey.DependencyProperty;
     /// <summary>紧凑标题的模块呈现提示。</summary>
     public bool IsCompact => (bool)GetValue(IsCompactProperty);
+    /// <summary>身份内容继承标题的紧凑状态，移出标题或模板重建时无需查找已消失的祖先。</summary>
+    public static bool GetIsCompact(DependencyObject element) => (bool)element.GetValue(IsCompactProperty);
     /// <summary>实例创建后按已应用的启动语言读取，避免主题模板缓存首次解析的语种。</summary>
     public string EditConnectionLabel => Text.Get("WorkspaceConnectionEdit");
     /// <summary>重连文案属于标题实例，不固化到共享模板。</summary>

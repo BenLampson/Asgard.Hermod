@@ -7,7 +7,7 @@
    FontFamily="{DynamicResource WorkspaceFont}" Foreground="{DynamicResource WorkspaceInkBrush}" FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="8,0,0,0" MaxWidth="320" />
   <TextBlock x:Name="Address" Grid.Column="2" Text="{Binding Endpoint, ElementName=Root}" ToolTip="{Binding Endpoint, ElementName=Root}"
    FontFamily="{DynamicResource WorkspaceFont}" FontSize="11" Foreground="{DynamicResource WorkspaceMutedBrush}" VerticalAlignment="Center" Margin="10,0,0,0" MaxWidth="300" TextTrimming="CharacterEllipsis">
-   <TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers><DataTrigger Binding="{Binding IsCompact, RelativeSource={RelativeSource AncestorType=controls:WorkspaceHeader}}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></TextBlock.Style>
+   <TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers><DataTrigger Binding="{Binding (controls:WorkspaceHeader.IsCompact), RelativeSource={RelativeSource Self}}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></TextBlock.Style>
   </TextBlock>
  </Grid>
 </UserControl>
