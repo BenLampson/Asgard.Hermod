@@ -15,6 +15,12 @@ public sealed class WindowsSshWorkspaceDialogs(Func<Window?> owner) : ISshWorksp
     public Task<bool> ConfirmActionAsync(string title, string detail, string preview) => Task.FromResult(new ConfirmationDialog(title, detail, Text.Get("SshActionConfirm"), preview: preview) { Owner = owner() }.ShowDialog() == true);
     /// <inheritdoc />
     public Task<bool> ConfirmDockerActionAsync(string title, string detail, string preview, CancellationToken token)
+        => ConfirmCancelableActionAsync(title, detail, token);
+    /// <inheritdoc />
+    public Task<bool> ConfirmKubernetesActionAsync(string title, string detail, string preview, CancellationToken token)
+        => ConfirmCancelableActionAsync(title, detail, token);
+
+    private Task<bool> ConfirmCancelableActionAsync(string title, string detail, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
         var dialog = new ConfirmationDialog(title, detail, title) { Owner = owner() };

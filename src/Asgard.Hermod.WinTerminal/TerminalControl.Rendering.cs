@@ -101,13 +101,15 @@ public sealed partial class TerminalControl
             int start = historyCount - _scrollOffset;
             var history = buffer.GetScrollback();
             float pixelsPerDip = (float)VisualTreeHelper.GetDpi(this).PixelsPerDip;
+            // 选区先整体填充，逐行绘字时不再叠加背景，避免实际窗口合成出现横线。
+            _renderer.RenderSelection(drawingContext, _selection, start, buffer.Columns, buffer.Rows);
             for (int y = 0; y < buffer.Rows; y++)
             {
                 int index = start + y;
                 Span<TerminalCellInfo> row = index < historyCount
                     ? history[index].AsSpan() : buffer.GetRow(index - historyCount);
                 drawingContext.PushTransform(new TranslateTransform(0, y * _renderer.CellHeight));
-                _renderer.RenderRow(drawingContext, row, _selection, index, pixelsPerDip);
+                _renderer.RenderRow(drawingContext, row, _selection, index, pixelsPerDip, drawSelection: false);
                 drawingContext.Pop();
             }
             var state = session.Decoder.State;

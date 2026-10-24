@@ -8,6 +8,57 @@ namespace Asgard.Hermod.WinTerminal.Tests;
 /// <summary>验证跨越 ANSI 彩色输出的选区背景连续、文字可读，取消后恢复原色。</summary>
 public sealed class TerminalSelectionRenderingTests
 {
+    /// <summary>实际控件在父布局小数偏移与 DPI 缩放下，选区内部每一像素必须保持连续。</summary>
+    [Theory]
+    [InlineData(1.0)]
+    [InlineData(1.25)]
+    [InlineData(1.5)]
+    [InlineData(1.75)]
+    [InlineData(2.0)]
+    public void ControlSelectionHasNoSeamsWithFractionalLayoutOrigin(double scale) => WpfTestThread.Run(() =>
+    {
+        using var session = new TerminalSession(72, 10, CreateOptions(false));
+        session.FeedOutput("\x1b[?25l"u8);
+        using var control = new TerminalControl
+        {
+            LineHeight = 22.1,
+            FontSize = 13,
+            Background = new SolidColorBrush(Color.FromRgb(32, 38, 46)),
+            Foreground = new SolidColorBrush(Color.FromRgb(232, 237, 244)),
+            Session = session,
+            Margin = new Thickness(0.37, 0.61, 0, 0),
+        };
+        var root = new System.Windows.Controls.Grid { Width = 600, Height = 220 };
+        root.Children.Add(control); root.Measure(new(600, 220)); root.Arrange(new(0, 0, 600, 220)); root.UpdateLayout();
+        control.SelectAll(); root.UpdateLayout();
+        var bitmap = new RenderTargetBitmap((int)(600 * scale), (int)(220 * scale), 96 * scale, 96 * scale, PixelFormats.Pbgra32);
+        bitmap.Render(root);
+        ExportPreview(bitmap, $"terminal-control-selection-{scale}.png");
+        int x = bitmap.PixelWidth / 2;
+        for (int y = 3; y < (int)(Math.Min(210, session.Buffer.Rows * 22.1) * scale) - 3; y++)
+            Assert.Equal(Color.FromRgb(232, 237, 244), Pixel(bitmap, x, y));
+    });
+
+    /// <summary>跨历史裁剪仍使用连续轮廓；首尾行只高亮真实选择列。</summary>
+    [Fact]
+    public void SelectionOutlineClipsHistoryAndPreservesPartialEndRows() => WpfTestThread.Run(() =>
+    {
+        using var renderer = new TerminalRenderer(); var options = CreateOptions(false); options.CellHeight = 22.1;
+        renderer.Configure("Consolas", 13, options);
+        var visual = new DrawingVisual(); var group = new DrawingGroup();
+        using (var context = group.Open()) renderer.RenderSelection(context, new TerminalSelection(3, 5, 6, 9), 6, 20, 4);
+        Assert.Single(group.Children); // 单一几何对象没有逐行内部边缘。
+        using (var context = visual.RenderOpen())
+        {
+            context.DrawRectangle(new SolidColorBrush(ToColor(options.DefaultBackground)), null, new Rect(0, 0, 200, 100));
+            context.DrawDrawing(group);
+        }
+        var bitmap = new RenderTargetBitmap(200, 100, 96, 96, PixelFormats.Pbgra32); bitmap.Render(visual);
+        Assert.Equal(ToColor(options.DefaultForeground), Pixel(bitmap, 1, 1));
+        Assert.Equal(ToColor(options.DefaultForeground), Pixel(bitmap, (int)(6.5 * renderer.CellWidth), 75));
+        Assert.Equal(ToColor(options.DefaultBackground), Pixel(bitmap, (int)(8 * renderer.CellWidth), 75));
+    });
+
     /// <summary>SSH 的小数行高在各 DPI 下跨行选中时，空白背景也不能出现水平细缝。</summary>
     [Theory]
     [InlineData(1.0)]
@@ -104,10 +155,11 @@ public sealed class TerminalSelectionRenderingTests
         using (var context = visual.RenderOpen())
         {
             context.DrawRectangle(new SolidColorBrush(ToColor(options.DefaultBackground)), null, new Rect(0, 0, width, height));
+            renderer.RenderSelection(context, selection, 0, session.Buffer.Columns, session.Buffer.Rows);
             for (int row = 0; row < session.Buffer.Rows; row++)
             {
                 context.PushTransform(new TranslateTransform(0, row * renderer.CellSize.Height));
-                renderer.RenderRow(context, session.Buffer.GetRow(row), selection, row, (float)scale);
+                renderer.RenderRow(context, session.Buffer.GetRow(row), selection, row, (float)scale, drawSelection: false);
                 context.Pop();
             }
         }

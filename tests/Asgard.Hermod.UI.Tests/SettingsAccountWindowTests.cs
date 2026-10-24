@@ -31,9 +31,7 @@ public sealed class SettingsAccountWindowTests(WpfTestFixture fixture)
             window = new SettingsWindow(model);
             WindowPreviewCapture.Show(window);
             await WindowTestVisuals.UpdateLayoutAsync(window);
-            var navigation = Assert.Single(WindowTestVisuals.Descendants<Button>(window),
-                button => button.CommandParameter is SettingsCategoryViewModel { Id: "account" });
-            WindowTestVisuals.Invoke(navigation);
+            model.SelectedCategory = model.Categories.Single(category => category.Id == "account");
             await WindowPreviewCapture.VerifyAsync(window, $"settings-account-{language}-{theme}");
             Assert.True(model.IsAccountSelected);
             Assert.Equal("hermod-admin", AccountName(window).Text);

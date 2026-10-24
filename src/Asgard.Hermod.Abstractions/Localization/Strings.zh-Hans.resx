@@ -5463,4 +5463,106 @@ SQL：
   <data name="UpdatesAvailableTooltip" xml:space="preserve">
     <value>有可用更新 — 查看版本和更新说明</value>
   </data>
+  <data name="KubeTitle" xml:space="preserve">
+    <value>kubectl 管理</value>
+  </data>
+  <data name="KubeContext" xml:space="preserve">
+    <value>上下文</value>
+  </data>
+  <data name="KubeNamespace" xml:space="preserve">
+    <value>命名空间</value>
+  </data>
+  <data name="KubeResource" xml:space="preserve">
+    <value>资源类型</value>
+  </data>
+  <data name="KubeStatus" xml:space="preserve">
+    <value>状态 / 就绪</value>
+  </data>
+  <data name="KubeDetect" xml:space="preserve">
+    <value>检测环境</value>
+  </data>
+  <data name="KubeDetectHint" xml:space="preserve">
+    <value>请先检测当前 SSH 主机上的 kubectl 环境。</value>
+  </data>
+  <data name="KubeMissing" xml:space="preserve">
+    <value>当前 SSH 主机上未检测到 kubectl。</value>
+  </data>
+  <data name="KubeDetected" xml:space="preserve">
+    <value>已检测到 kubectl {0}。</value>
+  </data>
+  <data name="KubeNoContext" xml:space="preserve">
+    <value>此主机尚未配置 Kubernetes 上下文。</value>
+  </data>
+  <data name="KubeReady" xml:space="preserve">
+    <value>请选择上下文、命名空间和资源类型，然后刷新。</value>
+  </data>
+  <data name="KubeRefreshHint" xml:space="preserve">
+    <value>请刷新以加载所选范围内的资源。</value>
+  </data>
+  <data name="KubeLoaded" xml:space="preserve">
+    <value>已加载 {0} 个资源。</value>
+  </data>
+  <data name="KubeEmpty" xml:space="preserve">
+    <value>当前范围内没有已加载的资源。</value>
+  </data>
+  <data name="KubeDescribe" xml:space="preserve">
+    <value>查看详情</value>
+  </data>
+  <data name="KubeRollout" xml:space="preserve">
+    <value>发布状态</value>
+  </data>
+  <data name="KubeRestart" xml:space="preserve">
+    <value>滚动重启</value>
+  </data>
+  <data name="KubeOutput" xml:space="preserve">
+    <value>kubectl 输出</value>
+  </data>
+  <data name="KubeRestartImpact" xml:space="preserve">
+    <value>是否在 {3} 上滚动重启上下文 {2}、命名空间 {1} 中的 Deployment {0}？其 Pod 将按照部署策略替换。</value>
+  </data>
+  <data name="KubeResultTarget" xml:space="preserve">
+    <value>资源 {0} · 命名空间 {1} · 上下文 {2} · 主机 {3}</value>
+  </data>
+  <data name="KubeRestarted" xml:space="preserve">
+    <value>已请求滚动重启 Deployment {0}。</value>
+  </data>
+  <data name="KubeCompleted" xml:space="preserve">
+    <value>命令已完成。</value>
+  </data>
+  <data name="KubeWorking" xml:space="preserve">
+    <value>正在处理…</value>
+  </data>
+  <data name="KubeCanceled" xml:space="preserve">
+    <value>请求已取消或超时。</value>
+  </data>
+  <data name="KubeQueryFailed" xml:space="preserve">
+    <value>kubectl 请求失败，请检查主机配置、集群连接和访问权限。</value>
+  </data>
+  <data name="KubeInvalidParameters" xml:space="preserve">
+    <value>请选择有效的上下文、命名空间和资源。</value>
+  </data>
+  <data name="KubeTooManyResources" xml:space="preserve">
+    <value>资源响应不完整或过大，请缩小查询范围后刷新。</value>
+  </data>
+  <data name="KubeOutcomeUnknown" xml:space="preserve">
+    <value>重启命令已派发，但结果无法确认。请先检查部署状态，再决定是否重试。</value>
+  </data>
+  <data name="KubeResource_pods" xml:space="preserve">
+    <value>Pod</value>
+  </data>
+  <data name="KubeResource_deployments" xml:space="preserve">
+    <value>Deployment</value>
+  </data>
+  <data name="KubeResource_services" xml:space="preserve">
+    <value>Service</value>
+  </data>
+  <data name="KubeResource_nodes" xml:space="preserve">
+    <value>节点</value>
+  </data>
+  <data name="KubeResource_namespaces" xml:space="preserve">
+    <value>命名空间</value>
+  </data>
+  <data name="KubeResource_events" xml:space="preserve">
+    <value>事件</value>
+  </data>
 </root>

@@ -4,11 +4,11 @@ namespace Asgard.Hermod.Ssh.UI.Views;
 public partial class SshWorkspaceView
 {
     private void OnCloseDockerCommands(object? sender, EventArgs args) { if (_model is not null) _model.IsDockerCommandsOpen = false; }
-    private void OnDockerMonitorRequested(object? sender, EventArgs args)
+    private void OnCloseDockerResources(object? sender, EventArgs args) { if (_model is not null) _model.IsDockerResourcesOpen = false; }
+    private void OnCloseKubernetes(object? sender, EventArgs args) { if (_model is not null) _model.IsKubernetesOpen = false; }
+    private async void OnDockerMonitorRequested(object? sender, EventArgs args)
     {
         if (_model is null) return;
-        _model.IsDockerCommandsOpen = false; _model.Monitor.Section = "docker"; _model.IsMonitorOpen = true;
-        if (_model.DockerCommands.SelectedContainer is { } selected)
-            _model.Monitor.SelectDockerContainer(selected.Id);
+        await _model.ShowDockerResourcesCommand.ExecuteAsync();
     }
 }

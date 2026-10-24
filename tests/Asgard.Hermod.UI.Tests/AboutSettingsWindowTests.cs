@@ -20,13 +20,11 @@ public sealed class AboutSettingsWindowTests(WpfTestFixture fixture)
         try
         {
             WindowPreviewCapture.Show(window); await WindowTestVisuals.UpdateLayoutAsync(window);
-            var general = model.Categories.Single(category => category.Id == "general");
-            var navigation = Assert.Single(WindowTestVisuals.Descendants<Button>(window), button => ReferenceEquals(button.CommandParameter, general));
-            WindowTestVisuals.Invoke(navigation); await WindowTestVisuals.UpdateLayoutAsync(window);
+            var navigation = Assert.Single(WindowTestVisuals.Descendants<ListBox>(window), list => ReferenceEquals(list.ItemsSource, model.Categories));
             var category = model.Categories.Single(category => category.Id == "about");
-            var entry = Assert.Single(WindowTestVisuals.Descendants<Button>(window), button => ReferenceEquals(button.CommandParameter, category));
+            var entry = Assert.IsType<ListBoxItem>(navigation.ItemContainerGenerator.ContainerFromItem(category));
             entry.BringIntoView(); await WindowTestVisuals.UpdateLayoutAsync(window);
-            Assert.True(entry.IsEnabled); Assert.True(entry.IsVisible); WindowTestVisuals.Invoke(entry); await WindowTestVisuals.UpdateLayoutAsync(window);
+            Assert.True(entry.IsEnabled); Assert.True(entry.IsVisible); navigation.SelectedItem = category; await WindowTestVisuals.UpdateLayoutAsync(window);
             var about = Assert.Single(WindowTestVisuals.Descendants<AboutSettingsView>(window)); Assert.True(about.IsVisible); Assert.True(model.IsAboutSelected);
             Assert.Equal(new HomeWorkspaceViewModel(_ => { }).Version, Assert.IsType<TextBlock>(about.FindName("AboutVersion")).Text);
             foreach (string key in new[] { "HomeAuthor", "HomeLicense", "HomeOpenSourceDescription" })

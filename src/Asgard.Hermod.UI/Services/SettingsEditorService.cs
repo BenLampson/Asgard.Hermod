@@ -116,7 +116,7 @@ public sealed class SettingsEditorService : ISettingsEditor, IDisposable, IAsync
 
     /// <summary>分类使用稳定标识，是否允许切换仍由模型命令判断。</summary>
     private static void SelectCategory(SettingsViewModel model, string category) =>
-        model.SelectCategoryCommand.Execute(model.Categories.First(item => item.Id == category));
+        model.SelectCategoryCommand.Execute(model.Categories.FirstOrDefault(item => item.Id == category));
 
     /// <summary>真正关闭后才允许下一次创建；模型由 SettingsWindow 的关闭处理释放。</summary>
     private void OnWindowClosed(object? sender, EventArgs args)

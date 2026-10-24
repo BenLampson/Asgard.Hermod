@@ -9,7 +9,31 @@ public sealed partial class SshWorkspaceViewModel
     /// <summary>命令参数及执行结果属于当前实例窗口。</summary>
     public SshDockerCommandsViewModel DockerCommands { get; private set; } = null!;
     /// <summary>隐藏命令库不会取消正在执行的操作。</summary>
-    public bool IsDockerCommandsOpen { get; set { if (SetProperty(ref field, value)) OnPropertyChanged(nameof(IsTerminalSection)); } }
+    public bool IsDockerCommandsOpen
+    {
+        get; set
+        {
+            if (!SetProperty(ref field, value)) return;
+            if (value) IsKubernetesOpen = false;
+            else IsDockerResourcesOpen = false;
+            OnPropertyChanged(nameof(IsTerminalSection));
+        }
+    }
+    private bool _dockerMonitorStarted;
+    /// <summary>Docker 资源采样只属于管理页，不改变实例监测所选栏目。</summary>
+    public SshMonitorViewModel DockerMonitor { get; private set; } = null!;
+    /// <summary>资源面板收起后暂停采样；管理页保留其历史和选中容器。</summary>
+    public bool IsDockerResourcesOpen
+    {
+        get; set
+        {
+            if (!SetProperty(ref field, value)) return;
+            DockerMonitor.IsPaused = !value;
+            DockerMonitor.IsPanelVisible = value;
+        }
+    }
+    /// <summary>在 Docker 管理内部打开资源监测。</summary>
+    public AsyncRelayCommand ShowDockerResourcesCommand { get; private set; } = null!;
     /// <summary>标题栏打开或收起命令库。</summary>
     public AsyncRelayCommand ToggleDockerCommandsCommand { get; private set; } = null!;
     /// <summary>返回监控或终端，不改变连接。</summary>
@@ -17,6 +41,7 @@ public sealed partial class SshWorkspaceViewModel
 
     private void InitializeDockerCommands()
     {
+        DockerMonitor = new(_dockerEnvironmentReader) { Section = "docker", IsPaused = true };
         DockerCommands = new(() => IsConnected && !IsClosed ? _connection as ISshWorkspaceConnection : null, () => RemoteIdentity, _dialogs,
             () => !IsReadOnly, RunDockerInTerminalAsync, _dockerEnvironmentReader);
         ToggleDockerCommandsCommand = new AsyncRelayCommand(async _ =>
@@ -25,16 +50,31 @@ public sealed partial class SshWorkspaceViewModel
             if (IsDockerCommandsOpen) await DockerCommands.InitializeAsync();
         }, _ => !IsClosed);
         CloseDockerCommandsCommand = new RelayCommand(_ => IsDockerCommandsOpen = false);
-        Monitor.DockerOperationRequested += async (_, operation) =>
+        ShowDockerResourcesCommand = new AsyncRelayCommand(async _ =>
+        {
+            if (_connection is not ISshWorkspaceConnection connection || !IsConnected) return;
+            IsDockerResourcesOpen = true;
+            if (!_dockerMonitorStarted)
+            {
+                _dockerMonitorStarted = true;
+                await DockerMonitor.StartAsync(connection);
+            }
+            else await DockerMonitor.RefreshDetailsCommand.ExecuteAsync();
+            if (!IsConnected || !ReferenceEquals(connection, _connection)) { IsDockerResourcesOpen = false; return; }
+            if (DockerCommands.SelectedContainer is { } selected) DockerMonitor.SelectDockerContainer(selected.Id);
+        }, _ => !IsClosed && IsConnected);
+        DockerMonitor.DockerOperationRequested += async (_, operation) =>
         {
             if (!IsConnected || IsClosed) return;
+            IsDockerResourcesOpen = false;
             if (DockerCommands.IsBusy) { IsDockerCommandsOpen = true; return; }
-            var container = Monitor.SelectedContainer;
+            var container = DockerMonitor.SelectedContainer;
             DockerCommands.Select(operation == "manage" ? "logs" : operation, container); IsDockerCommandsOpen = true;
             await DockerCommands.InitializeAsync();
             if (operation is "start" or "stop" or "restart") await DockerCommands.RunActionAsync(operation);
         };
-        DockerCommands.Changed += (_, _) => Monitor.RefreshDetailsCommand.Execute(null);
+        DockerMonitor.ContainerLogsRequested += OnContainerLogsRequested;
+        DockerCommands.Changed += (_, _) => { if (IsDockerResourcesOpen) DockerMonitor.RefreshDetailsCommand.Execute(null); };
     }
 
     private Task RunDockerInTerminalAsync(SshDockerCommandPlan plan, CancellationToken token)

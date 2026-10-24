@@ -42,18 +42,15 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         Categories =
         [
             new("general", Text.Get("General"), "sliders-horizontal", languageStore is not null || closePreferences is not null),
-            new("appearance", Text.Get("Appearance"), "palette", false),
             new("agent", Text.Get("AgentSettingsTitle"), "sparkles", AgentModels is not null || AgentSettings is not null),
             new("tags", Text.Get("TagManagement"), "tags", true),
             new("storage", Text.Get("Storage"), "hard-drive", Storage is not null),
             new("file-opening", Text.Get("FileOpening"), "folder-open", fileRules is not null),
             new("account", Text.Get("AccountAndSync"), "user-round", accounts is not null && openAccount is not null),
-            new("shortcuts", Text.Get("KeyboardShortcuts"), "keyboard", false),
-            new("about", Text.Get("About"), "info", true),
             new("updates", Text.Get("UpdatesTitle"), "download", updates is not null),
+            new("about", Text.Get("About"), "info", true),
         ];
-        PrimaryCategories = Categories.Where(category => category.Id is "general" or "appearance" or "agent" or "account").ToArray();
-        AdditionalCategories = Categories.Where(category => category.Id is not ("general" or "appearance" or "agent" or "account")).ToArray();
+        Categories = Categories.Where(category => category.IsAvailable).ToArray();
         Languages = [new("", Text.Get("FollowWindows"), []), .. Text.Languages];
         _selectedLanguage = Languages[0];
         try
@@ -66,7 +63,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         _selectedCategory = Categories.Single(category => category.Id == (languageStore is null && closePreferences is null ? "tags" : "general"));
         SelectCategoryCommand = new RelayCommand(parameter =>
         {
-            if (parameter is SettingsCategoryViewModel { IsAvailable: true } category)
+            if (parameter is SettingsCategoryViewModel category && Categories.Contains(category))
                 SelectedCategory = category;
         });
         CloseCommand = new RelayCommand(_ => CloseRequested?.Invoke(this, false));
@@ -74,14 +71,8 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
 
     /// <summary>请求关闭设置窗口。</summary>
     public event EventHandler<bool>? CloseRequested;
-    /// <summary>设计稿中的完整分类导航，未设计的页面保持不可用。</summary>
+    /// <summary>只展示已装配功能的左侧导航，关于始终位于最后。</summary>
     public IReadOnlyList<SettingsCategoryViewModel> Categories { get; }
-    /// <summary>Pencil 四项主导航，其他已有功能放在通用页，不删除能力。</summary>
-    public IReadOnlyList<SettingsCategoryViewModel> PrimaryCategories { get; }
-    /// <summary>通用页保留标签、存储、文件打开和关于等已有设置入口。</summary>
-    public IReadOnlyList<SettingsCategoryViewModel> AdditionalCategories { get; }
-    /// <summary>附加设置仍归于通用导航。</summary>
-    public bool IsGeneralNavigationSelected => SelectedCategory.Id is not ("agent" or "appearance" or "account");
     /// <summary>本机关闭询问和默认动作，保存后立即作用于主窗体。</summary>
     public MainWindowCloseSettingsViewModel? CloseSettings { get; }
     /// <summary>本机模型配置，与账号及实例同步独立。</summary>
@@ -154,11 +145,10 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
     public SettingsCategoryViewModel SelectedCategory
     {
         get => _selectedCategory;
-        private set
+        set
         {
-            if (!SetProperty(ref _selectedCategory, value)) return;
+            if (value is null || !Categories.Contains(value) || !SetProperty(ref _selectedCategory, value)) return;
             OnPropertyChanged(nameof(IsGeneralSelected));
-            OnPropertyChanged(nameof(IsGeneralNavigationSelected));
             OnPropertyChanged(nameof(IsAgentSelected));
             OnPropertyChanged(nameof(IsTagsSelected));
             OnPropertyChanged(nameof(IsFileOpeningSelected));

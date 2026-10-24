@@ -46,14 +46,14 @@ public sealed class TerminalRenderer : IDisposable
     /// <summary>释放缓冲区、解析器或字体缓存资源。</summary>
     public void Dispose() => _glyphs.Dispose();
     /// <summary>绘制一行单元格的背景、字形和装饰。</summary>
-    public void RenderRow(DrawingContext drawingContext, Span<TerminalCellInfo> row, TerminalSelection? selection, int rowIndex, float pixelsPerDip)
+    public void RenderRow(DrawingContext drawingContext, Span<TerminalCellInfo> row, TerminalSelection? selection, int rowIndex, float pixelsPerDip, bool drawSelection = true)
     {
         double cellW = _glyphs.CellWidth;
         double cellH = _glyphs.CellHeight;
         double baselineY = _glyphs.Ascent;
         int len = row.Length;
         // 整行选区一次填充；按 ANSI 样式分段填充会在非整数像素边界留下抗锯齿细缝。
-        if (selection is { } range && rowIndex >= range.StartY && rowIndex <= range.EndY)
+        if (drawSelection && selection is { } range && rowIndex >= range.StartY && rowIndex <= range.EndY)
         {
             int first = Math.Max(0, rowIndex == range.StartY ? range.StartX : 0);
             int last = Math.Min(len - 1, rowIndex == range.EndY ? range.EndX : len - 1);
@@ -80,6 +80,30 @@ public sealed class TerminalRenderer : IDisposable
                 DrawGlyphRun(drawingContext, row, runStart, runEnd, x, baselineY, Brush(fg), Brush(decoration), style, pixelsPerDip);
             }
         }
+    }
+
+    /// <summary>把整个可见选区绘成单一轮廓，消除 GPU 合成时相邻行矩形的抗锯齿接缝。</summary>
+    public void RenderSelection(DrawingContext context, TerminalSelection? selection, int firstRow, int columns, int rows)
+    {
+        if (selection is not { } range || columns <= 0 || rows <= 0 || range.EndY < firstRow || range.StartY >= firstRow + rows) return;
+        int top = Math.Max(firstRow, range.StartY) - firstRow;
+        int bottom = Math.Min(firstRow + rows - 1, range.EndY) - firstRow;
+        double left = Math.Clamp(range.StartY < firstRow ? 0 : range.StartX, 0, columns) * CellWidth;
+        double right = Math.Clamp(range.EndY >= firstRow + rows ? columns : range.EndX + 1, 0, columns) * CellWidth;
+        double width = columns * CellWidth;
+        var geometry = new StreamGeometry();
+        using (var path = geometry.Open())
+        {
+            path.BeginFigure(new(left, top * CellHeight), true, true);
+            if (top == bottom)
+                path.PolyLineTo([new(right, top * CellHeight), new(right, (bottom + 1) * CellHeight), new(left, (bottom + 1) * CellHeight)], true, false);
+            else
+                path.PolyLineTo([new(width, top * CellHeight), new(width, bottom * CellHeight),
+                    new(right, bottom * CellHeight), new(right, (bottom + 1) * CellHeight),
+                    new(0, (bottom + 1) * CellHeight), new(0, (top + 1) * CellHeight), new(left, (top + 1) * CellHeight)], true, false);
+        }
+        geometry.Freeze();
+        context.DrawGeometry(Brush(_options.DefaultForeground), null, geometry);
     }
 
     /// <summary>只将背景边缘对齐设备像素，相邻行共用同一边界；文字仍保留抗锯齿。</summary>
