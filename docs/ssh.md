@@ -59,7 +59,7 @@ does not independently verify the selected target's SSH fingerprint; host trust
 authenticates the bastion, and the gateway selects the target.
 
 Every new console and tool command opens its own PTY and repeats the configured
-selection. Monitoring and Docker commands therefore run in the selected server's
+selection. Monitoring, Docker and Kubernetes commands therefore run in the selected server's
 POSIX shell, without injecting commands into the user's console. Command input
 and output use `base64` and random framing markers, preserving output bytes across
 terminal newline transformations. Both `sh` and `base64` must already be available

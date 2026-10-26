@@ -43,7 +43,7 @@ public sealed partial class SshWorkspaceViewModel
         {
             IsDockerCommandsOpen = !IsDockerCommandsOpen;
             if (IsDockerCommandsOpen) await InitializeDockerPanelAsync();
-        }, _ => !IsClosed && SupportsInstanceTools);
+        }, _ => !IsClosed);
         CloseDockerCommandsCommand = new RelayCommand(_ => IsDockerCommandsOpen = false);
         ShowDockerResourcesCommand = new AsyncRelayCommand(async _ =>
         {

@@ -30,7 +30,7 @@ public sealed class SshBastionConfigurationTests(WpfTestFixture fixture)
         Assert.DoesNotContain(parameters.Keys, key => key.StartsWith("jump.", StringComparison.Ordinal));
     }
 
-    /// <summary>文件和转发入口不可触发网关操作，但终端、监控和 Docker 保持可用。</summary>
+    /// <summary>文件和转发入口不可触发网关操作，但终端、监控、Docker 和 Kubernetes 命令保持可用。</summary>
     [Fact]
     public Task UnsupportedToolsAreDisabledForBastionOnly() => fixture.RunOffscreenAsync(async () =>
     {
@@ -52,6 +52,12 @@ public sealed class SshBastionConfigurationTests(WpfTestFixture fixture)
         Assert.False(model.AddForwardCommand.CanExecute(null)); Assert.False(model.ShowForwardEditorCommand.CanExecute(null));
         Assert.True(model.NewSessionCommand.CanExecute(null)); Assert.True(model.ToggleMonitorCommand.CanExecute(null));
         Assert.True(model.ToggleDockerCommandsCommand.CanExecute(null));
+        Assert.True(model.ToggleKubernetesCommand.CanExecute(null));
+        Assert.True(model.ToggleToolboxCommand.CanExecute("docker")); Assert.True(model.ToggleToolboxCommand.CanExecute("kubernetes"));
+        Assert.False(model.ToggleToolboxCommand.CanExecute("forward")); Assert.False(model.ToggleToolboxCommand.CanExecute("invalid"));
+        await model.ToggleToolboxCommand.ExecuteAsync("docker"); Assert.True(model.IsDockerCommandsOpen);
+        await model.ToggleToolboxCommand.ExecuteAsync("kubernetes"); Assert.True(model.IsKubernetesOpen);
+        await model.ToggleToolboxCommand.ExecuteAsync("files"); Assert.True(model.IsKubernetesOpen);
         Assert.Contains("2", model.RemoteIdentity); Assert.DoesNotContain("tester@", model.RemoteIdentity);
     });
 
