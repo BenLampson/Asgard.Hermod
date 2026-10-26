@@ -88,18 +88,22 @@ public sealed partial class SshWorkspaceViewModel
         ToggleMonitorCommand = new RelayCommand(_ => IsMonitorOpen = !IsMonitorOpen);
         ToggleToolboxCommand = new AsyncRelayCommand(async value =>
         {
-            if (value is not string section || section is not ("files" or "forward" or "transfers" or "docker" or "kubernetes") || !SupportsInstanceTools) return;
+            if (!CanToggleToolbox(value) || value is not string section) return;
             ActiveSection = ActiveSection == section ? "terminal" : section;
             if (IsFilesSection && Files.Entries.Count == 0) await Files.RefreshCommand.ExecuteAsync();
             if (IsDockerCommandsOpen) await InitializeDockerPanelAsync();
             if (IsKubernetesOpen) await Kubernetes.InitializeAsync();
-        }, _ => !IsClosed && SupportsInstanceTools);
+        }, CanToggleToolbox);
         CollapseToolboxCommand = new RelayCommand(_ => ActiveSection = "terminal");
         AddForwardCommand = new AsyncRelayCommand(_ => AddForwardAsync(), _ => IsConnected && SupportsInstanceTools);
         ShowForwardEditorCommand = new RelayCommand(_ => IsAddingForward = true, _ => IsConnected && SupportsInstanceTools);
         CancelForwardEditorCommand = new RelayCommand(_ => IsAddingForward = false);
         StopForwardCommand = new RelayCommand(value => { if (value is SshForwardItem item) { item.Dispose(); Forwards.Remove(item); } });
     }
+
+    /// <summary>菜单堡垒机支持独立选机执行命令，但不能将文件和转发操作发送到网关。</summary>
+    private bool CanToggleToolbox(object? value) => !IsClosed && value is string section &&
+        (section is "docker" or "kubernetes" || SupportsInstanceTools && section is ("files" or "forward" or "transfers"));
 
     private async Task AddForwardAsync()
     {

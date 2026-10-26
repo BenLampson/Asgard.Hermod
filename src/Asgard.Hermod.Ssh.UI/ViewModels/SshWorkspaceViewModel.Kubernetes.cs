@@ -21,6 +21,6 @@ public sealed partial class SshWorkspaceViewModel
         {
             IsKubernetesOpen = !IsKubernetesOpen;
             if (IsKubernetesOpen) await Kubernetes.InitializeAsync();
-        }, _ => !IsClosed && SupportsInstanceTools);
+        }, _ => !IsClosed);
     }
 }
