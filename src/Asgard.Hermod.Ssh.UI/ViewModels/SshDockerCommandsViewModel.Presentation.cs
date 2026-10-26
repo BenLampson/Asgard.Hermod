@@ -8,7 +8,7 @@ public sealed partial class SshDockerCommandsViewModel
     /// <summary>资源选择后才显示动作，空列表有明确提示。</summary>
     public bool HasContainer => SelectedContainer is not null;
     /// <summary>资源选择前的引导。</summary>
-    public bool HasNoContainer => !HasContainer;
+    public bool HasNoContainer => !HasContainer && IsContainerTool;
     /// <summary>服务器当前没有容器或尚未读取。</summary>
     public bool HasNoContainers => ContainerView.IsEmpty && !IsBusy;
     /// <summary>仅次级工具显示独立的操作提交按钮。</summary>
@@ -58,5 +58,6 @@ public sealed partial class SshDockerCommandsViewModel
             nameof(Compatibility), nameof(ContainerHint), nameof(HasNoOutput), nameof(HasContainer), nameof(HasNoContainer), nameof(HasNoContainers), nameof(IsOtherOperation) }) OnPropertyChanged(property);
         DetectCommand?.NotifyCanExecuteChanged(); ExecuteCommand?.NotifyCanExecuteChanged(); InsertCommand?.NotifyCanExecuteChanged(); CancelCommand?.NotifyCanExecuteChanged();
         ActionCommand?.NotifyCanExecuteChanged(); ShowDetailsCommand?.NotifyCanExecuteChanged();
+        SelectToolCommand?.NotifyCanExecuteChanged();
     }
 }

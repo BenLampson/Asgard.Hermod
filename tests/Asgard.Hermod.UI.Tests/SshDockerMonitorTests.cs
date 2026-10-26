@@ -88,6 +88,6 @@ public sealed class SshDockerMonitorTests(WpfTestFixture fixture)
         string preview = workspace.DockerCommands.Preview; workspace.IsDockerCommandsOpen = true;
         await workspace.DockerCommands.ExecuteCommand.ExecuteAsync(); await SshWorkspaceTests.UntilAsync(() => connection.Consoles.Count == 2 && connection.Consoles[1].Inputs.Count > 0);
         Assert.NotSame(initial, workspace.ActiveConsole); Assert.Empty(connection.Consoles[0].Inputs);
-        Assert.Equal(preview + "\r", Assert.Single(connection.Consoles[1].Inputs)); Assert.False(workspace.IsDockerCommandsOpen); Assert.Empty(workspace.DockerCommands.Error);
+        Assert.Equal(preview + "\r", Assert.Single(connection.Consoles[1].Inputs)); Assert.True(workspace.IsDockerCommandsOpen); Assert.True(workspace.IsTerminalSection); Assert.Empty(workspace.DockerCommands.Error);
     });
 }

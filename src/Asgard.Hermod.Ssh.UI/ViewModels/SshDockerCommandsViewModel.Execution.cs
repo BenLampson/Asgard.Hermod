@@ -10,7 +10,7 @@ public sealed partial class SshDockerCommandsViewModel
         if (IsBusy || _disposed || _connection() is not { } connection) return;
         long generation = _generation;
         using var pending = new CancellationTokenSource(TimeSpan.FromSeconds(20)); _pending = pending;
-        IsBusy = true; Error = ""; Status = Text.Get("DockerDetecting");
+        IsBusy = true; IsInitialized = false; Error = ""; Status = Text.Get("DockerDetecting");
         try
         {
             var environment = await _environmentReader.ReadAsync(connection, force, pending.Token);
@@ -23,11 +23,12 @@ public sealed partial class SshDockerCommandsViewModel
             if (result.ExitCode != 0 || result.Truncated) throw Text.Exception("DockerContainerReadFailed");
             var items = SshMonitorDetailReader.ParseContainers(result.Output).Select(c => new SshMonitorContainerItem(c)).ToArray();
             UpdateContainers(items);
+            IsInitialized = true;
             Status = Text.Get("DockerEnvironmentReady");
         }
         catch (OperationCanceledException) { if (generation == _generation) Error = Text.Get("DockerDetectionCanceled"); }
         catch (Exception error) { if (generation == _generation) Error = Text.Error(error, "DockerEnvironmentFailed"); }
-        finally { _pending = null; IsBusy = false; RefreshPreview(); }
+        finally { if (ReferenceEquals(_pending, pending)) { _pending = null; IsBusy = false; RefreshPreview(); } }
     }
 
     private async Task ExecuteAsync()
@@ -52,7 +53,7 @@ public sealed partial class SshDockerCommandsViewModel
                 if (!approved) { Status = Text.Get("DockerDeclined"); return; }
             }
             EnsureCurrent(connection, generation, pending.Token);
-            Status = Text.Get("DockerExecuting"); ExecutedCommand = plan.Command; Output = ""; ResultSummary = "";
+            DetailSection = "output"; Status = Text.Get("DockerExecuting"); ExecutedCommand = plan.Command; Output = ""; ResultSummary = "";
             ResultTarget = Text.Format("DockerActionTarget", Text.Get(plan.Operation.TitleKey), target, host);
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(pending.Token); timeout.CancelAfter(TimeSpan.FromMinutes(2));
             var started = Stopwatch.GetTimestamp(); dispatched = true;
@@ -86,7 +87,7 @@ public sealed partial class SshDockerCommandsViewModel
         }
         catch (OperationCanceledException) { if (generation == _generation) Error = Text.Get(completed ? "DockerRefreshAfterActionFailed" : dispatched ? "DockerOutcomeUnknown" : "DockerCanceled"); }
         catch (Exception error) { if (generation == _generation) Error = completed ? Text.Get("DockerRefreshAfterActionFailed") : dispatched ? Text.Get("DockerOutcomeUnknown") : Text.Error(error, "DockerExecutionFailed"); }
-        finally { _pending = null; IsBusy = false; RefreshPreview(); }
+        finally { if (ReferenceEquals(_pending, pending)) { _pending = null; IsBusy = false; RefreshPreview(); } }
     }
 
     private void EnsureCurrent(ISshWorkspaceConnection connection, long generation, CancellationToken token)

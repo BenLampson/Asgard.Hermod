@@ -98,9 +98,11 @@ public sealed class LocalConfigurationUpdateTests
         Assert.Equal("Original", unchanged.Name);
     }
 
-    /// <summary>真实存储提供商切换保留原记录与标签，重启后使用新提供商及其加密参数。</summary>
-    [Fact]
-    public async Task UpdateAsync_ChangesStorageProviderAndPreservesIdentityAcrossRestart()
+    /// <summary>真实存储提供商切换保留原记录与标签，重启后完整 TOS 地址和旧区域值均保持不变。</summary>
+    [Theory]
+    [InlineData("cn-beijing")]
+    [InlineData("https://tos-cn-shanghai.volces.com")]
+    public async Task UpdateAsync_ChangesStorageProviderAndPreservesIdentityAcrossRestart(string tosEndpoint)
     {
         using var environment = new LocalStorageTestEnvironment();
         ServiceProvider CreateServices() => new ServiceCollection().AddHermodCore().AddWindowsSecretProtection()
@@ -122,7 +124,7 @@ public sealed class LocalConfigurationUpdateTests
                 {
                     ["accessKeyId"] = "VolcengineTestKey",
                     ["accessKeySecret"] = "new-provider-secret",
-                    ["region"] = "cn-beijing",
+                    ["region"] = tosEndpoint,
                 },
             };
             var updated = await configurations.UpdateAsync(summary.Id, new() { Name = "Corrected provider", Connection = connection },
@@ -160,7 +162,10 @@ public sealed class LocalConfigurationUpdateTests
         Assert.NotNull(saved);
         Assert.Equal("volcengine-tos", saved.ProviderId);
         Assert.Equal("new-provider-secret", saved.Parameters["accessKeySecret"]);
-        Assert.Equal("cn-beijing", saved.Parameters["region"]);
+        bool fullEndpoint = tosEndpoint.StartsWith("https://", StringComparison.Ordinal);
+        Assert.Equal(fullEndpoint ? "endpoint" : "region", saved.Parameters["endpointMode"]);
+        Assert.Equal(tosEndpoint, saved.Parameters[fullEndpoint ? "endpoint" : "region"]);
+        Assert.False(saved.Parameters.ContainsKey(fullEndpoint ? "region" : "endpoint"));
     }
 
     /// <summary>采用虚构有效字段，所有测试都不访问云服务。</summary>

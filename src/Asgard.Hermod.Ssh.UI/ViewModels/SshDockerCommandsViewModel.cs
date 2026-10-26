@@ -28,13 +28,15 @@ public sealed partial class SshDockerCommandsViewModel : ObservableObject, IDisp
         Operations.GroupDescriptions.Add(new PropertyGroupDescription(nameof(SshDockerOperationItem.Group)));
         Operations.Filter = item => item is SshDockerOperationItem o && (Search.Length == 0 || o.Title.Contains(Search, StringComparison.OrdinalIgnoreCase));
         ContainerView = CollectionViewSource.GetDefaultView(Containers);
-        ContainerView.Filter = item => item is SshMonitorContainerItem c && (ContainerSearch.Length == 0 ||
+        ContainerView.Filter = item => item is SshMonitorContainerItem c && (ContainerState.Length == 0 || c.State == ContainerState) && (ContainerSearch.Length == 0 ||
             c.Name.Contains(ContainerSearch, StringComparison.OrdinalIgnoreCase) || c.Image.Contains(ContainerSearch, StringComparison.OrdinalIgnoreCase));
         SelectedOperation = SshDockerCommandBuilder.Operations.Select(o => new SshDockerOperationItem(o)).First(o => o.Id == "logs");
         DetectCommand = new AsyncRelayCommand(_ => DetectAsync(true), _ => !IsBusy && _connection() is not null && !_disposed);
         ExecuteCommand = new AsyncRelayCommand(_ => ExecuteAsync(), _ => CanExecute);
         ActionCommand = new AsyncRelayCommand(p => RunActionAsync(p as string ?? ""), p => CanRunAction(p as string));
-        ShowDetailsCommand = new RelayCommand(_ => ShowDetails = !ShowDetails, _ => SelectedContainer is not null);
+        ShowDetailsCommand = new RelayCommand(_ => { ShowDetails = true; DetailSection = "details"; }, _ => SelectedContainer is not null);
+        SelectToolCommand = new RelayCommand(value => { if (value is string section) ToolSection = section; }, _ => !IsBusy);
+        SelectDetailCommand = new RelayCommand(value => { if (value is string section) DetailSection = section; });
         InsertCommand = new RelayCommand(_ => { if (_plan is { } plan && CanInsert) InsertRequested?.Invoke(this, plan.Command); }, _ => CanInsert);
         CancelCommand = new RelayCommand(_ => _pending?.Cancel(), _ => IsBusy);
     }
@@ -126,12 +128,13 @@ public sealed partial class SshDockerCommandsViewModel : ObservableObject, IDisp
     public string ExecutedCommand { get; private set => SetProperty(ref field, value); } = "";
 
     /// <summary>首次打开自动探测，重复打开复用已识别环境。</summary>
-    public Task InitializeAsync() => Environment is null ? DetectAsync(false) : Task.CompletedTask;
+    public Task InitializeAsync() => !IsInitialized ? DetectAsync(Environment is not null) : Task.CompletedTask;
 
     /// <summary>同一串行边界内选择动作并执行；忙碌时不改写当前计划。</summary>
     public async Task RunActionAsync(string id)
     {
         if (!CanRunAction(id)) return;
+        DetailSection = "output";
         Select(id, SelectedContainer);
         await ExecuteAsync();
     }
@@ -147,12 +150,13 @@ public sealed partial class SshDockerCommandsViewModel : ObservableObject, IDisp
     /// <summary>监测快捷入口带入当前容器与指定操作，不触发执行。</summary>
     public void Select(string id, SshMonitorContainerItem? container)
     {
+        ToolSection = SshDockerCommandBuilder.Operations.First(o => o.Id == id).RequiresCompose ? "compose" : id is "images" or "pull" ? "images" : "containers";
         SelectedOperation = OtherOperations.FirstOrDefault(o => o.Id == id) ??
             SshDockerCommandBuilder.Operations.Select(o => new SshDockerOperationItem(o)).First(o => o.Id == id);
         SelectedOtherOperation = OtherOperations.FirstOrDefault(o => o.Id == id);
         if (container is not null)
         {
-            if (!ContainerView.Cast<SshMonitorContainerItem>().Any(c => c.Id == container.Id)) ContainerSearch = "";
+            if (!ContainerView.Cast<SshMonitorContainerItem>().Any(c => c.Id == container.Id)) { ContainerSearch = ""; ContainerState = ""; }
             if (!Containers.Any(c => c.Id == container.Id)) Containers.Add(container);
             SelectedContainer = Containers.First(c => c.Id == container.Id);
         }
@@ -179,8 +183,8 @@ public sealed partial class SshDockerCommandsViewModel : ObservableObject, IDisp
     /// <summary>连接代次变更撤销确认和执行权限，清空旧主机的容器与版本。</summary>
     public void ConnectionChanged()
     {
-        _generation++; _pending?.Cancel(); Environment = null; SelectedContainer = null; Containers.Clear();
-        Error = ""; RefreshPreview();
+        _generation++; _pending?.Cancel(); _pending = null; IsBusy = false; IsInitialized = false; Environment = null; SelectedContainer = null; Containers.Clear();
+        Error = ""; Status = ""; Output = ""; ResultTarget = ""; ResultSummary = ""; ExecutedCommand = ""; RefreshPreview();
     }
     /// <inheritdoc />
     public void Dispose() { if (_disposed) return; _disposed = true; ConnectionChanged(); InsertRequested = null; Changed = null; }

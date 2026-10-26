@@ -9,6 +9,13 @@ on confirmation. List icons and provider filters use the saved brand, defaulting
 self-hosted for existing instances. Object-storage providers retain their protocol-specific
 connection forms and tests.
 
+Regional cloud-storage forms share an explicit region/full-endpoint selector with
+conditional fields. Providers normalize legacy parameters before editing or saving
+through `IInstanceProvider.NormalizeConnection`; the shared wizard does not infer
+vendor protocols. Cloud modules parse their official endpoint domains and signing
+regions. Only the active field is persisted, and changing the selection invalidates
+the verified connection. MinIO and generic S3 retain their required server endpoint.
+
 Each capability is compiled as a separate project. `Asgard.Hermod` is the
 composition root: it chooses implementations, loads resources, initializes local
 storage and owns application startup and shutdown.

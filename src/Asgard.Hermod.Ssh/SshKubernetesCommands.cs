@@ -11,6 +11,8 @@ public static class SshKubernetesCommands
     public const string Contexts = "kubectl config get-contexts -o name";
     /// <summary>读取默认上下文，不切换配置。</summary>
     public const string CurrentContext = "kubectl config current-context";
+    /// <summary>只读取指定上下文的默认命名空间，不输出 kubeconfig 证书或令牌。</summary>
+    public static string DefaultNamespace(string context) => Prefix(context, "", "namespaces") + " config view --minify -o jsonpath='{..namespace}'";
     /// <summary>固定资源类型，避免拼接任意 kubectl 子命令。</summary>
     public static IReadOnlyList<string> Resources { get; } = Array.AsReadOnly<string>(["pods", "deployments", "services", "nodes", "namespaces", "events"]);
 
@@ -30,6 +32,7 @@ public static class SshKubernetesCommands
         {
             "describe" => prefix + " describe " + resource + " " + Quote(name),
             "logs" when resource == "pods" => prefix + " logs " + Quote(name) + " --all-containers=true --tail=500 --timestamps=true",
+            "events" when resource is "pods" or "deployments" or "services" => prefix + " get events --field-selector " + Quote("involvedObject.name=" + name) + " -o wide",
             "rollout" when resource == "deployments" => prefix + " rollout status deployment/" + name + " --watch=false",
             "restart" when resource == "deployments" => prefix + " rollout restart deployment/" + name,
             _ => throw Text.Exception("KubeInvalidParameters"),

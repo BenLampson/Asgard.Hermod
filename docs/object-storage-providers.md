@@ -14,10 +14,10 @@ new connection test before saving. The instance ID, creation time and tags are r
 
 | Provider | Endpoint | Default region | Notes |
 | --- | --- | --- | --- |
-| Alibaba Cloud OSS | Derived by the OSS connector | Existing OSS configuration | Uses the official AlibabaCloud.OSS.V2 SDK |
-| Tencent COS | `https://cos.<region>.myqcloud.com` | `ap-guangzhou` | Regional bucket discovery; bucket names include the COS APPID suffix |
-| Volcengine TOS | `https://tos-s3-<region>.volces.com` | `cn-beijing` | Uses the TOS S3-compatible endpoint |
-| AWS S3 | `https://s3.<region>.amazonaws.com` | `us-east-1` | China regions use `amazonaws.com.cn` |
+| Alibaba Cloud OSS | Region or full OSS service endpoint | `cn-hangzhou` | Uses the official AlibabaCloud.OSS.V2 SDK; supports public, internal and dual-stack regional addresses |
+| Tencent COS | Region or full COS service endpoint | `ap-guangzhou` | Regional bucket discovery; bucket names include the COS APPID suffix |
+| Volcengine TOS | Region or full TOS service endpoint | `cn-beijing` | Accepts standard TOS and S3 endpoints; uses the S3-compatible protocol |
+| AWS S3 | Region or full S3 service endpoint | `us-east-1` | China regions use `amazonaws.com.cn` |
 | MinIO | Required custom HTTP(S) endpoint | `us-east-1` | Path addressing by default |
 | S3 compatible | Required custom HTTP(S) endpoint | `us-east-1` | Path addressing by default |
 
@@ -25,6 +25,30 @@ For S3-based providers, enter the access key ID and secret access key explicitly
 Optional temporary credentials also require the session token. Hermod does not
 read ambient AWS credentials or renew expired tokens. Credentials follow the
 existing encrypted instance persistence path and are excluded from display errors.
+
+OSS, COS, TOS and AWS offer an **Endpoint input** selector:
+
+- **Enter region** generates the provider's service address. A blank region uses
+  the default shown above.
+- **Enter full endpoint** detects the signing region from an official regional
+  service address, such as `https://cos.ap-shanghai.myqcloud.com` or
+  `https://s3.eu-west-1.amazonaws.com`. Hostnames without a scheme use HTTPS.
+
+Only the selected input is validated, tested and saved. Switching preserves both
+drafts in the open editor and invalidates the connection test. Saving persists
+`endpointMode` and the active `region` or `endpoint` field; reopening restores the
+selection. MinIO and generic S3 have no region-derived service address and continue
+to require their server endpoint plus an optional signing region.
+
+For TOS address mode, paste the complete service endpoint from the console, for example
+`https://tos-cn-beijing.volces.com` or `https://tos-s3-cn-beijing.volces.com`.
+The connector detects the signing region and converts standard TOS addresses to
+their S3 equivalents. Hostnames without a scheme use HTTPS. Public `.volces.com`
+and private `.ivolces.com` endpoints are supported; scheme and port are preserved.
+Do not include a bucket name or object path. Previously saved region-only values
+open in region mode. Early TOS configurations with a URL in `region` open in
+address mode and are converted to the current format on save. Existing OSS
+credentials-only configurations retain the original `cn-hangzhou` default.
 
 The optional bucket field restricts the instance to one bucket and avoids
 account-wide bucket listing. Use the bucket's region. Without a fixed bucket,

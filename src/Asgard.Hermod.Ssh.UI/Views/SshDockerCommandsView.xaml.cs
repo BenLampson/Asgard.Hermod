@@ -15,12 +15,14 @@ public partial class SshDockerCommandsView : UserControl
     public event EventHandler? MonitorRequested;
     private void OnClose(object sender, RoutedEventArgs args) => CloseRequested?.Invoke(this, EventArgs.Empty);
     private void OnMonitor(object sender, RoutedEventArgs args) => MonitorRequested?.Invoke(this, EventArgs.Empty);
-    private void OnViewportChanged(object sender, SizeChangedEventArgs args)
+    /// <summary>宿主提供独立采样模型，图表与当前容器共用真实资源。</summary>
+    public SshMonitorViewModel? ResourceMonitor
     {
-        if (!ReferenceEquals(args.Source, this) || !args.WidthChanged || CommandColumns is null) return;
-        double width = ActualWidth < 800 ? 180 : 250;
-        if (CatalogColumn.Width.Value != width) CatalogColumn.Width = new(width);
+        get => (SshMonitorViewModel?)GetValue(ResourceMonitorProperty);
+        set => SetValue(ResourceMonitorProperty, value);
     }
+    /// <summary>允许宿主绑定当前连接的资源监测。</summary>
+    public static readonly DependencyProperty ResourceMonitorProperty = DependencyProperty.Register(nameof(ResourceMonitor), typeof(SshMonitorViewModel), typeof(SshDockerCommandsView));
     private void OnOutputSearchChanged(object sender, TextChangedEventArgs args) => FindOutput(false);
     private void OnKeyDown(object sender, KeyEventArgs args)
     {

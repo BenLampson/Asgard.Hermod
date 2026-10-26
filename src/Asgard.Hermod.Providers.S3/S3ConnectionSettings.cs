@@ -11,21 +11,34 @@ internal sealed class S3ConnectionSettings
     internal string? Bucket { get; init; }
     internal bool PathStyle { get; init; }
 
-    /// <summary>云端地址只从服务商规则生成；自建服务允许显式填写 HTTP 或 HTTPS 服务根地址。</summary>
+    /// <summary>按厂商规则生成或解析端点；自建服务允许显式填写 HTTP 或 HTTPS 服务根地址。</summary>
     internal static S3ConnectionSettings Parse(S3ProviderProfile profile, InstanceConnectionOptions options, string? region)
     {
         ArgumentNullException.ThrowIfNull(options);
         if (options.TypeId != "storage" || options.ProviderId != profile.Id)
             throw ObjectStorageException.FromResource("TheConnectionConfigurationDoesNotMatchTheSelectedInstanceTypeOrProvider", "ProviderMismatch");
-        string Get(string key) => options.Parameters.GetValueOrDefault(key, "").Trim();
+        var parameters = profile.CustomEndpoint ? options.Parameters : ObjectStorageEndpointInput.Normalize(options).Parameters;
+        string Get(string key) => parameters.GetValueOrDefault(key, "").Trim();
         string access = Get("accessKeyId"), secret = Get("accessKeySecret"), session = Get("sessionToken");
         if (access.Length is 0 or > 256 || secret.Length is 0 or > 512 || session.Length > 16384 ||
             access.Any(char.IsControl) || secret.Any(char.IsControl) || session.Any(char.IsControl))
             throw ObjectStorageException.FromResource("InvalidConnectionCredentialsEditTheInstanceConfiguration", "InvalidCredentials");
-        string selectedRegion = string.IsNullOrWhiteSpace(region) ? Get("region") : region;
-        if (selectedRegion.Length == 0) selectedRegion = profile.DefaultRegion;
+        if (!string.IsNullOrWhiteSpace(region)) ValidateRegion(region);
+        string selectedRegion, address;
+        if (!profile.CustomEndpoint && Get("endpointMode") == "endpoint")
+        {
+            var resolve = profile.ResolveEndpoint
+                ?? throw ObjectStorageException.FromResource("StorageEndpointInvalid", "InvalidEndpoint");
+            (selectedRegion, address) = resolve(Get("endpoint"), region);
+        }
+        else
+        {
+            selectedRegion = string.IsNullOrWhiteSpace(region) ? Get("region") : region;
+            if (selectedRegion.Length == 0) selectedRegion = profile.DefaultRegion;
+            ValidateRegion(selectedRegion);
+            address = profile.CustomEndpoint ? Get("endpoint") : profile.Endpoint(selectedRegion);
+        }
         ValidateRegion(selectedRegion);
-        string address = profile.CustomEndpoint ? Get("endpoint") : profile.Endpoint(selectedRegion);
         if (!Uri.TryCreate(address, UriKind.Absolute, out var endpoint) || endpoint.Scheme is not ("https" or "http") ||
             endpoint.UserInfo.Length != 0 || endpoint.Query.Length != 0 || endpoint.Fragment.Length != 0 ||
             endpoint.AbsolutePath != "/" || endpoint.HostNameType == UriHostNameType.Unknown)

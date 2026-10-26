@@ -77,8 +77,6 @@ public partial class SshWorkspaceView : UserControl, IDisposable
         UpdateMonitorLayout();
         UpdateToolboxLayout();
         if (MonitorActionLabel is not null) MonitorActionLabel.Visibility = ActualWidth >= 1000 ? Visibility.Visible : Visibility.Collapsed;
-        if (DockerActionLabel is not null) DockerActionLabel.Visibility = ActualWidth >= 1150 ? Visibility.Visible : Visibility.Collapsed;
-        if (KubernetesActionLabel is not null) KubernetesActionLabel.Visibility = ActualWidth >= 1300 ? Visibility.Visible : Visibility.Collapsed;
         FooterRoute.Visibility = FooterTerminalType.Visibility = ActualWidth >= 800 ? Visibility.Visible : Visibility.Collapsed;
 
         ResizeSearchOverlay();
