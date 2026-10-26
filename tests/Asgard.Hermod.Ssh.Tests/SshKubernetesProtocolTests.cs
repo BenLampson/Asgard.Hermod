@@ -38,4 +38,19 @@ public sealed class SshKubernetesProtocolTests
             """);
         Assert.Equal(new SshKubernetesResource("web-1", "app", "Running"), items[0]); Assert.Equal("2/3", items[1].Status);
     }
+    /// <summary>Pod 阶段不能掩盖容器崩溃，汇总就绪数与重启数时保留实际容器数量。</summary>
+    [Fact]
+    public void PodReadinessAndWaitingReasonDoNotHideCrashes()
+    {
+        var item = Assert.Single(SshKubernetesResource.Parse("""
+            {"items":[{"kind":"Pod","metadata":{"name":"worker-1","namespace":"app"},"spec":{"containers":[{},{}]},
+            "status":{"phase":"Running","containerStatuses":[{"ready":true,"restartCount":1,"state":{"running":{}}},
+            {"ready":false,"restartCount":5,"state":{"waiting":{"reason":"CrashLoopBackOff"}}}]}}]}
+            """));
+        Assert.Equal("CrashLoopBackOff", item.Status); Assert.Equal("1/2", item.Ready); Assert.Equal(6, item.Restarts);
+        string events = SshKubernetesCommands.Action("prod", "app", "pods", "worker-1", "events");
+        Assert.Contains("--namespace 'app'", events); Assert.EndsWith("--field-selector 'involvedObject.name=worker-1' -o wide", events);
+        Assert.EndsWith("config view --minify -o jsonpath='{..namespace}'", SshKubernetesCommands.DefaultNamespace("prod"));
+    }
+
 }

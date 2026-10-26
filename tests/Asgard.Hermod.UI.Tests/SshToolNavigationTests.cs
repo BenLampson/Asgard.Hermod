@@ -20,7 +20,7 @@ public sealed class SshToolNavigationTests(WpfTestFixture fixture)
         var main = Assert.Single(WindowTestVisuals.Descendants<SshMonitorView>(view), monitor => !monitor.DockerOnly);
         var sections = Assert.IsType<SectionSelector>(main.FindName("MonitorSections"));
         Assert.Equal(new[] { "overview", "processes", "network", "disks" }, sections.Items.Cast<ListBoxItem>().Select(item => item.Tag));
-        Assert.True(Assert.IsType<Button>(view.FindName("KubernetesAction")).IsEnabled);
+        Assert.True(Assert.IsType<RadioButton>(view.FindName("KubernetesRailAction")).IsEnabled);
         await model.ToggleDockerCommandsCommand.ExecuteAsync(); await model.ShowDockerResourcesCommand.ExecuteAsync();
         await model.DockerMonitor.RefreshDetailsCommand.ExecuteAsync();
         Assert.True(model.IsDockerCommandsOpen); Assert.True(model.IsDockerResourcesOpen); Assert.Equal("network", model.Monitor.Section);
@@ -28,7 +28,7 @@ public sealed class SshToolNavigationTests(WpfTestFixture fixture)
         model.IsDockerResourcesOpen = false; Assert.True(model.DockerMonitor.IsPaused); Assert.True(model.IsDockerCommandsOpen);
         await model.ToggleKubernetesCommand.ExecuteAsync(); Assert.True(model.IsKubernetesOpen); Assert.False(model.IsDockerCommandsOpen);
         Assert.True(model.Kubernetes.IsInstalled); Assert.Equal("network", model.Monitor.Section);
-        model.ToggleMonitorCommand.Execute(null); Assert.False(model.IsKubernetesOpen); Assert.True(model.IsMonitorOpen);
-        Assert.Empty(bindings.Messages);
+        model.ToggleMonitorCommand.Execute(null); Assert.True(model.IsKubernetesOpen); Assert.True(model.IsTerminalSection); Assert.True(model.IsMonitorOpen);
+        Assert.True(bindings.Messages.Count == 0, string.Join(Environment.NewLine, bindings.Messages));
     });
 }

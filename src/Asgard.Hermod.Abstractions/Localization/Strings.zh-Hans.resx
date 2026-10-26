@@ -5565,4 +5565,24 @@ SQL：
   <data name="KubeResource_events" xml:space="preserve">
     <value>事件</value>
   </data>
+  <data name="SshToolDocker" xml:space="preserve"><value>Docker</value></data>
+  <data name="SshToolKubernetes" xml:space="preserve"><value>K8s</value></data>
+  <data name="SshInitializeEnvironment" xml:space="preserve"><value>初始化环境</value></data>
+  <data name="SshManagementResizeHint" xml:space="preserve"><value>拖动调整管理面板与终端的大小，双击恢复均分。</value></data>
+  <data name="SshResourceDetailsResize" xml:space="preserve"><value>调整资源列表与详情大小</value></data>
+  <data name="KubeWorkspaceTitle" xml:space="preserve"><value>Kubernetes</value></data>
+  <data name="KubeScope" xml:space="preserve"><value>上下文与命名空间</value></data>
+  <data name="KubeNamespaceUnavailable" xml:space="preserve"><value>无法读取命名空间列表。请输入已知命名空间，继续加载可访问的资源。</value></data>
+  <data name="KubeSearchResources" xml:space="preserve"><value>搜索资源名称</value></data>
+  <data name="DockerComposeTab" xml:space="preserve"><value>Compose</value></data>
+  <data name="DockerContainersTab" xml:space="preserve"><value>容器</value></data>
+  <data name="KubePreparingClient" xml:space="preserve"><value>正在检测 kubectl…</value></data>
+  <data name="KubePreparingContext" xml:space="preserve"><value>正在读取当前上下文…</value></data>
+  <data name="KubePreparingNamespaces" xml:space="preserve"><value>正在获取命名空间…</value></data>
+  <data name="KubePreparingResources" xml:space="preserve"><value>正在加载资源…</value></data>
+  <data name="KubeReadyColumn" xml:space="preserve"><value>就绪</value></data>
+  <data name="KubeRestartsColumn" xml:space="preserve"><value>重启</value></data>
+  <data name="KubeEventsTab" xml:space="preserve"><value>事件</value></data>
+  <data name="ManagementLogsTab" xml:space="preserve"><value>日志</value></data>
+  <data name="ManagementMemory" xml:space="preserve"><value>内存</value></data>
 </root>

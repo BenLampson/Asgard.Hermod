@@ -31,6 +31,9 @@ public sealed class SshKubernetesTests(WpfTestFixture fixture)
             Assert.Contains("app", model.Namespaces);
             model.SelectedItem = model.Items[0]; await model.ActionCommand.ExecuteAsync("logs");
             Assert.Equal("application log output", model.Output); Assert.Equal(0, dialogs.Count);
+            await Layout(view, 860, 650);
+            var outputSearch = Assert.IsType<TextBox>(view.FindName("OutputSearch")); outputSearch.Text = "log";
+            Assert.Equal("log", Assert.IsType<TextBox>(view.FindName("ResultOutput")).SelectedText); outputSearch.Text = "";
             Assert.Contains("--context 'production'", connection.Commands.Last()); Assert.Contains("--namespace 'app'", connection.Commands.Last());
             string target = model.ResultTarget;
             model.Resource = "deployments"; Assert.Empty(model.Items); Assert.Null(model.SelectedItem); Assert.False(model.ActionCommand.CanExecute("logs"));
@@ -43,7 +46,7 @@ public sealed class SshKubernetesTests(WpfTestFixture fixture)
             foreach ((double width, double height) in new[] { (1388d, 820d), (860d, 650d), (600d, 480d) })
             {
                 await Layout(view, width, height);
-                var table = Assert.IsType<DataGrid>(view.FindName("ResourceTable")); Assert.True(table.ActualHeight >= 90);
+                var table = Assert.IsType<DataGrid>(view.FindName("ResourceTable")); Assert.True(table.ActualHeight >= 32);
                 Assert.Same(view.FindResource("MonitorGrid"), table.Style);
                 var context = Assert.IsType<ComboBox>(view.FindName("ContextPicker"));
                 Assert.InRange(context.TranslatePoint(new(), view).X + context.ActualWidth, 1, width);
@@ -112,6 +115,7 @@ public sealed class SshKubernetesTests(WpfTestFixture fixture)
             SshKubernetesCommands.Probe => """{"clientVersion":{"gitVersion":"v1.35.0"}}""",
             SshKubernetesCommands.Contexts => "staging\nproduction\n",
             SshKubernetesCommands.CurrentContext => "production\n",
+            _ when command.Contains("config view --minify", StringComparison.Ordinal) => "app",
             _ when command.EndsWith("get namespaces -o json", StringComparison.Ordinal) => ListJson("Namespace", "app"),
             _ when command.EndsWith("get deployments -o json", StringComparison.Ordinal) => ListJson("Deployment", "web"),
             _ when command.EndsWith("get pods -o json", StringComparison.Ordinal) => ListJson("Pod", "web-1"),

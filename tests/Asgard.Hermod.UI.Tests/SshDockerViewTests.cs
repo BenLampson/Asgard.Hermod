@@ -33,7 +33,9 @@ public sealed class SshDockerViewTests(WpfTestFixture fixture)
                 Assert.Equal(model.IsDockerCommandsOpen ? Visibility.Visible : Visibility.Collapsed, management.Visibility);
                 if (model.IsDockerCommandsOpen)
                 {
-                    Assert.True(management.ActualWidth > 1000 && management.ActualHeight > 600);
+                    Assert.InRange(management.ActualWidth, 380, 750);
+                    var terminal = Assert.IsType<Grid>(view.FindName("TerminalSurface"));
+                    Assert.Equal(Visibility.Visible, terminal.Visibility); Assert.True(terminal.ActualWidth > 400);
                     Assert.Same(model.DockerCommands, management.DataContext);
                     model.DockerCommands.SelectedContainer = model.DockerCommands.Containers[1];
                     await model.DockerCommands.ActionCommand.ExecuteAsync("logs");
@@ -72,19 +74,14 @@ public sealed class SshDockerViewTests(WpfTestFixture fixture)
                 await Layout(view, width, 820);
                 var preview = Assert.IsType<TextBox>(view.FindName("CommandPreview")); var execute = Assert.IsType<Button>(view.FindName("LogsAction"));
                 Assert.True(preview.IsReadOnly); Assert.True(execute.IsEnabled); Assert.Equal(model.Preview, preview.Text);
-                var list = Assert.IsType<ListBox>(view.FindName("ContainerList"));
+                var list = Assert.IsType<DataGrid>(view.FindName("ContainerList"));
                 Assert.True(list.Focusable);
                 Assert.Equal(Visibility.Collapsed, Assert.IsType<Border>(view.FindName("EmptySelection")).Visibility);
-                var item = Assert.IsType<ListBoxItem>(list.ItemContainerGenerator.ContainerFromItem(model.SelectedContainer!));
-                var entry = Assert.IsType<Border>(item.Template.FindName("Entry", item));
-                Assert.Equal(new Thickness(1), entry.BorderThickness);
+                var item = Assert.IsType<DataGridRow>(list.ItemContainerGenerator.ContainerFromItem(model.SelectedContainer!));
                 var bounds = item.RenderSize; var catalogSize = list.RenderSize;
                 list.SelectedItem = model.Containers[0]; await Layout(view, width, 820);
                 Assert.Equal(bounds, item.RenderSize); Assert.Equal(catalogSize, list.RenderSize);
-                Assert.Equal(new Thickness(1), entry.BorderThickness);
                 list.SelectedItem = model.Containers[1]; await Layout(view, width, 820);
-                var color = Assert.IsType<SolidColorBrush>(list.Background).Color;
-                Assert.True(theme != UiTheme.Dark || color.R < 80 && color.G < 80 && color.B < 80);
                 var search = Assert.IsType<TextBox>(view.FindName("OutputSearch")); search.Text = "health";
                 Assert.Equal("health", Assert.IsType<TextBox>(view.FindName("ResultOutput")).SelectedText); search.Text = "";
                 Inside(execute, view); Inside(Assert.IsType<Border>(view.FindName("OutputPanel")), view);

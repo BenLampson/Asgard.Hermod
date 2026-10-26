@@ -11,13 +11,8 @@ public sealed partial class SshWorkspaceViewModel
     /// <summary>隐藏命令库不会取消正在执行的操作。</summary>
     public bool IsDockerCommandsOpen
     {
-        get; set
-        {
-            if (!SetProperty(ref field, value)) return;
-            if (value) IsKubernetesOpen = false;
-            else IsDockerResourcesOpen = false;
-            OnPropertyChanged(nameof(IsTerminalSection));
-        }
+        get => ActiveSection == "docker";
+        set { if (value) ActiveSection = "docker"; else if (IsDockerCommandsOpen) ActiveSection = "terminal"; }
     }
     private bool _dockerMonitorStarted;
     /// <summary>Docker 资源采样只属于管理页，不改变实例监测所选栏目。</summary>
@@ -47,20 +42,21 @@ public sealed partial class SshWorkspaceViewModel
         ToggleDockerCommandsCommand = new AsyncRelayCommand(async _ =>
         {
             IsDockerCommandsOpen = !IsDockerCommandsOpen;
-            if (IsDockerCommandsOpen) await DockerCommands.InitializeAsync();
-        }, _ => !IsClosed);
+            if (IsDockerCommandsOpen) await InitializeDockerPanelAsync();
+        }, _ => !IsClosed && SupportsInstanceTools);
         CloseDockerCommandsCommand = new RelayCommand(_ => IsDockerCommandsOpen = false);
         ShowDockerResourcesCommand = new AsyncRelayCommand(async _ =>
         {
             if (_connection is not ISshWorkspaceConnection connection || !IsConnected) return;
-            IsDockerResourcesOpen = true;
+            IsDockerCommandsOpen = true; IsDockerResourcesOpen = true;
             if (!_dockerMonitorStarted)
             {
                 _dockerMonitorStarted = true;
                 await DockerMonitor.StartAsync(connection);
             }
             else await DockerMonitor.RefreshDetailsCommand.ExecuteAsync();
-            if (!IsConnected || !ReferenceEquals(connection, _connection)) { IsDockerResourcesOpen = false; return; }
+            if (!IsDockerCommandsOpen || !IsConnected || !ReferenceEquals(connection, _connection))
+            { IsDockerResourcesOpen = false; DockerMonitor.IsPaused = true; DockerMonitor.IsPanelVisible = false; return; }
             if (DockerCommands.SelectedContainer is { } selected) DockerMonitor.SelectDockerContainer(selected.Id);
         }, _ => !IsClosed && IsConnected);
         DockerMonitor.DockerOperationRequested += async (_, operation) =>
@@ -75,6 +71,23 @@ public sealed partial class SshWorkspaceViewModel
         };
         DockerMonitor.ContainerLogsRequested += OnContainerLogsRequested;
         DockerCommands.Changed += (_, _) => { if (IsDockerResourcesOpen) DockerMonitor.RefreshDetailsCommand.Execute(null); };
+        DockerCommands.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(SshDockerCommandsViewModel.SelectedContainer) && DockerCommands.SelectedContainer is { } selected)
+                DockerMonitor.SelectDockerContainer(selected.Id);
+        };
+        DockerMonitor.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(SshMonitorViewModel.ResultCount) && IsDockerCommandsOpen)
+                DockerCommands.UpdateResources(DockerMonitor.Containers);
+        };
+    }
+
+    /// <summary>打开管理工具时自动初始化环境与独立采样，不替换交互终端。</summary>
+    private async Task InitializeDockerPanelAsync()
+    {
+        await DockerCommands.InitializeAsync();
+        if (IsDockerCommandsOpen && DockerCommands.IsInitialized) await ShowDockerResourcesCommand.ExecuteAsync();
     }
 
     private Task RunDockerInTerminalAsync(SshDockerCommandPlan plan, CancellationToken token)
@@ -99,7 +112,6 @@ public sealed partial class SshWorkspaceViewModel
             if (token.IsCancellationRequested || IsClosed || !IsConnected || !ReferenceEquals(connection, _connection))
             { await opened.DisposeAsync(); throw new OperationCanceledException(token); }
             var console = AddOpenedConsole(opened, 120, 32);
-            IsDockerCommandsOpen = false;
             // 新 PTY 不继承已有控制台未完成的输入，仅派发固定构建器产生的单行命令。
             console.Session.SendInput(Encoding.UTF8.GetBytes(plan.Command + "\r"));
         }

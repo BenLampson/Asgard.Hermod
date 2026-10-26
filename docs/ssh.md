@@ -301,7 +301,7 @@ values with an explicit warning and leave gaps in the selected container's
 two-minute history. Pausing and reconnecting reset rate baselines. Small monitors
 prioritize the table; enlarge the panel to see both resource charts.
 
-The SSH caption and selected-container action bar open **Docker management**.
+The left instance rail and selected-container action bar open **Docker management**.
 Select a container, then click Logs, Resources, Details, Start, Restart or Stop.
 The page initially asks for a target rather than silently selecting the first
 container. A monitor shortcut preserves the selected full container ID.
@@ -338,3 +338,35 @@ changes refresh monitoring and the library's container list. Log following opens
 new independent PTY, where Ctrl+C stops following; it never appends a command to an
 existing shell's partial input. Results retain their executed command and target
 even after the form changes, and support local copying and explicit export.
+
+
+## Infrastructure tools beside the terminal
+
+Docker and Kubernetes share the instance tool rail with Files, Forwarding and
+Transfers. Opening a tool preserves the active SSH console and its output. The
+management pane initially uses half the available width; drag the divider with
+the mouse or keyboard to resize it. Each tool remembers its requested width for
+the workspace lifetime. Double-click restores the default size. Narrow windows
+stack management above the terminal and remember a separate requested height;
+small tool panes scroll without covering the terminal.
+
+Docker initializes its client/engine/Compose capabilities and container list on
+first entry. Containers, Images and Compose have separate tabs. Container lists
+support local name/image and state filters, and show real sampled CPU and memory
+values. A separate lower pane displays resource charts, action output or identity
+details. Its divider resizes the list and detail areas independently. Sampling
+pauses when leaving Docker, while an explicit operation can finish in the
+background. Log following opens a new PTY beside the management pane. Existing
+confirmation and connection-generation checks still guard every change.
+
+Kubernetes initializes kubectl, contexts, the current context's configured
+namespace (or `default`), the namespace list and the resource list in one sequence.
+Context, namespace and resource-type changes load automatically; editable namespace
+input is briefly coalesced. Namespace-list permissions do not prevent loading a
+known namespace. A safe warning explains the manual fallback. Initialization can
+be canceled or retried with one button. Successful initialization is reused until
+reconnection or explicit reinitialization. Old connection responses cannot change
+a new connection's busy state, scope or results. Pods expose container readiness,
+restart counts and waiting reasons instead of hiding failures behind a Running
+phase. Details, bounded logs and events remain tied to the executed target; raw
+process output is retained verbatim. Deployment restarts still require confirmation.

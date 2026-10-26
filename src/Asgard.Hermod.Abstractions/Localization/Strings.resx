@@ -5565,4 +5565,24 @@ Address: {2}</value></data>
   <data name="KubeResource_events" xml:space="preserve">
     <value>Events</value>
   </data>
+  <data name="SshToolDocker" xml:space="preserve"><value>Docker</value></data>
+  <data name="SshToolKubernetes" xml:space="preserve"><value>K8s</value></data>
+  <data name="SshInitializeEnvironment" xml:space="preserve"><value>Initialize environment</value></data>
+  <data name="SshManagementResizeHint" xml:space="preserve"><value>Drag to resize the management and terminal panes. Double-click to restore equal sizes.</value></data>
+  <data name="SshResourceDetailsResize" xml:space="preserve"><value>Resize resource list and details</value></data>
+  <data name="KubeWorkspaceTitle" xml:space="preserve"><value>Kubernetes</value></data>
+  <data name="KubeScope" xml:space="preserve"><value>Context and namespace</value></data>
+  <data name="KubeNamespaceUnavailable" xml:space="preserve"><value>The namespace list could not be read. Enter a known namespace to load resources you can access.</value></data>
+  <data name="KubeSearchResources" xml:space="preserve"><value>Search resource names</value></data>
+  <data name="DockerComposeTab" xml:space="preserve"><value>Compose</value></data>
+  <data name="DockerContainersTab" xml:space="preserve"><value>Containers</value></data>
+  <data name="KubePreparingClient" xml:space="preserve"><value>Detecting kubectl…</value></data>
+  <data name="KubePreparingContext" xml:space="preserve"><value>Reading the current context…</value></data>
+  <data name="KubePreparingNamespaces" xml:space="preserve"><value>Loading namespaces…</value></data>
+  <data name="KubePreparingResources" xml:space="preserve"><value>Loading resources…</value></data>
+  <data name="KubeReadyColumn" xml:space="preserve"><value>Ready</value></data>
+  <data name="KubeRestartsColumn" xml:space="preserve"><value>Restarts</value></data>
+  <data name="KubeEventsTab" xml:space="preserve"><value>Events</value></data>
+  <data name="ManagementLogsTab" xml:space="preserve"><value>Logs</value></data>
+  <data name="ManagementMemory" xml:space="preserve"><value>Memory</value></data>
 </root>

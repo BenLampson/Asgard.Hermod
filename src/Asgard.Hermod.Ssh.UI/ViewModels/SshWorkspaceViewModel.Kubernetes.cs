@@ -8,12 +8,8 @@ public sealed partial class SshWorkspaceViewModel
     /// <summary>收起页面保留查询范围。</summary>
     public bool IsKubernetesOpen
     {
-        get; set
-        {
-            if (!SetProperty(ref field, value)) return;
-            if (value) IsDockerCommandsOpen = false;
-            OnPropertyChanged(nameof(IsTerminalSection));
-        }
+        get => ActiveSection == "kubernetes";
+        set { if (value) ActiveSection = "kubernetes"; else if (IsKubernetesOpen) ActiveSection = "terminal"; }
     }
     /// <summary>独立的标题栏管理入口。</summary>
     public AsyncRelayCommand ToggleKubernetesCommand { get; private set; } = null!;
@@ -25,6 +21,6 @@ public sealed partial class SshWorkspaceViewModel
         {
             IsKubernetesOpen = !IsKubernetesOpen;
             if (IsKubernetesOpen) await Kubernetes.InitializeAsync();
-        }, _ => !IsClosed);
+        }, _ => !IsClosed && SupportsInstanceTools);
     }
 }
