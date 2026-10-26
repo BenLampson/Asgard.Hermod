@@ -84,7 +84,7 @@ public sealed class ObjectStorageViewTests
             window.Show();
             await WindowTestVisuals.UpdateLayoutAsync(window);
             var list = Assert.Single(WindowTestVisuals.Descendants<ObjectStorageListView>(view));
-            var search = Assert.Single(WindowTestVisuals.Descendants<TextBox>(list));
+            var search = Assert.IsType<TextBox>(list.FindName("SearchInput"));
             Assert.InRange(search.ActualWidth, 80, 144);
             Assert.False(list.ShowSearchDecorations);
             Assert.Equal(Visibility.Collapsed, list.StorageColumnVisibility);

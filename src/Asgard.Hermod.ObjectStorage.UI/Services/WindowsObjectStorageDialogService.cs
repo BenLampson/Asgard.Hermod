@@ -137,6 +137,16 @@ public sealed class WindowsObjectStorageDialogService : IObjectStorageDialogServ
         return Task.FromResult(Show(new ObjectStorageForcePreviewWindow(model)) == true ? model.Result : null);
     }
 
+    /// <inheritdoc />
+    public Task ShowFolderPropertiesAsync(ObjectStorageBucket bucket, string prefix,
+        Func<IProgress<ObjectStorageFolderStatistics>, CancellationToken, Task<ObjectStorageFolderStatistics>> scan,
+        CancellationToken cancellationToken = default)
+    {
+        using var model = new ObjectStorageFolderPropertiesViewModel(bucket, prefix, scan, cancellationToken);
+        Show(new ObjectStorageFolderPropertiesWindow(model));
+        return Task.CompletedTask;
+    }
+
     /// <summary>调用方只能在显式复制操作后调用；失败使用共享业务窗体安全提示。</summary>
     public void CopyText(string text)
     {

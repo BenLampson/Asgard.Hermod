@@ -54,6 +54,11 @@ public sealed class ObjectStorageDirectoryScanViewTests(WpfTestFixture fixture)
             var start = Assert.Single(WindowTestVisuals.Descendants<Button>(view), button => ReferenceEquals(button.Command, model.ScanDirectoryCommand));
             Assert.Equal(32, start.ActualHeight);
             Assert.True(start.Command.CanExecute(null));
+            var sort = Assert.IsType<ComboBox>(view.FindName("TimeSortSelector"));
+            Assert.Equal(Text.Get("NewestFirst"), Assert.IsType<ComboBoxItem>(sort.Items[0]).Content);
+            Assert.Equal(Text.Get("OldestFirst"), Assert.IsType<ComboBoxItem>(sort.Items[1]).Content);
+            sort.SelectedIndex = 1;
+            Assert.Equal(1, model.TimeSortDirection);
             var scan = model.ScanDirectoryAsync(TestContext.Current.CancellationToken);
             await scanning.Task.WaitAsync(TimeSpan.FromSeconds(3), TestContext.Current.CancellationToken);
             await WindowPreviewCapture.VerifyAsync(window, $"directory-scan-running-{language}-{theme}-{width}");
@@ -81,6 +86,8 @@ public sealed class ObjectStorageDirectoryScanViewTests(WpfTestFixture fixture)
             Assert.Equal(continueScan, model.IsScanComplete);
             Assert.False(model.IsScanPaused);
             Assert.False(resume.IsVisible);
+            AssertContained(sort, view);
+            AssertContained(Assert.Single(WindowTestVisuals.Descendants<Button>(view), button => ReferenceEquals(button.Command, model.FolderPropertiesCommand)), view);
             Assert.Equal(Text.Get(continueScan ? "DirectoryScanCompleted" : "DirectoryScanCanceled"), model.ScanStatus);
         }
         finally
@@ -90,4 +97,13 @@ public sealed class ObjectStorageDirectoryScanViewTests(WpfTestFixture fixture)
             themes.SetTheme(UiTheme.Light);
         }
     });
+
+    /// <summary>窄窗口中的排序和属性入口不可被裁切，键盘导航仍有可见目标。</summary>
+    private static void AssertContained(FrameworkElement element, FrameworkElement view)
+    {
+        var bounds = WindowTestVisuals.ScreenBounds(element);
+        var container = WindowTestVisuals.ScreenBounds(view);
+        Assert.True(bounds.Left >= container.Left && bounds.Right <= container.Right + 1);
+        Assert.True(bounds.Top >= container.Top && bounds.Bottom <= container.Bottom + 1);
+    }
 }

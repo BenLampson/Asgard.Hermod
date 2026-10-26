@@ -5,6 +5,12 @@ namespace Asgard.Hermod.UI.Tests;
 /// <summary>记录用户选择与确认，默认取消写操作，不使用系统对话框或剪贴板。</summary>
 internal sealed class ObjectStorageTestDialogs : IObjectStorageDialogService
 {
+    /// <summary>属性窗口替身记录明确路径，只有测试明确开始时才调用扫描。</summary>
+    internal Func<ObjectStorageBucket, string, Func<IProgress<ObjectStorageFolderStatistics>, CancellationToken, Task<ObjectStorageFolderStatistics>>, CancellationToken, Task>? FolderPropertiesHandler { get; set; }
+    /// <inheritdoc />
+    public Task ShowFolderPropertiesAsync(ObjectStorageBucket bucket, string prefix,
+        Func<IProgress<ObjectStorageFolderStatistics>, CancellationToken, Task<ObjectStorageFolderStatistics>> scan, CancellationToken cancellationToken = default) =>
+        FolderPropertiesHandler?.Invoke(bucket, prefix, scan, cancellationToken) ?? Task.CompletedTask;
     /// <summary>已明确选择的上传队列。</summary>
     internal ObjectStorageUploadSelection? UploadSelection { get; set; }
     /// <summary>单文件下载的用户路径。</summary>

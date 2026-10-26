@@ -68,6 +68,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         ClearSearchCommand = new AsyncRelayCommand(_ => SearchAsync(""), _ => !IsClosed && SearchText.Length > 0);
         EditConnectionCommand = new AsyncRelayCommand(_ => EditConnectionAsync(), _ => !IsClosed && !_dialogOpen && !IsImagePreviewLoading && _editor is not null && !Transfers.Any(task => task.IsRunning));
         InitializeDirectoryScanCommands();
+        InitializeFolderPropertiesCommand();
         InitializeForcePreviewCommands();
         InitializeConnectionCommands();
     }
@@ -344,6 +345,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         CopyKeyCommand.NotifyCanExecuteChanged(); CopyPreviewCommand.NotifyCanExecuteChanged();
         CloseDetailsCommand.NotifyCanExecuteChanged(); ToggleDetailsCommand.NotifyCanExecuteChanged();
         RefreshScanCommands();
+        FolderPropertiesCommand?.NotifyCanExecuteChanged();
         ForcePreviewCommand?.NotifyCanExecuteChanged();
         CancelImagePreviewCommand?.NotifyCanExecuteChanged();
         OpenImagePreviewCommand?.NotifyCanExecuteChanged();

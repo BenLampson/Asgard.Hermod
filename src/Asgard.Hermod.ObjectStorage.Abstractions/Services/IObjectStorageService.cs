@@ -17,6 +17,10 @@ public interface IObjectStorageService
         string prefix, Func<ObjectStorageDirectoryScanProgress, CancellationToken, Task<bool>> confirmContinuation,
         IProgress<ObjectStorageDirectoryScanProgress>? progress = null, CancellationToken cancellationToken = default);
 
+    /// <summary>递归只读列举当前前缀，统计文件大小、文件数和去重后的子目录数，进度不代表最终结果。</summary>
+    Task<ObjectStorageFolderStatistics> GetFolderStatisticsAsync(string instanceId, ObjectStorageBucket bucket,
+        string prefix, IProgress<ObjectStorageFolderStatistics>? progress = null, CancellationToken cancellationToken = default);
+
     /// <summary>读取元数据，并仅为适合的文本提供最多 256KB 的预览。</summary>
     Task<ObjectStorageObjectDetails> GetObjectDetailsAsync(string instanceId,
         ObjectStorageBucket bucket, string key, CancellationToken cancellationToken = default);

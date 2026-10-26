@@ -29,6 +29,11 @@ public interface IObjectStorageDialogService
     /// <summary>确认预览类型与流量费用；取消时返回空值，窗体不下载对象。</summary>
     Task<ObjectStoragePreviewType?> RequestForcePreviewAsync(string name, long size, ObjectStoragePreviewType? inferredType);
 
+    /// <summary>先说明耗时，用户开始后统计并在同一属性窗口展示进度和完整结果；关闭取消扫描。</summary>
+    Task ShowFolderPropertiesAsync(ObjectStorageBucket bucket, string prefix,
+        Func<IProgress<ObjectStorageFolderStatistics>, CancellationToken, Task<ObjectStorageFolderStatistics>> scan,
+        CancellationToken cancellationToken = default);
+
     /// <summary>仅在用户点击复制时写入系统剪贴板。</summary>
     void CopyText(string text);
 }

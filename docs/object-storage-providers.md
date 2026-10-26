@@ -63,6 +63,21 @@ DNS and TLS configuration support it. Set the region configured on your server.
 
 ## Operations and permissions
 
+The recursive modification-time scan offers **Newest first** and **Oldest first**.
+Changing the direction after a complete scan reorders the loaded rows without
+another request. Folders stay first and unknown timestamps stay last in each group.
+
+Use **Current folder properties** or a folder's **Folder properties** menu to
+calculate its total size, file count, subfolder count and latest file modification
+time. The dialog warns before starting: recursive listing can take a long time
+and incur listing request charges. It shows an indeterminate progress bar with
+running counts and size, and supports cancellation or closing the window.
+Only a complete scan exposes final properties. It reads listing metadata without
+downloading file contents or requesting each object's metadata. Counts include
+implicit and empty subfolders once, exclude the selected folder itself, and
+describe currently visible objects rather than historical versions. Concurrent
+remote changes can affect this scan; it is not an atomic snapshot.
+
 Supported operations include paginated bucket/object listing, object metadata,
 range reads and downloads, single and multipart uploads, deletion, and temporary
 GET links. Links must expire within seven days and can stop working earlier when

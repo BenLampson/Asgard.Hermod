@@ -12,6 +12,33 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     private bool _isScanSuccessful;
     private long _scannedFiles;
     private string _scanStatus = "";
+    private int _timeSortDirection;
+
+    /// <summary>固定索引代表最新或最早在前；切换完整结果只在内存重排，不重复扫描。</summary>
+    public int TimeSortDirection
+    {
+        get => _timeSortDirection;
+        set
+        {
+            if (value is < 0 or > 1 || !SetProperty(ref _timeSortDirection, value)) return;
+            if (IsScanComplete) ApplyTimeSort();
+        }
+    }
+
+    /// <summary>文件夹始终在前，未知日期始终在末尾；保留行对象、选择与勾选状态。</summary>
+    private void ApplyTimeSort()
+    {
+        var selected = SelectedEntry;
+        var grouped = Entries.OrderByDescending(entry => entry.IsDirectory).ThenByDescending(entry => entry.Entry.LastModified.HasValue);
+        var ordered = (TimeSortDirection == 0 ? grouped.ThenByDescending(entry => entry.Entry.LastModified)
+            : grouped.ThenBy(entry => entry.Entry.LastModified)).ThenBy(entry => entry.Key, StringComparer.Ordinal).ToArray();
+        for (int index = 0; index < ordered.Length; index++)
+        {
+            int current = Entries.IndexOf(ordered[index]);
+            if (current != index) Entries.Move(current, index);
+        }
+        SelectedEntry = selected;
+    }
 
     /// <summary>临时递归获取日期，完整扫描后才发布排序。</summary>
     public AsyncRelayCommand ScanDirectoryCommand { get; private set; } = null!;
@@ -111,6 +138,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
             string? selectedKey = SelectedEntry?.Key;
             Entries.Clear();
             foreach (var entry in result.Entries) Entries.Add(new(entry, NotifyChecked) { IsChecked = checkedKeys.Contains(entry.Key) });
+            ApplyTimeSort();
             _nextToken = null;
             SelectedEntry = Entries.FirstOrDefault(entry => entry.Key == selectedKey);
             ScannedFiles = result.FilesScanned;

@@ -13,6 +13,10 @@ internal sealed class ConnectionAwareObjectStorageService(IObjectStorageService 
         IProgress<ObjectStorageDirectoryScanProgress>? progress = null, CancellationToken cancellationToken = default) =>
         ObserveAsync(() => inner.ScanDirectoryAsync(id, bucket, prefix, confirmContinuation, progress, cancellationToken), cancellationToken);
     /// <inheritdoc />
+    public Task<ObjectStorageFolderStatistics> GetFolderStatisticsAsync(string id, ObjectStorageBucket bucket, string prefix,
+        IProgress<ObjectStorageFolderStatistics>? progress = null, CancellationToken cancellationToken = default) =>
+        ObserveAsync(() => inner.GetFolderStatisticsAsync(id, bucket, prefix, progress, cancellationToken), cancellationToken);
+    /// <inheritdoc />
     public Task<ObjectStorageObjectDetails> GetObjectDetailsAsync(string id, ObjectStorageBucket bucket, string key, CancellationToken token = default) =>
         ObserveAsync(() => inner.GetObjectDetailsAsync(id, bucket, key, token), token);
     /// <inheritdoc />

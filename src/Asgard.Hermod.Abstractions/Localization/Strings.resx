@@ -1899,7 +1899,7 @@
     <value>Scanned {0:N0} files · There are many files; continuing may take a while.</value>
   </data>
   <data xml:space="preserve" name="DirectoryScanCompleted">
-    <value>Scan complete. Sorted by the latest file modification time in each directory.</value>
+    <value>Scan complete. Modification times are available.</value>
   </data>
   <data xml:space="preserve" name="DirectoryScanCanceled">
     <value>Scan canceled. The previous list order has been kept.</value>
@@ -5593,4 +5593,49 @@ Address: {2}</value></data>
   <data name="KubeEventsTab" xml:space="preserve"><value>Events</value></data>
   <data name="ManagementLogsTab" xml:space="preserve"><value>Logs</value></data>
   <data name="ManagementMemory" xml:space="preserve"><value>Memory</value></data>
+  <data name="ModificationTimeSortOrder" xml:space="preserve">
+    <value>Modification time order</value>
+  </data>
+  <data name="NewestFirst" xml:space="preserve">
+    <value>Newest first</value>
+  </data>
+  <data name="OldestFirst" xml:space="preserve">
+    <value>Oldest first</value>
+  </data>
+  <data name="FolderProperties" xml:space="preserve">
+    <value>Folder properties</value>
+  </data>
+  <data name="CurrentFolderProperties" xml:space="preserve">
+    <value>Current folder properties</value>
+  </data>
+  <data name="StartFolderStatistics" xml:space="preserve">
+    <value>Calculate size</value>
+  </data>
+  <data name="FolderStatisticsWarning" xml:space="preserve">
+    <value>Calculating size scans this folder and all subfolders. It may take a long time and incur listing request charges. File contents are not downloaded. You can cancel at any time.</value>
+  </data>
+  <data name="FolderStatisticsProgress" xml:space="preserve">
+    <value>Scanned {0:N0} files and {1:N0} subfolders; {2} so far. The total is unknown until the scan finishes.</value>
+  </data>
+  <data name="FolderStatisticsCompleted" xml:space="preserve">
+    <value>Calculation complete. These properties describe the objects visible during this scan, excluding historical versions. Objects changed during the scan may affect the result.</value>
+  </data>
+  <data name="FolderStatisticsCanceled" xml:space="preserve">
+    <value>Calculation canceled. No complete properties are available. You can start again.</value>
+  </data>
+  <data name="FolderStatisticsFailed" xml:space="preserve">
+    <value>Could not calculate folder properties. Check the connection and listing permissions, then try again.</value>
+  </data>
+  <data name="FolderStatisticsSize" xml:space="preserve">
+    <value>{0} ({1:N0} bytes)</value>
+  </data>
+  <data name="FolderStatisticsContains" xml:space="preserve">
+    <value>{0:N0} files, {1:N0} subfolders</value>
+  </data>
+  <data name="FolderStatisticsContents" xml:space="preserve">
+    <value>Contains</value>
+  </data>
+  <data name="FolderStatisticsScanning" xml:space="preserve">
+    <value>Calculating folder properties</value>
+  </data>
 </root>
