@@ -3,6 +3,12 @@ namespace Asgard.Hermod.UI.Tests;
 /// <summary>可控制迟到返回、业务错误和传输的对象服务替身，不访问网络或磁盘。</summary>
 internal sealed class ObjectStorageTestService : IObjectStorageService
 {
+    /// <summary>目录统计替身，默认空目录。</summary>
+    internal Func<string, IProgress<ObjectStorageFolderStatistics>?, CancellationToken, Task<ObjectStorageFolderStatistics>>? StatisticsHandler { get; set; }
+    /// <inheritdoc />
+    public Task<ObjectStorageFolderStatistics> GetFolderStatisticsAsync(string instanceId, ObjectStorageBucket bucket,
+        string prefix, IProgress<ObjectStorageFolderStatistics>? progress = null, CancellationToken cancellationToken = default) =>
+        StatisticsHandler?.Invoke(prefix, progress, cancellationToken) ?? Task.FromResult(new ObjectStorageFolderStatistics(0, 0, 0));
     /// <summary>默认可见桶，测试可以替换。</summary>
     internal IReadOnlyList<ObjectStorageBucket> Buckets { get; set; } = [new("assets-dev", "cn-hangzhou")];
     /// <summary>桶读取可阻塞或失败，支持取消生命周期测试。</summary>

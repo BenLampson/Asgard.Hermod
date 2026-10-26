@@ -5,6 +5,35 @@ namespace Asgard.Hermod.UI.Tests;
 /// <summary>临时目录日期只在完整扫描后发布，取消与导航不会套用未完成或过期结果。</summary>
 public sealed class ObjectStorageWorkspaceDirectoryScanTests
 {
+    /// <summary>正倒序可在扫描前选择或完成后切换，不重复访问服务且保留选择、勾选和未知日期末尾。</summary>
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    public async Task TimeOrder_ReordersCompleteResultsWithoutRescanning(int initial)
+    {
+        int calls = 0;
+        var date = new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var service = new ObjectStorageTestService
+        {
+            ScanHandler = (_, _, _, _) =>
+            {
+                calls++;
+                return Task.FromResult<ObjectStorageDirectoryScanResult?>(new(
+                    [new("unknown/", true), new("old/", true, LastModified: date), new("new/", true, LastModified: date.AddDays(1)), new("file", false, LastModified: date)], 3));
+            },
+        };
+        await using var model = ObjectStorageWorkspaceNavigationTests.Create(service);
+        await model.InitializeAsync(TestContext.Current.CancellationToken);
+        model.TimeSortDirection = initial;
+        await model.ScanDirectoryAsync(TestContext.Current.CancellationToken);
+        Assert.Equal(initial == 0 ? "new/" : "old/", model.Entries[0].Key);
+        var selected = model.Entries[0]; selected.IsChecked = true; model.SelectedEntry = selected;
+        model.TimeSortDirection = 1 - initial;
+        Assert.Equal(initial == 0 ? "old/" : "new/", model.Entries[0].Key);
+        Assert.Equal("unknown/", model.Entries[2].Key); Assert.Equal("file", model.Entries[3].Key);
+        Assert.Same(selected, model.SelectedEntry); Assert.True(selected.IsChecked); Assert.Equal(1, calls);
+    }
+
     /// <summary>完整结果替换首批列表，保留已有勾选，刷新后丢弃汇总日期及扫描状态。</summary>
     [Fact]
     public async Task CompleteScan_ReplacesPagedListAndRefreshInvalidatesDates()

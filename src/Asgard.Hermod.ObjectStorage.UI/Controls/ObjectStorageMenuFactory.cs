@@ -17,6 +17,7 @@ internal static class ObjectStorageMenuFactory
             menu.Items.Add(new Separator());
         }
         if (includeDownload) menu.Items.Add(Item(Text.Get("Download"), "download", model.DownloadCommand, row));
+        if (row.IsDirectory) menu.Items.Add(Item(Text.Get("FolderProperties"), "info", model.FolderPropertiesCommand, row));
         menu.Items.Add(Item(Text.Get("CopyObjectKey"), "copy", model.CopyKeyCommand, row));
         menu.Items.Add(Item(Text.Get("GenerateTemporaryLink2"), "link", model.TemporaryLinkCommand, row));
         menu.Items.Add(new Separator());

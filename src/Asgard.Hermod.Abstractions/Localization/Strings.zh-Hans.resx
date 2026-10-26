@@ -1899,7 +1899,7 @@
     <value>已扫描 {0:N0} 个文件 · 文件较多，继续扫描可能耗时较长</value>
   </data>
   <data xml:space="preserve" name="DirectoryScanCompleted">
-    <value>扫描完成，已按目录内最近更新时间排序</value>
+    <value>扫描完成，已获取目录内最近更新时间。</value>
   </data>
   <data xml:space="preserve" name="DirectoryScanCanceled">
     <value>扫描已取消，保留原列表顺序。</value>
@@ -5593,4 +5593,49 @@ SQL：
   <data name="KubeEventsTab" xml:space="preserve"><value>事件</value></data>
   <data name="ManagementLogsTab" xml:space="preserve"><value>日志</value></data>
   <data name="ManagementMemory" xml:space="preserve"><value>内存</value></data>
+  <data name="ModificationTimeSortOrder" xml:space="preserve">
+    <value>更新时间排序方式</value>
+  </data>
+  <data name="NewestFirst" xml:space="preserve">
+    <value>最新在前（倒序）</value>
+  </data>
+  <data name="OldestFirst" xml:space="preserve">
+    <value>最早在前（正序）</value>
+  </data>
+  <data name="FolderProperties" xml:space="preserve">
+    <value>文件夹属性</value>
+  </data>
+  <data name="CurrentFolderProperties" xml:space="preserve">
+    <value>当前文件夹属性</value>
+  </data>
+  <data name="StartFolderStatistics" xml:space="preserve">
+    <value>开始统计大小</value>
+  </data>
+  <data name="FolderStatisticsWarning" xml:space="preserve">
+    <value>统计大小需要扫描此文件夹及所有子文件夹，可能耗时较长并产生列表请求费用。不会下载文件内容，可随时取消。</value>
+  </data>
+  <data name="FolderStatisticsProgress" xml:space="preserve">
+    <value>已统计 {0:N0} 个文件、{1:N0} 个子文件夹，累计 {2}。扫描完成前无法确定总量。</value>
+  </data>
+  <data name="FolderStatisticsCompleted" xml:space="preserve">
+    <value>统计完成。以下属性为本次扫描期间可见的对象，不包含历史版本；扫描过程中发生的变更可能影响结果。</value>
+  </data>
+  <data name="FolderStatisticsCanceled" xml:space="preserve">
+    <value>已取消统计，未生成完整属性。可以重新开始。</value>
+  </data>
+  <data name="FolderStatisticsFailed" xml:space="preserve">
+    <value>无法统计文件夹属性，请检查连接和列表读取权限后重试。</value>
+  </data>
+  <data name="FolderStatisticsSize" xml:space="preserve">
+    <value>{0}（{1:N0} 字节）</value>
+  </data>
+  <data name="FolderStatisticsContains" xml:space="preserve">
+    <value>{0:N0} 个文件，{1:N0} 个子文件夹</value>
+  </data>
+  <data name="FolderStatisticsContents" xml:space="preserve">
+    <value>包含</value>
+  </data>
+  <data name="FolderStatisticsScanning" xml:space="preserve">
+    <value>正在统计文件夹属性</value>
+  </data>
 </root>
