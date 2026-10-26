@@ -17,36 +17,33 @@ public sealed class StorageProviderUiTests(WpfTestFixture fixture)
 {
     /// <summary>编辑时提供商列表可操作，双语和两种主题下切换品牌会显示对应的新表单。</summary>
     [Theory]
-    [InlineData("en", UiTheme.Light)]
-    [InlineData("en", UiTheme.Dark)]
-    [InlineData("zh-Hans", UiTheme.Light)]
-    [InlineData("zh-Hans", UiTheme.Dark)]
-    public Task EditWizard_ChangesProviderAndRendersItsFields(string language, UiTheme theme) => fixture.RunAsync(async () =>
+    [MemberData(nameof(CloudInputCases))]
+    public Task EditWizard_ChangesProviderAndRendersItsFields(string language, UiTheme theme, string providerId) => fixture.RunAsync(async () =>
     {
         var previous = CultureInfo.CurrentUICulture;
         var themes = new ThemeService(Application.Current.Resources);
         themes.SetTheme(theme);
         CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(language);
-        using var services = new ServiceCollection().AddHermodCore().AddAliyunOss().AddVolcengineTos().BuildServiceProvider();
+        using var services = new ServiceCollection().AddHermodCore().AddAliyunOss().AddVolcengineTos().AddAwsS3().AddTencentCos().AddMinio().BuildServiceProvider();
         var configurations = new NewInstanceWizardTestConfigurationService();
         var existing = new InstanceSummary("provider-edit", "Storage instance", "Storage instance", "cloud", [],
-            IsLocal: true, TypeId: "storage", ProviderId: "aliyun-oss");
+            IsLocal: true, TypeId: "storage", ProviderId: "minio");
         using var model = new NewInstanceViewModel(services.GetRequiredService<IInstanceProviderRegistry>(), configurations, existing, new()
         {
             TypeId = "storage",
-            ProviderId = "aliyun-oss",
+            ProviderId = "minio",
             Parameters = new Dictionary<string, string> { ["accessKeyId"] = "OriginalTestKey", ["accessKeySecret"] = "original-secret" },
         });
         var dialog = new NewInstanceWindow(model);
         try
         {
             WindowPreviewCapture.Show(dialog);
-            await WindowPreviewCapture.VerifyAsync(dialog, $"provider-edit-{language}-{theme}");
+            await WindowPreviewCapture.VerifyAsync(dialog, $"provider-edit-{providerId}-{language}-{theme}");
             Assert.Equal(Text.Get("EditInstance"), dialog.Title);
             var providers = Assert.IsType<ListBox>(WindowTestVisuals.Named(dialog, "ProviderList"));
             Assert.True(providers.IsEnabled);
             Assert.False(Assert.IsAssignableFrom<Control>(WindowTestVisuals.Named(dialog, "TypeList")).IsEnabled);
-            var selected = model.Providers.Single(provider => provider.Id == "volcengine-tos");
+            var selected = model.Providers.Single(provider => provider.Id == providerId);
             var card = Assert.Single(WindowTestVisuals.Descendants<SelectionCard>(providers), item => ReferenceEquals(item.DataContext, selected));
             Assert.True(card.Focus());
             card.IsChecked = true;
@@ -57,14 +54,53 @@ public sealed class StorageProviderUiTests(WpfTestFixture fixture)
             Assert.Empty(NewInstanceWizardTests.GetField(model, "accessKeySecret").Value);
             Assert.Contains(WindowTestVisuals.Descendants<TextBox>(dialog),
                 item => item.IsVisible && item.DataContext is InstanceConfigurationFieldViewModel { Key: "region" });
+            var region = NewInstanceWizardTests.GetField(model, "region");
+            var endpoint = NewInstanceWizardTests.GetField(model, "endpoint");
+            var mode = NewInstanceWizardTests.GetField(model, "endpointMode");
+            Assert.Equal("region", mode.Value);
+            Assert.Equal(Text.Get("StorageRegion"), region.Label);
+            Assert.True(region.IsVisible);
+            Assert.False(endpoint.IsVisible);
+            region.Value = "cn-beijing";
+            var selector = Assert.Single(WindowTestVisuals.Descendants<SegmentedSelector>(dialog), item => ReferenceEquals(item.DataContext, mode));
+            var endpointChoice = Assert.IsType<ListBoxItem>(selector.ItemContainerGenerator.ContainerFromIndex(1));
+            Assert.True(endpointChoice.Focus());
+            selector.SelectedValue = "endpoint";
+            await WindowTestVisuals.UpdateLayoutAsync(dialog);
+            Assert.Equal("endpoint", mode.Value);
+            Assert.False(region.IsVisible);
+            Assert.True(endpoint.IsVisible);
+            Assert.False(endpoint.IsValid);
+            Assert.Equal(Text.Get("StorageEndpoint"), endpoint.Label);
+            Assert.NotEmpty(endpoint.Definition.Hint);
+            Assert.Equal(2048, endpoint.Definition.MaxLength);
+            var input = Assert.Single(WindowTestVisuals.Descendants<TextBox>(dialog),
+                item => item.IsVisible && ReferenceEquals(item.DataContext, endpoint));
+            Assert.True(input.Focus());
+            input.Text = providerId switch
+            {
+                "aliyun-oss" => "https://oss-cn-shanghai.aliyuncs.com",
+                "aws-s3" => "https://s3.eu-west-1.amazonaws.com",
+                "tencent-cos" => "https://cos.ap-shanghai.myqcloud.com",
+                _ => "https://tos-cn-shanghai.volces.com",
+            };
+            input.GetBindingExpression(TextBox.TextProperty)!.UpdateSource();
+            Assert.Equal(input.Text, endpoint.Value);
             var name = Assert.IsType<TextBox>(WindowTestVisuals.Named(dialog, "NameInput"));
             Assert.Equal(existing.Name, name.Text);
             Assert.True(name.Focus());
             Assert.True(name.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)));
-            await WindowPreviewCapture.VerifyAsync(dialog, $"provider-edit-fields-{language}-{theme}");
+            await WindowPreviewCapture.VerifyAsync(dialog, $"provider-edit-fields-{providerId}-{language}-{theme}");
             dialog.Width = 1000;
             dialog.Height = 720;
-            await WindowPreviewCapture.VerifyAsync(dialog, $"provider-edit-expanded-{language}-{theme}");
+            await WindowPreviewCapture.VerifyAsync(dialog, $"provider-edit-expanded-{providerId}-{language}-{theme}");
+            selector.SelectedValue = "region";
+            await WindowTestVisuals.UpdateLayoutAsync(dialog);
+            Assert.True(region.IsVisible);
+            Assert.False(endpoint.IsVisible);
+            Assert.Equal("cn-beijing", region.Value);
+            Assert.Equal(input.Text, endpoint.Value);
+            await WindowPreviewCapture.VerifyAsync(dialog, $"provider-edit-region-{providerId}-{language}-{theme}");
             Assert.False(model.CanCreate);
             Assert.Empty(configurations.Updates);
         }
@@ -75,6 +111,13 @@ public sealed class StorageProviderUiTests(WpfTestFixture fixture)
             themes.SetTheme(UiTheme.Light);
         }
     });
+
+    /// <summary>全部区域云连接器在双语和两种主题下使用相同的地址填写选择。</summary>
+    public static IEnumerable<object[]> CloudInputCases() =>
+        from language in new[] { "en", "zh-Hans" }
+        from theme in new[] { UiTheme.Light, UiTheme.Dark }
+        from provider in new[] { "aliyun-oss", "aws-s3", "tencent-cos", "volcengine-tos" }
+        select new object[] { language, theme, provider };
 
     /// <summary>所有提供商使用同一向导，最后的配置字段可滚动访问，不裁切底部动作。</summary>
     [Theory]

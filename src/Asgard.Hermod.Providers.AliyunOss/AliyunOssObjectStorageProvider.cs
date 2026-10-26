@@ -3,7 +3,7 @@ using Oss = AlibabaCloud.OSS.V2;
 
 namespace Asgard.Hermod.Providers.AliyunOss;
 
-/// <summary>将本地密文配置恢复出的凭据交给官方 SDK，端点始终来自合法 OSS 区域。</summary>
+/// <summary>将本地密文配置恢复出的凭据交给官方 SDK，端点始终属于合法 OSS 服务域。</summary>
 public sealed class AliyunOssObjectStorageProvider(IHttpClientFactory clients) : IObjectStorageProvider
 {
     /// <summary>资源传输使用独立客户端，读取与写入遵循各自重试策略。</summary>
@@ -24,14 +24,14 @@ public sealed class AliyunOssObjectStorageProvider(IHttpClientFactory clients) :
             string.IsNullOrWhiteSpace(accessKeyId) || accessKeyId.Length > 128 || !accessKeyId.All(char.IsAsciiLetterOrDigit) ||
             string.IsNullOrWhiteSpace(accessKeySecret) || accessKeySecret.Length > 256 || accessKeySecret.Any(char.IsControl))
             throw ObjectStorageException.FromResource("InvalidConnectionCredentialsEditTheInstanceConfiguration", "InvalidCredentials");
-        string validatedRegion = AliyunOssEndpoint.NormalizeRegion(region ?? "cn-hangzhou");
+        var settings = AliyunOssEndpoint.Resolve(options, region);
         var transport = new Oss.Transport.HttpTransport(clients.CreateClient(HttpClientName));
         try
         {
             var configuration = new Oss.Configuration
             {
-                Region = validatedRegion,
-                Endpoint = $"https://oss-{validatedRegion}.aliyuncs.com",
+                Region = settings.Region,
+                Endpoint = settings.Endpoint.AbsoluteUri,
                 CredentialsProvider = new Oss.Credentials.StaticCredentialsProvider(accessKeyId, accessKeySecret),
                 HttpTransport = transport,
                 SignatureVersion = "v4",

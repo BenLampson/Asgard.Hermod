@@ -6,4 +6,7 @@ namespace Asgard.Hermod.Providers.TencentCos;
 public sealed class TencentCosStorageProvider(IHttpClientFactory clients) : S3StorageProvider(
     new("tencent-cos", "TencentCosName", "TencentCosDescription", "provider-tencent-cos", "ap-guangzhou",
         region => $"https://cos.{region}.myqcloud.com", ForbidOverwriteHeader: "x-cos-forbid-overwrite",
-        BucketListDialect: new("Location", "NextMarker", "marker", "max-keys")), clients);
+        BucketListDialect: new("Location", "NextMarker", "marker", "max-keys"))
+    {
+        ResolveEndpoint = (value, region) => S3RegionalEndpoint.Resolve(value, ["cos."], [".myqcloud.com"], "cos.", region),
+    }, clients);

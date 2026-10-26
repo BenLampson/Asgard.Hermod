@@ -15,6 +15,10 @@ public abstract class S3StorageProvider(S3ProviderProfile profile, IHttpClientFa
     public InstanceProviderDescriptor Descriptor { get; } = CreateDescriptor(profile);
 
     /// <inheritdoc />
+    public InstanceConnectionOptions NormalizeConnection(InstanceConnectionOptions options) =>
+        profile.CustomEndpoint ? options : ObjectStorageEndpointInput.Normalize(options);
+
+    /// <inheritdoc />
     public IObjectStorageClient CreateClient(InstanceConnectionOptions options, string? region)
     {
         var settings = S3ConnectionSettings.Parse(profile, options, region);
@@ -73,9 +77,14 @@ public abstract class S3StorageProvider(S3ProviderProfile profile, IHttpClientFa
     {
         var fields = new List<InstanceConfigurationField>();
         if (profile.CustomEndpoint)
+        {
             fields.Add(new("endpoint", Text.Get("StorageEndpoint"), MaxLength: 2048, Hint: Text.Get("StorageEndpointHint")));
-        fields.Add(new("region", Text.Get("StorageRegion"), IsRequired: false, MaxLength: 64,
-            Hint: Text.Format("StorageRegionHint", profile.DefaultRegion)));
+            fields.Add(new("region", Text.Get("StorageRegion"), IsRequired: false, MaxLength: 64,
+                Hint: Text.Format("StorageRegionHint", profile.DefaultRegion)));
+        }
+        else
+            fields.AddRange(ObjectStorageEndpointInput.CreateFields(profile.DefaultRegion, profile.EndpointHintResource is { } hint
+                ? Text.Get(hint) : Text.Format("StorageCloudEndpointHint", profile.Endpoint(profile.DefaultRegion))));
         fields.Add(new("accessKeyId", Text.Get("StorageAccessKeyId"), MaxLength: 256, IsSensitive: true));
         fields.Add(new("accessKeySecret", Text.Get("StorageSecretAccessKey"), InstanceFieldKind.Secret, MaxLength: 512));
         fields.Add(new("sessionToken", Text.Get("StorageSessionToken"), InstanceFieldKind.Secret, IsRequired: false,

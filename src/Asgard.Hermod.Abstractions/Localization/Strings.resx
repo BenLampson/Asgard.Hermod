@@ -1996,6 +1996,14 @@
   <data name="TencentCosDescription" xml:space="preserve"><value>Tencent Cloud object storage</value></data>
   <data name="VolcengineTosName" xml:space="preserve"><value>Volcengine TOS</value></data>
   <data name="VolcengineTosDescription" xml:space="preserve"><value>Volcengine object storage</value></data>
+  <data name="TosEndpointHint" xml:space="preserve"><value>Paste the full TOS endpoint, for example https://tos-cn-beijing.volces.com. The region is detected automatically and standard TOS addresses are converted to S3 endpoints. A hostname without https:// is also accepted.</value></data>
+  <data name="StorageEndpointMode" xml:space="preserve"><value>Endpoint input</value></data>
+  <data name="StorageEndpointByRegion" xml:space="preserve"><value>Enter region</value></data>
+  <data name="StorageEndpointByAddress" xml:space="preserve"><value>Enter full endpoint</value></data>
+  <data name="StorageCloudEndpointHint" xml:space="preserve"><value>Paste the provider's service endpoint, for example {0}. The region is detected automatically. A hostname without https:// is also accepted. Do not include a bucket name or object path.</value></data>
+  <data name="StorageCloudEndpointInvalid" xml:space="preserve"><value>Enter a regional service endpoint belonging to the selected provider, without a bucket name or object path.</value></data>
+  <data name="StorageEndpointModeInvalid" xml:space="preserve"><value>Select whether to enter a region or a full service endpoint.</value></data>
+  <data name="AliyunOssDescription" xml:space="preserve"><value>Alibaba Cloud object storage</value></data>
   <data name="MinioName" xml:space="preserve"><value>MinIO</value></data>
   <data name="MinioDescription" xml:space="preserve"><value>Self-hosted S3-compatible storage</value></data>
   <data name="S3CompatibleName" xml:space="preserve"><value>S3-compatible storage</value></data>

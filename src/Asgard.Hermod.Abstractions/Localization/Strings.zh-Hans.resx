@@ -1996,6 +1996,14 @@
   <data name="TencentCosDescription" xml:space="preserve"><value>腾讯云对象存储</value></data>
   <data name="VolcengineTosName" xml:space="preserve"><value>火山引擎 TOS</value></data>
   <data name="VolcengineTosDescription" xml:space="preserve"><value>火山引擎对象存储</value></data>
+  <data name="TosEndpointHint" xml:space="preserve"><value>粘贴完整 TOS 服务地址，例如 https://tos-cn-beijing.volces.com。自动识别区域，并将普通 TOS 地址转换为 S3 地址；省略 https:// 的域名也可直接填写。</value></data>
+  <data name="StorageEndpointMode" xml:space="preserve"><value>地址填写方式</value></data>
+  <data name="StorageEndpointByRegion" xml:space="preserve"><value>填写区域</value></data>
+  <data name="StorageEndpointByAddress" xml:space="preserve"><value>填写完整服务地址</value></data>
+  <data name="StorageCloudEndpointHint" xml:space="preserve"><value>粘贴服务商的完整服务地址，例如 {0}。自动识别区域，也可填写省略 https:// 的域名。请勿包含桶名或对象路径。</value></data>
+  <data name="StorageCloudEndpointInvalid" xml:space="preserve"><value>请填写所选服务商的区域服务地址，不要包含桶名或对象路径。</value></data>
+  <data name="StorageEndpointModeInvalid" xml:space="preserve"><value>请选择填写区域或完整服务地址。</value></data>
+  <data name="AliyunOssDescription" xml:space="preserve"><value>阿里云对象存储</value></data>
   <data name="MinioName" xml:space="preserve"><value>MinIO</value></data>
   <data name="MinioDescription" xml:space="preserve"><value>自建 S3 兼容存储</value></data>
   <data name="S3CompatibleName" xml:space="preserve"><value>S3 兼容存储</value></data>

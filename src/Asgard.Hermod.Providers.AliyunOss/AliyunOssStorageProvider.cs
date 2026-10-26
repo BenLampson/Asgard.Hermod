@@ -16,10 +16,6 @@ public sealed class AliyunOssStorageProvider : IStorageProvider
     public const string ProviderId = "aliyun-oss";
     /// <summary>存储是实例类型，OSS 是该类型下的服务商实现。</summary>
     public const string TypeId = "storage";
-    /// <summary>ListBuckets 查询账户桶列表，不要求用户预先选择具体 Bucket。</summary>
-    private const string Region = "cn-hangzhou";
-    /// <summary>固定官方 HTTPS 域，禁止凭据跟随任意 Endpoint 或重定向外发。</summary>
-    private static readonly Uri ListBucketsUri = new("https://oss-cn-hangzhou.aliyuncs.com/?max-keys=1");
     /// <summary>客户端生命周期和弹性由应用 DI 统一控制。</summary>
     private readonly IHttpClientFactory _clients;
     /// <summary>签名时钟支持确定性验证，生产使用 UTC 系统时间。</summary>
@@ -39,16 +35,20 @@ public sealed class AliyunOssStorageProvider : IStorageProvider
     }
 
     /// <inheritdoc />
-    public InstanceProviderDescriptor Descriptor { get; } = new(ProviderId, Text.Get("AlibabaCloudOSS"), "Object Storage Service", "provider-aliyun-oss",
+    public InstanceProviderDescriptor Descriptor { get; } = new(ProviderId, Text.Get("AlibabaCloudOSS"), Text.Get("AliyunOssDescription"), "provider-aliyun-oss",
         new(TypeId, Text.Get("Storage"), Text.Get("ConnectToObjectStorage"), "box"),
         Array.AsReadOnly<InstanceConfigurationField>([
-            new("accessKeyId", "AccessKey ID", InstanceFieldKind.Text, MaxLength: 128,
+            .. ObjectStorageEndpointInput.CreateFields("cn-hangzhou", Text.Format("StorageCloudEndpointHint", "https://oss-cn-hangzhou.aliyuncs.com")),
+            new("accessKeyId", Text.Get("StorageAccessKeyId"), InstanceFieldKind.Text, MaxLength: 128,
                 IsSensitive: true, ValidationRule: InstanceFieldValidationRule.AsciiLettersAndDigits),
-            new("accessKeySecret", "AccessKey Secret", InstanceFieldKind.Secret, MaxLength: 256, IsSensitive: true),
+            new("accessKeySecret", Text.Get("StorageSecretAccessKey"), InstanceFieldKind.Secret, MaxLength: 256, IsSensitive: true),
         ]))
     {
         ConnectionTestDescription = Text.Get("TheTestListsBucketsCreatesARandomTemporaryObjectUnderHermodConnectionTestInAnAvailabl"),
     };
+
+    /// <inheritdoc />
+    public InstanceConnectionOptions NormalizeConnection(InstanceConnectionOptions options) => ObjectStorageEndpointInput.Normalize(options);
 
     /// <inheritdoc />
     public async Task<InstanceConnectionTestResult> TestConnectionAsync(InstanceConnectionOptions options,
@@ -69,10 +69,12 @@ public sealed class AliyunOssStorageProvider : IStorageProvider
         deadline.CancelAfter(_timeout);
         try
         {
+            var snapshot = NormalizeConnection(options);
+            var settings = AliyunOssEndpoint.Resolve(snapshot, null);
             using HttpClient client = _clients.CreateClient(HttpClientName);
             // ResponseContentRead 将网络响应完整读取纳入取消期限，并限制异常响应的体积。
             client.MaxResponseContentBufferSize = 1024 * 1024;
-            using HttpRequestMessage request = CreateRequest(accessKeyId, accessKeySecret);
+            using HttpRequestMessage request = CreateRequest(accessKeyId, accessKeySecret, settings);
             using HttpResponseMessage response = await client.SendAsync(request,
                 HttpCompletionOption.ResponseContentRead, deadline.Token).ConfigureAwait(false);
             XDocument? document = await ReadResponseAsync(response, deadline.Token).ConfigureAwait(false);
@@ -82,16 +84,6 @@ public sealed class AliyunOssStorageProvider : IStorageProvider
                 document.Root.Element("Owner") is null || document.Root.Element("Buckets") is null)
                 return Failure("oss_invalid_response", Text.Get("OSSReturnedAnUnverifiableResponseTryAgainLater"));
             // 固定此次已验证的凭据，避免测试期间外部字典变更导致不同请求使用不同身份。
-            var snapshot = new InstanceConnectionOptions
-            {
-                TypeId = TypeId,
-                ProviderId = ProviderId,
-                Parameters = new Dictionary<string, string>
-                {
-                    ["accessKeyId"] = accessKeyId,
-                    ["accessKeySecret"] = accessKeySecret,
-                },
-            };
             var probe = new ObjectStorageConnectionProbe(new AliyunOssObjectStorageProvider(_clients));
             InstanceConnectionTestResult result = await probe.TestAsync(snapshot, deadline.Token).ConfigureAwait(false);
             result = result with
@@ -105,6 +97,10 @@ public sealed class AliyunOssStorageProvider : IStorageProvider
             if (deadline.IsCancellationRequested || result.ErrorCode == "oss_probe_cancelled")
                 return result with { IsSuccessful = false, ErrorCode = "oss_timeout", Message = Text.Get("ConnectionTestTimedOutKnownTemporaryObjectsWereCleanedUpCheckTheNetworkAndTryAgain") };
             return result;
+        }
+        catch (ObjectStorageException error)
+        {
+            return Failure(error.ErrorCode ?? "InvalidEndpoint", Text.Error(error));
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -134,14 +130,14 @@ public sealed class AliyunOssStorageProvider : IStorageProvider
         }
     }
 
-    /// <summary>身份验证只构造固定 GET 请求，Query 不含凭据；读写验证由通用探测器完成。</summary>
-    private HttpRequestMessage CreateRequest(string accessKeyId, string accessKeySecret)
+    /// <summary>身份验证只构造已校验官方端点的 GET 请求；读写探测复用相同地址与签名区域。</summary>
+    private HttpRequestMessage CreateRequest(string accessKeyId, string accessKeySecret, (string Region, Uri Endpoint) settings)
     {
         string timestamp = _time.GetUtcNow().ToString("yyyyMMdd'T'HHmmss'Z'", CultureInfo.InvariantCulture);
-        string scope = $"{timestamp[..8]}/{Region}/oss/aliyun_v4_request";
+        string scope = $"{timestamp[..8]}/{settings.Region}/oss/aliyun_v4_request";
         string canonical = $"GET\n/\nmax-keys=1\nx-oss-content-sha256:UNSIGNED-PAYLOAD\nx-oss-date:{timestamp}\n\n\nUNSIGNED-PAYLOAD";
-        string signature = AliyunOssV4Signer.CalculateSignature(canonical, timestamp, Region, accessKeySecret);
-        var request = new HttpRequestMessage(HttpMethod.Get, ListBucketsUri);
+        string signature = AliyunOssV4Signer.CalculateSignature(canonical, timestamp, settings.Region, accessKeySecret);
+        var request = new HttpRequestMessage(HttpMethod.Get, new UriBuilder(settings.Endpoint) { Query = "max-keys=1" }.Uri);
         request.Headers.Add("x-oss-content-sha256", "UNSIGNED-PAYLOAD");
         request.Headers.Add("x-oss-date", timestamp);
         request.Headers.Date = _time.GetUtcNow();
