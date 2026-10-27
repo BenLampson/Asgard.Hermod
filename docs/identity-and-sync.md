@@ -44,6 +44,16 @@ the replacement account.
   sign-in badge: password required, pending, synchronizing, synchronized, conflict,
   or failed. Its tooltip shows the full status message. The account window shows
   the last fully successful synchronization time.
+- Conflicts remain visible without opening the account menu: the account name
+  turns red and a red **Sync conflict** marker appears beside it (an alert icon
+  remains in compact mode). Affected unsynchronized instance names also turn red,
+  with a conflict badge in the main list. Resolving the conflict or signing out
+  removes the alert styling automatically. Names and configuration are not changed
+  by these visual indicators. Clicking the red account entry opens conflict choices
+  directly. The account menu and Settings > Account also expose **Resolve sync
+  conflicts**, with the settings page displaying the live synchronization status.
+  Every conflicting field still requires an explicit choice before any merge is
+  submitted; cancelling leaves both sides intact.
 - Each instance has its own cloud status mark. Signed-out local mode and the
   built-in local terminal have no cloud mark. A green cloud check means its
   configuration and related tags match confirmed cloud content, using the last

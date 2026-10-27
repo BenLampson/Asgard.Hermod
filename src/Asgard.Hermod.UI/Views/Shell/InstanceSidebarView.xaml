@@ -29,7 +29,7 @@
                     <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding SyncStatus}" Value="{x:Static models:ConfigurationSyncStatus.Conflict}">
-                    <Setter Property="Foreground" Value="{DynamicResource WarningBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource DangerBrush}" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding SyncStatus}" Value="{x:Static models:ConfigurationSyncStatus.Failed}">
                     <Setter Property="Foreground" Value="{DynamicResource DangerBrush}" />
@@ -178,7 +178,7 @@
                                             <controls:IconView x:Name="InstanceTypeIcon" Kind="{Binding TypeIcon}" Width="15" Height="15"
                                                                ToolTip="{Binding TypeHint}" IsHitTestVisible="True"
                                                                Style="{StaticResource InstanceIcon}" />
-                                            <TextBlock Grid.Column="2" Text="{Binding Name}" FontSize="12"
+                                            <TextBlock x:Name="SidebarInstanceName" Grid.Column="2" Text="{Binding Name}" FontSize="12"
                                                        FontFamily="{DynamicResource UiFont}"
                                                        VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
                                                 <TextBlock.Style>
@@ -188,6 +188,10 @@
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding IsSelected}" Value="True">
                                                                 <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
+                                                                <Setter Property="FontWeight" Value="SemiBold" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding HasSyncConflict}" Value="True">
+                                                                <Setter Property="Foreground" Value="{DynamicResource DangerBrush}" />
                                                                 <Setter Property="FontWeight" Value="SemiBold" />
                                                             </DataTrigger>
                                                         </Style.Triggers>

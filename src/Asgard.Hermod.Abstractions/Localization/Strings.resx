@@ -5641,4 +5641,5 @@ Address: {2}</value></data>
   <data name="SshLoadEnvironment" xml:space="preserve"><value>Load environment / refresh</value></data>
   <data name="SshEnvironmentSnapshotHint" xml:space="preserve"><value>Click to load the environment. Selections use the loaded data; click again to refresh changes.</value></data>
   <data name="KubeLoadingSnapshot" xml:space="preserve"><value>Loading {1} in context {0}…</value></data>
+  <data name="SyncResolveConflicts" xml:space="preserve"><value>Resolve sync conflicts</value></data>
 </root>

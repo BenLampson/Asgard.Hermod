@@ -43,6 +43,8 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
             _ => settings is not null);
         OpenAccountCommand = new AsyncRelayCommand(_ => (IsSignedIn ? accountEditor?.OpenAsync() : accountEditor?.OpenForSignInAsync()) ?? Task.CompletedTask,
             _ => accountEditor is not null);
+        ResolveSyncConflictsCommand = new AsyncRelayCommand(_ => accountEditor?.OpenConflictsAsync() ?? Task.CompletedTask,
+            _ => IsSignedIn && _sync?.Status == ConfigurationSyncStatus.Conflict && accountEditor is not null);
         SignOutAccountCommand = new AsyncRelayCommand(async _ =>
         {
             try { if (_accounts is not null) await _accounts.SignOutAsync(); }
@@ -118,6 +120,8 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
     public string AccountStatus => Text.Get(IsSignedIn ? "SignedIn" : "NotSignedIn");
     /// <summary>登录恢复失败仍允许离线使用本地工作区。</summary>
     public string AccountMessage { get; private set; } = "";
+    /// <summary>从账户冲突提示直接进入逐项合并，不修改任何默认选择。</summary>
+    public AsyncRelayCommand ResolveSyncConflictsCommand { get; }
     /// <summary>当前程序集版本。</summary>
     public string Version => "v" + CompactVersion;
     /// <summary>收起侧栏使用紧凑版本文本。</summary>
@@ -192,7 +196,7 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
         OnPropertyChanged(nameof(WorkspaceName)); OnPropertyChanged(nameof(SyncStatusText)); OnPropertyChanged(nameof(HasSyncStatus));
         OnPropertyChanged(nameof(SyncStatus)); OnPropertyChanged(nameof(SyncStatusLabel));
         OnPropertyChanged(nameof(MainSyncLabel)); OnPropertyChanged(nameof(MainSyncIcon));
-        SignOutAccountCommand.NotifyCanExecuteChanged();
+        SignOutAccountCommand.NotifyCanExecuteChanged(); ResolveSyncConflictsCommand.NotifyCanExecuteChanged();
         AccountMessage = "";
         OnPropertyChanged(nameof(AccountMessage));
     }
@@ -203,6 +207,7 @@ public sealed class ShellViewModel : ObservableObject, IAsyncDisposable
         if (!_dispatcher.CheckAccess()) { _dispatcher.BeginInvoke(() => OnSyncChanged(sender, args)); return; }
         if (_disposed) return;
         Sidebar.RefreshSyncStates();
+        ResolveSyncConflictsCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(SyncStatusText)); OnPropertyChanged(nameof(HasSyncStatus));
         OnPropertyChanged(nameof(SyncStatus)); OnPropertyChanged(nameof(SyncStatusLabel));
         OnPropertyChanged(nameof(MainSyncLabel)); OnPropertyChanged(nameof(MainSyncIcon));

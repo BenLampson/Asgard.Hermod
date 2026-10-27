@@ -5641,4 +5641,5 @@ SQL：
   <data name="SshLoadEnvironment" xml:space="preserve"><value>加载环境/刷新</value></data>
   <data name="SshEnvironmentSnapshotHint" xml:space="preserve"><value>点击后加载环境；切换选项使用已加载的数据。有变化时请再次点击刷新。</value></data>
   <data name="KubeLoadingSnapshot" xml:space="preserve"><value>正在加载上下文 {0} 的{1}…</value></data>
+  <data name="SyncResolveConflicts" xml:space="preserve"><value>处理同步冲突</value></data>
 </root>

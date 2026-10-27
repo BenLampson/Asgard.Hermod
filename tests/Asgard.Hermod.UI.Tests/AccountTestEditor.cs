@@ -7,6 +7,10 @@ internal sealed class AccountTestEditor : IAccountEditor
     public int Opened { get; private set; }
     /// <summary>未登录直达浏览器登录入口调用次数。</summary>
     public int SignIns { get; private set; }
+    /// <summary>冲突直达入口调用次数。</summary>
+    public int ConflictsOpened { get; private set; }
+    /// <inheritdoc />
+    public Task OpenConflictsAsync(Window? owner = null) { ConflictsOpened++; return Task.CompletedTask; }
     /// <inheritdoc />
     public Task OpenAsync() { Opened++; return Task.CompletedTask; }
     /// <inheritdoc />

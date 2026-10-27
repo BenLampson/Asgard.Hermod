@@ -12,7 +12,7 @@
   <controls:MainNavigationTabs x:Name="FixedTabs" Grid.Column="1" ItemsSource="{Binding Main.Navigation}" SelectedItem="{Binding Main.SelectedNavigation, Mode=TwoWay}"
            HorizontalAlignment="Left" chrome:WindowChrome.IsHitTestVisibleInChrome="True" AutomationProperties.Name="{loc:Loc MainNavigation}" />
   <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="6,0,12,0">
-   <controls:AccountMenu x:Name="Account" Margin="0,0,10,0" MaxWidth="190" chrome:WindowChrome.IsHitTestVisibleInChrome="True" />
+   <controls:AccountMenu x:Name="Account" Margin="0,0,10,0" MaxWidth="270" chrome:WindowChrome.IsHitTestVisibleInChrome="True" />
    <Button x:Name="ThemeButton" Width="26" Height="28" Padding="0" Margin="0,0,6,0" Command="{Binding ToggleThemeCommand}" chrome:WindowChrome.IsHitTestVisibleInChrome="True">
     <Button.Style><Style TargetType="Button" BasedOn="{StaticResource IconButton}">
      <Setter Property="ToolTip" Value="{loc:Loc SwitchToDarkMode}" /><Setter Property="AutomationProperties.Name" Value="{loc:Loc SwitchToDarkMode}" />

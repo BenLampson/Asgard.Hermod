@@ -8,6 +8,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
     private Asgard.Hermod.Abstractions.Localization.LanguageOption _selectedLanguage;
     private string _languageMessage = "";
     private readonly IAccountService? _accounts;
+    private readonly IConfigurationSyncService? _sync;
     private readonly System.Windows.Threading.Dispatcher _dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
     // 设置语言在重启后应用；后台通知不应改变已打开窗口的资源语言。
     private readonly string _signedInStatus = Text.Get("SignedIn");
@@ -23,7 +24,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         IAccountService? accounts = null, Func<Task>? openAccount = null, IMainWindowClosePreferenceStore? closePreferences = null,
         Agent.AgentConfiguration? agentConfiguration = null, IAgentPreferenceStore? agentPreferences = null,
         Agent.AgentModelCatalog? modelCatalog = null, Agent.IAgentClient? agentClient = null,
-        ApplicationUpdateViewModel? updates = null)
+        ApplicationUpdateViewModel? updates = null, IConfigurationSyncService? automaticSync = null, Func<Task>? resolveConflicts = null)
     {
         ArgumentNullException.ThrowIfNull(tags);
         ArgumentNullException.ThrowIfNull(dialogs);
@@ -33,7 +34,10 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         CloseSettings = closePreferences is null ? null : new(closePreferences);
         AgentSettings = modelCatalog is null && agentConfiguration is not null && agentPreferences is not null ? new(agentConfiguration, agentPreferences) : null;
         AgentModels = modelCatalog is not null && agentClient is not null ? new(modelCatalog, agentClient) : null;
-        _accounts = accounts;
+        _accounts = accounts; _sync = automaticSync;
+        ResolveConflictsCommand = new AsyncRelayCommand(_ => resolveConflicts?.Invoke() ?? Task.CompletedTask,
+            _ => !_disposed && HasSyncConflict && resolveConflicts is not null);
+        if (_sync is not null) _sync.Changed += OnSyncChanged;
         OpenAccountCommand = new AsyncRelayCommand(_ => openAccount?.Invoke() ?? Task.CompletedTask,
             _ => !_disposed && accounts is not null && openAccount is not null);
         if (accounts is not null) accounts.AccountChanged += OnAccountChanged;
@@ -137,6 +141,14 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
     public string WorkspaceIcon => _accounts?.Account is not null ? "cloud" : "laptop";
     /// <summary>打开已有账号与同步管理，设置页不自动发起浏览器登录。</summary>
     public AsyncRelayCommand OpenAccountCommand { get; }
+    /// <summary>账户设置直接显示同步状态，登录成功不能代替同步成功。</summary>
+    public bool HasSyncStatus => _accounts?.Account is not null && _sync is not null;
+    /// <summary>冲突状态由稳定枚举决定，不依赖文案。</summary>
+    public bool HasSyncConflict => HasSyncStatus && _sync?.Status == ConfigurationSyncStatus.Conflict;
+    /// <summary>服务提供的完整安全同步说明。</summary>
+    public string SyncMessage => HasSyncStatus ? _sync?.Message ?? "" : "";
+    /// <summary>从设置窗口直接打开所属账户的冲突列表。</summary>
+    public AsyncRelayCommand ResolveConflictsCommand { get; }
     /// <summary>本机临时文件的统计和清理状态。</summary>
     public StorageSettingsViewModel? Storage { get; }
     /// <summary>可选的本机文件规则管理状态。</summary>
@@ -175,7 +187,8 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         if (_disposed) return;
         _disposed = true;
         if (_accounts is not null) _accounts.AccountChanged -= OnAccountChanged;
-        OpenAccountCommand.NotifyCanExecuteChanged();
+        OpenAccountCommand.NotifyCanExecuteChanged(); ResolveConflictsCommand.NotifyCanExecuteChanged();
+        if (_sync is not null) _sync.Changed -= OnSyncChanged;
         Tags.Dispose(); Storage?.Dispose(); AgentSettings?.Dispose(); AgentModels?.Dispose();
     }
 
@@ -186,5 +199,15 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         if (_disposed) return;
         OnPropertyChanged(nameof(AccountName)); OnPropertyChanged(nameof(AccountStatus));
         OnPropertyChanged(nameof(WorkspaceName)); OnPropertyChanged(nameof(WorkspaceIcon));
+        OnSyncChanged(sender, args);
+    }
+
+    /// <summary>设置始终跟随同一同步服务，关闭后不再响应后台事件。</summary>
+    private void OnSyncChanged(object? sender, EventArgs args)
+    {
+        if (!_dispatcher.CheckAccess()) { _dispatcher.BeginInvoke(() => OnSyncChanged(sender, args)); return; }
+        if (_disposed) return;
+        OnPropertyChanged(nameof(HasSyncStatus)); OnPropertyChanged(nameof(HasSyncConflict)); OnPropertyChanged(nameof(SyncMessage));
+        ResolveConflictsCommand.NotifyCanExecuteChanged();
     }
 }

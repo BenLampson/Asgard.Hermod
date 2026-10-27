@@ -13,6 +13,7 @@ public sealed class SettingsEditorService : ISettingsEditor, IDisposable, IAsync
     private readonly ITemporaryFileStorage? _temporaryFiles;
     private readonly IAccountService? _accounts;
     private readonly IAccountEditor? _accountEditor;
+    private readonly IConfigurationSyncService? _sync;
     private readonly IMainWindowClosePreferenceStore? _closePreferences;
     private readonly Agent.AgentConfiguration? _agentConfiguration;
     private readonly IAgentPreferenceStore? _agentPreferences;
@@ -35,7 +36,7 @@ public sealed class SettingsEditorService : ISettingsEditor, IDisposable, IAsync
         IAccountService? accounts = null, IAccountEditor? accountEditor = null, IMainWindowClosePreferenceStore? closePreferences = null,
         Agent.AgentConfiguration? agentConfiguration = null, IAgentPreferenceStore? agentPreferences = null,
         Agent.AgentModelCatalog? modelCatalog = null, Agent.IAgentClient? agentClient = null,
-        ApplicationUpdateViewModel? updates = null)
+        ApplicationUpdateViewModel? updates = null, IConfigurationSyncService? automaticSync = null)
     {
         ArgumentNullException.ThrowIfNull(getOwner);
         ArgumentNullException.ThrowIfNull(tags);
@@ -47,7 +48,7 @@ public sealed class SettingsEditorService : ISettingsEditor, IDisposable, IAsync
         _fileRules = fileRules;
         _temporaryFiles = temporaryFiles;
         _accounts = accounts;
-        _accountEditor = accountEditor;
+        _accountEditor = accountEditor; _sync = automaticSync;
         _closePreferences = closePreferences;
         _agentConfiguration = agentConfiguration; _agentPreferences = agentPreferences;
         _modelCatalog = modelCatalog; _agentClient = agentClient;
@@ -94,7 +95,7 @@ public sealed class SettingsEditorService : ISettingsEditor, IDisposable, IAsync
         var dialogs = new WindowsTagDialogService(() => window ?? _getOwner(), _tags);
         var storageDialogs = new WindowsStorageSettingsDialogs(() => window ?? _getOwner());
         var model = new SettingsViewModel(_tags, dialogs, _languages, _fileRules, _temporaryFiles, storageDialogs,
-            _accounts, _accountEditor is null ? null : () => _accountEditor.OpenAsync(window), _closePreferences, _agentConfiguration, _agentPreferences, _modelCatalog, _agentClient, _updates);
+            _accounts, _accountEditor is null ? null : () => _accountEditor.OpenAsync(window), _closePreferences, _agentConfiguration, _agentPreferences, _modelCatalog, _agentClient, _updates, _sync, _accountEditor is null ? null : () => _accountEditor.OpenConflictsAsync(window));
         try
         {
             await model.InitializeAsync(_lifetime.Token);

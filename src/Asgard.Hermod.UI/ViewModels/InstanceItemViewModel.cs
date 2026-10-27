@@ -69,6 +69,8 @@ public sealed class InstanceItemViewModel : ObservableObject
     public bool HasSyncStatus => !IsLocal && _syncStatus != ConfigurationSyncStatus.Local;
     /// <summary>当前配置与最近确认的云端内容或成功基准的比较结果。</summary>
     public ConfigurationSyncStatus SyncStatus => _syncStatus;
+    /// <summary>实例同步冲突在名称旁持续提示，签出后立即隐藏。</summary>
+    public bool HasSyncConflict => HasSyncStatus && _syncStatus == ConfigurationSyncStatus.Conflict;
     /// <summary>已同步、待同步、进行中和需要处理使用不同图形。</summary>
     public string SyncIcon => _syncStatus switch
     {
@@ -89,7 +91,7 @@ public sealed class InstanceItemViewModel : ObservableObject
     {
         if (_syncStatus == status) return;
         _syncStatus = status;
-        foreach (string property in new[] { nameof(SyncStatus), nameof(HasSyncStatus), nameof(SyncIcon), nameof(SyncHint), nameof(AccessibleName) })
+        foreach (string property in new[] { nameof(SyncStatus), nameof(HasSyncStatus), nameof(HasSyncConflict), nameof(SyncIcon), nameof(SyncHint), nameof(AccessibleName) })
             OnPropertyChanged(property);
     }
     /// <summary>存储类型共用设计中的琥珀色图标，不绑定具体服务商。</summary>
@@ -113,7 +115,7 @@ public sealed class InstanceItemViewModel : ObservableObject
         foreach (string property in new[] { nameof(Summary), nameof(Name), nameof(DisplayName),
             nameof(Icon), nameof(IsStorage), nameof(Tags), nameof(IsLocal), nameof(HasAlert), nameof(TypeIcon),
             nameof(TypeName), nameof(HasProviderIcon), nameof(ProviderName), nameof(ProviderIcon), nameof(TypeHint), nameof(ProviderHint),
-            nameof(HasSyncStatus), nameof(AccessibleName), nameof(HasEnvironmentTag), nameof(EnvironmentLabel), nameof(EnvironmentTone) })
+            nameof(HasSyncStatus), nameof(HasSyncConflict), nameof(AccessibleName), nameof(HasEnvironmentTag), nameof(EnvironmentLabel), nameof(EnvironmentTone) })
             OnPropertyChanged(property);
     }
 }
