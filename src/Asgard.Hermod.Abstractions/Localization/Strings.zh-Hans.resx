@@ -5490,7 +5490,7 @@ SQL：
     <value>检测环境</value>
   </data>
   <data name="KubeDetectHint" xml:space="preserve">
-    <value>请先检测当前 SSH 主机上的 kubectl 环境。</value>
+    <value>请点击“加载环境/刷新”读取环境。</value>
   </data>
   <data name="KubeMissing" xml:space="preserve">
     <value>当前 SSH 主机上未检测到 kubectl。</value>
@@ -5502,10 +5502,10 @@ SQL：
     <value>此主机尚未配置 Kubernetes 上下文。</value>
   </data>
   <data name="KubeReady" xml:space="preserve">
-    <value>请选择上下文、命名空间和资源类型，然后刷新。</value>
+    <value>环境已加载，切换选项使用本地快照。</value>
   </data>
   <data name="KubeRefreshHint" xml:space="preserve">
-    <value>请刷新以加载所选范围内的资源。</value>
+    <value>数据有变化时请点击“加载环境/刷新”。</value>
   </data>
   <data name="KubeLoaded" xml:space="preserve">
     <value>已加载 {0} 个资源。</value>
@@ -5638,4 +5638,7 @@ SQL：
   <data name="FolderStatisticsScanning" xml:space="preserve">
     <value>正在统计文件夹属性</value>
   </data>
+  <data name="SshLoadEnvironment" xml:space="preserve"><value>加载环境/刷新</value></data>
+  <data name="SshEnvironmentSnapshotHint" xml:space="preserve"><value>点击后加载环境；切换选项使用已加载的数据。有变化时请再次点击刷新。</value></data>
+  <data name="KubeLoadingSnapshot" xml:space="preserve"><value>正在加载上下文 {0} 的{1}…</value></data>
 </root>

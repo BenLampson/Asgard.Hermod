@@ -14,6 +14,10 @@ public sealed class SshKubernetesProtocolTests
         Assert.Contains("--namespace 'production'", command); Assert.Contains("--request-timeout=15s", command);
         Assert.DoesNotContain("--namespace", SshKubernetesCommands.List("prod", "", "nodes"));
         Assert.DoesNotContain("use-context", command);
+        Assert.Contains("get pods --all-namespaces -o json", SshKubernetesCommands.Snapshot("prod", "pods"));
+        Assert.DoesNotContain("--namespace", SshKubernetesCommands.Snapshot("prod", "pods"));
+        Assert.DoesNotContain("--all-namespaces", SshKubernetesCommands.Snapshot("prod", "namespaces"));
+        Assert.DoesNotContain("--all-namespaces", SshKubernetesCommands.Snapshot("prod", "nodes"));
         Assert.EndsWith("--all-containers=true --tail=500 --timestamps=true", SshKubernetesCommands.Action("prod", "app", "pods", "web-1", "logs"));
         Assert.EndsWith("--watch=false", SshKubernetesCommands.Action("prod", "app", "deployments", "web", "rollout"));
     }

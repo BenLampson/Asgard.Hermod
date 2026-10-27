@@ -17,10 +17,10 @@ public sealed partial class SshWorkspaceViewModel
     private void InitializeKubernetes()
     {
         Kubernetes = new(() => IsConnected && !IsClosed ? _connection as ISshWorkspaceConnection : null, () => RemoteIdentity, _dialogs);
-        ToggleKubernetesCommand = new AsyncRelayCommand(async _ =>
+        ToggleKubernetesCommand = new AsyncRelayCommand(_ =>
         {
             IsKubernetesOpen = !IsKubernetesOpen;
-            if (IsKubernetesOpen) await Kubernetes.InitializeAsync();
+            return Task.CompletedTask;
         }, _ => !IsClosed);
     }
 }

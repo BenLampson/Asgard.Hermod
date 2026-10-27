@@ -661,9 +661,15 @@ Selection colors remain separate from the terminal buffer and ANSI state.
 Instance monitoring contains overview, processes, network and disks. Docker container
 resource monitoring is available inside Docker management with its own selection and
 sampling history; hiding it pauses sampling without changing the host monitor tab.
-The parallel kubectl management page detects the remote client and context names,
-then explicitly queries a selected context, namespace and resource type through SSH
-exec channels. It never changes kubeconfig or reads credentials. Pod logs are bounded;
+Docker and Kubernetes management load their environment only when the user clicks
+**Load environment / refresh**. Opening or reconnecting a tool does not load it.
+The kubectl page reads context names, default namespaces and bounded resource
+summaries for each context through SSH exec channels. Context, namespace and resource
+selections then filter the local snapshot without another request; the explicit
+load button refreshes changes. Resource permission failures remain separate safe
+errors rather than empty successful lists. Both management pages scroll vertically
+at short heights, retain usable list/output heights, and wrap long target labels
+and output by default. It never changes kubeconfig or reads credentials. Pod logs are bounded;
 details and rollout status are explicit reads, and deployment restarts require a
 cancelable target confirmation. Disconnects revoke pending queries and approvals;
 late results cannot repopulate a different connection or resource scope.

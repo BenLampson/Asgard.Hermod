@@ -21,12 +21,14 @@ public sealed class SshToolNavigationTests(WpfTestFixture fixture)
         var sections = Assert.IsType<SectionSelector>(main.FindName("MonitorSections"));
         Assert.Equal(new[] { "overview", "processes", "network", "disks" }, sections.Items.Cast<ListBoxItem>().Select(item => item.Tag));
         Assert.True(Assert.IsType<RadioButton>(view.FindName("KubernetesRailAction")).IsEnabled);
-        await model.ToggleDockerCommandsCommand.ExecuteAsync(); await model.ShowDockerResourcesCommand.ExecuteAsync();
+        await model.ToggleDockerCommandsCommand.ExecuteAsync(); await model.DockerCommands.DetectCommand.ExecuteAsync(); await model.ShowDockerResourcesCommand.ExecuteAsync();
         await model.DockerMonitor.RefreshDetailsCommand.ExecuteAsync();
         Assert.True(model.IsDockerCommandsOpen); Assert.True(model.IsDockerResourcesOpen); Assert.Equal("network", model.Monitor.Section);
         Assert.Equal("docker", model.DockerMonitor.Section); Assert.NotEmpty(model.DockerMonitor.Containers);
         model.IsDockerResourcesOpen = false; Assert.True(model.DockerMonitor.IsPaused); Assert.True(model.IsDockerCommandsOpen);
         await model.ToggleKubernetesCommand.ExecuteAsync(); Assert.True(model.IsKubernetesOpen); Assert.False(model.IsDockerCommandsOpen);
+        Assert.False(model.Kubernetes.IsInstalled); Assert.DoesNotContain(connection.Commands, command => command.Contains("kubectl", StringComparison.Ordinal));
+        await model.Kubernetes.DetectCommand.ExecuteAsync();
         Assert.True(model.Kubernetes.IsInstalled); Assert.Equal("network", model.Monitor.Section);
         model.ToggleMonitorCommand.Execute(null); Assert.True(model.IsKubernetesOpen); Assert.True(model.IsTerminalSection); Assert.True(model.IsMonitorOpen);
         Assert.True(bindings.Messages.Count == 0, string.Join(Environment.NewLine, bindings.Messages));

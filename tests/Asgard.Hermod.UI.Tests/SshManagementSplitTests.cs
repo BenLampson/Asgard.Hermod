@@ -7,7 +7,7 @@ using Asgard.Hermod.Ssh.UI.Views;
 
 namespace Asgard.Hermod.UI.Tests;
 
-/// <summary>基础设施管理与终端同时使用、自动初始化及迟到结果的离屏回归。</summary>
+/// <summary>基础设施管理与终端同时使用、手动加载及迟到结果的离屏回归。</summary>
 [Collection(WpfTestCollection.Name)]
 public sealed class SshManagementSplitTests(WpfTestFixture fixture)
 {
@@ -52,6 +52,7 @@ public sealed class SshManagementSplitTests(WpfTestFixture fixture)
                 Assert.InRange(Math.Abs(panel.ActualWidth - (grid.ActualWidth - 60) / 2), 0, 2);
                 if (section == "docker")
                 {
+                    if (!model.DockerCommands.IsInitialized) await model.DockerCommands.DetectCommand.ExecuteAsync();
                     Assert.True(model.DockerCommands.IsInitialized); Assert.NotEmpty(model.DockerCommands.Containers);
                     model.DockerCommands.SelectedContainer = model.DockerCommands.Containers.First(c => c.IsRunning);
                     await SshKubernetesTests.Layout(view, 1440, 1000);
@@ -60,6 +61,7 @@ public sealed class SshManagementSplitTests(WpfTestFixture fixture)
                 }
                 else
                 {
+                    if (!model.Kubernetes.IsInitialized) await model.Kubernetes.DetectCommand.ExecuteAsync();
                     Assert.True(model.Kubernetes.IsInitialized); Assert.NotEmpty(model.Kubernetes.Items);
                     model.Kubernetes.SelectedItem = model.Kubernetes.Items[0]; await model.Kubernetes.ActionCommand.ExecuteAsync("logs");
                 }
@@ -85,24 +87,28 @@ public sealed class SshManagementSplitTests(WpfTestFixture fixture)
         finally { Text.SetApplicationCulture(null); themes.SetTheme(UiTheme.Light); }
     });
 
-    /// <summary>初次进入自动选择远端当前范围并加载，切换命名空间和类型无需刷新按钮。</summary>
+    /// <summary>一次手动加载所有筛选所需快照，切换上下文、命名空间与类型零请求。</summary>
     [Fact]
-    public Task KubernetesInitializesAndAutomaticallyLoadsTheLatestScope() => fixture.RunOffscreenAsync(async () =>
+    public Task KubernetesSelectionsUseSnapshotUntilExplicitRefresh() => fixture.RunOffscreenAsync(async () =>
     {
         var connection = SshKubernetesTests.Connection(); using var model = new SshKubernetesViewModel(() => connection, () => "host", new Dialogs());
-        await model.InitializeAsync();
+        Assert.Empty(connection.Commands); Assert.False(model.IsInitialized);
+        await model.DetectCommand.ExecuteAsync();
         Assert.True(model.IsInitialized); Assert.Equal("production", model.Context); Assert.Equal("app", model.Namespace);
         Assert.NotEmpty(model.Namespaces); Assert.NotEmpty(model.Items);
-        int requests = connection.Commands.Count; await model.InitializeAsync(); Assert.Equal(requests, connection.Commands.Count);
-        model.Namespace = "discarded"; model.Namespace = "latest"; model.Resource = "deployments";
-        await model.ScopeRefreshTask;
-        Assert.Single(model.Items); Assert.Contains("--namespace 'latest'", connection.Commands.Last());
-        Assert.EndsWith("get deployments -o json", connection.Commands.Last(), StringComparison.Ordinal);
-        Assert.DoesNotContain(connection.Commands, command => command.Contains("--namespace 'discarded'", StringComparison.Ordinal));
+        int requests = connection.Commands.Count;
+        model.Namespace = "missing"; Assert.Empty(model.Items);
+        model.Namespace = "app"; model.Resource = "deployments"; Assert.Equal("web", Assert.Single(model.Items).Name);
+        model.Context = "staging"; Assert.Equal("app", model.Namespace); Assert.Single(model.Items);
+        model.Resource = "namespaces"; Assert.Single(model.Items);
+        Assert.Equal(requests, connection.Commands.Count);
+        Assert.Equal(2, connection.Commands.Count(command => command.EndsWith("get namespaces -o json", StringComparison.Ordinal)));
+        await model.DetectCommand.ExecuteAsync();
+        Assert.True(connection.Commands.Count > requests); Assert.Equal("staging", model.Context);
         Assert.All(connection.Consoles, console => Assert.Empty(console.Inputs));
     });
 
-    /// <summary>无列表权限仍自动加载当前命名空间，也可以手动输入已知范围，不能显示原始失败响应。</summary>
+    /// <summary>无命名空间列表权限仍缓存可读取资源；更改筛选不能重试网络或显示原始失败响应。</summary>
     [Fact]
     public Task NamespaceListFailurePreservesKnownScopeAndSafeRecovery() => fixture.RunOffscreenAsync(async () =>
     {
@@ -112,8 +118,9 @@ public sealed class SshManagementSplitTests(WpfTestFixture fixture)
         using var model = new SshKubernetesViewModel(() => connection, () => "host", new Dialogs());
         await model.InitializeAsync(); Assert.True(model.IsInitialized); Assert.NotEmpty(model.Items); Assert.NotEmpty(model.NamespaceWarning);
         Assert.DoesNotContain("private", model.NamespaceWarning); Assert.Empty(model.Error);
-        model.Namespace = "known-namespace"; await model.ScopeRefreshTask;
-        Assert.Contains("--namespace 'known-namespace'", connection.Commands.Last()); Assert.NotEmpty(model.Items);
+        int requests = connection.Commands.Count;
+        model.Namespace = "known-namespace"; Assert.Empty(model.Items);
+        model.Namespace = "app"; Assert.NotEmpty(model.Items); Assert.Equal(requests, connection.Commands.Count);
     });
 
     /// <summary>旧连接的初始化完成不能清除新连接的忙碌状态或写入旧环境。</summary>

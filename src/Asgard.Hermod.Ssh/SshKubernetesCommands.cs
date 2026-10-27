@@ -23,6 +23,14 @@ public static class SshKubernetesCommands
         return Prefix(context, ns, resource) + " get " + resource + " -o json";
     }
 
+    /// <summary>显式加载环境时一次读取全部命名空间的摘要，选择筛选条件时复用本地快照。</summary>
+    public static string Snapshot(string context, string resource)
+    {
+        ValidateResource(resource);
+        return Prefix(context, "", "namespaces") + " get " + resource
+            + (resource is "nodes" or "namespaces" ? "" : " --all-namespaces") + " -o json";
+    }
+
     /// <summary>常用操作只面向已选资源，日志有界，发布状态不持续监听。</summary>
     public static string Action(string context, string ns, string resource, string name, string action)
     {

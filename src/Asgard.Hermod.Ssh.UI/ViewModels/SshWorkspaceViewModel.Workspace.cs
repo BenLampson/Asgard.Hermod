@@ -91,8 +91,6 @@ public sealed partial class SshWorkspaceViewModel
             if (!CanToggleToolbox(value) || value is not string section) return;
             ActiveSection = ActiveSection == section ? "terminal" : section;
             if (IsFilesSection && Files.Entries.Count == 0) await Files.RefreshCommand.ExecuteAsync();
-            if (IsDockerCommandsOpen) await InitializeDockerPanelAsync();
-            if (IsKubernetesOpen) await Kubernetes.InitializeAsync();
         }, CanToggleToolbox);
         CollapseToolboxCommand = new RelayCommand(_ => ActiveSection = "terminal");
         AddForwardCommand = new AsyncRelayCommand(_ => AddForwardAsync(), _ => IsConnected && SupportsInstanceTools);
