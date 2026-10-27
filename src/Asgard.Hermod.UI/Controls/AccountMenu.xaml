@@ -54,9 +54,32 @@
                     </TextBlock>
                 </Grid>
             </Border>
-            <TextBlock Text="{Binding AccountName}" FontSize="12" MaxWidth="140"
+            <TextBlock x:Name="AccountNameText" Text="{Binding AccountName}" FontSize="12" MaxWidth="140"
                        TextTrimming="CharacterEllipsis" ToolTip="{Binding AccountName}"
-                       Foreground="{DynamicResource TextBodyBrush}" VerticalAlignment="Center" Margin="6,0,0,0"><TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers><DataTrigger Binding="{Binding IsCompact, RelativeSource={RelativeSource AncestorType=controls:AccountMenu}}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+                       VerticalAlignment="Center" Margin="6,0,0,0">
+                <TextBlock.Style><Style TargetType="TextBlock">
+                    <Setter Property="Foreground" Value="{DynamicResource TextBodyBrush}" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsCompact, RelativeSource={RelativeSource AncestorType=controls:AccountMenu}}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+                        <MultiDataTrigger><MultiDataTrigger.Conditions><Condition Binding="{Binding IsSignedIn}" Value="True" /><Condition Binding="{Binding SyncStatus}" Value="{x:Static models:ConfigurationSyncStatus.Conflict}" /></MultiDataTrigger.Conditions>
+                            <Setter Property="Foreground" Value="{DynamicResource DangerBrush}" /><Setter Property="FontWeight" Value="SemiBold" />
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style></TextBlock.Style>
+            </TextBlock>
+            <!-- 冲突在账户按钮旁持续显示，用户无需打开菜单；紧凑标题栏保留警示图标。 -->
+            <Border x:Name="AccountConflictMarker" Height="20" Padding="4,0" Margin="6,0,0,0" CornerRadius="4"
+                    Background="{DynamicResource DangerWeakBrush}" ToolTip="{Binding SyncStatusText}" AutomationProperties.Name="{Binding SyncStatusText}">
+                <Border.Style><Style TargetType="Border"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers>
+                    <MultiDataTrigger><MultiDataTrigger.Conditions><Condition Binding="{Binding IsSignedIn}" Value="True" /><Condition Binding="{Binding SyncStatus}" Value="{x:Static models:ConfigurationSyncStatus.Conflict}" /></MultiDataTrigger.Conditions><Setter Property="Visibility" Value="Visible" /></MultiDataTrigger>
+                </Style.Triggers></Style></Border.Style>
+                <StackPanel Orientation="Horizontal">
+                    <controls:IconView Kind="circle-alert" Width="13" Height="13" Foreground="{DynamicResource DangerBrush}" />
+                    <TextBlock x:Name="AccountConflictLabel" Text="{loc:Loc SyncBadgeConflict}" FontSize="10" Foreground="{DynamicResource DangerBrush}" Margin="4,0,0,0" VerticalAlignment="Center">
+                        <TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers><DataTrigger Binding="{Binding IsCompact, RelativeSource={RelativeSource AncestorType=controls:AccountMenu}}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
             <StackPanel x:Name="LocalSignIn" Orientation="Horizontal" VerticalAlignment="Center">
                 <StackPanel.Style><Style TargetType="StackPanel"><Style.Triggers><DataTrigger Binding="{Binding IsCompact, RelativeSource={RelativeSource AncestorType=controls:AccountMenu}}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger><DataTrigger Binding="{Binding IsSignedIn}" Value="True">
                         <Setter Property="Visibility" Value="Collapsed" />
@@ -124,8 +147,8 @@
                                                 <Setter Property="TextElement.Foreground" Value="{DynamicResource WarningBrush}" />
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding SyncStatus}" Value="{x:Static models:ConfigurationSyncStatus.Conflict}">
-                                                <Setter Property="Background" Value="{DynamicResource WarningWeakBrush}" />
-                                                <Setter Property="TextElement.Foreground" Value="{DynamicResource WarningBrush}" />
+                                                <Setter Property="Background" Value="{DynamicResource DangerWeakBrush}" />
+                                                <Setter Property="TextElement.Foreground" Value="{DynamicResource DangerBrush}" />
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding SyncStatus}" Value="{x:Static models:ConfigurationSyncStatus.Failed}">
                                                 <Setter Property="Background" Value="{DynamicResource DangerWeakBrush}" />
@@ -149,6 +172,10 @@
                     </MenuItem.Header>
                 </MenuItem>
                 <Separator />
+                <MenuItem x:Name="ResolveSyncConflictMenuItem" Header="{loc:Loc SyncResolveConflicts}" Command="{Binding ResolveSyncConflictsCommand}" Foreground="{DynamicResource DangerBrush}">
+                    <MenuItem.Style><Style TargetType="MenuItem" BasedOn="{StaticResource AccountMenuRow}"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding SyncStatus}" Value="{x:Static models:ConfigurationSyncStatus.Conflict}"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></MenuItem.Style>
+                    <MenuItem.Icon><controls:IconView Kind="circle-alert" Width="16" Height="16" Foreground="{DynamicResource DangerBrush}" /></MenuItem.Icon>
+                </MenuItem>
                 <MenuItem Header="{loc:Loc AccountInformation}" Command="{Binding OpenAccountCommand}" Style="{StaticResource AccountMenuRow}">
                     <MenuItem.Icon><controls:IconView Kind="user-round" Width="16" Height="16" /></MenuItem.Icon>
                 </MenuItem>

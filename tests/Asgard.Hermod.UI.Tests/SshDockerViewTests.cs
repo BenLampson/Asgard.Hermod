@@ -37,6 +37,7 @@ public sealed class SshDockerViewTests(WpfTestFixture fixture)
                     var terminal = Assert.IsType<Grid>(view.FindName("TerminalSurface"));
                     Assert.Equal(Visibility.Visible, terminal.Visibility); Assert.True(terminal.ActualWidth > 400);
                     Assert.Same(model.DockerCommands, management.DataContext);
+                    if (!model.DockerCommands.IsInitialized) await model.DockerCommands.DetectCommand.ExecuteAsync();
                     model.DockerCommands.SelectedContainer = model.DockerCommands.Containers[1];
                     await model.DockerCommands.ActionCommand.ExecuteAsync("logs");
                     await Layout(view, 1388, 920);

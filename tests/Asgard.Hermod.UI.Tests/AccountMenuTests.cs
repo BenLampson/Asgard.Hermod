@@ -89,8 +89,8 @@ public sealed class AccountMenuTests(WpfTestFixture fixture)
                 {
                     ConfigurationSyncStatus.Synced => "SuccessBrush",
                     ConfigurationSyncStatus.Pending or ConfigurationSyncStatus.Synchronizing => "AccentBrush",
-                    ConfigurationSyncStatus.PasswordRequired or ConfigurationSyncStatus.Conflict => "WarningBrush",
-                    ConfigurationSyncStatus.Failed => "DangerBrush",
+                    ConfigurationSyncStatus.PasswordRequired => "WarningBrush",
+                    ConfigurationSyncStatus.Failed or ConfigurationSyncStatus.Conflict => "DangerBrush",
                     _ => "TextMutedBrush",
                 };
                 Assert.Equal(Assert.IsType<SolidColorBrush>(Application.Current.FindResource(brushKey)).Color,
@@ -100,7 +100,7 @@ public sealed class AccountMenuTests(WpfTestFixture fixture)
                 Assert.True(badgeBounds.Right <= menuBounds.Right - 12);
                 ContextMenuPreviewScope.Save(popup, $"account-menu-{theme}-{language}-{status}");
             }
-            var actions = popup.Items.OfType<MenuItem>().Where(item => item.Command is not null).ToArray();
+            var actions = popup.Items.OfType<MenuItem>().Where(item => item.Command is not null && item.Visibility == Visibility.Visible).ToArray();
             Assert.Equal(2, actions.Length);
             Assert.Equal(Text.Get("AccountInformation"), actions[0].Header);
             Assert.Equal(Text.Get("SignOut"), actions[1].Header);

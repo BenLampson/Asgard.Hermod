@@ -9,15 +9,6 @@ public partial class SshKubernetesView : UserControl
     public SshKubernetesView() => InitializeComponent();
     /// <summary>关闭只收起页面，查询取消由用户和连接生命周期控制。</summary>
     public event EventHandler? CloseRequested;
-    private bool? _compact;
-    /// <summary>短面板收起筛选条件，保留列表、结果和终端；用户仍可主动展开。</summary>
-    private void OnViewportChanged(object sender, SizeChangedEventArgs args)
-    {
-        bool compact = ActualHeight < 500;
-        if (_compact == compact || ScopeFilters is null) return;
-        _compact = compact; ScopeFilters.IsExpanded = !compact;
-        AdvancedOutput.Visibility = OutputTabs.Visibility = OutputSearchTools.Visibility = compact ? Visibility.Collapsed : Visibility.Visible;
-    }
     /// <summary>本地查找只改变选区，不重读日志或向 SSH 发送键盘输入。</summary>
     private void OnOutputSearchChanged(object sender, TextChangedEventArgs args) => FindOutput(false);
     /// <summary>搜索快捷键由管理面板处理，不落入右侧 PTY。</summary>

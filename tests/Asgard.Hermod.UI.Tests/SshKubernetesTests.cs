@@ -36,7 +36,7 @@ public sealed class SshKubernetesTests(WpfTestFixture fixture)
             Assert.Equal("log", Assert.IsType<TextBox>(view.FindName("ResultOutput")).SelectedText); outputSearch.Text = "";
             Assert.Contains("--context 'production'", connection.Commands.Last()); Assert.Contains("--namespace 'app'", connection.Commands.Last());
             string target = model.ResultTarget;
-            model.Resource = "deployments"; Assert.Empty(model.Items); Assert.Null(model.SelectedItem); Assert.False(model.ActionCommand.CanExecute("logs"));
+            model.Resource = "deployments"; Assert.NotEmpty(model.Items); Assert.Null(model.SelectedItem); Assert.False(model.ActionCommand.CanExecute("logs"));
             await model.RefreshCommand.ExecuteAsync(); model.SelectedItem = model.Items[0];
             await model.ActionCommand.ExecuteAsync("restart"); Assert.Equal(1, dialogs.Count);
             Assert.DoesNotContain(connection.Commands, command => command.Contains("rollout restart", StringComparison.Ordinal));
@@ -97,9 +97,11 @@ public sealed class SshKubernetesTests(WpfTestFixture fixture)
         await model.InitializeAsync();
         var pending = new TaskCompletionSource<SshCommandResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         connection.Handler = (_, _) => pending.Task;
-        var query = model.RefreshCommand.ExecuteAsync(); model.Namespace = "different";
-        pending.SetResult(new(ListJson("Pod", "old-pod"), 0, false)); await query; Assert.Empty(model.Items);
-        connection.Handler = Handle; model.Resource = "deployments"; await model.RefreshCommand.ExecuteAsync(); model.SelectedItem = model.Items[0];
+        model.SelectedItem = model.Items[0];
+        var query = model.ActionCommand.ExecuteAsync("describe"); model.Namespace = "different";
+        pending.SetResult(new("old details", 0, false)); await query;
+        Assert.Empty(model.Items);
+        connection.Handler = Handle; model.Namespace = "app"; model.Resource = "deployments"; model.SelectedItem = model.Items[0];
         connection.Handler = (_, _) => new TaskCompletionSource<SshCommandResult>().Task;
         var restart = model.ActionCommand.ExecuteAsync("restart"); model.CancelCommand.Execute(null); await restart;
         Assert.Equal(Text.Get("KubeOutcomeUnknown"), model.Error);
@@ -117,8 +119,11 @@ public sealed class SshKubernetesTests(WpfTestFixture fixture)
             SshKubernetesCommands.CurrentContext => "production\n",
             _ when command.Contains("config view --minify", StringComparison.Ordinal) => "app",
             _ when command.EndsWith("get namespaces -o json", StringComparison.Ordinal) => ListJson("Namespace", "app"),
-            _ when command.EndsWith("get deployments -o json", StringComparison.Ordinal) => ListJson("Deployment", "web"),
-            _ when command.EndsWith("get pods -o json", StringComparison.Ordinal) => ListJson("Pod", "web-1"),
+            _ when command.Contains(" get deployments ", StringComparison.Ordinal) => ListJson("Deployment", "web"),
+            _ when command.Contains(" get pods ", StringComparison.Ordinal) => ListJson("Pod", "web-1"),
+            _ when command.Contains(" get services ", StringComparison.Ordinal) => ListJson("Service", "web"),
+            _ when command.Contains(" get nodes ", StringComparison.Ordinal) => ListJson("Node", "worker"),
+            _ when command.Contains(" get events ", StringComparison.Ordinal) => ListJson("Event", "web-started"),
             _ => "application log output",
         };
         return Task.FromResult(new SshCommandResult(output, 0, false));

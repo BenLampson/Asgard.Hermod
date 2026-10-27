@@ -39,10 +39,10 @@ public sealed partial class SshWorkspaceViewModel
         DockerMonitor = new(_dockerEnvironmentReader) { Section = "docker", IsPaused = true };
         DockerCommands = new(() => IsConnected && !IsClosed ? _connection as ISshWorkspaceConnection : null, () => RemoteIdentity, _dialogs,
             () => !IsReadOnly, RunDockerInTerminalAsync, _dockerEnvironmentReader);
-        ToggleDockerCommandsCommand = new AsyncRelayCommand(async _ =>
+        ToggleDockerCommandsCommand = new AsyncRelayCommand(_ =>
         {
             IsDockerCommandsOpen = !IsDockerCommandsOpen;
-            if (IsDockerCommandsOpen) await InitializeDockerPanelAsync();
+            return Task.CompletedTask;
         }, _ => !IsClosed);
         CloseDockerCommandsCommand = new RelayCommand(_ => IsDockerCommandsOpen = false);
         ShowDockerResourcesCommand = new AsyncRelayCommand(async _ =>
@@ -58,7 +58,7 @@ public sealed partial class SshWorkspaceViewModel
             if (!IsDockerCommandsOpen || !IsConnected || !ReferenceEquals(connection, _connection))
             { IsDockerResourcesOpen = false; DockerMonitor.IsPaused = true; DockerMonitor.IsPanelVisible = false; return; }
             if (DockerCommands.SelectedContainer is { } selected) DockerMonitor.SelectDockerContainer(selected.Id);
-        }, _ => !IsClosed && IsConnected);
+        }, _ => !IsClosed && IsConnected && DockerCommands.IsInitialized);
         DockerMonitor.DockerOperationRequested += async (_, operation) =>
         {
             if (!IsConnected || IsClosed) return;
@@ -73,6 +73,12 @@ public sealed partial class SshWorkspaceViewModel
         DockerCommands.Changed += (_, _) => { if (IsDockerResourcesOpen) DockerMonitor.RefreshDetailsCommand.Execute(null); };
         DockerCommands.PropertyChanged += (_, args) =>
         {
+            if (args.PropertyName == nameof(SshDockerCommandsViewModel.IsInitialized))
+                ShowDockerResourcesCommand.NotifyCanExecuteChanged();
+            // 仅用户完成加载后启动当前资源视图；打开工具本身不触发探测或采样。
+            if (args.PropertyName == nameof(SshDockerCommandsViewModel.IsBusy) && !DockerCommands.IsBusy &&
+                DockerCommands.IsInitialized && IsDockerCommandsOpen && DockerCommands.IsResourceSection && !IsDockerResourcesOpen)
+                ShowDockerResourcesCommand.Execute(null);
             if (args.PropertyName == nameof(SshDockerCommandsViewModel.SelectedContainer) && DockerCommands.SelectedContainer is { } selected)
                 DockerMonitor.SelectDockerContainer(selected.Id);
         };
@@ -81,13 +87,6 @@ public sealed partial class SshWorkspaceViewModel
             if (args.PropertyName == nameof(SshMonitorViewModel.ResultCount) && IsDockerCommandsOpen)
                 DockerCommands.UpdateResources(DockerMonitor.Containers);
         };
-    }
-
-    /// <summary>打开管理工具时自动初始化环境与独立采样，不替换交互终端。</summary>
-    private async Task InitializeDockerPanelAsync()
-    {
-        await DockerCommands.InitializeAsync();
-        if (IsDockerCommandsOpen && DockerCommands.IsInitialized) await ShowDockerResourcesCommand.ExecuteAsync();
     }
 
     private Task RunDockerInTerminalAsync(SshDockerCommandPlan plan, CancellationToken token)

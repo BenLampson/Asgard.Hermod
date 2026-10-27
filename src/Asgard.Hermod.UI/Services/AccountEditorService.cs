@@ -13,13 +13,26 @@ public sealed class AccountEditorService(Func<Window?> owner, IAccountService ac
     /// <inheritdoc />
     public Task OpenForSignInAsync() => ShowAsync(owner());
 
+    /// <inheritdoc />
+    public Task OpenConflictsAsync(Window? ownerWindow = null) => ShowAsync(ownerWindow ?? owner(), resolveConflicts: true);
+
     /// <summary>先让用户选择登录或注册，只有明确点击登录才启动浏览器。</summary>
-    private async Task ShowAsync(Window? ownerWindow)
+    private async Task ShowAsync(Window? ownerWindow, bool resolveConflicts = false)
     {
         AccountWindow? window = null;
         await using var model = new AccountViewModel(accounts, sync, download => RequestPassword(window!, download, automatic is not null), automatic,
             conflicts => RequestMerge(window!, conflicts), registration is null ? null : () => RequestRegistrationAsync(window!));
         window = new AccountWindow(model) { Owner = ownerWindow };
+        if (resolveConflicts)
+        {
+            // 先显示拥有状态和取消操作的账户窗口，再直接打开逐项选择界面。
+            window.Loaded += async (_, _) =>
+            {
+                if (!model.MergeCommand.CanExecute(null) && model.SyncNowCommand.CanExecute(null))
+                    await model.SyncNowCommand.ExecuteAsync();
+                if (model.MergeCommand.CanExecute(null)) await model.MergeCommand.ExecuteAsync();
+            };
+        }
         window.ShowDialog();
     }
 

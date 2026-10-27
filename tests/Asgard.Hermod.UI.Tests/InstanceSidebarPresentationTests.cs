@@ -64,6 +64,9 @@ public sealed class InstanceSidebarPresentationTests(WpfTestFixture fixture)
                 await WindowTestVisuals.UpdateLayoutAsync(window);
                 Assert.Equal(next != ConfigurationSyncStatus.Local, cloud.IsVisible);
                 Assert.Equal(item.SyncIcon, cloud.Kind);
+                var name = Assert.Single(WindowTestVisuals.Descendants<TextBlock>(button), text => text.Name == "SidebarInstanceName");
+                Assert.Same(Application.Current.FindResource(next == ConfigurationSyncStatus.Conflict ? "DangerBrush" : "TextBodyBrush"), name.Foreground);
+                if (next == ConfigurationSyncStatus.Conflict) Assert.Same(Application.Current.FindResource("DangerBrush"), cloud.Foreground);
                 Assert.Equal(Text.Get("InstanceSync" + next), cloud.ToolTip);
                 Assert.Equal(item.AccessibleName, AutomationProperties.GetName(button));
             }

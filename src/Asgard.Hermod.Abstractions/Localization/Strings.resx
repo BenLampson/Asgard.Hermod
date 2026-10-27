@@ -5490,7 +5490,7 @@ Address: {2}</value></data>
     <value>Detect environment</value>
   </data>
   <data name="KubeDetectHint" xml:space="preserve">
-    <value>Detect kubectl on this SSH host to begin.</value>
+    <value>Click Load environment / refresh to load the environment.</value>
   </data>
   <data name="KubeMissing" xml:space="preserve">
     <value>kubectl was not found on this SSH host.</value>
@@ -5502,10 +5502,10 @@ Address: {2}</value></data>
     <value>No Kubernetes context is configured on this host.</value>
   </data>
   <data name="KubeReady" xml:space="preserve">
-    <value>Choose a context, namespace and resource type, then refresh.</value>
+    <value>Environment loaded. Selections use the local snapshot.</value>
   </data>
   <data name="KubeRefreshHint" xml:space="preserve">
-    <value>Refresh to load resources in the selected scope.</value>
+    <value>Click Load environment / refresh when data changes.</value>
   </data>
   <data name="KubeLoaded" xml:space="preserve">
     <value>Loaded {0} resources.</value>
@@ -5638,4 +5638,8 @@ Address: {2}</value></data>
   <data name="FolderStatisticsScanning" xml:space="preserve">
     <value>Calculating folder properties</value>
   </data>
+  <data name="SshLoadEnvironment" xml:space="preserve"><value>Load environment / refresh</value></data>
+  <data name="SshEnvironmentSnapshotHint" xml:space="preserve"><value>Click to load the environment. Selections use the loaded data; click again to refresh changes.</value></data>
+  <data name="KubeLoadingSnapshot" xml:space="preserve"><value>Loading {1} in context {0}…</value></data>
+  <data name="SyncResolveConflicts" xml:space="preserve"><value>Resolve sync conflicts</value></data>
 </root>

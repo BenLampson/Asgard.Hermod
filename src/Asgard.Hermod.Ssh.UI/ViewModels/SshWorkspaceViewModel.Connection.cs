@@ -28,8 +28,6 @@ public sealed partial class SshWorkspaceViewModel
             Kubernetes.ConnectionChanged();
             _runTask = ObserveTransportAsync(opened, _ioCancellation);
             await Monitor.StartAsync(opened as ISshWorkspaceConnection);
-            if (IsDockerCommandsOpen) await InitializeDockerPanelAsync();
-            if (IsKubernetesOpen) await Kubernetes.InitializeAsync();
         }
         catch (OperationCanceledException) when (_connecting.IsCancellationRequested || IsClosed)
         {

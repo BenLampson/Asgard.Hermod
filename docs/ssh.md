@@ -350,8 +350,9 @@ the workspace lifetime. Double-click restores the default size. Narrow windows
 stack management above the terminal and remember a separate requested height;
 small tool panes scroll without covering the terminal.
 
-Docker initializes its client/engine/Compose capabilities and container list on
-first entry. Containers, Images and Compose have separate tabs. Container lists
+Click **Load environment / refresh** to read Docker client/engine/Compose
+capabilities and the container list. Opening or reconnecting a tool does not load
+its environment. Containers, Images and Compose have separate tabs. Container lists
 support local name/image and state filters, and show real sampled CPU and memory
 values. A separate lower pane displays resource charts, action output or identity
 details. Its divider resizes the list and detail areas independently. Sampling
@@ -359,14 +360,20 @@ pauses when leaving Docker, while an explicit operation can finish in the
 background. Log following opens a new PTY beside the management pane. Existing
 confirmation and connection-generation checks still guard every change.
 
-Kubernetes initializes kubectl, contexts, the current context's configured
-namespace (or `default`), the namespace list and the resource list in one sequence.
-Context, namespace and resource-type changes load automatically; editable namespace
-input is briefly coalesced. Namespace-list permissions do not prevent loading a
-known namespace. A safe warning explains the manual fallback. Initialization can
-be canceled or retried with one button. Successful initialization is reused until
-reconnection or explicit reinitialization. Old connection responses cannot change
-a new connection's busy state, scope or results. Pods expose container readiness,
+Click **Load environment / refresh** to read kubectl, contexts, each context's
+configured namespace (or default), namespace lists and resource summaries.
+Context, namespace and resource-type changes filter that snapshot locally and
+never issue another request. Click the same button again when remote data changes.
+Namespace-list failures do not discard readable resources; individual resource
+failures remain safe errors. Loading can be canceled or retried, and reconnecting
+clears the old snapshot without automatically loading another. Old connection
+responses cannot change a new connection's busy state, scope or results. Pods expose container readiness,
 restart counts and waiting reasons instead of hiding failures behind a Running
 phase. Details, bounded logs and events remain tied to the executed target; raw
 process output is retained verbatim. Deployment restarts still require confirmation.
+
+
+Both management pages preserve usable list and output heights and scroll vertically
+when the available pane is short. Search rows grow to fit their controls. Long
+result targets wrap instead of being trimmed; output wraps by default, with a
+wrap toggle and independent horizontal/vertical scrolling for unwrapped output.

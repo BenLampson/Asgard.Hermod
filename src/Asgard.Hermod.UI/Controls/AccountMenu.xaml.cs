@@ -30,6 +30,11 @@ public partial class AccountMenu : UserControl
                 shell.OpenAccountCommand.Execute(null);
             return;
         }
+        if (DataContext is ShellViewModel current && current.ResolveSyncConflictsCommand.CanExecute(null))
+        {
+            current.ResolveSyncConflictsCommand.Execute(null);
+            return;
+        }
         if (AccountButton.ContextMenu is { } menu)
         {
             menu.PlacementTarget = AccountButton;

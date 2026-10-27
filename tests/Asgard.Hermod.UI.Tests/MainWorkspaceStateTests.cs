@@ -27,7 +27,7 @@ public sealed class MainWorkspaceStateTests(WpfTestFixture fixture)
                 sync.SetStatus(state); await WpfTestFixture.DrainDispatcherAsync();
                 Assert.Equal(Text.Get("SyncBadge" + state), label.Text);
                 Assert.Equal(state == ConfigurationSyncStatus.Synced ? "cloud-check" : state == ConfigurationSyncStatus.Synchronizing ? "refresh-cw" : "circle-alert", icon.Kind);
-                string brush = state switch { ConfigurationSyncStatus.Synced => "SuccessBrush", ConfigurationSyncStatus.Failed => "DangerBrush", ConfigurationSyncStatus.Conflict => "WarningBrush", _ => "TextMutedBrush" };
+                string brush = state switch { ConfigurationSyncStatus.Synced => "SuccessBrush", ConfigurationSyncStatus.Failed => "DangerBrush", ConfigurationSyncStatus.Conflict => "DangerBrush", _ => "TextMutedBrush" };
                 Assert.Same(Application.Current.Resources[brush], icon.Foreground);
             }
             await accounts.SignOutAsync(TestContext.Current.CancellationToken); await WpfTestFixture.DrainDispatcherAsync();
