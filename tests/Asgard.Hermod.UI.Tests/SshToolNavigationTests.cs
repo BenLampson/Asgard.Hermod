@@ -7,6 +7,63 @@ namespace Asgard.Hermod.UI.Tests;
 [Collection(WpfTestCollection.Name)]
 public sealed class SshToolNavigationTests(WpfTestFixture fixture)
 {
+    /// <summary>主区域切换到资源页时选择同一容器并启动采样，离开后暂停。</summary>
+    [Fact]
+    public Task DockerResourcePageTracksSelectionAndPausesWhenLeaving() => fixture.RunOffscreenAsync(async () =>
+    {
+        var connection = new SshMonitorTestData().CreateConnection();
+        await using var model = SshWorkspaceTests.Create(new SshTestFactory { Handler = _ => Task.FromResult<ISshConnection>(connection) });
+        await model.InitializeAsync(); model.Monitor.IsPaused = true;
+        await model.ToggleDockerCommandsCommand.ExecuteAsync(); await model.DockerCommands.DetectCommand.ExecuteAsync();
+        var target = model.DockerCommands.Containers.First(container => container.Name == "hermod-api");
+        model.DockerCommands.SelectedContainer = target; model.DockerCommands.ShowResourcesCommand.Execute(null);
+        await model.DockerMonitor.RefreshDetailsCommand.ExecuteAsync();
+        await SshWorkspaceTests.UntilAsync(() => model.DockerMonitor.SelectedContainer?.Id == target.Id);
+        Assert.True(model.DockerCommands.IsResourceTool); Assert.True(model.IsDockerResourcesOpen);
+        Assert.NotNull(model.DockerMonitor.SelectedContainer!.CpuPercent); Assert.False(model.DockerCommands.IsOutputOpen);
+        model.DockerCommands.ShowDetailsCommand.Execute(null);
+        Assert.True(model.DockerCommands.IsDetailsTool); Assert.False(model.IsDockerResourcesOpen); Assert.True(model.DockerMonitor.IsPaused);
+        model.DockerCommands.ShowResourcesCommand.Execute(null);
+        await SshWorkspaceTests.UntilAsync(() => model.IsDockerResourcesOpen && !model.DockerMonitor.IsPaused);
+        Assert.Equal(target.Id, model.DockerCommands.SelectedContainer!.Id);
+    });
+
+    /// <summary>刷新尚未结束时切换页面，只在最终仍停留容器页时恢复采样。</summary>
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public Task NavigationDuringResourceRefreshRespectsFinalPage(bool returnToContainers) => fixture.RunOffscreenAsync(async () =>
+    {
+        var data = new SshMonitorTestData(); var connection = data.CreateConnection();
+        await using var model = SshWorkspaceTests.Create(new SshTestFactory { Handler = _ => Task.FromResult<ISshConnection>(connection) });
+        await model.InitializeAsync(); model.Monitor.IsPaused = true;
+        await model.ToggleDockerCommandsCommand.ExecuteAsync(); await model.DockerCommands.DetectCommand.ExecuteAsync();
+        await SshWorkspaceTests.UntilAsync(() => model.IsDockerResourcesOpen && !model.ShowDockerResourcesCommand.IsRunning && !model.DockerMonitor.RefreshDetailsCommand.IsRunning);
+        var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        bool block = true;
+        connection.Handler = async (command, token) =>
+        {
+            if (block && command.Contains("__CPU__", StringComparison.Ordinal))
+            {
+                block = false; entered.TrySetResult(); await release.Task.WaitAsync(token);
+            }
+            return await data.HandleAsync(command, token);
+        };
+        var refresh = model.ShowDockerResourcesCommand.ExecuteAsync();
+        try
+        {
+            await entered.Task.WaitAsync(TimeSpan.FromSeconds(3));
+            model.DockerCommands.SelectToolCommand.Execute("images"); Assert.False(model.IsDockerResourcesOpen);
+            model.DockerCommands.SelectToolCommand.Execute("containers");
+            if (!returnToContainers) model.DockerCommands.SelectToolCommand.Execute("images");
+        }
+        finally { release.TrySetResult(); }
+        await refresh;
+        if (returnToContainers) await SshWorkspaceTests.UntilAsync(() => model.IsDockerResourcesOpen && !model.DockerMonitor.IsPaused);
+        else { Assert.False(model.IsDockerResourcesOpen); Assert.True(model.DockerMonitor.IsPaused); }
+    });
+
     [Fact]
     public Task DockerResourcesStayInsideManagementAndKubectlUsesSameConnection() => fixture.RunOffscreenAsync(async () =>
     {

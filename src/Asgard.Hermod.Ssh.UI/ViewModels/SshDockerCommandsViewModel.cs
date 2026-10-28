@@ -30,13 +30,16 @@ public sealed partial class SshDockerCommandsViewModel : ObservableObject, IDisp
         ContainerView = CollectionViewSource.GetDefaultView(Containers);
         ContainerView.Filter = item => item is SshMonitorContainerItem c && (ContainerState.Length == 0 || c.State == ContainerState) && (ContainerSearch.Length == 0 ||
             c.Name.Contains(ContainerSearch, StringComparison.OrdinalIgnoreCase) || c.Image.Contains(ContainerSearch, StringComparison.OrdinalIgnoreCase));
+        ContainerView.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasNoContainers));
+        InitializeImageView();
         SelectedOperation = SshDockerCommandBuilder.Operations.Select(o => new SshDockerOperationItem(o)).First(o => o.Id == "logs");
         DetectCommand = new AsyncRelayCommand(_ => DetectAsync(true), _ => !IsBusy && _connection() is not null && !_disposed);
         ExecuteCommand = new AsyncRelayCommand(_ => ExecuteAsync(), _ => CanExecute);
         ActionCommand = new AsyncRelayCommand(p => RunActionAsync(p as string ?? ""), p => CanRunAction(p as string));
-        ShowDetailsCommand = new RelayCommand(_ => { ShowDetails = true; DetailSection = "details"; }, _ => SelectedContainer is not null);
+        ShowDetailsCommand = new RelayCommand(_ => ToolSection = "details", _ => SelectedContainer is not null);
+        ShowResourcesCommand = new RelayCommand(_ => ToolSection = "resources", _ => SelectedContainer is not null);
         SelectToolCommand = new RelayCommand(value => { if (value is string section) ToolSection = section; }, _ => !IsBusy);
-        SelectDetailCommand = new RelayCommand(value => { if (value is string section) DetailSection = section; });
+        ToggleOutputCommand = new RelayCommand(_ => IsOutputOpen = !IsOutputOpen);
         InsertCommand = new RelayCommand(_ => { if (_plan is { } plan && CanInsert) InsertRequested?.Invoke(this, plan.Command); }, _ => CanInsert);
         CancelCommand = new RelayCommand(_ => _pending?.Cancel(), _ => IsBusy);
     }
@@ -45,7 +48,7 @@ public sealed partial class SshDockerCommandsViewModel : ObservableObject, IDisp
     public ICollectionView Operations { get; }
     /// <summary>容器列表在本地筛选，不改变远端资源。</summary>
     public ICollectionView ContainerView { get; }
-    /// <summary>镜像与 Compose 为折叠的次级工具，常用容器动作无需进入目录。</summary>
+    /// <summary>镜像拉取与 Compose 使用参数化操作，列表读取独立于结果面板。</summary>
     public IReadOnlyList<SshDockerOperationItem> OtherOperations { get; } = SshDockerCommandBuilder.Operations
         .Where(o => o.Id is "images" or "pull" || o.RequiresCompose).Select(o => new SshDockerOperationItem(o)).ToArray();
     /// <summary>次级资源的选择与常用容器动作分开，避免下拉框清空主操作。</summary>
@@ -64,6 +67,7 @@ public sealed partial class SshDockerCommandsViewModel : ObservableObject, IDisp
             ContainerView.Refresh();
             if (SelectedContainer is { } selected && !ContainerView.Contains(selected)) SelectedContainer = null;
             OnPropertyChanged(nameof(HasNoContainers));
+            OnPropertyChanged(nameof(ContainerEmptyMessage));
         }
     } = "";
     /// <summary>当前连接真实容器列表。</summary>
@@ -80,8 +84,8 @@ public sealed partial class SshDockerCommandsViewModel : ObservableObject, IDisp
     public AsyncRelayCommand ActionCommand { get; }
     /// <summary>详情仅展示已读取的容器字段。</summary>
     public RelayCommand ShowDetailsCommand { get; }
-    /// <summary>可选的容器详情区域。</summary>
-    public bool ShowDetails { get; set => SetProperty(ref field, value); }
+    /// <summary>所选容器的资源用量位于主内容区。</summary>
+    public RelayCommand ShowResourcesCommand { get; }
     /// <summary>插入终端但不执行。</summary>
     public RelayCommand InsertCommand { get; }
     /// <summary>取消等待，不保证回滚已经派发的远端操作。</summary>
@@ -93,7 +97,15 @@ public sealed partial class SshDockerCommandsViewModel : ObservableObject, IDisp
     /// <summary>选择操作时只重新生成预览，不自动执行。</summary>
     public SshDockerOperationItem? SelectedOperation { get; set { if (SetProperty(ref field, value)) RefreshPreview(); } }
     /// <summary>容器名称只显示，命令以完整 ID 生成。</summary>
-    public SshMonitorContainerItem? SelectedContainer { get; set { if (SetProperty(ref field, value)) { ShowDetails = false; RefreshPreview(); } } }
+    public SshMonitorContainerItem? SelectedContainer
+    {
+        get;
+        set
+        {
+            if (!SetProperty(ref field, value)) return;
+            RefreshPreview();
+        }
+    }
     /// <summary>限定日志行数。</summary>
     public int TailLines { get; set { if (SetProperty(ref field, value)) RefreshPreview(); } } = 500;
     /// <summary>固定协议时间范围，与 UI 区域格式无关。</summary>
@@ -134,7 +146,6 @@ public sealed partial class SshDockerCommandsViewModel : ObservableObject, IDisp
     public async Task RunActionAsync(string id)
     {
         if (!CanRunAction(id)) return;
-        DetailSection = "output";
         Select(id, SelectedContainer);
         await ExecuteAsync();
     }
@@ -151,6 +162,7 @@ public sealed partial class SshDockerCommandsViewModel : ObservableObject, IDisp
     public void Select(string id, SshMonitorContainerItem? container)
     {
         ToolSection = SshDockerCommandBuilder.Operations.First(o => o.Id == id).RequiresCompose ? "compose" : id is "images" or "pull" ? "images" : "containers";
+        if (id == "images") return;
         SelectedOperation = OtherOperations.FirstOrDefault(o => o.Id == id) ??
             SshDockerCommandBuilder.Operations.Select(o => new SshDockerOperationItem(o)).First(o => o.Id == id);
         SelectedOtherOperation = OtherOperations.FirstOrDefault(o => o.Id == id);
@@ -183,7 +195,7 @@ public sealed partial class SshDockerCommandsViewModel : ObservableObject, IDisp
     /// <summary>连接代次变更撤销确认和执行权限，清空旧主机的容器与版本。</summary>
     public void ConnectionChanged()
     {
-        _generation++; _pending?.Cancel(); _pending = null; IsBusy = false; IsInitialized = false; Environment = null; SelectedContainer = null; Containers.Clear();
+        _generation++; _pending?.Cancel(); _pending = null; IsBusy = false; IsInitialized = false; Environment = null; SelectedContainer = null; Containers.Clear(); ClearImages(); IsOutputOpen = false;
         Error = ""; Status = ""; Output = ""; ResultTarget = ""; ResultSummary = ""; ExecutedCommand = ""; RefreshPreview();
     }
     /// <inheritdoc />

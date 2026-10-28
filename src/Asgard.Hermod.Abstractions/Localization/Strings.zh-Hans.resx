@@ -5345,7 +5345,7 @@ SQL：
   <data name="DockerRefreshResources" xml:space="preserve"><value>刷新容器</value></data>
   <data name="DockerChooseContainer" xml:space="preserve"><value>1. 选择容器</value></data>
   <data name="DockerChooseAction" xml:space="preserve"><value>2. 要对它做什么？</value></data>
-  <data name="DockerSelectFirst" xml:space="preserve"><value>先选择左侧的容器</value></data>
+  <data name="DockerSelectFirst" xml:space="preserve"><value>请先在容器列表中选择容器</value></data>
   <data name="DockerSelectFirstHint" xml:space="preserve"><value>选好以后，可以查看日志和资源用量，也可以启动、停止或重启容器。</value></data>
   <data name="DockerNoContainers" xml:space="preserve"><value>没有找到容器，可以刷新后重试。</value></data>
   <data name="DockerActionsHint" xml:space="preserve"><value>已停止的容器可以启动。重启和停止会先说明影响，由你确认后执行。</value></data>
@@ -5644,4 +5644,17 @@ SQL：
   <data name="SshEnvironmentSnapshotHint" xml:space="preserve"><value>点击后加载环境；切换选项使用已加载的数据。有变化时请再次点击刷新。</value></data>
   <data name="KubeLoadingSnapshot" xml:space="preserve"><value>正在加载上下文 {0} 的{1}…</value></data>
   <data name="SyncResolveConflicts" xml:space="preserve"><value>处理同步冲突</value></data>
+  <data name="DockerShowOutput" xml:space="preserve"><value>显示运行结果</value></data>
+  <data name="DockerHideOutput" xml:space="preserve"><value>收起运行结果</value></data>
+  <data name="DockerImageSearch" xml:space="preserve"><value>按仓库、标签或 ID 搜索镜像</value></data>
+  <data name="DockerImageRepository" xml:space="preserve"><value>仓库</value></data>
+  <data name="DockerImageTag" xml:space="preserve"><value>标签</value></data>
+  <data name="DockerImageId" xml:space="preserve"><value>镜像 ID</value></data>
+  <data name="DockerImageCreated" xml:space="preserve"><value>创建时间</value></data>
+  <data name="DockerImageSize" xml:space="preserve"><value>大小</value></data>
+  <data name="DockerNoImages" xml:space="preserve"><value>没有找到镜像。</value></data>
+  <data name="DockerImagesNotLoaded" xml:space="preserve"><value>加载环境后可查看镜像。</value></data>
+  <data name="DockerImagesLimited" xml:space="preserve"><value>镜像列表超出读取上限，当前显示的列表不完整。</value></data>
+  <data name="DockerImageReadFailed" xml:space="preserve"><value>无法加载镜像列表，之前加载的列表可能不是最新的。</value></data>
+  <data name="DockerImageRefreshAfterPullFailed" xml:space="preserve"><value>镜像已拉取，但无法刷新镜像列表。请刷新列表确认当前状态，不要重复拉取。</value></data>
 </root>

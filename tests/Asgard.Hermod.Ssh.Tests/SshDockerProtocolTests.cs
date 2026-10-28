@@ -99,6 +99,38 @@ public sealed class SshDockerProtocolTests
         Assert.ThrowsAny<Exception>(() => SshDockerCommandBuilder.Build("compose-ps", new(ProjectDirectory: "/srv"), Plugin with { ComposeVersion = "1.17.0" }));
     }
 
+    /// <summary>结构化输出保留长仓库、无标签镜像及共享 ID 的多条标签。</summary>
+    [Fact]
+    public void ImageRowsRetainDockerFieldsAndDistinctTags()
+    {
+        string first = ImageJson("registry.example.com/very/long/repository", "latest", Id);
+        string second = ImageJson("registry.example.com/very/long/repository", "stable", Id);
+        string dangling = ImageJson("<none>", "<none>", new string('b', 64));
+        var images = SshDockerImageReader.Parse(new(string.Join('\n', first, second, dangling), 0, false), out bool limited);
+        Assert.False(limited); Assert.Equal(3, images.Count);
+        Assert.Equal("registry.example.com/very/long/repository", images[0].Repository);
+        Assert.Equal("latest", images[0].Tag); Assert.Equal("stable", images[1].Tag);
+        Assert.Equal("sha256:" + Id, images[0].Id); Assert.Equal(Id[..12], images[0].ShortId);
+        Assert.Equal("<none>", images[2].Repository); Assert.Equal("7 days ago", images[0].Created); Assert.Equal("264MB", images[0].Size);
+    }
+
+    /// <summary>超限只保留完整 JSON 行并提示不完整；失败和畸形数据不能成为镜像行。</summary>
+    [Fact]
+    public void ImageRowsRejectErrorsAndMarkIncompleteOutput()
+    {
+        string valid = ImageJson("nginx", "latest", Id);
+        var images = SshDockerImageReader.Parse(new(valid + "\n{\"Repository\":", -1, true), out bool limited);
+        Assert.True(limited); Assert.Single(images);
+        Assert.ThrowsAny<Exception>(() => SshDockerImageReader.Parse(new("password=private", 1, false), out _));
+        Assert.ThrowsAny<Exception>(() => SshDockerImageReader.Parse(new("{\"Repository\":\"nginx\"}", 0, false), out _));
+        Assert.ThrowsAny<Exception>(() => SshDockerImageReader.Parse(new("{\"Repository\":", -1, true), out _));
+        images = SshDockerImageReader.Parse(new(string.Join('\n', Enumerable.Repeat(valid, 501)), 0, false), out limited);
+        Assert.True(limited); Assert.Equal(500, images.Count);
+    }
+
+    private static string ImageJson(string repository, string tag, string id) =>
+        System.Text.Json.JsonSerializer.Serialize(new { Repository = repository, Tag = tag, ID = "sha256:" + id, CreatedSince = "7 days ago", Size = "264MB" });
+
     private static string Stats(string network) => $$"""{"ID":"{{Id}}","CPUPerc":"250.5%","MemUsage":"1.5GiB / 4GiB","MemPerc":"37.5%","NetIO":"{{network}}","BlockIO":"1MB / 2MB","PIDs":"24"}""";
     private static string Probe(string mode) => "__HERMOD_VERSION__\n{\"Client\":{\"Version\":\"27.5.1\"},\"Server\":{\"Version\":\"27.5.1\"}}\n__HERMOD_ACCESS__0\n__HERMOD_COMPOSE__" + mode + " 2.32.4\n__HERMOD_STATS__\n--no-stream --no-trunc --format\n";
 }

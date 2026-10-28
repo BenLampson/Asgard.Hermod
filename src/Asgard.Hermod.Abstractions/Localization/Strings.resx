@@ -5345,7 +5345,7 @@ Address: {2}</value></data>
   <data name="DockerRefreshResources" xml:space="preserve"><value>Refresh containers</value></data>
   <data name="DockerChooseContainer" xml:space="preserve"><value>1. Choose a container</value></data>
   <data name="DockerChooseAction" xml:space="preserve"><value>2. What would you like to do?</value></data>
-  <data name="DockerSelectFirst" xml:space="preserve"><value>Choose a container on the left</value></data>
+  <data name="DockerSelectFirst" xml:space="preserve"><value>Choose a container in the list</value></data>
   <data name="DockerSelectFirstHint" xml:space="preserve"><value>View logs and resource usage, or start, stop and restart the selected container.</value></data>
   <data name="DockerNoContainers" xml:space="preserve"><value>No containers found. Refresh to try again.</value></data>
   <data name="DockerActionsHint" xml:space="preserve"><value>Start is available for stopped containers. Restart and stop ask for confirmation before making changes.</value></data>
@@ -5644,4 +5644,17 @@ Address: {2}</value></data>
   <data name="SshEnvironmentSnapshotHint" xml:space="preserve"><value>Click to load the environment. Selections use the loaded data; click again to refresh changes.</value></data>
   <data name="KubeLoadingSnapshot" xml:space="preserve"><value>Loading {1} in context {0}…</value></data>
   <data name="SyncResolveConflicts" xml:space="preserve"><value>Resolve sync conflicts</value></data>
+  <data name="DockerShowOutput" xml:space="preserve"><value>Show output</value></data>
+  <data name="DockerHideOutput" xml:space="preserve"><value>Hide output</value></data>
+  <data name="DockerImageSearch" xml:space="preserve"><value>Search images by repository, tag or ID</value></data>
+  <data name="DockerImageRepository" xml:space="preserve"><value>Repository</value></data>
+  <data name="DockerImageTag" xml:space="preserve"><value>Tag</value></data>
+  <data name="DockerImageId" xml:space="preserve"><value>Image ID</value></data>
+  <data name="DockerImageCreated" xml:space="preserve"><value>Created</value></data>
+  <data name="DockerImageSize" xml:space="preserve"><value>Size</value></data>
+  <data name="DockerNoImages" xml:space="preserve"><value>No images found.</value></data>
+  <data name="DockerImagesNotLoaded" xml:space="preserve"><value>Load the environment to view images.</value></data>
+  <data name="DockerImagesLimited" xml:space="preserve"><value>The image list is incomplete because it exceeded the read limit.</value></data>
+  <data name="DockerImageReadFailed" xml:space="preserve"><value>Could not load the image list. A previous list may be out of date.</value></data>
+  <data name="DockerImageRefreshAfterPullFailed" xml:space="preserve"><value>The image was pulled, but the image list could not be refreshed. Refresh the list to check its current state; do not repeat the pull.</value></data>
 </root>

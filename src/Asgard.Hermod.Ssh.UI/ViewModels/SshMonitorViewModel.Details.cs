@@ -43,6 +43,7 @@ public sealed partial class SshMonitorViewModel
                 SelectedContainer = Containers.FirstOrDefault(c => c.Id == selected);
                 _requestedContainerId = null;
                 ValidateContainerSelection();
+                DockerSnapshotChanged?.Invoke(this, EventArgs.Empty);
             }
             else
             {
