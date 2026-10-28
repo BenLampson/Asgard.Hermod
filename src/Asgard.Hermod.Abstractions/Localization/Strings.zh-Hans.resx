@@ -3625,7 +3625,8 @@
   <data name="AgentPromptRequired" xml:space="preserve"><value>请输入发给助手的消息。</value></data>
   <data name="AgentInputTooLarge" xml:space="preserve"><value>消息或上下文过长，请缩短后重试。</value></data>
   <data name="AgentBusy" xml:space="preserve"><value>请等待当前回复完成，或先取消请求。</value></data>
-  <data name="AgentAuthenticationFailed" xml:space="preserve"><value>模型服务拒绝了 API Key，请检查设置后重试。</value></data>
+  <data name="AgentAuthenticationFailed" xml:space="preserve"><value>模型服务未通过此请求的身份验证，请检查当前对话选中的配置、服务地址和 API Key。</value></data>
+  <data name="AgentAccessForbidden" xml:space="preserve"><value>模型服务拒绝访问，请检查当前选中的配置，以及账号对该模型和接口的访问权限。</value></data>
   <data name="AgentRateLimited" xml:space="preserve"><value>模型服务繁忙或已超出配额，请稍后重试。</value></data>
   <data name="AgentRequestFailed" xml:space="preserve"><value>模型请求失败，请检查设置后重试。</value></data>
   <data name="AgentTimedOut" xml:space="preserve"><value>模型请求超时，请重试。</value></data>
@@ -4508,16 +4509,17 @@ SQL：
   <data name="AgentModelsPending" xml:space="preserve"><value>已本机加密保存，等待同步</value></data>
   <data name="AgentModelsSyncExplanation" xml:space="preserve"><value>配置跟随当前账号。API Key 默认隐藏，重启后无需重新填写。
 未登录时仅在本机加密保存。</value></data>
-  <data name="AgentModelsDefaultExplanation" xml:space="preserve"><value>新 Session 使用默认配置；修改默认配置不切换已打开的 Session。</value></data>
+  <data name="AgentModelsDefaultExplanation" xml:space="preserve"><value>新对话使用默认配置；修改默认配置不会切换已选定模型的对话。</value></data>
   <data name="AgentModelNameHint" xml:space="preserve"><value>在聊天面板中通过此名称选择。</value></data>
   <data name="AgentModelEndpointHint" xml:space="preserve"><value>支持 Chat Completions 的服务地址。</value></data>
   <data name="AgentModelIdentifierHint" xml:space="preserve"><value>填写该服务支持的模型 ID。</value></data>
-  <data name="AgentModelUseDefault" xml:space="preserve"><value>作为新 Session 的默认配置</value></data>
+  <data name="AgentModelUseDefault" xml:space="preserve"><value>作为新对话的默认配置</value></data>
   <data name="AgentModelTest" xml:space="preserve"><value>测试连接</value></data>
   <data name="AgentModelEncryptedNote" xml:space="preserve"><value>API Key 会加密保存，并随账号加密同步。</value></data>
   <data name="AgentModelKeyRetained" xml:space="preserve"><value>已保存。留空沿用密钥，输入内容可替换。</value></data>
   <data name="AgentModelKeyEndpointChanged" xml:space="preserve"><value>服务地址已更改，旧密钥不会发送到新服务。</value></data>
   <data name="AgentModelTestSucceeded" xml:space="preserve"><value>连接成功 · {0} ms</value></data>
+  <data name="AgentModelTestScope" xml:space="preserve"><value>连接测试仅验证当前填写内容的基础对话，不测试 SSH 工具。请保存修改后再用于对话。</value></data>
   <data name="AgentModelSwitchTitle" xml:space="preserve"><value>切换模型配置</value></data>
   <data name="AgentModelSwitchPrompt" xml:space="preserve"><value>当前请求会停止，之后的问题将使用「{0}」。已有对话、SQL 和输入草稿会保留。</value></data>
   <data name="AgentModelStopAndSwitch" xml:space="preserve"><value>停止并切换</value></data>

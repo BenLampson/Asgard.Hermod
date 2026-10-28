@@ -27,7 +27,7 @@ public sealed class SshAssistantViewModel : ObservableObject, IDisposable
             {
                 var saved = state as Asgard.Hermod.UI.Models.AgentConversationFeedback ?? new();
                 Error = saved.Error; LastFailedPrompt = saved.FailedPrompt;
-            });
+            }, modelSession: _conversation?.ModelSession);
         SendCommand = new AsyncRelayCommand(_ => SendAsync(), _ => !IsSourceClosed && !IsBusy && _connection() is not null && !string.IsNullOrWhiteSpace(Prompt));
         RestoreDraftCommand = new RelayCommand(value => Prompt = value as string ?? LastFailedPrompt, value => !IsSourceClosed && !IsBusy && Prompt.Length == 0 && (value is string { Length: > 0 } || LastFailedPrompt.Length > 0));
         CancelCommand = new RelayCommand(_ => _pending?.Cancel(), _ => IsBusy);

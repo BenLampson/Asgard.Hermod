@@ -48,7 +48,8 @@ public sealed class OpenAiCompatibleAgentClient(HttpClient client, AgentConfigur
             headerLimit.Dispose();
             if (!response.IsSuccessStatusCode) throw Text.Exception(response.StatusCode switch
             {
-                HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden => "AgentAuthenticationFailed",
+                HttpStatusCode.Unauthorized => "AgentAuthenticationFailed",
+                HttpStatusCode.Forbidden => "AgentAccessForbidden",
                 HttpStatusCode.TooManyRequests => "AgentRateLimited",
                 HttpStatusCode.BadRequest or HttpStatusCode.UnprocessableEntity when tools is { Count: > 0 } => "SshAgentToolSupportRequired",
                 _ => "AgentRequestFailed",

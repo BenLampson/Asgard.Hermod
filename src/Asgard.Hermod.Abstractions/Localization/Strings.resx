@@ -3625,7 +3625,8 @@ Hiding to the notification area is temporarily unavailable. To exit Hermod, use 
   <data name="AgentPromptRequired" xml:space="preserve"><value>Enter a message for the assistant.</value></data>
   <data name="AgentInputTooLarge" xml:space="preserve"><value>The message or context is too large. Shorten it and try again.</value></data>
   <data name="AgentBusy" xml:space="preserve"><value>Wait for the current response or cancel it first.</value></data>
-  <data name="AgentAuthenticationFailed" xml:space="preserve"><value>The model service rejected the API key. Check settings and try again.</value></data>
+  <data name="AgentAuthenticationFailed" xml:space="preserve"><value>The model service could not authenticate this request. Check the session's selected configuration, service address and API key.</value></data>
+  <data name="AgentAccessForbidden" xml:space="preserve"><value>The model service denied access. Check the selected configuration and the account's permissions for this model and endpoint.</value></data>
   <data name="AgentRateLimited" xml:space="preserve"><value>The model service is busy or its quota was exceeded. Try again later.</value></data>
   <data name="AgentRequestFailed" xml:space="preserve"><value>The model request failed. Check settings and try again.</value></data>
   <data name="AgentTimedOut" xml:space="preserve"><value>The model request timed out. Try again.</value></data>
@@ -4508,16 +4509,17 @@ Status: {2}
   <data name="AgentModelsPending" xml:space="preserve"><value>Encrypted locally; sync pending</value></data>
   <data name="AgentModelsSyncExplanation" xml:space="preserve"><value>Configurations follow the current account. API keys stay hidden and remain available after restarting.
 When signed out, they are encrypted only on this device.</value></data>
-  <data name="AgentModelsDefaultExplanation" xml:space="preserve"><value>New Sessions use the default configuration. Changing the default does not switch open Sessions.</value></data>
+  <data name="AgentModelsDefaultExplanation" xml:space="preserve"><value>New conversations use the default configuration. Changing the default does not switch a conversation that already has a model selected.</value></data>
   <data name="AgentModelNameHint" xml:space="preserve"><value>Choose this name in the chat panel.</value></data>
   <data name="AgentModelEndpointHint" xml:space="preserve"><value>An OpenAI-compatible Chat Completions service address.</value></data>
   <data name="AgentModelIdentifierHint" xml:space="preserve"><value>The model identifier supported by this service.</value></data>
-  <data name="AgentModelUseDefault" xml:space="preserve"><value>Use as the default for new Sessions</value></data>
+  <data name="AgentModelUseDefault" xml:space="preserve"><value>Use as the default for new conversations</value></data>
   <data name="AgentModelTest" xml:space="preserve"><value>Test connection</value></data>
   <data name="AgentModelEncryptedNote" xml:space="preserve"><value>API keys are encrypted locally and included in encrypted account sync.</value></data>
   <data name="AgentModelKeyRetained" xml:space="preserve"><value>A key is saved. Leave this blank to keep it, or enter a replacement.</value></data>
   <data name="AgentModelKeyEndpointChanged" xml:space="preserve"><value>The service address changed. The old key will not be sent to the new service.</value></data>
   <data name="AgentModelTestSucceeded" xml:space="preserve"><value>Connection succeeded · {0} ms</value></data>
+  <data name="AgentModelTestScope" xml:space="preserve"><value>The test checks basic chat with these fields, not SSH tools. Save changes before using them in a conversation.</value></data>
   <data name="AgentModelSwitchTitle" xml:space="preserve"><value>Switch model configuration</value></data>
   <data name="AgentModelSwitchPrompt" xml:space="preserve"><value>The current task will stop. Future questions will use “{0}”. Existing messages, SQL and input drafts will be kept.</value></data>
   <data name="AgentModelStopAndSwitch" xml:space="preserve"><value>Stop and switch</value></data>

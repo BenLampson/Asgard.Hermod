@@ -104,6 +104,57 @@ public sealed class AgentModelPencilHeadlessTests(WpfTestFixture fixture)
         Assert.DoesNotContain(model.Messages, message => message.Content == "Late old-model answer");
     });
 
+    /// <summary>新对话使用最新默认值，切回历史时恢复各自模型，删除后不悄悄换用其他密钥。</summary>
+    [Fact]
+    public Task NewConversationLoadsDefaultAndRestoresEachConversationSelection() => fixture.RunOffscreenAsync(async () =>
+    {
+        using var runtime = new AgentModelTestRuntime();
+        using var model = new SshAssistantViewModel(runtime.Client, () => null, () => "host", new SshTroubleshootingWorkspaceTests.Dialogs());
+        var session = Assert.IsType<AgentModelSession>(model.ModelSession);
+        var previous = model.Archive.ActiveThread;
+        Assert.Equal(AgentModelTestRuntime.First.Id, session.SelectedId);
+        await runtime.Catalog.SetDefaultAsync(AgentModelTestRuntime.Second.Id, runtime.Catalog.Epoch);
+        Assert.Equal(AgentModelTestRuntime.First.Id, session.SelectedId);
+        model.Archive.NewCommand.Execute(null);
+        var current = model.Archive.ActiveThread;
+        Assert.Equal(AgentModelTestRuntime.Second.Id, session.SelectedId);
+        session.Select(AgentModelTestRuntime.Third.Id);
+        model.Archive.ActiveThread = previous; Assert.Equal(AgentModelTestRuntime.First.Id, session.SelectedId);
+        model.Archive.ActiveThread = current; Assert.Equal(AgentModelTestRuntime.Third.Id, session.SelectedId);
+        await runtime.Catalog.DeleteAsync(AgentModelTestRuntime.First, runtime.Catalog.Epoch);
+        model.Archive.ActiveThread = previous;
+        Assert.Empty(session.SelectedId); Assert.False(session.IsConfigured);
+        model.Archive.NewCommand.Execute(null);
+        Assert.Equal(AgentModelTestRuntime.Second.Id, session.SelectedId);
+    });
+
+    /// <summary>等待首次配置的历史对话在切换回来后也使用新默认配置。</summary>
+    [Fact]
+    public Task UnconfiguredHistoryLoadsFirstDefaultAfterSwitchingConversations() => fixture.RunOffscreenAsync(async () =>
+    {
+        using var runtime = new AgentModelTestRuntime(); runtime.Store.Save(new([], ""));
+        using var model = new SshAssistantViewModel(runtime.Client, () => null, () => "host", new SshTroubleshootingWorkspaceTests.Dialogs());
+        var first = model.Archive.ActiveThread; model.Archive.NewCommand.Execute(null);
+        await runtime.Catalog.SaveAsync(null, AgentModelTestRuntime.First, true, runtime.Catalog.Epoch);
+        Assert.Equal(AgentModelTestRuntime.First.Id, model.ModelSession!.SelectedId);
+        model.Archive.ActiveThread = first;
+        Assert.True(model.ModelSession.IsConfigured); Assert.Equal(AgentModelTestRuntime.First.Id, model.ModelSession.SelectedId);
+    });
+
+    /// <summary>已删除的配置不应在历史切换后被当成等待首次默认值。</summary>
+    [Fact]
+    public Task DeletedSelectionDoesNotAdoptAnotherDefaultAfterSwitchingConversations() => fixture.RunOffscreenAsync(async () =>
+    {
+        using var runtime = new AgentModelTestRuntime();
+        using var model = new SshAssistantViewModel(runtime.Client, () => null, () => "host", new SshTroubleshootingWorkspaceTests.Dialogs());
+        var first = model.Archive.ActiveThread;
+        await runtime.Catalog.DeleteAsync(AgentModelTestRuntime.First, runtime.Catalog.Epoch);
+        await runtime.Catalog.SetDefaultAsync(AgentModelTestRuntime.Second.Id, runtime.Catalog.Epoch);
+        model.Archive.NewCommand.Execute(null); Assert.Equal(AgentModelTestRuntime.Second.Id, model.ModelSession!.SelectedId);
+        model.Archive.ActiveThread = first;
+        Assert.False(model.ModelSession.IsConfigured); Assert.Empty(model.ModelSession.SelectedId);
+    });
+
     private static DockPanel Frame(SettingsCaption caption, FrameworkElement content)
     {
         var root = new DockPanel(); root.SetResourceReference(Control.FontFamilyProperty, "UiFont");

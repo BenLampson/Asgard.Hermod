@@ -15,13 +15,14 @@ public sealed class AgentConversationArchive : ObservableObject
     private readonly Func<bool> _isBusy;
     private readonly Func<object?>? _captureContext;
     private readonly Action<object?>? _restoreContext;
+    private readonly AgentModelSession? _modelSession;
     private bool _switching, _sourceClosed;
 
     /// <summary>消息与业务引擎仍由模块拥有，归档不读取或持久化外部数据。</summary>
-    public AgentConversationArchive(IList messages, Func<AgentConversationSnapshot> capture, Action<AgentConversationSnapshot> restore, Func<string> getDraft, Action<string> setDraft, Func<bool> isBusy, Func<object?>? captureContext = null, Action<object?>? restoreContext = null)
+    public AgentConversationArchive(IList messages, Func<AgentConversationSnapshot> capture, Action<AgentConversationSnapshot> restore, Func<string> getDraft, Action<string> setDraft, Func<bool> isBusy, Func<object?>? captureContext = null, Action<object?>? restoreContext = null, AgentModelSession? modelSession = null)
     {
         _messages = messages; _capture = capture; _restore = restore; _getDraft = getDraft; _setDraft = setDraft; _isBusy = isBusy;
-        _captureContext = captureContext; _restoreContext = restoreContext;
+        _captureContext = captureContext; _restoreContext = restoreContext; _modelSession = modelSession;
         ActiveThread = new(); Threads.Add(ActiveThread);
         NewCommand = new RelayCommand(_ => StartNew(), _ => !_sourceClosed && !_isBusy());
         if (messages is INotifyCollectionChanged observed) observed.CollectionChanged += (_, _) => { if (!_switching) UpdateTitle(); };
@@ -61,11 +62,17 @@ public sealed class AgentConversationArchive : ObservableObject
     {
         thread.Messages = _messages.Cast<object>().ToArray(); thread.Draft = _getDraft();
         thread.ContextState = _captureContext?.Invoke();
+        thread.ModelProfileId = _modelSession?.CaptureConversationSelection();
         if (!_sourceClosed) thread.EngineState = _capture();
     }
     private void RestoreThread(AgentConversationThread thread)
     {
-        if (!_sourceClosed) _restore(thread.EngineState);
+        if (!_sourceClosed)
+        {
+            _restore(thread.EngineState);
+            if (thread.ModelProfileId is null) _modelSession?.UseDefaultForNewConversation();
+            else _modelSession?.RestoreConversationSelection(thread.ModelProfileId);
+        }
         _switching = true;
         try { _messages.Clear(); foreach (var message in thread.Messages) _messages.Add(message); _setDraft(thread.Draft); _restoreContext?.Invoke(thread.ContextState); }
         finally { _switching = false; }

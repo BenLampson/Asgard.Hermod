@@ -224,7 +224,9 @@ Three-way merge treats endpoint, model and key as one connection; conflict
 previews mask credentials and deleted defaults cannot resurrect deleted profiles.
 `AgentModelCatalog` migrates the legacy address/model preference once, then
 tracks the current account workspace. `AgentModelSession` pins a profile per
-originating Session; changing the default only seeds future Sessions. A task
+conversation. A new conversation uses the current default, while an unconfigured
+conversation waits for its first default; a deleted selection never falls back
+to another profile. Switching history restores each conversation's selection. A task
 freezes endpoint, model, key and display identity for its entire context/tool
 loop. Changing or deleting that profile, closing the source, or changing account
 cancels the frozen task without replay. Busy selection requires an inline stop
