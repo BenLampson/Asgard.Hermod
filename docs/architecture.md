@@ -201,7 +201,9 @@ operations while retaining readable evidence. Container log readers attach an
 explicit frozen snapshot or selection and never execute tools.
 SSH, MySQL and PostgreSQL compose the same `AgentPanel`, `AgentMessageView`
 and `AgentCodeSuggestion` controls. Enter sends and Shift+Enter inserts a newline;
-IME composition does not submit. SQL scope, result sharing and execution, and SSH
+IME composition does not submit. Clicking the composer's blank space focuses the
+prompt, while its action and context controls retain their own mouse behavior.
+SQL scope, result sharing and execution, and SSH
 selection, diagnostics and connection generation checks remain in their modules.
 Inline approval cards freeze the full command and target, are single use and
 become invalid on cancellation, source changes or reconnection. Cancellation
