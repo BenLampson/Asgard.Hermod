@@ -20,6 +20,9 @@ public sealed partial class SshWorkspaceViewModel
         {
             if (value is not ("terminal" or "files" or "forward" or "transfers" or "docker" or "kubernetes") || !SetProperty(ref field, value)) return;
             if (value != "docker") IsDockerResourcesOpen = false;
+            else if (DockerCommands is not null && DockerCommands.IsInitialized && !DockerCommands.IsBusy &&
+                (DockerCommands.IsContainerTool || DockerCommands.IsResourceTool) && !IsDockerResourcesOpen)
+                RequestDockerResources();
             foreach (string property in new[] { nameof(IsTerminalSection), nameof(IsFilesSection), nameof(IsForwardSection), nameof(IsTransfersSection), nameof(IsToolboxOpen),
                 nameof(ToolboxTitle), nameof(IsDockerCommandsOpen), nameof(IsKubernetesOpen), nameof(IsManagementSection), nameof(IsBasicToolboxSection) }) OnPropertyChanged(property);
         }

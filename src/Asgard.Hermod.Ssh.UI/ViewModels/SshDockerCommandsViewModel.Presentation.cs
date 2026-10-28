@@ -7,10 +7,12 @@ public sealed partial class SshDockerCommandsViewModel
     public string OperationTitle => SelectedOperation?.Title ?? Text.Get("DockerLibrary");
     /// <summary>资源选择后才显示动作，空列表有明确提示。</summary>
     public bool HasContainer => SelectedContainer is not null;
-    /// <summary>资源选择前的引导。</summary>
-    public bool HasNoContainer => !HasContainer && IsContainerTool;
-    /// <summary>服务器当前没有容器或尚未读取。</summary>
-    public bool HasNoContainers => ContainerView.IsEmpty && !IsBusy;
+    /// <summary>容器消失或筛选隐藏时，主内容提示重新选择目标。</summary>
+    public bool HasNoContainer => !HasContainer && (IsResourceTool || IsDetailsTool);
+    /// <summary>成功读取后，筛选为空才显示空状态。</summary>
+    public bool HasNoContainers => IsInitialized && ContainerView.IsEmpty && !IsBusy;
+    /// <summary>筛选无结果与服务器没有容器使用不同提示。</summary>
+    public string ContainerEmptyMessage => Text.Get(ContainerSearch.Length > 0 || ContainerState.Length > 0 ? "SshMonitorNoMatches" : "DockerNoContainers");
     /// <summary>仅次级工具显示独立的操作提交按钮。</summary>
     public bool IsOtherOperation => SelectedOperation?.Id is "images" or "pull" || NeedsCompose;
     /// <summary>动作结果使用执行时的名称，不随列表选择变化。</summary>
@@ -55,9 +57,9 @@ public sealed partial class SshDockerCommandsViewModel
     {
         foreach (string property in new[] { nameof(OperationTitle), nameof(Host), nameof(CanEdit), nameof(CanExecute), nameof(CanInsert), nameof(NeedsContainer),
             nameof(IsLogs), nameof(NeedsTimeout), nameof(NeedsImage), nameof(NeedsCompose), nameof(ChangesState), nameof(Preview), nameof(EnvironmentSummary),
-            nameof(Compatibility), nameof(ContainerHint), nameof(HasNoOutput), nameof(HasContainer), nameof(HasNoContainer), nameof(HasNoContainers), nameof(IsOtherOperation) }) OnPropertyChanged(property);
+            nameof(Compatibility), nameof(ContainerHint), nameof(HasNoOutput), nameof(HasContainer), nameof(HasNoContainer), nameof(HasNoContainers), nameof(HasNoImages), nameof(HasNoImageSnapshot), nameof(IsOtherOperation) }) OnPropertyChanged(property);
         DetectCommand?.NotifyCanExecuteChanged(); ExecuteCommand?.NotifyCanExecuteChanged(); InsertCommand?.NotifyCanExecuteChanged(); CancelCommand?.NotifyCanExecuteChanged();
-        ActionCommand?.NotifyCanExecuteChanged(); ShowDetailsCommand?.NotifyCanExecuteChanged();
+        ActionCommand?.NotifyCanExecuteChanged(); ShowDetailsCommand?.NotifyCanExecuteChanged(); ShowResourcesCommand?.NotifyCanExecuteChanged();
         SelectToolCommand?.NotifyCanExecuteChanged();
     }
 }

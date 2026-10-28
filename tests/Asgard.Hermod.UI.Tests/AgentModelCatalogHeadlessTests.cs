@@ -38,6 +38,23 @@ public sealed class AgentModelCatalogHeadlessTests(WpfTestFixture fixture)
         Assert.Equal(AgentModelTestRuntime.Second.Id, existing.SelectedId);
     });
 
+    /// <summary>先打开助手再添加默认配置时，现有空会话立即获得配置和对应密钥。</summary>
+    [Fact]
+    public Task NewlySavedDefaultPopulatesAnOpenUnconfiguredSession() => fixture.RunOffscreenAsync(async () =>
+    {
+        using var runtime = new AgentModelTestRuntime();
+        runtime.Store.Save(new([], ""));
+        using var session = runtime.Client.CreateSession();
+        var selector = new AgentModelSelector { Session = session };
+        Assert.False(selector.IsConfigured); Assert.Empty(session.SelectedId);
+        await runtime.Catalog.SaveAsync(null, AgentModelTestRuntime.First, true, runtime.Catalog.Epoch);
+        Assert.True(selector.IsConfigured); Assert.Equal(AgentModelTestRuntime.First.Id, session.SelectedId);
+        using var task = session.BeginTask(TestContext.Current.CancellationToken);
+        var captured = Assert.Single(runtime.Client.Captured);
+        Assert.Equal(AgentModelTestRuntime.First.Endpoint, captured.Options.Endpoint);
+        Assert.Equal(AgentModelTestRuntime.First.ApiKey, captured.Options.ApiKey);
+    });
+
     [Fact]
     public Task ProfileChangeCancelsWholeTaskAndDeleteNeverFallsBackToDefault() => fixture.RunOffscreenAsync(async () =>
     {

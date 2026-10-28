@@ -62,7 +62,7 @@ public sealed class AgentClientTests
 
     [Theory]
     [InlineData(HttpStatusCode.Unauthorized, "AgentAuthenticationFailed")]
-    [InlineData(HttpStatusCode.Forbidden, "AgentAuthenticationFailed")]
+    [InlineData(HttpStatusCode.Forbidden, "AgentAccessForbidden")]
     [InlineData(HttpStatusCode.TooManyRequests, "AgentRateLimited")]
     [InlineData(HttpStatusCode.InternalServerError, "AgentRequestFailed")]
     [InlineData(HttpStatusCode.Redirect, "AgentRequestFailed")]
@@ -74,6 +74,25 @@ public sealed class AgentClientTests
         var error = await Assert.ThrowsAsync<InvalidOperationException>(() => client.CompleteAsync([new(AgentRole.User, "query")], TestContext.Current.CancellationToken));
         Assert.Equal(key, error.Data["Hermod.ResourceKey"]); Assert.DoesNotContain("raw-secret-response", error.ToString());
         Assert.DoesNotContain("private-key", error.ToString()); Assert.Single(handler.Bodies);
+    }
+
+    /// <summary>基础连接成功不能保证 SSH 工具请求有权限，两个请求仍使用同一配置。</summary>
+    [Fact]
+    public async Task BasicChatCanSucceedWhileToolRequestIsForbidden()
+    {
+        using var handler = new AgentHttpHandler(); using var http = new HttpClient(handler);
+        var configuration = new AgentConfiguration(); configuration.Update("https://models.example/v1", "model", "private-key");
+        var client = new OpenAiCompatibleAgentClient(http, configuration);
+        await client.CompleteAsync([new(AgentRole.User, "test")], TestContext.Current.CancellationToken);
+        handler.Status = HttpStatusCode.Forbidden; handler.Response = "raw-secret-response";
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(() => client.CompleteWithToolsAsync(
+            [new(AgentRole.User, "diagnose")], SshAgentTools.Definitions, TestContext.Current.CancellationToken));
+        Assert.Equal("AgentAccessForbidden", error.Data["Hermod.ResourceKey"]);
+        Assert.DoesNotContain("raw-secret-response", error.ToString()); Assert.DoesNotContain("private-key", error.ToString());
+        Assert.Equal(handler.Endpoints[0], handler.Endpoints[1]); Assert.Equal(handler.Keys[0], handler.Keys[1]);
+        using var basic = JsonDocument.Parse(handler.Bodies[0]); using var tools = JsonDocument.Parse(handler.Bodies[1]);
+        Assert.Equal(basic.RootElement.GetProperty("model").GetString(), tools.RootElement.GetProperty("model").GetString());
+        Assert.False(basic.RootElement.TryGetProperty("tools", out _)); Assert.True(tools.RootElement.TryGetProperty("tools", out _));
     }
 
     [Theory]

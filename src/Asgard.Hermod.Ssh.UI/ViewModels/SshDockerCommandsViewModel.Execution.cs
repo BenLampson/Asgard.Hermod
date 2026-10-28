@@ -24,6 +24,9 @@ public sealed partial class SshDockerCommandsViewModel
             var items = SshMonitorDetailReader.ParseContainers(result.Output).Select(c => new SshMonitorContainerItem(c)).ToArray();
             UpdateContainers(items);
             IsInitialized = true;
+            try { await ReadImagesAsync(connection, generation, pending.Token); }
+            catch (OperationCanceledException) { throw; }
+            catch (Exception) { Error = Text.Get("DockerImageReadFailed"); }
             Status = Text.Get("DockerEnvironmentReady");
         }
         catch (OperationCanceledException) { if (generation == _generation) Error = Text.Get("DockerDetectionCanceled"); }
@@ -34,7 +37,8 @@ public sealed partial class SshDockerCommandsViewModel
     private async Task ExecuteAsync()
     {
         if (IsBusy || _disposed || _plan is not { } plan || _connection() is not { } connection) return;
-        long generation = _generation; string host = _host(); string target = SelectedContainer?.Name ?? ProjectDirectory;
+        long generation = _generation; string host = _host();
+        string target = plan.Operation.Id == "pull" ? Image : plan.Operation.RequiresContainer ? SelectedContainer?.Name ?? "" : ProjectDirectory;
         using var pending = new CancellationTokenSource(); _pending = pending; IsBusy = true; Error = ""; bool dispatched = false, completed = false;
         try
         {
@@ -53,7 +57,7 @@ public sealed partial class SshDockerCommandsViewModel
                 if (!approved) { Status = Text.Get("DockerDeclined"); return; }
             }
             EnsureCurrent(connection, generation, pending.Token);
-            DetailSection = "output"; Status = Text.Get("DockerExecuting"); ExecutedCommand = plan.Command; Output = ""; ResultSummary = "";
+            IsOutputOpen = true; Status = Text.Get("DockerExecuting"); ExecutedCommand = plan.Command; Output = ""; ResultSummary = "";
             ResultTarget = Text.Format("DockerActionTarget", Text.Get(plan.Operation.TitleKey), target, host);
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(pending.Token); timeout.CancelAfter(TimeSpan.FromMinutes(2));
             var started = Stopwatch.GetTimestamp(); dispatched = true;
@@ -74,6 +78,11 @@ public sealed partial class SshDockerCommandsViewModel
             if (plan.Operation.ChangesState)
             {
                 Changed?.Invoke(this, EventArgs.Empty);
+                if (plan.Operation.Id == "pull")
+                {
+                    await ReadImagesAsync(connection, generation, timeout.Token);
+                    return;
+                }
                 // 重新读取当前列表而不自动重试刚才的变更；被移除的容器不能继续作为目标。
                 var refreshed = await connection.ExecuteCommandAsync(SshMonitorDetailReader.ContainerCommand, timeout.Token).WaitAsync(timeout.Token);
                 EnsureCurrent(connection, generation, pending.Token);
@@ -85,8 +94,8 @@ public sealed partial class SshDockerCommandsViewModel
                 else Error = Text.Get("DockerRefreshAfterActionFailed");
             }
         }
-        catch (OperationCanceledException) { if (generation == _generation) Error = Text.Get(completed ? "DockerRefreshAfterActionFailed" : dispatched ? "DockerOutcomeUnknown" : "DockerCanceled"); }
-        catch (Exception error) { if (generation == _generation) Error = completed ? Text.Get("DockerRefreshAfterActionFailed") : dispatched ? Text.Get("DockerOutcomeUnknown") : Text.Error(error, "DockerExecutionFailed"); }
+        catch (OperationCanceledException) { if (generation == _generation) Error = Text.Get(completed ? plan.Operation.Id == "pull" ? "DockerImageRefreshAfterPullFailed" : "DockerRefreshAfterActionFailed" : dispatched ? "DockerOutcomeUnknown" : "DockerCanceled"); }
+        catch (Exception error) { if (generation == _generation) Error = completed ? Text.Get(plan.Operation.Id == "pull" ? "DockerImageRefreshAfterPullFailed" : "DockerRefreshAfterActionFailed") : dispatched ? Text.Get("DockerOutcomeUnknown") : Text.Error(error, "DockerExecutionFailed"); }
         finally { if (ReferenceEquals(_pending, pending)) { _pending = null; IsBusy = false; RefreshPreview(); } }
     }
 

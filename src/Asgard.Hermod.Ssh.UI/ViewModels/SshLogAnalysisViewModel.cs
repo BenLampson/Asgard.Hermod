@@ -19,7 +19,7 @@ public sealed class SshLogAnalysisViewModel : ObservableObject, IDisposable
             {
                 var saved = value as Asgard.Hermod.UI.Models.AgentConversationFeedback ?? new();
                 Attachment = saved.Attachment as SshLogAttachment; Error = saved.Error; LastFailedPrompt = saved.FailedPrompt;
-            });
+            }, modelSession: _conversation?.ModelSession);
         SendCommand = new AsyncRelayCommand(_ => SendAsync(), _ => !_disposed && !IsBusy && Prompt.Trim().Length > 0 && Attachment?.Text.Length > 0);
         CancelCommand = new RelayCommand(_ => _pending?.Cancel(), _ => IsBusy);
         ClearCommand = new RelayCommand(_ => { _conversation?.Clear(); Messages.Clear(); Error = ""; }, _ => !IsBusy && !_disposed);

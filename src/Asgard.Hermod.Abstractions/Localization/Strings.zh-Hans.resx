@@ -3625,7 +3625,8 @@
   <data name="AgentPromptRequired" xml:space="preserve"><value>请输入发给助手的消息。</value></data>
   <data name="AgentInputTooLarge" xml:space="preserve"><value>消息或上下文过长，请缩短后重试。</value></data>
   <data name="AgentBusy" xml:space="preserve"><value>请等待当前回复完成，或先取消请求。</value></data>
-  <data name="AgentAuthenticationFailed" xml:space="preserve"><value>模型服务拒绝了 API Key，请检查设置后重试。</value></data>
+  <data name="AgentAuthenticationFailed" xml:space="preserve"><value>模型服务未通过此请求的身份验证，请检查当前对话选中的配置、服务地址和 API Key。</value></data>
+  <data name="AgentAccessForbidden" xml:space="preserve"><value>模型服务拒绝访问，请检查当前选中的配置，以及账号对该模型和接口的访问权限。</value></data>
   <data name="AgentRateLimited" xml:space="preserve"><value>模型服务繁忙或已超出配额，请稍后重试。</value></data>
   <data name="AgentRequestFailed" xml:space="preserve"><value>模型请求失败，请检查设置后重试。</value></data>
   <data name="AgentTimedOut" xml:space="preserve"><value>模型请求超时，请重试。</value></data>
@@ -4508,16 +4509,17 @@ SQL：
   <data name="AgentModelsPending" xml:space="preserve"><value>已本机加密保存，等待同步</value></data>
   <data name="AgentModelsSyncExplanation" xml:space="preserve"><value>配置跟随当前账号。API Key 默认隐藏，重启后无需重新填写。
 未登录时仅在本机加密保存。</value></data>
-  <data name="AgentModelsDefaultExplanation" xml:space="preserve"><value>新 Session 使用默认配置；修改默认配置不切换已打开的 Session。</value></data>
+  <data name="AgentModelsDefaultExplanation" xml:space="preserve"><value>新对话使用默认配置；修改默认配置不会切换已选定模型的对话。</value></data>
   <data name="AgentModelNameHint" xml:space="preserve"><value>在聊天面板中通过此名称选择。</value></data>
   <data name="AgentModelEndpointHint" xml:space="preserve"><value>支持 Chat Completions 的服务地址。</value></data>
   <data name="AgentModelIdentifierHint" xml:space="preserve"><value>填写该服务支持的模型 ID。</value></data>
-  <data name="AgentModelUseDefault" xml:space="preserve"><value>作为新 Session 的默认配置</value></data>
+  <data name="AgentModelUseDefault" xml:space="preserve"><value>作为新对话的默认配置</value></data>
   <data name="AgentModelTest" xml:space="preserve"><value>测试连接</value></data>
   <data name="AgentModelEncryptedNote" xml:space="preserve"><value>API Key 会加密保存，并随账号加密同步。</value></data>
   <data name="AgentModelKeyRetained" xml:space="preserve"><value>已保存。留空沿用密钥，输入内容可替换。</value></data>
   <data name="AgentModelKeyEndpointChanged" xml:space="preserve"><value>服务地址已更改，旧密钥不会发送到新服务。</value></data>
   <data name="AgentModelTestSucceeded" xml:space="preserve"><value>连接成功 · {0} ms</value></data>
+  <data name="AgentModelTestScope" xml:space="preserve"><value>连接测试仅验证当前填写内容的基础对话，不测试 SSH 工具。请保存修改后再用于对话。</value></data>
   <data name="AgentModelSwitchTitle" xml:space="preserve"><value>切换模型配置</value></data>
   <data name="AgentModelSwitchPrompt" xml:space="preserve"><value>当前请求会停止，之后的问题将使用「{0}」。已有对话、SQL 和输入草稿会保留。</value></data>
   <data name="AgentModelStopAndSwitch" xml:space="preserve"><value>停止并切换</value></data>
@@ -5343,7 +5345,7 @@ SQL：
   <data name="DockerRefreshResources" xml:space="preserve"><value>刷新容器</value></data>
   <data name="DockerChooseContainer" xml:space="preserve"><value>1. 选择容器</value></data>
   <data name="DockerChooseAction" xml:space="preserve"><value>2. 要对它做什么？</value></data>
-  <data name="DockerSelectFirst" xml:space="preserve"><value>先选择左侧的容器</value></data>
+  <data name="DockerSelectFirst" xml:space="preserve"><value>请先在容器列表中选择容器</value></data>
   <data name="DockerSelectFirstHint" xml:space="preserve"><value>选好以后，可以查看日志和资源用量，也可以启动、停止或重启容器。</value></data>
   <data name="DockerNoContainers" xml:space="preserve"><value>没有找到容器，可以刷新后重试。</value></data>
   <data name="DockerActionsHint" xml:space="preserve"><value>已停止的容器可以启动。重启和停止会先说明影响，由你确认后执行。</value></data>
@@ -5642,4 +5644,17 @@ SQL：
   <data name="SshEnvironmentSnapshotHint" xml:space="preserve"><value>点击后加载环境；切换选项使用已加载的数据。有变化时请再次点击刷新。</value></data>
   <data name="KubeLoadingSnapshot" xml:space="preserve"><value>正在加载上下文 {0} 的{1}…</value></data>
   <data name="SyncResolveConflicts" xml:space="preserve"><value>处理同步冲突</value></data>
+  <data name="DockerShowOutput" xml:space="preserve"><value>显示运行结果</value></data>
+  <data name="DockerHideOutput" xml:space="preserve"><value>收起运行结果</value></data>
+  <data name="DockerImageSearch" xml:space="preserve"><value>按仓库、标签或 ID 搜索镜像</value></data>
+  <data name="DockerImageRepository" xml:space="preserve"><value>仓库</value></data>
+  <data name="DockerImageTag" xml:space="preserve"><value>标签</value></data>
+  <data name="DockerImageId" xml:space="preserve"><value>镜像 ID</value></data>
+  <data name="DockerImageCreated" xml:space="preserve"><value>创建时间</value></data>
+  <data name="DockerImageSize" xml:space="preserve"><value>大小</value></data>
+  <data name="DockerNoImages" xml:space="preserve"><value>没有找到镜像。</value></data>
+  <data name="DockerImagesNotLoaded" xml:space="preserve"><value>加载环境后可查看镜像。</value></data>
+  <data name="DockerImagesLimited" xml:space="preserve"><value>镜像列表超出读取上限，当前显示的列表不完整。</value></data>
+  <data name="DockerImageReadFailed" xml:space="preserve"><value>无法加载镜像列表，之前加载的列表可能不是最新的。</value></data>
+  <data name="DockerImageRefreshAfterPullFailed" xml:space="preserve"><value>镜像已拉取，但无法刷新镜像列表。请刷新列表确认当前状态，不要重复拉取。</value></data>
 </root>

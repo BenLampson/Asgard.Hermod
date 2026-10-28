@@ -6,9 +6,4 @@ public partial class SshWorkspaceView
     private void OnCloseDockerCommands(object? sender, EventArgs args) { if (_model is not null) _model.IsDockerCommandsOpen = false; }
     private void OnCloseDockerResources(object? sender, EventArgs args) { if (_model is not null) _model.IsDockerResourcesOpen = false; }
     private void OnCloseKubernetes(object? sender, EventArgs args) { if (_model is not null) _model.IsKubernetesOpen = false; }
-    private async void OnDockerMonitorRequested(object? sender, EventArgs args)
-    {
-        if (_model is null) return;
-        await _model.ShowDockerResourcesCommand.ExecuteAsync();
-    }
 }

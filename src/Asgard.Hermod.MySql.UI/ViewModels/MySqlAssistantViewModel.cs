@@ -22,7 +22,7 @@ public sealed partial class MySqlAssistantViewModel : ObservableObject, IDisposa
             {
                 var saved = state as Asgard.Hermod.UI.Models.AgentConversationFeedback ?? new();
                 Error = saved.Error; LastFailedPrompt = saved.FailedPrompt;
-            });
+            }, modelSession: _conversation?.ModelSession);
         RestoreDraftCommand = new RelayCommand(value => Prompt = value as string ?? LastFailedPrompt, value => !_disposed && !IsBusy && Prompt.Length == 0 && (value is string { Length: > 0 } || LastFailedPrompt.Length > 0));
         SendCommand = new AsyncRelayCommand(_ => SendAsync(), _ => !IsBusy && !_disposed && !_tab.IsBusy && !_tab.IsManagingScope && _tab.ConnectionAvailable && !string.IsNullOrWhiteSpace(Prompt));
         CancelCommand = new RelayCommand(_ => _pending?.Cancel(), _ => IsBusy);

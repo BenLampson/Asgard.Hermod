@@ -15,6 +15,7 @@ public sealed partial class SshDockerCommandsViewModel
             ContainerView.Refresh();
             if (SelectedContainer is { } item && !ContainerView.Contains(item)) SelectedContainer = null;
             OnPropertyChanged(nameof(HasNoContainers));
+            OnPropertyChanged(nameof(ContainerEmptyMessage));
         }
     } = "";
     /// <summary>资源标签使用稳定 ID。</summary>
@@ -23,9 +24,10 @@ public sealed partial class SshDockerCommandsViewModel
         get;
         set
         {
-            if (value is not ("containers" or "images" or "compose") || !SetProperty(ref field, value)) return;
-            foreach (string property in new[] { nameof(IsContainerTool), nameof(IsImageTool), nameof(IsComposeTool), nameof(IsOtherTool), nameof(VisibleOperations), nameof(HasNoContainer) }) OnPropertyChanged(property);
-            if (value != "containers") { SelectedOtherOperation = VisibleOperations.FirstOrDefault(); DetailSection = "output"; }
+            if (value is not ("containers" or "images" or "compose" or "resources" or "details") || !SetProperty(ref field, value)) return;
+            foreach (string property in new[] { nameof(IsContainerTool), nameof(IsImageTool), nameof(IsComposeTool), nameof(IsResourceTool), nameof(IsDetailsTool), nameof(VisibleOperations), nameof(HasNoContainer) }) OnPropertyChanged(property);
+            if (value == "images") SelectedOtherOperation = OtherOperations.First(o => o.Id == "pull");
+            else if (value == "compose") SelectedOtherOperation = VisibleOperations.FirstOrDefault();
         }
     } = "containers";
     /// <summary>容器列表与动作。</summary>
@@ -34,30 +36,27 @@ public sealed partial class SshDockerCommandsViewModel
     public bool IsImageTool => ToolSection == "images";
     /// <summary>Compose 工具标签。</summary>
     public bool IsComposeTool => ToolSection == "compose";
-    /// <summary>镜像和 Compose 的显式参数表单。</summary>
-    public bool IsOtherTool => !IsContainerTool;
-    /// <summary>只列出当前资源类型支持的操作。</summary>
-    public IReadOnlyList<SshDockerOperationItem> VisibleOperations => OtherOperations.Where(o => IsImageTool ? o.Id is "images" or "pull" : o.Definition.RequiresCompose).ToArray();
-    /// <summary>详情标签独立于最终执行结果的固定目标。</summary>
-    public string DetailSection
+    /// <summary>所选容器的资源用量是主内容，而非命令结果。</summary>
+    public bool IsResourceTool => ToolSection == "resources";
+    /// <summary>所选容器的身份详情是主内容，而非命令结果。</summary>
+    public bool IsDetailsTool => ToolSection == "details";
+    /// <summary>Compose 表单只列出对应的操作。</summary>
+    public IReadOnlyList<SshDockerOperationItem> VisibleOperations => OtherOperations.Where(o => o.Definition.RequiresCompose).ToArray();
+    /// <summary>运行结果默认收起，可由用户随时关闭或重新打开。</summary>
+    public bool IsOutputOpen
     {
         get;
         set
         {
-            if (value is not ("resources" or "output" or "details") || !SetProperty(ref field, value)) return;
-            foreach (string property in new[] { nameof(IsResourceSection), nameof(IsOutputSection), nameof(IsDetailsSection) }) OnPropertyChanged(property);
+            if (SetProperty(ref field, value)) OnPropertyChanged(nameof(OutputToggleLabel));
         }
-    } = "resources";
-    /// <summary>真实资源监测在下半区展示。</summary>
-    public bool IsResourceSection => DetailSection == "resources";
-    /// <summary>日志与操作结果。</summary>
-    public bool IsOutputSection => DetailSection == "output";
-    /// <summary>当前容器只读身份详情。</summary>
-    public bool IsDetailsSection => DetailSection == "details";
-    /// <summary>切换容器、镜像与 Compose。</summary>
+    }
+    /// <summary>开关标签描述下一次操作。</summary>
+    public string OutputToggleLabel => Text.Get(IsOutputOpen ? "DockerHideOutput" : "DockerShowOutput");
+    /// <summary>切换容器、镜像、Compose 和容器详情。</summary>
     public RelayCommand SelectToolCommand { get; private set; } = null!;
-    /// <summary>切换详情标签，不自动执行日志或其他远端命令。</summary>
-    public RelayCommand SelectDetailCommand { get; private set; } = null!;
+    /// <summary>开关运行结果，不改变上方的主内容。</summary>
+    public RelayCommand ToggleOutputCommand { get; private set; } = null!;
 
     /// <summary>独立采样结果补充列表资源字段，不覆盖正在确认或执行的目标。</summary>
     public void UpdateResources(IEnumerable<SshMonitorContainerItem> items)

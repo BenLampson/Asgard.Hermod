@@ -18,6 +18,8 @@ public sealed partial class SshMonitorViewModel
     }
     /// <summary>命令入口由工作区打开，不在监测中执行任意 shell。</summary>
     public event EventHandler<string>? DockerOperationRequested;
+    /// <summary>仅在成功读取并协调完整容器快照后通知管理页。</summary>
+    public event EventHandler? DockerSnapshotChanged;
     /// <summary>从监测带入容器。</summary>
     public RelayCommand OpenDockerCommandsCommand { get; }
     /// <summary>已停止或新建的容器直接进入启动确认。</summary>

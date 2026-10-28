@@ -28,10 +28,6 @@ public sealed class MarkdownView : MarkdownDocumentReader
         VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
         HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
         SetResourceReference(ForegroundProperty, "TextBodyBrush");
-        SetResourceReference(SelectionBrushProperty, "ActionFillBrush");
-        SetResourceReference(SelectionTextBrushProperty, "InverseTextBrush");
-        SelectionOpacity = 1;
-        IsInactiveSelectionHighlightEnabled = true;
         RefreshDocument();
     }
 

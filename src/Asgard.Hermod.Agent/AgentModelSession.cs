@@ -2,7 +2,7 @@ using Asgard.Hermod.Abstractions.Models;
 
 namespace Asgard.Hermod.Agent;
 
-/// <summary>来源 Session 的模型选择；默认值只在创建时读取，任务中冻结整个连接。</summary>
+/// <summary>来源内对话的模型选择；未配置的对话等待默认值，任务中冻结整个连接。</summary>
 public sealed class AgentModelSession : IDisposable
 {
     private readonly AgentModelCatalog _catalog;
@@ -10,6 +10,7 @@ public sealed class AgentModelSession : IDisposable
     private readonly object _gate = new();
     private readonly long _epoch;
     private AgentModelProfile? _selected;
+    private bool _waitingForInitialDefault;
     private CancellationTokenSource? _active;
     private IAgentClient? _activeClient;
     private TaskCompletionSource? _idle;
@@ -19,6 +20,7 @@ public sealed class AgentModelSession : IDisposable
     {
         _catalog = catalog; _client = client; _epoch = catalog.Epoch;
         _selected = catalog.Current.Profiles.FirstOrDefault(profile => profile.Id == catalog.Current.DefaultProfileId);
+        _waitingForInitialDefault = _selected is null;
         catalog.Changed += OnChanged;
     }
     /// <summary>配置或忙碌变化；控件自行切回其 Dispatcher。</summary>
@@ -68,6 +70,7 @@ public sealed class AgentModelSession : IDisposable
             if (!IsOwnerCurrent) throw Text.Exception("AgentModelOwnerChanged");
             if (_active is not null) throw Text.Exception("AgentModelStopBeforeSwitch");
             _selected = _catalog.Current.Profiles.FirstOrDefault(profile => profile.Id == id) ?? throw Text.Exception("AgentModelChanged");
+            _waitingForInitialDefault = false;
         }
         Changed?.Invoke(this, EventArgs.Empty);
     }
@@ -77,6 +80,30 @@ public sealed class AgentModelSession : IDisposable
         Task idle;
         lock (_gate) { _active?.Cancel(); idle = _idle?.Task ?? Task.CompletedTask; }
         await idle.WaitAsync(token).ConfigureAwait(false); Select(id);
+    }
+
+    /// <summary>新对话读取当前默认配置；没有默认值时等待首次配置。</summary>
+    public void UseDefaultForNewConversation() => RestoreConversationSelection(null);
+
+    /// <summary>保留等待首次配置与所选配置已删除的区别，供内存对话切换使用。</summary>
+    public string? CaptureConversationSelection()
+    {
+        lock (_gate) return _waitingForInitialDefault ? null : _selected?.Id ?? "";
+    }
+
+    /// <summary>恢复历史对话的配置标识；已删除的配置不会自动切换到其他模型。</summary>
+    public void RestoreConversationSelection(string? id)
+    {
+        lock (_gate)
+        {
+            if (!IsOwnerCurrent) return;
+            if (_active is not null) throw Text.Exception("AgentModelStopBeforeSwitch");
+            var models = _catalog.Current;
+            string target = id ?? models.DefaultProfileId;
+            _selected = models.Profiles.FirstOrDefault(profile => profile.Id == target);
+            _waitingForInitialDefault = id is null && _selected is null;
+        }
+        Changed?.Invoke(this, EventArgs.Empty);
     }
 
     private void Release(CancellationTokenSource source)
@@ -92,7 +119,10 @@ public sealed class AgentModelSession : IDisposable
     {
         lock (_gate)
         {
-            var next = IsOwnerCurrent ? _catalog.Current.Profiles.FirstOrDefault(profile => profile.Id == _selected?.Id) : null;
+            var models = IsOwnerCurrent ? _catalog.Current : AgentModelSet.Empty;
+            string? id = _selected?.Id ?? (_waitingForInitialDefault ? models.DefaultProfileId : null);
+            var next = models.Profiles.FirstOrDefault(profile => profile.Id == id);
+            if (next is not null) _waitingForInitialDefault = false;
             if (next != _selected || !IsOwnerCurrent || _catalog.Error.Length > 0) _active?.Cancel();
             _selected = next;
         }

@@ -64,4 +64,32 @@ public sealed class AgentModelEditorHeadlessTests(WpfTestFixture fixture)
         await testing.WaitAsync(TimeSpan.FromSeconds(2)); late.SetResult(AgentReply.FromContent("late")); await WpfTestFixture.DrainDispatcherAsync();
         Assert.Empty(editor.TestResult); Assert.False(editor.IsTesting); Assert.Empty(editor.ApiKey);
     });
+
+    /// <summary>测试使用编辑草稿，现有对话在保存后才读取更新后的地址、模型和密钥。</summary>
+    [Fact]
+    public Task TestedDraftReachesExistingConversationOnlyAfterSave() => fixture.RunOffscreenAsync(async () =>
+    {
+        using var runtime = new AgentModelTestRuntime(); using var session = runtime.Client.CreateSession();
+        using var editor = new AgentModelEditorViewModel(runtime.Catalog, runtime.Client, AgentModelTestRuntime.First)
+        {
+            Endpoint = "https://replacement.example/v1",
+            Model = "replacement-model",
+            ApiKey = "replacement-key"
+        };
+        await editor.TestCommand.ExecuteAsync(); Assert.True(editor.TestSucceeded);
+        var tested = Assert.Single(runtime.Client.Captured).Options;
+        using (session.BeginTask(TestContext.Current.CancellationToken))
+        {
+            var existing = runtime.Client.Captured[1].Options;
+            Assert.Equal(AgentModelTestRuntime.First.Endpoint, existing.Endpoint);
+            Assert.Equal(AgentModelTestRuntime.First.Model, existing.Model);
+            Assert.Equal(AgentModelTestRuntime.First.ApiKey, existing.ApiKey);
+        }
+        await editor.SaveCommand.ExecuteAsync(); Assert.Empty(editor.Error);
+        using (session.BeginTask(TestContext.Current.CancellationToken))
+        {
+            var updated = runtime.Client.Captured[2].Options;
+            Assert.Equal(tested.Endpoint, updated.Endpoint); Assert.Equal(tested.Model, updated.Model); Assert.Equal(tested.ApiKey, updated.ApiKey);
+        }
+    });
 }

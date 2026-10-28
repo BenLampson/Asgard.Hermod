@@ -224,7 +224,9 @@ Three-way merge treats endpoint, model and key as one connection; conflict
 previews mask credentials and deleted defaults cannot resurrect deleted profiles.
 `AgentModelCatalog` migrates the legacy address/model preference once, then
 tracks the current account workspace. `AgentModelSession` pins a profile per
-originating Session; changing the default only seeds future Sessions. A task
+conversation. A new conversation uses the current default, while an unconfigured
+conversation waits for its first default; a deleted selection never falls back
+to another profile. Switching history restores each conversation's selection. A task
 freezes endpoint, model, key and display identity for its entire context/tool
 loop. Changing or deleting that profile, closing the source, or changing account
 cancels the frozen task without replay. Busy selection requires an inline stop
@@ -663,6 +665,15 @@ resource monitoring is available inside Docker management with its own selection
 sampling history; hiding it pauses sampling without changing the host monitor tab.
 Docker and Kubernetes management load their environment only when the user clicks
 **Load environment / refresh**. Opening or reconnecting a tool does not load it.
+Docker loads container and image snapshots together on that action. Its image table
+uses structured Docker output, supports local filtering and explicitly marks a
+snapshot that exceeded the read limit. A successful image pull refreshes the image
+snapshot; a refresh failure reports the completed pull without suggesting a retry.
+Container resources and details are primary pages associated with the selected
+container. The independent operation-output panel is initially collapsed, opens
+for dispatched actions and can be closed or reopened without changing the main page.
+Container monitoring updates the management list only after a complete successful
+snapshot, so an initial or failed sample cannot clear the selected target.
 The kubectl page reads context names, default namespaces and bounded resource
 summaries for each context through SSH exec channels. Context, namespace and resource
 selections then filter the local snapshot without another request; the explicit

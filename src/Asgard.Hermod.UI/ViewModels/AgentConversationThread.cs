@@ -13,4 +13,5 @@ public sealed class AgentConversationThread : ObservableObject
     internal string Draft { get; set; } = "";
     internal AgentConversationSnapshot EngineState { get; set; } = AgentConversationSnapshot.Empty;
     internal object? ContextState { get; set; }
+    internal string? ModelProfileId { get; set; }
 }

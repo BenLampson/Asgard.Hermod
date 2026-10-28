@@ -97,6 +97,67 @@ public sealed class SshDockerViewTests(WpfTestFixture fixture)
         finally { PresentationTraceSources.DataBindingSource.Listeners.Remove(errors); Text.Initialize(previous.Name, CultureInfo.InvariantCulture); themes.SetTheme(UiTheme.Light); }
     });
 
+    /// <summary>资源与详情位于主区域；结果可关闭、重开并保留手动调整的高度。</summary>
+    [Theory]
+    [InlineData("en", UiTheme.Light)]
+    [InlineData("en", UiTheme.Dark)]
+    [InlineData("zh-Hans", UiTheme.Light)]
+    [InlineData("zh-Hans", UiTheme.Dark)]
+    public Task MainPagesAndCollapsibleOutputRemainUsable(string language, UiTheme theme) => fixture.RunOffscreenAsync(async () =>
+    {
+        var previous = Text.Culture; Text.Initialize(language, CultureInfo.InvariantCulture);
+        var themes = new ThemeService(Application.Current.Resources); themes.SetTheme(theme);
+        var errors = new Errors(); PresentationTraceSources.DataBindingSource.Listeners.Add(errors);
+        var connection = new SshMonitorTestData().CreateConnection();
+        using var model = new SshDockerCommandsViewModel(() => connection, () => "ops@host:22", new Dialogs(), () => true, (_, _) => Task.CompletedTask);
+        var view = new SshDockerCommandsView { DataContext = model };
+        try
+        {
+            await model.InitializeAsync(); model.SelectedContainer = model.Containers[1];
+            var output = Assert.IsType<Grid>(view.FindName("OutputArea")); var grid = Assert.IsType<Grid>(view.FindName("CommandColumns"));
+            foreach (double width in new[] { 380d, 640d, 1000d })
+            {
+                model.SelectToolCommand.Execute("containers"); await Layout(view, width, 820);
+                Assert.Equal(Visibility.Collapsed, output.Visibility); Assert.Equal(0, grid.RowDefinitions[2].ActualHeight);
+                var tabs = Assert.IsType<ScrollViewer>(view.FindName("ToolTabsScroll"));
+                Assert.True(tabs.ViewportHeight >= Assert.IsType<RadioButton>(view.FindName("ResourcesTab")).ActualHeight);
+                double fullHeight = Assert.IsType<DataGrid>(view.FindName("ContainerList")).ActualHeight;
+                model.ShowResourcesCommand.Execute(null); await Layout(view, width, 820);
+                Assert.Equal(Visibility.Visible, Assert.IsType<Grid>(view.FindName("ResourcePage")).Visibility);
+                Assert.Equal(Visibility.Collapsed, output.Visibility);
+                Capture(view, $"docker-primary-resources-{language}-{theme}-{width}");
+                model.ShowDetailsCommand.Execute(null); await Layout(view, width, 820);
+                Assert.Equal(Visibility.Visible, Assert.IsType<Border>(view.FindName("DetailsPage")).Visibility);
+                model.SelectToolCommand.Execute("images"); await Layout(view, width, 820);
+                var images = Assert.IsType<DataGrid>(view.FindName("ImageList"));
+                Assert.Equal(3, images.Items.Count); Assert.True(images.ActualHeight > 0);
+                if (width == 380)
+                {
+                    var scroll = Assert.Single(WindowTestVisuals.Descendants<ScrollViewer>(images));
+                    Assert.True(scroll.ScrollableWidth > 0, $"Grid: {images.ActualWidth}, extent: {scroll.ExtentWidth}, viewport: {scroll.ViewportWidth}, visibility: {scroll.HorizontalScrollBarVisibility}, columns: {string.Join(", ", images.Columns.Select(column => $"{column.Width}/{column.ActualWidth}"))}");
+                    scroll.ScrollToRightEnd(); await WpfTestFixture.DrainDispatcherAsync();
+                    Assert.True(scroll.HorizontalOffset > 0); scroll.ScrollToLeftEnd(); await WpfTestFixture.DrainDispatcherAsync();
+                }
+                Assert.Equal(Visibility.Collapsed, Assert.IsType<TextBlock>(view.FindName("NoImages")).Visibility);
+                Capture(view, $"docker-primary-images-{language}-{theme}-{width}");
+                model.SelectToolCommand.Execute("containers"); await model.ActionCommand.ExecuteAsync("logs"); await Layout(view, width, 820);
+                Assert.Equal(Visibility.Visible, output.Visibility);
+                Assert.True(Assert.IsType<DataGrid>(view.FindName("ContainerList")).ActualHeight < fullHeight);
+                grid.RowDefinitions[0].Height = new GridLength(300); grid.RowDefinitions[2].Height = new GridLength(390);
+                model.ToggleOutputCommand.Execute(null); await Layout(view, width, 820);
+                Assert.Equal(Visibility.Collapsed, output.Visibility); Assert.Equal(0, grid.RowDefinitions[2].ActualHeight);
+                Assert.InRange(Math.Abs(Assert.IsType<DataGrid>(view.FindName("ContainerList")).ActualHeight - fullHeight), 0, 1);
+                model.ToggleOutputCommand.Execute(null); await Layout(view, width, 820);
+                Assert.Equal(new GridLength(390), grid.RowDefinitions[2].Height);
+                model.ToggleOutputCommand.Execute(null); await Layout(view, width, 820);
+                Assert.True(Assert.IsType<Button>(view.FindName("ToggleOutput")).Focusable);
+                Capture(view, $"docker-primary-{language}-{theme}-{width}");
+            }
+            Assert.Empty(errors.Messages);
+        }
+        finally { PresentationTraceSources.DataBindingSource.Listeners.Remove(errors); Text.Initialize(previous.Name, CultureInfo.InvariantCulture); themes.SetTheme(UiTheme.Light); }
+    });
+
     /// <summary>资源字段、真实曲线与选择一致，日志、详情和命令入口均保留。</summary>
     [Theory]
     [InlineData("en", UiTheme.Light)]

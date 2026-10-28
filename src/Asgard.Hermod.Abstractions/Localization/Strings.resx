@@ -3625,7 +3625,8 @@ Hiding to the notification area is temporarily unavailable. To exit Hermod, use 
   <data name="AgentPromptRequired" xml:space="preserve"><value>Enter a message for the assistant.</value></data>
   <data name="AgentInputTooLarge" xml:space="preserve"><value>The message or context is too large. Shorten it and try again.</value></data>
   <data name="AgentBusy" xml:space="preserve"><value>Wait for the current response or cancel it first.</value></data>
-  <data name="AgentAuthenticationFailed" xml:space="preserve"><value>The model service rejected the API key. Check settings and try again.</value></data>
+  <data name="AgentAuthenticationFailed" xml:space="preserve"><value>The model service could not authenticate this request. Check the session's selected configuration, service address and API key.</value></data>
+  <data name="AgentAccessForbidden" xml:space="preserve"><value>The model service denied access. Check the selected configuration and the account's permissions for this model and endpoint.</value></data>
   <data name="AgentRateLimited" xml:space="preserve"><value>The model service is busy or its quota was exceeded. Try again later.</value></data>
   <data name="AgentRequestFailed" xml:space="preserve"><value>The model request failed. Check settings and try again.</value></data>
   <data name="AgentTimedOut" xml:space="preserve"><value>The model request timed out. Try again.</value></data>
@@ -4508,16 +4509,17 @@ Status: {2}
   <data name="AgentModelsPending" xml:space="preserve"><value>Encrypted locally; sync pending</value></data>
   <data name="AgentModelsSyncExplanation" xml:space="preserve"><value>Configurations follow the current account. API keys stay hidden and remain available after restarting.
 When signed out, they are encrypted only on this device.</value></data>
-  <data name="AgentModelsDefaultExplanation" xml:space="preserve"><value>New Sessions use the default configuration. Changing the default does not switch open Sessions.</value></data>
+  <data name="AgentModelsDefaultExplanation" xml:space="preserve"><value>New conversations use the default configuration. Changing the default does not switch a conversation that already has a model selected.</value></data>
   <data name="AgentModelNameHint" xml:space="preserve"><value>Choose this name in the chat panel.</value></data>
   <data name="AgentModelEndpointHint" xml:space="preserve"><value>An OpenAI-compatible Chat Completions service address.</value></data>
   <data name="AgentModelIdentifierHint" xml:space="preserve"><value>The model identifier supported by this service.</value></data>
-  <data name="AgentModelUseDefault" xml:space="preserve"><value>Use as the default for new Sessions</value></data>
+  <data name="AgentModelUseDefault" xml:space="preserve"><value>Use as the default for new conversations</value></data>
   <data name="AgentModelTest" xml:space="preserve"><value>Test connection</value></data>
   <data name="AgentModelEncryptedNote" xml:space="preserve"><value>API keys are encrypted locally and included in encrypted account sync.</value></data>
   <data name="AgentModelKeyRetained" xml:space="preserve"><value>A key is saved. Leave this blank to keep it, or enter a replacement.</value></data>
   <data name="AgentModelKeyEndpointChanged" xml:space="preserve"><value>The service address changed. The old key will not be sent to the new service.</value></data>
   <data name="AgentModelTestSucceeded" xml:space="preserve"><value>Connection succeeded · {0} ms</value></data>
+  <data name="AgentModelTestScope" xml:space="preserve"><value>The test checks basic chat with these fields, not SSH tools. Save changes before using them in a conversation.</value></data>
   <data name="AgentModelSwitchTitle" xml:space="preserve"><value>Switch model configuration</value></data>
   <data name="AgentModelSwitchPrompt" xml:space="preserve"><value>The current task will stop. Future questions will use “{0}”. Existing messages, SQL and input drafts will be kept.</value></data>
   <data name="AgentModelStopAndSwitch" xml:space="preserve"><value>Stop and switch</value></data>
@@ -5343,7 +5345,7 @@ Address: {2}</value></data>
   <data name="DockerRefreshResources" xml:space="preserve"><value>Refresh containers</value></data>
   <data name="DockerChooseContainer" xml:space="preserve"><value>1. Choose a container</value></data>
   <data name="DockerChooseAction" xml:space="preserve"><value>2. What would you like to do?</value></data>
-  <data name="DockerSelectFirst" xml:space="preserve"><value>Choose a container on the left</value></data>
+  <data name="DockerSelectFirst" xml:space="preserve"><value>Choose a container in the list</value></data>
   <data name="DockerSelectFirstHint" xml:space="preserve"><value>View logs and resource usage, or start, stop and restart the selected container.</value></data>
   <data name="DockerNoContainers" xml:space="preserve"><value>No containers found. Refresh to try again.</value></data>
   <data name="DockerActionsHint" xml:space="preserve"><value>Start is available for stopped containers. Restart and stop ask for confirmation before making changes.</value></data>
@@ -5642,4 +5644,17 @@ Address: {2}</value></data>
   <data name="SshEnvironmentSnapshotHint" xml:space="preserve"><value>Click to load the environment. Selections use the loaded data; click again to refresh changes.</value></data>
   <data name="KubeLoadingSnapshot" xml:space="preserve"><value>Loading {1} in context {0}…</value></data>
   <data name="SyncResolveConflicts" xml:space="preserve"><value>Resolve sync conflicts</value></data>
+  <data name="DockerShowOutput" xml:space="preserve"><value>Show output</value></data>
+  <data name="DockerHideOutput" xml:space="preserve"><value>Hide output</value></data>
+  <data name="DockerImageSearch" xml:space="preserve"><value>Search images by repository, tag or ID</value></data>
+  <data name="DockerImageRepository" xml:space="preserve"><value>Repository</value></data>
+  <data name="DockerImageTag" xml:space="preserve"><value>Tag</value></data>
+  <data name="DockerImageId" xml:space="preserve"><value>Image ID</value></data>
+  <data name="DockerImageCreated" xml:space="preserve"><value>Created</value></data>
+  <data name="DockerImageSize" xml:space="preserve"><value>Size</value></data>
+  <data name="DockerNoImages" xml:space="preserve"><value>No images found.</value></data>
+  <data name="DockerImagesNotLoaded" xml:space="preserve"><value>Load the environment to view images.</value></data>
+  <data name="DockerImagesLimited" xml:space="preserve"><value>The image list is incomplete because it exceeded the read limit.</value></data>
+  <data name="DockerImageReadFailed" xml:space="preserve"><value>Could not load the image list. A previous list may be out of date.</value></data>
+  <data name="DockerImageRefreshAfterPullFailed" xml:space="preserve"><value>The image was pulled, but the image list could not be refreshed. Refresh the list to check its current state; do not repeat the pull.</value></data>
 </root>

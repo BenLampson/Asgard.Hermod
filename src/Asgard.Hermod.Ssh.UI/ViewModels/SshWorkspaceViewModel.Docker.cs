@@ -15,6 +15,7 @@ public sealed partial class SshWorkspaceViewModel
         set { if (value) ActiveSection = "docker"; else if (IsDockerCommandsOpen) ActiveSection = "terminal"; }
     }
     private bool _dockerMonitorStarted;
+    private bool _dockerResourcesReopenRequested;
     /// <summary>Docker 资源采样只属于管理页，不改变实例监测所选栏目。</summary>
     public SshMonitorViewModel DockerMonitor { get; private set; } = null!;
     /// <summary>资源面板收起后暂停采样；管理页保留其历史和选中容器。</summary>
@@ -55,10 +56,18 @@ public sealed partial class SshWorkspaceViewModel
                 await DockerMonitor.StartAsync(connection);
             }
             else await DockerMonitor.RefreshDetailsCommand.ExecuteAsync();
-            if (!IsDockerCommandsOpen || !IsConnected || !ReferenceEquals(connection, _connection))
+            if (!IsDockerResourcesOpen || !IsDockerCommandsOpen || !IsConnected || !ReferenceEquals(connection, _connection))
             { IsDockerResourcesOpen = false; DockerMonitor.IsPaused = true; DockerMonitor.IsPanelVisible = false; return; }
             if (DockerCommands.SelectedContainer is { } selected) DockerMonitor.SelectDockerContainer(selected.Id);
         }, _ => !IsClosed && IsConnected && DockerCommands.IsInitialized);
+        ShowDockerResourcesCommand.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName != nameof(AsyncRelayCommand.IsRunning) || ShowDockerResourcesCommand.IsRunning || !_dockerResourcesReopenRequested) return;
+            _dockerResourcesReopenRequested = false;
+            if (!IsClosed && IsConnected && IsDockerCommandsOpen && DockerCommands.IsInitialized && !DockerCommands.IsBusy &&
+                (DockerCommands.IsContainerTool || DockerCommands.IsResourceTool) && !IsDockerResourcesOpen)
+                RequestDockerResources();
+        };
         DockerMonitor.DockerOperationRequested += async (_, operation) =>
         {
             if (!IsConnected || IsClosed) return;
@@ -75,18 +84,26 @@ public sealed partial class SshWorkspaceViewModel
         {
             if (args.PropertyName == nameof(SshDockerCommandsViewModel.IsInitialized))
                 ShowDockerResourcesCommand.NotifyCanExecuteChanged();
-            // 仅用户完成加载后启动当前资源视图；打开工具本身不触发探测或采样。
-            if (args.PropertyName == nameof(SshDockerCommandsViewModel.IsBusy) && !DockerCommands.IsBusy &&
-                DockerCommands.IsInitialized && IsDockerCommandsOpen && DockerCommands.IsResourceSection && !IsDockerResourcesOpen)
-                ShowDockerResourcesCommand.Execute(null);
+            // 容器列表与资源页共用采样；结果面板的显隐不影响容器数据。
+            if (args.PropertyName == nameof(SshDockerCommandsViewModel.ToolSection) && !DockerCommands.IsContainerTool && !DockerCommands.IsResourceTool)
+                IsDockerResourcesOpen = false;
+            if ((args.PropertyName is nameof(SshDockerCommandsViewModel.ToolSection) or nameof(SshDockerCommandsViewModel.IsBusy)) &&
+                !DockerCommands.IsBusy && DockerCommands.IsInitialized && IsDockerCommandsOpen && (DockerCommands.IsContainerTool || DockerCommands.IsResourceTool) && !IsDockerResourcesOpen)
+                RequestDockerResources();
             if (args.PropertyName == nameof(SshDockerCommandsViewModel.SelectedContainer) && DockerCommands.SelectedContainer is { } selected)
                 DockerMonitor.SelectDockerContainer(selected.Id);
         };
-        DockerMonitor.PropertyChanged += (_, args) =>
+        DockerMonitor.DockerSnapshotChanged += (_, _) =>
         {
-            if (args.PropertyName == nameof(SshMonitorViewModel.ResultCount) && IsDockerCommandsOpen)
-                DockerCommands.UpdateResources(DockerMonitor.Containers);
+            if (IsDockerCommandsOpen) DockerCommands.UpdateResources(DockerMonitor.Containers);
         };
+    }
+
+    private void RequestDockerResources()
+    {
+        // 上一次刷新还在退出时保留最新导航意图，避免异步命令的防重入丢掉恢复请求。
+        if (ShowDockerResourcesCommand.IsRunning) { _dockerResourcesReopenRequested = true; return; }
+        ShowDockerResourcesCommand.Execute(null);
     }
 
     private Task RunDockerInTerminalAsync(SshDockerCommandPlan plan, CancellationToken token)

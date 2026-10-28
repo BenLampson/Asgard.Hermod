@@ -25,6 +25,7 @@ internal sealed class SshMonitorTestData
         if (command == SshMonitorDetailReader.ProcessCommand) return Task.FromResult(new SshCommandResult(Processes, 0, false));
         if (command == SshMonitorDetailReader.MountCommand) return Task.FromResult(new SshCommandResult(Mounts, 0, false));
         if (command == SshMonitorDetailReader.ContainerCommand) return Task.FromResult(new SshCommandResult(Containers, 0, false));
+        if (command == SshDockerImageReader.Command) return Task.FromResult(new SshCommandResult(Images, 0, false));
         if (command == SshDockerEnvironment.ProbeCommand) return Task.FromResult(new SshCommandResult(DockerEnvironment, 0, false));
         if (command.StartsWith("LC_ALL=C docker stats ", StringComparison.Ordinal)) return Task.FromResult(new SshCommandResult(DockerStats, 0, false));
         if (command.StartsWith("docker logs ", StringComparison.Ordinal)) return Task.FromResult(new SshCommandResult("2026-10-15T06:32:00Z [notice] nginx started\n203.0.113.8 GET /health 200\n", 0, false));
@@ -82,6 +83,12 @@ internal sealed class SshMonitorTestData
     }.Select((c, i) => JsonSerializer.Serialize(new { ID = new string((char)('a' + i), 64), Names = c.Item1, Image = c.Item2, State = c.Item3, Status = c.Item4, Ports = c.Item5 })));
 
     internal const string DockerEnvironment = "__HERMOD_VERSION__\n{\"Client\":{\"Version\":\"27.5.1\"},\"Server\":{\"Version\":\"27.5.1\"}}\n__HERMOD_ACCESS__0\n__HERMOD_COMPOSE__plugin 2.32.4\n__HERMOD_STATS__\n--no-stream --no-trunc --format\n";
+    internal static string Images => string.Join('\n', new[]
+    {
+        ("registry.example.com/team/hermod-api", "2026.10", 'a', "7 days ago", "264MB"),
+        ("<none>", "<none>", 'b', "9 days ago", "304MB"),
+        ("nginx", "alpine", 'c', "2 weeks ago", "93.8MB"),
+    }.Select(image => JsonSerializer.Serialize(new { Repository = image.Item1, Tag = image.Item2, ID = "sha256:" + new string(image.Item3, 64), CreatedSince = image.Item4, Size = image.Item5 })));
     internal static string DockerStats => string.Join('\n', Enumerable.Range(0, 4).Select(i => JsonSerializer.Serialize(new
     {
         ID = new string((char)('a' + i), 64),
