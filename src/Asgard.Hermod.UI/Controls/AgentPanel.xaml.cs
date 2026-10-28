@@ -144,6 +144,15 @@ public partial class AgentPanel : UserControl
     /// <summary>转发收起请求，真正的窗口和业务生命周期由模块处理。</summary>
     private void OnClose(object sender, RoutedEventArgs args) => CloseRequested?.Invoke(this, EventArgs.Empty);
 
+    /// <summary>外框空白也可开始输入；编辑器和其他控件保留各自的鼠标交互。</summary>
+    private void OnComposerMouseLeftButtonDown(object sender, MouseButtonEventArgs args)
+    {
+        if (!ReferenceEquals(args.OriginalSource, Composer)) return;
+        PromptEditor.Focus();
+        int position = PromptEditor.GetCharacterIndexFromPoint(args.GetPosition(PromptEditor), true);
+        PromptEditor.Select(position >= 0 ? position : PromptEditor.Text.Length, 0);
+    }
+
     /// <summary>统一 Enter 发送、Shift+Enter 换行，并兼容原 SQL 的 Ctrl+Enter；只处理输入框中的按键。</summary>
     private void OnPromptKeyDown(object sender, KeyEventArgs args)
     {
