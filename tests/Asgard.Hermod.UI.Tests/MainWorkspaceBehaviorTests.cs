@@ -29,7 +29,10 @@ public sealed class MainWorkspaceBehaviorTests(WpfTestFixture fixture)
             window.Activate(); Assert.True(rowControl.Focus());
             await WindowInteractionNativeMethods.DrainNativeMessagesAsync();
             Assert.Empty(host.Windows);
-            WindowInteractionNativeMethods.PostDoubleClick(window, rowControl); await WindowInteractionNativeMethods.DrainNativeMessagesAsync();
+            // 合成鼠标消息不移动桌面指针；暂时捕获目标行，让 WPF 按预期路由原生双击。
+            Assert.True(Mouse.Capture(rowControl));
+            try { WindowInteractionNativeMethods.PostDoubleClick(window, rowControl); await WindowInteractionNativeMethods.DrainNativeMessagesAsync(); }
+            finally { Mouse.Capture(null); }
             var work = Assert.Single(host.Windows);
             await WindowTestVisuals.UpdateLayoutAsync(window);
             var more = WindowTestVisuals.Descendants<Button>(window).First(button => button.Name == "MoreButton");
