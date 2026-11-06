@@ -24,7 +24,7 @@ public sealed class WpfTestFixture : IAsyncLifetime
     }
 
     /// <summary>在 WPF 上下文执行异步用例，超时或窗口异步异常会使测试失败。</summary>
-    public async Task RunAsync(Func<Task> action)
+    public async Task RunAsync(Func<Task> action, TimeSpan? timeout = null)
     {
         ArgumentNullException.ThrowIfNull(action);
         Assert.NotNull(_dispatcher);
@@ -37,7 +37,7 @@ public sealed class WpfTestFixture : IAsyncLifetime
             Assert.True(initialExceptions == _unhandled.Count, string.Join(Environment.NewLine,
                 _unhandled.Skip(initialExceptions).Select(error => error.ToString())));
         });
-        await operation.Task.Unwrap().WaitAsync(TimeSpan.FromSeconds(15), TestContext.Current.CancellationToken);
+        await operation.Task.Unwrap().WaitAsync(timeout ?? TimeSpan.FromSeconds(15), TestContext.Current.CancellationToken);
     }
 
     /// <summary>只处理资源与绑定队列，不创建窗口或发送原生消息；与普通用例共用唯一 Application。</summary>

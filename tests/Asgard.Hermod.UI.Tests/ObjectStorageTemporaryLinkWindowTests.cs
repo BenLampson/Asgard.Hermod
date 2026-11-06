@@ -83,12 +83,14 @@ public sealed class ObjectStorageTemporaryLinkWindowTests(WpfTestFixture fixture
             value => { copied = value; return true; });
         var owner = ObjectStorageDialogTestVisuals.CreateOwner();
         var dialog = new ObjectStorageTemporaryLinkWindow(model) { Opacity = 0 };
+        string phase = "加载窗口";
         try
         {
             owner.Show();
             dialog.Owner = owner;
             await ModalWindowTestInteraction.ShowAsync(dialog, async () =>
             {
+                phase = "生成链接";
                 WindowTestVisuals.Invoke(Assert.IsType<Button>(dialog.FindName("GenerateButton")));
                 await WindowTestVisuals.UpdateLayoutAsync(dialog);
                 var preview = Assert.IsType<TextBox>(dialog.FindName("LinkPreview"));
@@ -100,21 +102,22 @@ public sealed class ObjectStorageTemporaryLinkWindowTests(WpfTestFixture fixture
                 Assert.True(inputOrigin.X + preview.ActualWidth + 8 <= copyOrigin.X + 1);
                 Assert.Equal(preview.ActualHeight, copy.ActualHeight);
 
+                phase = "检查部分选区";
                 preview.Focus();
                 preview.Select(25, 30);
                 preview.ScrollToHorizontalOffset(0);
-                await WindowTestVisuals.UpdateLayoutAsync(dialog);
                 Assert.Equal(link.Substring(25, 30), preview.SelectedText);
                 await WindowPreviewCapture.VerifyAsync(dialog, $"object-storage-temporary-link-partial-selection-{theme}");
                 AssertRenderedSelection(preview);
 
+                phase = "检查完整选区";
                 preview.SelectAll();
-                await WindowTestVisuals.UpdateLayoutAsync(dialog);
                 Assert.Equal(link, preview.SelectedText);
                 await WindowPreviewCapture.VerifyAsync(dialog, $"object-storage-temporary-link-full-selection-{theme}");
                 AssertRenderedSelection(preview);
 
                 // 焦点移到复制按钮后仍能辨认原选区，复制回调必须收到完整签名 URL。
+                phase = "检查失焦选区并复制";
                 copy.Focus();
                 await WindowTestVisuals.UpdateLayoutAsync(dialog);
                 AssertRenderedSelection(preview);
@@ -122,8 +125,9 @@ public sealed class ObjectStorageTemporaryLinkWindowTests(WpfTestFixture fixture
                 await WindowTestVisuals.UpdateLayoutAsync(dialog);
                 Assert.Equal(link, copied);
                 Assert.Equal(Visibility.Collapsed, scroll.ComputedVerticalScrollBarVisibility);
+                phase = "关闭窗口";
                 WindowTestVisuals.Invoke(ObjectStorageDialogTestVisuals.CommandButton(dialog, model.CancelCommand));
-            });
+            }, TimeSpan.FromSeconds(30), () => phase);
         }
         finally
         {
@@ -131,7 +135,7 @@ public sealed class ObjectStorageTemporaryLinkWindowTests(WpfTestFixture fixture
             owner.Close();
             themes.SetTheme(UiTheme.Light);
         }
-    });
+    }, TimeSpan.FromSeconds(45));
 
     /// <summary>检查正文区域的真实像素，避免只验证样式属性却漏掉 WPF 选区绘制异常。</summary>
     private static void AssertRenderedSelection(TextBox preview)
