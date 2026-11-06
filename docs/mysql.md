@@ -24,9 +24,14 @@ saved connection requires an explicit reconnect to affect an open workspace.
 
 The real object tree loads each branch independently: databases, tables, views,
 procedures, functions, events, columns, indexes, foreign keys, triggers and routine
-parameters. Branches use distinct type icons, bounded pages and explicit empty,
-loading and retry states. Search filters loaded objects while retaining ancestors;
-it does not scan the whole server. A known table can be opened by database/name
+parameters. Branches use distinct type icons and automatically fetch all bounded
+pages, with explicit empty, loading and error retry states. Failed reads retain
+the previous complete branch. Search filters loaded objects while retaining
+ancestors; it does not scan the whole server. Selecting a database-level category
+shows its objects; table rows include the server's auto-increment value, update
+time, data length, engine, estimated row count and comment when available. Enter
+or double-click opens an object, and the document tabs return to the editor.
+A known table can be opened by database/name
 when object listing is unavailable. Object tabs are deduplicated by database,
 kind and original name. Tabs show the object name; the content header and tooltip
 show its database/schema context. Tree selection and keyboard focus style only

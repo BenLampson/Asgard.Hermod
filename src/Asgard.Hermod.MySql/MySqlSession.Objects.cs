@@ -38,7 +38,7 @@ internal sealed partial class MySqlSession
         var (sql, kind) = parent.Kind switch
         {
             MySqlObjectKind.Root => ("SELECT SCHEMA_NAME, DEFAULT_CHARACTER_SET_NAME FROM information_schema.SCHEMATA ORDER BY SCHEMA_NAME", MySqlObjectKind.Database),
-            MySqlObjectKind.Tables => ("SELECT TABLE_NAME, COALESCE(ENGINE,'') FROM information_schema.TABLES WHERE TABLE_SCHEMA=@db AND TABLE_TYPE='BASE TABLE' ORDER BY TABLE_NAME", MySqlObjectKind.Table),
+            MySqlObjectKind.Tables => ("SELECT TABLE_NAME, COALESCE(ENGINE,''), AUTO_INCREMENT, CAST(UPDATE_TIME AS CHAR), DATA_LENGTH, TABLE_ROWS, TABLE_COMMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA=@db AND TABLE_TYPE='BASE TABLE' ORDER BY TABLE_NAME", MySqlObjectKind.Table),
             MySqlObjectKind.Views => ("SELECT TABLE_NAME, '' FROM information_schema.VIEWS WHERE TABLE_SCHEMA=@db ORDER BY TABLE_NAME", MySqlObjectKind.View),
             MySqlObjectKind.Procedures or MySqlObjectKind.Functions => ("SELECT ROUTINE_NAME, DATA_TYPE FROM information_schema.ROUTINES WHERE ROUTINE_SCHEMA=@db AND ROUTINE_TYPE=@type ORDER BY ROUTINE_NAME", parent.Kind == MySqlObjectKind.Procedures ? MySqlObjectKind.Procedure : MySqlObjectKind.Function),
             MySqlObjectKind.Events => ("SELECT EVENT_NAME, STATUS FROM information_schema.EVENTS WHERE EVENT_SCHEMA=@db ORDER BY EVENT_NAME", MySqlObjectKind.Event),
@@ -59,7 +59,24 @@ internal sealed partial class MySqlSession
         {
             if (items.Count == 200) { more = true; break; }
             string name = reader.GetString(0), detail = reader.IsDBNull(1) ? "" : reader.GetString(1);
-            items.Add(new(kind, name, kind == MySqlObjectKind.Database ? name : parent.Database, parent.ParentName, detail) { ColumnDefinition = kind == MySqlObjectKind.Column ? MySqlColumnMetadata.Read(reader) : null });
+            var item = new MySqlObject(kind, name, kind == MySqlObjectKind.Database ? name : parent.Database, parent.ParentName, detail)
+            {
+                ColumnDefinition = kind == MySqlObjectKind.Column ? MySqlColumnMetadata.Read(reader) : null,
+            };
+            if (kind == MySqlObjectKind.Table)
+            {
+                string? updated = reader.IsDBNull(3) ? null : reader.GetString(3);
+                item = item with
+                {
+                    Engine = detail,
+                    AutoIncrement = reader.IsDBNull(2) ? null : Convert.ToUInt64(reader.GetValue(2), CultureInfo.InvariantCulture),
+                    UpdatedAt = DateTime.TryParse(updated, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date) ? date : null,
+                    DataLength = reader.IsDBNull(4) ? null : Convert.ToUInt64(reader.GetValue(4), CultureInfo.InvariantCulture),
+                    RowCount = reader.IsDBNull(5) ? null : Convert.ToUInt64(reader.GetValue(5), CultureInfo.InvariantCulture),
+                    Comment = reader.IsDBNull(6) ? null : reader.GetString(6),
+                };
+            }
+            items.Add(item);
         }
         return new MySqlObjectPage(items, more);
     }, token);

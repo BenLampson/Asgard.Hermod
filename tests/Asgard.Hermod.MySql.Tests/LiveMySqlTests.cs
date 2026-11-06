@@ -19,7 +19,10 @@ public sealed class LiveMySqlTests
         var databases = await session.ListAsync(new(MySqlObjectKind.Root, ""), 0, TestContext.Current.CancellationToken);
         Assert.Contains(databases.Items, item => item.Name == fixture.Database);
         var tables = await session.ListAsync(new(MySqlObjectKind.Tables, "", fixture.Database), 0, TestContext.Current.CancellationToken);
-        Assert.Contains(tables.Items, item => item.Name == "users");
+        var users = Assert.Single(tables.Items, item => item.Name == "users");
+        Assert.Equal("InnoDB", users.Engine, ignoreCase: true);
+        Assert.NotNull(users.DataLength);
+        Assert.NotNull(users.RowCount);
         var result = await session.ExecuteAsync("SELECT id,name,profile FROM users; SELECT 1 AS duplicate, 2 AS duplicate; SELECT * FROM missing_table", fixture.Database, TestContext.Current.CancellationToken);
         Assert.Equal(2, result.Results.Count); Assert.Equal("MYSQL_STATEMENT", result.Failure?.Code);
         Assert.NotNull(result.Results[0].EditableTable); Assert.Equal("duplicate", result.Results[1].Columns[1].Name);

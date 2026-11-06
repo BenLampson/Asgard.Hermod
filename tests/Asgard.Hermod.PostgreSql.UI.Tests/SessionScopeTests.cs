@@ -250,7 +250,7 @@ public sealed class SessionScopeTests(WpfTestFixture fixture)
     {
         var config = new Configurations(); var server = new TestPostgreSql { DatabaseNames = ["app", "reports", "audit"], DatabasePageSize = 1 };
         await using var catalog = new PostgreSqlWorkspaceViewModel(new(Configurations.Instance), config, server, config, new TestPostgreSqlDialogs());
-        await catalog.InitializeAsync(); Assert.Single(catalog.DatabaseChoices); Assert.False(catalog.HasSingleCatalogDatabase);
+        await catalog.InitializeAsync(); Assert.Equal(3, catalog.DatabaseChoices.Count); Assert.False(catalog.HasSingleCatalogDatabase);
         Assert.False(catalog.DatabaseChoices[0].IsSelected);
         await catalog.SelectAllDatabasesCommand.ExecuteAsync(); Assert.Equal(3, catalog.DatabaseChoices.Count);
         Assert.All(catalog.DatabaseChoices, item => Assert.True(item.IsSelected)); Assert.True(catalog.OpenSessionCommand.CanExecute(null));

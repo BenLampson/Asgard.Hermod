@@ -19,7 +19,9 @@ databases require selection, with an explicit Select all action. A Session retai
 at least one database. Scope changes and removal confirmations follow the shared
 [Session rules](mysql.md#database-catalog-and-script-sessions). Databases contain schemas, and
 schemas contain tables, views, routines and their metadata. Object identity
-includes database, schema, kind and original name. Filtering searches loaded
+includes database, schema, kind and original name. Each expanded branch automatically
+fetches all pages; a failed read retains the previous complete branch and offers retry.
+Filtering searches loaded
 objects without scanning the server. Opening a table by name is available when
 directory listing is restricted.
 
