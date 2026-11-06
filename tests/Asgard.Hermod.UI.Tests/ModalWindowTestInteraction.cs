@@ -4,16 +4,16 @@ namespace Asgard.Hermod.UI.Tests;
 internal static class ModalWindowTestInteraction
 {
     /// <summary>在 Loaded 后执行交互，超时保护只用于报告故障及回收测试窗口。</summary>
-    internal static async Task<bool?> ShowAsync(Window dialog, Func<Task> interaction)
+    internal static async Task<bool?> ShowAsync(Window dialog, Func<Task> interaction, TimeSpan? interactionTimeout = null, Func<string>? phase = null)
     {
         var finished = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var timeout = new DispatcherTimer(DispatcherPriority.Background)
         {
-            Interval = TimeSpan.FromSeconds(8),
+            Interval = interactionTimeout ?? TimeSpan.FromSeconds(8),
         };
         EventHandler timedOut = (_, _) =>
         {
-            finished.TrySetException(new TimeoutException("模态窗口没有完成测试交互。"));
+            finished.TrySetException(new TimeoutException($"模态窗口没有完成测试交互。阶段：{phase?.Invoke() ?? "未指定"}。"));
             if (dialog.IsVisible)
                 dialog.Close();
         };
