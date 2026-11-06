@@ -94,6 +94,8 @@ public sealed class PostgreSqlTreeNode : ObservableObject
     public bool IsLoading { get; internal set { if (SetProperty(ref field, value)) LoadMoreCommand.NotifyCanExecuteChanged(); } }
     /// <summary>保留后续分页或失败重试入口。</summary>
     public bool HasMore { get; internal set { if (SetProperty(ref field, value)) LoadMoreCommand.NotifyCanExecuteChanged(); } } = true;
+    /// <summary>仅加载失败时提供重试入口。</summary>
+    public bool IsLoadFailed { get; internal set => SetProperty(ref field, value); }
     /// <summary>读取状态或安全失败说明。</summary>
     public string Status { get; internal set => SetProperty(ref field, value); } = "";
     /// <summary>是否需要显示分支状态。</summary>

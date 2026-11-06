@@ -5657,4 +5657,10 @@ Address: {2}</value></data>
   <data name="DockerImagesLimited" xml:space="preserve"><value>The image list is incomplete because it exceeded the read limit.</value></data>
   <data name="DockerImageReadFailed" xml:space="preserve"><value>Could not load the image list. A previous list may be out of date.</value></data>
   <data name="DockerImageRefreshAfterPullFailed" xml:space="preserve"><value>The image was pulled, but the image list could not be refreshed. Refresh the list to check its current state; do not repeat the pull.</value></data>
+  <data name="MySqlCatalogAutoIncrement" xml:space="preserve"><value>Auto increment</value></data>
+  <data name="MySqlCatalogUpdated" xml:space="preserve"><value>Updated</value></data>
+  <data name="MySqlCatalogDataLength" xml:space="preserve"><value>Data length (bytes)</value></data>
+  <data name="MySqlCatalogEngine" xml:space="preserve"><value>Engine</value></data>
+  <data name="MySqlCatalogRows" xml:space="preserve"><value>Rows (estimated)</value></data>
+  <data name="MySqlCatalogComment" xml:space="preserve"><value>Comment</value></data>
 </root>

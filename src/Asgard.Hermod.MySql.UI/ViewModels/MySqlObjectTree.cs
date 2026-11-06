@@ -1,6 +1,6 @@
 namespace Asgard.Hermod.MySql.UI.ViewModels;
 
-/// <summary>分支独立分页，搜索只过滤已加载对象并保留祖先。</summary>
+/// <summary>分支自动读取完整分页，搜索只过滤已加载对象并保留祖先。</summary>
 public sealed class MySqlObjectTree : IDisposable
 {
     private readonly IMySqlSession _session;
@@ -25,25 +25,37 @@ public sealed class MySqlObjectTree : IDisposable
         if (_disposed || !node.CanExpand || node.IsLoading || !node.HasMore || IsFiltering) return;
         int revision = ++node.Revision;
         using var pending = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
-        node.Pending = pending; node.IsLoading = true; node.Status = Text.Get("MySqlLoading"); node.RefreshStatus();
+        node.Pending = pending; node.IsLoading = true; node.IsLoadFailed = false; node.Status = Text.Get("MySqlLoading"); node.RefreshStatus();
         try
         {
-            var page = await _session.ListAsync(node.Object, node.Offset, pending.Token);
-            if (_disposed || revision != node.Revision || pending.IsCancellationRequested) return;
-            if (!node.Loaded) node.Children.Clear();
-            foreach (var item in page.Items)
+            // 分页全部成功后才替换现有分支，避免失败时把不完整列表当作完整结果。
+            var children = new List<MySqlTreeNode>();
+            var identities = new HashSet<string>();
+            int offset = 0;
+            bool hasMore;
+            do
             {
-                var child = new MySqlTreeNode(item, this) { Parent = node };
-                if (!node.Children.Any(existing => existing.Identity == child.Identity)) node.Children.Add(child);
-            }
-            node.Offset += page.Items.Count; node.HasMore = page.HasMore; node.Loaded = true;
+                var page = await _session.ListAsync(node.Object, offset, pending.Token);
+                if (_disposed || revision != node.Revision || pending.IsCancellationRequested) return;
+                if (page.HasMore && page.Items.Count == 0) throw new InvalidOperationException();
+                foreach (var item in page.Items)
+                {
+                    var child = new MySqlTreeNode(item, this) { Parent = node };
+                    if (identities.Add(child.Identity)) children.Add(child);
+                }
+                offset += page.Items.Count;
+                hasMore = page.HasMore;
+            } while (hasMore);
+            node.Children.Clear();
+            foreach (var child in children) node.Children.Add(child);
+            node.Offset = offset; node.HasMore = false; node.Loaded = true;
             node.Status = node.Children.Count == 0 ? Text.Get("MySqlEmptyBranch") : "";
             if (_search.Length > 0) Filter(_search);
         }
         catch (OperationCanceledException) when (pending.IsCancellationRequested) { }
         catch (Exception error)
         {
-            if (revision == node.Revision) { node.Status = Text.Error(error, "MySqlCommandFailed"); node.HasMore = true; }
+            if (revision == node.Revision) { node.Status = Text.Error(error, "MySqlCommandFailed"); node.HasMore = true; node.IsLoadFailed = true; }
         }
         finally
         {

@@ -19,7 +19,7 @@ public partial class MySqlWorkspaceView : UserControl
         Unloaded += (_, _) => { if (_model is not null) _model.PropertyChanged -= OnModelChanged; _model = null; };
     }
     private void Attach() { if (_model is not null) _model.PropertyChanged -= OnModelChanged; _model = DataContext as MySqlWorkspaceViewModel; if (_model is not null) _model.PropertyChanged += OnModelChanged; ShowTab(); }
-    private void OnModelChanged(object? sender, PropertyChangedEventArgs args) { if (args.PropertyName == nameof(MySqlWorkspaceViewModel.ActiveTab)) ShowTab(); }
+    private void OnModelChanged(object? sender, PropertyChangedEventArgs args) { if (args.PropertyName is nameof(MySqlWorkspaceViewModel.ActiveTab) or nameof(MySqlWorkspaceViewModel.ActiveSession)) ShowTab(); }
     private void ShowTab()
     {
         // 分屏收起时保留同一助手视图与会话，只更新当前 Session 的绑定。
@@ -34,7 +34,8 @@ public partial class MySqlWorkspaceView : UserControl
         if (_model is null || args.NewValue is not MySqlTreeNode node) return;
         if (TabHost.Content is MySqlTabView current && !current.CommitInput()) return;
         _model.SelectedNode = node;
-        if (node.Object.Kind != MySqlObjectKind.Database) await _model.OpenAsync(node);
+        if (IsCategory(node)) { ShowCategory(node); return; }
+        if (node.Object.Kind != MySqlObjectKind.Database) { await _model.OpenAsync(node); ShowTab(); }
         if (_compact && node.Object.Kind is MySqlObjectKind.Table or MySqlObjectKind.View or MySqlObjectKind.Procedure or MySqlObjectKind.Function or MySqlObjectKind.Event) { _drawer = false; Layout(); }
     }
     /// <summary>鼠标再次点击已选数据库仍可唤回窗口；展开按钮和键盘方向键只负责导航。</summary>
@@ -45,11 +46,25 @@ public partial class MySqlWorkspaceView : UserControl
         {
             if (source is ButtonBase) return;
             if (source is not TreeViewItem item) continue;
+            if (item.DataContext is MySqlTreeNode category && IsCategory(category) && ReferenceEquals(_model.SelectedNode, category))
+            {
+                if (TabHost.Content is MySqlTabView current && !current.CommitInput()) return;
+                ShowCategory(category); return;
+            }
             if (item.DataContext is MySqlTreeNode { Object.Kind: MySqlObjectKind.Database } node && ReferenceEquals(_model.SelectedNode, node))
             { if (_model.IsCatalog) _model.OpenDatabase(node.Object.Name); else node.IsExpanded = !node.IsExpanded; args.Handled = true; }
             return;
         }
     }
+    private static bool IsCategory(MySqlTreeNode node) => node.Object.Kind is MySqlObjectKind.Tables or MySqlObjectKind.Views
+        or MySqlObjectKind.Procedures or MySqlObjectKind.Functions or MySqlObjectKind.Events;
+    private void ShowCategory(MySqlTreeNode node)
+    {
+        if (_model is null) return;
+        node.IsExpanded = true;
+        TabHost.Content = new MySqlCategoryView(node, async selected => { await _model.OpenAsync(selected); ShowTab(); });
+    }
+    private void OnDocumentClick(object sender, MouseButtonEventArgs args) => ShowTab();
     private void OnTabChanged(object sender, SelectionChangedEventArgs args) => ShowTab();
     private void OnBodySizeChanged(object sender, SizeChangedEventArgs args)
     {

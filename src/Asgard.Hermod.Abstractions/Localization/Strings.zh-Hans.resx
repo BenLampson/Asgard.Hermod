@@ -5657,4 +5657,10 @@ SQL：
   <data name="DockerImagesLimited" xml:space="preserve"><value>镜像列表超出读取上限，当前显示的列表不完整。</value></data>
   <data name="DockerImageReadFailed" xml:space="preserve"><value>无法加载镜像列表，之前加载的列表可能不是最新的。</value></data>
   <data name="DockerImageRefreshAfterPullFailed" xml:space="preserve"><value>镜像已拉取，但无法刷新镜像列表。请刷新列表确认当前状态，不要重复拉取。</value></data>
+  <data name="MySqlCatalogAutoIncrement" xml:space="preserve"><value>自动递增值</value></data>
+  <data name="MySqlCatalogUpdated" xml:space="preserve"><value>修改日期</value></data>
+  <data name="MySqlCatalogDataLength" xml:space="preserve"><value>数据长度（字节）</value></data>
+  <data name="MySqlCatalogEngine" xml:space="preserve"><value>引擎</value></data>
+  <data name="MySqlCatalogRows" xml:space="preserve"><value>行数（估计）</value></data>
+  <data name="MySqlCatalogComment" xml:space="preserve"><value>注释</value></data>
 </root>

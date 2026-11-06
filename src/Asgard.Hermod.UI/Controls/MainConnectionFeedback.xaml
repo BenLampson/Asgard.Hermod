@@ -21,7 +21,7 @@
      <Button x:Name="CancelConnection" Content="{loc:Loc MainConnectionCancel}" Command="{Binding CancelCommand}" Visibility="{Binding IsConnecting, Converter={StaticResource Visible}}" HorizontalAlignment="Right" Style="{StaticResource FeedbackButton}" />
      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Visibility="{Binding HasError, Converter={StaticResource Visible}}">
       <Button Content="{loc:Loc MainConnectionBack}" Command="{Binding DismissCommand}" Style="{StaticResource FeedbackButton}" Margin="0,0,8,0" />
-      <Button x:Name="RetryConnection" Content="{loc:Loc MainConnectionRetry}" Command="{Binding RetryCommand}"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource FeedbackButton}"><Setter Property="Background" Value="{DynamicResource AccentBrush}" /><Setter Property="Foreground" Value="White" /></Style></Button.Style></Button>
+      <Button x:Name="RetryConnection" Content="{loc:Loc MainConnectionRetry}" Command="{Binding RetryCommand}"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource FeedbackButton}"><Setter Property="Background" Value="{DynamicResource AccentBrush}" /><Setter Property="Foreground" Value="White" /><Style.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{DynamicResource ActionHoverBrush}" /></Trigger><Trigger Property="IsPressed" Value="True"><Setter Property="Background" Value="{DynamicResource ActionHoverBrush}" /></Trigger></Style.Triggers></Style></Button.Style></Button>
      </StackPanel>
     </Grid>
    </StackPanel>
