@@ -49,17 +49,19 @@ public sealed partial class MySqlTabViewModel : ObservableObject, IAsyncDisposab
     /// <summary>此页签或连接的数据库上下文，不由树选择隐式修改。</summary>
     public string Database { get; private set; }
     /// <summary>是否为独立 SQL 文稿页签。</summary>
-    public bool IsQuery => Kind == MySqlObjectKind.Root;
+    public bool IsQuery => Kind == MySqlObjectKind.Root && !IsOverview;
+    /// <summary>概要是所属 Session 的可关闭文档，不代表数据库对象或 SQL 文稿。</summary>
+    public bool IsOverview { get; internal init; }
     /// <summary>是否只展示定义和参数。</summary>
     public bool IsMetadataOnly => Kind is MySqlObjectKind.Procedure or MySqlObjectKind.Function or MySqlObjectKind.Event or MySqlObjectKind.Trigger;
     /// <summary>服务器返回的 DDL 原文，只读展示，不自动执行。</summary>
     public string Definition { get; private set; } = "";
     /// <summary>完整页签标题，截断只由公共视图负责。</summary>
-    public string Header => IsQuery ? Name : Text.Format("MySqlObjectTitle", Database, Name);
+    public string Header => IsOverview ? Text.Get("DatabaseOverview") : IsQuery ? Name : Text.Format("MySqlObjectTitle", Database, Name);
     /// <summary>正文固定显示实际数据库上下文，空上下文明确说明，不受对象树展开状态影响。</summary>
     public string DatabaseContext => Database.Length == 0 ? Text.Get("MySqlNoDatabaseSelected") : Database;
     /// <summary>按真实对象类型选择的公共图标。</summary>
-    public string Icon => IsQuery ? "file-code" : Kind switch { MySqlObjectKind.View => "eye", MySqlObjectKind.Procedure => "workflow", MySqlObjectKind.Function => "square-function", MySqlObjectKind.Event => "clock-3", _ => "table-2" };
+    public string Icon => IsOverview ? "list" : IsQuery ? "file-code" : Kind switch { MySqlObjectKind.View => "eye", MySqlObjectKind.Procedure => "workflow", MySqlObjectKind.Function => "square-function", MySqlObjectKind.Event => "clock-3", _ => "table-2" };
     /// <summary>当前 SQL 文稿，与表格草稿独立。</summary>
     public string Sql { get; set { if (SetProperty(ref field, value)) { DraftChanged(); LocateMessageCommand.NotifyCanExecuteChanged(); OnPropertyChanged(nameof(OutputFooterText)); } } } = "";
     /// <summary>SQL 文件内容尚未保存。</summary>

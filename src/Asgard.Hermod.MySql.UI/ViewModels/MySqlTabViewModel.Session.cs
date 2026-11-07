@@ -13,7 +13,11 @@ public sealed partial class MySqlTabViewModel
     /// <summary>仅脚本 Session 拥有可变范围。</summary>
     public DatabaseSessionScope? Scope { get; private set; }
     /// <summary>正文脚本标题不与顶层 Session 标题重复。</summary>
-    public string DocumentTitle => IsQuery ? Text.Get("DatabaseSessionScript") : Name;
+    public string DocumentTitle => IsOverview ? Text.Get("DatabaseOverview") : IsQuery ? Text.Get("DatabaseSessionScript") : Name;
+    /// <summary>概要分组由 Session 保留，关闭页签后仍可重新打开。</summary>
+    public MySqlTreeNode? OverviewCategory { get; internal set => SetProperty(ref field, value); }
+    /// <summary>切换 Session 时恢复上次活动文档。</summary>
+    internal MySqlTabViewModel? LastActiveDocument { get; set; }
     /// <summary>历史仅属于当前脚本。</summary>
     public bool IsHistoryOpen { get => IsHistoryOutput; set => OutputView = value ? "history" : "results"; }
     private long _resultScopeRevision;

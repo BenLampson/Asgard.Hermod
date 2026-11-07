@@ -43,7 +43,7 @@ public sealed class TableInteractionHeadlessTests(WpfTestFixture fixture)
     {
         var server = new TestMySql(); var configs = new Configurations();
         await using var page = new MySqlWorkspaceViewModel(new(Configurations.Instance), configs, server, configs, new TestMySqlDialogs(), "app");
-        await page.InitializeAsync(); var original = page.ActiveTab!; await original.ChangeDatabaseAsync("active-context");
+        await page.InitializeAsync(); page.ShowScriptCommand.Execute(null); var original = page.ActiveTab!; await original.ChangeDatabaseAsync("active-context");
         var schema = Assert.Single(page.Tree!.Root.Children); page.SelectedNode = schema;
         var selected = page.NewQuery()!; Assert.Equal("app", selected.Database); Assert.Equal("app", original.Database);
         page.SelectedNode = null; await selected.ChangeDatabaseAsync("manual-context");

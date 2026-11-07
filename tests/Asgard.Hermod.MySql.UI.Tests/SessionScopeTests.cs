@@ -154,7 +154,7 @@ public sealed class SessionScopeTests(WpfTestFixture fixture)
         var session = page.ActiveSession!; var assistant = page.Assistant;
         await page.OpenObjectAsync(new(MySqlObjectKind.Table, "users", "app"));
         Assert.Same(session, page.ActiveSession); Assert.Same(assistant, page.Assistant); Assert.Equal(2, page.ActiveDocuments.Count);
-        await page.CloseTabCommand.ExecuteAsync(session); Assert.Equal(2, page.Tabs.Count);
+        await page.CloseTabCommand.ExecuteAsync(session); Assert.Equal(3, page.Tabs.Count);
         dialogs.ActionAllowed = true; await page.CloseTabCommand.ExecuteAsync(session); Assert.Empty(page.Tabs); Assert.Empty(page.Sessions);
     });
 

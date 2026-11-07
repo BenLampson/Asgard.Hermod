@@ -18,8 +18,25 @@ public sealed partial class MySqlWorkspaceViewModel
     public bool IsCatalog => !IsDatabaseFocused;
     /// <summary>当前窗口的独立脚本 Session。</summary>
     public ObservableCollection<MySqlTabViewModel> Sessions { get; } = [];
-    /// <summary>对象视图始终回溯到所属脚本 Session。</summary>
-    public MySqlTabViewModel? ActiveSession { get => ActiveTab is { IsQuery: true } ? ActiveTab : ActiveTab?.SessionOwner; set { if (value is not null && Sessions.Contains(value) && value != ActiveTab) ActiveTab = value; } }
+    private MySqlTabViewModel? _activeSession;
+    /// <summary>Session 可在所有文档关闭后继续存在，并保留独立数据库范围。</summary>
+    public MySqlTabViewModel? ActiveSession
+    {
+        get => _activeSession;
+        set
+        {
+            if (value is null || !Sessions.Contains(value) || value == _activeSession) return;
+            var document = value.LastActiveDocument;
+            if (document is null || !value.Documents.Contains(document)) document = value.Documents.FirstOrDefault();
+            if (ActiveTab?.CommitInputRequested?.Invoke() == false) { OnPropertyChanged(); return; }
+            if (document is not null) { ActiveTab = document; return; }
+            ActiveTab = null; _activeSession = value;
+            _changingDocumentSelection = true;
+            try { RefreshSessionNavigation(); OnPropertyChanged(nameof(ActiveTab)); }
+            finally { _changingDocumentSelection = false; }
+            OnActiveTabChanged();
+        }
+    }
     /// <summary>只呈现当前 Session 的脚本和对象视图。</summary>
     public IReadOnlyList<MySqlTabViewModel> ActiveDocuments => ActiveSession?.Documents ?? (IReadOnlyList<MySqlTabViewModel>)Array.Empty<MySqlTabViewModel>();
     /// <summary>左侧只展示当前 Session 纳入的数据库。</summary>
@@ -53,11 +70,12 @@ public sealed partial class MySqlWorkspaceViewModel
     public string DatabaseScopeLabel => Text.Format("DatabaseScopeLabel", ActiveSession?.Scope?.Databases.Count ?? 0);
     private void InitializeSessionCommands()
     {
+        InitializeOverviewCommands();
         OpenScopeEditorCommand = new AsyncRelayCommand(_ => OpenScopeEditorAsync(), _ => IsConnected && !IsManagingDatabases && ActiveSession is { IsBusy: false, IsManagingScope: false });
         ToggleAllDatabasesCommand = new AsyncRelayCommand(async _ => { bool selected = IsAllDatabasesSelected; try { if (await LoadDatabaseCatalogAsync()) foreach (var item in DatabaseChoices) item.IsSelected = !selected; } finally { OnPropertyChanged(nameof(IsAllDatabasesSelected)); } }, _ => IsConnected && !IsManagingDatabases);
         CancelDatabasePickerCommand = new RelayCommand(_ => { if (Sessions.Count == 0) CloseWindowCommand.Execute(null); else SetDatabasePicker(false); }, _ => !IsClosed);
-        ShowSessionHistoryCommand = new RelayCommand(_ => { if (ActiveSession is { } session) { ActiveTab = session; session.IsHistoryOpen = !session.IsHistoryOpen; } }, _ => ActiveSession is not null);
-        ReturnToScriptCommand = new RelayCommand(_ => ActiveTab = ActiveSession, _ => ActiveSession is not null && ActiveTab != ActiveSession);
+        ShowSessionHistoryCommand = new RelayCommand(_ => { if (ActiveSession is { } session) { ShowScript(session); session.IsHistoryOpen = !session.IsHistoryOpen; } }, _ => ActiveSession is not null);
+        ReturnToScriptCommand = new RelayCommand(_ => { if (ActiveSession is { } session) ShowScript(session); }, _ => ActiveSession is not null && ActiveTab != ActiveSession);
         OpenSessionCommand = new AsyncRelayCommand(_ => OpenSelectedSessionAsync(), _ => IsConnected && !IsManagingDatabases && (HasSingleCatalogDatabase || DatabaseChoices.Any(item => item.IsSelected)));
         SelectAllDatabasesCommand = new AsyncRelayCommand(async _ => { if (await LoadDatabaseCatalogAsync()) foreach (var item in DatabaseChoices) item.IsSelected = true; }, _ => IsConnected && !IsManagingDatabases);
         AddSessionDatabaseCommand = new AsyncRelayCommand(_ => AddSessionDatabasesAsync(), _ => IsConnected && !IsManagingDatabases && ActiveSession is { IsBusy: false, IsManagingScope: false });
@@ -121,8 +139,10 @@ public sealed partial class MySqlWorkspaceViewModel
         // SQL 和对象文档之间切换不替换同一个范围的树数据源，保留原生容器、选中项和滚动位置。
         var nodes = Tree?.Root.Children.Where(node => ActiveSession?.Scope?.Contains(node.Object.Name) == true).ToArray() ?? [];
         if (!_sessionTreeItems.SequenceEqual(nodes)) { _sessionTreeItems = nodes; OnPropertyChanged(nameof(SessionTreeItems)); }
-        foreach (string name in new[] { nameof(ActiveSession), nameof(ActiveDocuments), nameof(NavigationLoadedSummary), nameof(DatabaseScopeLabel) }) OnPropertyChanged(name);
+        if (ActiveSession is { OverviewCategory: { } category, Scope: { } currentScope } session && !currentScope.Contains(category.Object.Database)) session.OverviewCategory = null;
+        foreach (string name in new[] { nameof(ActiveSession), nameof(ActiveDocuments), nameof(HasTabs), nameof(NavigationLoadedSummary), nameof(DatabaseScopeLabel) }) OnPropertyChanged(name);
         ToggleAllDatabasesCommand.NotifyCanExecuteChanged(); SelectAllDatabasesCommand.NotifyCanExecuteChanged(); ToggleAssistantCommand?.NotifyCanExecuteChanged(); ShowSessionHistoryCommand.NotifyCanExecuteChanged(); ReturnToScriptCommand.NotifyCanExecuteChanged();
+        ShowOverviewCommand.NotifyCanExecuteChanged(); ShowScriptCommand.NotifyCanExecuteChanged(); RefreshOverviewCommand.NotifyCanExecuteChanged();
         AddSessionDatabaseCommand.NotifyCanExecuteChanged(); RemoveSessionDatabaseCommand.NotifyCanExecuteChanged();
     }
     private bool _selectingDatabases;
@@ -151,13 +171,21 @@ public sealed partial class MySqlWorkspaceViewModel
         foreach (var choice in DatabaseChoices) choice.IsSelected = false;
         SetDatabasePicker(true);
     }
-    private MySqlTabViewModel? CreateSession(IReadOnlyList<DatabaseIdentity> databases)
+    private MySqlTabViewModel? CreateSession(IReadOnlyList<DatabaseIdentity> databases, bool openScript = false)
     {
-        if (_options is null || databases.Count == 0) return null;
+        if (_options is null || databases.Count == 0 || ActiveTab?.CommitInputRequested?.Invoke() == false) return null;
         var scope = new DatabaseSessionScope(InstanceId!, Text.Format("DatabaseSessionName", ++_queryNumber), databases);
         var tab = CreateTab(scope.SessionName, scope.ExecutionTarget, MySqlObjectKind.Root);
-        tab.InitializeScope(scope); tab.PropertyChanged += (_, args) => { if (args.PropertyName is nameof(tab.ScopeRevision) or nameof(tab.IsBusy)) RefreshSessionNavigation(); };
-        tab.Documents.Add(tab); Sessions.Add(tab); Tabs.Add(tab); ActiveTab = tab; SetDatabasePicker(false); return tab;
+        tab.InitializeScope(scope); tab.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName is nameof(tab.ScopeRevision) or nameof(tab.IsBusy)) RefreshSessionNavigation();
+            if (args.PropertyName == nameof(tab.OverviewCategory)) RefreshOverviewCommand.NotifyCanExecuteChanged();
+        };
+        tab.Documents.CollectionChanged += (_, _) => { if (ActiveSession == tab) OnPropertyChanged(nameof(HasTabs)); };
+        Sessions.Add(tab); Tabs.Add(tab);
+        var overview = CreateOverview(tab); ActiveTab = overview;
+        if (openScript) ShowScript(tab);
+        SetDatabasePicker(false); _ = InitializeOverviewAsync(tab); return tab;
     }
     private async Task AddSessionDatabasesAsync()
     {
@@ -185,7 +213,7 @@ public sealed partial class MySqlWorkspaceViewModel
         {
             var decision = await _dialogs.ConfirmDatabaseRemovalAsync(_instance.Name, Endpoint, request);
             if (decision is null || scope.ReplacementFor(request, decision) is null || !Sessions.Contains(tab)) return;
-            var objects = Tabs.Where(item => item.SessionOwner == tab && item.Database == database.Name).ToArray();
+            var objects = Tabs.Where(item => item.SessionOwner == tab && !item.IsOverview && item.Database == database.Name).ToArray();
             var plans = new List<WorkspaceClosePlan>();
             foreach (var item in objects) { var plan = await item.PrepareCloseAsync(); if (plan is null) return; plans.Add(plan); }
             bool changeTarget = request.Database == request.ExecutionTarget;
@@ -193,7 +221,7 @@ public sealed partial class MySqlWorkspaceViewModel
             if (!scope.Matches(request) || IsClosed) return;
             foreach (var plan in plans) await plan.CommitAsync();
             if (changeTarget) { await tab.DisconnectSessionAsync(); tab.RebindConnection(_options!); }
-            if (objects.Contains(ActiveTab)) ActiveTab = tab;
+            if (objects.Contains(ActiveTab)) ActiveTab = tab.Documents.FirstOrDefault(item => !objects.Contains(item));
             foreach (var item in objects) { item.PropertyChanged -= OnTabChanged; Tabs.Remove(item); tab.Documents.Remove(item); await item.DisposeAsync(); }
             tab.CommitScopeRemoval(request, decision);
         }

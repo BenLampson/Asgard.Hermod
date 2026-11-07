@@ -7,10 +7,19 @@ public partial class MySqlCategoryView : UserControl
 {
     private readonly Func<MySqlTreeNode, Task> _open;
     /// <summary>绑定分类节点及对象打开操作。</summary>
-    public MySqlCategoryView(MySqlTreeNode node, Func<MySqlTreeNode, Task> open)
+    public MySqlCategoryView(MySqlTabViewModel session, Func<MySqlTreeNode, Task> open, System.Windows.Input.ICommand refresh)
     {
-        InitializeComponent(); DataContext = node; _open = open;
-        bool tables = node.Object.Kind == MySqlObjectKind.Tables;
+        InitializeComponent(); DataContext = session; _open = open; RefreshButton.Command = refresh;
+        PropertyChangedEventManager.AddHandler(session, OnCategoryChanged, nameof(MySqlTabViewModel.OverviewCategory));
+        UpdateColumns(session);
+    }
+    private void OnCategoryChanged(object? sender, PropertyChangedEventArgs args)
+    {
+        if (sender is MySqlTabViewModel session) UpdateColumns(session);
+    }
+    private void UpdateColumns(MySqlTabViewModel session)
+    {
+        bool tables = session.OverviewCategory?.Object.Kind == MySqlObjectKind.Tables;
         foreach (var column in new[] { AutoIncrementColumn, UpdatedColumn, LengthColumn, EngineColumn, RowsColumn, CommentColumn })
             column.Visibility = tables ? Visibility.Visible : Visibility.Collapsed;
         DetailColumn.Visibility = tables ? Visibility.Collapsed : Visibility.Visible;

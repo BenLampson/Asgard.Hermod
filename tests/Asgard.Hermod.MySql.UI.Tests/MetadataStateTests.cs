@@ -21,7 +21,7 @@ public sealed class MetadataStateTests(WpfTestFixture fixture)
             var server = new TestMySql(); var configurations = new Configurations(); var dialogs = new TestMySqlDialogs();
             await using var workspace = new MySqlWorkspaceViewModel(instance, configurations, server, configurations, dialogs, "app");
             await workspace.InitializeAsync(TestContext.Current.CancellationToken);
-            var query = workspace.ActiveTab!; query.Sql = "SELECT * FROM users"; await query.ExecuteAsync(query.Sql);
+            workspace.ShowScriptCommand.Execute(null); var query = workspace.ActiveTab!; query.Sql = "SELECT * FROM users"; await query.ExecuteAsync(query.Sql);
             var grid = query.SelectedResult!; var row = grid.Rows[0];
             Assert.True(await query.PrepareCellAsync(grid, row, row.Cells[1])); row.Cells[1].Apply("unsaved row");
             query.Sql += " WHERE id = 1";

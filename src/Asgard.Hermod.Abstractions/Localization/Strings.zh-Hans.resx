@@ -4274,6 +4274,11 @@ Session：{2}
   <data name="DatabaseTlsDisabled" xml:space="preserve"><value>TLS 未启用</value></data>
   <data name="DatabasePickNone" xml:space="preserve"><value>请选择至少一个数据库</value></data>
   <data name="DatabaseObjectGroupCount" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="DatabaseOverview" xml:space="preserve"><value>概要</value></data>
+  <data name="DatabaseOpenOverview" xml:space="preserve"><value>打开概要</value></data>
+  <data name="DatabaseOpenScript" xml:space="preserve"><value>打开 SQL 脚本</value></data>
+  <data name="DatabaseOverviewRefresh" xml:space="preserve"><value>刷新当前对象分组</value></data>
+  <data name="DatabaseOverviewChooseGroup" xml:space="preserve"><value>在对象树中选择一个分组，即可查看其中的对象。</value></data>
   <data name="DatabaseLoadedObjects" xml:space="preserve"><value>{0} 张表 · {1} 个视图</value></data>
   <data name="DatabaseScopeLabel" xml:space="preserve"><value>数据库范围 · {0}</value></data>
   <data name="DatabaseClipboardFailed" xml:space="preserve"><value>无法复制输出，请重试。</value></data>

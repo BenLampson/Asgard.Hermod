@@ -21,7 +21,7 @@ public sealed class TabClosingTests(WpfTestFixture fixture)
         await using var model = new MySqlWorkspaceViewModel(new(new("mysql", "Database", "Database", "database", [], TypeId: MySqlIds.Type)),
             configurations, server, configurations, new TestMySqlDialogs(), "app");
         await model.InitializeAsync(TestContext.Current.CancellationToken);
-        var first = model.ActiveTab!; var second = model.NewQuery()!; var third = model.NewQuery()!;
+        model.ShowScriptCommand.Execute(null); var first = model.ActiveTab!; var second = model.NewQuery()!; var third = model.NewQuery()!;
         var view = new MySqlWorkspaceView { DataContext = model }; var window = new HermodWindow { Content = view, Width = 1120, Height = 780 };
         try
         {
@@ -34,7 +34,7 @@ public sealed class TabClosingTests(WpfTestFixture fixture)
             await model.CloseTabCommand.ExecuteAsync(second); await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.Same(third, model.ActiveTab); Assert.Same(third, tabs.SelectedItem); Assert.Same(thirdView, host.Content);
             third.Sql = "unsaved query";
-            await model.CloseTabCommand.ExecuteAsync(third); Assert.Same(third, model.ActiveTab); Assert.Single(model.Tabs);
+            await model.CloseTabCommand.ExecuteAsync(third); Assert.Same(third, model.ActiveTab); Assert.Single(model.Sessions);
             third.Sql = "";
             var tree = model.Tree; int opens = server.Opens;
             await model.CloseTabCommand.ExecuteAsync(third); await WindowTestVisuals.UpdateLayoutAsync(window);
@@ -44,7 +44,7 @@ public sealed class TabClosingTests(WpfTestFixture fixture)
             Assert.Empty(model.Sessions); Assert.Same(tree, model.Tree); Assert.True(model.IsConnected);
             await WindowPreviewCapture.VerifyAsync(window, $"mysql-session-picker-{language}-{theme}");
             model.NewQueryCommand.Execute(null); await WindowTestVisuals.UpdateLayoutAsync(window);
-            Assert.False(model.IsCatalog); Assert.True(tabs.IsVisible); Assert.Same(model.ActiveTab, Assert.IsType<MySqlTabView>(host.Content).DataContext); Assert.Equal(opens, server.Opens);
+            Assert.False(model.IsCatalog); Assert.True(tabs.IsVisible); Assert.True(model.ActiveTab!.IsOverview); Assert.IsType<MySqlCategoryView>(host.Content); Assert.Equal(opens, server.Opens);
             Assert.Empty(trace.Messages);
         }
         finally { window.Close(); themes.SetTheme(UiTheme.Light); Text.SetApplicationCulture(null); CultureInfo.CurrentUICulture = previous; }

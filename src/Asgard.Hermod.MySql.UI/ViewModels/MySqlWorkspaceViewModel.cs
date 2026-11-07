@@ -97,15 +97,31 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
     /// <summary>按打开顺序保存的独立对象和查询页签。</summary>
     public ObservableCollection<MySqlTabViewModel> Tabs { get; } = [];
     /// <summary>最后一个页签关闭后展示引导，并隐藏空页签轨道。</summary>
-    public bool HasTabs => Tabs.Count > 0;
+    public bool HasTabs => ActiveDocuments.Count > 0;
+    private bool _changingDocumentSelection;
     public MySqlTabViewModel? ActiveTab
     {
         get; set
         {
             if (ReferenceEquals(field, value)) return;
+            if (_changingDocumentSelection && value is null) return;
             if (field?.CommitInputRequested?.Invoke() == false) { OnPropertyChanged(); return; }
             if (field is not null) field.IsActive = false;
             field = value; if (value is not null) value.IsActive = true;
+            if (value is not null)
+            {
+                var owner = value.IsQuery ? value : value.SessionOwner;
+                if (owner is not null && Sessions.Contains(owner))
+                {
+                    bool changedSession = _activeSession != owner; _activeSession = owner; owner.LastActiveDocument = value;
+                    if (changedSession)
+                    {
+                        _changingDocumentSelection = true;
+                        try { RefreshSessionNavigation(); }
+                        finally { _changingDocumentSelection = false; }
+                    }
+                }
+            }
             OnPropertyChanged(); ExportCommand.NotifyCanExecuteChanged(); OnActiveTabChanged(); RefreshSessionNavigation();
         }
     }
@@ -180,10 +196,10 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
     public MySqlTabViewModel? NewQuery(string? database = null)
     {
         if (_options is null || !IsConnected || IsClosed) return null;
-        if (database is not null) return DatabaseChoices.Any(item => item.Name == database) ? CreateSession([new(InstanceId!, database)]) : null;
+        if (database is not null) return DatabaseChoices.Any(item => item.Name == database) ? CreateSession([new(InstanceId!, database)], openScript: true) : null;
         var scope = ActiveSession?.Scope?.Databases.ToArray() ?? InitialDatabases.ToArray();
         if (scope.Length == 0) return null;
-        return CreateSession(scope);
+        return CreateSession(scope, openScript: true);
     }
     private MySqlTabViewModel CreateTab(string name, string database, MySqlObjectKind kind)
     {
@@ -223,6 +239,14 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
     private async Task CloseTabAsync(MySqlTabViewModel? tab)
     {
         if (tab is null || !Tabs.Contains(tab) || IsManagingDatabases) return;
+        if (tab.IsOverview)
+        {
+            var owner = tab.SessionOwner;
+            if (ActiveTab == tab) ActiveTab = owner?.Documents.FirstOrDefault(item => item != tab);
+            if (ActiveTab == tab) return;
+            owner?.Documents.Remove(tab); Tabs.Remove(tab); tab.PropertyChanged -= OnTabChanged; await tab.DisposeAsync();
+            RefreshSessionNavigation(); return;
+        }
         if (!await tab.ConfirmRemovalAsync(tab.IsQuery ? "DatabaseSessionClose" : "DatabaseSessionCloseObject")) return;
         var closing = Tabs.Where(item => item == tab || item.SessionOwner == tab).ToArray();
         var plans = new List<WorkspaceClosePlan>();
@@ -230,7 +254,16 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
         try
         {
             foreach (var plan in plans) await plan.CommitAsync();
-            if (closing.Contains(ActiveTab)) ActiveTab = Tabs.FirstOrDefault(item => !closing.Contains(item));
+            if (closing.Contains(ActiveTab))
+            {
+                if (tab.IsQuery)
+                {
+                    var nextSession = Sessions.FirstOrDefault(item => item != tab);
+                    if (nextSession is null) { ActiveTab = null; _activeSession = null; }
+                    else ActiveSession = nextSession;
+                }
+                else ActiveTab = tab.SessionOwner?.Documents.FirstOrDefault(item => !closing.Contains(item));
+            }
             if (closing.Contains(ActiveTab)) return;
             foreach (var item in closing) { item.PropertyChanged -= OnTabChanged; Tabs.Remove(item); item.SessionOwner?.Documents.Remove(item); Sessions.Remove(item); await item.DisposeAsync(); }
             if (Sessions.Count == 0) SetDatabasePicker(true);
@@ -243,6 +276,7 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
         if (Tree is null) return;
         var node = SelectedNode; while (node is not null && !node.CanExpand) node = node.Parent;
         await Tree.RefreshAsync(node ?? NavigationRoot);
+        await RebindOverviewCategoriesAsync();
         RefreshCatalog(); RefreshSessionNavigation();
         Refresh();
     }
@@ -255,7 +289,10 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
         foreach (var tab in Tabs) await tab.DisconnectSessionAsync();
         await ConnectAsync();
         if (IsConnected && _options is not null)
+        {
             foreach (var tab in Tabs) tab.RebindConnection(_options);
+            await RebindOverviewCategoriesAsync();
+        }
     }
     private async Task EditConnectionAsync()
     {
@@ -301,6 +338,7 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
     {
         foreach (string property in new[] { nameof(EngineDescription), nameof(ConnectionSummary), nameof(Endpoint), nameof(WorkspaceSubtitle), nameof(IsConnecting), nameof(IsConnected), nameof(Status), nameof(ConnectionTone), nameof(Error), nameof(HasError), nameof(Tree), nameof(NavigationRoot) }) OnPropertyChanged(property);
         NewQueryCommand.NotifyCanExecuteChanged(); OpenQueryCommand.NotifyCanExecuteChanged(); RefreshTreeCommand.NotifyCanExecuteChanged(); ReconnectCommand.NotifyCanExecuteChanged(); EditConnectionCommand.NotifyCanExecuteChanged();
+        RefreshOverviewCommand.NotifyCanExecuteChanged();
     }
     partial void InitializeAssistant(IAgentClient? client);
     partial void ReleaseAssistant();
