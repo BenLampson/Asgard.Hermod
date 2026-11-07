@@ -26,13 +26,13 @@ public sealed class MainWorkspaceBehaviorTests(WpfTestFixture fixture)
             Assert.Empty(host.Windows);
             var selected = Assert.IsType<MainInstanceRow>(rows.SelectedItem);
             var rowControl = Assert.IsType<ListBoxItem>(rows.ItemContainerGenerator.ContainerFromIndex(0));
+            object? doubleClickSource = null;
+            rows.AddHandler(Control.MouseDoubleClickEvent, new MouseButtonEventHandler((_, args) => doubleClickSource = args.OriginalSource), true);
             window.Activate(); Assert.True(rowControl.Focus());
             await WindowInteractionNativeMethods.DrainNativeMessagesAsync();
             Assert.Empty(host.Windows);
-            // 合成鼠标消息不移动桌面指针；暂时捕获目标行，让 WPF 按预期路由原生双击。
-            Assert.True(Mouse.Capture(rowControl));
-            try { WindowInteractionNativeMethods.PostDoubleClick(window, rowControl); await WindowInteractionNativeMethods.DrainNativeMessagesAsync(); }
-            finally { Mouse.Capture(null); }
+            await WindowInteractionNativeMethods.PostDoubleClickAsync(window, rowControl);
+            Assert.Same(rowControl, doubleClickSource);
             var work = Assert.Single(host.Windows);
             await WindowTestVisuals.UpdateLayoutAsync(window);
             var more = WindowTestVisuals.Descendants<Button>(window).First(button => button.Name == "MoreButton");
