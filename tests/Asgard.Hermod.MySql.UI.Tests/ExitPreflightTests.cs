@@ -15,7 +15,7 @@ public sealed class ExitPreflightTests(WpfTestFixture fixture)
         await using var first = new MySqlWorkspaceViewModel(new(new("one", "Database", "Database", "database", [], TypeId: MySqlIds.Type)),
             configurations, server, configurations, new TestMySqlDialogs { Choice = MySqlDraftChoice.Discard }, "app");
         await first.InitializeAsync(TestContext.Current.CancellationToken);
-        var tab = first.ActiveTab!; await tab.ExecuteAsync("SELECT * FROM users");
+        first.ShowScriptCommand.Execute(null); var tab = first.ActiveTab!; await tab.ExecuteAsync("SELECT * FROM users");
         var grid = tab.SelectedResult!; var row = grid.Rows[0];
         Assert.True(await tab.PrepareCellAsync(grid, row, row.Cells[1])); row.Cells[1].Apply("keep this draft");
         var plan = await first.PrepareCloseAsync(); Assert.NotNull(plan);

@@ -50,7 +50,7 @@ public sealed partial class MySqlWorkspaceViewModel
                 }
                 else if (decision.ReplacementTarget is not null) return false;
             }
-            var objects = Tabs.Where(item => item.SessionOwner == tab && !names.Contains(item.Database, StringComparer.Ordinal)).ToArray();
+            var objects = Tabs.Where(item => item.SessionOwner == tab && !item.IsOverview && !names.Contains(item.Database, StringComparer.Ordinal)).ToArray();
             var plans = new List<WorkspaceClosePlan>();
             foreach (var item in objects) { var plan = await item.PrepareCloseAsync(); if (plan is null) return false; plans.Add(plan); }
             bool changeTarget = target != change.ExecutionTarget;
@@ -58,7 +58,7 @@ public sealed partial class MySqlWorkspaceViewModel
             if (!Current()) return false;
             foreach (var plan in plans) await plan.CommitAsync();
             if (changeTarget) { await tab.DisconnectSessionAsync(); tab.RebindConnection(_options!); }
-            if (objects.Contains(ActiveTab)) ActiveTab = tab;
+            if (objects.Contains(ActiveTab)) ActiveTab = tab.Documents.FirstOrDefault(item => !objects.Contains(item));
             foreach (var item in objects) { item.PropertyChanged -= OnTabChanged; Tabs.Remove(item); tab.Documents.Remove(item); await item.DisposeAsync(); }
             return tab.CommitScopeChange(change, target);
         }

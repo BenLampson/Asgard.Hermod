@@ -4274,6 +4274,11 @@ Result sample:
   <data name="DatabaseTlsDisabled" xml:space="preserve"><value>TLS disabled</value></data>
   <data name="DatabasePickNone" xml:space="preserve"><value>Select at least one database</value></data>
   <data name="DatabaseObjectGroupCount" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="DatabaseOverview" xml:space="preserve"><value>Overview</value></data>
+  <data name="DatabaseOpenOverview" xml:space="preserve"><value>Open overview</value></data>
+  <data name="DatabaseOpenScript" xml:space="preserve"><value>Open SQL script</value></data>
+  <data name="DatabaseOverviewRefresh" xml:space="preserve"><value>Refresh this object group</value></data>
+  <data name="DatabaseOverviewChooseGroup" xml:space="preserve"><value>Select an object group in the tree to view its contents.</value></data>
   <data name="DatabaseLoadedObjects" xml:space="preserve"><value>{0} tables · {1} views</value></data>
   <data name="DatabaseScopeLabel" xml:space="preserve"><value>Database scope · {0}</value></data>
   <data name="DatabaseClipboardFailed" xml:space="preserve"><value>Unable to copy the output. Try again.</value></data>

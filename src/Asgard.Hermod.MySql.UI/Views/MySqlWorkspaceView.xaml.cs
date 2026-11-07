@@ -8,6 +8,7 @@ namespace Asgard.Hermod.MySql.UI.Views;
 public partial class MySqlWorkspaceView : UserControl
 {
     private readonly Dictionary<MySqlTabViewModel, MySqlTabView> _views = [];
+    private readonly Dictionary<MySqlTabViewModel, MySqlCategoryView> _overviewViews = [];
     private MySqlWorkspaceViewModel? _model;
     private bool _compact, _drawer;
     private bool _treeVisible = true;
@@ -25,7 +26,14 @@ public partial class MySqlWorkspaceView : UserControl
         // 分屏收起时保留同一助手视图与会话，只更新当前 Session 的绑定。
         if (_model is null) return;
         foreach (var stale in _views.Keys.Where(tab => !_model.Tabs.Contains(tab)).ToArray()) _views.Remove(stale);
+        foreach (var stale in _overviewViews.Keys.Where(tab => !_model.Tabs.Contains(tab)).ToArray()) _overviewViews.Remove(stale);
         if (_model.ActiveTab is not { } tab) { TabHost.Content = null; return; }
+        if (tab is { IsOverview: true, SessionOwner: { } session })
+        {
+            if (!_overviewViews.TryGetValue(tab, out var overview))
+            { overview = new(session, selected => _model.OpenAsync(selected), _model.RefreshOverviewCommand); _overviewViews.Add(tab, overview); }
+            TabHost.Content = overview; ObjectTabs.ScrollIntoView(tab); return;
+        }
         if (!_views.TryGetValue(tab, out var view)) { view = new() { DataContext = tab }; _views.Add(tab, view); }
         TabHost.Content = view; ObjectTabs.ScrollIntoView(tab);
     }
@@ -34,7 +42,7 @@ public partial class MySqlWorkspaceView : UserControl
         if (_model is null || args.NewValue is not MySqlTreeNode node) return;
         if (TabHost.Content is MySqlTabView current && !current.CommitInput()) return;
         _model.SelectedNode = node;
-        if (IsCategory(node)) { ShowCategory(node); return; }
+        if (IsCategory(node)) { _model.ShowOverview(node); return; }
         if (node.Object.Kind != MySqlObjectKind.Database) { await _model.OpenAsync(node); ShowTab(); }
         if (_compact && node.Object.Kind is MySqlObjectKind.Table or MySqlObjectKind.View or MySqlObjectKind.Procedure or MySqlObjectKind.Function or MySqlObjectKind.Event) { _drawer = false; Layout(); }
     }
@@ -49,7 +57,7 @@ public partial class MySqlWorkspaceView : UserControl
             if (item.DataContext is MySqlTreeNode category && IsCategory(category) && ReferenceEquals(_model.SelectedNode, category))
             {
                 if (TabHost.Content is MySqlTabView current && !current.CommitInput()) return;
-                ShowCategory(category); return;
+                _model.ShowOverview(category); return;
             }
             if (item.DataContext is MySqlTreeNode { Object.Kind: MySqlObjectKind.Database } node && ReferenceEquals(_model.SelectedNode, node))
             { if (_model.IsCatalog) _model.OpenDatabase(node.Object.Name); else node.IsExpanded = !node.IsExpanded; args.Handled = true; }
@@ -58,13 +66,6 @@ public partial class MySqlWorkspaceView : UserControl
     }
     private static bool IsCategory(MySqlTreeNode node) => node.Object.Kind is MySqlObjectKind.Tables or MySqlObjectKind.Views
         or MySqlObjectKind.Procedures or MySqlObjectKind.Functions or MySqlObjectKind.Events;
-    private void ShowCategory(MySqlTreeNode node)
-    {
-        if (_model is null) return;
-        node.IsExpanded = true;
-        TabHost.Content = new MySqlCategoryView(node, async selected => { await _model.OpenAsync(selected); ShowTab(); });
-    }
-    private void OnDocumentClick(object sender, MouseButtonEventArgs args) => ShowTab();
     private void OnTabChanged(object sender, SelectionChangedEventArgs args) => ShowTab();
     private void OnBodySizeChanged(object sender, SizeChangedEventArgs args)
     {
@@ -96,7 +97,7 @@ public partial class MySqlWorkspaceView : UserControl
         if (args.Key == Key.Escape && _drawer) { _drawer = false; Layout(); args.Handled = true; return; }
         if ((Keyboard.Modifiers & ModifierKeys.Control) == 0) return;
         if (args.Key == Key.W) { if (TabHost.Content is MySqlTabView current && !current.CommitInput()) return; args.Handled = true; await _model.CloseTabCommand.ExecuteAsync(_model.ActiveTab); }
-        if (args.Key == Key.Tab && _model.Tabs.Count > 0) { args.Handled = true; int index = _model.ActiveTab is null ? 0 : _model.Tabs.IndexOf(_model.ActiveTab); _model.ActiveTab = _model.Tabs[(index + ((Keyboard.Modifiers & ModifierKeys.Shift) == 0 ? 1 : -1) + _model.Tabs.Count) % _model.Tabs.Count]; }
+        if (args.Key == Key.Tab && _model.ActiveDocuments.Count > 0) { args.Handled = true; var documents = _model.ActiveDocuments; int index = _model.ActiveTab is null ? -1 : documents.ToList().IndexOf(_model.ActiveTab); _model.ActiveTab = documents[(index + ((Keyboard.Modifiers & ModifierKeys.Shift) == 0 ? 1 : -1) + documents.Count) % documents.Count]; }
     }
 
     /// <summary>固定来源 Session，其他窗口和活动页签不会重定向已有助手。</summary>

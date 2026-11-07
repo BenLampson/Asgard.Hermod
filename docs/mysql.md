@@ -27,10 +27,16 @@ procedures, functions, events, columns, indexes, foreign keys, triggers and rout
 parameters. Branches use distinct type icons and automatically fetch all bounded
 pages, with explicit empty, loading and error retry states. Failed reads retain
 the previous complete branch. Search filters loaded objects while retaining
-ancestors; it does not scan the whole server. Selecting a database-level category
-shows its objects; table rows include the server's auto-increment value, update
-time, data length, engine, estimated row count and comment when available. Enter
-or double-click opens an object, and the document tabs return to the editor.
+ancestors; it does not scan the whole server. A new Session starts with a closable
+Overview document instead of an open SQL script. For a single database, Overview
+initially shows its tables; with multiple databases it asks the user to select a
+category in the tree. Selecting a database-level category updates that Session's
+Overview, and its refresh button reloads the displayed group without changing
+open objects or drafts. Failed reads retain the previous list. The document strip
+can reopen Overview or open the Session's SQL script explicitly. Enter or
+double-click opens an object, and the Overview tab returns to the list. Table rows
+include the server's auto-increment value, update time, data length, engine,
+estimated row count and comment when available.
 A known table can be opened by database/name
 when object listing is unavailable. Object tabs are deduplicated by database,
 kind and original name. Tabs show the object name; the content header and tooltip
@@ -81,8 +87,9 @@ overlay is open. Cancellation disposes late sessions instead of activating them.
 The instance connects in the main window before its work window opens. Database selection and all script Sessions stay in that same work window.
 One fully loaded database can be used directly. With multiple databases, users
 choose the scope or explicitly select all, then enter a script Session in place. New Session uses the same picker; cancel returns to the previous Session.
-Every Session is fixed to one instance, has independent SQL, execution history,
-results, transaction state and AI conversation, and retains at least one database.
+Every Session is fixed to one instance, has an independently opened SQL script,
+execution history, results, transaction state and AI conversation, and retains at
+least one database even if all its document tabs are closed.
 Object views belong to their script Session; Return to script preserves their drafts.
 
 A single database scope popup manages included databases. Add databases lists only the current instance,

@@ -77,9 +77,9 @@ public sealed class MySqlInteractionLayoutHeadlessTests(WpfTestFixture fixture)
     {
         var server = new TestMySql(); var dialogs = new TestMySqlDialogs(); var configs = new Configurations();
         await using var page = new MySqlWorkspaceViewModel(new(Configurations.Instance), configs, server, configs, dialogs, "app");
-        await page.InitializeAsync(); var first = page.ActiveTab!; var second = page.NewQuery()!;
+        await page.InitializeAsync(); page.ShowScriptCommand.Execute(null); var first = page.ActiveTab!; var second = page.NewQuery()!;
         first.Sql = "unsaved";
-        var tabs = new Asgard.Hermod.UI.Controls.WorkspaceTabStrip { ItemsSource = page.Tabs, SelectedItem = second, CloseCommand = page.CloseTabCommand };
+        var tabs = new Asgard.Hermod.UI.Controls.WorkspaceTabStrip { ItemsSource = page.Sessions, SelectedItem = second, CloseCommand = page.CloseTabCommand };
         var root = Root(tabs); Layout(root, 700);
         Click(first); await WpfTestFixture.DrainDispatcherAsync(); Assert.Equal(2, tabs.Items.Count); Assert.Same(second, tabs.SelectedItem);
         dialogs.Choice = MySqlDraftChoice.Discard; Click(first); await WpfTestFixture.DrainDispatcherAsync(); Assert.Single(tabs.Items); Assert.Same(second, tabs.SelectedItem);

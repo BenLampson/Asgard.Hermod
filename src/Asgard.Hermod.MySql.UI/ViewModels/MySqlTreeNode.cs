@@ -88,6 +88,7 @@ public sealed class MySqlTreeNode : ObservableObject
     internal bool Loaded { get; set; }
     internal int Revision { get; set; }
     internal CancellationTokenSource? Pending { get; set; }
+    internal TaskCompletionSource? LoadCompletion { get; set; }
     internal bool SavedExpansion { get; set; }
     internal void RefreshStatus() { OnPropertyChanged(nameof(HasStatus)); OnPropertyChanged(nameof(DisplayLabel)); }
 }

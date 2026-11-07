@@ -23,7 +23,7 @@ public sealed class ConnectionLifecycleHeadlessTests(WpfTestFixture fixture)
     {
         var server = new TestMySql(); var configs = new Configurations(); var dialogs = new TestMySqlDialogs();
         await using var page = new MySqlWorkspaceViewModel(new(Configurations.Instance), configs, server, configs, dialogs, "app");
-        await page.InitializeAsync(); var query = page.ActiveTab!; query.Sql = "SELECT 1;";
+        await page.InitializeAsync(); page.ShowScriptCommand.Execute(null); var query = page.ActiveTab!; query.Sql = "SELECT 1;";
         await page.OpenObjectAsync(new(MySqlObjectKind.Table, "users", "app")); var table = page.ActiveTab!;
         var grid = table.SelectedResult!; var row = grid.Rows[0]; await table.PrepareCellAsync(grid, row, row.Cells[1]); row.Cells[1].Apply("kept draft");
         var previous = server.Sessions.ToArray(); previous[0].Disconnect();

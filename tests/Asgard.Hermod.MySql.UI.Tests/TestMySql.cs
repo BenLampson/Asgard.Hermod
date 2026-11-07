@@ -8,6 +8,7 @@ internal sealed class TestMySql : IMySqlSessionFactory
     internal string[] DatabaseNames = ["app"];
     internal Func<MySqlObject, MySqlObject[]?>? MetadataOverride;
     internal Func<MySqlObject, int, MySqlObjectPage>? MetadataPageOverride;
+    internal Func<MySqlObject, int, Task<MySqlObjectPage>?>? AsyncMetadataPageOverride;
     internal TimeSpan Elapsed = TimeSpan.FromMilliseconds(2);
     internal string? Version;
     internal List<string> MetadataDatabases { get; } = [];
@@ -54,6 +55,7 @@ internal sealed class TestMySql : IMySqlSessionFactory
         {
             server.MetadataDatabases.Add(parent.Database);
             if (server.ListFailure is { } error) throw error;
+            if (server.AsyncMetadataPageOverride?.Invoke(parent, offset) is { } pending) return pending;
             if (server.MetadataPageOverride is { } page) return Task.FromResult(page(parent, offset));
             MySqlObject[] items = parent.Kind switch
             {

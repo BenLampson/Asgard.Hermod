@@ -120,14 +120,35 @@ internal static class WindowInteractionNativeMethods
         finally { window.Closed -= closed; if (!source.IsDisposed) source.RemoveHook(Hook); }
     }
     /// <summary>双击消息仅发给被测 HWND，不移动系统鼠标或影响其他应用。</summary>
-    internal static void PostDoubleClick(Window window, FrameworkElement target)
+    internal static async Task PostDoubleClickAsync(Window window, FrameworkElement target)
     {
+        const uint doubleClick = 0x0203;
         Point origin = window.PointToScreen(new Point());
         Point point = target.PointToScreen(new Point(target.ActualWidth / 3, target.ActualHeight / 2));
         int x = (int)(point.X - origin.X), y = (int)(point.Y - origin.Y);
         nint position = new((y << 16) | (x & 0xffff)); nint handle = Handle(window);
-        PostMessage(handle, 0x0201, 1, position); PostMessage(handle, 0x0202, 0, position);
-        PostMessage(handle, 0x0203, 1, position); PostMessage(handle, 0x0202, 0, position);
+        bool recaptured = false;
+        void Retarget(ref MSG message, ref bool handled)
+        {
+            // 列表处理第一次按下时会接管并释放捕获；在派发第二次按下前重新捕获目标。
+            if (message.hwnd == handle && message.message == doubleClick && message.lParam == position)
+                recaptured = System.Windows.Input.Mouse.Capture(target);
+        }
+        Assert.True(System.Windows.Input.Mouse.Capture(target));
+        ComponentDispatcher.ThreadFilterMessage += Retarget;
+        try
+        {
+            if (!PostMessage(handle, 0x0201, 1, position) || !PostMessage(handle, 0x0202, 0, position)
+                || !PostMessage(handle, doubleClick, 1, position) || !PostMessage(handle, 0x0202, 0, position))
+                throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+            await DrainNativeMessagesAsync();
+            Assert.True(recaptured);
+        }
+        finally
+        {
+            ComponentDispatcher.ThreadFilterMessage -= Retarget;
+            System.Windows.Input.Mouse.Capture(null);
+        }
     }
     /// <summary>鼠标消息仅送给测试 HWND，不移动用户的桌面指针。</summary>
     internal static void PostPointerMove(Window window, Point position)

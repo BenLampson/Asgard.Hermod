@@ -75,10 +75,11 @@ public sealed class CategoryViewTests(WpfTestFixture fixture)
             await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.Equal(MySqlObjectKind.Table, model.ActiveTab!.Kind);
             Assert.IsType<MySqlTabView>(host.Content);
+            var opened = model.ActiveTab;
 
             tree.RaiseEvent(new RoutedPropertyChangedEventArgs<object>(null!, category, TreeView.SelectedItemChangedEvent));
             var tabs = Assert.IsType<WorkspaceTabStrip>(view.FindName("ObjectTabs"));
-            tabs.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left) { RoutedEvent = Mouse.PreviewMouseDownEvent });
+            tabs.SelectedItem = opened; await WindowTestVisuals.UpdateLayoutAsync(window);
             Assert.IsType<MySqlTabView>(host.Content);
 
             tree.RaiseEvent(new RoutedPropertyChangedEventArgs<object>(null!, category, TreeView.SelectedItemChangedEvent));

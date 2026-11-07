@@ -159,16 +159,9 @@ repository. For local installation, sign a copy using a trusted test certificate
 whose subject exactly matches the manifest Publisher, then use `Add-AppxPackage`.
 Keep private keys, `.pfx` files and passwords outside the repository.
 
-Before submission, test the installed package on a clean Windows machine:
-
-- Launch from Start and verify English, Chinese, language preference persistence
-  and English fallback for unsupported display languages.
-- Verify SQLite creation and persistence, DPAPI-protected credentials, browser
-  login and its loopback callback, object transfers, previews and external opening.
-- Verify local ConPTY terminal sessions and package update behavior. Packaged
-  desktop apps may virtualize per-user file paths; verify migration from an
-  existing unpackaged installation rather than assuming both share a database.
-- Run Windows App Certification Kit and review its results.
+For Microsoft Store releases, do not perform clean Windows installation testing
+or Windows App Certification Kit (WACK) checks. The Release MSIX workflow remains
+the build, formatting, automated test and packaging gate before submission.
 
 In Partner Center, select **Start submission**, upload the `.msix` under
 **Packages**, and complete availability, properties, age ratings, privacy details,

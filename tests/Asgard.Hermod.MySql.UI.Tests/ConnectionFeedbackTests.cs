@@ -13,7 +13,7 @@ public sealed class ConnectionFeedbackTests(WpfTestFixture fixture)
     public Task QueryOpenFailureKeepsDocumentAndSafeSharedRecovery() => fixture.RunOffscreenAsync(async () =>
     {
         var server = new TestMySql(); var configs = new Configurations();
-        await using var model = Create(server, configs); await model.InitializeAsync(); var tab = Assert.Single(model.Tabs); tab.Sql = "SELECT 1";
+        await using var model = Create(server, configs); await model.InitializeAsync(); model.ShowScriptCommand.Execute(null); var tab = model.ActiveTab!; tab.Sql = "SELECT 1";
         var view = new MySqlWorkspaceView { DataContext = model }; var root = Root(view); await Layout(root);
         var body = (Grid)view.FindName("Body"); var size = body.RenderSize;
         server.OpenError = new IOException("password=private-test-secret"); await tab.ExecuteAsync(tab.Sql); await Layout(root);
@@ -28,7 +28,7 @@ public sealed class ConnectionFeedbackTests(WpfTestFixture fixture)
     public Task QuerySessionDisconnectPreservesDraftAndNeverReopensPopup() => fixture.RunOffscreenAsync(async () =>
     {
         var server = new TestMySql(); var configs = new Configurations();
-        await using var model = Create(server, configs); await model.InitializeAsync(); var tab = Assert.Single(model.Tabs); tab.Sql = "SELECT 'retained draft';";
+        await using var model = Create(server, configs); await model.InitializeAsync(); model.ShowScriptCommand.Execute(null); var tab = model.ActiveTab!; tab.Sql = "SELECT 'retained draft';";
         await tab.ExecuteAsync(tab.Sql); var old = server.Sessions.Last(); await Task.Run(old.Disconnect); await WpfTestFixture.DrainDispatcherAsync();
         Assert.True(model.Connection.IsDisconnected); Assert.False(model.Connection.IsOpen); Assert.False(model.IsConnected); Assert.False(model.HasError); Assert.False(tab.CanRun);
         Assert.Equal("SELECT 'retained draft';", tab.Sql); Assert.Same(tab, model.ActiveTab); Assert.Equal(1, server.Executions); Assert.Equal(0, server.Writes);

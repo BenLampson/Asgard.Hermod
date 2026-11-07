@@ -46,7 +46,8 @@ public sealed class DatabaseWorkspaceTests(WpfTestFixture fixture)
         int requests = 0; browser.WorkspaceRequested += (_, _) => requests++;
         var tree = browser.Tree!; Assert.True(browser.IsCatalog);
         await browser.OpenAsync(tree.Root.Children.Single(node => node.Object.Name == "app"));
-        var first = Assert.Single(browser.Sessions); Assert.Same(first, browser.ActiveTab); Assert.Equal("app", first.Database);
+        var first = Assert.Single(browser.Sessions); Assert.True(browser.ActiveTab!.IsOverview); Assert.Equal("app", first.Database);
+        browser.ShowScriptCommand.Execute(null); Assert.Same(first, browser.ActiveTab);
         await first.ExecuteAsync("SELECT 1"); first.Sql = "SELECT pending";
         Assert.Equal(2, server.Opens); Assert.Equal("app", Assert.Single(browser.SessionTreeItems).Object.Name);
         browser.BrowseDatabasesCommand.Execute(null); Assert.True(browser.IsCatalog);
@@ -68,7 +69,7 @@ public sealed class DatabaseWorkspaceTests(WpfTestFixture fixture)
         var configuration = new Configuration();
         await using var focused = new MySqlWorkspaceViewModel(new(Configuration.Instance), configuration, new TestMySql(), configuration, new TestMySqlDialogs(), "app");
         await focused.InitializeAsync(TestContext.Current.CancellationToken);
-        var first = focused.ActiveTab!; await first.ChangeDatabaseAsync("reporting"); first.Sql = "SELECT pending";
+        focused.ShowScriptCommand.Execute(null); var first = focused.ActiveTab!; await first.ChangeDatabaseAsync("reporting"); first.Sql = "SELECT pending";
         var second = focused.NewQuery()!; Assert.Equal("app", second.Database); Assert.Equal("app", first.Database);
         Assert.NotSame(first.Scope, second.Scope);
         int requests = 0; focused.WorkspaceRequested += (_, _) => requests++;

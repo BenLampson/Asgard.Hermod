@@ -22,9 +22,20 @@ public sealed class MySqlObjectTree : IDisposable
     /// <summary>加载当前分支，使用请求版本拒绝迟到结果。</summary>
     public async Task LoadAsync(MySqlTreeNode node)
     {
-        if (_disposed || !node.CanExpand || node.IsLoading || !node.HasMore || IsFiltering) return;
+        if (_disposed || !node.CanExpand || !node.HasMore || IsFiltering) return;
+        // 多个入口同时展开同一分支时，等待已有读取，避免概要把尚未返回的分组当作空列表。
+        if (node.IsLoading)
+        {
+            do
+            {
+                if (node.LoadCompletion is not { } current) return;
+                await current.Task;
+            } while (node.IsLoading);
+            return;
+        }
         int revision = ++node.Revision;
         using var pending = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
+        var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously); node.LoadCompletion = completion;
         node.Pending = pending; node.IsLoading = true; node.IsLoadFailed = false; node.Status = Text.Get("MySqlLoading"); node.RefreshStatus();
         try
         {
@@ -60,6 +71,8 @@ public sealed class MySqlObjectTree : IDisposable
         finally
         {
             if (revision == node.Revision) { node.Pending = null; node.IsLoading = false; node.RefreshStatus(); Changed?.Invoke(this, EventArgs.Empty); }
+            if (ReferenceEquals(node.LoadCompletion, completion)) node.LoadCompletion = null;
+            completion.TrySetResult();
         }
     }
     /// <summary>仅刷新指定分支，不修改其他页签草稿。</summary>
@@ -67,7 +80,6 @@ public sealed class MySqlObjectTree : IDisposable
     {
         node ??= Root;
         Cancel(node); node.Revision++; node.Loaded = false; node.Offset = 0; node.HasMore = true; node.IsLoading = false;
-        if (_search.Length > 0) Filter("");
         await LoadAsync(node);
     }
     /// <summary>过滤已加载节点并保留祖先层级。</summary>
