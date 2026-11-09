@@ -18,6 +18,7 @@
 ## Repository conventions
 
 - Use `main` as the permanent development branch. Create a branch or worktree only when needed for the task, and remove temporary branches after their work is complete.
+- Keep Dependabot updates that automatically create branches disabled; update dependencies manually unless the user explicitly requests otherwise.
 - Publish GitHub Releases only from `main` through the `Release MSIX` workflow. Merge any validated task branch into `main` first. Do not create release tags outside the workflow or replace a published version.
 - For Microsoft Store releases, do not perform clean Windows installation testing or Windows App Certification Kit (WACK) checks. Follow the existing build, formatting, automated test and MSIX workflow gates.
 - Maintain the UI in its XAML, shared resources and behavior tests. Do not add retired design drafts, temporary plans, screenshots or rendered design exports to the repository. Keep shipped icons and other application assets in their owning modules.
