@@ -60,9 +60,9 @@ from regional formatting.
 
 ## Build from source
 
-[`main`](https://github.com/BenLampson/Asgard.Hermod/tree/main) contains the released
-source and documentation; [`dev`](https://github.com/BenLampson/Asgard.Hermod/tree/dev)
-is used for ongoing development. Releases are published only from `main`.
+[`main`](https://github.com/BenLampson/Asgard.Hermod/tree/main) contains the current
+source and documentation. Create temporary branches when needed; releases are
+published only from `main`.
 Install the .NET 10 SDK on Windows; the SDK selection policy is in `global.json`.
 Visual Studio with the .NET desktop development workload is optional.
 
@@ -104,7 +104,7 @@ before changing the application. Repository documentation, issues and pull reque
 use English by default. Application-owned display text requires English and
 Simplified Chinese resources with English fallback.
 
-Run the repository checks from `dev` before submitting code:
+Run the repository checks before submitting code:
 
 ```powershell
 dotnet build Asgard.Hermod.slnx -c Release

@@ -5,16 +5,16 @@ Contributions to Asgard Hermod are welcome. English is the primary language for 
 ## Workflow
 
 1. Discuss substantial features in a GitHub issue before implementation.
-2. Fork the repository and base application changes on `dev`, which contains the current source. Create a focused branch in your fork.
+2. Base application changes on `main`. Create a focused branch when needed and remove it after its work is complete.
 3. Install the .NET 10 SDK and build on Windows.
 4. Make focused changes and update relevant documentation.
 5. Run `dotnet build Asgard.Hermod.slnx -c Release` and `dotnet format Asgard.Hermod.slnx --verify-no-changes`.
 6. For UI changes, launch the application and verify resizing and keyboard navigation. Attach screenshots to your pull request; do not commit screenshots, design previews, temporary plans, or rendered design exports. Maintain the UI in its XAML, resources and behavior tests.
 7. Describe the problem, resulting behavior, and verification performed in your pull request.
 
-Merge validated release changes into `main` before publishing. GitHub Releases
-are created only by the **Release MSIX** workflow running from `main`; `dev` is
-for development. See the [release and Store packaging guide](docs/microsoft-store.md#build).
+Merge any validated task branch into `main` before publishing. GitHub Releases
+are created only by the **Release MSIX** workflow running from `main`. See the
+[release and Store packaging guide](docs/microsoft-store.md#build).
 
 Server images follow the [server release procedure](docs/identity-and-sync.md#docker-deployment).
 Build and test locally or on hosted CI, then push a uniquely versioned Registry image
@@ -28,7 +28,7 @@ The `Server Image` workflow prepares images without connecting to production.
 
 - Follow `.editorconfig`; use nullable reference types and C# 14.
 - Keep one class per file and files under 400 lines where practical.
-- Follow [AGENTS.md](https://github.com/BenLampson/Asgard.Hermod/blob/dev/AGENTS.md) and [the localization guide](https://github.com/BenLampson/Asgard.Hermod/blob/dev/docs/localization.md). All application-owned display text must use shared resources, with English and Chinese translations and English fallback.
+- Follow [AGENTS.md](https://github.com/BenLampson/Asgard.Hermod/blob/main/AGENTS.md) and [the localization guide](https://github.com/BenLampson/Asgard.Hermod/blob/main/docs/localization.md). All application-owned display text must use shared resources, with English and Chinese translations and English fallback.
 - Document public APIs and non-obvious behavior following Asgard code conventions.
 - Do not commit credentials, local settings, build outputs, or personal data.
 - Add meaningful automated tests when introducing business behavior. New .NET unit tests should use xUnit v3.

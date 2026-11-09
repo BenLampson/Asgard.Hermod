@@ -35,10 +35,9 @@ In Partner Center, choose **Provide a privacy policy URL** and enter:
 <https://github.com/BenLampson/Asgard.Hermod/blob/main/PRIVACY.md>
 
 The repository and this document must remain public so customers and certification
-reviewers can read the policy without signing in. Maintain policy changes on
-`dev` and publish the updated document to `main` before submitting changes to the
-Store. Keep the policy aligned with the submitted application's data handling
-behavior. Privacy requests go to
+reviewers can read the policy without signing in. Publish policy changes to
+`main` before submitting changes to the Store. Keep the policy aligned with the
+submitted application's data handling behavior. Privacy requests go to
 `cn.benlampson@gmail.com`.
 
 For **Website**, use <https://github.com/BenLampson/Asgard.Hermod>. For **Support
@@ -48,7 +47,7 @@ credentials.
 
 ## Build
 
-Develop on `dev`, then merge the validated release changes into `main`. Only
+Develop on `main` or merge a validated temporary branch into `main`. Only
 `main` may publish a GitHub Release. In **Actions → Release MSIX → Run workflow**:
 
 1. Select branch **main** and enter a new tag such as `v1.0.1`.
@@ -60,9 +59,9 @@ Develop on `dev`, then merge the validated release changes into `main`. Only
    and creates the x64 package. Only after every gate passes does it create the
    tag and Release together with the package and generated release notes.
 
-The owner must start or rerun the workflow. Selecting `dev` skips the release
-job. The `release` environment independently permits only branch `main`, with
-no tag deployment rules. `tools/Test-ReleaseSource.ps1` rejects another branch,
+The owner must start or rerun the workflow. Selecting a branch other than `main`
+skips the release job. The `release` environment independently permits only branch
+`main`, with no tag deployment rules. `tools/Test-ReleaseSource.ps1` rejects another branch,
 an unmerged commit, an unexpected checkout or an existing publication tag. It
 rechecks the source immediately before publishing. A failed build creates no
 Release. Published Release events and tag pushes do not trigger this workflow,
@@ -82,8 +81,8 @@ release tags**; its private key is stored as `RELEASE_TAG_SSH_KEY` in the
 main-only `release` environment, not in repository-wide secrets or source files.
 The workflow pushes the verified main commit with this key, then creates the
 Release using the built-in token and `--verify-tag`. Human accounts cannot create a
-new tag from `dev` through Git, the API or the Release UI. Existing tags must
-already point to commits merged into `main`; version `v1.0.0` satisfies this
+new tag outside the workflow through Git, the API or the Release UI. Existing tags
+must already point to commits merged into `main`; version `v1.0.0` satisfies this
 condition. Use the main-only workflow above for new releases.
 
 Keep write access limited to the owner. Repository administrators can change
@@ -92,7 +91,7 @@ release workflows requires reviewing this policy. A rehearsal verifies the SSH
 push credentials with `git push --dry-run` and creates no remote tag.
 
 `.github/CODEOWNERS` assigns every file to `@BenLampson`. Branch protection for
-`main` and `dev` requires one approval from the code owner and dismisses stale
+`main` requires one approval from the code owner and dismisses stale
 approvals after new changes. Owner/admin bypass remains enabled because GitHub
 cannot accept a person's approval of their own PR. Contributors must submit PRs
 for owner review; the owner can explicitly bypass protection for their own changes.

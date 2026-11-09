@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   package:
-    # 仅允许所有者从 main 手动发布；环境规则另行限制分支，避免误选 dev。
+    # 仅允许所有者从 main 手动发布；环境规则另行限制分支，避免误选其他分支。
     if: >-
       github.ref == 'refs/heads/main' &&
       github.actor == github.repository_owner &&
