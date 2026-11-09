@@ -3174,7 +3174,6 @@
   <data name="MySqlParameter" xml:space="preserve"><value>参数</value></data>
   <data name="MySqlNotLoaded" xml:space="preserve"><value>尚未加载</value></data>
   <data name="MySqlLoading" xml:space="preserve"><value>正在加载…</value></data>
-  <data name="MySqlEmptyBranch" xml:space="preserve"><value>此分支没有对象。</value></data>
   <data name="MySqlLoadMore" xml:space="preserve"><value>加载更多 / 重试</value></data>
   <data name="MySqlData" xml:space="preserve"><value>数据</value></data>
   <data name="MySqlStructure" xml:space="preserve"><value>结构</value></data>
@@ -3304,7 +3303,7 @@
   <data name="SshKeyImported" xml:space="preserve"><value>私钥已导入 · 保存时加密</value></data>
   <data name="MySqlNoOpenTabs" xml:space="preserve"><value>尚未打开表或查询</value></data>
   <data name="SshKeyImportFailed" xml:space="preserve"><value>无法导入私钥。请选择可读取且不超过 32 KiB 的 UTF-8 私钥文件后重试。</value></data>
-  <data name="MySqlNoOpenTabsHint" xml:space="preserve"><value>从左侧对象树选择一张表，或新建查询继续操作。</value></data>
+  <data name="MySqlNoOpenTabsHint" xml:space="preserve"><value>双击左侧对象树中的表，或新建查询继续操作。</value></data>
   <data name="MySqlNoDatabaseSelected" xml:space="preserve"><value>未选择数据库</value></data>
   <data name="MySqlDatabaseSchema" xml:space="preserve"><value>数据库 / Schema</value></data>
   <data name="MySqlNoStructureItems" xml:space="preserve"><value>当前分区没有对象。</value></data>
@@ -3722,7 +3721,6 @@
   <data name="PostgreSqlParameter" xml:space="preserve"><value>参数</value></data>
   <data name="PostgreSqlNotLoaded" xml:space="preserve"><value>尚未加载</value></data>
   <data name="PostgreSqlLoading" xml:space="preserve"><value>正在加载…</value></data>
-  <data name="PostgreSqlEmptyBranch" xml:space="preserve"><value>此分支没有对象。</value></data>
   <data name="PostgreSqlLoadMore" xml:space="preserve"><value>加载更多 / 重试</value></data>
   <data name="PostgreSqlData" xml:space="preserve"><value>数据</value></data>
   <data name="PostgreSqlStructure" xml:space="preserve"><value>结构</value></data>
@@ -3822,7 +3820,7 @@
 {2}</value></data>
   <data name="PostgreSqlResultRow" xml:space="preserve"><value>结果第 {0} 行</value></data>
   <data name="PostgreSqlNoOpenTabs" xml:space="preserve"><value>尚未打开表或查询</value></data>
-  <data name="PostgreSqlNoOpenTabsHint" xml:space="preserve"><value>从左侧对象树选择一张表，或新建查询继续操作。</value></data>
+  <data name="PostgreSqlNoOpenTabsHint" xml:space="preserve"><value>双击左侧对象树中的表，或新建查询继续操作。</value></data>
   <data name="PostgreSqlNoDatabaseSelected" xml:space="preserve"><value>未选择数据库</value></data>
   <data name="PostgreSqlDatabaseSchema" xml:space="preserve"><value>数据库 / 架构</value></data>
   <data name="PostgreSqlNoStructureItems" xml:space="preserve"><value>当前分区没有对象。</value></data>
@@ -4279,7 +4277,6 @@ Session：{2}
   <data name="DatabaseOpenScript" xml:space="preserve"><value>打开 SQL 脚本</value></data>
   <data name="DatabaseOverviewRefresh" xml:space="preserve"><value>刷新当前对象分组</value></data>
   <data name="DatabaseOverviewChooseGroup" xml:space="preserve"><value>在对象树中选择一个分组，即可查看其中的对象。</value></data>
-  <data name="DatabaseLoadedObjects" xml:space="preserve"><value>{0} 张表 · {1} 个视图</value></data>
   <data name="DatabaseScopeLabel" xml:space="preserve"><value>数据库范围 · {0}</value></data>
   <data name="DatabaseClipboardFailed" xml:space="preserve"><value>无法复制输出，请重试。</value></data>
   <data name="LocalTerminalSubtitle" xml:space="preserve"><value>本地 · {0}</value></data>

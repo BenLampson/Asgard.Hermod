@@ -95,22 +95,6 @@ public sealed partial class PostgreSqlWorkspaceViewModel
         OnPropertyChanged(nameof(IsAllDatabasesSelected)); OnPropertyChanged(nameof(CatalogSelectionSummary)); OnPropertyChanged(nameof(CatalogSelectionNames));
         OpenSessionCommand.NotifyCanExecuteChanged(); NewQueryCommand.NotifyCanExecuteChanged();
     }
-    /// <summary>仅统计当前 Session 范围中真正已加载的对象。</summary>
-    public string NavigationLoadedSummary
-    {
-        get
-        {
-            int tables = 0, views = 0;
-            foreach (var database in SessionTreeItems) Count(database);
-            return tables + views == 0 ? "" : Text.Format("DatabaseLoadedObjects", tables, views);
-            void Count(PostgreSqlTreeNode node)
-            {
-                if (!node.IsPlaceholder && node.Object.Kind == PostgreSqlObjectKind.Table) tables++;
-                if (!node.IsPlaceholder && node.Object.Kind == PostgreSqlObjectKind.View) views++;
-                foreach (var child in node.Children) Count(child);
-            }
-        }
-    }
     private void RefreshSessionNavigation()
     {
         if (ScopeEditor is not null && (_scopeEditorSession != ActiveSession || !ScopeEditor.IsCurrent)) ScopeEditor.IsOpen = false;
@@ -121,7 +105,7 @@ public sealed partial class PostgreSqlWorkspaceViewModel
         // SQL 和对象文档之间切换不替换同一个范围的树数据源，保留原生容器、选中项和滚动位置。
         var nodes = Tree?.Root.Children.Where(node => ActiveSession?.Scope?.Contains(node.Object.Name) == true).ToArray() ?? [];
         if (!_sessionTreeItems.SequenceEqual(nodes)) { _sessionTreeItems = nodes; OnPropertyChanged(nameof(SessionTreeItems)); }
-        foreach (string name in new[] { nameof(ActiveSession), nameof(ActiveDocuments), nameof(NavigationLoadedSummary), nameof(DatabaseScopeLabel) }) OnPropertyChanged(name);
+        foreach (string name in new[] { nameof(ActiveSession), nameof(ActiveDocuments), nameof(DatabaseScopeLabel) }) OnPropertyChanged(name);
         ToggleAllDatabasesCommand.NotifyCanExecuteChanged(); SelectAllDatabasesCommand.NotifyCanExecuteChanged(); ToggleAssistantCommand?.NotifyCanExecuteChanged(); ShowSessionHistoryCommand.NotifyCanExecuteChanged(); ReturnToScriptCommand.NotifyCanExecuteChanged();
         AddSessionDatabaseCommand.NotifyCanExecuteChanged(); RemoveSessionDatabaseCommand.NotifyCanExecuteChanged();
     }

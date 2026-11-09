@@ -161,7 +161,6 @@ public sealed partial class MySqlWorkspaceViewModel : WorkspacePageViewModel
             Tree = new(session, _lifetime.Token); OnPropertyChanged(nameof(Tree)); await Tree.LoadAsync(Tree.Root).WaitAsync(linked.Token);
             Tree.Root.Children.CollectionChanged += (_, _) => RefreshCatalog();
             Tree.Root.PropertyChanged += (_, args) => { if (args.PropertyName == nameof(Tree.Root.HasMore)) RefreshCatalog(); };
-            Tree.Changed += (_, _) => OnPropertyChanged(nameof(NavigationLoadedSummary));
             NavigationRoot = Tree.Root;
             if (IsDatabaseFocused && FocusedDatabase.Length > 0)
             {

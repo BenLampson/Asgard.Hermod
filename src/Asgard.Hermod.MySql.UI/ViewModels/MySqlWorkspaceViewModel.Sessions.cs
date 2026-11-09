@@ -113,22 +113,6 @@ public sealed partial class MySqlWorkspaceViewModel
         OnPropertyChanged(nameof(IsAllDatabasesSelected)); OnPropertyChanged(nameof(CatalogSelectionSummary)); OnPropertyChanged(nameof(CatalogSelectionNames));
         OpenSessionCommand.NotifyCanExecuteChanged(); NewQueryCommand.NotifyCanExecuteChanged();
     }
-    /// <summary>仅统计当前 Session 范围中真正已加载的对象。</summary>
-    public string NavigationLoadedSummary
-    {
-        get
-        {
-            int tables = 0, views = 0;
-            foreach (var database in SessionTreeItems) Count(database);
-            return tables + views == 0 ? "" : Text.Format("DatabaseLoadedObjects", tables, views);
-            void Count(MySqlTreeNode node)
-            {
-                if (!node.IsPlaceholder && node.Object.Kind == MySqlObjectKind.Table) tables++;
-                if (!node.IsPlaceholder && node.Object.Kind == MySqlObjectKind.View) views++;
-                foreach (var child in node.Children) Count(child);
-            }
-        }
-    }
     private void RefreshSessionNavigation()
     {
         if (ScopeEditor is not null && (_scopeEditorSession != ActiveSession || !ScopeEditor.IsCurrent)) ScopeEditor.IsOpen = false;
@@ -140,7 +124,7 @@ public sealed partial class MySqlWorkspaceViewModel
         var nodes = Tree?.Root.Children.Where(node => ActiveSession?.Scope?.Contains(node.Object.Name) == true).ToArray() ?? [];
         if (!_sessionTreeItems.SequenceEqual(nodes)) { _sessionTreeItems = nodes; OnPropertyChanged(nameof(SessionTreeItems)); }
         if (ActiveSession is { OverviewCategory: { } category, Scope: { } currentScope } session && !currentScope.Contains(category.Object.Database)) session.OverviewCategory = null;
-        foreach (string name in new[] { nameof(ActiveSession), nameof(ActiveDocuments), nameof(HasTabs), nameof(NavigationLoadedSummary), nameof(DatabaseScopeLabel) }) OnPropertyChanged(name);
+        foreach (string name in new[] { nameof(ActiveSession), nameof(ActiveDocuments), nameof(HasTabs), nameof(DatabaseScopeLabel) }) OnPropertyChanged(name);
         ToggleAllDatabasesCommand.NotifyCanExecuteChanged(); SelectAllDatabasesCommand.NotifyCanExecuteChanged(); ToggleAssistantCommand?.NotifyCanExecuteChanged(); ShowSessionHistoryCommand.NotifyCanExecuteChanged(); ReturnToScriptCommand.NotifyCanExecuteChanged();
         ShowOverviewCommand.NotifyCanExecuteChanged(); ShowScriptCommand.NotifyCanExecuteChanged(); RefreshOverviewCommand.NotifyCanExecuteChanged();
         AddSessionDatabaseCommand.NotifyCanExecuteChanged(); RemoveSessionDatabaseCommand.NotifyCanExecuteChanged();

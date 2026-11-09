@@ -37,13 +37,44 @@ public partial class MySqlWorkspaceView : UserControl
         if (!_views.TryGetValue(tab, out var view)) { view = new() { DataContext = tab }; _views.Add(tab, view); }
         TabHost.Content = view; ObjectTabs.ScrollIntoView(tab);
     }
-    private async void OnSelectedObject(object sender, RoutedPropertyChangedEventArgs<object> args)
+    private void OnSelectedObject(object sender, RoutedPropertyChangedEventArgs<object> args)
     {
         if (_model is null || args.NewValue is not MySqlTreeNode node) return;
-        if (TabHost.Content is MySqlTabView current && !current.CommitInput()) return;
+        if (IsCategory(node))
+        {
+            if (TabHost.Content is MySqlTabView current && !current.CommitInput()) return;
+            _model.SelectedNode = node; _model.ShowOverview(node); return;
+        }
         _model.SelectedNode = node;
-        if (IsCategory(node)) { _model.ShowOverview(node); return; }
-        if (node.Object.Kind != MySqlObjectKind.Database) { await _model.OpenAsync(node); ShowTab(); }
+    }
+    /// <summary>只响应真实对象行的双击，避免原生树同时展开对象的元数据。</summary>
+    private async void OnObjectDoubleClick(object sender, MouseButtonEventArgs args)
+    {
+        if (_model is null || _model.Connection.IsOpen || args.ChangedButton != MouseButton.Left || args.ClickCount != 2) return;
+        for (var source = args.OriginalSource as DependencyObject; source is not null; source = source is Visual ? VisualTreeHelper.GetParent(source) : LogicalTreeHelper.GetParent(source))
+        {
+            if (source is ButtonBase) return;
+            if (source is not TreeViewItem item) continue;
+            if (item.DataContext is not MySqlTreeNode node || node.IsPlaceholder || node.Object.Kind == MySqlObjectKind.Database || IsCategory(node)) return;
+            args.Handled = true;
+            await OpenNodeAsync(node);
+            return;
+        }
+    }
+    private async void OnTreeKeyDown(object sender, KeyEventArgs args)
+    {
+        if (args.Key != Key.Enter || _model is null || _model.Connection.IsOpen || _model.SelectedNode is not { } node) return;
+        for (var source = args.OriginalSource as DependencyObject; source is not null && source != ObjectTree; source = source is Visual ? VisualTreeHelper.GetParent(source) : LogicalTreeHelper.GetParent(source))
+            if (source is ButtonBase) return;
+        args.Handled = true;
+        await OpenNodeAsync(node);
+    }
+    private async Task OpenNodeAsync(MySqlTreeNode node)
+    {
+        if (_model is null || _model.Connection.IsOpen) return;
+        if (TabHost.Content is MySqlTabView current && !current.CommitInput()) return;
+        await _model.OpenAsync(node);
+        ShowTab();
         if (_compact && node.Object.Kind is MySqlObjectKind.Table or MySqlObjectKind.View or MySqlObjectKind.Procedure or MySqlObjectKind.Function or MySqlObjectKind.Event) { _drawer = false; Layout(); }
     }
     /// <summary>鼠标再次点击已选数据库仍可唤回窗口；展开按钮和键盘方向键只负责导航。</summary>
@@ -92,8 +123,6 @@ public partial class MySqlWorkspaceView : UserControl
     private async void OnKeyDown(object sender, KeyEventArgs args)
     {
         if (_model is null || _model.Connection.IsOpen) return;
-        if (args.Key == Key.Enter && ObjectTree.IsKeyboardFocusWithin && _model.SelectedNode is { Object.Kind: MySqlObjectKind.Database } database)
-        { args.Handled = true; await _model.OpenAsync(database); return; }
         if (args.Key == Key.Escape && _drawer) { _drawer = false; Layout(); args.Handled = true; return; }
         if ((Keyboard.Modifiers & ModifierKeys.Control) == 0) return;
         if (args.Key == Key.W) { if (TabHost.Content is MySqlTabView current && !current.CommitInput()) return; args.Handled = true; await _model.CloseTabCommand.ExecuteAsync(_model.ActiveTab); }

@@ -13,8 +13,6 @@ public sealed class MySqlObjectTree : IDisposable
         _session = session; _lifetime = CancellationTokenSource.CreateLinkedTokenSource(lifetime);
         Root = new(new(MySqlObjectKind.Root, ""), this);
     }
-    /// <summary>元数据加载完成后通知当前范围的已加载数量发生变化。</summary>
-    public event EventHandler? Changed;
     /// <summary>数据库对象树的根分支。</summary>
     public MySqlTreeNode Root { get; }
     /// <summary>搜索只检查已经加载的节点，不触发隐式扫描。</summary>
@@ -60,7 +58,7 @@ public sealed class MySqlObjectTree : IDisposable
             node.Children.Clear();
             foreach (var child in children) node.Children.Add(child);
             node.Offset = offset; node.HasMore = false; node.Loaded = true;
-            node.Status = node.Children.Count == 0 ? Text.Get("MySqlEmptyBranch") : "";
+            node.Status = "";
             if (_search.Length > 0) Filter(_search);
         }
         catch (OperationCanceledException) when (pending.IsCancellationRequested) { }
@@ -70,7 +68,7 @@ public sealed class MySqlObjectTree : IDisposable
         }
         finally
         {
-            if (revision == node.Revision) { node.Pending = null; node.IsLoading = false; node.RefreshStatus(); Changed?.Invoke(this, EventArgs.Empty); }
+            if (revision == node.Revision) { node.Pending = null; node.IsLoading = false; node.RefreshStatus(); }
             if (ReferenceEquals(node.LoadCompletion, completion)) node.LoadCompletion = null;
             completion.TrySetResult();
         }
@@ -101,6 +99,6 @@ public sealed class MySqlObjectTree : IDisposable
     }
     private static void Cancel(MySqlTreeNode node)
     { node.Pending?.Cancel(); foreach (var child in node.Children) Cancel(child); }
-    /// <summary>取消分支读取并解除监听。</summary>
-    public void Dispose() { if (_disposed) return; _disposed = true; Changed = null; _lifetime.Cancel(); Cancel(Root); _lifetime.Dispose(); }
+    /// <summary>取消分支读取并释放资源。</summary>
+    public void Dispose() { if (_disposed) return; _disposed = true; _lifetime.Cancel(); Cancel(Root); _lifetime.Dispose(); }
 }

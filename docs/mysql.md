@@ -25,8 +25,9 @@ saved connection requires an explicit reconnect to affect an open workspace.
 The real object tree loads each branch independently: databases, tables, views,
 procedures, functions, events, columns, indexes, foreign keys, triggers and routine
 parameters. Branches use distinct type icons and automatically fetch all bounded
-pages, with explicit empty, loading and error retry states. Failed reads retain
-the previous complete branch. Search filters loaded objects while retaining
+pages, showing exact counts for loaded categories and retaining loading and error
+retry states. Failed reads retain the previous complete branch. Search filters
+loaded objects while retaining
 ancestors; it does not scan the whole server. A new Session starts with a closable
 Overview document instead of an open SQL script. For a single database, Overview
 initially shows its tables; with multiple databases it asks the user to select a
@@ -34,7 +35,8 @@ category in the tree. Selecting a database-level category updates that Session's
 Overview, and its refresh button reloads the displayed group without changing
 open objects or drafts. Failed reads retain the previous list. The document strip
 can reopen Overview or open the Session's SQL script explicitly. Enter or
-double-click opens an object, and the Overview tab returns to the list. Table rows
+double-click opens an object from the tree or Overview; a single tree click only
+selects an object. The Overview tab returns to the list. Table rows
 include the server's auto-increment value, update time, data length, engine,
 estimated row count and comment when available.
 A known table can be opened by database/name

@@ -3174,7 +3174,6 @@
   <data name="MySqlParameter" xml:space="preserve"><value>Parameter</value></data>
   <data name="MySqlNotLoaded" xml:space="preserve"><value>Not loaded</value></data>
   <data name="MySqlLoading" xml:space="preserve"><value>Loading…</value></data>
-  <data name="MySqlEmptyBranch" xml:space="preserve"><value>No objects in this branch.</value></data>
   <data name="MySqlLoadMore" xml:space="preserve"><value>Load more / retry</value></data>
   <data name="MySqlData" xml:space="preserve"><value>Data</value></data>
   <data name="MySqlStructure" xml:space="preserve"><value>Structure</value></data>
@@ -3304,7 +3303,7 @@ Delete the key “{1}”? This action cannot be undone.</value></data>
   <data name="SshKeyImported" xml:space="preserve"><value>Private key imported · encrypted when saved</value></data>
   <data name="MySqlNoOpenTabs" xml:space="preserve"><value>No tabs open</value></data>
   <data name="SshKeyImportFailed" xml:space="preserve"><value>Could not import the private key. Choose a readable UTF-8 key file up to 32 KiB and try again.</value></data>
-  <data name="MySqlNoOpenTabsHint" xml:space="preserve"><value>Select a table from the object tree or create a query to continue.</value></data>
+  <data name="MySqlNoOpenTabsHint" xml:space="preserve"><value>Double-click a table in the object tree or create a query to continue.</value></data>
   <data name="MySqlNoDatabaseSelected" xml:space="preserve"><value>No database selected</value></data>
   <data name="MySqlDatabaseSchema" xml:space="preserve"><value>Database / schema</value></data>
   <data name="MySqlNoStructureItems" xml:space="preserve"><value>No objects in this section.</value></data>
@@ -3722,7 +3721,6 @@ Hiding to the notification area is temporarily unavailable. To exit Hermod, use 
   <data name="PostgreSqlParameter" xml:space="preserve"><value>Parameter</value></data>
   <data name="PostgreSqlNotLoaded" xml:space="preserve"><value>Not loaded</value></data>
   <data name="PostgreSqlLoading" xml:space="preserve"><value>Loading…</value></data>
-  <data name="PostgreSqlEmptyBranch" xml:space="preserve"><value>No objects in this branch.</value></data>
   <data name="PostgreSqlLoadMore" xml:space="preserve"><value>Load more / retry</value></data>
   <data name="PostgreSqlData" xml:space="preserve"><value>Data</value></data>
   <data name="PostgreSqlStructure" xml:space="preserve"><value>Structure</value></data>
@@ -3822,7 +3820,7 @@ Hiding to the notification area is temporarily unavailable. To exit Hermod, use 
 {2}</value></data>
   <data name="PostgreSqlResultRow" xml:space="preserve"><value>Result row {0}</value></data>
   <data name="PostgreSqlNoOpenTabs" xml:space="preserve"><value>No tabs open</value></data>
-  <data name="PostgreSqlNoOpenTabsHint" xml:space="preserve"><value>Select a table from the object tree or create a query to continue.</value></data>
+  <data name="PostgreSqlNoOpenTabsHint" xml:space="preserve"><value>Double-click a table in the object tree or create a query to continue.</value></data>
   <data name="PostgreSqlNoDatabaseSelected" xml:space="preserve"><value>No database selected</value></data>
   <data name="PostgreSqlDatabaseSchema" xml:space="preserve"><value>Database / schema</value></data>
   <data name="PostgreSqlNoStructureItems" xml:space="preserve"><value>No objects in this section.</value></data>
@@ -4279,7 +4277,6 @@ Result sample:
   <data name="DatabaseOpenScript" xml:space="preserve"><value>Open SQL script</value></data>
   <data name="DatabaseOverviewRefresh" xml:space="preserve"><value>Refresh this object group</value></data>
   <data name="DatabaseOverviewChooseGroup" xml:space="preserve"><value>Select an object group in the tree to view its contents.</value></data>
-  <data name="DatabaseLoadedObjects" xml:space="preserve"><value>{0} tables · {1} views</value></data>
   <data name="DatabaseScopeLabel" xml:space="preserve"><value>Database scope · {0}</value></data>
   <data name="DatabaseClipboardFailed" xml:space="preserve"><value>Unable to copy the output. Try again.</value></data>
   <data name="LocalTerminalSubtitle" xml:space="preserve"><value>Local · {0}</value></data>

@@ -32,9 +32,39 @@ public partial class PostgreSqlWorkspaceView : UserControl
     private async void OnSelectedObject(object sender, RoutedPropertyChangedEventArgs<object> args)
     {
         if (_model is null || args.NewValue is not PostgreSqlTreeNode node) return;
-        if (TabHost.Content is PostgreSqlTabView current && !current.CommitInput()) return;
         _model.SelectedNode = node;
-        if (node.Object.Kind != PostgreSqlObjectKind.Database) await _model.OpenAsync(node);
+        if (node.Object.Kind is PostgreSqlObjectKind.Schema or PostgreSqlObjectKind.Tables or PostgreSqlObjectKind.Views
+            or PostgreSqlObjectKind.Procedures or PostgreSqlObjectKind.Functions or PostgreSqlObjectKind.Events)
+            await _model.OpenAsync(node);
+    }
+    /// <summary>只响应真实对象行的双击，避免原生树同时展开对象的元数据。</summary>
+    private async void OnObjectDoubleClick(object sender, MouseButtonEventArgs args)
+    {
+        if (_model is null || _model.Connection.IsOpen || args.ChangedButton != MouseButton.Left || args.ClickCount != 2) return;
+        for (var source = args.OriginalSource as DependencyObject; source is not null; source = source is Visual ? VisualTreeHelper.GetParent(source) : LogicalTreeHelper.GetParent(source))
+        {
+            if (source is ButtonBase) return;
+            if (source is not TreeViewItem item) continue;
+            if (item.DataContext is not PostgreSqlTreeNode node || node.IsPlaceholder || node.Object.Kind is PostgreSqlObjectKind.Database or PostgreSqlObjectKind.Schema or PostgreSqlObjectKind.Tables or PostgreSqlObjectKind.Views
+                or PostgreSqlObjectKind.Procedures or PostgreSqlObjectKind.Functions or PostgreSqlObjectKind.Events) return;
+            args.Handled = true;
+            await OpenNodeAsync(node);
+            return;
+        }
+    }
+    private async void OnTreeKeyDown(object sender, KeyEventArgs args)
+    {
+        if (args.Key != Key.Enter || _model is null || _model.Connection.IsOpen || _model.SelectedNode is not { } node) return;
+        for (var source = args.OriginalSource as DependencyObject; source is not null && source != ObjectTree; source = source is Visual ? VisualTreeHelper.GetParent(source) : LogicalTreeHelper.GetParent(source))
+            if (source is ButtonBase) return;
+        args.Handled = true;
+        await OpenNodeAsync(node);
+    }
+    private async Task OpenNodeAsync(PostgreSqlTreeNode node)
+    {
+        if (_model is null || _model.Connection.IsOpen) return;
+        if (TabHost.Content is PostgreSqlTabView current && !current.CommitInput()) return;
+        await _model.OpenAsync(node);
         if (_compact && node.Object.Kind is PostgreSqlObjectKind.Table or PostgreSqlObjectKind.View or PostgreSqlObjectKind.Procedure or PostgreSqlObjectKind.Function or PostgreSqlObjectKind.Event) { _drawer = false; Layout(); }
     }
     /// <summary>鼠标再次点击已选数据库仍可唤回窗口；展开按钮和键盘方向键只负责导航。</summary>
@@ -76,8 +106,6 @@ public partial class PostgreSqlWorkspaceView : UserControl
     private async void OnKeyDown(object sender, KeyEventArgs args)
     {
         if (_model is null || _model.Connection.IsOpen) return;
-        if (args.Key == Key.Enter && ObjectTree.IsKeyboardFocusWithin && _model.SelectedNode is { Object.Kind: PostgreSqlObjectKind.Database } database)
-        { args.Handled = true; await _model.OpenAsync(database); return; }
         if (args.Key == Key.Escape && _drawer) { _drawer = false; Layout(); args.Handled = true; return; }
         if ((Keyboard.Modifiers & ModifierKeys.Control) == 0) return;
         if (args.Key == Key.W) { if (TabHost.Content is PostgreSqlTabView current && !current.CommitInput()) return; args.Handled = true; await _model.CloseTabCommand.ExecuteAsync(_model.ActiveTab); }

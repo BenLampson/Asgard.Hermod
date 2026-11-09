@@ -21,9 +21,9 @@ at least one database. Scope changes and removal confirmations follow the shared
 schemas contain tables, views, routines and their metadata. Object identity
 includes database, schema, kind and original name. Each expanded branch automatically
 fetches all pages; a failed read retains the previous complete branch and offers retry.
-Filtering searches loaded
-objects without scanning the server. Opening a table by name is available when
-directory listing is restricted.
+Filtering searches loaded objects without scanning the server. Select an object in
+the tree with one click, then double-click it or press Enter to open it. Opening a
+table by name is available when directory listing is restricted.
 
 Every query tab has a separate physical connection and transaction context.
 PostgreSQL connections belong to one database: opening another database creates
