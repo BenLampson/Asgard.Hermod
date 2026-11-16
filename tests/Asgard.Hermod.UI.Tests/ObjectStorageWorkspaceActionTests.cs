@@ -3,27 +3,56 @@ namespace Asgard.Hermod.UI.Tests;
 /// <summary>验证确认前不发写请求、完整删除范围、覆盖竞态和失败重试。</summary>
 public sealed class ObjectStorageWorkspaceActionTests
 {
-    /// <summary>目录删除先展开完整键清单，取消后没有删除请求。</summary>
+    /// <summary>确认窗体先收到选中的文件与目录；只有确认后才展开和删除，并刷新目录。</summary>
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task DeleteDirectory_UsesExactlyConfirmedPlan(bool confirm)
+    public async Task DeleteSelection_OnlyCollectsAfterConfirmation(bool confirm)
     {
-        var plan = new ObjectStorageDeletePlan(["docs/a.txt", "docs/nested/b.txt", "docs/"]);
+        var plan = new ObjectStorageDeletePlan(["docs/a.txt", "docs/nested/b.txt", "docs/", "selected.txt"]);
+        var events = new List<string>();
+        IReadOnlyList<string>? shownKeys = null;
+        IReadOnlyList<ObjectStorageEntry>? collectedEntries = null;
         var service = new ObjectStorageTestService
         {
-            ListObjectsHandler = (_, _, _, _, _, _) => Task.FromResult(new ObjectStoragePage([new("docs/", true)])),
-            PrepareDeleteHandler = (_, _) => Task.FromResult(plan)
+            ListObjectsHandler = (_, _, _, _, _, _) =>
+                Task.FromResult(new ObjectStoragePage([new("docs/", true), new("selected.txt", false), new("keep.txt", false)])),
+            PrepareDeleteHandler = (entries, _, _) =>
+            {
+                events.Add("collect"); collectedEntries = entries;
+                return Task.FromResult(plan);
+            }
         };
-        var dialogs = new ObjectStorageTestDialogs { ConfirmDeletion = confirm };
+        var dialogs = new ObjectStorageTestDialogs
+        {
+            DeleteDialogHandler = dialog =>
+            {
+                events.Add("show"); shownKeys = dialog.Keys;
+                if (confirm)
+                {
+                    events.Add("confirm");
+                    return dialog.ConfirmCommand.ExecuteAsync();
+                }
+                dialog.DismissCommand.Execute(null);
+                return Task.CompletedTask;
+            }
+        };
         await using var model = ObjectStorageWorkspaceNavigationTests.Create(service, dialogs);
         await model.InitializeAsync(TestContext.Current.CancellationToken);
-        model.Entries[0].IsChecked = true;
+        foreach (var row in model.Entries.Where(row => row.Key != "keep.txt")) row.IsChecked = true;
         await model.DeleteCommand.ExecuteAsync();
 
-        Assert.Same(plan, dialogs.PresentedPlan);
-        Assert.Equal(confirm ? 1 : 0, service.DeletedPlans.Count);
-        if (confirm) Assert.Same(plan, Assert.Single(service.DeletedPlans));
+        Assert.Empty(model.ActionError);
+        Assert.Equal(["docs/", "selected.txt"], shownKeys);
+        Assert.Equal(confirm ? ["show", "confirm", "collect"] : ["show"], events);
+        Assert.Equal(confirm ? 2 : 1, service.ListCalls.Count);
+        if (confirm)
+        {
+            Assert.NotNull(collectedEntries);
+            Assert.Equal(shownKeys, collectedEntries.Select(entry => entry.Key));
+            Assert.Same(plan, Assert.Single(service.DeletedPlans));
+        }
+        else Assert.Empty(service.DeletedPlans);
     }
 
     /// <summary>默认同名策略在确认前不覆盖，取消明确留下跳过结果。</summary>

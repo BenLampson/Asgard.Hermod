@@ -37,7 +37,7 @@ public sealed class LocalObjectStoragePolicyTests
 
     /// <summary>目录枚举包含所有分页和占位对象，执行阶段不再增加新增对象到删除范围。</summary>
     [Fact]
-    public async Task Deletion_UsesCompleteConfirmedKeysWithoutReenumerating()
+    public async Task Deletion_CollectsInPagesAndUsesCompleteKeysWithoutReenumerating()
     {
         int listCalls = 0;
         var client = new FakeObjectStorageClient
@@ -47,7 +47,7 @@ public sealed class LocalObjectStoragePolicyTests
                 listCalls++;
                 Assert.Equal("docs/", prefix);
                 Assert.Null(delimiter);
-                Assert.Equal(100, size);
+                Assert.Equal(1000, size);
                 return Task.FromResult(token is null
                     ? new ObjectStoragePage([new("docs/", true), new("docs/a.txt", false)], "second")
                     : new ObjectStoragePage([new("docs/sub/", true), new("docs/sub/b.txt", false)]));
@@ -56,39 +56,42 @@ public sealed class LocalObjectStoragePolicyTests
         var context = ObjectStorageTestServices.Create(client);
         ObjectStorageBucket bucket = new("test-bucket", "cn-hangzhou");
 
+        var progress = new DeleteProgressRecorder();
         ObjectStorageDeletePlan plan = await context.Service.PrepareDeletionAsync("saved-instance", bucket,
-            [new("docs/", true), new("outside.txt", false), new("docs/a.txt", false)], TestContext.Current.CancellationToken);
+            [new("docs/", true), new("outside.txt", false), new("docs/a.txt", false)], progress, TestContext.Current.CancellationToken);
 
         Assert.Equal(2, listCalls);
+        Assert.Equal([3, 3, 5], progress.Counts);
         Assert.Equal(["docs/", "docs/a.txt", "docs/sub/", "docs/sub/b.txt", "outside.txt"], plan.Keys);
         client.ListObjects = (_, _, _, _, _, _) => throw new InvalidOperationException("执行阶段不得再次枚举目录。");
         client.Delete = (_, keys, _) =>
         {
             Assert.Equal(plan.Keys, keys);
-            Assert.DoesNotContain("docs/new-after-confirmation.txt", keys);
+            Assert.DoesNotContain("docs/new-after-collection.txt", keys);
             return Task.CompletedTask;
         };
-        await context.Service.DeleteAsync("saved-instance", bucket, plan, TestContext.Current.CancellationToken);
+        await context.Service.DeleteAsync("saved-instance", bucket, plan, cancellationToken: TestContext.Current.CancellationToken);
         Assert.Equal(2, listCalls);
     }
 
-    /// <summary>不可信范围和重复游标不能生成供 UI 确认的删除清单。</summary>
+    /// <summary>不可信范围和无效游标不能生成供执行的删除清单。</summary>
     [Theory]
-    [InlineData(false, "InvalidDeleteRange")]
-    [InlineData(true, "InvalidResponse")]
-    public async Task PrepareDeletionAsync_RejectsInvalidScopeOrRepeatedCursor(bool repeat, string expectedCode)
+    [InlineData(null, "InvalidDeleteRange")]
+    [InlineData("same-cursor", "InvalidResponse")]
+    [InlineData("", "InvalidResponse")]
+    public async Task PrepareDeletionAsync_RejectsInvalidScopeOrCursor(string? nextToken, string expectedCode)
     {
         var client = new FakeObjectStorageClient
         {
-            ListObjects = (_, _, _, _, _, _) => Task.FromResult(repeat
-                ? new ObjectStoragePage([new("docs/a.txt", false)], "same-cursor")
+            ListObjects = (_, _, _, _, _, _) => Task.FromResult(nextToken is not null
+                ? new ObjectStoragePage([new("docs/a.txt", false)], nextToken)
                 : new ObjectStoragePage([new("docs-other/outside.txt", false)])),
             Delete = (_, _, _) => throw new InvalidOperationException("准备阶段不能写远程数据。"),
         };
         var context = ObjectStorageTestServices.Create(client);
 
         ObjectStorageException error = await Assert.ThrowsAsync<ObjectStorageException>(() => context.Service.PrepareDeletionAsync(
-            "saved-instance", new("test-bucket", "cn-hangzhou"), [new("docs/", true)], TestContext.Current.CancellationToken));
+            "saved-instance", new("test-bucket", "cn-hangzhou"), [new("docs/", true)], cancellationToken: TestContext.Current.CancellationToken));
 
         Assert.Equal(expectedCode, error.ErrorCode);
     }
@@ -110,12 +113,67 @@ public sealed class LocalObjectStoragePolicyTests
         var context = ObjectStorageTestServices.Create(client);
         string[] keys = Enumerable.Range(0, 1001).Select(index => $"docs/file-{index}.txt").ToArray();
 
+        var progress = new DeleteProgressRecorder();
         ObjectStorageException error = await Assert.ThrowsAsync<ObjectStorageException>(() => context.Service.DeleteAsync(
-            "saved-instance", new("test-bucket", "cn-hangzhou"), new(keys), TestContext.Current.CancellationToken));
+            "saved-instance", new("test-bucket", "cn-hangzhou"), new(keys), progress, TestContext.Current.CancellationToken));
 
         Assert.Equal("PartialDelete", error.ErrorCode);
+        Assert.Equal([1000], progress.Counts);
         Assert.Equal([1000, 1], batches.Select(batch => batch.Length));
         Assert.Equal(keys, batches.SelectMany(batch => batch));
+    }
+
+    /// <summary>停止时保留已确认的进度，不再发送下一批。</summary>
+    [Fact]
+    public async Task DeleteAsync_StopsBeforeSendingNextBatch()
+    {
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+        int requests = 0;
+        var client = new FakeObjectStorageClient
+        {
+            Delete = (_, _, _) =>
+            {
+                requests++;
+                cancellation.Cancel();
+                return Task.CompletedTask;
+            },
+        };
+        var context = ObjectStorageTestServices.Create(client);
+        var progress = new DeleteProgressRecorder();
+        string[] keys = Enumerable.Range(0, 1001).Select(index => $"docs/file-{index}.txt").ToArray();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => context.Service.DeleteAsync(
+            "saved-instance", new("test-bucket", "cn-hangzhou"), new(keys), progress, cancellation.Token));
+
+        Assert.Equal(1, requests);
+        Assert.Equal([1000], progress.Counts);
+    }
+
+    /// <summary>界面关闭造成的进度通知异常不能把已经提交的请求报告为失败。</summary>
+    [Fact]
+    public async Task DeleteAsync_CompletesAllBatchesWhenProgressObserverThrows()
+    {
+        int requests = 0;
+        var client = new FakeObjectStorageClient { Delete = (_, _, _) => { requests++; return Task.CompletedTask; } };
+        var context = ObjectStorageTestServices.Create(client);
+        var progress = new DeleteProgressRecorder(throwOnReport: true);
+        string[] keys = Enumerable.Range(0, 1001).Select(index => $"docs/file-{index}.txt").ToArray();
+
+        await context.Service.DeleteAsync("saved-instance", new("test-bucket", "cn-hangzhou"), new(keys), progress,
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(2, requests);
+        Assert.Equal([1000, 1001], progress.Counts);
+    }
+
+    private sealed class DeleteProgressRecorder(bool throwOnReport = false) : IProgress<int>
+    {
+        internal List<int> Counts { get; } = [];
+        public void Report(int value)
+        {
+            Counts.Add(value);
+            if (throwOnReport) throw new InvalidOperationException("Progress observer was closed.");
+        }
     }
 
     /// <summary>新建目录检测同名普通对象，并将未授权覆盖标志交给服务端写入。</summary>

@@ -108,11 +108,11 @@ public sealed class WindowsObjectStorageDialogService : IObjectStorageDialogServ
         return Task.FromResult(Show(new ObjectStorageFolderWindow(model)) == true ? model.Result : null);
     }
 
-    /// <summary>只确认服务已枚举的键清单，窗体不扩大前缀删除范围。</summary>
-    public Task<bool> ConfirmDeleteAsync(ObjectStorageBucket bucket, string prefix, ObjectStorageDeletePlan plan)
+    /// <inheritdoc />
+    public Task ShowDeleteAsync(ObjectStorageDeleteDialogViewModel model)
     {
-        using var model = ObjectStorageConfirmationDialogViewModel.ForDelete(bucket, prefix, plan);
-        return Task.FromResult(Show(new ObjectStorageConfirmationWindow(model)) == true && model.Result);
+        Show(new ObjectStorageDeleteWindow(model));
+        return Task.CompletedTask;
     }
 
     /// <summary>默认策略下每一个同名对象都由用户主动确认覆盖。</summary>

@@ -414,9 +414,6 @@
   <data xml:space="preserve" name="DeleteAndItsChildTags">
     <value>Delete {0} and its child tags?</value>
   </data>
-  <data xml:space="preserve" name="DeleteObjects">
-    <value>Delete {0} objects</value>
-  </data>
   <data xml:space="preserve" name="DeleteObjects2">
     <value>Delete objects</value>
   </data>
@@ -428,9 +425,6 @@
   </data>
   <data xml:space="preserve" name="DeleteTags">
     <value>Delete {0} tags</value>
-  </data>
-  <data xml:space="preserve" name="DeleteTheseObjects">
-    <value>Delete these {0} objects?</value>
   </data>
   <data xml:space="preserve" name="Deploy">
     <value>Deploy</value>
@@ -5665,4 +5659,19 @@ Address: {2}</value></data>
   <data name="MySqlCatalogEngine" xml:space="preserve"><value>Engine</value></data>
   <data name="MySqlCatalogRows" xml:space="preserve"><value>Rows (estimated)</value></data>
   <data name="MySqlCatalogComment" xml:space="preserve"><value>Comment</value></data>
+  <data name="ObjectStorageDeleteConfirmSelection" xml:space="preserve"><value>Delete {0:N0} selected items?</value></data>
+  <data name="ObjectStorageDeleteSelection" xml:space="preserve"><value>Items selected for deletion</value></data>
+  <data name="ObjectStorageDeleteRecursiveWarning" xml:space="preserve"><value>This deletes the selected items and everything inside the selected folders, including subfolders. Hermod will collect the objects first, then delete them in batches. You cannot undo this in Hermod.</value></data>
+  <data name="ObjectStorageDeleteStepCollect" xml:space="preserve"><value>Step 1 of 2: Find objects</value></data>
+  <data name="ObjectStorageDeleteCollectProgress" xml:space="preserve"><value>Found {0:N0} items to delete.</value></data>
+  <data name="ObjectStorageDeleteStepDelete" xml:space="preserve"><value>Step 2 of 2: Delete objects</value></data>
+  <data name="ObjectStorageDeleteBatchProgress" xml:space="preserve"><value>Deleted {0:N0} of {1:N0} items.</value></data>
+  <data name="ObjectStorageDeleteStop" xml:space="preserve"><value>Stop</value></data>
+  <data name="ObjectStorageDeleteStopping" xml:space="preserve"><value>Stopping…</value></data>
+  <data name="ObjectStorageDeleteCollectStopped" xml:space="preserve"><value>Stopped collecting objects. No items were deleted.</value></data>
+  <data name="ObjectStorageDeleteStopped" xml:space="preserve"><value>Deletion stopped. Requests already sent may have taken effect. Check the list after it refreshes.</value></data>
+  <data name="ObjectStorageDeleteEmpty" xml:space="preserve"><value>No items to delete.</value></data>
+  <data name="ObjectStorageDeleteCompleted" xml:space="preserve"><value>Deletion complete.</value></data>
+  <data name="ObjectStorageDeleteCollectFailed" xml:space="preserve"><value>Could not finish collecting objects. No items were deleted. {0}</value></data>
+  <data name="ObjectStorageDeleteFailed" xml:space="preserve"><value>Deletion did not finish. Some items may already have been deleted. {0}</value></data>
 </root>

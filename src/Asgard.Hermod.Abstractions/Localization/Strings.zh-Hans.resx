@@ -414,9 +414,6 @@
   <data xml:space="preserve" name="DeleteAndItsChildTags">
     <value>删除 {0} 及其子标签？</value>
   </data>
-  <data xml:space="preserve" name="DeleteObjects">
-    <value>删除 {0} 个对象</value>
-  </data>
   <data xml:space="preserve" name="DeleteObjects2">
     <value>删除对象</value>
   </data>
@@ -428,9 +425,6 @@
   </data>
   <data xml:space="preserve" name="DeleteTags">
     <value>删除 {0} 个标签</value>
-  </data>
-  <data xml:space="preserve" name="DeleteTheseObjects">
-    <value>删除这 {0} 个对象？</value>
   </data>
   <data xml:space="preserve" name="Deploy">
     <value>部署</value>
@@ -5665,4 +5659,19 @@ SQL：
   <data name="MySqlCatalogEngine" xml:space="preserve"><value>引擎</value></data>
   <data name="MySqlCatalogRows" xml:space="preserve"><value>行数（估计）</value></data>
   <data name="MySqlCatalogComment" xml:space="preserve"><value>注释</value></data>
+  <data name="ObjectStorageDeleteConfirmSelection" xml:space="preserve"><value>删除选中的 {0:N0} 项？</value></data>
+  <data name="ObjectStorageDeleteSelection" xml:space="preserve"><value>选中要删除的项目</value></data>
+  <data name="ObjectStorageDeleteRecursiveWarning" xml:space="preserve"><value>所选文件夹及其中所有内容都会被删除，包括子文件夹。Hermod 会先获取对象，再分批删除。此操作无法在 Hermod 中撤销。</value></data>
+  <data name="ObjectStorageDeleteStepCollect" xml:space="preserve"><value>第 1 步（共 2 步）：获取对象</value></data>
+  <data name="ObjectStorageDeleteCollectProgress" xml:space="preserve"><value>已找到 {0:N0} 个待删除项。</value></data>
+  <data name="ObjectStorageDeleteStepDelete" xml:space="preserve"><value>第 2 步（共 2 步）：删除对象</value></data>
+  <data name="ObjectStorageDeleteBatchProgress" xml:space="preserve"><value>已删除 {0:N0} / {1:N0} 项。</value></data>
+  <data name="ObjectStorageDeleteStop" xml:space="preserve"><value>停止</value></data>
+  <data name="ObjectStorageDeleteStopping" xml:space="preserve"><value>正在停止…</value></data>
+  <data name="ObjectStorageDeleteCollectStopped" xml:space="preserve"><value>已停止获取对象，未删除任何项目。</value></data>
+  <data name="ObjectStorageDeleteStopped" xml:space="preserve"><value>已停止删除。已经发出的请求可能已生效，请查看刷新后的列表。</value></data>
+  <data name="ObjectStorageDeleteEmpty" xml:space="preserve"><value>没有可删除的项目。</value></data>
+  <data name="ObjectStorageDeleteCompleted" xml:space="preserve"><value>删除完成。</value></data>
+  <data name="ObjectStorageDeleteCollectFailed" xml:space="preserve"><value>未能完成对象获取，未删除任何项目。{0}</value></data>
+  <data name="ObjectStorageDeleteFailed" xml:space="preserve"><value>删除未完成，部分项目可能已经删除。{0}</value></data>
 </root>

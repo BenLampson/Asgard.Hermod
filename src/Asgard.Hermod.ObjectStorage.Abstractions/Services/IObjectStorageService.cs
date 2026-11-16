@@ -43,13 +43,13 @@ public interface IObjectStorageService
     Task CreateFolderAsync(string instanceId, ObjectStorageBucket bucket, string prefix, string name,
         CancellationToken cancellationToken = default);
 
-    /// <summary>枚举所选目录的所有对象，返回供用户确认的明确删除范围。</summary>
+    /// <summary>展开已确认的选择，按页报告已收集的去重键数，返回完整的删除清单。</summary>
     Task<ObjectStorageDeletePlan> PrepareDeletionAsync(string instanceId, ObjectStorageBucket bucket,
-        IReadOnlyList<ObjectStorageEntry> entries, CancellationToken cancellationToken = default);
+        IReadOnlyList<ObjectStorageEntry> entries, IProgress<int>? progress = null, CancellationToken cancellationToken = default);
 
-    /// <summary>仅删除已经确认的对象键；部分失败需显式告知，刷新后可重新确认。</summary>
+    /// <summary>仅删除清单中的键，报告服务已确认的累计键数；部分失败需显式告知。</summary>
     Task DeleteAsync(string instanceId, ObjectStorageBucket bucket, ObjectStorageDeletePlan plan,
-        CancellationToken cancellationToken = default);
+        IProgress<int>? progress = null, CancellationToken cancellationToken = default);
 
     /// <summary>生成有限有效期的只读临时链接，不自动发布或发送给其他人。</summary>
     Task<string> CreateTemporaryLinkAsync(string instanceId, ObjectStorageBucket bucket, string key,

@@ -260,7 +260,7 @@ public sealed class LocalObjectStorageTransferTests
         var context = ObjectStorageTestServices.Create(client);
 
         await context.Service.DeleteAsync("saved-instance", new("test-bucket", "cn-hangzhou"), new(["file.txt"]),
-            TestContext.Current.CancellationToken);
+            cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.True(deleted);
         Assert.Equal(1, client.DisposeCount);

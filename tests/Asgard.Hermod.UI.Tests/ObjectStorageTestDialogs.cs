@@ -19,14 +19,12 @@ internal sealed class ObjectStorageTestDialogs : IObjectStorageDialogService
     internal string? DownloadFolder { get; set; }
     /// <summary>已经通过本地校验的目录名。</summary>
     internal string? FolderName { get; set; }
-    /// <summary>删除确认的用户选择。</summary>
-    internal bool ConfirmDeletion { get; set; }
+    /// <summary>删除窗口替身，默认不确认；测试可在检查范围后模拟用户操作。</summary>
+    internal Func<ObjectStorageDeleteDialogViewModel, Task>? DeleteDialogHandler { get; set; }
     /// <summary>同名覆盖确认。</summary>
     internal bool ConfirmOverwrite { get; set; }
     /// <summary>用户实际请求生成链接的有效期，空值表示只打开后取消。</summary>
     internal TimeSpan? GenerateLifetime { get; set; }
-    /// <summary>用户看到的完整删除清单。</summary>
-    internal ObjectStorageDeletePlan? PresentedPlan { get; private set; }
     /// <summary>覆盖确认次数。</summary>
     internal int OverwriteConfirmations { get; private set; }
     /// <summary>明确复制的文本。</summary>
@@ -43,11 +41,7 @@ internal sealed class ObjectStorageTestDialogs : IObjectStorageDialogService
     /// <inheritdoc />
     public Task<string?> RequestFolderNameAsync(ObjectStorageBucket bucket, string prefix) => Task.FromResult(FolderName);
     /// <inheritdoc />
-    public Task<bool> ConfirmDeleteAsync(ObjectStorageBucket bucket, string prefix, ObjectStorageDeletePlan plan)
-    {
-        PresentedPlan = plan;
-        return Task.FromResult(ConfirmDeletion);
-    }
+    public Task ShowDeleteAsync(ObjectStorageDeleteDialogViewModel model) => DeleteDialogHandler?.Invoke(model) ?? Task.CompletedTask;
     /// <inheritdoc />
     public Task<bool> ConfirmOverwriteAsync(string key)
     {

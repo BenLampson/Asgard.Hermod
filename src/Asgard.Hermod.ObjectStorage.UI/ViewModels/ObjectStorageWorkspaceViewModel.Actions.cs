@@ -169,7 +169,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
             finally { _transferGate.Release(); }
         }, _lifetime.Token), bucket, originPrefix);
 
-    /// <summary>只有完整键清单已经展示并确认后才发出删除请求。</summary>
+    /// <summary>先确认选中的范围；收集结束后只删除明确的键，尝试写入后刷新原目录。</summary>
     private async Task DeleteAsync(object? parameter)
     {
         if (SelectedBucket is not { } bucket) return;
@@ -180,11 +180,17 @@ public sealed partial class ObjectStorageWorkspaceViewModel
         if (entries.Length == 0) return;
         await InteractAsync(async () =>
         {
-            var plan = await _service.PrepareDeletionAsync(_instance.Id, bucket, entries, _lifetime.Token);
-            if (IsClosed || plan.Keys.Count == 0) return;
-            if (!await _dialogs.ConfirmDeleteAsync(bucket, prefix, plan) || IsClosed) return;
-            try { await _service.DeleteAsync(_instance.Id, bucket, plan, _lifetime.Token); }
-            finally { if (!IsClosed && SelectedBucket == bucket && Prefix == prefix) await RefreshAsync(_lifetime.Token); }
+            using var model = new ObjectStorageDeleteDialogViewModel(bucket, prefix, entries,
+                (progress, token) => _service.PrepareDeletionAsync(_instance.Id, bucket, entries, progress, token),
+                (plan, progress, token) => _service.DeleteAsync(_instance.Id, bucket, plan, progress, token), _lifetime.Token);
+            try { await _dialogs.ShowDeleteAsync(model); }
+            finally
+            {
+                model.Dispose();
+                await model.Completion;
+                if (model.DeletionStarted && !IsClosed && SelectedBucket == bucket && Prefix == prefix)
+                    await RefreshAsync(_lifetime.Token);
+            }
         });
     }
 

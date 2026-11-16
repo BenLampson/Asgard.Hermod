@@ -98,50 +98,6 @@ public sealed class ObjectStorageDialogWindowTests(WpfTestFixture fixture)
         finally { if (dialog.IsVisible) dialog.Close(); owner.Close(); themes.SetTheme(UiTheme.Light); }
     });
 
-    /// <summary>完整删除清单可滚动查看，危险按钮没有默认确认，并使用当前主题警示色。</summary>
-    [Theory]
-    [InlineData(UiTheme.Light)]
-    [InlineData(UiTheme.Dark)]
-    public Task DeleteDialog_ContainsAllExactKeysAndOnlyExplicitClickConfirms(UiTheme theme) => fixture.RunAsync(async () =>
-    {
-        var themes = new ThemeService(Application.Current.Resources);
-        themes.SetTheme(theme);
-        string[] keys = ["releases/config.json", "releases/nested/manifest.json", "releases/" + new string('x', 200) + ".txt"];
-        using var model = ObjectStorageConfirmationDialogViewModel.ForDelete(Bucket(), "releases/", new(keys));
-        var owner = ObjectStorageDialogTestVisuals.CreateOwner();
-        var dialog = new ObjectStorageConfirmationWindow(model) { Opacity = 0 };
-        try
-        {
-            owner.Show();
-            dialog.Owner = owner;
-            bool? result = await ModalWindowTestInteraction.ShowAsync(dialog, async () =>
-            {
-                ObjectStorageDialogTestVisuals.AssertCommonFrame(dialog, owner, 620, 420);
-                var list = Assert.IsType<ItemsControl>(dialog.FindName("ObjectKeys"));
-                Assert.Equal(3, list.Items.Count);
-                foreach (string key in keys)
-                    Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(list), text => text.Text == key);
-                var confirm = ObjectStorageDialogTestVisuals.CommandButton(dialog, model.ConfirmCommand);
-                Assert.False(confirm.IsDefault);
-                Assert.False(model.Result);
-                Assert.Equal(((SolidColorBrush)Application.Current.FindResource("DangerBrush")).Color,
-                    Assert.IsType<SolidColorBrush>(confirm.Background).Color);
-                await WindowPreviewCapture.VerifyAsync(dialog, $"object-storage-delete-{theme}");
-                WindowTestVisuals.Invoke(confirm);
-                await WpfTestFixture.DrainDispatcherAsync();
-            });
-            Assert.Equal<bool?>(true, result);
-            Assert.True(model.Result);
-            Assert.True(WindowInteractionNativeMethods.IsEnabled(owner));
-        }
-        finally
-        {
-            if (dialog.IsVisible) dialog.Close();
-            owner.Close();
-            themes.SetTheme(UiTheme.Light);
-        }
-    });
-
     /// <summary>对话框测试不会连接真实对象服务。</summary>
     private static ObjectStorageBucket Bucket() => new("assets-dev", "cn-hangzhou");
 }

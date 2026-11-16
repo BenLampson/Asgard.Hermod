@@ -24,9 +24,9 @@ internal sealed class ObjectStorageTestService : IObjectStorageService
     /// <summary>下载回调可模拟取消。</summary>
     internal Func<string, string, IProgress<ObjectStorageTransferProgress>?, CancellationToken, Task>? DownloadHandler { get; set; }
     /// <summary>准备删除返回完整展开后的目录对象键。</summary>
-    internal Func<IReadOnlyList<ObjectStorageEntry>, CancellationToken, Task<ObjectStorageDeletePlan>>? PrepareDeleteHandler { get; set; }
+    internal Func<IReadOnlyList<ObjectStorageEntry>, IProgress<int>?, CancellationToken, Task<ObjectStorageDeletePlan>>? PrepareDeleteHandler { get; set; }
     /// <summary>删除失败和部分失败由测试指定。</summary>
-    internal Func<ObjectStorageDeletePlan, CancellationToken, Task>? DeleteHandler { get; set; }
+    internal Func<ObjectStorageDeletePlan, IProgress<int>?, CancellationToken, Task>? DeleteHandler { get; set; }
     /// <summary>创建目录可以失败或记录业务行为。</summary>
     internal Func<string, string, CancellationToken, Task>? CreateFolderHandler { get; set; }
     /// <summary>生成链接必须只在用户触发回调后调用。</summary>
@@ -99,13 +99,14 @@ internal sealed class ObjectStorageTestService : IObjectStorageService
         CreateFolderHandler?.Invoke(prefix, name, cancellationToken) ?? Task.CompletedTask;
     /// <inheritdoc />
     public Task<ObjectStorageDeletePlan> PrepareDeletionAsync(string instanceId, ObjectStorageBucket bucket,
-        IReadOnlyList<ObjectStorageEntry> entries, CancellationToken cancellationToken = default) =>
-        PrepareDeleteHandler?.Invoke(entries, cancellationToken) ?? Task.FromResult(new ObjectStorageDeletePlan(entries.Select(entry => entry.Key).ToArray()));
+        IReadOnlyList<ObjectStorageEntry> entries, IProgress<int>? progress = null, CancellationToken cancellationToken = default) =>
+        PrepareDeleteHandler?.Invoke(entries, progress, cancellationToken) ?? Task.FromResult(new ObjectStorageDeletePlan(entries.Select(entry => entry.Key).ToArray()));
     /// <inheritdoc />
-    public Task DeleteAsync(string instanceId, ObjectStorageBucket bucket, ObjectStorageDeletePlan plan, CancellationToken cancellationToken = default)
+    public Task DeleteAsync(string instanceId, ObjectStorageBucket bucket, ObjectStorageDeletePlan plan,
+        IProgress<int>? progress = null, CancellationToken cancellationToken = default)
     {
         DeletedPlans.Add(plan);
-        return DeleteHandler?.Invoke(plan, cancellationToken) ?? Task.CompletedTask;
+        return DeleteHandler?.Invoke(plan, progress, cancellationToken) ?? Task.CompletedTask;
     }
     /// <inheritdoc />
     public Task<string> CreateTemporaryLinkAsync(string instanceId, ObjectStorageBucket bucket, string key,

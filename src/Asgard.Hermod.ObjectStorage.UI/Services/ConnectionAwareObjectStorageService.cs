@@ -32,10 +32,13 @@ internal sealed class ConnectionAwareObjectStorageService(IObjectStorageService 
     public Task CreateFolderAsync(string id, ObjectStorageBucket bucket, string prefix, string name, CancellationToken token = default) =>
         ObserveAsync(() => inner.CreateFolderAsync(id, bucket, prefix, name, token), token);
     /// <inheritdoc />
-    public Task<ObjectStorageDeletePlan> PrepareDeletionAsync(string id, ObjectStorageBucket bucket, IReadOnlyList<ObjectStorageEntry> entries, CancellationToken token = default) =>
-        ObserveAsync(() => inner.PrepareDeletionAsync(id, bucket, entries, token), token);
+    public Task<ObjectStorageDeletePlan> PrepareDeletionAsync(string id, ObjectStorageBucket bucket, IReadOnlyList<ObjectStorageEntry> entries,
+        IProgress<int>? progress = null, CancellationToken cancellationToken = default) =>
+        ObserveAsync(() => inner.PrepareDeletionAsync(id, bucket, entries, progress, cancellationToken), cancellationToken);
     /// <inheritdoc />
-    public Task DeleteAsync(string id, ObjectStorageBucket bucket, ObjectStorageDeletePlan plan, CancellationToken token = default) => ObserveAsync(() => inner.DeleteAsync(id, bucket, plan, token), token);
+    public Task DeleteAsync(string id, ObjectStorageBucket bucket, ObjectStorageDeletePlan plan,
+        IProgress<int>? progress = null, CancellationToken cancellationToken = default) =>
+        ObserveAsync(() => inner.DeleteAsync(id, bucket, plan, progress, cancellationToken), cancellationToken);
     /// <inheritdoc />
     public Task<string> CreateTemporaryLinkAsync(string id, ObjectStorageBucket bucket, string key, TimeSpan lifetime, CancellationToken token = default) =>
         ObserveAsync(() => inner.CreateTemporaryLinkAsync(id, bucket, key, lifetime, token), token);

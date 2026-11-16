@@ -17,8 +17,8 @@ public interface IObjectStorageDialogService
     /// <summary>读取通过验证的当前目录名称。</summary>
     Task<string?> RequestFolderNameAsync(ObjectStorageBucket bucket, string prefix);
 
-    /// <summary>展示完整对象键范围，并要求用户明确确认删除。</summary>
-    Task<bool> ConfirmDeleteAsync(ObjectStorageBucket bucket, string prefix, ObjectStorageDeletePlan plan);
+    /// <summary>展示选中的删除范围，显式确认后在同一窗体中展示进度。</summary>
+    Task ShowDeleteAsync(ObjectStorageDeleteDialogViewModel model);
 
     /// <summary>默认策略下对同名对象确认覆盖。</summary>
     Task<bool> ConfirmOverwriteAsync(string key);

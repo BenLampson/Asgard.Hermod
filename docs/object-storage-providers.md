@@ -78,6 +78,14 @@ implicit and empty subfolders once, exclude the selected folder itself, and
 describe currently visible objects rather than historical versions. Concurrent
 remote changes can affect this scan; it is not an atomic snapshot.
 
+Deleting objects first shows the selected files and folders and warns that folder
+deletion includes all descendants. After you confirm, step 1 collects object keys
+and shows a running count with an indeterminate progress bar. Step 2 shows the
+number of keys the service has confirmed against the full total. A failed or
+stopped scan sends no delete requests. Stopping during deletion does not undo
+requests already sent. The browser refreshes the original directory after the
+dialog closes if any delete request was attempted.
+
 Supported operations include paginated bucket/object listing, object metadata,
 range reads and downloads, single and multipart uploads, deletion, and temporary
 GET links. Links must expire within seven days and can stop working earlier when

@@ -14,7 +14,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel
     public AsyncRelayCommand DownloadCommand { get; }
     /// <summary>下载所有勾选对象及目录。</summary>
     public AsyncRelayCommand BatchDownloadCommand { get; }
-    /// <summary>先枚举再确认删除的完整范围。</summary>
+    /// <summary>先确认选中的删除范围，再收集和分批删除。</summary>
     public AsyncRelayCommand DeleteCommand { get; }
     /// <summary>生成有限期只读签名 URL。</summary>
     public AsyncRelayCommand TemporaryLinkCommand { get; }
