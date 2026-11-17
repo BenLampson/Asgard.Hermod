@@ -1,4 +1,5 @@
 using Asgard.Hermod.Agent;
+using Asgard.Hermod.Mcp;
 
 namespace Asgard.Hermod;
 
@@ -49,6 +50,7 @@ public partial class App : Application
             services.AddMySql();
             services.AddPostgreSql();
             services.AddRabbitMq();
+            services.AddHermodMcp(McpLaunchCommand.Get());
             services.AddSingleton<ITerminalSessionFactory, LocalTerminalSessionFactory>();
             services.AddSingleton<IApplicationUpdateService>(_ => new Updates.WindowsApplicationUpdateService(() => MainWindow));
             services.AddHermodUi(() => Asgard.Hermod.UI.Windowing.DialogOwner.Current ?? MainWindow, Resources);
@@ -82,6 +84,7 @@ public partial class App : Application
             var shell = ActivatorUtilities.CreateInstance<ShellViewModel>(provider);
             var workspaceWindows = new Asgard.Hermod.UI.Windowing.WorkspaceWindowHost(shell.Workspace);
             await shell.InitializeAsync();
+            var mcp = provider.GetRequiredService<McpDesktopServer>();
             ITrayIcon? tray = null;
             try { tray = new Asgard.Hermod.UI.Windowing.WindowsTrayIcon(); }
             catch (Exception) { /* 通知区域不可用时仍保留可访问主窗体。 */ }
@@ -89,8 +92,10 @@ public partial class App : Application
             var window = new MainWindow(shell, workspaceWindows, tray, provider.GetRequiredService<ITrayPreferenceStore>(), FinishExitAsync,
                 closePreferences: provider.GetRequiredService<IMainWindowClosePreferenceStore>());
             window.ExitCommitted += _instance.BeginExit;
+            window.ExitCommitted += mcp.Stop;
             MainWindow = window;
             window.Show();
+            mcp.Start();
             provider.GetRequiredService<ApplicationUpdateViewModel>().Start();
             _instance.SetActivationHandler(() => Dispatcher.BeginInvoke(() => window.NotifyAlreadyRunning()));
             if (tray is null)

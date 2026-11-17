@@ -1,0 +1,78 @@
+<UserControl x:Class="Asgard.Hermod.UI.Views.Dialogs.McpSettingsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="McpVisibility" />
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="28" MaxWidth="650" HorizontalAlignment="Stretch">
+            <TextBlock Text="{loc:Loc McpSettingsTitle}" FontSize="24" FontWeight="SemiBold" />
+            <TextBlock Text="{loc:Loc McpSettingsDescription}" Margin="0,8,0,20" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" />
+            <Border Background="{DynamicResource AppBackgroundBrush}" CornerRadius="6" Padding="16">
+                <StackPanel>
+                    <TextBlock Text="{Binding StateText}" FontWeight="SemiBold" AutomationProperties.LiveSetting="Polite" />
+                    <WrapPanel Margin="0,8,0,8">
+                        <Button x:Name="McpToggle" Content="{Binding ToggleLabel}" Command="{Binding ToggleCommand}" Margin="0,0,8,4" Padding="12,0" />
+                        <Button Content="{loc:Loc McpCopyConfiguration}" Command="{Binding CopyCommand}" Margin="0,0,8,4" Padding="12,0" />
+                        <Button Content="{loc:Loc Refresh}" Command="{Binding RefreshCommand}" Margin="0,0,0,4" Padding="12,0" />
+                    </WrapPanel>
+                    <TextBlock Text="{loc:Loc McpClientHint}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" />
+                </StackPanel>
+            </Border>
+            <TextBlock Text="{Binding Message}" Margin="0,8,0,0" TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite" />
+            <TextBlock Text="{loc:Loc McpGrantedInstances}" FontSize="16" FontWeight="SemiBold" Margin="0,16,0,8" />
+            <TextBlock Text="{loc:Loc McpNoGrants}" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap"
+                       Visibility="{Binding NoGrants, Converter={StaticResource McpVisibility}}" />
+            <ItemsControl ItemsSource="{Binding Grants}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="{DynamicResource LineSoftBrush}" BorderThickness="0,0,0,1" Padding="0,8">
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Name}" TextWrapping="Wrap" FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding Scope}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" />
+                                    <TextBlock Text="{loc:Loc McpGrantExpired}" Foreground="{DynamicResource WarningBrush}" TextWrapping="Wrap">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                                <Style.Triggers><DataTrigger Binding="{Binding IsCurrent}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                                <Button Grid.Column="1" Content="{loc:Loc McpRevoke}" CommandParameter="{Binding}"
+                                        Command="{Binding DataContext.RevokeCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        Padding="10,0" Margin="12,0,0,0" VerticalAlignment="Center" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Text="{loc:Loc McpAddGrant}" FontSize="16" FontWeight="SemiBold" Margin="0,22,0,8" />
+            <TextBlock Text="{loc:Loc McpSelectInstance}" Margin="0,0,0,4" />
+            <ComboBox x:Name="McpTargetPicker" ItemsSource="{Binding Targets}" SelectedItem="{Binding SelectedTarget}" DisplayMemberPath="Label"
+                      AutomationProperties.Name="{loc:Loc McpSelectInstance}" />
+            <StackPanel Margin="0,10,0,0" Visibility="{Binding ShowResource, Converter={StaticResource McpVisibility}}">
+                <TextBlock Text="{Binding ResourceLabel}" />
+                <TextBox Text="{Binding Resource, UpdateSourceTrigger=PropertyChanged}" MaxLength="253" AutomationProperties.Name="{Binding ResourceLabel}" />
+            </StackPanel>
+            <StackPanel Margin="0,10,0,0" Visibility="{Binding ShowQualifier, Converter={StaticResource McpVisibility}}">
+                <TextBlock Text="{Binding QualifierLabel}" />
+                <TextBox Text="{Binding Qualifier, UpdateSourceTrigger=PropertyChanged}" MaxLength="1024" AutomationProperties.Name="{Binding QualifierLabel}" />
+            </StackPanel>
+            <StackPanel Margin="0,10,0,0" Visibility="{Binding ShowTable, Converter={StaticResource McpVisibility}}">
+                <TextBlock Text="{loc:Loc McpTable}" />
+                <TextBox Text="{Binding Table, UpdateSourceTrigger=PropertyChanged}" MaxLength="128" AutomationProperties.Name="{loc:Loc McpTable}" />
+            </StackPanel>
+            <TextBlock Text="{Binding ScopeHint}" Margin="0,8,0,0" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" />
+            <CheckBox x:Name="McpShareContent" IsChecked="{Binding ShareContent}" Margin="0,10,0,0" AutomationProperties.Name="{Binding ContentLabel}"
+                      Visibility="{Binding ShowContent, Converter={StaticResource McpVisibility}}">
+                <TextBlock Text="{Binding ContentLabel}" TextWrapping="Wrap" />
+            </CheckBox>
+            <Button Content="{loc:Loc McpAddGrant}" Command="{Binding GrantCommand}" HorizontalAlignment="Left" Style="{StaticResource PrimaryButton}"
+                    Padding="16,0" Margin="0,12,0,0" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

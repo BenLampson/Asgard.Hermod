@@ -21,6 +21,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Asgard.Hermod.Identity\Asgard.Hermod.Identity.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Mcp\Asgard.Hermod.Mcp.csproj" />
+    <ProjectReference Include="..\Asgard.Hermod.Mcp.Stdio\Asgard.Hermod.Mcp.Stdio.csproj"
+                      Private="false" ReferenceOutputAssembly="false" OutputItemType="_McpLauncherAssembly" />
     <ProjectReference Include="..\Asgard.Hermod.UI\Asgard.Hermod.UI.csproj" />
     <ProjectReference Include="..\Asgard.Hermod.Core\Asgard.Hermod.Core.csproj" />
     <ProjectReference Include="..\Asgard.Hermod.Persistence.Sqlite\Asgard.Hermod.Persistence.Sqlite.csproj" />
@@ -41,4 +44,15 @@
     <ProjectReference Include="..\Asgard.Hermod.PostgreSql.UI\Asgard.Hermod.PostgreSql.UI.csproj" />
     <ProjectReference Include="..\Asgard.Hermod.RabbitMq.UI\Asgard.Hermod.RabbitMq.UI.csproj" />
   </ItemGroup>
+  <Target Name="IncludeHermodMcpLauncher" AfterTargets="ResolveProjectReferences" Condition="'@(_McpLauncherAssembly)' != ''">
+    <!-- 控制台入口复用主程序的运行时和共享资源，但不成为 WPF 的程序集引用。 -->
+    <ItemGroup>
+      <_McpLauncherFile Include="@(_McpLauncherAssembly)" />
+      <_McpLauncherFile Include="@(_McpLauncherAssembly->'%(RootDir)%(Directory)%(Filename).exe')" />
+      <_McpLauncherFile Include="@(_McpLauncherAssembly->'%(RootDir)%(Directory)%(Filename).deps.json')" />
+      <_McpLauncherFile Include="@(_McpLauncherAssembly->'%(RootDir)%(Directory)%(Filename).runtimeconfig.json')" />
+      <ContentWithTargetPath Include="@(_McpLauncherFile)" TargetPath="%(_McpLauncherFile.Filename)%(_McpLauncherFile.Extension)"
+                             CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>
+  </Target>
 </Project>

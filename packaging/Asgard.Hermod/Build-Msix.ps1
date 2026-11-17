@@ -56,6 +56,11 @@ if ($LASTEXITCODE -ne 0) {
 if (-not (Test-Path -LiteralPath (Join-Path $stagingDirectory 'zh-Hans/Asgard.Hermod.Abstractions.resources.dll'))) {
     throw 'The Simplified Chinese satellite resources are missing from the publish output.'
 }
+foreach ($mcpFile in @('Hermod.Mcp.exe', 'Hermod.Mcp.dll', 'Hermod.Mcp.deps.json', 'Hermod.Mcp.runtimeconfig.json')) {
+    if (-not (Test-Path -LiteralPath (Join-Path $stagingDirectory $mcpFile) -PathType Leaf)) {
+        throw "The MCP launcher file '$mcpFile' is missing from the publish output."
+    }
+}
 
 # 安装包保留项目许可、隐私政策和派生终端代码的上游许可，避免仅在源码仓库中提供声明。
 foreach ($document in @('LICENSE', 'NOTICE', 'THIRD-PARTY-NOTICES.md', 'PRIVACY.md')) {

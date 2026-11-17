@@ -24,7 +24,8 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         IAccountService? accounts = null, Func<Task>? openAccount = null, IMainWindowClosePreferenceStore? closePreferences = null,
         Agent.AgentConfiguration? agentConfiguration = null, IAgentPreferenceStore? agentPreferences = null,
         Agent.AgentModelCatalog? modelCatalog = null, Agent.IAgentClient? agentClient = null,
-        ApplicationUpdateViewModel? updates = null, IConfigurationSyncService? automaticSync = null, Func<Task>? resolveConflicts = null)
+        ApplicationUpdateViewModel? updates = null, IConfigurationSyncService? automaticSync = null, Func<Task>? resolveConflicts = null,
+        IMcpSettingsService? mcp = null)
     {
         ArgumentNullException.ThrowIfNull(tags);
         ArgumentNullException.ThrowIfNull(dialogs);
@@ -34,6 +35,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         CloseSettings = closePreferences is null ? null : new(closePreferences);
         AgentSettings = modelCatalog is null && agentConfiguration is not null && agentPreferences is not null ? new(agentConfiguration, agentPreferences) : null;
         AgentModels = modelCatalog is not null && agentClient is not null ? new(modelCatalog, agentClient) : null;
+        Mcp = mcp is null ? null : new(mcp);
         _accounts = accounts; _sync = automaticSync;
         ResolveConflictsCommand = new AsyncRelayCommand(_ => resolveConflicts?.Invoke() ?? Task.CompletedTask,
             _ => !_disposed && HasSyncConflict && resolveConflicts is not null);
@@ -47,6 +49,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         [
             new("general", Text.Get("General"), "sliders-horizontal", languageStore is not null || closePreferences is not null),
             new("agent", Text.Get("AgentSettingsTitle"), "sparkles", AgentModels is not null || AgentSettings is not null),
+            new("mcp", Text.Get("McpSettingsTitle"), "plug", Mcp is not null),
             new("tags", Text.Get("TagManagement"), "tags", true),
             new("storage", Text.Get("Storage"), "hard-drive", Storage is not null),
             new("file-opening", Text.Get("FileOpening"), "folder-open", fileRules is not null),
@@ -85,6 +88,10 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
     public AgentModelsViewModel? AgentModels { get; }
     /// <summary>AI 设置使用稳定导航标识。</summary>
     public bool IsAgentSelected => SelectedCategory.Id == "agent";
+    /// <summary>外部 AI 工具入口独立于内置模型设置。</summary>
+    public McpSettingsViewModel? Mcp { get; }
+    /// <summary>协议入口通过固定导航标识选择。</summary>
+    public bool IsMcpSelected => SelectedCategory.Id == "mcp";
 
     /// <summary>系统选项和语言原名组成稳定选择列表，新增语种无需修改设置视图。</summary>
     public IReadOnlyList<Asgard.Hermod.Abstractions.Localization.LanguageOption> Languages { get; }
@@ -162,6 +169,8 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
             if (value is null || !Categories.Contains(value) || !SetProperty(ref _selectedCategory, value)) return;
             OnPropertyChanged(nameof(IsGeneralSelected));
             OnPropertyChanged(nameof(IsAgentSelected));
+            OnPropertyChanged(nameof(IsMcpSelected));
+            if (IsMcpSelected && Mcp is not null) _ = Mcp.RefreshAsync();
             OnPropertyChanged(nameof(IsTagsSelected));
             OnPropertyChanged(nameof(IsFileOpeningSelected));
             OnPropertyChanged(nameof(IsStorageSelected));
@@ -189,7 +198,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         if (_accounts is not null) _accounts.AccountChanged -= OnAccountChanged;
         OpenAccountCommand.NotifyCanExecuteChanged(); ResolveConflictsCommand.NotifyCanExecuteChanged();
         if (_sync is not null) _sync.Changed -= OnSyncChanged;
-        Tags.Dispose(); Storage?.Dispose(); AgentSettings?.Dispose(); AgentModels?.Dispose();
+        Tags.Dispose(); Storage?.Dispose(); AgentSettings?.Dispose(); AgentModels?.Dispose(); Mcp?.Dispose();
     }
 
     /// <summary>后台账号通知切回设置窗口线程，关闭后的排队通知不再更新绑定。</summary>
@@ -199,6 +208,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         if (_disposed) return;
         OnPropertyChanged(nameof(AccountName)); OnPropertyChanged(nameof(AccountStatus));
         OnPropertyChanged(nameof(WorkspaceName)); OnPropertyChanged(nameof(WorkspaceIcon));
+        if (IsMcpSelected && Mcp is not null) _ = Mcp.RefreshAsync();
         OnSyncChanged(sender, args);
     }
 
