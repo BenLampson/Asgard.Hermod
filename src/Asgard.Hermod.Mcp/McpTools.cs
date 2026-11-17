@@ -5,7 +5,8 @@ using ModelContextProtocol.Protocol;
 namespace Asgard.Hermod.Mcp;
 
 /// <summary>为每次调用重新核验授权，只返回模型确实能访问的实例和能力。</summary>
-internal sealed class McpTools(McpAccessService access, McpSqlTools sql, McpStorageTools storage, McpSshTools ssh, McpRedisTools redis, McpRabbitMqTools queues)
+internal sealed class McpTools(McpAccessService access, McpSqlTools sql, McpStorageTools storage, McpSshTools ssh, McpRedisTools redis,
+    McpRabbitMqTools queues, McpStorageTransferJobs transfers)
 {
     private readonly SemaphoreSlim _concurrency = new(4, 4);
 
@@ -29,8 +30,10 @@ internal sealed class McpTools(McpAccessService access, McpSqlTools sql, McpStor
             if (!McpToolCatalog.All.TryGetValue(name, out var tool)) throw Text.Exception("McpInvalidArguments");
             var args = McpArguments.Validate(tool.Arguments, values);
             if (tool.Types.Length == 0) return McpJson.Success(new { instances = CurrentGrants(session).Select(Item).ToArray() });
+            if (name == McpToolCatalog.StorageTransferStatus) return McpJson.Success(transfers.Poll(session, args.String("task_id")));
             var grant = session.Policy.Grants.SingleOrDefault(grant => grant.Id == args.String("grant_id") && tool.Allows(grant))
                 ?? throw Text.Exception("McpAccessDenied");
+            if (name == McpToolCatalog.StorageStartTransfer) return McpJson.Success(transfers.Start(session, grant, args, token));
             var connection = access.OpenTarget(session, grant);
             token.ThrowIfCancellationRequested();
             object result = grant.TypeId switch
@@ -68,7 +71,7 @@ internal sealed class McpTools(McpAccessService access, McpSqlTools sql, McpStor
         var (grant, target) = pair;
         object scope = grant.TypeId switch
         {
-            "storage" => new { bucket = grant.Resource, prefix = grant.Qualifier },
+            "storage" => new { bucket = grant.Resource, prefix = grant.Qualifier, grant.AllowUpload, grant.AllowDownload },
             "mysql" => new { database = grant.Resource, table = grant.Table.Length > 0 ? grant.Table : null },
             "postgresql" => new { database = grant.Resource, schema = grant.Qualifier, table = grant.Table.Length > 0 ? grant.Table : null },
             "redis" => new { database = int.Parse(grant.Resource, CultureInfo.InvariantCulture), prefix = grant.Qualifier },

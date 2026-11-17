@@ -11,6 +11,7 @@ namespace Asgard.Hermod.Mcp.Tests;
 
 internal sealed class McpTestRig : IDisposable
 {
+    private readonly McpStorageTransferJobs _transfers;
     internal MemoryMcpStore Store { get; }
     internal McpAccessService Access { get; }
     internal McpTools Tools { get; }
@@ -20,18 +21,22 @@ internal sealed class McpTestRig : IDisposable
 
     internal McpTestRig(McpTarget[] targets, IObjectStorageClientFactory? storage = null, IMySqlSessionFactory? mysql = null,
         IPostgreSqlSessionFactory? postgres = null, ISshConnectionFactory? ssh = null, IRedisSessionFactory? redis = null,
-        IRabbitMqSessionFactory? queues = null)
+        IRabbitMqSessionFactory? queues = null, TimeProvider? clock = null)
     {
         Store = new(targets);
         Access = new(Store, "Hermod.Mcp.exe");
+        var factory = storage ?? ProtocolStub<IObjectStorageClientFactory>.For();
+        _transfers = new(Access, new(Access, factory), clock ?? TimeProvider.System);
         Tools = new(Access, new(mysql ?? ProtocolStub<IMySqlSessionFactory>.For(), postgres ?? ProtocolStub<IPostgreSqlSessionFactory>.For()),
-            new(storage ?? ProtocolStub<IObjectStorageClientFactory>.For()), new(ssh ?? ProtocolStub<ISshConnectionFactory>.For()),
-            new(redis ?? ProtocolStub<IRedisSessionFactory>.For()), new(queues ?? ProtocolStub<IRabbitMqSessionFactory>.For()));
+            new(factory), new(ssh ?? ProtocolStub<ISshConnectionFactory>.For()),
+            new(redis ?? ProtocolStub<IRedisSessionFactory>.For()), new(queues ?? ProtocolStub<IRabbitMqSessionFactory>.For()), _transfers);
     }
 
-    internal async Task<McpGrant> GrantAsync(McpTarget target, string resource = "", string qualifier = "", string table = "", bool share = false)
+    internal async Task<McpGrant> GrantAsync(McpTarget target, string resource = "", string qualifier = "", string table = "", bool share = false,
+        string? transferRoot = null, bool upload = false, bool download = false)
     {
-        var snapshot = await Access.AddGrantAsync(Store.Owner, new("", target.Id, target.TypeId, target.Revision, resource, qualifier, table, share), Token);
+        var snapshot = await Access.AddGrantAsync(Store.Owner, new("", target.Id, target.TypeId, target.Revision, resource, qualifier, table, share,
+            transferRoot, upload, download), Token);
         return snapshot.Grants[^1];
     }
 
@@ -45,5 +50,9 @@ internal sealed class McpTestRig : IDisposable
         return values;
     }
 
-    public void Dispose() => Access.Dispose();
+    public void Dispose()
+    {
+        _transfers.Dispose();
+        Access.Dispose();
+    }
 }

@@ -12,7 +12,7 @@
     <ProjectReference Include="../Asgard.Hermod.PostgreSql/Asgard.Hermod.PostgreSql.csproj" />
     <ProjectReference Include="../Asgard.Hermod.Redis/Asgard.Hermod.Redis.csproj" />
     <ProjectReference Include="../Asgard.Hermod.RabbitMq/Asgard.Hermod.RabbitMq.csproj" />
-    <ProjectReference Include="../Asgard.Hermod.ObjectStorage.Abstractions/Asgard.Hermod.ObjectStorage.Abstractions.csproj" />
+    <ProjectReference Include="../Asgard.Hermod.ObjectStorage/Asgard.Hermod.ObjectStorage.csproj" />
     <InternalsVisibleTo Include="Asgard.Hermod.Mcp.Tests" />
   </ItemGroup>
 </Project>

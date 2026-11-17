@@ -1,0 +1,253 @@
+using System.Text.Json;
+using Asgard.Hermod.ObjectStorage.Abstractions.Clients;
+using Asgard.Hermod.ObjectStorage.Abstractions.Models;
+using ModelContextProtocol.Client;
+using ModelContextProtocol.Protocol;
+
+namespace Asgard.Hermod.Mcp.Tests;
+
+public sealed class McpStorageTransferTests
+{
+    private static readonly McpTarget Target = new("object-store", "OSS", "storage", "v1");
+    private const string Start = McpToolCatalog.StorageStartTransfer;
+    private const string Status = McpToolCatalog.StorageTransferStatus;
+
+    [Fact]
+    public async Task SdkClientCanQueueDirectoryDownloadAndConsumeFinalStatus()
+    {
+        using var folder = new TransferFolder();
+        var opened = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        byte[] contents = [1, 2, 3];
+        using var rig = CreateRig(ProtocolStub<IObjectStorageClient>.For((name, args) =>
+        {
+            Assert.Equal("exports", args[0]);
+            if (name == nameof(IObjectStorageClient.ListObjectsAsync))
+            {
+                Assert.Equal("test/reports/", args[1]);
+                Assert.Null(args[3]);
+                return args[2] is null
+                    ? Task.FromResult(new ObjectStoragePage([new("test/reports/", true)], "page-two"))
+                    : Task.FromResult(new ObjectStoragePage([new("test/reports/2026/result.bin", false, contents.Length)]));
+            }
+            Assert.Equal(nameof(IObjectStorageClient.OpenReadAsync), name);
+            Assert.Equal("test/reports/2026/result.bin", args[1]);
+            return ReadAsync((CancellationToken)args[3]!);
+        }));
+        var grant = await rig.GrantAsync(Target, "exports", "test/", transferRoot: folder.Path, download: true);
+        await rig.Access.SetEnabledAsync("", true, McpTestRig.Token);
+        string pipeName = "Hermod.Mcp.Tests." + Guid.NewGuid().ToString("N");
+        await using var server = new McpDesktopServer(rig.Access, new(rig.Tools), name: pipeName);
+        server.Start();
+        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(McpTestRig.Token);
+        deadline.CancelAfter(TimeSpan.FromSeconds(10));
+        var token = deadline.Token;
+        await using var pipe = await McpPipeEndpoint.ConnectAsync(pipeName, token);
+        Assert.True(await McpPipeEndpoint.AuthenticateAsync(pipe, rig.Session.Policy.Secret, token));
+        await using var client = await McpClient.CreateAsync(new StreamClientTransport(pipe, pipe), cancellationToken: token);
+        var tools = await client.ListToolsAsync(cancellationToken: token);
+        Assert.False(Assert.Single(tools, tool => tool.Name == Start).ProtocolTool.Annotations!.ReadOnlyHint);
+        Assert.True(Assert.Single(tools, tool => tool.Name == Status).ProtocolTool.Annotations!.ReadOnlyHint);
+
+        var queued = GetResult(await client.CallToolAsync(Start, new Dictionary<string, object?>
+        {
+            ["grant_id"] = grant.Id,
+            ["direction"] = "download",
+            ["key"] = "test/reports/",
+            ["local_path"] = "download",
+        }, cancellationToken: token));
+        Assert.Equal("queued", queued.GetProperty("status").GetString());
+        string id = queued.GetProperty("task_id").GetString()!;
+        await opened.Task.WaitAsync(token);
+        var statusArgs = new Dictionary<string, object?> { ["task_id"] = id };
+        var running = GetResult(await client.CallToolAsync(Status, statusArgs, cancellationToken: token));
+        Assert.Equal("running", running.GetProperty("status").GetString());
+        Assert.Equal(0, running.GetProperty("completed_files").GetInt32());
+        Assert.Equal(1, running.GetProperty("total_files").GetInt32());
+        release.SetResult();
+
+        var terminal = await WaitForTerminalAsync(() => client.CallToolAsync(Status, statusArgs, cancellationToken: token).AsTask(), token);
+        Assert.Equal("completed", terminal.GetProperty("status").GetString());
+        Assert.Equal(1, terminal.GetProperty("completed_files").GetInt32());
+        Assert.Equal(contents, await File.ReadAllBytesAsync(Path.Combine(folder.Path, "download", "2026", "result.bin"), token));
+        Assert.True((await client.CallToolAsync(Status, statusArgs, cancellationToken: token)).IsError);
+
+        async Task<ObjectStorageReadResult> ReadAsync(CancellationToken cancellationToken)
+        {
+            opened.TrySetResult();
+            await release.Task.WaitAsync(cancellationToken);
+            return new(new MemoryStream(contents), contents.Length);
+        }
+    }
+
+    [Fact]
+    public async Task UploadDirectoryKeepsHierarchyAndUsesServerSideNoOverwrite()
+    {
+        using var folder = new TransferFolder();
+        string sub = Directory.CreateDirectory(Path.Combine(folder.Path, "out", "daily")).FullName;
+        await File.WriteAllTextAsync(Path.Combine(sub, "report.csv"), "sample", McpTestRig.Token);
+        using var rig = CreateRig(ProtocolStub<IObjectStorageClient>.For((name, args) =>
+        {
+            Assert.Equal(nameof(IObjectStorageClient.UploadAsync), name);
+            Assert.Equal("exports", args[0]);
+            Assert.Equal("test/archive/daily/report.csv", args[1]);
+            Assert.Equal(6L, args[3]);
+            Assert.Equal(false, args[4]);
+            using var reader = new StreamReader((Stream)args[2]!, leaveOpen: true);
+            Assert.Equal("sample", reader.ReadToEnd());
+            return Task.CompletedTask;
+        }));
+        var grant = await rig.GrantAsync(Target, "exports", "test/", transferRoot: folder.Path, upload: true);
+        await rig.Access.SetEnabledAsync("", true, McpTestRig.Token);
+        string id = TaskId(await rig.CallAsync(Start, grant, ("direction", "upload"), ("key", "test/archive/"), ("local_path", "out")));
+        var terminal = await WaitForTerminalAsync(() => PollAsync(rig, id), McpTestRig.Token);
+        Assert.Equal("completed", terminal.GetProperty("status").GetString());
+        Assert.Equal(1, terminal.GetProperty("completed_files").GetInt32());
+        Assert.True((await PollAsync(rig, id)).IsError);
+    }
+
+    [Fact]
+    public async Task TransferIsOptInAndCannotEscapeEitherScope()
+    {
+        using var folder = new TransferFolder();
+        using var rig = new McpTestRig([Target]);
+        var metadata = await rig.GrantAsync(Target, "exports", "test/");
+        await rig.Access.SetEnabledAsync("", true, McpTestRig.Token);
+        Assert.DoesNotContain(rig.Tools.List(rig.Session), tool => tool.Name is Start or Status);
+        Assert.True((await rig.CallAsync(Start, metadata, ("direction", "download"), ("key", "test/report"))).IsError);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => rig.GrantAsync(Target, "exports", "", transferRoot: folder.Path, download: true));
+
+        var grant = await rig.GrantAsync(Target, "exports", "test/", transferRoot: folder.Path, download: true);
+        Assert.Contains(rig.Tools.List(rig.Session), tool => tool.Name == Start);
+        Assert.True((await rig.CallAsync(Start, grant, ("direction", "upload"), ("key", "test/report"), ("local_path", "report"))).IsError);
+        foreach (string key in new[] { "testing/report", "test/../private", "test/%2e%2e/private", "test//report" })
+            Assert.True((await rig.CallAsync(Start, grant, ("direction", "download"), ("key", key))).IsError);
+        foreach (string path in new[] { "../outside", @"C:\outside", @"\\server\share\outside", "report:stream", "NUL.txt", "COM¹.txt" })
+            Assert.True((await rig.CallAsync(Start, grant, ("direction", "download"), ("key", "test/report"), ("local_path", path))).IsError);
+        Assert.Empty(Directory.EnumerateFileSystemEntries(folder.Path));
+    }
+
+    [Fact]
+    public async Task AFileCreatedDuringDownloadIsNeverOverwrittenAndFailureIsConsumed()
+    {
+        using var folder = new TransferFolder();
+        string destination = Path.Combine(folder.Path, "report.csv");
+        using var rig = CreateRig(ProtocolStub<IObjectStorageClient>.For((name, _) =>
+        {
+            Assert.Equal(nameof(IObjectStorageClient.OpenReadAsync), name);
+            File.WriteAllText(destination, "keep");
+            return Task.FromResult(new ObjectStorageReadResult(new MemoryStream([9]), 1));
+        }));
+        var grant = await rig.GrantAsync(Target, "exports", "test/", transferRoot: folder.Path, download: true);
+        await rig.Access.SetEnabledAsync("", true, McpTestRig.Token);
+        string id = TaskId(await rig.CallAsync(Start, grant, ("direction", "download"), ("key", "test/report.csv")));
+        var terminal = await WaitForTerminalAsync(() => PollAsync(rig, id), McpTestRig.Token);
+        Assert.Equal("failed", terminal.GetProperty("status").GetString());
+        Assert.Equal(Text.Get("McpTransferDestinationExists"), terminal.GetProperty("error").GetString());
+        Assert.Equal("keep", await File.ReadAllTextAsync(destination, McpTestRig.Token));
+        Assert.Equal(destination, Assert.Single(Directory.GetFiles(folder.Path)));
+        Assert.True((await PollAsync(rig, id)).IsError);
+    }
+
+    [Fact]
+    public async Task AnUnclaimedFinalResultExpires()
+    {
+        using var folder = new TransferFolder();
+        var clock = new CompletionClock();
+        var client = ProtocolStub<IObjectStorageClient>.For((name, _) =>
+        {
+            Assert.Equal(nameof(IObjectStorageClient.OpenReadAsync), name);
+            clock.WatchCompletion();
+            return Task.FromResult(new ObjectStorageReadResult(new MemoryStream([42]), 1));
+        });
+        using var rig = new McpTestRig([Target], storage: ProtocolStub<IObjectStorageClientFactory>.For((_, _) => client), clock: clock);
+        var grant = await rig.GrantAsync(Target, "exports", "test/", transferRoot: folder.Path, download: true);
+        await rig.Access.SetEnabledAsync("", true, McpTestRig.Token);
+        string id = TaskId(await rig.CallAsync(Start, grant, ("direction", "download"), ("key", "test/report.csv")));
+        await clock.Finished.Task.WaitAsync(TimeSpan.FromSeconds(5), McpTestRig.Token);
+        clock.Advance(TimeSpan.FromMinutes(6));
+        Assert.True((await PollAsync(rig, id)).IsError);
+        Assert.Equal(new byte[] { 42 }, await File.ReadAllBytesAsync(Path.Combine(folder.Path, "report.csv"), McpTestRig.Token));
+    }
+
+    [Fact]
+    public async Task RevocationStopsInFlightTransferAndTheNextPairingCannotReadItsId()
+    {
+        using var folder = new TransferFolder();
+        var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var canceled = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var rig = CreateRig(ProtocolStub<IObjectStorageClient>.For((name, args) =>
+        {
+            Assert.Equal(nameof(IObjectStorageClient.OpenReadAsync), name);
+            return WaitUntilCanceledAsync((CancellationToken)args[3]!);
+        }));
+        var grant = await rig.GrantAsync(Target, "exports", "test/", transferRoot: folder.Path, download: true);
+        await rig.Access.SetEnabledAsync("", true, McpTestRig.Token);
+        string id = TaskId(await rig.CallAsync(Start, grant, ("direction", "download"), ("key", "test/report.csv")));
+        await started.Task.WaitAsync(TimeSpan.FromSeconds(5), McpTestRig.Token);
+        await rig.Access.SetEnabledAsync("", false, McpTestRig.Token);
+        await canceled.Task.WaitAsync(TimeSpan.FromSeconds(5), McpTestRig.Token);
+        await rig.Access.SetEnabledAsync("", true, McpTestRig.Token);
+        Assert.True((await PollAsync(rig, id)).IsError);
+        Assert.Empty(Directory.EnumerateFileSystemEntries(folder.Path));
+
+        async Task<ObjectStorageReadResult> WaitUntilCanceledAsync(CancellationToken token)
+        {
+            started.TrySetResult();
+            try { await Task.Delay(Timeout.InfiniteTimeSpan, token); }
+            finally { canceled.TrySetResult(); }
+            throw new InvalidOperationException();
+        }
+    }
+
+    private static McpTestRig CreateRig(IObjectStorageClient client) =>
+        new([Target], storage: ProtocolStub<IObjectStorageClientFactory>.For((_, _) => client));
+
+    private static JsonElement GetResult(CallToolResult result)
+    {
+        Assert.False(result.IsError == true, string.Join(" ", result.Content.OfType<TextContentBlock>().Select(item => item.Text)));
+        return result.StructuredContent!.Value;
+    }
+
+    private static string TaskId(CallToolResult result) => GetResult(result).GetProperty("task_id").GetString()!;
+
+    private static Task<CallToolResult> PollAsync(McpTestRig rig, string id) =>
+        rig.Tools.InvokeAsync(rig.Session, Status, new Dictionary<string, JsonElement> { ["task_id"] = JsonSerializer.SerializeToElement(id) },
+            rig.Cursors, McpTestRig.Token);
+
+    private static async Task<JsonElement> WaitForTerminalAsync(Func<Task<CallToolResult>> poll, CancellationToken token)
+    {
+        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(token);
+        deadline.CancelAfter(TimeSpan.FromSeconds(5));
+        while (true)
+        {
+            var result = GetResult(await poll());
+            if (result.GetProperty("status").GetString() is "completed" or "failed") return result;
+            await Task.Delay(15, deadline.Token);
+        }
+    }
+
+    private sealed class TransferFolder : IDisposable
+    {
+        private readonly DirectoryInfo _folder = Directory.CreateTempSubdirectory("Hermod.Mcp.Transfer.");
+        internal string Path => _folder.FullName;
+        public void Dispose() => _folder.Delete(recursive: true);
+    }
+
+    private sealed class CompletionClock : TimeProvider
+    {
+        private long _timestamp;
+        private int _watch;
+        internal TaskCompletionSource Finished { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public override long TimestampFrequency => TimeSpan.TicksPerSecond;
+        internal void WatchCompletion() => Volatile.Write(ref _watch, 1);
+        internal void Advance(TimeSpan time) => Interlocked.Add(ref _timestamp, time.Ticks);
+
+        public override long GetTimestamp()
+        {
+            long timestamp = Interlocked.Read(ref _timestamp);
+            if (Volatile.Read(ref _watch) == 1) Finished.TrySetResult();
+            return timestamp;
+        }
+    }
+}

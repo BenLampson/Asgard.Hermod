@@ -42,6 +42,13 @@
                                 <StackPanel>
                                     <TextBlock Text="{Binding Name}" TextWrapping="Wrap" FontWeight="SemiBold" />
                                     <TextBlock Text="{Binding Scope}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" />
+                                    <TextBlock Text="{Binding TransferScope}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers><DataTrigger Binding="{Binding TransferScope}" Value=""><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                     <TextBlock Text="{loc:Loc McpGrantExpired}" Foreground="{DynamicResource WarningBrush}" TextWrapping="Wrap">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
@@ -80,6 +87,23 @@
                       Visibility="{Binding ShowContent, Converter={StaticResource McpVisibility}}">
                 <TextBlock Text="{Binding ContentLabel}" TextWrapping="Wrap" />
             </CheckBox>
+            <StackPanel Margin="0,12,0,0" Visibility="{Binding ShowTransfers, Converter={StaticResource McpVisibility}}">
+                <TextBlock Text="{loc:Loc McpStorageTransferTitle}" FontWeight="SemiBold" />
+                <CheckBox x:Name="McpAllowDownload" IsChecked="{Binding AllowDownload}" Margin="0,6,0,0"
+                          AutomationProperties.Name="{loc:Loc McpStorageAllowDownload}">
+                    <TextBlock Text="{loc:Loc McpStorageAllowDownload}" TextWrapping="Wrap" />
+                </CheckBox>
+                <CheckBox x:Name="McpAllowUpload" IsChecked="{Binding AllowUpload}" Margin="0,6,0,0"
+                          AutomationProperties.Name="{loc:Loc McpStorageAllowUpload}">
+                    <TextBlock Text="{loc:Loc McpStorageAllowUpload}" TextWrapping="Wrap" />
+                </CheckBox>
+                <StackPanel x:Name="McpTransferRootPanel" Margin="0,8,0,0" Visibility="{Binding ShowTransferRoot, Converter={StaticResource McpVisibility}}">
+                    <TextBlock Text="{loc:Loc McpStorageTransferHint}" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" />
+                    <Button x:Name="McpSelectTransferFolder" Content="{loc:Loc McpStorageSelectTransferFolder}" Click="OnSelectTransferFolder"
+                            HorizontalAlignment="Left" Padding="12,0" Margin="0,8,0,0" />
+                    <TextBlock Text="{Binding TransferRoot}" TextWrapping="Wrap" Margin="0,4,0,0" AutomationProperties.LiveSetting="Polite" />
+                </StackPanel>
+            </StackPanel>
             <Button Content="{loc:Loc McpAddGrant}" Command="{Binding GrantCommand}" HorizontalAlignment="Left" Style="{StaticResource PrimaryButton}"
                     Padding="16,0" Margin="0,12,0,0" />
         </StackPanel>

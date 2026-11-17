@@ -25,7 +25,8 @@ public sealed class McpLocalStorageTests
             Assert.Null(store.ReadPolicy());
             await workspace.RestoreAsync(initial with { Instances = [first] }, token);
             var target = Assert.Single(store.ReadWorkspace().Targets);
-            grant = new("grant", first.Id, first.TypeId, target.Revision, "exports", "nightly/", "", false);
+            grant = new("grant", first.Id, first.TypeId, target.Revision, "exports", "nightly/", "", false,
+                @"D:\Synthetic transfer folder", AllowDownload: true);
             store.SavePolicy(new("", "synthetic-generation", true, pairing, [grant]));
 
             using var sqlite = new SQLiteConnection(configuration.Database.ConnectionString);

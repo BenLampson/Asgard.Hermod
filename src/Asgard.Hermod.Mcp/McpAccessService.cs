@@ -25,7 +25,11 @@ internal sealed class McpAccessService(IMcpLocalStore store, string command) : I
         {
             McpGrantRules.Validate(grant);
             if (!workspace.Targets.Any(target => McpGrantRules.IsSameTarget(target, grant))) throw Text.Exception("McpWorkspaceChanged");
-            var candidate = grant with { Id = "" };
+            var candidate = grant with
+            {
+                Id = "",
+                TransferRoot = McpGrantRules.CanTransfer(grant) ? McpStorageTransferPaths.NormalizeRoot(grant.TransferRoot!) : null,
+            };
             if (policy.Grants.Any(value => value with { Id = "" } == candidate)) return policy;
             if (policy.Grants.Count >= McpGrantRules.MaximumGrants) throw Text.Exception("McpGrantLimit");
             return policy with { Grants = Array.AsReadOnly<McpGrant>([.. policy.Grants, candidate with { Id = Guid.NewGuid().ToString("N") }]) };

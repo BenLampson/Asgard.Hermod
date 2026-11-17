@@ -8,8 +8,8 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
     private readonly CancellationTokenSource _lifetime = new();
     private McpSettingsSnapshot? _snapshot;
     private McpSettingsTarget? _selected;
-    private string _resource = "", _qualifier = "", _table = "", _message = "";
-    private bool _shareContent, _busy, _disposed;
+    private string _resource = "", _qualifier = "", _table = "", _message = "", _transferRoot = "";
+    private bool _shareContent, _allowUpload, _allowDownload, _busy, _disposed;
 
     /// <summary>剪贴板动作可替换，视图模型从不在绑定中持有可复制的客户端凭证。</summary>
     public McpSettingsViewModel(IMcpSettingsService service, Action<string>? copy = null)
@@ -32,12 +32,14 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
         GrantCommand = new(_ => ChangeAsync(async token =>
         {
             var target = _selected!.Target;
-            var draft = new McpGrant("", target.Id, target.TypeId, target.Revision, Resource, Qualifier, Table, ShareContent);
+            var draft = new McpGrant("", target.Id, target.TypeId, target.Revision, Resource, Qualifier, Table, ShareContent,
+                ShowTransferRoot ? TransferRoot : null, AllowUpload, AllowDownload);
             var snapshot = await _service.AddGrantAsync(_snapshot!.Workspace.Owner, draft, token);
             Apply(snapshot);
         }, "McpSettingsSaved"), _ => Ready && _selected is not null
             && (Kind == "ssh" || Resource.Length > 0) && (Kind != "postgresql" || Qualifier.Length > 0)
-            && (!ShareContent || (ShowTable ? Table.Length > 0 : Kind != "ssh" || Resource.Length > 0)));
+            && (!ShareContent || (ShowTable ? Table.Length > 0 : Kind != "ssh" || Resource.Length > 0))
+            && (!ShowTransferRoot || (TransferRoot.Length > 0 && Qualifier.Length > 1 && Qualifier.EndsWith('/'))));
         RevokeCommand = new(item => ChangeAsync(async token => Apply(await _service.RemoveGrantAsync(_snapshot!.Workspace.Owner,
             ((McpSettingsGrant)item!).Id, token)), "McpSettingsSaved"), item => Ready && item is McpSettingsGrant grant && Grants.Contains(grant));
     }
@@ -57,9 +59,12 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
             _resource = Kind switch { "redis" => "0", "rabbitmq" => "/", _ => "" };
             _qualifier = Kind == "postgresql" ? "public" : "";
             _table = ""; _shareContent = false;
+            _allowUpload = _allowDownload = false;
+            _transferRoot = "";
             foreach (string property in new[] { nameof(SelectedTarget), nameof(ShowResource), nameof(ShowQualifier), nameof(ShowTable),
                 nameof(ShowContent), nameof(ResourceLabel), nameof(QualifierLabel), nameof(ContentLabel), nameof(ScopeHint),
-                nameof(Resource), nameof(Qualifier), nameof(Table), nameof(ShareContent) }) OnPropertyChanged(property);
+                nameof(Resource), nameof(Qualifier), nameof(Table), nameof(ShareContent), nameof(ShowTransfers), nameof(ShowTransferRoot),
+                nameof(TransferRoot), nameof(AllowUpload), nameof(AllowDownload) }) OnPropertyChanged(property);
             GrantCommand.NotifyCanExecuteChanged();
         }
     }
@@ -72,6 +77,24 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
     public string Table { get => _table; set { if (SetProperty(ref _table, value)) GrantCommand.NotifyCanExecuteChanged(); } }
     /// <summary>内容须经独立的肯定选择，新增实例默认不勾选。</summary>
     public bool ShareContent { get => _shareContent; set { if (SetProperty(ref _shareContent, value)) GrantCommand.NotifyCanExecuteChanged(); } }
+    /// <summary>仅向对象存储授权开放单独的上传选择。</summary>
+    public bool AllowUpload
+    {
+        get => _allowUpload;
+        set { if (ShowTransfers && SetProperty(ref _allowUpload, value)) OnTransferPermissionChanged(); }
+    }
+    /// <summary>仅向对象存储授权开放单独的下载选择。</summary>
+    public bool AllowDownload
+    {
+        get => _allowDownload;
+        set { if (ShowTransfers && SetProperty(ref _allowDownload, value)) OnTransferPermissionChanged(); }
+    }
+    /// <summary>从本机目录选择器获得根目录，模型只使用它下面的相对路径。</summary>
+    public string TransferRoot
+    {
+        get => _transferRoot;
+        set { if (ShowTransferRoot && SetProperty(ref _transferRoot, value)) GrantCommand.NotifyCanExecuteChanged(); }
+    }
 
     private string Kind => _selected?.Target.TypeId ?? "";
     private bool Ready => !_disposed && !_busy && _snapshot is not null;
@@ -87,6 +110,10 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
     public bool ShowTable => Kind is "mysql" or "postgresql";
     /// <summary>仅支持额外读取正文的连接器显示内容授权。</summary>
     public bool ShowContent => Kind is "storage" or "mysql" or "postgresql" or "ssh";
+    /// <summary>文件传输选项只适用于对象存储。</summary>
+    public bool ShowTransfers => Kind == "storage";
+    /// <summary>勾选任一方向后，才要求选择本地根目录。</summary>
+    public bool ShowTransferRoot => ShowTransfers && (AllowUpload || AllowDownload);
     /// <summary>当前会话的连接可用状态。</summary>
     public string StateText => Text.Get(Enabled ? "McpEnabled" : "McpDisabled");
     /// <summary>显示切换后的动作，状态变更以保存结果为准。</summary>
@@ -169,7 +196,7 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
         {
             var target = Targets.FirstOrDefault(entry => entry.Target.Id == grant.InstanceId);
             return new McpSettingsGrant(grant.Id, target?.Label ?? Text.Get("McpUnavailableInstance"), Scope(grant),
-                target?.Target.Revision == grant.Revision && target.Target.TypeId == grant.TypeId);
+                target?.Target.Revision == grant.Revision && target.Target.TypeId == grant.TypeId, TransferScope(grant));
         }).ToArray();
         OnPropertyChanged(nameof(Grants)); OnPropertyChanged(nameof(NoGrants));
         OnPropertyChanged(nameof(Enabled)); OnPropertyChanged(nameof(ToggleLabel)); OnPropertyChanged(nameof(StateText));
@@ -179,7 +206,8 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
     {
         string table = grant.Table.Length == 0 ? Text.Get("McpAllTables") : grant.Table;
         string prefix = grant.Qualifier.Length == 0 ? Text.Get("McpAnyPrefix") : grant.Qualifier;
-        string content = Text.Get(grant.ShareContent ? "McpContentShared" : "McpMetadataOnly");
+        string content = Text.Get(grant.ShareContent ? "McpContentShared"
+            : grant.AllowUpload || grant.AllowDownload ? "McpStorageMetadataBrowsingOnly" : "McpMetadataOnly");
         return grant.TypeId switch
         {
             "storage" => Text.Format("McpStorageScope", grant.Resource, prefix, content),
@@ -189,6 +217,20 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
             "redis" => Text.Format("McpRedisScope", grant.Resource, prefix),
             _ => Text.Format("McpRabbitScope", grant.Resource),
         };
+    }
+
+    private static string TransferScope(McpGrant grant) => (grant.AllowUpload, grant.AllowDownload) switch
+    {
+        (true, true) => Text.Format("McpStorageTransferScopeBoth", grant.TransferRoot),
+        (true, false) => Text.Format("McpStorageTransferScopeUpload", grant.TransferRoot),
+        (false, true) => Text.Format("McpStorageTransferScopeDownload", grant.TransferRoot),
+        _ => "",
+    };
+
+    private void OnTransferPermissionChanged()
+    {
+        OnPropertyChanged(nameof(ShowTransferRoot));
+        GrantCommand.NotifyCanExecuteChanged();
     }
 
     private static string TypeLabel(string type) => Text.Get(type switch

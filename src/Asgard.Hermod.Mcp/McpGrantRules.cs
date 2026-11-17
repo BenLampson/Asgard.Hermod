@@ -10,6 +10,8 @@ internal static class McpGrantRules
 
     internal static bool Supports(string type) => type is "storage" or "mysql" or "postgresql" or "ssh" or "redis" or "rabbitmq";
 
+    internal static bool CanTransfer(McpGrant grant) => grant.TypeId == "storage" && (grant.AllowUpload || grant.AllowDownload);
+
     internal static bool IsSameTarget(McpTarget target, McpGrant grant) => target.Id == grant.InstanceId
         && target.TypeId == grant.TypeId && target.Revision == grant.Revision;
 
@@ -34,7 +36,11 @@ internal static class McpGrantRules
             "rabbitmq" => grant.Resource.Length > 0 && grant.Resource is not ("." or "..") && grant.Qualifier.Length == 0 && grant.Table.Length == 0 && !grant.ShareContent,
             _ => false,
         };
-        if (!valid) throw Text.Exception("McpInvalidGrant");
+        if (!valid || ((grant.AllowUpload || grant.AllowDownload) && grant.TypeId != "storage"))
+            throw Text.Exception("McpInvalidGrant");
+        if (CanTransfer(grant) && (string.IsNullOrWhiteSpace(grant.TransferRoot) || !grant.Qualifier.EndsWith('/')
+            || !McpStorageTransferPaths.IsKey(grant.Qualifier)))
+            throw Text.Exception("McpTransferGrantScopeRequired");
     }
 
     internal static bool IsServiceName(string value) => value.Length is > 0 and <= 128

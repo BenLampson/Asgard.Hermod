@@ -1,8 +1,10 @@
 namespace Asgard.Hermod.Mcp;
 
-/// <summary>只登记受限读取能力，保持工具 ID 独立于界面语言。</summary>
+/// <summary>登记受限能力，保持工具 ID 独立于界面语言。</summary>
 internal static class McpToolCatalog
 {
+    internal const string StorageStartTransfer = "hermod_storage_start_transfer";
+    internal const string StorageTransferStatus = "hermod_storage_transfer_status";
     private static readonly McpArgument Grant = new("grant_id", "McpArgGrant", true, 32);
     private static readonly McpArgument Key = new("key", "McpArgKey", true, 1024);
     private static readonly McpArgument Table = new("table", "McpArgTable", true, 128);
@@ -16,6 +18,12 @@ internal static class McpToolCatalog
             [Grant, new("prefix", "McpArgPrefix", MaximumLength: 1024), new("cursor", "McpArgCursor", MaximumLength: 64)]),
         new("hermod_storage_stat", "McpToolStorageStat", ["storage"], false, [Grant, Key]),
         new("hermod_storage_read_text", "McpToolStorageRead", ["storage"], true, [Grant, Key]),
+        new(StorageStartTransfer, "McpToolStorageStartTransfer", ["storage"], false,
+            [Grant, new("direction", "McpArgTransferDirection", true, 8, Choices: ["upload", "download"]),
+                new("key", "McpArgTransferKey", true, 1024), new("local_path", "McpArgTransferLocalPath", MaximumLength: 1024)],
+            RequiresTransfer: true, ReadOnly: false),
+        new(StorageTransferStatus, "McpToolStorageTransferStatus", ["storage"], false,
+            [new("task_id", "McpArgTransferTaskId", true, 32)], RequiresTransfer: true, LocalOnly: true),
         new("hermod_db_list_tables", "McpToolDbList", Sql, false, [Grant, Offset]),
         new("hermod_db_describe_table", "McpToolDbDescribe", Sql, false, [Grant, Table]),
         new("hermod_db_list_indexes", "McpToolDbIndexes", Sql, false, [Grant, Table]),

@@ -3,10 +3,12 @@ using ModelContextProtocol.Protocol;
 
 namespace Asgard.Hermod.Mcp;
 
-/// <summary>每个工具绑定允许的连接器与可选内容权限；模型不能覆盖这两个条件。</summary>
-internal sealed record McpToolDefinition(string Name, string DescriptionKey, string[] Types, bool ShareContent, McpArgument[] Arguments)
+/// <summary>每个工具绑定连接器、内容和传输权限；模型不能改变可用条件。</summary>
+internal sealed record McpToolDefinition(string Name, string DescriptionKey, string[] Types, bool ShareContent, McpArgument[] Arguments,
+    bool RequiresTransfer = false, bool ReadOnly = true, bool LocalOnly = false)
 {
-    internal bool Allows(McpGrant grant) => Types.Contains(grant.TypeId, StringComparer.Ordinal) && (!ShareContent || grant.ShareContent);
+    internal bool Allows(McpGrant grant) => Types.Contains(grant.TypeId, StringComparer.Ordinal) && (!ShareContent || grant.ShareContent)
+        && (!RequiresTransfer || McpGrantRules.CanTransfer(grant));
 
     internal Tool ToProtocol() => new()
     {
@@ -19,6 +21,12 @@ internal sealed record McpToolDefinition(string Name, string DescriptionKey, str
             required = Arguments.Where(argument => argument.Required).Select(argument => argument.Name),
             additionalProperties = false,
         }, McpJson.Schema),
-        Annotations = new() { ReadOnlyHint = true, DestructiveHint = false, OpenWorldHint = Types.Length > 0 },
+        Annotations = new()
+        {
+            ReadOnlyHint = ReadOnly,
+            DestructiveHint = false,
+            IdempotentHint = ReadOnly ? null : false,
+            OpenWorldHint = Types.Length > 0 && !LocalOnly,
+        },
     };
 }
