@@ -1,5 +1,3 @@
-using System.IO.Pipes;
-using System.Security.Principal;
 using Asgard.Hermod.Abstractions.Localization;
 using Asgard.Hermod.Mcp;
 
@@ -14,10 +12,8 @@ if (!McpPipeEndpoint.IsSecret(secret))
 
 try
 {
-    await using var pipe = new NamedPipeClientStream(".", McpPipeEndpoint.Name, PipeDirection.InOut,
-        PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly, TokenImpersonationLevel.Identification);
     using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-    await pipe.ConnectAsync(timeout.Token).ConfigureAwait(false);
+    await using var pipe = await McpPipeEndpoint.ConnectAsync(McpPipeEndpoint.Name, timeout.Token).ConfigureAwait(false);
     if (!McpPipeEndpoint.IsLocalPeer(pipe, peerIsServer: true) ||
         !await McpPipeEndpoint.AuthenticateAsync(pipe, secret!, timeout.Token).ConfigureAwait(false))
         throw Text.Exception("McpClientUnavailable");

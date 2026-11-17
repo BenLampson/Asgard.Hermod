@@ -1,5 +1,3 @@
-using System.IO.Pipes;
-using System.Security.Principal;
 using ModelContextProtocol.Client;
 using ModelContextProtocol.Protocol;
 
@@ -23,10 +21,10 @@ public sealed class McpDesktopProtocolTests
         deadline.CancelAfter(TimeSpan.FromSeconds(10));
         CancellationToken token = deadline.Token;
 
-        await using (var invalid = await ConnectAsync(name, token))
+        await using (var invalid = await McpPipeEndpoint.ConnectAsync(name, token))
             Assert.False(await McpPipeEndpoint.AuthenticateAsync(invalid, new string('0', 64), token));
 
-        await using var pipe = await ConnectAsync(name, token);
+        await using var pipe = await McpPipeEndpoint.ConnectAsync(name, token);
         Assert.True(McpPipeEndpoint.IsLocalPeer(pipe, peerIsServer: true));
         Assert.True(await McpPipeEndpoint.AuthenticateAsync(pipe, rig.Session.Policy.Secret, token));
         await using var client = await McpClient.CreateAsync(new StreamClientTransport(pipe, pipe), new() { ProtocolVersion = version }, cancellationToken: token);
@@ -37,14 +35,7 @@ public sealed class McpDesktopProtocolTests
         var row = Assert.Single(result.StructuredContent!.Value.GetProperty("instances").EnumerateArray());
         Assert.Equal("orders", row.GetProperty("scope").GetProperty("database").GetString());
         await rig.Access.SetEnabledAsync("", false, token);
-        await using var inactive = await ConnectAsync(name, token);
+        await using var inactive = await McpPipeEndpoint.ConnectAsync(name, token);
         Assert.Equal(0, await inactive.ReadAsync(new byte[1], token));
-    }
-
-    private static async Task<NamedPipeClientStream> ConnectAsync(string name, CancellationToken token)
-    {
-        var pipe = new NamedPipeClientStream(".", name, PipeDirection.InOut, PipeOptions.CurrentUserOnly | PipeOptions.Asynchronous, TokenImpersonationLevel.Identification);
-        try { await pipe.ConnectAsync(token); return pipe; }
-        catch { await pipe.DisposeAsync(); throw; }
     }
 }

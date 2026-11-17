@@ -22,6 +22,25 @@ internal static partial class McpPipeEndpoint
 
     internal static bool IsSecret(string? value) => value is { Length: 64 } && value.All(char.IsAsciiHexDigit);
 
+    internal static async Task<NamedPipeClientStream> ConnectAsync(string name, CancellationToken token)
+    {
+        var pipe = new NamedPipeClientStream(".", name, PipeDirection.InOut, PipeOptions.Asynchronous,
+            TokenImpersonationLevel.Identification);
+        try
+        {
+            await pipe.ConnectAsync(token).ConfigureAwait(false);
+            // CurrentUserOnly 比较令牌默认所有者（提升后可能是管理员组）。管道归账户 SID 所有。
+            if (pipe.GetAccessControl().GetOwner(typeof(SecurityIdentifier)) != User)
+                throw new UnauthorizedAccessException();
+            return pipe;
+        }
+        catch
+        {
+            await pipe.DisposeAsync().ConfigureAwait(false);
+            throw;
+        }
+    }
+
     internal static bool IsLocalPeer(PipeStream pipe, bool peerIsServer)
     {
         bool found = peerIsServer ? GetNamedPipeServerProcessId(pipe.SafePipeHandle, out uint pid)
