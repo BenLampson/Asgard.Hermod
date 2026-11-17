@@ -76,6 +76,23 @@ internal sealed class RedisSession(ConnectionMultiplexer connection, RedisSessio
 
     public Task<RedisSnapshot> ReadAsync(int database, RedisKeyId key, string cursor = "0", long offset = 0, CancellationToken cancellationToken = default) =>
         ReadCoreAsync(database, key, "page", cursor, offset, cancellationToken);
+
+    public async Task<RedisKeyMetadata> ReadKeyMetadataAsync(int database, RedisKeyId key, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            CheckDatabase(database);
+            cancellationToken.ThrowIfCancellationRequested();
+            var target = connection.GetDatabase(database);
+            var identity = (RedisKey)key.ToBytes();
+            var type = await target.KeyTypeAsync(identity, CommandFlags.DemandMaster).WaitAsync(cancellationToken).ConfigureAwait(false);
+            if (type == RedisType.None) return new("none", null);
+            var ttl = await target.KeyTimeToLiveAsync(identity, CommandFlags.DemandMaster).WaitAsync(cancellationToken).ConfigureAwait(false);
+            return new(type.ToString().ToLowerInvariant(), ttl is null ? null : (long)ttl.Value.TotalMilliseconds);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+        catch (Exception error) { ReportConnectionFailure(error); throw RedisException.Safe(error); }
+    }
     public Task<RedisSnapshot> ReadEditableAsync(int database, RedisKeyId key, CancellationToken cancellationToken = default) =>
         ReadCoreAsync(database, key, "full", "0", 0, cancellationToken);
 

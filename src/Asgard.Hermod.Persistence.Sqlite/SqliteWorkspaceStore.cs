@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace Asgard.Hermod.Persistence.Sqlite;
 
-/// <summary>快照读取使用同一仓储事务；恢复在单个写事务内重新保护全部参数。</summary>
+/// <summary>快照读取使用同一仓储事务；恢复在单个写事务内保留或重新保护连接参数。</summary>
 public sealed class SqliteWorkspaceStore(IFreeSql database, ILocalConfigurationRepository repository,
     ISecretProtector protector, LocalTagManagementService tags, SqliteAgentModelStore? agentModels = null) : ILocalWorkspaceStore
 {
@@ -82,9 +82,21 @@ public sealed class SqliteWorkspaceStore(IFreeSql database, ILocalConfigurationR
         using var transaction = lease.Value.BeginTransaction(IsolationLevel.Serializable);
         using var command = lease.Value.CreateCommand();
         command.Transaction = transaction;
-        if (expected is not null && !WorkspaceContent.Equal(expected,
-            ToSnapshot(SqliteConfigurationRepository.ReadSnapshot(command, cancellationToken), cancellationToken)))
-            throw Text.Exception("SyncLocalChanged");
+        Dictionary<string, byte[]> unchangedConnections = new(StringComparer.Ordinal);
+        if (expected is not null)
+        {
+            var previous = SqliteConfigurationRepository.ReadSnapshot(command, cancellationToken);
+            if (!WorkspaceContent.Equal(expected, ToSnapshot(previous, cancellationToken))) throw Text.Exception("SyncLocalChanged");
+            if (owner is null)
+            {
+                // 同一工作区内未变的连接保留密文，标签或其他实例同步不必让现有授权失效。
+                var original = expected.Instances.ToDictionary(instance => instance.Id, StringComparer.Ordinal);
+                var preserved = previous.Instances.ToDictionary(instance => instance.Id, StringComparer.Ordinal);
+                foreach (var incoming in snapshot.Instances)
+                    if (original.TryGetValue(incoming.Id, out var old) && SameConnection(old, incoming))
+                        unchangedConnections.Add(incoming.Id, preserved[incoming.Id].ProtectedParameters);
+            }
+        }
         Set(command, "DELETE FROM instance_tag; DELETE FROM instance_configuration; DELETE FROM managed_tag;");
         command.ExecuteNonQuery();
         foreach (var tag in orderedTags)
@@ -102,7 +114,8 @@ public sealed class SqliteWorkspaceStore(IFreeSql database, ILocalConfigurationR
                 INSERT INTO instance_configuration (id, name, type_id, provider_id, protected_parameters, create_time, hosting_provider_id)
                 VALUES (@id, @name, @type, @provider, @parameters, @time, @hosting);
                 """, ("@id", instance.Id), ("@name", instance.Name), ("@type", instance.TypeId),
-                ("@provider", instance.ProviderId), ("@parameters", instance.ProtectedParameters), ("@hosting", instance.HostingProviderId),
+                ("@provider", instance.ProviderId), ("@parameters", unchangedConnections.GetValueOrDefault(instance.Id, instance.ProtectedParameters)),
+                ("@hosting", instance.HostingProviderId),
                 ("@time", instance.CreatedAt.ToString("O", CultureInfo.InvariantCulture)));
             command.ExecuteNonQuery();
             foreach (string tag in instance.TagIds)
@@ -123,6 +136,10 @@ public sealed class SqliteWorkspaceStore(IFreeSql database, ILocalConfigurationR
         }
         transaction.Commit();
     }
+
+    private static bool SameConnection(SyncedInstance left, SyncedInstance right) => left.TypeId == right.TypeId
+        && left.ProviderId == right.ProviderId && left.CreatedAt == right.CreatedAt && left.Parameters.Count == right.Parameters.Count
+        && left.Parameters.All(pair => right.Parameters.TryGetValue(pair.Key, out string? value) && pair.Value == value);
     /// <summary>参数化写入，SQL 片段全部由本模块固定。</summary>
     private static void Set(DbCommand command, string sql, params (string Name, object? Value)[] values)
     {

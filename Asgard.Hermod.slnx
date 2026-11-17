@@ -6,11 +6,13 @@
   <Folder Name="/src/Desktop/">
     <Project Path="src/Asgard.Hermod/Asgard.Hermod.csproj" />
     <Project Path="src/Asgard.Hermod.UI/Asgard.Hermod.UI.csproj" />
+    <Project Path="src/Asgard.Hermod.Mcp.Stdio/Asgard.Hermod.Mcp.Stdio.csproj" />
     <Project Path="src/Asgard.Hermod.WinTerminal/Asgard.Hermod.WinTerminal.csproj" />
   </Folder>
   <Folder Name="/src/Infrastructure/">
     <Project Path="src/Asgard.Hermod.Agent/Asgard.Hermod.Agent.csproj" />
     <Project Path="src/Asgard.Hermod.Identity/Asgard.Hermod.Identity.csproj" />
+    <Project Path="src/Asgard.Hermod.Mcp/Asgard.Hermod.Mcp.csproj" />
     <Project Path="src/Asgard.Hermod.Persistence.Sqlite/Asgard.Hermod.Persistence.Sqlite.csproj" />
     <Project Path="src/Asgard.Hermod.Security.Windows/Asgard.Hermod.Security.Windows.csproj" />
   </Folder>
@@ -58,6 +60,7 @@
     <Project Path="tests/Asgard.Hermod.Sync.Tests/Asgard.Hermod.Sync.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Modules/">
+    <Project Path="tests/Asgard.Hermod.Mcp.Tests/Asgard.Hermod.Mcp.Tests.csproj" />
     <Project Path="tests/Asgard.Hermod.RabbitMq.Tests/Asgard.Hermod.RabbitMq.Tests.csproj" />
     <Project Path="tests/Asgard.Hermod.RabbitMq.UI.Tests/Asgard.Hermod.RabbitMq.UI.Tests.csproj" />
     <Project Path="tests/Asgard.Hermod.Agent.Tests/Asgard.Hermod.Agent.Tests.csproj" />

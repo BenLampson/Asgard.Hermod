@@ -17,6 +17,9 @@ public interface IRedisSession : IAsyncDisposable
     Task<long?> ReadDatabaseKeyCountAsync(int database, CancellationToken cancellationToken = default);
     /// <summary>每次仅请求一个 SCAN 批次，空批次不代表完成。</summary>
     Task<RedisScanPage> ScanAsync(string node, int database, string cursor, string pattern, string type, CancellationToken cancellationToken);
+    /// <summary>读取单个键的类型和过期时间，不读值或集合成员。</summary>
+    Task<RedisKeyMetadata> ReadKeyMetadataAsync(int database, RedisKeyId key, CancellationToken cancellationToken = default)
+        => Task.FromException<RedisKeyMetadata>(Text.Exception("McpAccessUnavailable"));
     /// <summary>有界读取一页及元数据；不获取创建时间。</summary>
     Task<RedisSnapshot> ReadAsync(int database, RedisKeyId key, string cursor = "0", long offset = 0, CancellationToken cancellationToken = default);
     /// <summary>原子取得有界编辑基线；大值只读。</summary>

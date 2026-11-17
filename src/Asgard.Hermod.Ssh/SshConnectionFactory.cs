@@ -7,7 +7,26 @@ namespace Asgard.Hermod.Ssh;
 public sealed class SshConnectionFactory(IHostKeyTrustStore trust, ISshHostKeyPrompt prompt) : ISshConnectionFactory
 {
     /// <inheritdoc />
-    public async Task<ISshConnection> OpenAsync(InstanceConnectionOptions options, int columns, int rows, CancellationToken cancellationToken = default)
+    public Task<ISshConnection> OpenAsync(InstanceConnectionOptions options, int columns, int rows, CancellationToken cancellationToken = default) =>
+        ConnectAsync(options, (client, bridge, profile, keys) => OpenShellAsync(client, bridge, profile, keys, columns, rows, cancellationToken),
+            promptForTrust: true, cancellationToken);
+
+    /// <inheritdoc />
+    public Task<SshCommandResult> ExecuteDiagnosticAsync(InstanceConnectionOptions options, string command, CancellationToken cancellationToken = default) =>
+        ConnectAsync(options, async (client, bridge, profile, keys) =>
+        {
+            // 交互式堡垒机必须完成已保存的目标导航。其他连接不启动登录 Shell，只打开独立 exec 通道。
+            if (profile.Route == SshIds.Bastion)
+            {
+                await using var connection = await OpenShellAsync(client, bridge, profile, keys, 80, 24, cancellationToken).ConfigureAwait(false);
+                return await ((ISshWorkspaceConnection)connection).ExecuteCommandAsync(command, cancellationToken).ConfigureAwait(false);
+            }
+            return await SshConnection.ExecuteBoundedAsync(client, command, cancellationToken).ConfigureAwait(false);
+        }, promptForTrust: false, cancellationToken);
+
+    private async Task<TResult> ConnectAsync<TResult>(InstanceConnectionOptions options,
+        Func<SshClient, SshProxyBridge?, SshConnectionOptions, TrustedHostKey[], Task<TResult>> connect, bool promptForTrust,
+        CancellationToken cancellationToken)
     {
         var profile = SshConnectionOptions.Parse(options);
         // 第一次跳板与目标分别核验；拒绝无限重试或自动覆盖变化的指纹。
@@ -30,23 +49,20 @@ public sealed class SshConnectionFactory(IHostKeyTrustStore trust, ISshHostKeyPr
                 }
                 client = new SshClient(settings);
                 await client.ConnectAsync(cancellationToken).ConfigureAwait(false);
-                var shell = await client.ExecuteShellAsync(new ExecuteOptions
+                var result = await connect(client, bridge, profile, verified.ToArray()).ConfigureAwait(false);
+                if (!promptForTrust && profile.Route != SshIds.Bastion)
                 {
-                    AllocateTerminal = true,
-                    TerminalType = "xterm-256color",
-                    TerminalSize = new(columns, rows),
-                }, cancellationToken).ConfigureAwait(false);
-                var connection = new SshConnection(client, shell, bridge, verified.ToArray());
-                return profile.Route == SshIds.Bastion
-                    ? await SshBastionConnection.CreateAsync(connection, profile, cancellationToken).ConfigureAwait(false)
-                    : connection;
+                    client.Dispose();
+                    if (bridge is not null) await bridge.DisposeAsync().ConfigureAwait(false);
+                }
+                return result;
             }
             catch (Exception) when (challenge is not null && !cancellationToken.IsCancellationRequested)
             {
                 client?.Dispose();
                 if (bridge is not null) await bridge.DisposeAsync().ConfigureAwait(false);
                 // SDK 连接已终止，用户核验不受 SDK 的网络超时计时影响。
-                bool accepted = await prompt.ConfirmAsync(challenge, cancellationToken).ConfigureAwait(false);
+                bool accepted = promptForTrust && await prompt.ConfirmAsync(challenge, cancellationToken).ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
                 if (!accepted) throw new SshException("SshHostNotTrusted", "SSH_HOST_NOT_TRUSTED");
                 if (!await trust.TrustAsync(challenge.Presented, challenge.Previous?.Fingerprint, cancellationToken).ConfigureAwait(false))
@@ -97,6 +113,21 @@ public sealed class SshConnectionFactory(IHostKeyTrustStore trust, ISshHostKeyPr
             }
         }
         throw new SshException("SshTrustChanged", "SSH_TRUST_CHANGED");
+    }
+
+    private static async Task<ISshConnection> OpenShellAsync(SshClient client, SshProxyBridge? bridge, SshConnectionOptions profile,
+        TrustedHostKey[] keys, int columns, int rows, CancellationToken cancellationToken)
+    {
+        var shell = await client.ExecuteShellAsync(new ExecuteOptions
+        {
+            AllocateTerminal = true,
+            TerminalType = "xterm-256color",
+            TerminalSize = new(columns, rows),
+        }, cancellationToken).ConfigureAwait(false);
+        var connection = new SshConnection(client, shell, bridge, keys);
+        return profile.Route == SshIds.Bastion
+            ? await SshBastionConnection.CreateAsync(connection, profile, cancellationToken).ConfigureAwait(false)
+            : connection;
     }
 
     /// <summary>只按异常类型归类，不解析或展示 SDK 的响应和消息。</summary>

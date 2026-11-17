@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>Hermod.Mcp</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../Asgard.Hermod.Mcp/McpPipeEndpoint.cs" Link="McpPipeEndpoint.cs" />
+    <ProjectReference Include="../Asgard.Hermod.Abstractions/Asgard.Hermod.Abstractions.csproj" />
+  </ItemGroup>
+</Project>

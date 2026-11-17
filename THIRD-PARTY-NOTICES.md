@@ -12,6 +12,7 @@ a replacement for those notices or the applicable license texts.
 | Inter fonts | SIL Open Font License 1.1 | [License](https://github.com/BenLampson/Asgard.Hermod/blob/dev/src/Asgard.Hermod.UI/Assets/Licenses/Inter.LICENSE.txt) |
 | JetBrains Mono fonts | SIL Open Font License 1.1 | [License](https://github.com/BenLampson/Asgard.Hermod/blob/dev/src/Asgard.Hermod.UI/Assets/Licenses/JetBrainsMono.OFL.txt) |
 | Noto Sans SC fonts | SIL Open Font License 1.1 | [License](https://github.com/BenLampson/Asgard.Hermod/blob/dev/src/Asgard.Hermod.UI/Assets/Licenses/NotoSansSC.OFL.txt) |
+| Model Context Protocol C# SDK | Apache License 2.0 | [Upstream license](https://github.com/modelcontextprotocol/csharp-sdk/blob/v2.4.0/LICENSE) |
 | Provider and database names and logos | Respective owners' asset and trademark terms | [Provider sources and trademark notes](https://github.com/BenLampson/Asgard.Hermod/blob/dev/src/Asgard.Hermod.UI/Assets/Providers/README.md), [database and other UI asset sources](https://github.com/BenLampson/Asgard.Hermod/blob/dev/src/Asgard.Hermod.UI/Assets/NOTICE.txt) |
 
 The UI asset notices document the original sources, imported revisions and

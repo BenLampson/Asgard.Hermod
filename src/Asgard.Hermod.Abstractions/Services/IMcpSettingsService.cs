@@ -1,0 +1,20 @@
+namespace Asgard.Hermod.Abstractions.Services;
+
+/// <summary>MCP 设置管理；所有更改立即生效并撤销现有 MCP 会话。</summary>
+public interface IMcpSettingsService
+{
+    /// <summary>读取当前工作区的授权和可选实例。</summary>
+    Task<McpSettingsSnapshot> ReadAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>启动或关闭访问；关闭后废止此前发放的配对凭证。</summary>
+    Task<McpSettingsSnapshot> SetEnabledAsync(string owner, bool enabled, CancellationToken cancellationToken = default);
+
+    /// <summary>为指定版本的实例添加范围授权，授权标识由服务分配。</summary>
+    Task<McpSettingsSnapshot> AddGrantAsync(string owner, McpGrant grant, CancellationToken cancellationToken = default);
+
+    /// <summary>撤销指定授权，允许移除已失效的记录。</summary>
+    Task<McpSettingsSnapshot> RemoveGrantAsync(string owner, string grantId, CancellationToken cancellationToken = default);
+
+    /// <summary>仅响应明确的复制动作返回含配对凭证的客户端配置。</summary>
+    Task<string> GetClientConfigurationAsync(string owner, CancellationToken cancellationToken = default);
+}

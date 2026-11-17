@@ -8,7 +8,11 @@ namespace Asgard.Hermod.Ssh;
 internal sealed partial class SshConnection
 {
     /// <inheritdoc />
-    public async Task<SshCommandResult> ExecuteCommandAsync(string command, CancellationToken cancellationToken = default)
+    public Task<SshCommandResult> ExecuteCommandAsync(string command, CancellationToken cancellationToken = default) =>
+        ExecuteBoundedAsync(client, command, cancellationToken);
+
+    /// <summary>独立诊断通道与工作区 exec 共用输出上限。</summary>
+    internal static async Task<SshCommandResult> ExecuteBoundedAsync(SshClient client, string command, CancellationToken cancellationToken)
     {
         using var process = await client.ExecuteAsync(command, cancellationToken).ConfigureAwait(false);
         process.WriteEof();
