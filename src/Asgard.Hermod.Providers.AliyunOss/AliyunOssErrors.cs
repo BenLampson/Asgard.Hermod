@@ -32,6 +32,31 @@ internal static class AliyunOssErrors
         return service is { StatusCode: 403 } && service.ErrorCode is null or "" or "AccessDenied";
     }
 
+    /// <summary>只接受错地域错误中的当前 Bucket 官方域名，提取地域后由连接配置重建端点。</summary>
+    public static string? BucketRegionHint(Exception error, string bucket)
+    {
+        var service = Find<Oss.ServiceException>(error);
+        if (service is not { StatusCode: 403, ErrorCode: "AccessDenied", Ec: "0003-00001403" }
+            || service.ErrorFields is not { } fields || !fields.TryGetValue("HostId", out string? host)
+            || host is null || !host.StartsWith(bucket + ".", StringComparison.Ordinal)
+            || (fields.TryGetValue("Bucket", out string? reported) && reported != bucket))
+            return null;
+
+        string domain = host[(bucket.Length + 1)..];
+        string region;
+        if (domain.StartsWith("oss-", StringComparison.Ordinal) && domain.EndsWith(".aliyuncs.com", StringComparison.Ordinal))
+        {
+            region = domain[4..^".aliyuncs.com".Length];
+            if (region.EndsWith("-internal", StringComparison.Ordinal)) region = region[..^"-internal".Length];
+        }
+        else if (domain.EndsWith(".oss.aliyuncs.com", StringComparison.Ordinal))
+            region = domain[..^".oss.aliyuncs.com".Length];
+        else return null;
+
+        try { return AliyunOssEndpoint.NormalizeRegion(region); }
+        catch (ObjectStorageException) { return null; }
+    }
+
     /// <summary>安全错误不保留 inner exception，错误消息和错误码都采用固定白名单。</summary>
     public static ObjectStorageException Translate(Exception error)
     {
