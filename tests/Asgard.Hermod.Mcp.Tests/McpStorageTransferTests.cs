@@ -13,19 +13,28 @@ public sealed class McpStorageTransferTests
     private const string Status = McpToolCatalog.StorageTransferStatus;
 
     [Fact]
-    public async Task SdkClientCanQueueDirectoryDownloadAndConsumeFinalStatus()
+    public async Task SdkClientUsesTheSameBucketRegionForListingAndBackgroundDownload()
     {
         using var folder = new TransferFolder();
         var opened = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         byte[] contents = [1, 2, 3];
-        using var rig = CreateRig(ProtocolStub<IObjectStorageClient>.For((name, args) =>
+        List<string?> regions = [];
+        var lookup = ProtocolStub<IObjectStorageBucketRegionClient>.For((name, args) =>
+        {
+            Assert.Equal(nameof(IObjectStorageBucketRegionClient.FindBucketRegionAsync), name);
+            Assert.Equal("exports", args[0]);
+            return Task.FromResult<string?>("cn-chengdu");
+        });
+        var routed = ProtocolStub<IObjectStorageClient>.For((name, args) =>
         {
             Assert.Equal("exports", args[0]);
             if (name == nameof(IObjectStorageClient.ListObjectsAsync))
             {
                 Assert.Equal("test/reports/", args[1]);
                 Assert.Null(args[3]);
+                if (Equals(args[4], 30))
+                    return Task.FromResult(new ObjectStoragePage([new("test/reports/2026/result.bin", false, contents.Length)]));
                 return args[2] is null
                     ? Task.FromResult(new ObjectStoragePage([new("test/reports/", true)], "page-two"))
                     : Task.FromResult(new ObjectStoragePage([new("test/reports/2026/result.bin", false, contents.Length)]));
@@ -33,6 +42,15 @@ public sealed class McpStorageTransferTests
             Assert.Equal(nameof(IObjectStorageClient.OpenReadAsync), name);
             Assert.Equal("test/reports/2026/result.bin", args[1]);
             return ReadAsync((CancellationToken)args[3]!);
+        });
+        using var rig = new McpTestRig([Target], storage: ProtocolStub<IObjectStorageClientFactory>.For((name, args) =>
+        {
+            Assert.Equal(nameof(IObjectStorageClientFactory.CreateClient), name);
+            string? region = (string?)args[1];
+            regions.Add(region);
+            if (region is null) return lookup;
+            Assert.Equal("cn-chengdu", region);
+            return routed;
         }));
         var grant = await rig.GrantAsync(Target, "exports", "test/", transferRoot: folder.Path, download: true);
         await rig.Access.SetEnabledAsync("", true, McpTestRig.Token);
@@ -48,6 +66,12 @@ public sealed class McpStorageTransferTests
         var tools = await client.ListToolsAsync(cancellationToken: token);
         Assert.False(Assert.Single(tools, tool => tool.Name == Start).ProtocolTool.Annotations!.ReadOnlyHint);
         Assert.True(Assert.Single(tools, tool => tool.Name == Status).ProtocolTool.Annotations!.ReadOnlyHint);
+        var listed = GetResult(await client.CallToolAsync("hermod_storage_list", new Dictionary<string, object?>
+        {
+            ["grant_id"] = grant.Id,
+            ["prefix"] = "test/reports/",
+        }, cancellationToken: token));
+        Assert.Equal("test/reports/2026/result.bin", Assert.Single(listed.GetProperty("entries").EnumerateArray()).GetProperty("key").GetString());
 
         var queued = GetResult(await client.CallToolAsync(Start, new Dictionary<string, object?>
         {
@@ -71,6 +95,7 @@ public sealed class McpStorageTransferTests
         Assert.Equal(1, terminal.GetProperty("completed_files").GetInt32());
         Assert.Equal(contents, await File.ReadAllBytesAsync(Path.Combine(folder.Path, "download", "2026", "result.bin"), token));
         Assert.True((await client.CallToolAsync(Status, statusArgs, cancellationToken: token)).IsError);
+        Assert.Equal([null, "cn-chengdu", "cn-chengdu"], regions);
 
         async Task<ObjectStorageReadResult> ReadAsync(CancellationToken cancellationToken)
         {

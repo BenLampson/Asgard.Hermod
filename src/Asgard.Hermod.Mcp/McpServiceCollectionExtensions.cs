@@ -18,6 +18,7 @@ public static class McpServiceCollectionExtensions
         services.AddKeyedSingleton<ISshTcpStreamFactory>("mcp", (provider, _) =>
             new SshTcpStreamFactory(provider.GetRequiredService<IHostKeyTrustStore>(), new McpSshTrustPrompt()));
         services.AddSingleton(provider => new McpSqlTools(new MySqlSessionFactory(Tunnel(provider)), new PostgreSqlSessionFactory(Tunnel(provider))));
+        services.AddSingleton<McpStorageClients>();
         services.AddSingleton<McpStorageTools>();
         services.AddSingleton<McpStorageTransfer>();
         services.AddSingleton(provider => new McpStorageTransferJobs(provider.GetRequiredService<McpAccessService>(),

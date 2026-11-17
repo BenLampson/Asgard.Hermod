@@ -25,10 +25,10 @@ internal sealed class McpTestRig : IDisposable
     {
         Store = new(targets);
         Access = new(Store, "Hermod.Mcp.exe");
-        var factory = storage ?? ProtocolStub<IObjectStorageClientFactory>.For();
-        _transfers = new(Access, new(Access, factory), clock ?? TimeProvider.System);
+        var storageClients = new McpStorageClients(storage ?? ProtocolStub<IObjectStorageClientFactory>.For());
+        _transfers = new(Access, new(Access, storageClients), clock ?? TimeProvider.System);
         Tools = new(Access, new(mysql ?? ProtocolStub<IMySqlSessionFactory>.For(), postgres ?? ProtocolStub<IPostgreSqlSessionFactory>.For()),
-            new(factory), new(ssh ?? ProtocolStub<ISshConnectionFactory>.For()),
+            new(storageClients), new(ssh ?? ProtocolStub<ISshConnectionFactory>.For()),
             new(redis ?? ProtocolStub<IRedisSessionFactory>.For()), new(queues ?? ProtocolStub<IRabbitMqSessionFactory>.For()), _transfers);
     }
 

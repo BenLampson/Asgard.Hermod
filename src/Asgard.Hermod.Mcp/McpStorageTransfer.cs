@@ -5,7 +5,7 @@ using Asgard.Hermod.ObjectStorage.Abstractions.Services;
 namespace Asgard.Hermod.Mcp;
 
 /// <summary>在固定授权内规划文件或目录传输；每个实际文件开始前重新检查授权和本地路径。</summary>
-internal sealed class McpStorageTransfer(McpAccessService access, IObjectStorageClientFactory factory)
+internal sealed class McpStorageTransfer(McpAccessService access, McpStorageClients clients)
 {
     private const int FileLimit = 1000;
     private const int DirectoryLimit = 4000;
@@ -17,7 +17,7 @@ internal sealed class McpStorageTransfer(McpAccessService access, IObjectStorage
         token.ThrowIfCancellationRequested();
         var connection = access.OpenTarget(session, grant);
         McpStorageTransferPaths.NormalizeRoot(grant.TransferRoot!);
-        using var client = factory.CreateClient(connection);
+        using var client = await clients.CreateAsync(grant, connection, token).ConfigureAwait(false);
         var plan = upload ? PlanUpload(key, local, token) : await PlanDownloadAsync(client, session, grant, key, local, token).ConfigureAwait(false);
         report(plan.Count, 0);
         if (plan.Count == 0) throw Text.Exception("McpTransferNoFiles");

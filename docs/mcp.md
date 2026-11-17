@@ -37,6 +37,12 @@ Connect interactively in Hermod first to verify a new or changed SSH host key.
 | RabbitMQ | Exact virtual host | Queue depth, ready and unacknowledged counts, and consumers. No message retrieval or acknowledgement is performed. |
 
 For a storage folder, include its trailing slash, for example `exports/`.
+For Alibaba Cloud OSS, Hermod discovers the granted Bucket's region and uses
+it for browsing, file reads, uploads, and downloads. This keeps the connection's
+public, internal, or dual-stack endpoint mode and does not change the saved
+connection. If OSS cannot disclose the region with the current credentials,
+Hermod can still use the configured endpoint for data operations.
+
 An empty prefix grants metadata for the entire selected Bucket or Redis
 database. SQL row tools accept a row limit and offset, with up to 25 rows per
 request and additional size caps. They generate a qualified query in an

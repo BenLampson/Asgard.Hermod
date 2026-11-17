@@ -1,10 +1,9 @@
 using System.Text;
-using Asgard.Hermod.ObjectStorage.Abstractions.Clients;
 
 namespace Asgard.Hermod.Mcp;
 
 /// <summary>复用通用对象存储客户端，只允许已授权 Bucket 前缀内的读取。</summary>
-internal sealed class McpStorageTools(IObjectStorageClientFactory factory)
+internal sealed class McpStorageTools(McpStorageClients clients)
 {
     internal async Task<object> RunAsync(string name, McpGrant grant, InstanceConnectionOptions connection, McpArguments args,
         McpCursorCache cursors, CancellationToken token)
@@ -12,7 +11,7 @@ internal sealed class McpStorageTools(IObjectStorageClientFactory factory)
         bool listing = name == "hermod_storage_list";
         string target = listing ? args.String("prefix", grant.Qualifier) : args.String("key");
         if (!target.StartsWith(grant.Qualifier, StringComparison.Ordinal) || !McpGrantRules.IsObjectPath(target)) throw Text.Exception("McpAccessDenied");
-        using var client = factory.CreateClient(connection);
+        using var client = await clients.CreateAsync(grant, connection, token).ConfigureAwait(false);
         if (listing)
         {
             string? continuation = cursors.Read<string>(args.String("cursor"), name, grant.Id, target);
