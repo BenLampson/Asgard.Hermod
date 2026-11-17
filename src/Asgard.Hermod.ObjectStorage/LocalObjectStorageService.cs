@@ -88,9 +88,7 @@ public sealed partial class LocalObjectStorageService : IObjectStorageService
         {
             ValidateKey(key);
             ValidateLocalPath(localPath);
-            await using var file = new FileStream(localPath, FileMode.Open, FileAccess.Read, FileShare.Read,
-                64 * 1024, FileOptions.Asynchronous | FileOptions.SequentialScan);
-            await client.UploadAsync(bucket.Name, key, file, file.Length, overwrite, progress,
+            await ObjectStorageFileTransfer.UploadAsync(client, bucket.Name, key, localPath, overwrite, progress,
                 cancellationToken).ConfigureAwait(false);
             return true;
         }, cancellationToken);
@@ -103,52 +101,9 @@ public sealed partial class LocalObjectStorageService : IObjectStorageService
         {
             ValidateKey(key);
             ValidateLocalPath(localPath);
-            if (maxBytes is <= 0) throw new ArgumentOutOfRangeException(nameof(maxBytes));
-            string destination = Path.GetFullPath(localPath);
-            string directory = Path.GetDirectoryName(destination)!;
-            EnsureDownloadDirectory(directory, createMissing: true);
-            // 同一目录内原子替换，传输失败和取消不会损坏已有文件。
-            string temporary = Path.Combine(directory, $".{Path.GetFileName(destination)}.{Guid.NewGuid():N}.download");
-            try
-            {
-                long transferred = 0;
-                long totalBytes;
-                await using (ObjectStorageReadResult remote = await client.OpenReadAsync(bucket.Name, key, null,
-                    cancellationToken).ConfigureAwait(false))
-                {
-                    totalBytes = remote.Size;
-                    if (maxBytes is { } limit && remote.Size > limit)
-                        throw ObjectStorageException.FromResource("FilePreviewTooLarge", "PreviewLimitExceeded");
-                    await using var file = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None,
-                        64 * 1024, FileOptions.Asynchronous | FileOptions.SequentialScan);
-                    ObjectStorageProgress.Report(progress, 0, remote.Size);
-                    byte[] buffer = new byte[64 * 1024];
-                    while (true)
-                    {
-                        int read = await remote.Body.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
-                        if (read == 0) break;
-                        if (maxBytes is { } bodyLimit && transferred > bodyLimit - read)
-                            throw ObjectStorageException.FromResource("FilePreviewTooLarge", "PreviewLimitExceeded");
-                        await file.WriteAsync(buffer.AsMemory(0, read), cancellationToken).ConfigureAwait(false);
-                        transferred += read;
-                        ObjectStorageProgress.Report(progress, transferred, remote.Size);
-                    }
-                    if (remote.Size >= 0 && transferred != remote.Size)
-                        throw ObjectStorageException.FromResource("TheDownloadIsIncompleteCheckYourNetworkAndTryAgain", "IncompleteDownload");
-                    await file.FlushAsync(cancellationToken).ConfigureAwait(false);
-                }
-                cancellationToken.ThrowIfCancellationRequested();
-                EnsureDownloadDirectory(directory, createMissing: false);
-                File.Move(temporary, destination, overwrite: true);
-                ObjectStorageProgress.Report(progress, transferred, totalBytes);
-                return true;
-            }
-            finally
-            {
-                try { if (File.Exists(temporary)) File.Delete(temporary); }
-                catch (IOException) { }
-                catch (UnauthorizedAccessException) { }
-            }
+            await ObjectStorageFileTransfer.DownloadAsync(client, bucket.Name, key, localPath, overwrite: true, progress,
+                cancellationToken, maxBytes).ConfigureAwait(false);
+            return true;
         }, cancellationToken);
 
     /// <inheritdoc />
@@ -238,23 +193,4 @@ public sealed partial class LocalObjectStorageService : IObjectStorageService
             throw ObjectStorageException.FromResource("SelectAValidLocalFileLocation", "InvalidLocalPath");
     }
 
-    /// <summary>映射后的子目录由后台创建，拒绝沿目录联接或符号链接写出所选位置。</summary>
-    private static void EnsureDownloadDirectory(string path, bool createMissing)
-    {
-        string fullPath = Path.GetFullPath(path);
-        string current = Path.GetPathRoot(fullPath)!;
-        foreach (string segment in fullPath[current.Length..].Split(
-            [Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar], StringSplitOptions.RemoveEmptyEntries))
-        {
-            current = Path.Combine(current, segment);
-            if (!Directory.Exists(current))
-            {
-                if (!createMissing)
-                    throw ObjectStorageException.FromResource("TheDownloadDirectoryHasChangedSelectTheDestinationAgain", "InvalidLocalPath");
-                Directory.CreateDirectory(current);
-            }
-            if ((File.GetAttributes(current) & FileAttributes.ReparsePoint) != 0)
-                throw ObjectStorageException.FromResource("TheDownloadDirectoryContainsAJunctionOrSymbolicLinkSelectARegularDirectory", "InvalidLocalPath");
-        }
-    }
 }
