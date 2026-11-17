@@ -14,10 +14,11 @@ routes. You do not need to set up an AI model in Hermod to use this feature.
    `mcpServers` object, `command` and `env`; use your client's equivalent fields
    if its settings use another format. `HERMOD_MCP_TOKEN` is a local access
    credential. Keep it in trusted client settings and out of source control.
-4. Keep Hermod running in the same Windows user session. The client can call
-   `hermod_list_instances` to see available scopes, then pass the returned
-   `grant_id` to the reader tools. A useful first question is: “Check whether the
-   test export service is running and whether the latest file reached storage.”
+4. Keep Hermod running in the same Windows user session. In **Try asking**,
+   choose **Copy prompt** and paste it into your AI chat to discover what you
+   can ask about the granted instances. The prompt contains no credentials.
+   You can also ask a question directly, such as “Use Hermod to check whether
+   the test export service is running and the latest file reached storage.”
 
 Builds include the `Hermod.Mcp.exe` launcher. An unpackaged build uses the
 launcher in the application directory. MSIX registers a Windows app execution

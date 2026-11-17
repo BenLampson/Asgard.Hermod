@@ -1,4 +1,5 @@
 using System.Globalization;
+using Asgard.Hermod.Abstractions.Localization;
 using Asgard.Hermod.UI.Views.Dialogs;
 
 namespace Asgard.Hermod.UI.Tests;
@@ -7,10 +8,10 @@ namespace Asgard.Hermod.UI.Tests;
 public sealed class McpSettingsViewTests(WpfTestFixture fixture)
 {
     [Theory]
-    [InlineData("en-US", "Select an instance", "AI tools (MCP)")]
-    [InlineData("zh-CN", "选择实例", "AI 工具（MCP）")]
-    [InlineData("de-DE", "Select an instance", "AI tools (MCP)")]
-    public Task FormAdaptsToTheSelectedConnectorAndKeepsContentOffByDefault(string culture, string pickerLabel, string title) => fixture.RunOffscreenAsync(async () =>
+    [InlineData("en-US", "Select an instance", "AI tools (MCP)", "Copy prompt")]
+    [InlineData("zh-CN", "选择实例", "AI 工具（MCP）", "复制提示词")]
+    [InlineData("de-DE", "Select an instance", "AI tools (MCP)", "Copy prompt")]
+    public Task FormAdaptsToTheSelectedConnectorAndKeepsContentOffByDefault(string culture, string pickerLabel, string title, string copyLabel) => fixture.RunOffscreenAsync(async () =>
     {
         var previous = CultureInfo.CurrentUICulture;
         try
@@ -27,6 +28,15 @@ public sealed class McpSettingsViewTests(WpfTestFixture fixture)
             Assert.Equal(pickerLabel, System.Windows.Automation.AutomationProperties.GetName(picker));
             Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(view), text => text.Text == title);
             Assert.False(model.CopyCommand.CanExecute(null));
+            var copyPrompt = Assert.IsType<Button>(view.FindName("McpCopyPromptButton"));
+            Assert.Equal(copyLabel, copyPrompt.Content);
+            Assert.True(copyPrompt.IsEnabled);
+            var promptCommand = Assert.IsType<Asgard.Hermod.UI.Common.AsyncRelayCommand>(copyPrompt.Command);
+            await promptCommand.ExecuteAsync();
+            Assert.Equal(Text.Get("McpStarterPrompt"), copy);
+            Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(view), text => text.Text == copy);
+            Assert.Equal(Text.Get("McpPromptCopied"), model.Message);
+            Assert.Equal(0, settings.ClientConfigurationReads);
             picker.SelectedItem = model.Targets.Single(target => target.Target.TypeId == "redis");
             Assert.Equal(Visibility.Collapsed, share.Visibility);
             Assert.Equal("0", model.Resource);
@@ -45,6 +55,7 @@ public sealed class McpSettingsViewTests(WpfTestFixture fixture)
             await model.ToggleCommand.ExecuteAsync();
             await model.CopyCommand.ExecuteAsync();
             Assert.Equal("test client configuration", copy);
+            Assert.Equal(1, settings.ClientConfigurationReads);
         }
         finally { CultureInfo.CurrentUICulture = previous; }
     });
@@ -54,10 +65,15 @@ public sealed class McpSettingsViewTests(WpfTestFixture fixture)
         private static readonly McpWorkspace Workspace = new("", [new("cache", "Cache", "redis", "v1"), new("sql", "SQL", "mysql", "v1")]);
         private bool _enabled;
         internal List<McpGrant> Grants { get; } = [];
+        internal int ClientConfigurationReads { get; private set; }
         public Task<McpSettingsSnapshot> ReadAsync(CancellationToken cancellationToken = default) => Task.FromResult(new McpSettingsSnapshot(Workspace, _enabled, Grants.ToArray()));
         public Task<McpSettingsSnapshot> SetEnabledAsync(string owner, bool enabled, CancellationToken cancellationToken = default) { _enabled = enabled; return ReadAsync(cancellationToken); }
         public Task<McpSettingsSnapshot> AddGrantAsync(string owner, McpGrant grant, CancellationToken cancellationToken = default) { Grants.Add(grant with { Id = "grant" }); return ReadAsync(cancellationToken); }
         public Task<McpSettingsSnapshot> RemoveGrantAsync(string owner, string grantId, CancellationToken cancellationToken = default) => throw new NotSupportedException();
-        public Task<string> GetClientConfigurationAsync(string owner, CancellationToken cancellationToken = default) => Task.FromResult("test client configuration");
+        public Task<string> GetClientConfigurationAsync(string owner, CancellationToken cancellationToken = default)
+        {
+            ClientConfigurationReads++;
+            return Task.FromResult("test client configuration");
+        }
     }
 }

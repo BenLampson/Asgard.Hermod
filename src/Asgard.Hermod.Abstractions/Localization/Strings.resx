@@ -5830,6 +5830,24 @@ Address: {2}</value></data>
   <data name="McpConfigurationCopied" xml:space="preserve">
     <value>Client configuration copied. Paste it only into a trusted local AI client.</value>
   </data>
+  <data name="McpStarterPromptTitle" xml:space="preserve">
+    <value>Try asking</value>
+  </data>
+  <data name="McpStarterPromptHint" xml:space="preserve">
+    <value>After connecting Hermod, paste this prompt into your AI chat.</value>
+  </data>
+  <data name="McpStarterPrompt" xml:space="preserve">
+    <value>Use Hermod MCP to list the instances I have granted and what you can read from each. Then suggest a few questions I can ask about them. Use metadata only. If Hermod is not connected or has no grants, explain what I need to set up in Hermod and in this AI client.</value>
+  </data>
+  <data name="McpCopyPrompt" xml:space="preserve">
+    <value>Copy prompt</value>
+  </data>
+  <data name="McpPromptCopied" xml:space="preserve">
+    <value>Prompt copied. Paste it into your AI chat.</value>
+  </data>
+  <data name="McpPromptCopyFailed" xml:space="preserve">
+    <value>Could not copy the prompt. Try again.</value>
+  </data>
   <data name="McpAccessUnavailable" xml:space="preserve">
     <value>MCP access is unavailable. Check the MCP settings in Hermod.</value>
   </data>

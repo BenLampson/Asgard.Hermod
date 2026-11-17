@@ -1,6 +1,6 @@
 namespace Asgard.Hermod.UI.ViewModels;
 
-/// <summary>管理本机 MCP 开关、选定实例的授权和显式的配置复制。</summary>
+/// <summary>管理本机 MCP 开关、实例授权与剪贴板操作。</summary>
 public sealed class McpSettingsViewModel : ObservableObject, IDisposable
 {
     private readonly IMcpSettingsService _service;
@@ -23,6 +23,12 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
             string config = await _service.GetClientConfigurationAsync(_snapshot!.Workspace.Owner, token);
             if (!_disposed) _copy(config);
         }, "McpConfigurationCopied"), _ => Ready && Enabled);
+        CopyPromptCommand = new(_ => ChangeAsync(_ =>
+        {
+            // 对话提示使用固定资源，复制时不读取配对令牌或工作区内容。
+            _copy(Text.Get("McpStarterPrompt"));
+            return Task.CompletedTask;
+        }, "McpPromptCopied", failureKey: "McpPromptCopyFailed"), _ => !_disposed && !_busy);
         GrantCommand = new(_ => ChangeAsync(async token =>
         {
             var target = _selected!.Target;
@@ -115,6 +121,8 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
     public AsyncRelayCommand ToggleCommand { get; }
     /// <summary>仅响应用户命令复制客户端配置。</summary>
     public AsyncRelayCommand CopyCommand { get; }
+    /// <summary>复制可粘贴到 AI 对话的本地化开场提示。</summary>
+    public AsyncRelayCommand CopyPromptCommand { get; }
     /// <summary>把表单验证并保存为新的授权。</summary>
     public AsyncRelayCommand GrantCommand { get; }
     /// <summary>撤销指定范围的访问。</summary>
@@ -123,7 +131,8 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
     /// <summary>启动设置页或切换账号时重新获取工作区；旧表单不能跨账号提交。</summary>
     public Task RefreshAsync(CancellationToken cancellationToken = default) => ChangeAsync(async token => Apply(await _service.ReadAsync(token)), null, cancellationToken);
 
-    private async Task ChangeAsync(Func<CancellationToken, Task> change, string? success, CancellationToken cancellationToken = default)
+    private async Task ChangeAsync(Func<CancellationToken, Task> change, string? success, CancellationToken cancellationToken = default,
+        string failureKey = "McpSettingsFailed")
     {
         if (_disposed || _busy) return;
         _busy = true; NotifyCommands();
@@ -134,7 +143,7 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
             if (!_disposed) Message = success is null ? "" : Text.Get(success);
         }
         catch (OperationCanceledException) when (linked.IsCancellationRequested) { }
-        catch (Exception error) { if (!_disposed) Message = Text.Error(error, "McpSettingsFailed"); }
+        catch (Exception error) { if (!_disposed) Message = Text.Error(error, failureKey); }
         finally { _busy = false; NotifyCommands(); }
     }
 
@@ -194,7 +203,7 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
 
     private void NotifyCommands()
     {
-        foreach (var command in new[] { RefreshCommand, ToggleCommand, CopyCommand, GrantCommand, RevokeCommand }) command.NotifyCanExecuteChanged();
+        foreach (var command in new[] { RefreshCommand, ToggleCommand, CopyCommand, CopyPromptCommand, GrantCommand, RevokeCommand }) command.NotifyCanExecuteChanged();
     }
 
     /// <summary>关闭窗口时取消正在读写的授权任务，迟到结果不触碰视图。</summary>

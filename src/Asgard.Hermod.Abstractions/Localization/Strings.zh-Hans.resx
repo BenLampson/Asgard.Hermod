@@ -5830,6 +5830,24 @@ SQL：
   <data name="McpConfigurationCopied" xml:space="preserve">
     <value>已复制客户端配置。请只将其粘贴到信任的本机 AI 客户端。</value>
   </data>
+  <data name="McpStarterPromptTitle" xml:space="preserve">
+    <value>试着这样问</value>
+  </data>
+  <data name="McpStarterPromptHint" xml:space="preserve">
+    <value>接入 Hermod 后，把这段提示词粘贴到你的 AI 对话。</value>
+  </data>
+  <data name="McpStarterPrompt" xml:space="preserve">
+    <value>请用 Hermod MCP 列出我已授权的实例，以及每个实例里可以查看什么。然后给我几个可以直接问的问题。只查看元数据。如果 Hermod 尚未连接或没有可用授权，请告诉我需要在 Hermod 和这个 AI 客户端里如何设置。</value>
+  </data>
+  <data name="McpCopyPrompt" xml:space="preserve">
+    <value>复制提示词</value>
+  </data>
+  <data name="McpPromptCopied" xml:space="preserve">
+    <value>提示词已复制，可以粘贴到 AI 对话。</value>
+  </data>
+  <data name="McpPromptCopyFailed" xml:space="preserve">
+    <value>无法复制提示词，请重试。</value>
+  </data>
   <data name="McpAccessUnavailable" xml:space="preserve">
     <value>MCP 接入不可用。请检查 Hermod 中的 MCP 设置。</value>
   </data>
