@@ -31,7 +31,7 @@ storage and owns application startup and shutdown.
 | `Asgard.Hermod.Persistence.Sqlite` | SQLite configuration, migrations, repository, local instance and tag services | Shared contracts, Asgard.Core, FreeSql SQLite |
 | `Asgard.Hermod.Security.Windows` | Windows current-user DPAPI protection | Shared contracts, ProtectedData, DI abstractions |
 | `Asgard.Hermod.Identity` | Heimdall desktop login, account registration transport, protected sessions, automatic configuration synchronization and conflict merging | Shared contracts, official Heimdall SDK |
-| `Asgard.Hermod.Mcp` | Local tool catalog, scoped authorization and current-session pipe broker | Shared contracts, protocol modules, MCP C# SDK |
+| `Asgard.Hermod.Mcp` | Local tool catalog, scoped authorization, current-session pipe broker and in-memory storage transfer tasks | Shared contracts, protocol modules, MCP C# SDK |
 | `Asgard.Hermod.Mcp.Stdio` | Console relay from an external MCP client to the desktop broker | Shared localization and pipe handshake source |
 | `Asgard.Hermod.Server` | Independent sync and ordinary-account registration API plugin, online identity checks and encrypted server persistence | Shared contracts, identity module, Asgard PluginSdk, Microsoft.Data.Sqlite |
 | `Asgard.Hermod.Server.Starter` | Yggdrasil API composition and process lifetime | Sync API plugin |
