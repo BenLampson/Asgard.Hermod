@@ -80,6 +80,10 @@ When you start an automated SSH troubleshooting task, the application may collec
 
 Your model API key is used to authenticate requests to the configured model service. That provider's policies determine how request content is retained, used or used for model training. Review those policies before use and avoid submitting information you are not authorized to disclose.
 
+您可在系统设置中开启本机 MCP，并指定外部客户端可访问的实例和资源范围。配对令牌和授权以当前 Windows 用户保护方式保存在本机，不参与同步。MCP 会将授权操作的结果交给调用客户端；客户端可能根据自己的配置将结果发送给模型服务。文件正文、数据库行样本和 SSH 服务日志须单独授权。
+
+You can enable local MCP in System settings and choose the resources accessible to an external client. The pairing token and grants are protected for the current Windows user and do not sync. MCP returns authorized results to the calling client, which may send them to its model service according to its own settings. File contents, database row samples and SSH service logs require explicit additional permission.
+
 ## 6. 信息接收方与保护 / Data Recipients and Protection
 
 应用启动后及运行期间会定期检查更新，也可从设置手动检查。商店安装版通过微软商店查询可用更新，应用通过 GitHub 的公开发布接口读取版本与更新说明。此类检查不发送连接配置、凭据、终端内容或 AI 对话；微软和 GitHub 会接收通信所需的 IP 地址等技术信息。

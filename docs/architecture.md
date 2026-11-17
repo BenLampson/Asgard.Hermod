@@ -31,6 +31,8 @@ storage and owns application startup and shutdown.
 | `Asgard.Hermod.Persistence.Sqlite` | SQLite configuration, migrations, repository, local instance and tag services | Shared contracts, Asgard.Core, FreeSql SQLite |
 | `Asgard.Hermod.Security.Windows` | Windows current-user DPAPI protection | Shared contracts, ProtectedData, DI abstractions |
 | `Asgard.Hermod.Identity` | Heimdall desktop login, account registration transport, protected sessions, automatic configuration synchronization and conflict merging | Shared contracts, official Heimdall SDK |
+| `Asgard.Hermod.Mcp` | Local tool catalog, scoped authorization and current-session pipe broker | Shared contracts, protocol modules, MCP C# SDK |
+| `Asgard.Hermod.Mcp.Stdio` | Console relay from an external MCP client to the desktop broker | Shared localization and pipe handshake source |
 | `Asgard.Hermod.Server` | Independent sync and ordinary-account registration API plugin, online identity checks and encrypted server persistence | Shared contracts, identity module, Asgard PluginSdk, Microsoft.Data.Sqlite |
 | `Asgard.Hermod.Server.Starter` | Yggdrasil API composition and process lifetime | Sync API plugin |
 | `Asgard.Hermod.WinTerminal` | VT engine, rendering, WPF terminal control, ConPTY connections and local session adapter | Windows desktop framework |
@@ -271,6 +273,16 @@ terminal selections, fixed automatic diagnostics and confirmed command actions.
 The Agent module owns the bounded function-tool loop and diagnostic templates;
 the SSH UI owns approval, connection-generation checks and exec dispatch.
 Results return to the model within the current task, enabling iterative analysis.
+
+[Local MCP access](mcp.md) runs independently of the built-in Agent. The desktop
+process owns an authenticated pipe scoped by Windows SID and login session. A
+console relay speaks MCP over stdio and never opens the configuration database.
+The broker pairs using a mutual challenge, freezes the current policy and
+checks the workspace, grant and protected connection revision before opening a
+resource and again before returning results. The local SQLite policy and token
+are DPAPI protected and excluded from synchronization. Each adapter projects
+explicit response fields from independently owned protocol sessions; no tool
+can provide its own endpoint, connection options, SQL or shell command.
 Agent replies in SSH, MySQL and PostgreSQL use the shared `MarkdownView`, which
 maps Markdig syntax into selectable native WPF documents. Headings, tables,
 lists, emphasis and code blocks follow the current theme and available width.

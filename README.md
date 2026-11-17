@@ -22,6 +22,7 @@ AI assistance and configuration synchronization across devices.
 | RabbitMQ | Management API connections, resource administration and explicit message inspection. |
 | Object storage | Alibaba Cloud OSS, Tencent COS, Volcengine TOS, AWS S3, MinIO and custom S3-compatible services; uploads, downloads, previews and temporary links. |
 | AI assistant | Your own compatible model service for SQL assistance, log analysis and SSH troubleshooting, with confirmation for operations that require approval. |
+| MCP tools | Give a trusted local AI client scoped read access to saved SSH, database, Redis, RabbitMQ and object storage connections. [Setup guide](docs/mcp.md). |
 | Personal workspace | Instance organization, tags, light and dark themes, English and Simplified Chinese, and optional encrypted credential synchronization. |
 
 ## Use without an account
@@ -50,8 +51,9 @@ You can also build from source below.
   current desktop package. WPF requires Windows.
 - The current Store package targets x64 and includes the .NET runtime.
 - Remote workspaces require access to your own servers or cloud services.
-- AI features require a compatible model endpoint, model name and credentials
-  where required by your provider.
+- The built-in AI assistant requires a compatible model endpoint, model name and
+  credentials where required by your provider. For MCP, your external client
+  chooses the model.
 
 The application supports English and Simplified Chinese, follows your Windows
 display language by default, and remembers a manual language choice. Unsupported
