@@ -7,6 +7,8 @@ internal sealed class McpArguments(IReadOnlyDictionary<string, JsonElement> argu
 {
     internal string String(string key, string fallback = "") => arguments.TryGetValue(key, out var value) ? value.GetString()! : fallback;
     internal int Integer(string key, int fallback) => arguments.TryGetValue(key, out var value) ? value.GetInt32() : fallback;
+    internal string[] Strings(string key) => arguments.TryGetValue(key, out var value)
+        ? value.EnumerateArray().Select(item => item.GetString()!).ToArray() : [];
 
     internal static McpArguments Validate(IReadOnlyList<McpArgument> schema, IReadOnlyDictionary<string, JsonElement>? values)
     {
@@ -20,12 +22,17 @@ internal sealed class McpArguments(IReadOnlyDictionary<string, JsonElement> argu
                 if (argument.Required) throw Text.Exception("McpInvalidArguments");
                 continue;
             }
-            bool valid = argument.MaximumLength > 0
+            bool valid = argument.MaximumItems > 0
+                ? value.ValueKind == JsonValueKind.Array && value.GetArrayLength() <= argument.MaximumItems
+                    && value.EnumerateArray().All(item => item.ValueKind == JsonValueKind.String && item.GetString() is { Length: > 0 } text
+                        && text.Length <= argument.MaximumLength && !text.Any(char.IsControl))
+                : argument.MaximumLength > 0
                 ? value.ValueKind == JsonValueKind.String && value.GetString() is { } text && text.Length <= argument.MaximumLength
                     && (!argument.Required || text.Length > 0) && !text.Any(char.IsControl)
                     && (argument.Choices is null || argument.Choices.Contains(text, StringComparer.Ordinal))
                 : value.ValueKind == JsonValueKind.Number && value.TryGetInt32(out int number)
-                    && number >= argument.Minimum && number <= argument.Maximum;
+                    && number >= argument.Minimum && number <= argument.Maximum
+                    && (argument.IntegerChoices is null || argument.IntegerChoices.Contains(number));
             if (!valid) throw Text.Exception("McpInvalidArguments");
         }
         return new(values);

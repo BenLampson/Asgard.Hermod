@@ -175,6 +175,47 @@ public sealed class McpStorageTransferTests
     }
 
     [Fact]
+    public async Task OverwriteRequiresExplicitGrantAndRequestForBothDirections()
+    {
+        using var folder = new TransferFolder();
+        await File.WriteAllTextAsync(Path.Combine(folder.Path, "source.txt"), "new upload", McpTestRig.Token);
+        string destination = Path.Combine(folder.Path, "download.txt");
+        await File.WriteAllTextAsync(destination, "old download", McpTestRig.Token);
+        int uploads = 0, downloads = 0;
+        using var rig = CreateRig(ProtocolStub<IObjectStorageClient>.For((name, args) =>
+        {
+            if (name == nameof(IObjectStorageClient.UploadAsync))
+            {
+                uploads++;
+                Assert.Equal(true, args[4]);
+                return Task.CompletedTask;
+            }
+            Assert.Equal(nameof(IObjectStorageClient.OpenReadAsync), name);
+            downloads++;
+            byte[] data = System.Text.Encoding.UTF8.GetBytes("new download");
+            return Task.FromResult(new ObjectStorageReadResult(new MemoryStream(data), data.Length));
+        }));
+        var ordinary = await rig.GrantAsync(Target, "exports", "test/", transferRoot: folder.Path, upload: true, download: true);
+        await rig.Access.SetEnabledAsync("", true, McpTestRig.Token);
+        Assert.True((await rig.CallAsync(Start, ordinary, ("direction", "upload"), ("key", "test/source.txt"),
+            ("local_path", "source.txt"), ("conflict", "overwrite"))).IsError);
+        var grant = await rig.GrantAsync(Target, "exports", "test/", transferRoot: folder.Path, upload: true, download: true, overwrite: true);
+
+        string preserved = TaskId(await rig.CallAsync(Start, grant, ("direction", "download"), ("key", "test/download.txt")));
+        Assert.Equal("failed", (await WaitForTerminalAsync(() => PollAsync(rig, preserved), McpTestRig.Token)).GetProperty("status").GetString());
+        Assert.Equal("old download", await File.ReadAllTextAsync(destination, McpTestRig.Token));
+        string upload = TaskId(await rig.CallAsync(Start, grant, ("direction", "upload"), ("key", "test/source.txt"),
+            ("local_path", "source.txt"), ("conflict", "overwrite")));
+        Assert.Equal("completed", (await WaitForTerminalAsync(() => PollAsync(rig, upload), McpTestRig.Token)).GetProperty("status").GetString());
+        string download = TaskId(await rig.CallAsync(Start, grant, ("direction", "download"), ("key", "test/download.txt"),
+            ("conflict", "overwrite")));
+        Assert.Equal("completed", (await WaitForTerminalAsync(() => PollAsync(rig, download), McpTestRig.Token)).GetProperty("status").GetString());
+        Assert.Equal("new download", await File.ReadAllTextAsync(destination, McpTestRig.Token));
+        Assert.Equal(1, uploads);
+        Assert.Equal(1, downloads);
+    }
+
+    [Fact]
     public async Task AnUnclaimedFinalResultExpires()
     {
         using var folder = new TransferFolder();

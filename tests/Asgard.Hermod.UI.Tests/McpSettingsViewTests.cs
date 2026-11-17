@@ -80,6 +80,7 @@ public sealed class McpSettingsViewTests(WpfTestFixture fixture)
             var upload = Assert.IsType<CheckBox>(view.FindName("McpAllowUpload"));
             var rootPanel = Assert.IsType<StackPanel>(view.FindName("McpTransferRootPanel"));
             var folder = Assert.IsType<Button>(view.FindName("McpSelectTransferFolder"));
+            var overwrite = Assert.IsType<CheckBox>(view.FindName("McpAllowOverwrite"));
             model.SelectedTarget = model.Targets.Single(item => item.Target.TypeId == "storage");
             Assert.False(download.IsChecked);
             Assert.False(upload.IsChecked);
@@ -88,20 +89,24 @@ public sealed class McpSettingsViewTests(WpfTestFixture fixture)
             download.SetCurrentValue(CheckBox.IsCheckedProperty, true);
             Assert.True(model.AllowDownload);
             Assert.Equal(Visibility.Visible, rootPanel.Visibility);
+            Assert.False(overwrite.IsChecked);
             Assert.Equal(folderLabel, folder.Content);
             Assert.True(folder.Focusable);
             Assert.False(model.GrantCommand.CanExecute(null));
             model.Qualifier = "test/";
             Assert.False(model.GrantCommand.CanExecute(null));
             model.TransferRoot = @"D:\McpDownloads";
+            overwrite.SetCurrentValue(CheckBox.IsCheckedProperty, true);
             Assert.True(model.GrantCommand.CanExecute(null));
             await model.GrantCommand.ExecuteAsync();
             var saved = Assert.Single(settings.Grants);
             Assert.True(saved.AllowDownload);
             Assert.False(saved.AllowUpload);
+            Assert.True(saved.AllowOverwrite);
             Assert.Equal(@"D:\McpDownloads", saved.TransferRoot);
             model.SelectedTarget = model.Targets.Single(item => item.Target.TypeId == "mysql");
             Assert.False(model.AllowDownload);
+            Assert.False(model.AllowOverwrite);
             Assert.Empty(model.TransferRoot);
             Assert.Equal(Visibility.Collapsed, rootPanel.Visibility);
         }
@@ -131,6 +136,74 @@ public sealed class McpSettingsViewTests(WpfTestFixture fixture)
             Assert.True(upload.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)));
             Assert.Same(folder, Keyboard.FocusedElement);
             Assert.InRange(folder.ActualWidth, 1, view.ActualWidth);
+        }
+        finally { window.Close(); }
+    });
+
+    [Theory]
+    [InlineData("en-US", "Allow deleting objects and folder contents within this scope")]
+    [InlineData("zh-CN", "允许删除此范围内的对象和文件夹内容")]
+    [InlineData("de-DE", "Allow deleting objects and folder contents within this scope")]
+    public Task StorageManagementPermissionsAreExplicitLocalizedAndSaved(string culture, string deleteLabel) => fixture.RunOffscreenAsync(async () =>
+    {
+        var previous = CultureInfo.CurrentUICulture;
+        try
+        {
+            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(culture);
+            var settings = new SettingsStub();
+            using var model = new McpSettingsViewModel(settings);
+            await model.RefreshAsync(TestContext.Current.CancellationToken);
+            var view = new McpSettingsView { DataContext = model };
+            view.Measure(new(420, 550)); view.Arrange(new(0, 0, 420, 550)); view.UpdateLayout();
+            model.SelectedTarget = model.Targets.Single(item => item.Target.TypeId == "storage");
+            var folder = Assert.IsType<CheckBox>(view.FindName("McpAllowCreateFolder"));
+            var delete = Assert.IsType<CheckBox>(view.FindName("McpAllowDelete"));
+            var links = Assert.IsType<CheckBox>(view.FindName("McpAllowSignedLinks"));
+            Assert.Equal(deleteLabel, System.Windows.Automation.AutomationProperties.GetName(delete));
+            Assert.False(folder.IsChecked);
+            Assert.False(delete.IsChecked);
+            Assert.False(links.IsChecked);
+            model.Resource = "exports";
+            folder.SetCurrentValue(CheckBox.IsCheckedProperty, true);
+            delete.SetCurrentValue(CheckBox.IsCheckedProperty, true);
+            links.SetCurrentValue(CheckBox.IsCheckedProperty, true);
+            await model.GrantCommand.ExecuteAsync();
+            var saved = Assert.Single(settings.Grants);
+            Assert.True(saved.AllowCreateFolder && saved.AllowDelete && saved.AllowSignedLinks);
+            var visibleGrant = Assert.Single(model.Grants);
+            Assert.Equal(Text.Get("McpStorageDeleteScope"), visibleGrant.DeleteScope);
+            Assert.Equal(Text.Get("McpStorageSignedLinksScope"), visibleGrant.SignedLinksScope);
+            model.SelectedTarget = model.Targets.Single(item => item.Target.TypeId == "mysql");
+            Assert.False(model.AllowCreateFolder || model.AllowDelete || model.AllowSignedLinks);
+        }
+        finally { CultureInfo.CurrentUICulture = previous; }
+    });
+
+    [Fact]
+    public Task StorageManagementControlsRemainKeyboardAccessibleAfterResize() => fixture.RunAsync(async () =>
+    {
+        using var model = new McpSettingsViewModel(new SettingsStub());
+        await model.RefreshAsync(TestContext.Current.CancellationToken);
+        model.SelectedTarget = model.Targets.Single(item => item.Target.TypeId == "storage");
+        var view = new McpSettingsView { DataContext = model };
+        var window = new HermodWindow { Content = view, Width = 900, Height = 700 };
+        try
+        {
+            WindowPreviewCapture.Show(window);
+            await WindowTestVisuals.UpdateLayoutAsync(window);
+            window.Width = 430;
+            window.Height = 480;
+            var folder = Assert.IsType<CheckBox>(view.FindName("McpAllowCreateFolder"));
+            var delete = Assert.IsType<CheckBox>(view.FindName("McpAllowDelete"));
+            var links = Assert.IsType<CheckBox>(view.FindName("McpAllowSignedLinks"));
+            folder.BringIntoView();
+            await WindowTestVisuals.UpdateLayoutAsync(window);
+            Assert.True(folder.Focus());
+            Assert.True(folder.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)));
+            Assert.Same(delete, Keyboard.FocusedElement);
+            Assert.True(delete.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)));
+            Assert.Same(links, Keyboard.FocusedElement);
+            Assert.InRange(delete.ActualWidth, 1, view.ActualWidth);
         }
         finally { window.Close(); }
     });

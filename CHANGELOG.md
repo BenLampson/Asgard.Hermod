@@ -2,6 +2,16 @@
 
 All notable changes will be documented here. Released versions will follow Semantic Versioning.
 
+## 1.0.14 - 2026-11-17
+
+### Added
+
+- Scoped MCP object storage folder creation, recursive statistics, temporary
+  read-only links and previewable batch deletion.
+- Separate opt-in permissions for storage management and transfer overwrites;
+  existing grants retain their previous permissions.
+- MCP deletion plans with pagination, one-time execution and bounded lifetime.
+
 ## 1.0.0 - 2026-10-17
 
 ### Added

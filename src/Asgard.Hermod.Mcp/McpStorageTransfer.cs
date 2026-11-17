@@ -11,7 +11,7 @@ internal sealed class McpStorageTransfer(McpAccessService access, McpStorageClie
     private const int DirectoryLimit = 4000;
     private const int PageLimit = 200;
 
-    internal async Task RunAsync(McpSessionAccess session, McpGrant grant, bool upload, string key, string local,
+    internal async Task RunAsync(McpSessionAccess session, McpGrant grant, bool upload, bool overwrite, string key, string local,
         Action<int, int> report, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
@@ -22,7 +22,7 @@ internal sealed class McpStorageTransfer(McpAccessService access, McpStorageClie
         report(plan.Count, 0);
         if (plan.Count == 0) throw Text.Exception("McpTransferNoFiles");
         if (!upload)
-            foreach (var file in plan) EnsureDestinationAvailable(file.Path);
+            foreach (var file in plan) EnsureDestinationAvailable(file.Path, overwrite);
 
         int completed = 0;
         foreach (var file in plan)
@@ -34,23 +34,23 @@ internal sealed class McpStorageTransfer(McpAccessService access, McpStorageClie
                 EnsureSource(file.Path, directory: false);
                 try
                 {
-                    await ObjectStorageFileTransfer.UploadAsync(client, grant.Resource, file.Key, file.Path, overwrite: false,
+                    await ObjectStorageFileTransfer.UploadAsync(client, grant.Resource, file.Key, file.Path, overwrite,
                         progress: null, token).ConfigureAwait(false);
                 }
-                catch (ObjectStorageException error) when (error.ErrorCode == "ObjectAlreadyExists")
+                catch (ObjectStorageException error) when (error.ErrorCode is "ObjectAlreadyExists" or "FileAlreadyExists")
                 {
                     throw Text.Exception("McpTransferDestinationExists");
                 }
             }
             else
             {
-                EnsureDestinationAvailable(file.Path);
+                EnsureDestinationAvailable(file.Path, overwrite);
                 try
                 {
-                    await ObjectStorageFileTransfer.DownloadAsync(client, grant.Resource, file.Key, file.Path, overwrite: false,
+                    await ObjectStorageFileTransfer.DownloadAsync(client, grant.Resource, file.Key, file.Path, overwrite,
                         progress: null, token).ConfigureAwait(false);
                 }
-                catch (IOException) when (File.Exists(file.Path) || Directory.Exists(file.Path))
+                catch (IOException) when (!overwrite && (File.Exists(file.Path) || Directory.Exists(file.Path)))
                 {
                     throw Text.Exception("McpTransferDestinationExists");
                 }
@@ -139,9 +139,10 @@ internal sealed class McpStorageTransfer(McpAccessService access, McpStorageClie
             throw Text.Exception("McpTransferSourceType");
     }
 
-    private static void EnsureDestinationAvailable(string path)
+    private static void EnsureDestinationAvailable(string path, bool overwrite)
     {
-        if (McpStorageTransferPaths.CheckExisting(path, allowMissing: true) is not null)
+        if (McpStorageTransferPaths.CheckExisting(path, allowMissing: true) is { } existing
+            && (!overwrite || existing.HasFlag(FileAttributes.Directory)))
             throw Text.Exception("McpTransferDestinationExists");
     }
 }

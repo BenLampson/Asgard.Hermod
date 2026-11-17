@@ -31,6 +31,8 @@ internal sealed class McpStorageTransferJobs : IDisposable
         bool upload = args.String("direction") == "upload";
         if (!(upload ? grant.AllowUpload : grant.AllowDownload) || grant.TransferRoot is not { } root)
             throw Text.Exception("McpAccessDenied");
+        bool overwrite = args.String("conflict", "fail") == "overwrite";
+        if (overwrite && !grant.AllowOverwrite) throw Text.Exception("McpAccessDenied");
 
         string key = args.String("key");
         if (!McpStorageTransferPaths.IsKey(key) || !key.StartsWith(grant.Qualifier, StringComparison.Ordinal))
@@ -51,7 +53,7 @@ internal sealed class McpStorageTransferJobs : IDisposable
             lifetime.CancelAfter(TimeSpan.FromHours(2));
             _entries.Add(entry.Id, entry);
             _active++;
-            _ = Task.Run(() => RunAsync(entry, session, upload, key, local, lifetime));
+            _ = Task.Run(() => RunAsync(entry, session, upload, overwrite, key, local, lifetime));
             return Snapshot(entry);
         }
     }
@@ -71,7 +73,7 @@ internal sealed class McpStorageTransferJobs : IDisposable
         }
     }
 
-    private async Task RunAsync(Entry entry, McpSessionAccess session, bool upload, string key, string local, CancellationTokenSource lifetime)
+    private async Task RunAsync(Entry entry, McpSessionAccess session, bool upload, bool overwrite, string key, string local, CancellationTokenSource lifetime)
     {
         string? failure = null;
         try
@@ -80,7 +82,7 @@ internal sealed class McpStorageTransferJobs : IDisposable
             try
             {
                 lock (_gate) entry.Status = "running";
-                await _transfer.RunAsync(session, entry.Grant, upload, key, local, (total, completed) =>
+                await _transfer.RunAsync(session, entry.Grant, upload, overwrite, key, local, (total, completed) =>
                 {
                     lock (_gate)
                     {

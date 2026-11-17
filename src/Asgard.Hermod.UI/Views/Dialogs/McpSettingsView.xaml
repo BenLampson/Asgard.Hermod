@@ -4,6 +4,9 @@
     xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="McpVisibility" />
+        <Style x:Key="McpOptionalScope" TargetType="TextBlock">
+            <Style.Triggers><Trigger Property="Text" Value=""><Setter Property="Visibility" Value="Collapsed" /></Trigger></Style.Triggers>
+        </Style>
     </UserControl.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <StackPanel Margin="28" MaxWidth="650" HorizontalAlignment="Stretch">
@@ -49,6 +52,10 @@
                                             </Style>
                                         </TextBlock.Style>
                                     </TextBlock>
+                                    <TextBlock Text="{Binding CreateFolderScope}" Style="{StaticResource McpOptionalScope}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" />
+                                    <TextBlock Text="{Binding DeleteScope}" Style="{StaticResource McpOptionalScope}" TextWrapping="Wrap" Foreground="{DynamicResource WarningBrush}" />
+                                    <TextBlock Text="{Binding SignedLinksScope}" Style="{StaticResource McpOptionalScope}" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" />
+                                    <TextBlock Text="{Binding OverwriteScope}" Style="{StaticResource McpOptionalScope}" TextWrapping="Wrap" Foreground="{DynamicResource WarningBrush}" />
                                     <TextBlock Text="{loc:Loc McpGrantExpired}" Foreground="{DynamicResource WarningBrush}" TextWrapping="Wrap">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
@@ -102,7 +109,27 @@
                     <Button x:Name="McpSelectTransferFolder" Content="{loc:Loc McpStorageSelectTransferFolder}" Click="OnSelectTransferFolder"
                             HorizontalAlignment="Left" Padding="12,0" Margin="0,8,0,0" />
                     <TextBlock Text="{Binding TransferRoot}" TextWrapping="Wrap" Margin="0,4,0,0" AutomationProperties.LiveSetting="Polite" />
+                    <CheckBox x:Name="McpAllowOverwrite" IsChecked="{Binding AllowOverwrite}" Margin="0,8,0,0"
+                              AutomationProperties.Name="{loc:Loc McpStorageAllowOverwrite}">
+                        <TextBlock Text="{loc:Loc McpStorageAllowOverwrite}" TextWrapping="Wrap" />
+                    </CheckBox>
                 </StackPanel>
+            </StackPanel>
+            <StackPanel Margin="0,12,0,0" Visibility="{Binding ShowTransfers, Converter={StaticResource McpVisibility}}">
+                <TextBlock Text="{loc:Loc McpStorageOperationsTitle}" FontWeight="SemiBold" />
+                <CheckBox x:Name="McpAllowCreateFolder" IsChecked="{Binding AllowCreateFolder}" Margin="0,6,0,0"
+                          AutomationProperties.Name="{loc:Loc McpStorageAllowCreateFolder}">
+                    <TextBlock Text="{loc:Loc McpStorageAllowCreateFolder}" TextWrapping="Wrap" />
+                </CheckBox>
+                <CheckBox x:Name="McpAllowDelete" IsChecked="{Binding AllowDelete}" Margin="0,6,0,0"
+                          AutomationProperties.Name="{loc:Loc McpStorageAllowDelete}">
+                    <TextBlock Text="{loc:Loc McpStorageAllowDelete}" TextWrapping="Wrap" />
+                </CheckBox>
+                <CheckBox x:Name="McpAllowSignedLinks" IsChecked="{Binding AllowSignedLinks}" Margin="0,6,0,0"
+                          AutomationProperties.Name="{loc:Loc McpStorageAllowSignedLinks}">
+                    <TextBlock Text="{loc:Loc McpStorageAllowSignedLinks}" TextWrapping="Wrap" />
+                </CheckBox>
+                <TextBlock Text="{loc:Loc McpStorageOperationsHint}" Margin="0,6,0,0" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" />
             </StackPanel>
             <Button Content="{loc:Loc McpAddGrant}" Command="{Binding GrantCommand}" HorizontalAlignment="Left" Style="{StaticResource PrimaryButton}"
                     Padding="16,0" Margin="0,12,0,0" />

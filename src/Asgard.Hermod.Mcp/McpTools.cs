@@ -71,7 +71,17 @@ internal sealed class McpTools(McpAccessService access, McpSqlTools sql, McpStor
         var (grant, target) = pair;
         object scope = grant.TypeId switch
         {
-            "storage" => new { bucket = grant.Resource, prefix = grant.Qualifier, grant.AllowUpload, grant.AllowDownload },
+            "storage" => new
+            {
+                bucket = grant.Resource,
+                prefix = grant.Qualifier,
+                grant.AllowUpload,
+                grant.AllowDownload,
+                grant.AllowCreateFolder,
+                grant.AllowDelete,
+                grant.AllowSignedLinks,
+                grant.AllowOverwrite
+            },
             "mysql" => new { database = grant.Resource, table = grant.Table.Length > 0 ? grant.Table : null },
             "postgresql" => new { database = grant.Resource, schema = grant.Qualifier, table = grant.Table.Length > 0 ? grant.Table : null },
             "redis" => new { database = int.Parse(grant.Resource, CultureInfo.InvariantCulture), prefix = grant.Qualifier },

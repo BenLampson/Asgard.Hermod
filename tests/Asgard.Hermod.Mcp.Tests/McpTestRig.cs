@@ -33,10 +33,11 @@ internal sealed class McpTestRig : IDisposable
     }
 
     internal async Task<McpGrant> GrantAsync(McpTarget target, string resource = "", string qualifier = "", string table = "", bool share = false,
-        string? transferRoot = null, bool upload = false, bool download = false)
+        string? transferRoot = null, bool upload = false, bool download = false, bool createFolder = false, bool delete = false, bool signedLinks = false,
+        bool overwrite = false)
     {
         var snapshot = await Access.AddGrantAsync(Store.Owner, new("", target.Id, target.TypeId, target.Revision, resource, qualifier, table, share,
-            transferRoot, upload, download), Token);
+            transferRoot, upload, download, createFolder, delete, signedLinks, overwrite), Token);
         return snapshot.Grants[^1];
     }
 

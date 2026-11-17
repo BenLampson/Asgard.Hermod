@@ -9,7 +9,7 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
     private McpSettingsSnapshot? _snapshot;
     private McpSettingsTarget? _selected;
     private string _resource = "", _qualifier = "", _table = "", _message = "", _transferRoot = "";
-    private bool _shareContent, _allowUpload, _allowDownload, _busy, _disposed;
+    private bool _shareContent, _allowUpload, _allowDownload, _allowCreateFolder, _allowDelete, _allowSignedLinks, _allowOverwrite, _busy, _disposed;
 
     /// <summary>剪贴板动作可替换，视图模型从不在绑定中持有可复制的客户端凭证。</summary>
     public McpSettingsViewModel(IMcpSettingsService service, Action<string>? copy = null)
@@ -33,7 +33,7 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
         {
             var target = _selected!.Target;
             var draft = new McpGrant("", target.Id, target.TypeId, target.Revision, Resource, Qualifier, Table, ShareContent,
-                ShowTransferRoot ? TransferRoot : null, AllowUpload, AllowDownload);
+                ShowTransferRoot ? TransferRoot : null, AllowUpload, AllowDownload, AllowCreateFolder, AllowDelete, AllowSignedLinks, AllowOverwrite);
             var snapshot = await _service.AddGrantAsync(_snapshot!.Workspace.Owner, draft, token);
             Apply(snapshot);
         }, "McpSettingsSaved"), _ => Ready && _selected is not null
@@ -60,11 +60,13 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
             _qualifier = Kind == "postgresql" ? "public" : "";
             _table = ""; _shareContent = false;
             _allowUpload = _allowDownload = false;
+            _allowCreateFolder = _allowDelete = _allowSignedLinks = _allowOverwrite = false;
             _transferRoot = "";
             foreach (string property in new[] { nameof(SelectedTarget), nameof(ShowResource), nameof(ShowQualifier), nameof(ShowTable),
                 nameof(ShowContent), nameof(ResourceLabel), nameof(QualifierLabel), nameof(ContentLabel), nameof(ScopeHint),
                 nameof(Resource), nameof(Qualifier), nameof(Table), nameof(ShareContent), nameof(ShowTransfers), nameof(ShowTransferRoot),
-                nameof(TransferRoot), nameof(AllowUpload), nameof(AllowDownload) }) OnPropertyChanged(property);
+                nameof(TransferRoot), nameof(AllowUpload), nameof(AllowDownload), nameof(AllowCreateFolder), nameof(AllowDelete),
+                nameof(AllowSignedLinks), nameof(AllowOverwrite) }) OnPropertyChanged(property);
             GrantCommand.NotifyCanExecuteChanged();
         }
     }
@@ -89,6 +91,14 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
         get => _allowDownload;
         set { if (ShowTransfers && SetProperty(ref _allowDownload, value)) OnTransferPermissionChanged(); }
     }
+    /// <summary>单独授权在指定对象存储范围内创建目录。</summary>
+    public bool AllowCreateFolder { get => _allowCreateFolder; set { if (ShowTransfers) SetProperty(ref _allowCreateFolder, value); } }
+    /// <summary>单独授权预览并删除明确列出的对象。</summary>
+    public bool AllowDelete { get => _allowDelete; set { if (ShowTransfers) SetProperty(ref _allowDelete, value); } }
+    /// <summary>单独授权向客户端提供可分享的临时只读链接。</summary>
+    public bool AllowSignedLinks { get => _allowSignedLinks; set { if (ShowTransfers) SetProperty(ref _allowSignedLinks, value); } }
+    /// <summary>单独允许传输时覆盖目标对象或本地文件。</summary>
+    public bool AllowOverwrite { get => _allowOverwrite; set { if (ShowTransferRoot) SetProperty(ref _allowOverwrite, value); } }
     /// <summary>从本机目录选择器获得根目录，模型只使用它下面的相对路径。</summary>
     public string TransferRoot
     {
@@ -196,7 +206,11 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
         {
             var target = Targets.FirstOrDefault(entry => entry.Target.Id == grant.InstanceId);
             return new McpSettingsGrant(grant.Id, target?.Label ?? Text.Get("McpUnavailableInstance"), Scope(grant),
-                target?.Target.Revision == grant.Revision && target.Target.TypeId == grant.TypeId, TransferScope(grant));
+                target?.Target.Revision == grant.Revision && target.Target.TypeId == grant.TypeId, TransferScope(grant),
+                grant.AllowCreateFolder ? Text.Get("McpStorageCreateFolderScope") : "",
+                grant.AllowDelete ? Text.Get("McpStorageDeleteScope") : "",
+                grant.AllowSignedLinks ? Text.Get("McpStorageSignedLinksScope") : "",
+                grant.AllowOverwrite ? Text.Get("McpStorageOverwriteScope") : "");
         }).ToArray();
         OnPropertyChanged(nameof(Grants)); OnPropertyChanged(nameof(NoGrants));
         OnPropertyChanged(nameof(Enabled)); OnPropertyChanged(nameof(ToggleLabel)); OnPropertyChanged(nameof(StateText));
@@ -207,7 +221,8 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
         string table = grant.Table.Length == 0 ? Text.Get("McpAllTables") : grant.Table;
         string prefix = grant.Qualifier.Length == 0 ? Text.Get("McpAnyPrefix") : grant.Qualifier;
         string content = Text.Get(grant.ShareContent ? "McpContentShared"
-            : grant.AllowUpload || grant.AllowDownload ? "McpStorageMetadataBrowsingOnly" : "McpMetadataOnly");
+            : grant.AllowUpload || grant.AllowDownload || grant.AllowCreateFolder || grant.AllowDelete || grant.AllowSignedLinks
+                ? "McpStorageMetadataBrowsingOnly" : "McpMetadataOnly");
         return grant.TypeId switch
         {
             "storage" => Text.Format("McpStorageScope", grant.Resource, prefix, content),
@@ -229,6 +244,11 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
 
     private void OnTransferPermissionChanged()
     {
+        if (!ShowTransferRoot && _allowOverwrite)
+        {
+            _allowOverwrite = false;
+            OnPropertyChanged(nameof(AllowOverwrite));
+        }
         OnPropertyChanged(nameof(ShowTransferRoot));
         GrantCommand.NotifyCanExecuteChanged();
     }

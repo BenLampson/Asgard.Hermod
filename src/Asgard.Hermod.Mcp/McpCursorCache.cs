@@ -7,6 +7,9 @@ internal sealed class McpCursorCache
 {
     private sealed record Entry(string Tool, string GrantId, string Scope, object Data, long Created);
     private readonly Dictionary<string, Entry> _entries = new(StringComparer.Ordinal);
+    private readonly Func<long> _clock;
+
+    internal McpCursorCache(Func<long>? clock = null) => _clock = clock ?? (() => Environment.TickCount64);
 
     internal string Store(string tool, string grantId, string scope, object data)
     {
@@ -14,7 +17,7 @@ internal sealed class McpCursorCache
         {
             var id = Convert.ToHexString(RandomNumberGenerator.GetBytes(16));
             if (_entries.Count >= 32) _entries.Remove(_entries.MinBy(item => item.Value.Created).Key);
-            _entries.Add(id, new(tool, grantId, scope, data, Environment.TickCount64));
+            _entries.Add(id, new(tool, grantId, scope, data, _clock()));
             return id;
         }
     }
@@ -25,9 +28,20 @@ internal sealed class McpCursorCache
         lock (_entries)
         {
             if (_entries.TryGetValue(cursor, out var entry) && entry.Tool == tool && entry.GrantId == grantId
-                && entry.Scope == scope && Environment.TickCount64 - entry.Created <= (long)TimeSpan.FromMinutes(5).TotalMilliseconds
+                && entry.Scope == scope && _clock() - entry.Created <= (long)TimeSpan.FromMinutes(5).TotalMilliseconds
                 && entry.Data is T state) return state;
             throw Text.Exception("McpInvalidCursor");
+        }
+    }
+
+    // 破坏性操作的清单只能领取一次，读取和移除必须在同一把锁里完成。
+    internal T Take<T>(string cursor, string tool, string grantId, string scope) where T : class
+    {
+        lock (_entries)
+        {
+            var value = Read<T>(cursor, tool, grantId, scope) ?? throw Text.Exception("McpInvalidCursor");
+            _entries.Remove(cursor);
+            return value;
         }
     }
 }
