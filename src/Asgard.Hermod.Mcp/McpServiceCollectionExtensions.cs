@@ -19,6 +19,7 @@ public static class McpServiceCollectionExtensions
             new SshTcpStreamFactory(provider.GetRequiredService<IHostKeyTrustStore>(), new McpSshTrustPrompt()));
         services.AddSingleton(provider => new McpSqlTools(new MySqlSessionFactory(Tunnel(provider)), new PostgreSqlSessionFactory(Tunnel(provider))));
         services.AddSingleton<McpStorageClients>();
+        services.AddSingleton<IMcpStorageScopeBrowser, McpStorageScopeBrowser>();
         services.AddSingleton<McpStorageTools>();
         services.AddSingleton<McpStorageTransfer>();
         services.AddSingleton(provider => new McpStorageTransferJobs(provider.GetRequiredService<McpAccessService>(),
@@ -26,6 +27,7 @@ public static class McpServiceCollectionExtensions
         services.AddSingleton<McpSshTools>();
         services.AddSingleton(provider => new McpRedisTools(new RedisSessionFactory(Tunnel(provider))));
         services.AddSingleton(provider => new McpRabbitMqTools(new RabbitMqSessionFactory(provider.GetRequiredService<IHttpClientFactory>(), Tunnel(provider))));
+        services.AddSingleton<McpResourceDiscovery>();
         services.AddSingleton<McpTools>();
         services.AddSingleton<McpProtocolSession>();
         services.AddSingleton(provider => new McpDesktopServer(provider.GetRequiredService<McpAccessService>(),

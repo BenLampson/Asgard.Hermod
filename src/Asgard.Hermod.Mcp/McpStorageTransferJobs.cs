@@ -29,17 +29,22 @@ internal sealed class McpStorageTransferJobs : IDisposable
     {
         _access.Check(session, grant);
         bool upload = args.String("direction") == "upload";
-        if (!(upload ? grant.AllowUpload : grant.AllowDownload) || grant.TransferRoot is not { } root)
+        if (!(upload ? grant.AllowUpload : grant.AllowDownload))
             throw Text.Exception("McpAccessDenied");
         bool overwrite = args.String("conflict", "fail") == "overwrite";
         if (overwrite && !grant.AllowOverwrite) throw Text.Exception("McpAccessDenied");
 
         string key = args.String("key");
-        if (!McpStorageTransferPaths.IsKey(key) || !key.StartsWith(grant.Qualifier, StringComparison.Ordinal))
+        if (!(session.Policy.DefaultAllow && key.Length == 0) && !McpStorageTransferPaths.IsKey(key)
+            || !key.StartsWith(grant.Qualifier, StringComparison.Ordinal))
             throw Text.Exception("McpTransferInvalidKey");
-        bool directory = key.EndsWith('/');
+        bool directory = McpStorageTransferPaths.IsDirectoryKey(key);
         string fallback = !upload && !directory ? key[(key.LastIndexOf('/') + 1)..] : "";
-        string local = McpStorageTransferPaths.Resolve(root, args.String("local_path", fallback), directory);
+        string suppliedPath = args.String("local_path", fallback);
+        string local = upload && grant.AllowUnrestrictedUpload
+            ? McpStorageTransferPaths.ResolveUpload(suppliedPath, directory)
+            : grant.TransferRoot is { } root ? McpStorageTransferPaths.Resolve(root, suppliedPath, directory)
+            : throw Text.Exception("McpAccessDenied");
 
         lock (_gate)
         {

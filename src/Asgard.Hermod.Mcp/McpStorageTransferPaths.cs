@@ -2,7 +2,7 @@ using System.Text;
 
 namespace Asgard.Hermod.Mcp;
 
-/// <summary>将客户端传来的相对路径与已选根目录绑定，并限制 Windows 路径和对象键的映射。</summary>
+/// <summary>限制下载目标与旧上传授权的路径范围；新上传授权接受明确的绝对来源路径。</summary>
 internal static class McpStorageTransferPaths
 {
     private static readonly char[] Separators = ['/', '\\'];
@@ -11,12 +11,12 @@ internal static class McpStorageTransferPaths
     {
         try
         {
-            if (root.Length < 4 || !char.IsAsciiLetter(root[0]) || root[1] != ':' || root[2] is not ('\\' or '/')
+            if (root.Length < 3 || !char.IsAsciiLetter(root[0]) || root[1] != ':' || root[2] is not ('\\' or '/')
                 || root.Any(char.IsControl))
                 throw Text.Exception("McpTransferInvalidLocalPath");
             string full = Path.TrimEndingDirectorySeparator(Path.GetFullPath(root));
             string drive = Path.GetPathRoot(full)!;
-            if (full.Length <= drive.Length || new DriveInfo(drive).DriveType == DriveType.Network || !Directory.Exists(full))
+            if (full.Length < drive.Length || new DriveInfo(drive).DriveType == DriveType.Network || !Directory.Exists(full))
                 throw Text.Exception("McpTransferInvalidLocalPath");
             CheckExisting(full, allowMissing: false);
             return full;
@@ -26,6 +26,9 @@ internal static class McpStorageTransferPaths
             throw Text.Exception("McpTransferInvalidLocalPath");
         }
     }
+
+    // 空前缀表示 Bucket 根目录，其余目录键以斜杠结尾。
+    internal static bool IsDirectoryKey(string key) => key.Length == 0 || key.EndsWith('/');
 
     internal static bool IsKey(string key) => key.Length > 0 && Encoding.UTF8.GetByteCount(key) <= 1023
         && !key.Any(char.IsControl) && McpGrantRules.IsObjectPath(key)
@@ -41,17 +44,51 @@ internal static class McpStorageTransferPaths
         string[] parts = input.Split(Separators);
         if (parts.Any(part => !IsRegularPart(part))) throw Text.Exception("McpTransferInvalidLocalPath");
         string target = Path.GetFullPath(Path.Combine(root, Path.Combine(parts)));
-        if (!target.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+        string boundary = Path.EndsInDirectorySeparator(root) ? root : root + Path.DirectorySeparatorChar;
+        if (!target.StartsWith(boundary, StringComparison.OrdinalIgnoreCase))
             throw Text.Exception("McpTransferInvalidLocalPath");
         return target;
     }
 
-    // 在每次打开源文件或目标目录之前重新拒绝符号链接、目录联接和设备。
-    internal static FileAttributes? CheckExisting(string path, bool allowMissing)
+    // 新上传授权使用完整来源路径，不与下载目录或旧授权的相对路径混用。
+    internal static string ResolveUpload(string path, bool directory)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(path) || path.Any(char.IsControl) || !Path.IsPathFullyQualified(path)
+                || path.StartsWith(@"\\?\", StringComparison.Ordinal) || path.StartsWith(@"\\.\", StringComparison.Ordinal))
+                throw Text.Exception("McpTransferInvalidUploadPath");
+            string full = Path.TrimEndingDirectorySeparator(Path.GetFullPath(path));
+            string root = Path.GetPathRoot(full)!;
+            if (root.Length == 0 || !directory && full.Length == root.Length
+                || full[root.Length..].Split(Separators, StringSplitOptions.RemoveEmptyEntries).Any(part => !IsRegularPart(part)))
+                throw Text.Exception("McpTransferInvalidUploadPath");
+            return full;
+        }
+        catch (Exception error) when (error is ArgumentException or IOException or UnauthorizedAccessException or NotSupportedException)
+        {
+            throw Text.Exception("McpTransferInvalidUploadPath");
+        }
+    }
+
+    // 下载及旧授权始终拒绝链接；新上传明确允许任意来源，仍拒绝设备路径。
+    internal static FileAttributes? CheckExisting(string path, bool allowMissing, bool allowLinks = false)
     {
         string current = Path.GetPathRoot(path)!;
         string[] parts = path[current.Length..].Split(Separators, StringSplitOptions.RemoveEmptyEntries);
         FileAttributes? last = null;
+        if (parts.Length == 0)
+        {
+            try { last = File.GetAttributes(current); }
+            catch (IOException error) when (error is FileNotFoundException or DirectoryNotFoundException)
+            {
+                if (allowMissing) return null;
+                throw Text.Exception("McpTransferInvalidLocalPath");
+            }
+            if ((last.Value & FileAttributes.Device) != 0 || !allowLinks && last.Value.HasFlag(FileAttributes.ReparsePoint))
+                throw Text.Exception("McpTransferInvalidLocalPath");
+            return last;
+        }
         for (int i = 0; i < parts.Length; i++)
         {
             current = Path.Combine(current, parts[i]);
@@ -62,7 +99,7 @@ internal static class McpStorageTransferPaths
                 if (allowMissing) return null;
                 throw Text.Exception("McpTransferInvalidLocalPath");
             }
-            if ((attributes & (FileAttributes.ReparsePoint | FileAttributes.Device)) != 0
+            if ((attributes & FileAttributes.Device) != 0 || !allowLinks && attributes.HasFlag(FileAttributes.ReparsePoint)
                 || (i < parts.Length - 1 && !attributes.HasFlag(FileAttributes.Directory)))
                 throw Text.Exception("McpTransferInvalidLocalPath");
             last = attributes;

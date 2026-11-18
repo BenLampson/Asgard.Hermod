@@ -23,12 +23,13 @@ internal sealed class McpAccessService(IMcpLocalStore store, string command) : I
     public Task<McpSettingsSnapshot> AddGrantAsync(string owner, McpGrant grant, CancellationToken cancellationToken = default) =>
         UpdateAsync(owner, (workspace, policy) =>
         {
+            if (policy.DefaultAllow) throw Text.Exception("McpLegacyGrantUnavailable");
             McpGrantRules.Validate(grant);
             if (!workspace.Targets.Any(target => McpGrantRules.IsSameTarget(target, grant))) throw Text.Exception("McpWorkspaceChanged");
             var candidate = grant with
             {
                 Id = "",
-                TransferRoot = McpGrantRules.CanTransfer(grant) ? McpStorageTransferPaths.NormalizeRoot(grant.TransferRoot!) : null,
+                TransferRoot = McpGrantRules.NeedsTransferRoot(grant) ? McpStorageTransferPaths.NormalizeRoot(grant.TransferRoot!) : null,
             };
             if (policy.Grants.Any(value => value with { Id = "" } == candidate)) return policy;
             if (policy.Grants.Count >= McpGrantRules.MaximumGrants) throw Text.Exception("McpGrantLimit");
@@ -37,6 +38,23 @@ internal sealed class McpAccessService(IMcpLocalStore store, string command) : I
 
     public Task<McpSettingsSnapshot> RemoveGrantAsync(string owner, string grantId, CancellationToken cancellationToken = default) =>
         UpdateAsync(owner, (_, policy) => policy with { Grants = Array.AsReadOnly(policy.Grants.Where(grant => grant.Id != grantId).ToArray()) }, cancellationToken);
+
+    public Task<McpSettingsSnapshot> SetExclusionsAsync(string owner, IReadOnlyList<McpExclusion> exclusions, CancellationToken cancellationToken = default) =>
+        UpdateAsync(owner, (workspace, policy) =>
+        {
+            ArgumentNullException.ThrowIfNull(exclusions);
+            if (exclusions.Count > McpExclusionRules.Maximum) throw Text.Exception("McpExclusionLimit");
+            foreach (var exclusion in exclusions)
+            {
+                McpExclusionRules.Validate(exclusion);
+                if (!workspace.Targets.Any(target => target.Id == exclusion.InstanceId && target.TypeId == exclusion.TypeId)
+                    && !(policy.Exclusions ?? []).Contains(exclusion)) throw Text.Exception("McpWorkspaceChanged");
+            }
+            var normalized = exclusions.Select(item => item with { Id = item.Id.Length == 0 ? Guid.NewGuid().ToString("N") : item.Id })
+                .DistinctBy(item => (item.InstanceId, item.TypeId, item.Resource, item.Qualifier, item.Table)).ToArray();
+            if (policy.DefaultAllow && (policy.Exclusions ?? []).SequenceEqual(normalized)) return policy;
+            return policy with { DefaultAllow = true, Exclusions = Array.AsReadOnly(normalized) };
+        }, cancellationToken);
 
     public Task<string> GetClientConfigurationAsync(string owner, CancellationToken cancellationToken = default) => RunAsync(() =>
     {
@@ -47,6 +65,23 @@ internal sealed class McpAccessService(IMcpLocalStore store, string command) : I
             mcpServers = new { hermod = new { command, env = new Dictionary<string, string> { [McpPipeEndpoint.SecretVariable] = policy.Secret } } },
         }, new JsonSerializerOptions { WriteIndented = true });
     }, cancellationToken);
+
+    /// <summary>默认开放模式不再使用旧白名单；保留加密备份，并防止旧版忽略禁止规则后沿用旧授权。</summary>
+    internal void MigrateDefaultPolicy()
+    {
+        CancellationTokenSource? previous = null;
+        lock (_gate)
+        {
+            if (_stopped) return;
+            string owner = store.ReadOwner();
+            if (store.ReadPolicy() is not { DefaultAllow: true, Grants.Count: > 0 } policy || policy.Owner != owner) return;
+            var legacy = policy.LegacyGrants is null ? policy.Grants.ToArray() : [.. policy.LegacyGrants, .. policy.Grants];
+            store.SavePolicy(policy with { Grants = [], LegacyGrants = Array.AsReadOnly(legacy), Generation = Guid.NewGuid().ToString("N") });
+            previous = _revocation;
+            _revocation = new();
+        }
+        if (previous is not null) Cancel(previous);
+    }
 
     internal McpSessionAccess? Connect()
     {
@@ -133,14 +168,15 @@ internal sealed class McpAccessService(IMcpLocalStore store, string command) : I
     private McpLocalPolicy Policy(string owner)
     {
         if (store.ReadPolicy() is not { } policy || policy.Owner != owner) return new(owner, "", false, "", []);
-        if (policy.Grants is null || policy.Grants.Count > McpGrantRules.MaximumGrants
+        if (policy.Grants is null || policy.Grants.Count > McpGrantRules.MaximumGrants || policy.Exclusions?.Count > McpExclusionRules.Maximum
             || (policy.Enabled && (policy.Generation is not { Length: 32 } || !McpPipeEndpoint.IsSecret(policy.Secret))))
             throw Text.Exception("McpAccessUnavailable");
         return policy;
     }
 
     private static McpSettingsSnapshot Snapshot(McpWorkspace workspace, McpLocalPolicy policy) =>
-        new(workspace with { Targets = Array.AsReadOnly(workspace.Targets.Where(target => McpGrantRules.Supports(target.TypeId)).ToArray()) }, policy.Enabled, policy.Grants);
+        new(workspace with { Targets = Array.AsReadOnly(workspace.Targets.Where(target => McpGrantRules.Supports(target.TypeId)).ToArray()) },
+            policy.Enabled, policy.Grants, policy.Exclusions ?? [], policy.DefaultAllow);
 
     public void Dispose()
     {

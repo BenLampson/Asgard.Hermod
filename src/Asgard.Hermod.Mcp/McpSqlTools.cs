@@ -9,7 +9,40 @@ namespace Asgard.Hermod.Mcp;
 /// <summary>从授权生成限定的查询，不接受外部提供的 SQL、连接参数或表达式。</summary>
 internal sealed class McpSqlTools(IMySqlSessionFactory mySql, IPostgreSqlSessionFactory postgres)
 {
-    internal async Task<object> RunAsync(string name, McpGrant grant, InstanceConnectionOptions connection, McpArguments args, CancellationToken token)
+    internal async Task<object> ListResourcesAsync(string type, string database, int offset, InstanceConnectionOptions connection,
+        Func<string, string, bool> allowed, CancellationToken token)
+    {
+        if (type == "mysql")
+        {
+            await using var session = await mySql.OpenAsync(connection, token).ConfigureAwait(false);
+            var page = await session.ListAsync(new(MySqlObjectKind.Root, ""), offset, token).ConfigureAwait(false);
+            return new
+            {
+                kind = "databases",
+                items = page.Items.Where(item => allowed(item.Name, "")).Select(item => item.Name).ToArray(),
+                nextOffset = page.HasMore ? (int?)(offset + page.Items.Count) : null
+            };
+        }
+        var options = database.Length == 0 ? connection : new InstanceConnectionOptions
+        {
+            TypeId = connection.TypeId,
+            ProviderId = connection.ProviderId,
+            Parameters = new Dictionary<string, string>(connection.Parameters, StringComparer.Ordinal) { ["database"] = database },
+        };
+        await using var postgresSession = await postgres.OpenAsync(options, token).ConfigureAwait(false);
+        var parent = database.Length == 0 ? new PostgreSqlObject(PostgreSqlObjectKind.Root, "")
+            : new PostgreSqlObject(PostgreSqlObjectKind.Database, database, database);
+        var result = await postgresSession.ListAsync(parent, offset, token).ConfigureAwait(false);
+        return new
+        {
+            kind = database.Length == 0 ? "databases" : "schemas",
+            items = result.Items.Where(item => database.Length == 0 ? allowed(item.Name, "") : allowed(database, item.Name)).Select(item => item.Name).ToArray(),
+            nextOffset = result.HasMore ? (int?)(offset + result.Items.Count) : null
+        };
+    }
+
+    internal async Task<object> RunAsync(string name, McpGrant grant, InstanceConnectionOptions connection, McpArguments args, CancellationToken token,
+        Func<string, bool>? allowed = null)
     {
         string table = args.String("table");
         bool listing = name == "hermod_db_list_tables";
@@ -17,12 +50,12 @@ internal sealed class McpSqlTools(IMySqlSessionFactory mySql, IPostgreSqlSession
         if (listing && grant.Table.Length > 0) return new { tables = new[] { grant.Table }, nextOffset = (int?)null };
         int offset = args.Integer("offset", 0), limit = args.Integer("limit", 10);
         return grant.TypeId == MySqlIds.Type
-            ? await MySqlAsync(name, grant.Resource, table, offset, limit, connection, token).ConfigureAwait(false)
-            : await PostgreSqlAsync(name, grant.Resource, grant.Qualifier, table, offset, limit, connection, token).ConfigureAwait(false);
+            ? await MySqlAsync(name, grant.Resource, table, offset, limit, connection, token, allowed).ConfigureAwait(false)
+            : await PostgreSqlAsync(name, grant.Resource, grant.Qualifier, table, offset, limit, connection, token, allowed).ConfigureAwait(false);
     }
 
     private async Task<object> MySqlAsync(string name, string database, string table, int offset, int limit,
-        InstanceConnectionOptions connection, CancellationToken token)
+        InstanceConnectionOptions connection, CancellationToken token, Func<string, bool>? allowed)
     {
         await using var session = await mySql.OpenAsync(connection, token).ConfigureAwait(false);
         string relation = MySqlSql.Quote(database) + "." + MySqlSql.Quote(table);
@@ -47,7 +80,7 @@ internal sealed class McpSqlTools(IMySqlSessionFactory mySql, IPostgreSqlSession
         var rows = result.Rows;
         return name switch
         {
-            "hermod_db_list_tables" => new { tables = rows.Take(100).Select(row => Cell(result, row, "TABLE_NAME")), nextOffset = NextOffset(offset, 100, rows.Count > 100) },
+            "hermod_db_list_tables" => new { tables = rows.Take(100).Select(row => Cell(result, row, "TABLE_NAME")).Where(name => allowed is null || allowed(name)), nextOffset = NextOffset(offset, 100, rows.Count > 100) },
             "hermod_db_describe_table" => new
             {
                 table,
@@ -65,7 +98,7 @@ internal sealed class McpSqlTools(IMySqlSessionFactory mySql, IPostgreSqlSession
     }
 
     private async Task<object> PostgreSqlAsync(string name, string database, string schema, string table, int offset, int limit,
-        InstanceConnectionOptions connection, CancellationToken token)
+        InstanceConnectionOptions connection, CancellationToken token, Func<string, bool>? allowed)
     {
         // 服务器会截断过长的标识符；在打开会话之前拒绝可能解析到其他对象的范围。
         if (new[] { database, schema, table }.Any(value => Encoding.UTF8.GetByteCount(value) > 63)) throw Text.Exception("McpInvalidArguments");
@@ -79,7 +112,7 @@ internal sealed class McpSqlTools(IMySqlSessionFactory mySql, IPostgreSqlSession
         if (name == "hermod_db_list_tables")
         {
             var page = await session.ListAsync(new(PostgreSqlObjectKind.Tables, "", database, Schema: schema), offset, token).ConfigureAwait(false);
-            return new { tables = page.Items.Take(100).Select(item => item.Name), nextOffset = NextOffset(offset, 100, page.HasMore || page.Items.Count > 100) };
+            return new { tables = page.Items.Take(100).Select(item => item.Name).Where(name => allowed is null || allowed(name)), nextOffset = NextOffset(offset, 100, page.HasMore || page.Items.Count > 100) };
         }
         if (name == "hermod_db_list_indexes")
         {

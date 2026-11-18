@@ -22,7 +22,7 @@ AI assistance and configuration synchronization across devices.
 | RabbitMQ | Management API connections, resource administration and explicit message inspection. |
 | Object storage | Alibaba Cloud OSS, Tencent COS, Volcengine TOS, AWS S3, MinIO and custom S3-compatible services; uploads, downloads, previews and temporary links. |
 | AI assistant | Your own compatible model service for SQL assistance, log analysis and SSH troubleshooting, with confirmation for operations that require approval. |
-| MCP tools | Give a trusted local AI client scoped access to saved SSH, database, Redis, RabbitMQ and object storage connections, with separately granted file transfers and object management. [Setup guide](docs/mcp.md). |
+| MCP tools | Connect a trusted local AI client to saved instances, exclude unwanted locations and confirm each requested instance once per connection. [Setup guide](docs/mcp.md). |
 | Personal workspace | Instance organization, tags, light and dark themes, English and Simplified Chinese, and optional encrypted credential synchronization. |
 
 ## Use without an account

@@ -3,6 +3,8 @@ namespace Asgard.Hermod.Mcp;
 /// <summary>登记受限能力，保持工具 ID 独立于界面语言。</summary>
 internal static class McpToolCatalog
 {
+    internal const string ListResources = "hermod_list_resources";
+    internal const string RedisReadValue = "hermod_redis_read_value";
     internal const string StorageStartTransfer = "hermod_storage_start_transfer";
     internal const string StorageTransferStatus = "hermod_storage_transfer_status";
     internal const string StorageCreateFolder = "hermod_storage_create_folder";
@@ -20,6 +22,8 @@ internal static class McpToolCatalog
     internal static IReadOnlyDictionary<string, McpToolDefinition> All { get; } = new McpToolDefinition[]
     {
         new("hermod_list_instances", "McpToolInstances", [], false, []),
+        new(ListResources, "McpToolListResources", ["storage", "mysql", "postgresql", "redis", "rabbitmq", "ssh"], false,
+            [Grant, Offset, new("page", "McpArgPage", Minimum: 1, Maximum: 1000)], DefaultOnly: true),
         new("hermod_storage_list", "McpToolStorageList", ["storage"], false,
             [Grant, new("prefix", "McpArgPrefix", MaximumLength: 1024), new("cursor", "McpArgCursor", MaximumLength: 64)]),
         new("hermod_storage_stat", "McpToolStorageStat", ["storage"], false, [Grant, Key]),
@@ -56,6 +60,8 @@ internal static class McpToolCatalog
         new("hermod_redis_scan_keys", "McpToolRedisScan", ["redis"], false,
             [Grant, new("prefix", "McpArgPrefix", MaximumLength: 1024), new("cursor", "McpArgCursor", MaximumLength: 64)]),
         new("hermod_redis_key_info", "McpToolRedisKey", ["redis"], false, [Grant, Key]),
+        new(RedisReadValue, "McpToolRedisReadValue", ["redis"], true,
+            [Grant, Key, new("cursor", "McpArgCursor", MaximumLength: 64)], DefaultOnly: true),
         new("hermod_rabbitmq_list_queues", "McpToolRabbitQueues", ["rabbitmq"], false,
             [Grant, new("page", "McpArgPage", Minimum: 1, Maximum: 1000)]),
         new("hermod_rabbitmq_queue_info", "McpToolRabbitQueue", ["rabbitmq"], false, [Grant, new("queue", "McpArgQueue", true, 255)]),

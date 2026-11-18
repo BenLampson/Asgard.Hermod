@@ -274,7 +274,14 @@ The Agent module owns the bounded function-tool loop and diagnostic templates;
 the SSH UI owns approval, connection-generation checks and exec dispatch.
 Results return to the model within the current task, enabling iterative analysis.
 
-[Local MCP access](mcp.md) runs independently of the built-in Agent. The desktop
+[Local MCP access](mcp.md) defaults to all saved instances and their supported
+resources, with user-managed exclusions for instances and locations. Each MCP
+connection confirms each instance once before access to its non-excluded locations,
+including transfers and deletion. Exclusion changes revoke active
+sessions, and recursive operations cannot cross an excluded location. Local
+SQLite policy continues to protect the pairing token and never synchronizes it.
+
+The desktop
 process owns an authenticated pipe scoped by Windows SID and login session. A
 console relay speaks MCP over stdio and never opens the configuration database.
 The broker pairs using a mutual challenge, freezes the current policy and

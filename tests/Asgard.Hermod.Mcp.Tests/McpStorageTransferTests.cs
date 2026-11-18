@@ -132,6 +132,117 @@ public sealed class McpStorageTransferTests
     }
 
     [Fact]
+    public async Task NewUploadAllowsAbsoluteSourcesOutsideDownloadFolderAndBucketRoot()
+    {
+        using var downloadFolder = new TransferFolder();
+        using var sourceFolder = new TransferFolder();
+        string sourceFile = Path.Combine(sourceFolder.Path, "report.txt");
+        await File.WriteAllTextAsync(sourceFile, "outside download folder", McpTestRig.Token);
+        var uploaded = new List<string>();
+        using var rig = CreateRig(ProtocolStub<IObjectStorageClient>.For((name, args) =>
+        {
+            Assert.Equal(nameof(IObjectStorageClient.UploadAsync), name);
+            uploaded.Add((string)args[1]!);
+            return Task.CompletedTask;
+        }));
+        var grant = await rig.GrantAsync(Target, "exports", "", transferRoot: downloadFolder.Path,
+            upload: true, download: true, unrestrictedUpload: true);
+        await rig.Access.SetEnabledAsync("", true, McpTestRig.Token);
+        var discovery = GetResult(await rig.Tools.InvokeAsync(rig.Session, "hermod_list_instances", null, rig.Cursors, McpTestRig.Token));
+        Assert.True(Assert.Single(discovery.GetProperty("instances").EnumerateArray())
+            .GetProperty("scope").GetProperty("allow_unrestricted_upload").GetBoolean());
+        Assert.True((await rig.CallAsync(Start, grant, ("direction", "upload"), ("key", "folder/report.txt"),
+            ("local_path", "report.txt"))).IsError);
+        string fileTask = TaskId(await rig.CallAsync(Start, grant, ("direction", "upload"), ("key", "folder/report.txt"),
+            ("local_path", sourceFile)));
+        Assert.Equal("completed", (await WaitForTerminalAsync(() => PollAsync(rig, fileTask), McpTestRig.Token)).GetProperty("status").GetString());
+        string directoryTask = TaskId(await rig.CallAsync(Start, grant, ("direction", "upload"), ("key", "folder/tree/"),
+            ("local_path", sourceFolder.Path)));
+        Assert.Equal("completed", (await WaitForTerminalAsync(() => PollAsync(rig, directoryTask), McpTestRig.Token)).GetProperty("status").GetString());
+        Assert.Equal(["folder/report.txt", "folder/tree/report.txt"], uploaded);
+        Assert.Empty(Directory.EnumerateFileSystemEntries(downloadFolder.Path));
+    }
+
+    [Fact]
+    public async Task UploadOnlyNeedsNoDownloadFolderAndLegacyGrantsStayRestricted()
+    {
+        using var permitted = new TransferFolder();
+        using var outside = new TransferFolder();
+        string externalFile = Path.Combine(outside.Path, "source.txt");
+        await File.WriteAllTextAsync(externalFile, "sample", McpTestRig.Token);
+        using var rig = CreateRig(ProtocolStub<IObjectStorageClient>.For((_, _) => Task.CompletedTask));
+        var unrestricted = await rig.GrantAsync(Target, "exports", "", upload: true, unrestrictedUpload: true);
+        Assert.Null(unrestricted.TransferRoot);
+        await rig.Access.SetEnabledAsync("", true, McpTestRig.Token);
+        string id = TaskId(await rig.CallAsync(Start, unrestricted, ("direction", "upload"), ("key", "source.txt"), ("local_path", externalFile)));
+        Assert.Equal("completed", (await WaitForTerminalAsync(() => PollAsync(rig, id), McpTestRig.Token)).GetProperty("status").GetString());
+
+        var legacy = await rig.GrantAsync(Target, "exports", "legacy/", transferRoot: permitted.Path, upload: true);
+        Assert.False(legacy.AllowUnrestrictedUpload);
+        Assert.True((await rig.CallAsync(Start, legacy, ("direction", "upload"), ("key", "legacy/source.txt"), ("local_path", externalFile))).IsError);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => rig.GrantAsync(Target, "exports", "", upload: true));
+        var oldJson = JsonSerializer.Serialize(new
+        {
+            legacy.Id,
+            legacy.InstanceId,
+            legacy.TypeId,
+            legacy.Revision,
+            legacy.Resource,
+            legacy.Qualifier,
+            legacy.Table,
+            legacy.ShareContent,
+            legacy.TransferRoot,
+            legacy.AllowUpload,
+            legacy.AllowDownload
+        });
+        Assert.False(JsonSerializer.Deserialize<McpGrant>(oldJson)!.AllowUnrestrictedUpload);
+    }
+
+    [Fact]
+    public void DownloadDestinationMayBeTheDriveRoot()
+    {
+        string root = Path.GetPathRoot(Path.GetTempPath())!;
+        Assert.Equal(root, McpStorageTransferPaths.NormalizeRoot(root));
+        Assert.Equal(Path.Combine(root, "example.txt"), McpStorageTransferPaths.Resolve(root, "example.txt", directory: false));
+    }
+
+    [Fact]
+    public async Task UnrestrictedDirectoryUploadFollowsLinksButRejectsCycles()
+    {
+        using var source = new TransferFolder();
+        using var destination = new TransferFolder();
+        await File.WriteAllTextAsync(Path.Combine(destination.Path, "linked.txt"), "linked", McpTestRig.Token);
+        string link = Path.Combine(source.Path, "linked");
+        string cycle = Path.Combine(destination.Path, "cycle");
+        CreateDirectoryLink(link, destination.Path);
+        try
+        {
+            using var rig = CreateRig(ProtocolStub<IObjectStorageClient>.For((name, args) =>
+            {
+                Assert.Equal(nameof(IObjectStorageClient.UploadAsync), name);
+                Assert.Equal("uploads/linked/linked.txt", args[1]);
+                return Task.CompletedTask;
+            }));
+            var grant = await rig.GrantAsync(Target, "exports", "", upload: true, unrestrictedUpload: true);
+            await rig.Access.SetEnabledAsync("", true, McpTestRig.Token);
+            string uploaded = TaskId(await rig.CallAsync(Start, grant, ("direction", "upload"), ("key", "uploads/"), ("local_path", source.Path)));
+            Assert.Equal("completed", (await WaitForTerminalAsync(() => PollAsync(rig, uploaded), McpTestRig.Token)).GetProperty("status").GetString());
+
+            CreateDirectoryLink(cycle, source.Path);
+            string cyclic = TaskId(await rig.CallAsync(Start, grant, ("direction", "upload"), ("key", "uploads/"), ("local_path", source.Path)));
+            var terminal = await WaitForTerminalAsync(() => PollAsync(rig, cyclic), McpTestRig.Token);
+            Assert.Equal("failed", terminal.GetProperty("status").GetString());
+            Assert.Equal(Text.Get("McpTransferUploadCycle"), terminal.GetProperty("error").GetString());
+        }
+        finally
+        {
+            // 显式删除本次用例创建的联接本身，避免递归清理沿循环访问目标。
+            if (Directory.Exists(cycle)) Directory.Delete(cycle);
+            if (Directory.Exists(link)) Directory.Delete(link);
+        }
+    }
+
+    [Fact]
     public async Task TransferIsOptInAndCannotEscapeEitherScope()
     {
         using var folder = new TransferFolder();
@@ -140,7 +251,7 @@ public sealed class McpStorageTransferTests
         await rig.Access.SetEnabledAsync("", true, McpTestRig.Token);
         Assert.DoesNotContain(rig.Tools.List(rig.Session), tool => tool.Name is Start or Status);
         Assert.True((await rig.CallAsync(Start, metadata, ("direction", "download"), ("key", "test/report"))).IsError);
-        await Assert.ThrowsAsync<InvalidOperationException>(() => rig.GrantAsync(Target, "exports", "", transferRoot: folder.Path, download: true));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => rig.GrantAsync(Target, "exports", "invalid-prefix", transferRoot: folder.Path, download: true));
 
         var grant = await rig.GrantAsync(Target, "exports", "test/", transferRoot: folder.Path, download: true);
         Assert.Contains(rig.Tools.List(rig.Session), tool => tool.Name == Start);
@@ -264,6 +375,25 @@ public sealed class McpStorageTransferTests
             finally { canceled.TrySetResult(); }
             throw new InvalidOperationException();
         }
+    }
+
+    private static void CreateDirectoryLink(string link, string target)
+    {
+        try { Directory.CreateSymbolicLink(link, target); return; }
+        catch (Exception error) when (error is UnauthorizedAccessException or IOException or PlatformNotSupportedException) { }
+        // Windows 通常无需管理员权限即可创建目录联接，作为符号链接不可用时的等价测试。
+        var start = new System.Diagnostics.ProcessStartInfo("cmd.exe")
+        {
+            CreateNoWindow = true,
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+        };
+        foreach (string argument in new[] { "/d", "/c", "mklink", "/J", link, target }) start.ArgumentList.Add(argument);
+        using var process = System.Diagnostics.Process.Start(start);
+        if (process is null) { Assert.Skip("The test environment cannot create a directory link."); return; }
+        process.WaitForExit();
+        if (process.ExitCode != 0) Assert.Skip("The test environment cannot create a directory link.");
     }
 
     private static McpTestRig CreateRig(IObjectStorageClient client) =>

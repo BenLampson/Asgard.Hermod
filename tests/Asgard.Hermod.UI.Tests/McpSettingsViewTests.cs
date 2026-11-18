@@ -9,203 +9,98 @@ namespace Asgard.Hermod.UI.Tests;
 public sealed class McpSettingsViewTests(WpfTestFixture fixture)
 {
     [Theory]
-    [InlineData("en-US", "Select an instance", "AI tools (MCP)", "Copy prompt")]
-    [InlineData("zh-CN", "选择实例", "AI 工具（MCP）", "复制提示词")]
-    [InlineData("de-DE", "Select an instance", "AI tools (MCP)", "Copy prompt")]
-    public Task FormAdaptsToTheSelectedConnectorAndKeepsContentOffByDefault(string culture, string pickerLabel, string title, string copyLabel) => fixture.RunOffscreenAsync(async () =>
+    [InlineData("en-US", "Instance access", "Copy prompt")]
+    [InlineData("zh-CN", "实例访问", "复制提示词")]
+    [InlineData("de-DE", "Instance access", "Copy prompt")]
+    public Task InstancesDefaultToAllowedAndExclusionsCanBeAddedOrRemoved(string culture, string heading, string copyLabel) => fixture.RunOffscreenAsync(async () =>
     {
         var previous = CultureInfo.CurrentUICulture;
         try
         {
             CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(culture);
             var settings = new SettingsStub();
-            string? copy = null;
-            using var model = new McpSettingsViewModel(settings, text => copy = text);
-            await model.RefreshAsync(TestContext.Current.CancellationToken);
-            var view = new McpSettingsView { DataContext = model };
-            view.Measure(new(420, 550)); view.Arrange(new(0, 0, 420, 550)); view.UpdateLayout();
-            var picker = Assert.IsType<ComboBox>(view.FindName("McpTargetPicker"));
-            var share = Assert.IsType<CheckBox>(view.FindName("McpShareContent"));
-            Assert.Equal(pickerLabel, System.Windows.Automation.AutomationProperties.GetName(picker));
-            Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(view), text => text.Text == title);
-            Assert.False(model.CopyCommand.CanExecute(null));
-            var copyPrompt = Assert.IsType<Button>(view.FindName("McpCopyPromptButton"));
-            Assert.Equal(copyLabel, copyPrompt.Content);
-            Assert.True(copyPrompt.IsEnabled);
-            var promptCommand = Assert.IsType<Asgard.Hermod.UI.Common.AsyncRelayCommand>(copyPrompt.Command);
-            await promptCommand.ExecuteAsync();
-            Assert.Equal(Text.Get("McpStarterPrompt"), copy);
-            Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(view), text => text.Text == copy);
-            Assert.Equal(Text.Get("McpPromptCopied"), model.Message);
+            string? copied = null;
+            using var model = new McpSettingsViewModel(settings, text => copied = text);
+            await model.RefreshAsync();
+            var page = new McpSettingsView { DataContext = model };
+            page.Measure(new(600, 800)); page.Arrange(new(0, 0, 600, 800)); page.UpdateLayout();
+            Assert.Contains(WindowTestVisuals.Descendants<TextBlock>(page), text => text.Text == heading);
+            var prompt = Assert.IsType<Button>(page.FindName("McpCopyPromptButton"));
+            Assert.Equal(copyLabel, prompt.Content);
+            await model.CopyPromptCommand.ExecuteAsync();
+            Assert.Equal(Text.Get("McpStarterPrompt"), copied);
             Assert.Equal(0, settings.ClientConfigurationReads);
-            picker.SelectedItem = model.Targets.Single(target => target.Target.TypeId == "redis");
-            Assert.Equal(Visibility.Collapsed, share.Visibility);
-            Assert.Equal("0", model.Resource);
-            picker.SelectedItem = model.Targets.Single(target => target.Target.TypeId == "mysql");
-            Assert.Equal(Visibility.Visible, share.Visibility);
-            Assert.False(share.IsChecked);
-
-            model.Resource = "orders";
-            model.ShareContent = true;
-            Assert.False(model.GrantCommand.CanExecute(null));
-            model.Table = "exports";
-            await model.GrantCommand.ExecuteAsync();
-            Assert.True(Assert.Single(settings.Grants).ShareContent);
-            Assert.Equal("exports", model.Table);
-            Assert.Equal("sql", model.SelectedTarget?.Target.Id);
+            Assert.All(model.InstanceAccess, item => Assert.True(item.IsAllowed));
+            var instance = model.InstanceAccess.Single(item => item.Target.Target.TypeId == "storage");
+            instance.IsAllowed = false;
+            Assert.Equal("oss", Assert.Single(settings.Exclusions).InstanceId);
+            Assert.False(model.InstanceAccess.Single(item => item.Target.Target.TypeId == "storage").IsAllowed);
+            model.InstanceAccess.Single(item => item.Target.Target.TypeId == "storage").IsAllowed = true;
+            Assert.Empty(settings.Exclusions);
+            model.SelectedTarget = model.Targets.Single(item => item.Target.TypeId == "storage");
+            model.Resource = "exports"; model.Qualifier = "private/";
+            await model.AddExclusionCommand.ExecuteAsync();
+            var excluded = Assert.Single(settings.Exclusions);
+            Assert.Equal("private/", excluded.Qualifier);
+            var visible = Assert.Single(model.ExcludedScopes);
+            Assert.Contains("private/", visible.Scope);
+            await model.RemoveExclusionCommand.ExecuteAsync(visible);
+            Assert.Empty(settings.Exclusions);
+            Assert.Empty(model.ExcludedScopes);
             await model.ToggleCommand.ExecuteAsync();
             await model.CopyCommand.ExecuteAsync();
-            Assert.Equal("test client configuration", copy);
+            Assert.Equal("test client configuration", copied);
             Assert.Equal(1, settings.ClientConfigurationReads);
         }
         finally { CultureInfo.CurrentUICulture = previous; }
     });
 
-    [Theory]
-    [InlineData("en-US", "Choose local folder")]
-    [InlineData("zh-CN", "选择本地文件夹")]
-    [InlineData("de-DE", "Choose local folder")]
-    public Task TransferGrantRequiresExplicitDirectionPrefixAndFolder(string culture, string folderLabel) => fixture.RunOffscreenAsync(async () =>
+    [Fact]
+    public Task FailedInstanceChangeRestoresThePreviousSelection() => fixture.RunOffscreenAsync(async () =>
     {
-        var previous = CultureInfo.CurrentUICulture;
-        try
-        {
-            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(culture);
-            var settings = new SettingsStub();
-            using var model = new McpSettingsViewModel(settings);
-            await model.RefreshAsync(TestContext.Current.CancellationToken);
-            var view = new McpSettingsView { DataContext = model };
-            view.Measure(new(420, 550)); view.Arrange(new(0, 0, 420, 550)); view.UpdateLayout();
-            var download = Assert.IsType<CheckBox>(view.FindName("McpAllowDownload"));
-            var upload = Assert.IsType<CheckBox>(view.FindName("McpAllowUpload"));
-            var rootPanel = Assert.IsType<StackPanel>(view.FindName("McpTransferRootPanel"));
-            var folder = Assert.IsType<Button>(view.FindName("McpSelectTransferFolder"));
-            var overwrite = Assert.IsType<CheckBox>(view.FindName("McpAllowOverwrite"));
-            model.SelectedTarget = model.Targets.Single(item => item.Target.TypeId == "storage");
-            Assert.False(download.IsChecked);
-            Assert.False(upload.IsChecked);
-            Assert.Equal(Visibility.Collapsed, rootPanel.Visibility);
-            model.Resource = "exports";
-            download.SetCurrentValue(CheckBox.IsCheckedProperty, true);
-            Assert.True(model.AllowDownload);
-            Assert.Equal(Visibility.Visible, rootPanel.Visibility);
-            Assert.False(overwrite.IsChecked);
-            Assert.Equal(folderLabel, folder.Content);
-            Assert.True(folder.Focusable);
-            Assert.False(model.GrantCommand.CanExecute(null));
-            model.Qualifier = "test/";
-            Assert.False(model.GrantCommand.CanExecute(null));
-            model.TransferRoot = @"D:\McpDownloads";
-            overwrite.SetCurrentValue(CheckBox.IsCheckedProperty, true);
-            Assert.True(model.GrantCommand.CanExecute(null));
-            await model.GrantCommand.ExecuteAsync();
-            var saved = Assert.Single(settings.Grants);
-            Assert.True(saved.AllowDownload);
-            Assert.False(saved.AllowUpload);
-            Assert.True(saved.AllowOverwrite);
-            Assert.Equal(@"D:\McpDownloads", saved.TransferRoot);
-            model.SelectedTarget = model.Targets.Single(item => item.Target.TypeId == "mysql");
-            Assert.False(model.AllowDownload);
-            Assert.False(model.AllowOverwrite);
-            Assert.Empty(model.TransferRoot);
-            Assert.Equal(Visibility.Collapsed, rootPanel.Visibility);
-        }
-        finally { CultureInfo.CurrentUICulture = previous; }
+        var settings = new SettingsStub { FailExclusions = true };
+        using var model = new McpSettingsViewModel(settings);
+        await model.RefreshAsync();
+        var instance = model.InstanceAccess.First();
+        instance.IsAllowed = false;
+        Assert.True(instance.IsAllowed);
+        Assert.Empty(settings.Exclusions);
+        Assert.Equal(Text.Get("McpSettingsFailed"), model.Message);
     });
 
     [Fact]
-    public Task TransferFolderPickerRemainsReachableAfterResize() => fixture.RunAsync(async () =>
+    public Task DefaultAccessAndExclusionDialogsRemainUsableAfterResize() => fixture.RunAsync(async () =>
     {
-        using var model = new McpSettingsViewModel(new SettingsStub());
-        await model.RefreshAsync(TestContext.Current.CancellationToken);
-        model.SelectedTarget = model.Targets.Single(item => item.Target.TypeId == "storage");
-        model.AllowDownload = true;
-        var view = new McpSettingsView { DataContext = model };
-        var window = new HermodWindow { Content = view, Width = 900, Height = 700 };
+        Text.SetApplicationCulture(CultureInfo.GetCultureInfo("zh-Hans"));
+        var themes = new Asgard.Hermod.UI.Themes.ThemeService(Application.Current.Resources);
+        themes.SetTheme(UiTheme.Dark);
+        var settings = new SettingsStub();
+        using var model = new McpSettingsViewModel(settings);
+        await model.RefreshAsync();
+        var page = new McpSettingsView { DataContext = model };
+        var host = new HermodWindow { Content = page, Width = 760, Height = 760 };
         try
         {
-            WindowPreviewCapture.Show(window);
-            await WindowTestVisuals.UpdateLayoutAsync(window);
-            window.Width = 430;
-            window.Height = 480;
-            var upload = Assert.IsType<CheckBox>(view.FindName("McpAllowUpload"));
-            var folder = Assert.IsType<Button>(view.FindName("McpSelectTransferFolder"));
-            upload.BringIntoView();
-            await WindowTestVisuals.UpdateLayoutAsync(window);
-            Assert.True(upload.Focus());
-            Assert.True(upload.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)));
-            Assert.Same(folder, Keyboard.FocusedElement);
-            Assert.InRange(folder.ActualWidth, 1, view.ActualWidth);
+            WindowPreviewCapture.Show(host);
+            await WindowPreviewCapture.VerifyAsync(host, "mcp-default-settings");
+            var add = Assert.IsType<Button>(page.FindName("McpOpenExclusion"));
+            Assert.True(add.IsEnabled);
+            model.SelectedTarget = model.Targets.Single(target => target.Target.TypeId == "storage");
+            model.Resource = "exports"; model.Qualifier = "private/";
+            var dialog = new McpExclusionWindow(model);
+            try
+            {
+                WindowPreviewCapture.Show(dialog);
+                await WindowPreviewCapture.VerifyAsync(dialog, "mcp-exclusion");
+                dialog.Width = dialog.MinWidth; dialog.Height = dialog.MinHeight;
+                await WindowPreviewCapture.VerifyAsync(dialog, "mcp-exclusion-narrow");
+                var target = Assert.IsType<ComboBox>(dialog.FindName("McpExclusionTarget"));
+                Assert.True(target.Focus());
+                Assert.True(target.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)));
+            }
+            finally { dialog.Close(); }
         }
-        finally { window.Close(); }
-    });
-
-    [Theory]
-    [InlineData("en-US", "Allow deleting objects and folder contents within this scope")]
-    [InlineData("zh-CN", "允许删除此范围内的对象和文件夹内容")]
-    [InlineData("de-DE", "Allow deleting objects and folder contents within this scope")]
-    public Task StorageManagementPermissionsAreExplicitLocalizedAndSaved(string culture, string deleteLabel) => fixture.RunOffscreenAsync(async () =>
-    {
-        var previous = CultureInfo.CurrentUICulture;
-        try
-        {
-            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(culture);
-            var settings = new SettingsStub();
-            using var model = new McpSettingsViewModel(settings);
-            await model.RefreshAsync(TestContext.Current.CancellationToken);
-            var view = new McpSettingsView { DataContext = model };
-            view.Measure(new(420, 550)); view.Arrange(new(0, 0, 420, 550)); view.UpdateLayout();
-            model.SelectedTarget = model.Targets.Single(item => item.Target.TypeId == "storage");
-            var folder = Assert.IsType<CheckBox>(view.FindName("McpAllowCreateFolder"));
-            var delete = Assert.IsType<CheckBox>(view.FindName("McpAllowDelete"));
-            var links = Assert.IsType<CheckBox>(view.FindName("McpAllowSignedLinks"));
-            Assert.Equal(deleteLabel, System.Windows.Automation.AutomationProperties.GetName(delete));
-            Assert.False(folder.IsChecked);
-            Assert.False(delete.IsChecked);
-            Assert.False(links.IsChecked);
-            model.Resource = "exports";
-            folder.SetCurrentValue(CheckBox.IsCheckedProperty, true);
-            delete.SetCurrentValue(CheckBox.IsCheckedProperty, true);
-            links.SetCurrentValue(CheckBox.IsCheckedProperty, true);
-            await model.GrantCommand.ExecuteAsync();
-            var saved = Assert.Single(settings.Grants);
-            Assert.True(saved.AllowCreateFolder && saved.AllowDelete && saved.AllowSignedLinks);
-            var visibleGrant = Assert.Single(model.Grants);
-            Assert.Equal(Text.Get("McpStorageDeleteScope"), visibleGrant.DeleteScope);
-            Assert.Equal(Text.Get("McpStorageSignedLinksScope"), visibleGrant.SignedLinksScope);
-            model.SelectedTarget = model.Targets.Single(item => item.Target.TypeId == "mysql");
-            Assert.False(model.AllowCreateFolder || model.AllowDelete || model.AllowSignedLinks);
-        }
-        finally { CultureInfo.CurrentUICulture = previous; }
-    });
-
-    [Fact]
-    public Task StorageManagementControlsRemainKeyboardAccessibleAfterResize() => fixture.RunAsync(async () =>
-    {
-        using var model = new McpSettingsViewModel(new SettingsStub());
-        await model.RefreshAsync(TestContext.Current.CancellationToken);
-        model.SelectedTarget = model.Targets.Single(item => item.Target.TypeId == "storage");
-        var view = new McpSettingsView { DataContext = model };
-        var window = new HermodWindow { Content = view, Width = 900, Height = 700 };
-        try
-        {
-            WindowPreviewCapture.Show(window);
-            await WindowTestVisuals.UpdateLayoutAsync(window);
-            window.Width = 430;
-            window.Height = 480;
-            var folder = Assert.IsType<CheckBox>(view.FindName("McpAllowCreateFolder"));
-            var delete = Assert.IsType<CheckBox>(view.FindName("McpAllowDelete"));
-            var links = Assert.IsType<CheckBox>(view.FindName("McpAllowSignedLinks"));
-            folder.BringIntoView();
-            await WindowTestVisuals.UpdateLayoutAsync(window);
-            Assert.True(folder.Focus());
-            Assert.True(folder.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)));
-            Assert.Same(delete, Keyboard.FocusedElement);
-            Assert.True(delete.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next)));
-            Assert.Same(links, Keyboard.FocusedElement);
-            Assert.InRange(delete.ActualWidth, 1, view.ActualWidth);
-        }
-        finally { window.Close(); }
+        finally { host.Close(); themes.SetTheme(UiTheme.Light); Text.SetApplicationCulture(null); }
     });
 
     private sealed class SettingsStub : IMcpSettingsService
@@ -213,16 +108,23 @@ public sealed class McpSettingsViewTests(WpfTestFixture fixture)
         private static readonly McpWorkspace Workspace = new("", [new("cache", "Cache", "redis", "v1"),
             new("sql", "SQL", "mysql", "v1"), new("oss", "OSS", "storage", "v1")]);
         private bool _enabled;
-        internal List<McpGrant> Grants { get; } = [];
+        internal bool FailExclusions { get; init; }
+        internal List<McpExclusion> Exclusions { get; } = [];
         internal int ClientConfigurationReads { get; private set; }
-        public Task<McpSettingsSnapshot> ReadAsync(CancellationToken cancellationToken = default) => Task.FromResult(new McpSettingsSnapshot(Workspace, _enabled, Grants.ToArray()));
-        public Task<McpSettingsSnapshot> SetEnabledAsync(string owner, bool enabled, CancellationToken cancellationToken = default) { _enabled = enabled; return ReadAsync(cancellationToken); }
-        public Task<McpSettingsSnapshot> AddGrantAsync(string owner, McpGrant grant, CancellationToken cancellationToken = default) { Grants.Add(grant with { Id = "grant" }); return ReadAsync(cancellationToken); }
+        public Task<McpSettingsSnapshot> ReadAsync(CancellationToken cancellationToken = default) =>
+            Task.FromResult(new McpSettingsSnapshot(Workspace, _enabled, [], Exclusions.ToArray()));
+        public Task<McpSettingsSnapshot> SetEnabledAsync(string owner, bool enabled, CancellationToken cancellationToken = default)
+        { _enabled = enabled; return ReadAsync(cancellationToken); }
+        public Task<McpSettingsSnapshot> AddGrantAsync(string owner, McpGrant grant, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public Task<McpSettingsSnapshot> RemoveGrantAsync(string owner, string grantId, CancellationToken cancellationToken = default) => throw new NotSupportedException();
-        public Task<string> GetClientConfigurationAsync(string owner, CancellationToken cancellationToken = default)
+        public Task<McpSettingsSnapshot> SetExclusionsAsync(string owner, IReadOnlyList<McpExclusion> exclusions, CancellationToken cancellationToken = default)
         {
-            ClientConfigurationReads++;
-            return Task.FromResult("test client configuration");
+            if (FailExclusions) throw new IOException("sensitive details");
+            Exclusions.Clear();
+            Exclusions.AddRange(exclusions.Select(item => item.Id.Length == 0 ? item with { Id = Guid.NewGuid().ToString("N") } : item));
+            return ReadAsync(cancellationToken);
         }
+        public Task<string> GetClientConfigurationAsync(string owner, CancellationToken cancellationToken = default)
+        { ClientConfigurationReads++; return Task.FromResult("test client configuration"); }
     }
 }

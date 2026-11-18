@@ -1,21 +1,21 @@
 namespace Asgard.Hermod.UI.ViewModels;
 
-/// <summary>管理本机 MCP 开关、实例授权与剪贴板操作。</summary>
+/// <summary>管理本机 MCP 开关、默认开放的实例以及用户指定的禁止范围。</summary>
 public sealed class McpSettingsViewModel : ObservableObject, IDisposable
 {
     private readonly IMcpSettingsService _service;
     private readonly Action<string> _copy;
+    private readonly IMcpStorageScopeBrowser? _storageBrowser;
     private readonly CancellationTokenSource _lifetime = new();
     private McpSettingsSnapshot? _snapshot;
     private McpSettingsTarget? _selected;
-    private string _resource = "", _qualifier = "", _table = "", _message = "", _transferRoot = "";
-    private bool _shareContent, _allowUpload, _allowDownload, _allowCreateFolder, _allowDelete, _allowSignedLinks, _allowOverwrite, _busy, _disposed;
+    private string _resource = "", _qualifier = "", _table = "", _message = "";
+    private bool _busy, _disposed;
 
-    /// <summary>剪贴板动作可替换，视图模型从不在绑定中持有可复制的客户端凭证。</summary>
-    public McpSettingsViewModel(IMcpSettingsService service, Action<string>? copy = null)
+    /// <summary>剪贴板动作可替换，视图模型不在绑定中持有客户端凭证。</summary>
+    public McpSettingsViewModel(IMcpSettingsService service, Action<string>? copy = null, IMcpStorageScopeBrowser? storageBrowser = null)
     {
-        _service = service;
-        _copy = copy ?? Clipboard.SetText;
+        _service = service; _copy = copy ?? Clipboard.SetText; _storageBrowser = storageBrowser;
         RefreshCommand = new(_ => RefreshAsync(), _ => !_disposed && !_busy);
         ToggleCommand = new(_ => ChangeAsync(async token => Apply(await _service.SetEnabledAsync(_snapshot!.Workspace.Owner, !Enabled, token)), "McpSettingsSaved"), _ => Ready);
         CopyCommand = new(_ => ChangeAsync(async token =>
@@ -25,110 +25,86 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
         }, "McpConfigurationCopied"), _ => Ready && Enabled);
         CopyPromptCommand = new(_ => ChangeAsync(_ =>
         {
-            // 对话提示使用固定资源，复制时不读取配对令牌或工作区内容。
             _copy(Text.Get("McpStarterPrompt"));
             return Task.CompletedTask;
         }, "McpPromptCopied", failureKey: "McpPromptCopyFailed"), _ => !_disposed && !_busy);
-        GrantCommand = new(_ => ChangeAsync(async token =>
+        AddExclusionCommand = new(_ => ChangeAsync(async token =>
         {
             var target = _selected!.Target;
-            var draft = new McpGrant("", target.Id, target.TypeId, target.Revision, Resource, Qualifier, Table, ShareContent,
-                ShowTransferRoot ? TransferRoot : null, AllowUpload, AllowDownload, AllowCreateFolder, AllowDelete, AllowSignedLinks, AllowOverwrite);
-            var snapshot = await _service.AddGrantAsync(_snapshot!.Workspace.Owner, draft, token);
-            Apply(snapshot);
+            var exclusions = (_snapshot!.Exclusions ?? []).Append(new McpExclusion("", target.Id, target.TypeId, Resource, Qualifier, Table)).ToArray();
+            Apply(await _service.SetExclusionsAsync(_snapshot.Workspace.Owner, exclusions, token));
+            if (!_disposed) ExclusionSaved?.Invoke(this, EventArgs.Empty);
         }, "McpSettingsSaved"), _ => Ready && _selected is not null
-            && (Kind == "ssh" || Resource.Length > 0) && (Kind != "postgresql" || Qualifier.Length > 0)
-            && (!ShareContent || (ShowTable ? Table.Length > 0 : Kind != "ssh" || Resource.Length > 0))
-            && (!ShowTransferRoot || (TransferRoot.Length > 0 && Qualifier.Length > 1 && Qualifier.EndsWith('/'))));
-        RevokeCommand = new(item => ChangeAsync(async token => Apply(await _service.RemoveGrantAsync(_snapshot!.Workspace.Owner,
-            ((McpSettingsGrant)item!).Id, token)), "McpSettingsSaved"), item => Ready && item is McpSettingsGrant grant && Grants.Contains(grant));
+            && (Resource.Length > 0 || Qualifier.Length == 0 && Table.Length == 0)
+            && (Kind != "postgresql" || Table.Length == 0 || Qualifier.Length > 0));
+        RemoveExclusionCommand = new(item => ChangeAsync(async token =>
+        {
+            var remaining = (_snapshot!.Exclusions ?? []).Where(exclusion => exclusion.Id != ((McpExcludedScope)item!).Id).ToArray();
+            Apply(await _service.SetExclusionsAsync(_snapshot.Workspace.Owner, remaining, token));
+        }, "McpSettingsSaved"), item => Ready && item is McpExcludedScope exclusion && ExcludedScopes.Contains(exclusion));
     }
 
-    /// <summary>当前快照的可用授权目标。</summary>
+    /// <summary>禁止范围成功保存后关闭编辑器。</summary>
+    public event EventHandler? ExclusionSaved;
+    /// <summary>当前快照的可选实例。</summary>
     public IReadOnlyList<McpSettingsTarget> Targets { get; private set; } = [];
-    /// <summary>保留失效记录，以便用户看见原因并移除。</summary>
-    public IReadOnlyList<McpSettingsGrant> Grants { get; private set; } = [];
-    /// <summary>授权表单使用实例类型选择对应的范围字段。</summary>
+    /// <summary>实例默认勾选，取消勾选即禁止整个实例。</summary>
+    public IReadOnlyList<McpInstanceAccessViewModel> InstanceAccess { get; private set; } = [];
+    /// <summary>细粒度禁止范围；整实例禁用由勾选状态表示。</summary>
+    public IReadOnlyList<McpExcludedScope> ExcludedScopes { get; private set; } = [];
+    /// <summary>没有已保存实例时显示说明。</summary>
+    public bool NoInstances => InstanceAccess.Count == 0;
+    /// <summary>没有细粒度禁止范围时显示说明。</summary>
+    public bool NoExcludedScopes => ExcludedScopes.Count == 0;
+    /// <summary>策略保存时暂停更改，防止覆盖并发选择。</summary>
+    public bool CanEditExclusions => Ready;
+    /// <summary>当前工作区的接入状态。</summary>
+    public bool Enabled => _snapshot?.Enabled == true;
+    /// <summary>当前会话的连接可用状态。</summary>
+    public string StateText => Text.Get(Enabled ? "McpEnabled" : "McpDisabled");
+    /// <summary>状态变更以保存结果为准。</summary>
+    public string ToggleLabel => Text.Get(Enabled ? "McpDisable" : "McpEnable");
+    /// <summary>保存进行中时弹窗不允许取消，以免误以为写入未发生。</summary>
+    public bool IsBusy => _busy;
+    /// <summary>只展示安全的操作反馈，不保存配对令牌。</summary>
+    public string Message { get => _message; private set => SetProperty(ref _message, value); }
+
+    /// <summary>禁止范围表单按实例类型选择字段，并在切换实例时清空草稿。</summary>
     public McpSettingsTarget? SelectedTarget
     {
         get => _selected;
         set
         {
-            if (value == _selected || (value is not null && !Targets.Contains(value))) return;
+            if (value == _selected || value is not null && !Targets.Contains(value)) return;
             _selected = value;
             _resource = Kind switch { "redis" => "0", "rabbitmq" => "/", _ => "" };
             _qualifier = Kind == "postgresql" ? "public" : "";
-            _table = ""; _shareContent = false;
-            _allowUpload = _allowDownload = false;
-            _allowCreateFolder = _allowDelete = _allowSignedLinks = _allowOverwrite = false;
-            _transferRoot = "";
-            foreach (string property in new[] { nameof(SelectedTarget), nameof(ShowResource), nameof(ShowQualifier), nameof(ShowTable),
-                nameof(ShowContent), nameof(ResourceLabel), nameof(QualifierLabel), nameof(ContentLabel), nameof(ScopeHint),
-                nameof(Resource), nameof(Qualifier), nameof(Table), nameof(ShareContent), nameof(ShowTransfers), nameof(ShowTransferRoot),
-                nameof(TransferRoot), nameof(AllowUpload), nameof(AllowDownload), nameof(AllowCreateFolder), nameof(AllowDelete),
-                nameof(AllowSignedLinks), nameof(AllowOverwrite) }) OnPropertyChanged(property);
-            GrantCommand.NotifyCanExecuteChanged();
+            _table = "";
+            foreach (string property in new[] { nameof(SelectedTarget), nameof(ShowResource), nameof(ShowQualifier), nameof(ShowExclusionTable),
+                nameof(ShowTransfers), nameof(CanBrowseStorage), nameof(ResourceLabel), nameof(QualifierLabel), nameof(ExclusionTableLabel),
+                nameof(Resource), nameof(Qualifier), nameof(Table) }) OnPropertyChanged(property);
+            AddExclusionCommand.NotifyCanExecuteChanged();
         }
     }
-
-    /// <summary>Bucket、数据库、服务或虚拟主机的字面名称。</summary>
-    public string Resource { get => _resource; set { if (SetProperty(ref _resource, value)) GrantCommand.NotifyCanExecuteChanged(); } }
+    /// <summary>Bucket、数据库、服务或虚拟主机的字面名称；空值代表整个实例。</summary>
+    public string Resource { get => _resource; set { if (SetProperty(ref _resource, value)) AddExclusionCommand.NotifyCanExecuteChanged(); } }
     /// <summary>对象键前缀、Redis 键前缀或 PostgreSQL Schema。</summary>
-    public string Qualifier { get => _qualifier; set { if (SetProperty(ref _qualifier, value)) GrantCommand.NotifyCanExecuteChanged(); } }
-    /// <summary>限制到指定表；读取行时必填。</summary>
-    public string Table { get => _table; set { if (SetProperty(ref _table, value)) GrantCommand.NotifyCanExecuteChanged(); } }
-    /// <summary>内容须经独立的肯定选择，新增实例默认不勾选。</summary>
-    public bool ShareContent { get => _shareContent; set { if (SetProperty(ref _shareContent, value)) GrantCommand.NotifyCanExecuteChanged(); } }
-    /// <summary>仅向对象存储授权开放单独的上传选择。</summary>
-    public bool AllowUpload
-    {
-        get => _allowUpload;
-        set { if (ShowTransfers && SetProperty(ref _allowUpload, value)) OnTransferPermissionChanged(); }
-    }
-    /// <summary>仅向对象存储授权开放单独的下载选择。</summary>
-    public bool AllowDownload
-    {
-        get => _allowDownload;
-        set { if (ShowTransfers && SetProperty(ref _allowDownload, value)) OnTransferPermissionChanged(); }
-    }
-    /// <summary>单独授权在指定对象存储范围内创建目录。</summary>
-    public bool AllowCreateFolder { get => _allowCreateFolder; set { if (ShowTransfers) SetProperty(ref _allowCreateFolder, value); } }
-    /// <summary>单独授权预览并删除明确列出的对象。</summary>
-    public bool AllowDelete { get => _allowDelete; set { if (ShowTransfers) SetProperty(ref _allowDelete, value); } }
-    /// <summary>单独授权向客户端提供可分享的临时只读链接。</summary>
-    public bool AllowSignedLinks { get => _allowSignedLinks; set { if (ShowTransfers) SetProperty(ref _allowSignedLinks, value); } }
-    /// <summary>单独允许传输时覆盖目标对象或本地文件。</summary>
-    public bool AllowOverwrite { get => _allowOverwrite; set { if (ShowTransferRoot) SetProperty(ref _allowOverwrite, value); } }
-    /// <summary>从本机目录选择器获得根目录，模型只使用它下面的相对路径。</summary>
-    public string TransferRoot
-    {
-        get => _transferRoot;
-        set { if (ShowTransferRoot && SetProperty(ref _transferRoot, value)) GrantCommand.NotifyCanExecuteChanged(); }
-    }
-
+    public string Qualifier { get => _qualifier; set { if (SetProperty(ref _qualifier, value)) AddExclusionCommand.NotifyCanExecuteChanged(); } }
+    /// <summary>表或队列的准确名称，空值代表全部。</summary>
+    public string Table { get => _table; set { if (SetProperty(ref _table, value)) AddExclusionCommand.NotifyCanExecuteChanged(); } }
     private string Kind => _selected?.Target.TypeId ?? "";
     private bool Ready => !_disposed && !_busy && _snapshot is not null;
-    /// <summary>快照未加载时不开放连接操作。</summary>
-    public bool Enabled => _snapshot?.Enabled == true;
-    /// <summary>空列表显示授权引导。</summary>
-    public bool NoGrants => Grants.Count == 0;
-    /// <summary>选择实例后才显示范围字段。</summary>
+    /// <summary>选择实例后显示对应的资源字段。</summary>
     public bool ShowResource => _selected is not null;
-    /// <summary>仅需要字面前缀或 Schema 的连接器显示次级范围。</summary>
+    /// <summary>需要前缀或 Schema 的实例显示次级范围。</summary>
     public bool ShowQualifier => Kind is "storage" or "postgresql" or "redis";
-    /// <summary>数据库授权可限定到某张表。</summary>
-    public bool ShowTable => Kind is "mysql" or "postgresql";
-    /// <summary>仅支持额外读取正文的连接器显示内容授权。</summary>
-    public bool ShowContent => Kind is "storage" or "mysql" or "postgresql" or "ssh";
-    /// <summary>文件传输选项只适用于对象存储。</summary>
+    /// <summary>数据库或消息队列可以禁止具体表或队列。</summary>
+    public bool ShowExclusionTable => Kind is "mysql" or "postgresql" or "rabbitmq";
+    /// <summary>对象存储展示可浏览的 Bucket 和目录。</summary>
     public bool ShowTransfers => Kind == "storage";
-    /// <summary>勾选任一方向后，才要求选择本地根目录。</summary>
-    public bool ShowTransferRoot => ShowTransfers && (AllowUpload || AllowDownload);
-    /// <summary>当前会话的连接可用状态。</summary>
-    public string StateText => Text.Get(Enabled ? "McpEnabled" : "McpDisabled");
-    /// <summary>显示切换后的动作，状态变更以保存结果为准。</summary>
-    public string ToggleLabel => Text.Get(Enabled ? "McpDisable" : "McpEnable");
-    /// <summary>基础范围标签兼作字段的无障碍名称。</summary>
+    /// <summary>只有快照就绪时允许浏览对象存储。</summary>
+    public bool CanBrowseStorage => Ready && ShowTransfers && _storageBrowser is not null;
+    /// <summary>基础范围标签兼作无障碍名称。</summary>
     public string ResourceLabel => Text.Get(Kind switch
     {
         "storage" => "McpBucket",
@@ -139,33 +115,34 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
     });
     /// <summary>次级范围字段的本地化标签。</summary>
     public string QualifierLabel => Text.Get(Kind == "postgresql" ? "McpSchema" : "McpPrefix");
-    /// <summary>根据连接器说明将要共享的数据种类。</summary>
-    public string ContentLabel => Text.Get(Kind switch { "storage" => "McpShareFiles", "ssh" => "McpShareLogs", _ => "McpShareRows" });
-    /// <summary>说明空字段是否扩大授权范围。</summary>
-    public string ScopeHint => _selected is null ? "" : Text.Get(Kind switch
-    {
-        "storage" => "McpStorageScopeHint",
-        "redis" => "McpRedisScopeHint",
-        "ssh" => "McpSshScopeHint",
-        "rabbitmq" => "McpRabbitScopeHint",
-        _ => "McpSqlScopeHint",
-    });
-    /// <summary>只展示安全的操作反馈，不保存配对令牌。</summary>
-    public string Message { get => _message; private set => SetProperty(ref _message, value); }
-    /// <summary>更新可选连接器与现有授权。</summary>
+    /// <summary>范围细项按实例类型选择标签。</summary>
+    public string ExclusionTableLabel => Text.Get(Kind == "rabbitmq" ? "McpApprovalQueue" : "McpExclusionTable");
+    /// <summary>更新实例与禁止范围。</summary>
     public AsyncRelayCommand RefreshCommand { get; }
-    /// <summary>开启或关闭当前工作区接入。</summary>
+    /// <summary>开启或关闭当前工作区的本机接入。</summary>
     public AsyncRelayCommand ToggleCommand { get; }
     /// <summary>仅响应用户命令复制客户端配置。</summary>
     public AsyncRelayCommand CopyCommand { get; }
-    /// <summary>复制可粘贴到 AI 对话的本地化开场提示。</summary>
+    /// <summary>复制本地化开场提示。</summary>
     public AsyncRelayCommand CopyPromptCommand { get; }
-    /// <summary>把表单验证并保存为新的授权。</summary>
-    public AsyncRelayCommand GrantCommand { get; }
-    /// <summary>撤销指定范围的访问。</summary>
-    public AsyncRelayCommand RevokeCommand { get; }
+    /// <summary>添加明确的禁止范围。</summary>
+    public AsyncRelayCommand AddExclusionCommand { get; }
+    /// <summary>移除指定禁止范围。</summary>
+    public AsyncRelayCommand RemoveExclusionCommand { get; }
 
-    /// <summary>启动设置页或切换账号时重新获取工作区；旧表单不能跨账号提交。</summary>
+    /// <summary>每次打开编辑器都从空草稿开始，取消不保存。</summary>
+    public void BeginExclusionDraft() { SelectedTarget = null; Message = ""; }
+    /// <summary>浏览器固定打开时的工作区和实例版本，不持有凭据。</summary>
+    public McpStorageBrowserViewModel? CreateStorageBrowser() => CanBrowseStorage && _snapshot is not null && _selected is not null
+        ? new(_storageBrowser!, _snapshot.Workspace.Owner, _selected.Target) : null;
+    /// <summary>只把当前工作区和原实例的已确认选择写入草稿。</summary>
+    public void ApplyStorageScope(McpStorageBrowserViewModel browser)
+    {
+        if (!Ready || _snapshot?.Workspace.Owner != browser.Owner || _selected?.Target != browser.Target || !browser.CanChoose)
+        { Message = Text.Get("McpWorkspaceChanged"); return; }
+        Resource = browser.SelectedBucket!.Name; Qualifier = browser.ChosenPrefix; Message = "";
+    }
+    /// <summary>启动设置页或切换账号时重新获取工作区；旧草稿不能跨账号提交。</summary>
     public Task RefreshAsync(CancellationToken cancellationToken = default) => ChangeAsync(async token => Apply(await _service.ReadAsync(token)), null, cancellationToken);
 
     private async Task ChangeAsync(Func<CancellationToken, Task> change, string? success, CancellationToken cancellationToken = default,
@@ -174,11 +151,7 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
         if (_disposed || _busy) return;
         _busy = true; NotifyCommands();
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token, cancellationToken);
-        try
-        {
-            await change(linked.Token);
-            if (!_disposed) Message = success is null ? "" : Text.Get(success);
-        }
+        try { await change(linked.Token); if (!_disposed) Message = success is null ? "" : Text.Get(success); }
         catch (OperationCanceledException) when (linked.IsCancellationRequested) { }
         catch (Exception error) { if (!_disposed) Message = Text.Error(error, failureKey); }
         finally { _busy = false; NotifyCommands(); }
@@ -188,71 +161,51 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
     {
         if (_disposed) return;
         bool sameOwner = _snapshot?.Workspace.Owner == snapshot.Workspace.Owner;
-        var selected = _selected;
-        _snapshot = snapshot;
+        var selected = _selected; _snapshot = snapshot;
         var duplicateNames = snapshot.Workspace.Targets.GroupBy(target => (target.Name, target.TypeId))
             .Where(group => group.Count() > 1).Select(group => group.Key).ToHashSet();
         var targets = snapshot.Workspace.Targets.Select(target => new McpSettingsTarget(target,
             Text.Format(duplicateNames.Contains((target.Name, target.TypeId)) ? "McpInstanceChoiceDisambiguated" : "McpInstanceChoice",
                 target.Name, TypeLabel(target.TypeId), target.Id[..Math.Min(target.Id.Length, 8)]))).ToArray();
-        // 普通保存不替换下拉框内容，避免 WPF 清空选择和未提交草稿。
         if (!sameOwner || !Targets.SequenceEqual(targets))
         {
-            Targets = targets;
-            OnPropertyChanged(nameof(Targets));
+            Targets = targets; OnPropertyChanged(nameof(Targets));
             SelectedTarget = sameOwner && selected is not null ? Targets.FirstOrDefault(entry => entry.Target == selected.Target) : null;
         }
-        Grants = snapshot.Grants.Select(grant =>
-        {
-            var target = Targets.FirstOrDefault(entry => entry.Target.Id == grant.InstanceId);
-            return new McpSettingsGrant(grant.Id, target?.Label ?? Text.Get("McpUnavailableInstance"), Scope(grant),
-                target?.Target.Revision == grant.Revision && target.Target.TypeId == grant.TypeId, TransferScope(grant),
-                grant.AllowCreateFolder ? Text.Get("McpStorageCreateFolderScope") : "",
-                grant.AllowDelete ? Text.Get("McpStorageDeleteScope") : "",
-                grant.AllowSignedLinks ? Text.Get("McpStorageSignedLinksScope") : "",
-                grant.AllowOverwrite ? Text.Get("McpStorageOverwriteScope") : "");
-        }).ToArray();
-        OnPropertyChanged(nameof(Grants)); OnPropertyChanged(nameof(NoGrants));
+        var exclusions = snapshot.Exclusions ?? [];
+        InstanceAccess = Targets.Select(target => new McpInstanceAccessViewModel(target,
+            !exclusions.Any(item => item.InstanceId == target.Target.Id && item.Resource.Length == 0), OnInstanceAccessChanged)).ToArray();
+        ExcludedScopes = exclusions.Where(item => item.Resource.Length > 0).Select(item => new McpExcludedScope(item.Id,
+            Targets.FirstOrDefault(target => target.Target.Id == item.InstanceId)?.Label ?? Text.Get("McpUnavailableInstance"), ExclusionScope(item))).ToArray();
+        OnPropertyChanged(nameof(InstanceAccess)); OnPropertyChanged(nameof(NoInstances));
+        OnPropertyChanged(nameof(ExcludedScopes)); OnPropertyChanged(nameof(NoExcludedScopes));
         OnPropertyChanged(nameof(Enabled)); OnPropertyChanged(nameof(ToggleLabel)); OnPropertyChanged(nameof(StateText));
     }
 
-    private static string Scope(McpGrant grant)
+    private async void OnInstanceAccessChanged(McpInstanceAccessViewModel item, bool allowed)
     {
-        string table = grant.Table.Length == 0 ? Text.Get("McpAllTables") : grant.Table;
-        string prefix = grant.Qualifier.Length == 0 ? Text.Get("McpAnyPrefix") : grant.Qualifier;
-        string content = Text.Get(grant.ShareContent ? "McpContentShared"
-            : grant.AllowUpload || grant.AllowDownload || grant.AllowCreateFolder || grant.AllowDelete || grant.AllowSignedLinks
-                ? "McpStorageMetadataBrowsingOnly" : "McpMetadataOnly");
-        return grant.TypeId switch
+        if (!Ready || _snapshot is null) { item.Restore(!allowed); return; }
+        var exclusions = (_snapshot.Exclusions ?? []).Where(exclusion => exclusion.InstanceId != item.Target.Target.Id || exclusion.Resource.Length > 0).ToList();
+        if (!allowed) exclusions.Add(new("", item.Target.Target.Id, item.Target.Target.TypeId));
+        await ChangeAsync(async token => Apply(await _service.SetExclusionsAsync(_snapshot!.Workspace.Owner, exclusions, token)), "McpSettingsSaved");
+        if (_disposed) return;
+        bool actual = !(_snapshot?.Exclusions ?? []).Any(exclusion => exclusion.InstanceId == item.Target.Target.Id && exclusion.Resource.Length == 0);
+        if (actual != allowed) item.Restore(actual);
+    }
+
+    private static string ExclusionScope(McpExclusion item)
+    {
+        string any = Text.Get("McpExclusionAll");
+        return item.TypeId switch
         {
-            "storage" => Text.Format("McpStorageScope", grant.Resource, prefix, content),
-            "mysql" => Text.Format("McpMysqlScope", grant.Resource, table, content),
-            "postgresql" => Text.Format("McpPostgresScope", grant.Resource, grant.Qualifier, table, content),
-            "ssh" => grant.Resource.Length > 0 ? Text.Format("McpSshServiceScope", grant.Resource, content) : Text.Get("McpHostScope"),
-            "redis" => Text.Format("McpRedisScope", grant.Resource, prefix),
-            _ => Text.Format("McpRabbitScope", grant.Resource),
+            "storage" => Text.Format("McpExclusionStorage", item.Resource, item.Qualifier.Length == 0 ? any : item.Qualifier),
+            "mysql" => Text.Format("McpExclusionMysql", item.Resource, item.Table.Length == 0 ? any : item.Table),
+            "postgresql" => Text.Format("McpExclusionPostgres", item.Resource, item.Qualifier.Length == 0 ? any : item.Qualifier, item.Table.Length == 0 ? any : item.Table),
+            "redis" => Text.Format("McpExclusionRedis", item.Resource, item.Qualifier.Length == 0 ? any : item.Qualifier),
+            "rabbitmq" => Text.Format("McpExclusionRabbit", item.Resource, item.Table.Length == 0 ? any : item.Table),
+            _ => Text.Format("McpExclusionService", item.Resource),
         };
     }
-
-    private static string TransferScope(McpGrant grant) => (grant.AllowUpload, grant.AllowDownload) switch
-    {
-        (true, true) => Text.Format("McpStorageTransferScopeBoth", grant.TransferRoot),
-        (true, false) => Text.Format("McpStorageTransferScopeUpload", grant.TransferRoot),
-        (false, true) => Text.Format("McpStorageTransferScopeDownload", grant.TransferRoot),
-        _ => "",
-    };
-
-    private void OnTransferPermissionChanged()
-    {
-        if (!ShowTransferRoot && _allowOverwrite)
-        {
-            _allowOverwrite = false;
-            OnPropertyChanged(nameof(AllowOverwrite));
-        }
-        OnPropertyChanged(nameof(ShowTransferRoot));
-        GrantCommand.NotifyCanExecuteChanged();
-    }
-
     private static string TypeLabel(string type) => Text.Get(type switch
     {
         "storage" => "ObjectStorage",
@@ -262,13 +215,12 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
         "redis" => "McpTypeRedis",
         _ => "McpTypeRabbitMq",
     });
-
     private void NotifyCommands()
     {
-        foreach (var command in new[] { RefreshCommand, ToggleCommand, CopyCommand, CopyPromptCommand, GrantCommand, RevokeCommand }) command.NotifyCanExecuteChanged();
+        OnPropertyChanged(nameof(CanBrowseStorage)); OnPropertyChanged(nameof(IsBusy)); OnPropertyChanged(nameof(CanEditExclusions));
+        foreach (var command in new[] { RefreshCommand, ToggleCommand, CopyCommand, CopyPromptCommand, AddExclusionCommand, RemoveExclusionCommand }) command.NotifyCanExecuteChanged();
     }
-
-    /// <summary>关闭窗口时取消正在读写的授权任务，迟到结果不触碰视图。</summary>
+    /// <summary>关闭窗口时取消正在读写的任务，迟到结果不触碰视图。</summary>
     public void Dispose()
     {
         if (_disposed) return;

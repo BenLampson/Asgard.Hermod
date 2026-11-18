@@ -21,6 +21,7 @@ public sealed class SettingsEditorService : ISettingsEditor, IDisposable, IAsync
     private readonly Agent.IAgentClient? _agentClient;
     private readonly ApplicationUpdateViewModel? _updates;
     private readonly IMcpSettingsService? _mcp;
+    private readonly IMcpStorageScopeBrowser? _mcpStorageBrowser;
     private readonly CancellationTokenSource _lifetime = new();
     private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
     private SettingsWindow? _window;
@@ -37,7 +38,7 @@ public sealed class SettingsEditorService : ISettingsEditor, IDisposable, IAsync
         IAccountService? accounts = null, IAccountEditor? accountEditor = null, IMainWindowClosePreferenceStore? closePreferences = null,
         Agent.AgentConfiguration? agentConfiguration = null, IAgentPreferenceStore? agentPreferences = null,
         Agent.AgentModelCatalog? modelCatalog = null, Agent.IAgentClient? agentClient = null,
-        ApplicationUpdateViewModel? updates = null, IConfigurationSyncService? automaticSync = null, IMcpSettingsService? mcp = null)
+        ApplicationUpdateViewModel? updates = null, IConfigurationSyncService? automaticSync = null, IMcpSettingsService? mcp = null, IMcpStorageScopeBrowser? mcpStorageBrowser = null)
     {
         ArgumentNullException.ThrowIfNull(getOwner);
         ArgumentNullException.ThrowIfNull(tags);
@@ -45,6 +46,7 @@ public sealed class SettingsEditorService : ISettingsEditor, IDisposable, IAsync
         _getOwner = getOwner;
         _updates = updates;
         _mcp = mcp;
+        _mcpStorageBrowser = mcpStorageBrowser;
         _tags = tags;
         _languages = languages;
         _fileRules = fileRules;
@@ -97,7 +99,7 @@ public sealed class SettingsEditorService : ISettingsEditor, IDisposable, IAsync
         var dialogs = new WindowsTagDialogService(() => window ?? _getOwner(), _tags);
         var storageDialogs = new WindowsStorageSettingsDialogs(() => window ?? _getOwner());
         var model = new SettingsViewModel(_tags, dialogs, _languages, _fileRules, _temporaryFiles, storageDialogs,
-            _accounts, _accountEditor is null ? null : () => _accountEditor.OpenAsync(window), _closePreferences, _agentConfiguration, _agentPreferences, _modelCatalog, _agentClient, _updates, _sync, _accountEditor is null ? null : () => _accountEditor.OpenConflictsAsync(window), _mcp);
+            _accounts, _accountEditor is null ? null : () => _accountEditor.OpenAsync(window), _closePreferences, _agentConfiguration, _agentPreferences, _modelCatalog, _agentClient, _updates, _sync, _accountEditor is null ? null : () => _accountEditor.OpenConflictsAsync(window), _mcp, _mcpStorageBrowser);
         try
         {
             await model.InitializeAsync(_lifetime.Token);

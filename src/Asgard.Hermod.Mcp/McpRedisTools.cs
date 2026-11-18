@@ -9,8 +9,16 @@ internal sealed class McpRedisTools(IRedisSessionFactory factory)
 {
     private sealed record Position(string Node, string Cursor, string[] Remaining, bool Truncated);
 
+    internal async Task<object> ListDatabasesAsync(InstanceConnectionOptions connection, Func<string, bool> allowed, CancellationToken token)
+    {
+        await using var session = await factory.OpenAsync(connection, token).ConfigureAwait(false);
+        var databases = Enumerable.Range(0, Math.Clamp(session.DatabaseCount, 0, 256))
+            .Where(index => allowed(index.ToString(CultureInfo.InvariantCulture))).ToArray();
+        return new { kind = "databases", items = databases, truncated = session.DatabaseCount > 256 };
+    }
+
     internal async Task<object> RunAsync(string name, McpGrant grant, InstanceConnectionOptions connection, McpArguments args,
-        McpCursorCache cursors, CancellationToken token)
+        McpCursorCache cursors, CancellationToken token, Func<string, bool>? allowed = null)
     {
         bool scanning = name == "hermod_redis_scan_keys";
         string target = scanning ? args.String("prefix", grant.Qualifier) : args.String("key");
@@ -18,6 +26,8 @@ internal sealed class McpRedisTools(IRedisSessionFactory factory)
         int db = int.Parse(grant.Resource, CultureInfo.InvariantCulture);
         await using var session = await factory.OpenAsync(connection, token).ConfigureAwait(false);
         if (db >= session.DatabaseCount) throw Text.Exception("McpInvalidGrant");
+        if (name == McpToolCatalog.RedisReadValue)
+            return await McpRedisValueReader.ReadAsync(session, db, target, grant.Id, args.String("cursor"), cursors, token).ConfigureAwait(false);
         if (!scanning)
         {
             var metadata = await session.ReadKeyMetadataAsync(db, RedisKeyId.FromText(target), token).ConfigureAwait(false);
@@ -37,7 +47,7 @@ internal sealed class McpRedisTools(IRedisSessionFactory factory)
         {
             var page = await session.ScanAsync(node, db, cursor, Pattern(target), "", token).ConfigureAwait(false);
             var matched = page.Keys.Where(key => key.IsText).Select(key => key.DisplayName)
-                .Where(key => key.Length <= 1024 && key.StartsWith(target, StringComparison.Ordinal)).Distinct(StringComparer.Ordinal).Take(201).ToArray();
+                .Where(key => key.Length <= 1024 && key.StartsWith(target, StringComparison.Ordinal) && (allowed is null || allowed(key))).Distinct(StringComparer.Ordinal).Take(201).ToArray();
             truncated |= matched.Length > 200;
             keys = matched.Take(200).ToArray();
             cursor = page.Cursor;

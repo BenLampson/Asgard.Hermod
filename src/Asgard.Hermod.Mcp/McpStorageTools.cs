@@ -7,7 +7,7 @@ namespace Asgard.Hermod.Mcp;
 internal sealed class McpStorageTools(McpStorageClients clients)
 {
     internal async Task<object> RunAsync(string name, McpGrant grant, InstanceConnectionOptions connection, McpArguments args,
-        McpCursorCache cursors, CancellationToken token)
+        McpCursorCache cursors, CancellationToken token, Func<string, bool>? allowed = null)
     {
         if (name == McpToolCatalog.StorageDeletePlan) return McpStorageDeletion.Inspect(grant, args, cursors);
         if (name == McpToolCatalog.StorageStatistics)
@@ -50,7 +50,7 @@ internal sealed class McpStorageTools(McpStorageClients clients)
         {
             string? continuation = cursors.Read<string>(args.String("cursor"), name, grant.Id, target);
             var page = await client.ListObjectsAsync(grant.Resource, target, continuation, null, 30, token).ConfigureAwait(false);
-            var entries = page.Entries.Take(30).Where(entry => entry.Key.StartsWith(target, StringComparison.Ordinal))
+            var entries = page.Entries.Take(30).Where(entry => entry.Key.StartsWith(target, StringComparison.Ordinal) && (allowed is null || allowed(entry.Key)))
                 .Select(entry => new { entry.Key, entry.Size, entry.LastModified, entry.IsDirectory }).ToArray();
             string? cursor = page.NextToken is { Length: > 0 and <= 8192 } next ? cursors.Store(name, grant.Id, target, next) : null;
             return new { bucket = grant.Resource, prefix = target, entries, nextCursor = cursor, hasMore = page.NextToken is { Length: > 0 } };

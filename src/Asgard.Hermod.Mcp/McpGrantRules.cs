@@ -12,6 +12,9 @@ internal static class McpGrantRules
 
     internal static bool CanTransfer(McpGrant grant) => grant.TypeId == "storage" && (grant.AllowUpload || grant.AllowDownload);
 
+    // 旧授权没有此字段，仍按原本的本地目录限制上传，避免升级后扩大已有授权。
+    internal static bool NeedsTransferRoot(McpGrant grant) => grant.AllowDownload || grant.AllowUpload && !grant.AllowUnrestrictedUpload;
+
     internal static bool IsSameTarget(McpTarget target, McpGrant grant) => target.Id == grant.InstanceId
         && target.TypeId == grant.TypeId && target.Revision == grant.Revision;
 
@@ -36,13 +39,16 @@ internal static class McpGrantRules
             "rabbitmq" => grant.Resource.Length > 0 && grant.Resource is not ("." or "..") && grant.Qualifier.Length == 0 && grant.Table.Length == 0 && !grant.ShareContent,
             _ => false,
         };
-        if (!valid || ((grant.AllowUpload || grant.AllowDownload || grant.AllowCreateFolder || grant.AllowDelete || grant.AllowSignedLinks || grant.AllowOverwrite)
+        if (!valid || ((grant.AllowUpload || grant.AllowDownload || grant.AllowCreateFolder || grant.AllowDelete || grant.AllowSignedLinks || grant.AllowOverwrite || grant.AllowUnrestrictedUpload)
             && grant.TypeId != "storage"))
             throw Text.Exception("McpInvalidGrant");
-        if (grant.AllowOverwrite && !CanTransfer(grant)) throw Text.Exception("McpInvalidGrant");
-        if (CanTransfer(grant) && (string.IsNullOrWhiteSpace(grant.TransferRoot) || !grant.Qualifier.EndsWith('/')
-            || !McpStorageTransferPaths.IsKey(grant.Qualifier)))
+        if (grant.AllowOverwrite && !CanTransfer(grant) || grant.AllowUnrestrictedUpload && !grant.AllowUpload)
+            throw Text.Exception("McpInvalidGrant");
+        if (CanTransfer(grant) && NeedsTransferRoot(grant) && string.IsNullOrWhiteSpace(grant.TransferRoot))
             throw Text.Exception("McpTransferGrantScopeRequired");
+        if (CanTransfer(grant) && grant.Qualifier.Length > 0
+            && (!grant.Qualifier.EndsWith('/') || !McpStorageTransferPaths.IsKey(grant.Qualifier)))
+            throw Text.Exception("McpTransferStorageScopeRequired");
     }
 
     internal static bool IsServiceName(string value) => value.Length is > 0 and <= 128

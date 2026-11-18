@@ -5,7 +5,15 @@ namespace Asgard.Hermod.Mcp;
 /// <summary>仅走 Management API 的队列读取，不消费、重排或返回消息载荷。</summary>
 internal sealed class McpRabbitMqTools(IRabbitMqSessionFactory factory)
 {
-    internal async Task<object> RunAsync(string name, McpGrant grant, InstanceConnectionOptions connection, McpArguments args, CancellationToken token)
+    internal async Task<object> ListVhostsAsync(InstanceConnectionOptions connection, int page, Func<string, bool> allowed, CancellationToken token)
+    {
+        await using var session = await factory.OpenAsync(connection, token).ConfigureAwait(false);
+        var result = await session.ReadPageAsync(RabbitMqResource.Vhosts, page: page, pageSize: 50, cancellationToken: token).ConfigureAwait(false);
+        return new { kind = "vhosts", result.Page, result.PageCount, items = result.Items.Where(item => allowed(item.Name)).Select(item => item.Name).ToArray() };
+    }
+
+    internal async Task<object> RunAsync(string name, McpGrant grant, InstanceConnectionOptions connection, McpArguments args, CancellationToken token,
+        Func<string, bool>? allowed = null)
     {
         await using var session = await factory.OpenAsync(connection, token).ConfigureAwait(false);
         if (name == "hermod_rabbitmq_queue_info")
@@ -17,7 +25,7 @@ internal sealed class McpRabbitMqTools(IRabbitMqSessionFactory factory)
         }
         var page = await session.ReadPageAsync(RabbitMqResource.Queues, grant.Resource, page: args.Integer("page", 1),
             pageSize: 25, cancellationToken: token).ConfigureAwait(false);
-        return new { vhost = grant.Resource, page.Page, page.PageCount, queues = page.Items.Where(item => item.Vhost == grant.Resource).Select(Queue).ToArray() };
+        return new { vhost = grant.Resource, page.Page, page.PageCount, queues = page.Items.Where(item => item.Vhost == grant.Resource && (allowed is null || allowed(item.Name))).Select(Queue).ToArray() };
     }
 
     private static object Queue(RabbitMqRecord record) => new

@@ -16,9 +16,10 @@ internal sealed class McpStorageTransfer(McpAccessService access, McpStorageClie
     {
         token.ThrowIfCancellationRequested();
         var connection = access.OpenTarget(session, grant);
-        McpStorageTransferPaths.NormalizeRoot(grant.TransferRoot!);
+        if (!upload || !grant.AllowUnrestrictedUpload) McpStorageTransferPaths.NormalizeRoot(grant.TransferRoot!);
         using var client = await clients.CreateAsync(grant, connection, token).ConfigureAwait(false);
-        var plan = upload ? PlanUpload(key, local, token) : await PlanDownloadAsync(client, session, grant, key, local, token).ConfigureAwait(false);
+        var plan = upload ? PlanUpload(key, local, grant.AllowUnrestrictedUpload, token)
+            : await PlanDownloadAsync(client, session, grant, key, local, token).ConfigureAwait(false);
         report(plan.Count, 0);
         if (plan.Count == 0) throw Text.Exception("McpTransferNoFiles");
         if (!upload)
@@ -31,7 +32,7 @@ internal sealed class McpStorageTransfer(McpAccessService access, McpStorageClie
             access.Check(session, grant);
             if (upload)
             {
-                EnsureSource(file.Path, directory: false);
+                EnsureSource(file.Path, directory: false, grant.AllowUnrestrictedUpload);
                 try
                 {
                     await ObjectStorageFileTransfer.UploadAsync(client, grant.Resource, file.Key, file.Path, overwrite,
@@ -59,28 +60,36 @@ internal sealed class McpStorageTransfer(McpAccessService access, McpStorageClie
         }
     }
 
-    private static List<(string Key, string Path)> PlanUpload(string key, string path, CancellationToken token)
+    private static List<(string Key, string Path)> PlanUpload(string key, string path, bool allowLinks, CancellationToken token)
     {
-        bool isDirectory = key.EndsWith('/');
-        EnsureSource(path, isDirectory);
+        bool isDirectory = McpStorageTransferPaths.IsDirectoryKey(key);
+        EnsureSource(path, isDirectory, allowLinks);
         if (!isDirectory) return [(key, path)];
 
         var files = new List<(string Key, string Path)>();
-        var pending = new Stack<string>();
-        pending.Push(path);
+        var pending = new Stack<(string Path, DirectoryAncestor? Parent)>();
+        pending.Push((path, null));
         int directories = 1;
-        while (pending.TryPop(out string? directory))
+        while (pending.TryPop(out var item))
         {
             token.ThrowIfCancellationRequested();
-            EnsureSource(directory, directory: true);
+            string directory = item.Path;
+            EnsureSource(directory, directory: true, allowLinks);
+            // 无限制上传可跟随链接，但递归扫描不能沿目录链接形成循环。
+            var info = new DirectoryInfo(directory);
+            string identity = allowLinks ? info.ResolveLinkTarget(returnFinalTarget: true)?.FullName ?? info.FullName : info.FullName;
+            for (var parent = item.Parent; parent is not null; parent = parent.Parent)
+                if (string.Equals(parent.Path, identity, StringComparison.OrdinalIgnoreCase))
+                    throw Text.Exception("McpTransferUploadCycle");
+            var ancestry = new DirectoryAncestor(identity, item.Parent);
             foreach (string child in Directory.EnumerateFileSystemEntries(directory))
             {
                 token.ThrowIfCancellationRequested();
-                FileAttributes attributes = McpStorageTransferPaths.CheckExisting(child, allowMissing: false)!.Value;
+                FileAttributes attributes = McpStorageTransferPaths.CheckExisting(child, allowMissing: false, allowLinks)!.Value;
                 if (attributes.HasFlag(FileAttributes.Directory))
                 {
                     if (++directories > DirectoryLimit) throw Text.Exception("McpTransferTooManyFiles");
-                    pending.Push(child);
+                    pending.Push((child, ancestry));
                     continue;
                 }
                 string target = key + Path.GetRelativePath(path, child).Replace('\\', '/');
@@ -95,7 +104,7 @@ internal sealed class McpStorageTransfer(McpAccessService access, McpStorageClie
     private async Task<List<(string Key, string Path)>> PlanDownloadAsync(IObjectStorageClient client, McpSessionAccess session,
         McpGrant grant, string key, string path, CancellationToken token)
     {
-        if (!key.EndsWith('/')) return [(key, path)];
+        if (!McpStorageTransferPaths.IsDirectoryKey(key)) return [(key, path)];
 
         var files = new List<(string Key, string Path)>();
         var paths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -132,12 +141,19 @@ internal sealed class McpStorageTransfer(McpAccessService access, McpStorageClie
         return files;
     }
 
-    private static void EnsureSource(string path, bool directory)
+    private static void EnsureSource(string path, bool directory, bool allowLinks)
     {
-        if (McpStorageTransferPaths.CheckExisting(path, allowMissing: false) is not { } attributes
-            || attributes.HasFlag(FileAttributes.Directory) != directory)
+        FileAttributes? attributes;
+        try { attributes = McpStorageTransferPaths.CheckExisting(path, allowMissing: false, allowLinks); }
+        catch (Exception error) when (error.Data["Hermod.ResourceKey"] as string == "McpTransferInvalidLocalPath")
+        {
+            throw Text.Exception("McpTransferSourceUnavailable");
+        }
+        if (attributes is null || attributes.Value.HasFlag(FileAttributes.Directory) != directory)
             throw Text.Exception("McpTransferSourceType");
     }
+
+    private sealed record DirectoryAncestor(string Path, DirectoryAncestor? Parent);
 
     private static void EnsureDestinationAvailable(string path, bool overwrite)
     {

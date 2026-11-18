@@ -32,7 +32,10 @@ public sealed class McpDesktopServer : IDisposable, IAsyncDisposable
     {
         lock (_gate)
             if (!_stopped && _listeners is null)
+            {
+                _access.MigrateDefaultPolicy();
                 _listeners = Task.WhenAll(Enumerable.Range(0, Connections).Select(_ => Task.Run(() => ListenAsync(_stop.Token))));
+            }
     }
 
     /// <summary>退出已获确认后立即停止接收任务，不等待窗口清理完成。</summary>

@@ -6,6 +6,11 @@ namespace Asgard.Hermod.Mcp;
 internal sealed class McpArguments(IReadOnlyDictionary<string, JsonElement> arguments)
 {
     internal string String(string key, string fallback = "") => arguments.TryGetValue(key, out var value) ? value.GetString()! : fallback;
+    internal McpArguments WithString(string key, string value)
+    {
+        var copy = new Dictionary<string, JsonElement>(arguments, StringComparer.Ordinal) { [key] = JsonSerializer.SerializeToElement(value) };
+        return new(copy);
+    }
     internal int Integer(string key, int fallback) => arguments.TryGetValue(key, out var value) ? value.GetInt32() : fallback;
     internal string[] Strings(string key) => arguments.TryGetValue(key, out var value)
         ? value.EnumerateArray().Select(item => item.GetString()!).ToArray() : [];

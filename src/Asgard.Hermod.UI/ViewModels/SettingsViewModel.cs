@@ -25,7 +25,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         Agent.AgentConfiguration? agentConfiguration = null, IAgentPreferenceStore? agentPreferences = null,
         Agent.AgentModelCatalog? modelCatalog = null, Agent.IAgentClient? agentClient = null,
         ApplicationUpdateViewModel? updates = null, IConfigurationSyncService? automaticSync = null, Func<Task>? resolveConflicts = null,
-        IMcpSettingsService? mcp = null)
+        IMcpSettingsService? mcp = null, IMcpStorageScopeBrowser? mcpStorageBrowser = null)
     {
         ArgumentNullException.ThrowIfNull(tags);
         ArgumentNullException.ThrowIfNull(dialogs);
@@ -35,7 +35,7 @@ public sealed class SettingsViewModel : ObservableObject, IDisposable
         CloseSettings = closePreferences is null ? null : new(closePreferences);
         AgentSettings = modelCatalog is null && agentConfiguration is not null && agentPreferences is not null ? new(agentConfiguration, agentPreferences) : null;
         AgentModels = modelCatalog is not null && agentClient is not null ? new(modelCatalog, agentClient) : null;
-        Mcp = mcp is null ? null : new(mcp);
+        Mcp = mcp is null ? null : new(mcp, storageBrowser: mcpStorageBrowser);
         _accounts = accounts; _sync = automaticSync;
         ResolveConflictsCommand = new AsyncRelayCommand(_ => resolveConflicts?.Invoke() ?? Task.CompletedTask,
             _ => !_disposed && HasSyncConflict && resolveConflicts is not null);
