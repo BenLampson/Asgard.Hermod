@@ -5,7 +5,7 @@ Contributions to Asgard Hermod are welcome. English is the primary language for 
 ## Workflow
 
 1. Discuss substantial features in a GitHub issue before implementation.
-2. Base application changes on `main`. Create a focused branch when needed and remove it after its work is complete.
+2. Create a short-lived development branch from current `main`. After merging, remove the local task branch and its remote branch if it was pushed. Keep only `main` permanently.
 3. Install the .NET 10 SDK and build on Windows.
 4. Make focused changes and update relevant documentation.
 5. Run `dotnet build Asgard.Hermod.slnx -c Release` and `dotnet format Asgard.Hermod.slnx --verify-no-changes`.

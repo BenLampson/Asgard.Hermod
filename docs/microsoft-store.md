@@ -47,7 +47,7 @@ credentials.
 
 ## Build
 
-Develop on `main` or merge a validated temporary branch into `main`. Only
+Merge the validated temporary development branch into `main` and prune it. Only
 `main` may publish a GitHub Release. In **Actions → Release MSIX → Run workflow**:
 
 1. Select branch **main** and enter a new tag such as `v1.0.1`.

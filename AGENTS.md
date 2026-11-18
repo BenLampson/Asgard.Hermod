@@ -17,7 +17,7 @@
 
 ## Repository conventions
 
-- Use `main` as the permanent development branch. Create a branch or worktree only when needed for the task, and remove temporary branches after their work is complete.
+- Keep `main` as the only long-lived local and remote branch. Start each development task on a short-lived branch from current `main`. After merging, remove the merged task branch locally and on the remote if it was pushed.
 - Keep Dependabot updates that automatically create branches disabled; update dependencies manually unless the user explicitly requests otherwise.
 - Publish GitHub Releases only from `main` through the `Release MSIX` workflow. Merge any validated task branch into `main` first. Do not create release tags outside the workflow or replace a published version.
 - For Microsoft Store releases, do not perform clean Windows installation testing or Windows App Certification Kit (WACK) checks. Follow the existing build, formatting, automated test and MSIX workflow gates.
