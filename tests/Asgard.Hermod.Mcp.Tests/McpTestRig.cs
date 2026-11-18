@@ -33,7 +33,7 @@ internal sealed class McpTestRig : IDisposable
         var queueTools = new McpRabbitMqTools(queues ?? ProtocolStub<IRabbitMqSessionFactory>.For());
         _transfers = new(Access, new(Access, storageClients), clock ?? TimeProvider.System);
         Tools = new(Access, sql, new(storageClients), sshTools, redisTools, queueTools, _transfers, approval,
-            new(new McpStorageScopeBrowser(Store, factory), sql, redisTools, queueTools, sshTools));
+            new(new McpStorageScopeBrowser(Store, factory), sql, redisTools, queueTools, sshTools), clock);
     }
 
     internal async Task<McpGrant> GrantAsync(McpTarget target, string resource = "", string qualifier = "", string table = "", bool share = false,

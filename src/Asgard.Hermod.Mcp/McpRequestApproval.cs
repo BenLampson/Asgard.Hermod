@@ -79,7 +79,7 @@ internal static class McpRequestApproval
     {
         McpToolCatalog.ListResources => "McpActionListResources",
         "hermod_storage_list" => "McpActionStorageList",
-        "hermod_storage_stat" => "McpActionStorageStat",
+        McpToolCatalog.StorageStat => "McpActionStorageStat",
         McpToolCatalog.StorageStatistics => "McpActionStorageStatistics",
         "hermod_storage_read_text" => "McpActionStorageRead",
         McpToolCatalog.StorageCreateFolder => "McpActionCreateFolder",

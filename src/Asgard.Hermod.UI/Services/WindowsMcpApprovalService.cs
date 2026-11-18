@@ -15,7 +15,16 @@ public sealed class WindowsMcpApprovalService(Func<Window?> owner) : IMcpApprova
     public async Task<McpApprovalResult> ConfirmAsync(McpApprovalRequest request, CancellationToken cancellationToken = default)
     {
         await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
-        try { return await _dispatcher.InvokeAsync(() => ShowAsync(request, cancellationToken)).Task.Unwrap().ConfigureAwait(false); }
+        try
+        {
+            return await _dispatcher.InvokeAsync(() => ShowAsync(request, cancellationToken), DispatcherPriority.Normal, cancellationToken)
+                .Task.Unwrap().ConfigureAwait(false);
+        }
+        catch (Exception)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            throw Text.Exception("McpApprovalUnavailable");
+        }
         finally { _gate.Release(); }
     }
 
@@ -24,17 +33,18 @@ public sealed class WindowsMcpApprovalService(Func<Window?> owner) : IMcpApprova
         token.ThrowIfCancellationRequested();
         var model = new McpApprovalViewModel(request);
         var window = new McpApprovalWindow(model);
-        if (owner() is { IsVisible: true } parent) window.Owner = parent;
         var closed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         window.Closed += (_, _) => closed.TrySetResult();
-        using var registration = token.Register(() =>
+        try
         {
-            if (!_dispatcher.HasShutdownStarted) _dispatcher.BeginInvoke(() => { if (window.IsVisible) window.Close(); });
-        });
-        token.ThrowIfCancellationRequested();
-        PresentWindow(window);
-        await closed.Task;
-        token.ThrowIfCancellationRequested();
-        return new(window.Approved, window.Approved ? model.DownloadFolder : "");
+            if (owner() is { IsVisible: true, WindowState: not WindowState.Minimized } parent) window.Owner = parent;
+            else window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            token.ThrowIfCancellationRequested();
+            PresentWindow(window);
+            await closed.Task.WaitAsync(token);
+            token.ThrowIfCancellationRequested();
+            return new(window.Approved, window.Approved ? model.DownloadFolder : "");
+        }
+        finally { if (!closed.Task.IsCompleted) window.Close(); }
     }
 }

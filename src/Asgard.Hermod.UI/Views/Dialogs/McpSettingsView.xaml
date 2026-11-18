@@ -27,11 +27,15 @@
                        Visibility="{Binding NoInstances, Converter={StaticResource McpVisibility}}" />
             <ItemsControl x:Name="McpInstanceAccessList" ItemsSource="{Binding InstanceAccess}" Margin="0,8,0,0">
                 <ItemsControl.ItemTemplate><DataTemplate>
-                    <CheckBox IsChecked="{Binding IsAllowed, Mode=TwoWay}" Margin="0,6,0,0"
-                              IsEnabled="{Binding DataContext.CanEditExclusions, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                              AutomationProperties.Name="{Binding Label}">
-                        <TextBlock Text="{Binding Label}" TextWrapping="Wrap" />
-                    </CheckBox>
+                    <Grid Margin="0,6,0,0" IsEnabled="{Binding DataContext.CanEditExclusions, RelativeSource={RelativeSource AncestorType=ItemsControl}}">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                        <CheckBox IsChecked="{Binding IsAllowed, Mode=TwoWay}" AutomationProperties.Name="{Binding Label}">
+                            <TextBlock Text="{Binding Label}" TextWrapping="Wrap" />
+                        </CheckBox>
+                        <CheckBox Grid.Column="1" Margin="12,0,0,0" Content="{loc:Loc McpAlwaysAllowInstance}"
+                                  IsEnabled="{Binding IsAllowed}" IsChecked="{Binding AlwaysAllow, Mode=TwoWay}"
+                                  AutomationProperties.Name="{Binding Label, StringFormat={loc:Loc McpAlwaysAllowNamedInstance}}" />
+                    </Grid>
                 </DataTemplate></ItemsControl.ItemTemplate>
             </ItemsControl>
             <TextBlock Text="{loc:Loc McpExcludedScopesTitle}" FontSize="16" FontWeight="SemiBold" Margin="0,22,0,8" />

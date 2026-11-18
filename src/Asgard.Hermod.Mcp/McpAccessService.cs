@@ -53,7 +53,23 @@ internal sealed class McpAccessService(IMcpLocalStore store, string command) : I
             var normalized = exclusions.Select(item => item with { Id = item.Id.Length == 0 ? Guid.NewGuid().ToString("N") : item.Id })
                 .DistinctBy(item => (item.InstanceId, item.TypeId, item.Resource, item.Qualifier, item.Table)).ToArray();
             if (policy.DefaultAllow && (policy.Exclusions ?? []).SequenceEqual(normalized)) return policy;
-            return policy with { DefaultAllow = true, Exclusions = Array.AsReadOnly(normalized) };
+            // 禁用整个实例同时清除持久授权，重新启用时恢复首次访问确认。
+            var approvals = policy.InstanceApprovals?.Where(approval =>
+                !normalized.Any(item => item.InstanceId == approval.InstanceId && item.Resource.Length == 0)).ToArray();
+            return policy with { DefaultAllow = true, Exclusions = Array.AsReadOnly(normalized), InstanceApprovals = approvals };
+        }, cancellationToken);
+
+    public Task<McpSettingsSnapshot> SetInstanceApprovalAsync(string owner, McpInstanceApproval approval, bool enabled, CancellationToken cancellationToken = default) =>
+        UpdateAsync(owner, (workspace, policy) =>
+        {
+            var target = workspace.Targets.SingleOrDefault(approval.Matches) ?? throw Text.Exception("McpWorkspaceChanged");
+            if (!policy.DefaultAllow || !McpGrantRules.Supports(target.TypeId) || enabled && McpExclusionRules.Blocks(policy, target))
+                throw Text.Exception("McpAccessDenied");
+            var approvals = policy.InstanceApprovals ?? [];
+            if (approvals.Any(item => item.Matches(target)) == enabled) return policy;
+            var remaining = approvals.Where(item => item.InstanceId != target.Id && workspace.Targets.Any(item.Matches)).ToList();
+            if (enabled) remaining.Add(approval);
+            return policy with { InstanceApprovals = remaining.AsReadOnly() };
         }, cancellationToken);
 
     public Task<string> GetClientConfigurationAsync(string owner, CancellationToken cancellationToken = default) => RunAsync(() =>
@@ -176,7 +192,7 @@ internal sealed class McpAccessService(IMcpLocalStore store, string command) : I
 
     private static McpSettingsSnapshot Snapshot(McpWorkspace workspace, McpLocalPolicy policy) =>
         new(workspace with { Targets = Array.AsReadOnly(workspace.Targets.Where(target => McpGrantRules.Supports(target.TypeId)).ToArray()) },
-            policy.Enabled, policy.Grants, policy.Exclusions ?? [], policy.DefaultAllow);
+            policy.Enabled, policy.Grants, policy.Exclusions ?? [], policy.DefaultAllow, policy.InstanceApprovals ?? []);
 
     public void Dispose()
     {

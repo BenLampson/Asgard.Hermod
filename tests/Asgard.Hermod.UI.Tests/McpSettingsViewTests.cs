@@ -31,7 +31,19 @@ public sealed class McpSettingsViewTests(WpfTestFixture fixture)
             Assert.Equal(Text.Get("McpStarterPrompt"), copied);
             Assert.Equal(0, settings.ClientConfigurationReads);
             Assert.All(model.InstanceAccess, item => Assert.True(item.IsAllowed));
+            Assert.All(model.InstanceAccess, item => Assert.False(item.AlwaysAllow));
             var instance = model.InstanceAccess.Single(item => item.Target.Target.TypeId == "storage");
+            var alwaysAllow = Assert.Single(WindowTestVisuals.Descendants<CheckBox>(page),
+                box => box.DataContext == instance && Equals(box.Content, Text.Get("McpAlwaysAllowInstance")));
+            Assert.Equal(Text.Format("McpAlwaysAllowNamedInstance", instance.Label), System.Windows.Automation.AutomationProperties.GetName(alwaysAllow));
+            alwaysAllow.SetCurrentValue(System.Windows.Controls.Primitives.ToggleButton.IsCheckedProperty, true);
+            Assert.True(Assert.Single(settings.Approvals).Matches(instance.Target.Target));
+            await model.RefreshAsync();
+            instance = model.InstanceAccess.Single(item => item.Target.Target.TypeId == "storage");
+            Assert.True(instance.AlwaysAllow);
+            instance.AlwaysAllow = false;
+            Assert.Empty(settings.Approvals);
+            instance = model.InstanceAccess.Single(item => item.Target.Target.TypeId == "storage");
             instance.IsAllowed = false;
             Assert.Equal("oss", Assert.Single(settings.Exclusions).InstanceId);
             Assert.False(model.InstanceAccess.Single(item => item.Target.Target.TypeId == "storage").IsAllowed);
@@ -58,13 +70,16 @@ public sealed class McpSettingsViewTests(WpfTestFixture fixture)
     [Fact]
     public Task FailedInstanceChangeRestoresThePreviousSelection() => fixture.RunOffscreenAsync(async () =>
     {
-        var settings = new SettingsStub { FailExclusions = true };
+        var settings = new SettingsStub { FailChanges = true };
         using var model = new McpSettingsViewModel(settings);
         await model.RefreshAsync();
         var instance = model.InstanceAccess.First();
         instance.IsAllowed = false;
         Assert.True(instance.IsAllowed);
         Assert.Empty(settings.Exclusions);
+        instance.AlwaysAllow = true;
+        Assert.False(instance.AlwaysAllow);
+        Assert.Empty(settings.Approvals);
         Assert.Equal(Text.Get("McpSettingsFailed"), model.Message);
     });
 
@@ -108,18 +123,26 @@ public sealed class McpSettingsViewTests(WpfTestFixture fixture)
         private static readonly McpWorkspace Workspace = new("", [new("cache", "Cache", "redis", "v1"),
             new("sql", "SQL", "mysql", "v1"), new("oss", "OSS", "storage", "v1")]);
         private bool _enabled;
-        internal bool FailExclusions { get; init; }
+        internal bool FailChanges { get; init; }
         internal List<McpExclusion> Exclusions { get; } = [];
+        internal List<McpInstanceApproval> Approvals { get; } = [];
         internal int ClientConfigurationReads { get; private set; }
         public Task<McpSettingsSnapshot> ReadAsync(CancellationToken cancellationToken = default) =>
-            Task.FromResult(new McpSettingsSnapshot(Workspace, _enabled, [], Exclusions.ToArray()));
+            Task.FromResult(new McpSettingsSnapshot(Workspace, _enabled, [], Exclusions.ToArray(), InstanceApprovals: Approvals.ToArray()));
+        public Task<McpSettingsSnapshot> SetInstanceApprovalAsync(string owner, McpInstanceApproval approval, bool enabled, CancellationToken cancellationToken = default)
+        {
+            if (FailChanges) throw new IOException("sensitive details");
+            Approvals.RemoveAll(item => item.InstanceId == approval.InstanceId);
+            if (enabled) Approvals.Add(approval);
+            return ReadAsync(cancellationToken);
+        }
         public Task<McpSettingsSnapshot> SetEnabledAsync(string owner, bool enabled, CancellationToken cancellationToken = default)
         { _enabled = enabled; return ReadAsync(cancellationToken); }
         public Task<McpSettingsSnapshot> AddGrantAsync(string owner, McpGrant grant, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public Task<McpSettingsSnapshot> RemoveGrantAsync(string owner, string grantId, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public Task<McpSettingsSnapshot> SetExclusionsAsync(string owner, IReadOnlyList<McpExclusion> exclusions, CancellationToken cancellationToken = default)
         {
-            if (FailExclusions) throw new IOException("sensitive details");
+            if (FailChanges) throw new IOException("sensitive details");
             Exclusions.Clear();
             Exclusions.AddRange(exclusions.Select(item => item.Id.Length == 0 ? item with { Id = Guid.NewGuid().ToString("N") } : item));
             return ReadAsync(cancellationToken);

@@ -1,8 +1,10 @@
 using System.Text;
 using System.Text.Json;
+using System.Threading.Channels;
 using Asgard.Hermod.ObjectStorage.Abstractions.Clients;
 using Asgard.Hermod.ObjectStorage.Abstractions.Models;
 using Asgard.Hermod.Redis;
+using ModelContextProtocol;
 using ModelContextProtocol.Client;
 using ModelContextProtocol.Protocol;
 
@@ -100,9 +102,14 @@ public sealed class McpDefaultAccessTests
     [Fact]
     public async Task OfficialMcpClientDiscoversInstancesAndRequestsAConfirmedBucket()
     {
-        var prompts = new ApprovalStub();
-        var client = ProtocolStub<IObjectStorageClient>.For((name, _) => name == nameof(IObjectStorageClient.ListObjectsAsync)
-            ? Task.FromResult(new ObjectStoragePage([new("daily/report.txt", false)])) : throw new InvalidOperationException(name));
+        var decision = new TaskCompletionSource<McpApprovalResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var prompts = new ApprovalStub((_, token) => decision.Task.WaitAsync(token));
+        var client = ProtocolStub<IObjectStorageClient>.For((name, _) => name switch
+        {
+            nameof(IObjectStorageClient.ObjectExistsAsync) => Task.FromResult(false),
+            nameof(IObjectStorageClient.ListObjectsAsync) => Task.FromResult(new ObjectStoragePage([new("daily/report.txt", false)])),
+            _ => throw new InvalidOperationException(name),
+        });
         using var rig = new McpTestRig([Storage], storage: ProtocolStub<IObjectStorageClientFactory>.For((_, _) => client),
             defaultAccess: true, approval: prompts);
         await rig.Access.SetEnabledAsync("", true, McpTestRig.Token);
@@ -121,6 +128,26 @@ public sealed class McpDefaultAccessTests
         Assert.True(storageTool.ProtocolTool.InputSchema.GetProperty("properties").TryGetProperty("bucket", out _));
         var instances = Result(await sdk.CallToolAsync("hermod_list_instances", new Dictionary<string, object?>(), cancellationToken: token));
         string id = Assert.Single(instances.GetProperty("instances").EnumerateArray()).GetProperty("grant_id").GetString()!;
+        var messages = Channel.CreateUnbounded<ProgressNotificationValue>();
+        var stat = sdk.CallToolAsync("hermod_storage_stat", new Dictionary<string, object?>
+        {
+            ["grant_id"] = id,
+            ["bucket"] = "exports",
+            ["key"] = "daily/words.json",
+        }, new Progress<ProgressNotificationValue>(value => messages.Writer.TryWrite(value)), cancellationToken: token);
+        try
+        {
+            var pending = await messages.Reader.ReadAsync(token);
+            Assert.Equal(Text.Format("McpApprovalWaiting", Storage.Name), pending.Message);
+            Assert.Equal(0, rig.Store.Opened);
+            Assert.False(stat.IsCompleted);
+            decision.SetResult(new(true));
+            var querying = await messages.Reader.ReadAsync(token);
+            Assert.True(querying.Progress > pending.Progress);
+            Assert.Equal(Text.Get("McpStorageStatQuerying"), querying.Message);
+            Assert.False(Result(await stat).GetProperty("exists").GetBoolean());
+        }
+        finally { decision.TrySetResult(new(false)); }
         var result = Result(await sdk.CallToolAsync("hermod_storage_list", new Dictionary<string, object?>
         {
             ["grant_id"] = id,
@@ -131,7 +158,7 @@ public sealed class McpDefaultAccessTests
         var request = Assert.Single(prompts.Requests);
         Assert.Equal("Objects A", request.InstanceName);
         Assert.Contains(request.Fields, field => field.Value == "exports");
-        Assert.Contains(request.Fields, field => field.Value == "daily/");
+        Assert.Contains(request.Fields, field => field.Value == "daily/words.json");
     }
 
     [Fact]
@@ -164,12 +191,14 @@ public sealed class McpDefaultAccessTests
         var firstSession = unavailable.Session;
         var first = await Call(unavailable, firstSession, "hermod_storage_list", ("grant_id", McpDefaultAccess.Id(firstSession, Storage)), ("bucket", "exports"));
         Assert.True(first.IsError);
+        Assert.Equal(Text.Get("McpApprovalUnavailable"), Assert.IsType<TextContentBlock>(Assert.Single(first.Content)).Text);
         var denied = new ApprovalStub((_, _) => Task.FromResult(new McpApprovalResult(false)));
         using var rejected = new McpTestRig([Storage], storage: factory, defaultAccess: true, approval: denied);
         await rejected.Access.SetEnabledAsync("", true, McpTestRig.Token);
         var secondSession = rejected.Session;
         var second = await Call(rejected, secondSession, "hermod_storage_list", ("grant_id", McpDefaultAccess.Id(secondSession, Storage)), ("bucket", "exports"));
         Assert.True(second.IsError);
+        Assert.Equal(Text.Get("McpApprovalDenied"), Assert.IsType<TextContentBlock>(Assert.Single(second.Content)).Text);
         Assert.Single(denied.Requests);
         Assert.Equal(0, opened);
     }
@@ -272,31 +301,40 @@ public sealed class McpDefaultAccessTests
         Assert.Equal(0, opened);
     }
 
-    [Fact]
-    public async Task WholeBucketTransfersUseRootAndKeepTheDirectoryHierarchy()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task WholeBucketTransfersUseRootAndKeepTheDirectoryHierarchy(bool alwaysAllow)
     {
         using var destination = new TemporaryFolder();
         using var alternate = new TemporaryFolder();
         using var source = new TemporaryFolder();
         string nested = Directory.CreateDirectory(Path.Combine(source.Path, "nested")).FullName;
-        await File.WriteAllTextAsync(Path.Combine(nested, "upload.txt"), "upload", McpTestRig.Token);
+        string sourceFile = Path.Combine(nested, "upload.txt");
+        await File.WriteAllTextAsync(sourceFile, "upload", McpTestRig.Token);
+        await File.WriteAllTextAsync(Path.Combine(source.Path, "index.json"), "{}", McpTestRig.Token);
         var prompts = new ApprovalStub((_, _) => Task.FromResult(new McpApprovalResult(true, destination.Path)));
-        var uploaded = new List<string>();
+        var uploaded = new Dictionary<string, byte[]>();
         var client = ProtocolStub<IObjectStorageClient>.For((name, args) => name switch
         {
             nameof(IObjectStorageClient.ListBucketsAsync) => Task.FromResult<IReadOnlyList<ObjectStorageBucket>>([new("exports", "region")]),
             nameof(IObjectStorageClient.ListObjectsAsync) => ListObjects(args),
-            nameof(IObjectStorageClient.OpenReadAsync) => Task.FromResult(new ObjectStorageReadResult(new MemoryStream([1, 2, 3]), 3)),
+            nameof(IObjectStorageClient.OpenReadAsync) => Read((string)args[1]!),
+            nameof(IObjectStorageClient.ObjectExistsAsync) => Task.FromResult(uploaded.ContainsKey((string)args[1]!)),
+            nameof(IObjectStorageClient.GetObjectMetadataAsync) => Task.FromResult(new ObjectStorageObjectDetails((string)args[1]!,
+                uploaded[(string)args[1]!].Length, null, "Standard", "text/plain", "private")),
             nameof(IObjectStorageClient.UploadAsync) => Upload(args),
             _ => throw new InvalidOperationException(name),
         });
         using var rig = new McpTestRig([Storage], storage: ProtocolStub<IObjectStorageClientFactory>.For((_, _) => client),
             defaultAccess: true, approval: prompts);
+        if (alwaysAllow)
+            await rig.Access.SetInstanceApprovalAsync("", new(Storage.Id, Storage.TypeId, Storage.Revision, destination.Path), true, McpTestRig.Token);
         await rig.Access.SetEnabledAsync("", true, McpTestRig.Token);
         var session = rig.Session;
         string id = McpDefaultAccess.Id(session, Storage);
         Result(await Call(rig, session, McpToolCatalog.ListResources, ("grant_id", id)));
-        Assert.True(Assert.Single(prompts.Requests).ShowDownloadFolder);
+        if (!alwaysAllow) Assert.True(Assert.Single(prompts.Requests).ShowDownloadFolder);
         var download = Result(await Call(rig, session, McpToolCatalog.StorageStartTransfer, ("grant_id", id), ("bucket", "exports"),
             ("direction", "download"), ("key", "/")));
         await WaitAsync(download);
@@ -306,22 +344,40 @@ public sealed class McpDefaultAccessTests
             ("direction", "download"), ("key", "other.bin"), ("local_path", explicitPath)));
         await WaitAsync(explicitDownload);
         Assert.Equal(new byte[] { 1, 2, 3 }, await File.ReadAllBytesAsync(explicitPath, McpTestRig.Token));
+        var stat = Result(await Call(rig, session, McpToolCatalog.StorageStat, ("grant_id", id), ("bucket", "exports"), ("key", "single.txt")));
+        Assert.False(stat.GetProperty("exists").GetBoolean());
+        var single = Result(await Call(rig, session, McpToolCatalog.StorageStartTransfer, ("grant_id", id), ("bucket", "exports"),
+            ("direction", "upload"), ("key", "single.txt"), ("local_path", sourceFile)));
+        await WaitAsync(single);
+        var metadata = Result(await Call(rig, session, McpToolCatalog.StorageStat, ("grant_id", id), ("bucket", "exports"), ("key", "single.txt")));
+        Assert.True(metadata.GetProperty("exists").GetBoolean());
+        Assert.Equal(6, metadata.GetProperty("size").GetInt64());
+        var verified = Result(await Call(rig, session, "hermod_storage_read_text", ("grant_id", id), ("bucket", "exports"), ("key", "single.txt")));
+        Assert.Equal("upload", verified.GetProperty("content").GetString());
         var upload = Result(await Call(rig, session, McpToolCatalog.StorageStartTransfer, ("grant_id", id), ("bucket", "exports"),
             ("direction", "upload"), ("key", "/"), ("local_path", source.Path)));
         await WaitAsync(upload);
-        Assert.Equal(["nested/upload.txt"], uploaded);
-        Assert.Single(prompts.Requests);
-        Assert.False(prompts.Requests[0].RequiresDownloadFolder);
+        Assert.Equal(uploaded["single.txt"], uploaded["nested/upload.txt"]);
+        Assert.Equal("{}"u8.ToArray(), uploaded["index.json"]);
+        Assert.Equal(3, uploaded.Count);
+        if (alwaysAllow) Assert.Empty(prompts.Requests);
+        else Assert.False(Assert.Single(prompts.Requests).RequiresDownloadFolder);
 
         Task<ObjectStoragePage> ListObjects(object?[] args)
         {
             Assert.Equal("", args[1]);
             return Task.FromResult(new ObjectStoragePage([new("nested/result.bin", false, 3)]));
         }
-        Task Upload(object?[] args)
+        Task<ObjectStorageReadResult> Read(string key)
         {
-            uploaded.Add((string)args[1]!);
-            return Task.CompletedTask;
+            byte[] bytes = uploaded.GetValueOrDefault(key) ?? [1, 2, 3];
+            return Task.FromResult(new ObjectStorageReadResult(new MemoryStream(bytes), bytes.Length));
+        }
+        async Task Upload(object?[] args)
+        {
+            using var body = new MemoryStream();
+            await ((Stream)args[2]!).CopyToAsync(body, (CancellationToken)args[^1]!);
+            uploaded.Add((string)args[1]!, body.ToArray());
         }
         async Task WaitAsync(JsonElement queued)
         {

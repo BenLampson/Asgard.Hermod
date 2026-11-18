@@ -275,9 +275,11 @@ the SSH UI owns approval, connection-generation checks and exec dispatch.
 Results return to the model within the current task, enabling iterative analysis.
 
 [Local MCP access](mcp.md) defaults to all saved instances and their supported
-resources, with user-managed exclusions for instances and locations. Each MCP
-connection confirms each instance once before access to its non-excluded locations,
-including transfers and deletion. Exclusion changes revoke active
+resources, with user-managed exclusions for instances and locations. A desktop
+user can persist approval for a particular workspace, instance and connection
+revision. Otherwise each MCP connection confirms that instance on first access.
+Both forms permit supported operations, including transfers and deletion, within
+the same exclusions. Changes to persistent approvals or exclusions revoke active
 sessions, and recursive operations cannot cross an excluded location. Local
 SQLite policy continues to protect the pairing token and never synchronizes it.
 

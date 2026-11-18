@@ -18,6 +18,9 @@ public interface IMcpSettingsService
     /// <summary>替换本机禁止范围；所有未列出的实例与位置默认可请求访问。</summary>
     Task<McpSettingsSnapshot> SetExclusionsAsync(string owner, IReadOnlyList<McpExclusion> exclusions, CancellationToken cancellationToken = default);
 
+    /// <summary>由桌面设置勾选或取消指定连接版本的持久授权，禁止范围仍然生效。</summary>
+    Task<McpSettingsSnapshot> SetInstanceApprovalAsync(string owner, McpInstanceApproval approval, bool enabled, CancellationToken cancellationToken = default);
+
     /// <summary>仅响应明确的复制动作返回含配对凭证的客户端配置。</summary>
     Task<string> GetClientConfigurationAsync(string owner, CancellationToken cancellationToken = default);
 }

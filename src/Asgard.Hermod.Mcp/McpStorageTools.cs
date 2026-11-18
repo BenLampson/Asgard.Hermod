@@ -55,7 +55,7 @@ internal sealed class McpStorageTools(McpStorageClients clients)
             string? cursor = page.NextToken is { Length: > 0 and <= 8192 } next ? cursors.Store(name, grant.Id, target, next) : null;
             return new { bucket = grant.Resource, prefix = target, entries, nextCursor = cursor, hasMore = page.NextToken is { Length: > 0 } };
         }
-        if (name == "hermod_storage_stat")
+        if (name == McpToolCatalog.StorageStat)
         {
             if (!await client.ObjectExistsAsync(grant.Resource, target, token).ConfigureAwait(false))
                 return new { bucket = grant.Resource, key = target, exists = false };

@@ -174,7 +174,8 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
         }
         var exclusions = snapshot.Exclusions ?? [];
         InstanceAccess = Targets.Select(target => new McpInstanceAccessViewModel(target,
-            !exclusions.Any(item => item.InstanceId == target.Target.Id && item.Resource.Length == 0), OnInstanceAccessChanged)).ToArray();
+            !exclusions.Any(item => item.InstanceId == target.Target.Id && item.Resource.Length == 0), OnInstanceAccessChanged,
+            (snapshot.InstanceApprovals ?? []).Any(approval => approval.Matches(target.Target)), OnInstanceApprovalChanged)).ToArray();
         ExcludedScopes = exclusions.Where(item => item.Resource.Length > 0).Select(item => new McpExcludedScope(item.Id,
             Targets.FirstOrDefault(target => target.Target.Id == item.InstanceId)?.Label ?? Text.Get("McpUnavailableInstance"), ExclusionScope(item))).ToArray();
         OnPropertyChanged(nameof(InstanceAccess)); OnPropertyChanged(nameof(NoInstances));
@@ -184,13 +185,27 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
 
     private async void OnInstanceAccessChanged(McpInstanceAccessViewModel item, bool allowed)
     {
-        if (!Ready || _snapshot is null) { item.Restore(!allowed); return; }
+        if (!Ready || _snapshot is null || !InstanceAccess.Contains(item)) { item.Restore(!allowed); return; }
         var exclusions = (_snapshot.Exclusions ?? []).Where(exclusion => exclusion.InstanceId != item.Target.Target.Id || exclusion.Resource.Length > 0).ToList();
         if (!allowed) exclusions.Add(new("", item.Target.Target.Id, item.Target.Target.TypeId));
         await ChangeAsync(async token => Apply(await _service.SetExclusionsAsync(_snapshot!.Workspace.Owner, exclusions, token)), "McpSettingsSaved");
         if (_disposed) return;
         bool actual = !(_snapshot?.Exclusions ?? []).Any(exclusion => exclusion.InstanceId == item.Target.Target.Id && exclusion.Resource.Length == 0);
         if (actual != allowed) item.Restore(actual);
+    }
+
+    private async void OnInstanceApprovalChanged(McpInstanceAccessViewModel item, bool enabled)
+    {
+        if (!Ready || _snapshot is null || !item.IsAllowed || !InstanceAccess.Contains(item)) { item.RestoreApproval(!enabled); return; }
+        var target = item.Target.Target;
+        string owner = _snapshot.Workspace.Owner;
+        await ChangeAsync(async token =>
+        {
+            string folder = enabled && target.TypeId == "storage" ? WindowsDownloadFolder.GetDefault() : "";
+            var approval = new McpInstanceApproval(target.Id, target.TypeId, target.Revision, folder);
+            Apply(await _service.SetInstanceApprovalAsync(owner, approval, enabled, token));
+        }, "McpInstanceApprovalSaved");
+        if (!_disposed) item.RestoreApproval((_snapshot.InstanceApprovals ?? []).Any(approval => approval.Matches(target)));
     }
 
     private static string ExclusionScope(McpExclusion item)

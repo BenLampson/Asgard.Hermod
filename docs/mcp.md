@@ -12,10 +12,24 @@ routes. You do not need to set up an AI model in Hermod to use this feature.
 3. Turn on access and choose **Copy client configuration**. Use the `hermod`
    entry in the local client's MCP settings. The configuration includes a local
    access token; keep it in trusted client settings and out of source control.
-4. Keep Hermod running. When an instance is first requested, confirm it in
-   Hermod. The confirmation covers all its non-prohibited locations and supported
-   operations, including transfers and deletion, for this MCP connection. Denial
-   or cancellation prevents the requested operation.
+4. Keep Hermod running. By default, the first resource request on each connection
+   opens a confirmation window. To grant access ahead of time, select **Always
+   allow** beside that instance in **AI tools (MCP)**. The choice applies to
+   paired clients across connections and restarts for this local workspace.
+   Both choices cover all permitted locations and supported operations,
+   including transfers and deletion. Changing connection details requires fresh
+   approval. Clearing **Always allow** restores the first-use prompt. Changing
+   the setting disconnects active MCP sessions, so reconnect the client once.
+
+Listing instances does not open a confirmation window. If an instance has
+`scope.requires_confirmation: true`, the client should tell you in chat to open
+Hermod, then send the first resource request once. That request opens **Confirm
+MCP access**. Review the instance and choose **Allow access** or **Deny**.
+Hermod waits up to 30 seconds for that decision. If the wait expires, the
+client receives a confirmation timeout and the resource operation has not started.
+A confirmed object metadata query has its own 20-second timeout. Clients that
+request MCP progress can show whether Hermod is waiting for you or querying
+storage. Keep the same MCP connection for the transfer and follow-up queries.
 
 Builds include the `Hermod.Mcp.exe` launcher. An unpackaged build uses the
 launcher in the application directory. MSIX registers a Windows app execution
@@ -60,14 +74,15 @@ reconnect the client to refresh discovery and confirmations.
 The client calls `hermod_list_instances` and then `hermod_list_resources` to
 discover a target. It supplies the relevant `bucket`, `database`, `schema`,
 `vhost` or `service` when calling a tool. Hermod shows the instance and requested
-location before granting access to the instance. Each instance is confirmed once
-per MCP connection; prohibited locations remain blocked.
+location when confirmation is required. Blocking an entire instance also clears
+its **Always allow** selection.
 
 ## Transfer files with a task ID
 
 The client specifies the Bucket and the object key or folder. Uploads supply
 an absolute path to the local source file or folder. Choose the default download
-folder when first confirming a storage instance. A later download uses that
+folder when first confirming a storage instance. Selecting **Always allow** in
+settings uses the Windows download folder as the default. A later download uses that
 folder when no destination is supplied, or the absolute destination supplied by
 the client. There is no additional transfer confirmation. The Bucket root can
 be used unless it or the requested location is prohibited.
@@ -98,7 +113,7 @@ running at once and a two-hour limit including queue time.
 ## Manage storage objects
 
 Storage operations are available by default for non-excluded locations.
-Hermod confirms the instance once per connection. Deletion plans do not request
+Hermod uses the instance approval from settings or the current connection. Deletion plans do not request
 another confirmation. An empty prefix includes the whole Bucket.
 
 `hermod_storage_create_folder` creates a folder marker without overwriting an

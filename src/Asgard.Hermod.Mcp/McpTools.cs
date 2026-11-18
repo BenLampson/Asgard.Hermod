@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
+using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 
 namespace Asgard.Hermod.Mcp;
@@ -7,8 +8,9 @@ namespace Asgard.Hermod.Mcp;
 /// <summary>为每次调用重新核验授权，只返回模型确实能访问的实例和能力。</summary>
 internal sealed class McpTools(McpAccessService access, McpSqlTools sql, McpStorageTools storage, McpSshTools ssh, McpRedisTools redis,
     McpRabbitMqTools queues, McpStorageTransferJobs transfers, IMcpApprovalService? approval = null,
-    McpResourceDiscovery? discovery = null)
+    McpResourceDiscovery? discovery = null, TimeProvider? clock = null)
 {
+    private static readonly TimeSpan OperationTimeout = TimeSpan.FromSeconds(20);
     private readonly SemaphoreSlim _concurrency = new(4, 4);
 
     internal IReadOnlyList<Tool> List(McpSessionAccess session)
@@ -20,19 +22,26 @@ internal sealed class McpTools(McpAccessService access, McpSqlTools sql, McpStor
     }
 
     internal async Task<CallToolResult> InvokeAsync(McpSessionAccess session, string name, IReadOnlyDictionary<string, JsonElement>? values,
-        McpCursorCache cursors, CancellationToken cancellationToken)
+        McpCursorCache cursors, CancellationToken cancellationToken, Func<ProgressNotificationValue, CancellationToken, Task>? reportProgress = null)
     {
         if (!_concurrency.Wait(0, cancellationToken)) return McpJson.Error(Text.Get("McpBusy"));
-        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, session.Revoked);
-        timeout.CancelAfter(session.Policy.DefaultAllow ? TimeSpan.FromMinutes(3) : TimeSpan.FromSeconds(20));
+        using var deadline = new CancellationTokenSource(OperationTimeout, clock ?? TimeProvider.System);
+        using var lifetime = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, session.Revoked, deadline.Token);
+        bool waitingForApproval = false;
         try
         {
-            var token = timeout.Token;
+            var token = lifetime.Token;
             token.ThrowIfCancellationRequested();
             if (!McpToolCatalog.All.TryGetValue(name, out var tool) || tool.DefaultOnly && !session.Policy.DefaultAllow)
                 throw Text.Exception("McpInvalidArguments");
             var args = McpArguments.Validate(tool.ArgumentsFor(session.Policy.DefaultAllow), values);
-            if (tool.Types.Length == 0) return McpJson.Success(new { instances = CurrentGrants(session).Select(pair => Item(pair, session.Policy.DefaultAllow)).ToArray() });
+            if (tool.Types.Length == 0)
+            {
+                var instances = CurrentGrants(session).Select(pair => Item(pair, session)).ToArray();
+                return session.Policy.DefaultAllow
+                    ? McpJson.Success(new { instances, confirmationHint = Text.Get("McpInstanceConfirmationHint") })
+                    : McpJson.Success(new { instances });
+            }
             if (name == McpToolCatalog.StorageTransferStatus) return McpJson.Success(transfers.Poll(session, args.String("task_id")));
             var pair = CurrentGrants(session).SingleOrDefault(item => item.Grant.Id == args.String("grant_id") && tool.Allows(item.Grant));
             if (pair.Grant is null) throw Text.Exception("McpAccessDenied");
@@ -48,22 +57,12 @@ internal sealed class McpTools(McpAccessService access, McpSqlTools sql, McpStor
                 bool newlyApproved = false;
                 if (!session.HasApproval(scope))
                 {
-                    await session.ApprovalGate.WaitAsync(token).ConfigureAwait(false);
-                    try
-                    {
-                        if (!session.HasApproval(scope))
-                        {
-                            if (approval is null) throw Text.Exception("McpApprovalUnavailable");
-                            var decision = await approval.ConfirmAsync(request, token).ConfigureAwait(false);
-                            token.ThrowIfCancellationRequested();
-                            access.Check(session, grant);
-                            if (!decision.Approved) throw Text.Exception("McpApprovalDenied");
-                            string folder = decision.DownloadFolder.Length == 0 ? "" : McpStorageTransferPaths.NormalizeRoot(decision.DownloadFolder);
-                            session.AddApproval(scope, folder);
-                            newlyApproved = true;
-                        }
-                    }
-                    finally { session.ApprovalGate.Release(); }
+                    waitingForApproval = true;
+                    deadline.CancelAfter(TimeSpan.FromSeconds(30));
+                    newlyApproved = await ConfirmInstanceAsync(session, grant, request, scope, reportProgress, token).ConfigureAwait(false);
+                    token.ThrowIfCancellationRequested();
+                    deadline.CancelAfter(OperationTimeout);
+                    waitingForApproval = false;
                 }
                 if (request.RequiresDownloadFolder)
                 {
@@ -73,11 +72,12 @@ internal sealed class McpTools(McpAccessService access, McpSqlTools sql, McpStor
                     grant = grant with { TransferRoot = McpStorageTransferPaths.NormalizeRoot(folder) };
                     args = args.WithString("local_path", request.DownloadFileName);
                 }
-                timeout.CancelAfter(TimeSpan.FromSeconds(20));
             }
             if (name == McpToolCatalog.StorageStartTransfer) return McpJson.Success(transfers.Start(session, grant, args, token));
             var connection = access.OpenTarget(session, grant);
             token.ThrowIfCancellationRequested();
+            if (name == McpToolCatalog.StorageStat && reportProgress is not null)
+                await reportProgress(new() { Progress = 1, Message = Text.Get("McpStorageStatQuerying") }, token).ConfigureAwait(false);
             bool allowed(string item) => !McpExclusionRules.Blocks(session.Policy, pair.Target, grant.Resource,
                 grant.TypeId is "storage" or "redis" ? item : grant.Qualifier,
                 grant.TypeId is "mysql" or "postgresql" or "rabbitmq" ? item : "");
@@ -99,9 +99,35 @@ internal sealed class McpTools(McpAccessService access, McpSqlTools sql, McpStor
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
         catch (OperationCanceledException) when (session.Revoked.IsCancellationRequested) { return McpJson.Error(Text.Get("McpAccessDenied")); }
-        catch (OperationCanceledException) when (timeout.IsCancellationRequested) { return McpJson.Error(Text.Get("McpTimedOut")); }
+        catch (OperationCanceledException) when (deadline.IsCancellationRequested)
+        {
+            string key = waitingForApproval ? "McpApprovalTimedOut" : name == McpToolCatalog.StorageStat ? "McpStorageStatTimedOut" : "McpTimedOut";
+            return McpJson.Error(Text.Get(key));
+        }
         catch (Exception error) { return McpJson.Error(Text.Error(error, "McpOperationFailed")); }
         finally { _concurrency.Release(); }
+    }
+
+    private async Task<bool> ConfirmInstanceAsync(McpSessionAccess session, McpGrant grant, McpApprovalRequest request, McpApprovalScope scope,
+        Func<ProgressNotificationValue, CancellationToken, Task>? reportProgress, CancellationToken token)
+    {
+        if (approval is null) throw Text.Exception("McpApprovalUnavailable");
+        if (reportProgress is not null)
+            await reportProgress(new() { Progress = 0, Message = Text.Format("McpApprovalWaiting", request.InstanceName) }, token).ConfigureAwait(false);
+        await session.ApprovalGate.WaitAsync(token).ConfigureAwait(false);
+        try
+        {
+            if (session.HasApproval(scope)) return false;
+            // 即使桌面线程暂时不能处理关闭事件，客户端也能及时结束；过期的决定不进入会话授权。
+            var decision = await approval.ConfirmAsync(request, token).WaitAsync(token).ConfigureAwait(false);
+            token.ThrowIfCancellationRequested();
+            access.Check(session, grant);
+            if (!decision.Approved) throw Text.Exception("McpApprovalDenied");
+            string folder = decision.DownloadFolder.Length == 0 ? "" : McpStorageTransferPaths.NormalizeRoot(decision.DownloadFolder);
+            session.AddApproval(scope, folder, token);
+            return true;
+        }
+        finally { session.ApprovalGate.Release(); }
     }
 
     private (McpGrant Grant, McpTarget Target)[] CurrentGrants(McpSessionAccess session)
@@ -117,16 +143,16 @@ internal sealed class McpTools(McpAccessService access, McpSqlTools sql, McpStor
                 select (grant, target)).ToArray();
     }
 
-    private static object Item((McpGrant Grant, McpTarget Target) pair, bool defaultAllow)
+    private static object Item((McpGrant Grant, McpTarget Target) pair, McpSessionAccess session)
     {
         var (grant, target) = pair;
-        if (defaultAllow) return new
+        if (session.Policy.DefaultAllow) return new
         {
             grantId = grant.Id,
             instanceId = target.Id,
             target.Name,
             type = target.TypeId,
-            scope = new { allResources = true, requiresConfirmation = true }
+            scope = new { allResources = true, requiresConfirmation = !session.HasApproval(McpDefaultAccess.Scope(target)) },
         };
         object scope = grant.TypeId switch
         {

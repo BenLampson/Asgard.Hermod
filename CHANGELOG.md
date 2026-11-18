@@ -2,6 +2,20 @@
 
 All notable changes will be documented here. Released versions will follow Semantic Versioning.
 
+## 1.0.16 - 2026-11-18
+
+### Added
+
+- An **Always allow** checkbox for each MCP instance. Paired clients can reuse
+  that approval across connections while respecting excluded locations.
+
+### Fixed
+
+- First-use requests tell the client when Hermod is waiting for desktop approval.
+  Unanswered confirmations expire after 30 seconds. Object metadata queries
+  report a separate storage timeout.
+- The MCP confirmation window opens independently when Hermod is minimized.
+
 ## 1.0.14 - 2026-11-17
 
 ### Added

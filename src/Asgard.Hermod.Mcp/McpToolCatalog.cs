@@ -5,6 +5,7 @@ internal static class McpToolCatalog
 {
     internal const string ListResources = "hermod_list_resources";
     internal const string RedisReadValue = "hermod_redis_read_value";
+    internal const string StorageStat = "hermod_storage_stat";
     internal const string StorageStartTransfer = "hermod_storage_start_transfer";
     internal const string StorageTransferStatus = "hermod_storage_transfer_status";
     internal const string StorageCreateFolder = "hermod_storage_create_folder";
@@ -26,7 +27,7 @@ internal static class McpToolCatalog
             [Grant, Offset, new("page", "McpArgPage", Minimum: 1, Maximum: 1000)], DefaultOnly: true),
         new("hermod_storage_list", "McpToolStorageList", ["storage"], false,
             [Grant, new("prefix", "McpArgPrefix", MaximumLength: 1024), new("cursor", "McpArgCursor", MaximumLength: 64)]),
-        new("hermod_storage_stat", "McpToolStorageStat", ["storage"], false, [Grant, Key]),
+        new(StorageStat, "McpToolStorageStat", ["storage"], false, [Grant, Key]),
         new(StorageStatistics, "McpToolStorageStatistics", ["storage"], false,
             [Grant, new("prefix", "McpArgStatisticsPrefix", MaximumLength: 1024)]),
         new("hermod_storage_read_text", "McpToolStorageRead", ["storage"], true, [Grant, Key]),

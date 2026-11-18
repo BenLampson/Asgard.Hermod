@@ -29,7 +29,8 @@ public sealed class McpLocalStorageTests
                 @"D:\Synthetic transfer folder", AllowUpload: true, AllowDownload: true, AllowCreateFolder: true, AllowDelete: true,
                 AllowSignedLinks: true, AllowOverwrite: true, AllowUnrestrictedUpload: true);
             store.SavePolicy(new("", "synthetic-generation", true, pairing, [grant],
-                [new("excluded", first.Id, first.TypeId, "exports", "private/")]));
+                [new("excluded", first.Id, first.TypeId, "exports", "private/")],
+                InstanceApprovals: [new(target.Id, target.TypeId, target.Revision)]));
 
             using var sqlite = new SQLiteConnection(configuration.Database.ConnectionString);
             sqlite.Open();
@@ -49,6 +50,8 @@ public sealed class McpLocalStorageTests
         Assert.True(restoredPolicy.DefaultAllow);
         Assert.Equal(grant, Assert.Single(restoredPolicy.Grants));
         Assert.Equal("private/", Assert.Single(restoredPolicy.Exclusions!).Qualifier);
+        var approval = Assert.Single(restoredPolicy.InstanceApprovals!);
+        Assert.True(approval.Matches(Assert.Single(saved.ReadWorkspace().Targets)));
         Assert.Null(saved.OpenTarget("another-owner", grant));
         var initialSnapshot = await local.ExportAsync(token);
         var renamed = initialSnapshot with { Instances = [first with { Name = "Renamed" }] };
@@ -61,6 +64,7 @@ public sealed class McpLocalStorageTests
         await local.RestoreIfUnchangedAsync(currentSnapshot with { Instances = [retargeted] }, currentSnapshot, token);
         Assert.Null(saved.OpenTarget("", grant));
         Assert.False(saved.IsCurrent("", grant));
+        Assert.False(approval.Matches(Assert.Single(saved.ReadWorkspace().Targets)));
         var beforeSwitch = await local.ExportAsync(token);
         await local.SwitchOwnerAsync("another-owner", beforeSwitch, beforeSwitch, token);
         Assert.Equal("another-owner", saved.ReadWorkspace().Owner);

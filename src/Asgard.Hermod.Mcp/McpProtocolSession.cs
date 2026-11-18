@@ -24,7 +24,10 @@ internal sealed class McpProtocolSession(McpTools tools)
                     catch (Exception error) { throw new McpException(Text.Error(error, "McpAccessUnavailable")); }
                 },
                 CallToolHandler = (request, requestToken) => new(tools.InvokeAsync(access, request.Params?.Name ?? "",
-                    request.Params?.Arguments?.ToDictionary(StringComparer.Ordinal), cursors, requestToken)),
+                    request.Params?.Arguments?.ToDictionary(StringComparer.Ordinal), cursors, requestToken,
+                    request.Params?.ProgressToken is { } progressToken
+                        ? (progress, ct) => request.Server.NotifyProgressAsync(progressToken, progress, cancellationToken: ct)
+                        : null)),
             },
         });
         await server.RunAsync(token).ConfigureAwait(false);

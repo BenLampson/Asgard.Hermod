@@ -70,6 +70,50 @@ public sealed class McpApprovalWindowTests(WpfTestFixture fixture)
     });
 
     [Fact]
+    public Task MinimizedOwnerLeavesThePromptAccessibleFromTheTaskbar() => fixture.RunAsync(async () =>
+    {
+        var parent = new HermodWindow();
+        WindowPreviewCapture.Show(parent);
+        parent.WindowState = WindowState.Minimized;
+        var shown = new TaskCompletionSource<Window>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var service = new WindowsMcpApprovalService(() => parent)
+        {
+            PresentWindow = window =>
+            {
+                window.ShowActivated = false;
+                window.Opacity = 0;
+                window.Show();
+                shown.SetResult(window);
+            },
+        };
+        try
+        {
+            var pending = service.ConfirmAsync(new("Instance", "Storage", "Read", []), TestContext.Current.CancellationToken);
+            var prompt = await shown.Task.WaitAsync(TestContext.Current.CancellationToken);
+            try
+            {
+                Assert.Null(prompt.Owner);
+                Assert.Equal(WindowStartupLocation.CenterScreen, prompt.WindowStartupLocation);
+                Assert.True(prompt.ShowInTaskbar);
+                Assert.True(prompt.IsVisible);
+            }
+            finally { prompt.Close(); }
+            Assert.False((await pending).Approved);
+        }
+        finally { parent.Close(); }
+    });
+
+    [Fact]
+    public Task FailedPresentationReturnsAConfirmationErrorAndReleasesTheWindow() => fixture.RunOffscreenAsync(async () =>
+    {
+        var service = new WindowsMcpApprovalService(() => null) { PresentWindow = _ => throw new InvalidOperationException("sensitive details") };
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            service.ConfirmAsync(new("Instance", "Storage", "Read", []), TestContext.Current.CancellationToken));
+        Assert.Equal(Text.Get("McpApprovalUnavailable"), Text.Error(error));
+        Assert.Empty(Application.Current.Windows.OfType<McpApprovalWindow>());
+    });
+
+    [Fact]
     public Task CancellationClosesThePendingWindowAndNeverApproves() => fixture.RunAsync(async () =>
     {
         var service = new WindowsMcpApprovalService(() => null)

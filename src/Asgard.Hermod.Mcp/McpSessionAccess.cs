@@ -1,31 +1,31 @@
 namespace Asgard.Hermod.Mcp;
 
-/// <summary>连接接受时冻结策略，用户确认的实例只属于这次连接。</summary>
+/// <summary>连接接受时读取设置中的持久授权，弹窗中新增的授权只属于这次连接。</summary>
 internal sealed record McpSessionAccess(McpLocalPolicy Policy, CancellationToken Revoked)
 {
     private readonly object _approvalGate = new();
-    private readonly HashSet<McpApprovalScope> _approved = [];
-    private readonly Dictionary<McpApprovalScope, string> _downloadFolders = [];
+    private readonly Dictionary<McpApprovalScope, string> _approved = (Policy.InstanceApprovals ?? []).ToDictionary(
+        item => new McpApprovalScope(item.InstanceId, item.TypeId, item.Revision), item => item.DownloadFolder);
     // 并发的同一实例请求在首个确认结束后重新检查，避免重复弹窗。
     internal SemaphoreSlim ApprovalGate { get; } = new(1, 1);
 
     internal bool HasApproval(McpApprovalScope scope)
     {
-        lock (_approvalGate) return !Revoked.IsCancellationRequested && _approved.Contains(scope);
+        lock (_approvalGate) return !Revoked.IsCancellationRequested && _approved.ContainsKey(scope);
     }
 
-    internal void AddApproval(McpApprovalScope scope, string downloadFolder)
+    internal void AddApproval(McpApprovalScope scope, string downloadFolder, CancellationToken requestToken)
     {
         lock (_approvalGate)
         {
+            requestToken.ThrowIfCancellationRequested();
             Revoked.ThrowIfCancellationRequested();
-            if (downloadFolder.Length > 0) _downloadFolders[scope] = downloadFolder;
-            _approved.Add(scope);
+            _approved[scope] = downloadFolder;
         }
     }
 
     internal string DownloadFolder(McpApprovalScope scope)
     {
-        lock (_approvalGate) return _downloadFolders.GetValueOrDefault(scope, "");
+        lock (_approvalGate) return _approved.GetValueOrDefault(scope, "");
     }
 }
