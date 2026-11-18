@@ -6189,4 +6189,35 @@ SQL：
   <data name="McpActionRedisReadValue" xml:space="preserve"><value>读取 Redis 键内容</value></data>
   <data name="McpTransferInvalidDownloadPath" xml:space="preserve"><value>请输入下载目标的绝对路径，或留空后在 Hermod 中选择下载文件夹。</value></data>
   <data name="McpLegacyGrantUnavailable" xml:space="preserve"><value>默认开放模式不再使用逐条授权。</value></data>
+  <data name="McpAccessControl" xml:space="preserve"><value>MCP 访问控制</value></data>
+  <data name="McpAccessSubtitle" xml:space="preserve"><value>每次连接后，已配对的客户端首次访问实例时默认需要你确认。</value></data>
+  <data name="McpConfirmFirst" xml:space="preserve"><value>首次确认</value></data>
+  <data name="McpBlockAccess" xml:space="preserve"><value>禁止访问</value></data>
+  <data name="McpAllPolicies" xml:space="preserve"><value>全部</value></data>
+  <data name="McpPolicyForInstance" xml:space="preserve"><value>{0}，访问策略为{1}</value></data>
+  <data name="McpPolicyMenuTitle" xml:space="preserve"><value>{0} 的访问策略</value></data>
+  <data name="McpInstanceNameWithId" xml:space="preserve"><value>{0}（{1}）</value></data>
+  <data name="McpFilterPolicy" xml:space="preserve"><value>按访问策略筛选</value></data>
+  <data name="McpTypeColumn" xml:space="preserve"><value>类型</value></data>
+  <data name="McpAccessPolicy" xml:space="preserve"><value>访问策略</value></data>
+  <data name="McpSearchInstances" xml:space="preserve"><value>搜索实例名称或类型</value></data>
+  <data name="McpNoMatch" xml:space="preserve"><value>没有符合当前搜索和筛选条件的实例。</value></data>
+  <data name="McpConfirmDescription" xml:space="preserve"><value>每次连接后，首次访问此实例时询问。</value></data>
+  <data name="McpAllowDescription" xml:space="preserve"><value>已配对客户端可直接执行此实例支持的操作，包括适用的上传、下载和删除。</value></data>
+  <data name="McpBlockDescription" xml:space="preserve"><value>对客户端隐藏此实例，并阻止访问其中的所有位置。</value></data>
+  <data name="McpLocationsShort" xml:space="preserve"><value>禁止位置</value></data>
+  <data name="McpBlockedPriority" xml:space="preserve"><value>即使实例设为「始终允许」，禁止位置仍然无法访问。</value></data>
+  <data name="McpAddLocation" xml:space="preserve"><value>添加位置</value></data>
+  <data name="McpAutoSaveHint" xml:space="preserve"><value>更改会自动保存。修改访问策略后，已连接的客户端需重新连接。</value></data>
+  <data name="McpClientGuide" xml:space="preserve"><value>客户端接入指南</value></data>
+  <data name="McpConnectClient" xml:space="preserve"><value>连接客户端</value></data>
+  <data name="McpGuideSteps" xml:space="preserve"><value>开启本机接入，将复制的 hermod 配置粘贴到客户端的 MCP 设置中，并保持 Hermod 运行。</value></data>
+  <data name="McpGuideTokenHint" xml:space="preserve"><value>配置包含本机访问令牌，请只交给你信任的客户端。关闭并重新开启接入后，需要复制新的配置。</value></data>
+  <data name="McpScopeRange" xml:space="preserve"><value>禁止范围</value></data>
+  <data name="McpScopePrefix" xml:space="preserve"><value>目录或前缀</value></data>
+  <data name="McpScopeBucket" xml:space="preserve"><value>整个 Bucket</value></data>
+  <data name="McpScopeInstance" xml:space="preserve"><value>整个实例</value></data>
+  <data name="McpBlockWholePreview" xml:space="preserve"><value>将禁止访问 {0} 中的所有位置。</value></data>
+  <data name="McpSaveScope" xml:space="preserve"><value>禁止此范围</value></data>
+  <data name="McpBrowseLocation" xml:space="preserve"><value>浏览位置</value></data>
 </root>

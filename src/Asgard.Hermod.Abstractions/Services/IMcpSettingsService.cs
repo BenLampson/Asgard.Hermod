@@ -21,6 +21,9 @@ public interface IMcpSettingsService
     /// <summary>由桌面设置勾选或取消指定连接版本的持久授权，禁止范围仍然生效。</summary>
     Task<McpSettingsSnapshot> SetInstanceApprovalAsync(string owner, McpInstanceApproval approval, bool enabled, CancellationToken cancellationToken = default);
 
+    /// <summary>核对实例版本，并在同一次保存中更新整实例禁用与持久授权，保留细粒度禁止位置。</summary>
+    Task<McpSettingsSnapshot> SetInstancePolicyAsync(string owner, McpInstanceApproval approval, McpInstancePolicy selection, CancellationToken cancellationToken = default);
+
     /// <summary>仅响应明确的复制动作返回含配对凭证的客户端配置。</summary>
     Task<string> GetClientConfigurationAsync(string owner, CancellationToken cancellationToken = default);
 }

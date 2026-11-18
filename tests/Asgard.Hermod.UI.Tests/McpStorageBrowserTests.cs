@@ -218,6 +218,7 @@ public sealed class McpStorageBrowserTests(WpfTestFixture fixture)
         public Task<McpSettingsSnapshot> SetEnabledAsync(string owner, bool enabled, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public Task<McpSettingsSnapshot> RemoveGrantAsync(string owner, string grantId, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public Task<McpSettingsSnapshot> SetInstanceApprovalAsync(string owner, McpInstanceApproval approval, bool enabled, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+        public Task<McpSettingsSnapshot> SetInstancePolicyAsync(string owner, McpInstanceApproval approval, McpInstancePolicy selection, CancellationToken cancellationToken = default) => throw new NotSupportedException();
         public Task<McpSettingsSnapshot> SetExclusionsAsync(string owner, IReadOnlyList<McpExclusion> exclusions, CancellationToken cancellationToken = default)
         {
             Exclusions.Clear();

@@ -27,7 +27,10 @@
                         </ControlTemplate.Triggers>
                     </ControlTemplate></Setter.Value></Setter>
                 </Style></ListBox.ItemContainerStyle>
-                <ListBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Name}" FontSize="13" TextTrimming="CharacterEllipsis" ToolTip="{Binding Name}" /></DataTemplate></ListBox.ItemTemplate>
+                <ListBox.ItemTemplate><DataTemplate><DockPanel>
+                    <controls:IconView DockPanel.Dock="Left" Kind="{Binding Icon}" Width="15" Height="15" Margin="0,0,9,0" />
+                    <TextBlock Text="{Binding Name}" FontSize="13" TextTrimming="CharacterEllipsis" ToolTip="{Binding Name}" />
+                </DockPanel></DataTemplate></ListBox.ItemTemplate>
             </ListBox>
         </Border>
         <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto"

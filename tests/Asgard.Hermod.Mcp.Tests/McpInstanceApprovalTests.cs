@@ -7,6 +7,30 @@ namespace Asgard.Hermod.Mcp.Tests;
 public sealed class McpInstanceApprovalTests
 {
     [Fact]
+    public async Task PolicyTransitionsPreserveLocationsAndRejectStaleVersions()
+    {
+        var target = new McpTarget("objects", "Objects", "storage", "v1");
+        var approval = new McpInstanceApproval(target.Id, target.TypeId, target.Revision);
+        using var rig = new McpTestRig([target], defaultAccess: true);
+        var token = McpTestRig.Token;
+        await rig.Access.SetEnabledAsync("", true, token);
+        var existing = await rig.Access.SetExclusionsAsync("", [new("", target.Id, target.TypeId, "exports", "private/")], token);
+        var location = Assert.Single(existing.Exclusions!);
+        var session = rig.Session;
+        var blocked = await rig.Access.SetInstancePolicyAsync("", approval, McpInstancePolicy.Blocked, token);
+        Assert.True(session.Revoked.IsCancellationRequested);
+        Assert.Contains(location, blocked.Exclusions!);
+        Assert.Contains(blocked.Exclusions!, item => item.Resource.Length == 0);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => rig.Access.SetInstancePolicyAsync("", approval with { Revision = "old" }, McpInstancePolicy.AlwaysAllow, token));
+        var allowed = await rig.Access.SetInstancePolicyAsync("", approval, McpInstancePolicy.AlwaysAllow, token);
+        Assert.Equal(location, Assert.Single(allowed.Exclusions!));
+        Assert.Equal(approval, Assert.Single(allowed.InstanceApprovals!));
+        var confirm = await rig.Access.SetInstancePolicyAsync("", approval, McpInstancePolicy.Confirm, token);
+        Assert.Equal(location, Assert.Single(confirm.Exclusions!));
+        Assert.Empty(confirm.InstanceApprovals!);
+    }
+
+    [Fact]
     public async Task AlwaysAllowSkipsOnlyTheMatchingInstanceAndRevisionAcrossConnections()
     {
         var storage = new McpTarget("oss", "Objects", "storage", "v1");

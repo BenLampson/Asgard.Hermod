@@ -6189,4 +6189,35 @@ Address: {2}</value></data>
   <data name="McpActionRedisReadValue" xml:space="preserve"><value>Read the Redis key value</value></data>
   <data name="McpTransferInvalidDownloadPath" xml:space="preserve"><value>Use an absolute download destination, or omit it and choose a folder in Hermod.</value></data>
   <data name="McpLegacyGrantUnavailable" xml:space="preserve"><value>Individual grants are unavailable in the default-access mode.</value></data>
+  <data name="McpAccessControl" xml:space="preserve"><value>MCP access control</value></data>
+  <data name="McpAccessSubtitle" xml:space="preserve"><value>By default, paired clients ask the first time they access each instance on a connection.</value></data>
+  <data name="McpConfirmFirst" xml:space="preserve"><value>Ask on first use</value></data>
+  <data name="McpBlockAccess" xml:space="preserve"><value>Block access</value></data>
+  <data name="McpAllPolicies" xml:space="preserve"><value>All</value></data>
+  <data name="McpPolicyForInstance" xml:space="preserve"><value>{0}, access policy: {1}</value></data>
+  <data name="McpPolicyMenuTitle" xml:space="preserve"><value>Access policy for {0}</value></data>
+  <data name="McpInstanceNameWithId" xml:space="preserve"><value>{0} ({1})</value></data>
+  <data name="McpFilterPolicy" xml:space="preserve"><value>Filter by access policy</value></data>
+  <data name="McpTypeColumn" xml:space="preserve"><value>Type</value></data>
+  <data name="McpAccessPolicy" xml:space="preserve"><value>Access policy</value></data>
+  <data name="McpSearchInstances" xml:space="preserve"><value>Search by name or type</value></data>
+  <data name="McpNoMatch" xml:space="preserve"><value>No instances match this search and filter.</value></data>
+  <data name="McpConfirmDescription" xml:space="preserve"><value>Ask the first time a client accesses this instance on each connection.</value></data>
+  <data name="McpAllowDescription" xml:space="preserve"><value>Paired clients can use all supported operations directly, including file transfers and deletion where available.</value></data>
+  <data name="McpBlockDescription" xml:space="preserve"><value>Hide this instance from clients and block access to every location in it.</value></data>
+  <data name="McpLocationsShort" xml:space="preserve"><value>Prohibited locations</value></data>
+  <data name="McpBlockedPriority" xml:space="preserve"><value>Prohibited locations stay blocked even when the instance is set to Always allow.</value></data>
+  <data name="McpAddLocation" xml:space="preserve"><value>Add location</value></data>
+  <data name="McpAutoSaveHint" xml:space="preserve"><value>Changes save automatically. Reconnect active clients after changing access policies.</value></data>
+  <data name="McpClientGuide" xml:space="preserve"><value>Client setup guide</value></data>
+  <data name="McpConnectClient" xml:space="preserve"><value>Connect a client</value></data>
+  <data name="McpGuideSteps" xml:space="preserve"><value>Enable local access, paste the copied hermod configuration into your client’s MCP settings, and keep Hermod running.</value></data>
+  <data name="McpGuideTokenHint" xml:space="preserve"><value>The configuration contains a local access token. Share it only with trusted clients. Copy a new configuration if you turn access off and on again.</value></data>
+  <data name="McpScopeRange" xml:space="preserve"><value>Scope to block</value></data>
+  <data name="McpScopePrefix" xml:space="preserve"><value>Folder or prefix</value></data>
+  <data name="McpScopeBucket" xml:space="preserve"><value>Entire bucket</value></data>
+  <data name="McpScopeInstance" xml:space="preserve"><value>Entire instance</value></data>
+  <data name="McpBlockWholePreview" xml:space="preserve"><value>All locations in {0} will be blocked.</value></data>
+  <data name="McpSaveScope" xml:space="preserve"><value>Block this scope</value></data>
+  <data name="McpBrowseLocation" xml:space="preserve"><value>Browse locations</value></data>
 </root>

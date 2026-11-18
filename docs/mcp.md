@@ -6,19 +6,19 @@ Hermod handles the existing credentials, host verification, TLS and configured
 routes. You do not need to set up an AI model in Hermod to use this feature.
 
 1. Open **System settings → AI tools (MCP)** in Hermod. Local MCP access starts off.
-2. All saved instances and their resources are available by default. Clear an
-   instance checkbox or add a prohibited location to exclude it. Newly added
-   instances are available automatically.
-3. Turn on access and choose **Copy client configuration**. Use the `hermod`
+2. The instance table shows the active policy for each saved connection. Search
+   by name or type, or filter by policy. **Always allow** instances appear first.
+   New instances default to **Ask on first use**.
+3. Turn on local access, open **Client setup guide**, and choose **Copy client configuration**. Use the `hermod`
    entry in the local client's MCP settings. The configuration includes a local
    access token; keep it in trusted client settings and out of source control.
 4. Keep Hermod running. By default, the first resource request on each connection
    opens a confirmation window. To grant access ahead of time, select **Always
-   allow** beside that instance in **AI tools (MCP)**. The choice applies to
+   allow** from that instance’s **Access policy** menu. The choice applies to
    paired clients across connections and restarts for this local workspace.
    Both choices cover all permitted locations and supported operations,
    including transfers and deletion. Changing connection details requires fresh
-   approval. Clearing **Always allow** restores the first-use prompt. Changing
+   approval. Selecting **Ask on first use** restores the first-use prompt. Changing
    the setting disconnects active MCP sessions, so reconnect the client once.
 
 Listing instances does not open a confirmation window. If an instance has
@@ -62,11 +62,14 @@ an instance does not add tools that Hermod has not implemented.
 
 ## Exclude instances or locations
 
-All instances are checked by default. Uncheck an instance to exclude it, or use
-**Prohibit a location** to specify a Bucket and prefix, database and table,
-PostgreSQL schema, Redis prefix, RabbitMQ virtual host or queue, or SSH service.
-An empty resource excludes the entire instance; an empty lower-level field covers
-all items below that level. Excluded names are filtered from lists, direct access
+Choose **Block access** in the instance’s policy menu to exclude it. Use **Add
+location** below the table to prohibit a storage bucket or key prefix, database
+and table, PostgreSQL schema, Redis prefix, RabbitMQ virtual host or queue, or
+SSH service. For object storage, explicitly select a folder or prefix, an entire
+bucket, or the entire instance. You can browse a bucket and its folders or enter
+the names manually. Review the displayed scope before saving. For the other
+providers, an empty resource excludes the entire instance and an empty lower-level
+field covers all items below that level. Excluded names are filtered from lists, direct access
 is refused, and recursive transfers, statistics or deletions cannot cross into
 an excluded location. Changing exclusions disconnects existing MCP sessions;
 reconnect the client to refresh discovery and confirmations.

@@ -1,32 +1,42 @@
 namespace Asgard.Hermod.UI.ViewModels;
 
-/// <summary>默认允许的实例勾选项；取消勾选时立即保存禁止规则。</summary>
-public sealed class McpInstanceAccessViewModel : ObservableObject
+/// <summary>一行已保存的实例权限；菜单选择成功保存后才更新显示状态。</summary>
+public sealed class McpInstanceAccessViewModel(McpSettingsTarget target, string name, string typeName, McpInstancePolicy policy,
+    Func<McpInstanceAccessViewModel, McpInstancePolicy, Task> change) : ObservableObject
 {
-    private readonly Action<McpInstanceAccessViewModel, bool> _changed;
-    private readonly Action<McpInstanceAccessViewModel, bool>? _approvalChanged;
-    private bool _allowed, _alwaysAllow;
-    /// <summary>实例名称仅用于显示，控制逻辑使用稳定标识。</summary>
-    public McpInstanceAccessViewModel(McpSettingsTarget target, bool allowed, Action<McpInstanceAccessViewModel, bool> changed,
-        bool alwaysAllow = false, Action<McpInstanceAccessViewModel, bool>? approvalChanged = null)
-    { Target = target; _allowed = allowed; _changed = changed; _alwaysAllow = alwaysAllow; _approvalChanged = approvalChanged; }
-    /// <summary>当前实例的稳定身份。</summary>
-    public McpSettingsTarget Target { get; }
-    /// <summary>实例及类型的本地化名称。</summary>
-    public string Label => Target.Label;
-    /// <summary>取消勾选禁止整个实例；再次勾选不清除其更细的禁止范围。</summary>
-    public bool IsAllowed
+    /// <summary>使用稳定身份和连接版本处理更改。</summary>
+    public McpSettingsTarget Target => target;
+    /// <summary>重名时附带短标识的实例名称。</summary>
+    public string Name => name;
+    /// <summary>本地化的协议类型名称。</summary>
+    public string TypeName => typeName;
+    /// <summary>实际生效的互斥策略。</summary>
+    public McpInstancePolicy Policy { get; private set; } = policy;
+    /// <summary>菜单按钮显示的策略名称。</summary>
+    public string PolicyLabel => McpPolicyFilter.LabelFor(Policy);
+    /// <summary>按钮以图标和文字同时表达当前策略。</summary>
+    public string PolicyIcon => Policy switch { McpInstancePolicy.AlwaysAllow => "shield-check", McpInstancePolicy.Blocked => "circle-x", _ => "message-square" };
+    /// <summary>辅助技术同时读出实例与当前策略。</summary>
+    public string AccessibleLabel => Text.Format("McpPolicyForInstance", target.Label, PolicyLabel);
+    /// <summary>实例类型对应的内置图标。</summary>
+    public string Icon => target.Target.TypeId switch
     {
-        get => _allowed;
-        set { if (SetProperty(ref _allowed, value)) _changed(this, value); }
-    }
-    /// <summary>勾选后本机已配对客户端可直接访问此连接版本允许的资源。</summary>
-    public bool AlwaysAllow
+        "storage" => "box",
+        "ssh" => "terminal",
+        "redis" => "layers",
+        "rabbitmq" => "network",
+        _ => "database",
+    };
+    /// <summary>用户显式选择后才写入权限，打开菜单不会更改权限。</summary>
+    public AsyncRelayCommand SetPolicyCommand => field ??= new(value => change(this, (McpInstancePolicy)value!),
+        value => value is McpInstancePolicy);
+
+    /// <summary>保存完成后更新原行，保留可见项的容器和键盘焦点。</summary>
+    internal void ApplyPolicy(McpInstancePolicy value)
     {
-        get => _alwaysAllow;
-        set { if (SetProperty(ref _alwaysAllow, value)) _approvalChanged?.Invoke(this, value); }
+        if (Policy == value) return;
+        Policy = value;
+        OnPropertyChanged(nameof(Policy)); OnPropertyChanged(nameof(PolicyLabel));
+        OnPropertyChanged(nameof(PolicyIcon)); OnPropertyChanged(nameof(AccessibleLabel));
     }
-    /// <summary>保存失败时恢复上一次实际策略，不触发新的写入。</summary>
-    internal void Restore(bool allowed) => SetProperty(ref _allowed, allowed, nameof(IsAllowed));
-    internal void RestoreApproval(bool enabled) => SetProperty(ref _alwaysAllow, enabled, nameof(AlwaysAllow));
 }

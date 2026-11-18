@@ -8,6 +8,20 @@ public partial class McpSettingsView : UserControl
     /// <summary>加载支持主题和共享资源的设置布局。</summary>
     public McpSettingsView() => InitializeComponent();
 
+    private void OnOpenPolicy(object sender, RoutedEventArgs args)
+    {
+        if (sender is not Button { ContextMenu: { } menu } button) return;
+        menu.PlacementTarget = button;
+        menu.IsOpen = true;
+    }
+
+    private void OnOpenGuide(object sender, RoutedEventArgs args)
+    {
+        if (DataContext is not McpSettingsViewModel model) return;
+        var guide = new McpClientGuideWindow(model) { Owner = Window.GetWindow(this) };
+        guide.ShowDialog();
+    }
+
     private void OnOpenExclusion(object sender, RoutedEventArgs args)
     {
         if (DataContext is not McpSettingsViewModel { CanEditExclusions: true } model) return;

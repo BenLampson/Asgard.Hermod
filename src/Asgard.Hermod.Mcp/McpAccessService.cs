@@ -72,6 +72,31 @@ internal sealed class McpAccessService(IMcpLocalStore store, string command) : I
             return policy with { InstanceApprovals = remaining.AsReadOnly() };
         }, cancellationToken);
 
+    public Task<McpSettingsSnapshot> SetInstancePolicyAsync(string owner, McpInstanceApproval approval, McpInstancePolicy selection, CancellationToken cancellationToken = default) =>
+        UpdateAsync(owner, (workspace, policy) =>
+        {
+            var target = workspace.Targets.SingleOrDefault(approval.Matches) ?? throw Text.Exception("McpWorkspaceChanged");
+            if (!policy.DefaultAllow || !McpGrantRules.Supports(target.TypeId) || !Enum.IsDefined(selection))
+                throw Text.Exception("McpAccessDenied");
+            var exclusions = policy.Exclusions ?? [];
+            var approvals = policy.InstanceApprovals ?? [];
+            bool blocked = McpExclusionRules.Blocks(policy, target);
+            bool approved = approvals.Any(item => item.Matches(target));
+            if (blocked == (selection == McpInstancePolicy.Blocked) && approved == (selection == McpInstancePolicy.AlwaysAllow))
+                return policy;
+
+            // 两种记录共同决定最终权限；一次写入及会话撤销避免中途开放实例。
+            var remaining = exclusions.Where(item => item.InstanceId != target.Id || item.Resource.Length > 0).ToList();
+            if (selection == McpInstancePolicy.Blocked)
+            {
+                if (remaining.Count >= McpExclusionRules.Maximum) throw Text.Exception("McpExclusionLimit");
+                remaining.Add(new(Guid.NewGuid().ToString("N"), target.Id, target.TypeId));
+            }
+            var remembered = approvals.Where(item => item.InstanceId != target.Id).ToList();
+            if (selection == McpInstancePolicy.AlwaysAllow) remembered.Add(approval);
+            return policy with { Exclusions = remaining.AsReadOnly(), InstanceApprovals = remembered.AsReadOnly() };
+        }, cancellationToken);
+
     public Task<string> GetClientConfigurationAsync(string owner, CancellationToken cancellationToken = default) => RunAsync(() =>
     {
         if (store.ReadOwner() != owner) throw Text.Exception("McpWorkspaceChanged");

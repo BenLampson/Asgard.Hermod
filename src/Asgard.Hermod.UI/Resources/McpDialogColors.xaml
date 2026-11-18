@@ -1,0 +1,9 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- 独立窗口不继承设置页资源；沿用其主题色，操作按钮继续使用系统明暗主题中的对比色。 -->
+    <SolidColorBrush x:Key="SurfaceBrush" Color="{DynamicResource AgentBackgroundColor}" />
+    <SolidColorBrush x:Key="AppBackgroundBrush" Color="{DynamicResource AgentSoftColor}" />
+    <SolidColorBrush x:Key="LineBrush" Color="{DynamicResource AgentLineColor}" />
+    <SolidColorBrush x:Key="TextBodyBrush" Color="{DynamicResource AgentInkColor}" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="{DynamicResource AgentMutedColor}" />
+    <SolidColorBrush x:Key="AccentWeakBrush" Color="{DynamicResource AgentSelectedColor}" />
+</ResourceDictionary>

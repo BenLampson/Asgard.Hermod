@@ -1,0 +1,23 @@
+<controls:HermodDialog x:Class="Asgard.Hermod.UI.Views.Dialogs.McpClientGuideWindow"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:controls="clr-namespace:Asgard.Hermod.UI.Controls" xmlns:loc="clr-namespace:Asgard.Hermod.UI.Localization"
+  Title="{loc:Loc McpClientGuide}" Width="490" Height="485" MinWidth="390" MinHeight="350" ResizeMode="CanResize">
+  <controls:HermodDialog.Resources><ResourceDictionary Source="/Asgard.Hermod.UI;component/Resources/McpDialogColors.xaml" /></controls:HermodDialog.Resources>
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel Margin="20,14,20,18">
+      <DockPanel Margin="0,0,0,8"><Button x:Name="McpCopyConfigurationButton" DockPanel.Dock="Right" HorizontalAlignment="Right" Content="{loc:Loc McpCopyConfiguration}" Command="{Binding CopyCommand}" Style="{StaticResource PrimaryButton}" Padding="12,0" />
+        <TextBlock Text="{loc:Loc McpConnectClient}" FontWeight="SemiBold" FontSize="16" VerticalAlignment="Center" /></DockPanel>
+      <TextBlock Text="{loc:Loc McpGuideSteps}" TextWrapping="Wrap" />
+      <Border Margin="0,12,0,16" Background="{DynamicResource AppBackgroundBrush}" CornerRadius="5" Padding="10">
+        <DockPanel><controls:IconView Kind="lock-keyhole" Width="15" Height="15" Margin="0,0,8,0" /><TextBlock Text="{loc:Loc McpGuideTokenHint}" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" /></DockPanel>
+      </Border>
+      <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LineBrush}" Padding="0,12,0,0"><StackPanel>
+        <DockPanel><Button x:Name="McpCopyPromptButton" DockPanel.Dock="Right" Content="{loc:Loc McpCopyPrompt}" Command="{Binding CopyPromptCommand}" HorizontalAlignment="Right" Padding="12,0" />
+          <TextBlock Text="{loc:Loc McpStarterPromptTitle}" FontWeight="SemiBold" FontSize="16" VerticalAlignment="Center" /></DockPanel>
+        <TextBlock Text="{loc:Loc McpStarterPromptHint}" Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" Margin="0,5,0,8" />
+        <Border Background="{DynamicResource AppBackgroundBrush}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="2,0,0,0" CornerRadius="4" Padding="12"><TextBlock Text="{loc:Loc McpStarterPrompt}" TextWrapping="Wrap" /></Border>
+      </StackPanel></Border>
+      <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Margin="0,7,0,0" AutomationProperties.LiveSetting="Polite" />
+    </StackPanel>
+  </ScrollViewer>
+</controls:HermodDialog>

@@ -10,12 +10,16 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
     private McpSettingsSnapshot? _snapshot;
     private McpSettingsTarget? _selected;
     private string _resource = "", _qualifier = "", _table = "", _message = "";
+    private string _search = "";
+    private McpPolicyFilter _selectedFilter;
+    private McpStorageExclusionRange _storageRange;
     private bool _busy, _disposed;
 
     /// <summary>剪贴板动作可替换，视图模型不在绑定中持有客户端凭证。</summary>
     public McpSettingsViewModel(IMcpSettingsService service, Action<string>? copy = null, IMcpStorageScopeBrowser? storageBrowser = null)
     {
         _service = service; _copy = copy ?? Clipboard.SetText; _storageBrowser = storageBrowser;
+        _selectedFilter = Filters[0];
         RefreshCommand = new(_ => RefreshAsync(), _ => !_disposed && !_busy);
         ToggleCommand = new(_ => ChangeAsync(async token => Apply(await _service.SetEnabledAsync(_snapshot!.Workspace.Owner, !Enabled, token)), "McpSettingsSaved"), _ => Ready);
         CopyCommand = new(_ => ChangeAsync(async token =>
@@ -34,22 +38,40 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
             var exclusions = (_snapshot!.Exclusions ?? []).Append(new McpExclusion("", target.Id, target.TypeId, Resource, Qualifier, Table)).ToArray();
             Apply(await _service.SetExclusionsAsync(_snapshot.Workspace.Owner, exclusions, token));
             if (!_disposed) ExclusionSaved?.Invoke(this, EventArgs.Empty);
-        }, "McpSettingsSaved"), _ => Ready && _selected is not null
+        }, "McpInstanceApprovalSaved"), _ => Ready && _selected is not null && ValidStorageRange
             && (Resource.Length > 0 || Qualifier.Length == 0 && Table.Length == 0)
             && (Kind != "postgresql" || Table.Length == 0 || Qualifier.Length > 0));
         RemoveExclusionCommand = new(item => ChangeAsync(async token =>
         {
             var remaining = (_snapshot!.Exclusions ?? []).Where(exclusion => exclusion.Id != ((McpExcludedScope)item!).Id).ToArray();
             Apply(await _service.SetExclusionsAsync(_snapshot.Workspace.Owner, remaining, token));
-        }, "McpSettingsSaved"), item => Ready && item is McpExcludedScope exclusion && ExcludedScopes.Contains(exclusion));
+        }, "McpInstanceApprovalSaved"), item => Ready && item is McpExcludedScope exclusion && ExcludedScopes.Contains(exclusion));
     }
 
     /// <summary>禁止范围成功保存后关闭编辑器。</summary>
     public event EventHandler? ExclusionSaved;
     /// <summary>当前快照的可选实例。</summary>
     public IReadOnlyList<McpSettingsTarget> Targets { get; private set; } = [];
-    /// <summary>实例默认勾选，取消勾选即禁止整个实例。</summary>
+    /// <summary>工作区中的全部实例及其实际生效策略。</summary>
     public IReadOnlyList<McpInstanceAccessViewModel> InstanceAccess { get; private set; } = [];
+    /// <summary>实例表组合名称、协议搜索和当前策略筛选。</summary>
+    public ObservableCollection<McpInstanceAccessViewModel> VisibleInstances { get; } = [];
+    /// <summary>选项实例在刷新后保持稳定，可保留键盘选择。</summary>
+    public IReadOnlyList<McpPolicyFilter> Filters { get; } = [new(null), new(McpInstancePolicy.Confirm), new(McpInstancePolicy.AlwaysAllow), new(McpInstancePolicy.Blocked)];
+    /// <summary>已选择的策略筛选。</summary>
+    public McpPolicyFilter SelectedFilter
+    {
+        get => _selectedFilter;
+        set { if (value is not null && Filters.Contains(value) && SetProperty(ref _selectedFilter, value)) FilterInstances(); }
+    }
+    /// <summary>按用户名称、协议名称或稳定类型标识查找。</summary>
+    public string Search
+    {
+        get => _search;
+        set { if (SetProperty(ref _search, value)) FilterInstances(); }
+    }
+    /// <summary>区分空工作区与没有匹配结果。</summary>
+    public bool NoMatches => !NoInstances && VisibleInstances.Count == 0;
     /// <summary>细粒度禁止范围；整实例禁用由勾选状态表示。</summary>
     public IReadOnlyList<McpExcludedScope> ExcludedScopes { get; private set; } = [];
     /// <summary>没有已保存实例时显示说明。</summary>
@@ -77,27 +99,58 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
         {
             if (value == _selected || value is not null && !Targets.Contains(value)) return;
             _selected = value;
+            _storageRange = McpStorageExclusionRange.Prefix;
             _resource = Kind switch { "redis" => "0", "rabbitmq" => "/", _ => "" };
             _qualifier = Kind == "postgresql" ? "public" : "";
             _table = "";
             foreach (string property in new[] { nameof(SelectedTarget), nameof(ShowResource), nameof(ShowQualifier), nameof(ShowExclusionTable),
                 nameof(ShowTransfers), nameof(CanBrowseStorage), nameof(ResourceLabel), nameof(QualifierLabel), nameof(ExclusionTableLabel),
-                nameof(Resource), nameof(Qualifier), nameof(Table) }) OnPropertyChanged(property);
+                nameof(Resource), nameof(Qualifier), nameof(Table), nameof(StorageRange), nameof(ScopePreview) }) OnPropertyChanged(property);
             AddExclusionCommand.NotifyCanExecuteChanged();
         }
     }
     /// <summary>Bucket、数据库、服务或虚拟主机的字面名称；空值代表整个实例。</summary>
-    public string Resource { get => _resource; set { if (SetProperty(ref _resource, value)) AddExclusionCommand.NotifyCanExecuteChanged(); } }
+    public string Resource { get => _resource; set { if (SetProperty(ref _resource, value)) DraftChanged(); } }
     /// <summary>对象键前缀、Redis 键前缀或 PostgreSQL Schema。</summary>
-    public string Qualifier { get => _qualifier; set { if (SetProperty(ref _qualifier, value)) AddExclusionCommand.NotifyCanExecuteChanged(); } }
+    public string Qualifier { get => _qualifier; set { if (SetProperty(ref _qualifier, value)) DraftChanged(); } }
     /// <summary>表或队列的准确名称，空值代表全部。</summary>
-    public string Table { get => _table; set { if (SetProperty(ref _table, value)) AddExclusionCommand.NotifyCanExecuteChanged(); } }
+    public string Table { get => _table; set { if (SetProperty(ref _table, value)) DraftChanged(); } }
+    /// <summary>整实例和整个 Bucket 必须显式选择，隐藏的字段不参与保存。</summary>
+    public McpStorageExclusionRange StorageRange
+    {
+        get => _storageRange;
+        set
+        {
+            if (!SetProperty(ref _storageRange, value)) return;
+            if (value == McpStorageExclusionRange.Instance) Resource = "";
+            if (value != McpStorageExclusionRange.Prefix) Qualifier = "";
+            OnPropertyChanged(nameof(ShowResource)); OnPropertyChanged(nameof(ShowQualifier));
+            DraftChanged();
+        }
+    }
+    private bool ValidStorageRange => Kind != "storage" || StorageRange switch
+    {
+        McpStorageExclusionRange.Prefix => Resource.Length > 0 && Qualifier.Length > 0,
+        McpStorageExclusionRange.Bucket => Resource.Length > 0 && Qualifier.Length == 0,
+        _ => StorageRange == McpStorageExclusionRange.Instance && Resource.Length == 0 && Qualifier.Length == 0,
+    };
+    /// <summary>按实际提交的范围生成预览，不拼接翻译片段。</summary>
+    public string ScopePreview
+    {
+        get
+        {
+            if (_selected is null || !ValidStorageRange) return "";
+            if (Resource.Length == 0) return Qualifier.Length == 0 && Table.Length == 0 ? Text.Format("McpBlockWholePreview", _selected.Target.Name) : "";
+            return ExclusionScope(new("", _selected.Target.Id, Kind, Resource, Qualifier, Table));
+        }
+    }
+    private void DraftChanged() { OnPropertyChanged(nameof(ScopePreview)); AddExclusionCommand.NotifyCanExecuteChanged(); }
     private string Kind => _selected?.Target.TypeId ?? "";
     private bool Ready => !_disposed && !_busy && _snapshot is not null;
     /// <summary>选择实例后显示对应的资源字段。</summary>
-    public bool ShowResource => _selected is not null;
+    public bool ShowResource => _selected is not null && (Kind != "storage" || StorageRange != McpStorageExclusionRange.Instance);
     /// <summary>需要前缀或 Schema 的实例显示次级范围。</summary>
-    public bool ShowQualifier => Kind is "storage" or "postgresql" or "redis";
+    public bool ShowQualifier => Kind is "postgresql" or "redis" || Kind == "storage" && StorageRange == McpStorageExclusionRange.Prefix;
     /// <summary>数据库或消息队列可以禁止具体表或队列。</summary>
     public bool ShowExclusionTable => Kind is "mysql" or "postgresql" or "rabbitmq";
     /// <summary>对象存储展示可浏览的 Bucket 和目录。</summary>
@@ -140,6 +193,7 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
     {
         if (!Ready || _snapshot?.Workspace.Owner != browser.Owner || _selected?.Target != browser.Target || !browser.CanChoose)
         { Message = Text.Get("McpWorkspaceChanged"); return; }
+        StorageRange = browser.ChosenPrefix.Length == 0 ? McpStorageExclusionRange.Bucket : McpStorageExclusionRange.Prefix;
         Resource = browser.SelectedBucket!.Name; Qualifier = browser.ChosenPrefix; Message = "";
     }
     /// <summary>启动设置页或切换账号时重新获取工作区；旧草稿不能跨账号提交。</summary>
@@ -173,9 +227,24 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
             SelectedTarget = sameOwner && selected is not null ? Targets.FirstOrDefault(entry => entry.Target == selected.Target) : null;
         }
         var exclusions = snapshot.Exclusions ?? [];
-        InstanceAccess = Targets.Select(target => new McpInstanceAccessViewModel(target,
-            !exclusions.Any(item => item.InstanceId == target.Target.Id && item.Resource.Length == 0), OnInstanceAccessChanged,
-            (snapshot.InstanceApprovals ?? []).Any(approval => approval.Matches(target.Target)), OnInstanceApprovalChanged)).ToArray();
+        var existing = InstanceAccess.ToDictionary(item => item.Target);
+        InstanceAccess = Targets.Select(entry =>
+        {
+            var target = entry.Target;
+            var policy = exclusions.Any(item => item.InstanceId == target.Id && item.Resource.Length == 0) ? McpInstancePolicy.Blocked
+                : (snapshot.InstanceApprovals ?? []).Any(approval => approval.Matches(target)) ? McpInstancePolicy.AlwaysAllow : McpInstancePolicy.Confirm;
+            if (sameOwner && existing.TryGetValue(entry, out var previous))
+            {
+                previous.ApplyPolicy(policy);
+                return previous;
+            }
+            string name = duplicateNames.Contains((target.Name, target.TypeId))
+                ? Text.Format("McpInstanceNameWithId", target.Name, target.Id[..Math.Min(target.Id.Length, 8)]) : target.Name;
+            return new McpInstanceAccessViewModel(entry, name, TypeLabel(target.TypeId), policy, SetPolicyAsync);
+        }).OrderByDescending(item => item.Policy == McpInstancePolicy.AlwaysAllow).ToArray();
+        foreach (var filter in Filters) filter.Count = filter.Policy is null ? InstanceAccess.Count : InstanceAccess.Count(item => item.Policy == filter.Policy);
+        if (!sameOwner) { Search = ""; SelectedFilter = Filters[0]; }
+        FilterInstances();
         ExcludedScopes = exclusions.Where(item => item.Resource.Length > 0).Select(item => new McpExcludedScope(item.Id,
             Targets.FirstOrDefault(target => target.Target.Id == item.InstanceId)?.Label ?? Text.Get("McpUnavailableInstance"), ExclusionScope(item))).ToArray();
         OnPropertyChanged(nameof(InstanceAccess)); OnPropertyChanged(nameof(NoInstances));
@@ -183,29 +252,36 @@ public sealed class McpSettingsViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(Enabled)); OnPropertyChanged(nameof(ToggleLabel)); OnPropertyChanged(nameof(StateText));
     }
 
-    private async void OnInstanceAccessChanged(McpInstanceAccessViewModel item, bool allowed)
+    private void FilterInstances()
     {
-        if (!Ready || _snapshot is null || !InstanceAccess.Contains(item)) { item.Restore(!allowed); return; }
-        var exclusions = (_snapshot.Exclusions ?? []).Where(exclusion => exclusion.InstanceId != item.Target.Target.Id || exclusion.Resource.Length > 0).ToList();
-        if (!allowed) exclusions.Add(new("", item.Target.Target.Id, item.Target.Target.TypeId));
-        await ChangeAsync(async token => Apply(await _service.SetExclusionsAsync(_snapshot!.Workspace.Owner, exclusions, token)), "McpSettingsSaved");
-        if (_disposed) return;
-        bool actual = !(_snapshot?.Exclusions ?? []).Any(exclusion => exclusion.InstanceId == item.Target.Target.Id && exclusion.Resource.Length == 0);
-        if (actual != allowed) item.Restore(actual);
+        string query = Search.Trim();
+        var matches = InstanceAccess.Where(item => (SelectedFilter.Policy is null || SelectedFilter.Policy == item.Policy)
+            && (item.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase) || item.TypeName.Contains(query, StringComparison.CurrentCultureIgnoreCase)
+                || item.Target.Target.TypeId.Contains(query, StringComparison.OrdinalIgnoreCase))).ToArray();
+        var included = matches.ToHashSet();
+        for (int i = VisibleInstances.Count - 1; i >= 0; i--)
+            if (!included.Contains(VisibleInstances[i])) VisibleInstances.RemoveAt(i);
+        for (int i = 0; i < matches.Length; i++)
+        {
+            if (i < VisibleInstances.Count && VisibleInstances[i] == matches[i]) continue;
+            int previous = VisibleInstances.IndexOf(matches[i]);
+            if (previous >= 0) VisibleInstances.Move(previous, i);
+            else VisibleInstances.Insert(i, matches[i]);
+        }
+        OnPropertyChanged(nameof(NoMatches));
     }
 
-    private async void OnInstanceApprovalChanged(McpInstanceAccessViewModel item, bool enabled)
+    private Task SetPolicyAsync(McpInstanceAccessViewModel item, McpInstancePolicy selection)
     {
-        if (!Ready || _snapshot is null || !item.IsAllowed || !InstanceAccess.Contains(item)) { item.RestoreApproval(!enabled); return; }
+        if (!Ready || _snapshot is null || !InstanceAccess.Contains(item) || selection == item.Policy) return Task.CompletedTask;
         var target = item.Target.Target;
         string owner = _snapshot.Workspace.Owner;
-        await ChangeAsync(async token =>
+        return ChangeAsync(async token =>
         {
-            string folder = enabled && target.TypeId == "storage" ? WindowsDownloadFolder.GetDefault() : "";
+            string folder = selection == McpInstancePolicy.AlwaysAllow && target.TypeId == "storage" ? WindowsDownloadFolder.GetDefault() : "";
             var approval = new McpInstanceApproval(target.Id, target.TypeId, target.Revision, folder);
-            Apply(await _service.SetInstanceApprovalAsync(owner, approval, enabled, token));
+            Apply(await _service.SetInstancePolicyAsync(owner, approval, selection, token));
         }, "McpInstanceApprovalSaved");
-        if (!_disposed) item.RestoreApproval((_snapshot.InstanceApprovals ?? []).Any(approval => approval.Matches(target)));
     }
 
     private static string ExclusionScope(McpExclusion item)
