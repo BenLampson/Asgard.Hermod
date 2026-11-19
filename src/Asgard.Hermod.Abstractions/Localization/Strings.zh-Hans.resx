@@ -1149,6 +1149,9 @@
   <data xml:space="preserve" name="SwitchBucket">
     <value>切换 Bucket</value>
   </data>
+  <data xml:space="preserve" name="OpenBucketRoot">
+    <value>打开 {0} 的根目录</value>
+  </data>
   <data xml:space="preserve" name="SwitchToDarkMode">
     <value>切换为深色模式</value>
   </data>

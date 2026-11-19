@@ -27,26 +27,69 @@
         </Style>
     </UserControl.Resources>
     <Grid Margin="24,22,22,0">
-        <Grid.RowDefinitions><RowDefinition Height="32" /><RowDefinition Height="18" /><RowDefinition Height="32" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="46" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+        <Grid.RowDefinitions><RowDefinition Height="Auto" MinHeight="32" /><RowDefinition Height="18" /><RowDefinition Height="32" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="46" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
         <Grid>
-            <Grid.ColumnDefinitions><ColumnDefinition Width="170" /><ColumnDefinition Width="8" /><ColumnDefinition Width="*" /><ColumnDefinition Width="32" /><ColumnDefinition Width="8" /><ColumnDefinition Width="32" /></Grid.ColumnDefinitions>
-            <controls:SearchableSelect x:Name="BucketSelector" ItemsSource="{Binding Buckets}" SelectedItem="{Binding SelectedBucket, Mode=OneWay}"
-                                      DisplayMemberPath="Name" Icon="box" Height="32" SelectionCommitted="OnBucketSelected" AutomationProperties.Name="{loc:Loc SwitchBucket}" />
-            <ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled" Margin="0,0,12,0">
-                <ItemsControl ItemsSource="{Binding DirectoryBreadcrumbs}" VerticalAlignment="Center">
-                    <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate><DataTemplate><StackPanel Orientation="Horizontal">
-                        <controls:IconView Kind="chevron-right" Width="12" Height="12" Margin="0,0,8,0" Foreground="{DynamicResource TextMutedBrush}" />
-                        <Button Content="{Binding Name}" Command="{Binding NavigateCommand}" Width="Auto" Height="32" Padding="0" FontSize="12" Margin="0,0,8,0">
-                            <Button.Style><Style TargetType="Button" BasedOn="{StaticResource GhostButton}"><Setter Property="Foreground" Value="{DynamicResource TextBodyBrush}" /><Setter Property="FontWeight" Value="Normal" /><Style.Triggers><DataTrigger Binding="{Binding IsCurrent}" Value="True"><Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" /><Setter Property="FontWeight" Value="SemiBold" /></DataTrigger></Style.Triggers></Style></Button.Style>
-                        </Button>
-                    </StackPanel></DataTemplate></ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
-            <Button Grid.Column="3" Command="{Binding RefreshCommand}" Width="32" Height="32" Padding="7" ToolTip="{loc:Loc RefreshObjectList}" AutomationProperties.Name="{loc:Loc RefreshObjectList}">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="32" /><ColumnDefinition Width="8" /><ColumnDefinition Width="32" /></Grid.ColumnDefinitions>
+            <WrapPanel Margin="0,0,12,0">
+                <Grid VerticalAlignment="Top">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                    <Button x:Name="BucketRootButton" DataContext="{Binding BucketBreadcrumb}" Command="{Binding NavigateCommand}"
+                            Height="Auto" MinHeight="32" Padding="10,4" Margin="0,0,2,0" HorizontalContentAlignment="Stretch"
+                            AutomationProperties.Name="{Binding Name, StringFormat={loc:Loc OpenBucketRoot}}"
+                            ToolTip="{Binding Path=(AutomationProperties.Name), RelativeSource={RelativeSource Self}}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource StandardButton}">
+                                <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsCurrent}" Value="True"><Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" /></DataTrigger>
+                                    <DataTrigger Binding="{Binding}" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <controls:IconView Kind="box" Width="14" Height="14" Margin="0,0,8,0" Foreground="{DynamicResource TextMutedBrush}" />
+                            <TextBlock Grid.Column="1" Text="{Binding Name}" TextWrapping="Wrap" VerticalAlignment="Center" />
+                        </Grid>
+                    </Button>
+                    <controls:SearchableSelect x:Name="BucketSelector" Grid.Column="1" Height="32" VerticalAlignment="Top"
+                                               ItemsSource="{Binding Buckets}" SelectedItem="{Binding SelectedBucket, Mode=OneWay}"
+                                               DisplayMemberPath="Name" SelectionCommitted="OnBucketSelected"
+                                               ToolTip="{loc:Loc SwitchBucket}" AutomationProperties.Name="{loc:Loc SwitchBucket}">
+                        <controls:SearchableSelect.Style>
+                            <Style TargetType="controls:SearchableSelect">
+                                <Setter Property="ShowSelectedLabel" Value="False" />
+                                <Style.Triggers><DataTrigger Binding="{Binding SelectedBucket}" Value="{x:Null}"><Setter Property="ShowSelectedLabel" Value="True" /></DataTrigger></Style.Triggers>
+                            </Style>
+                        </controls:SearchableSelect.Style>
+                    </controls:SearchableSelect>
+                </Grid>
+                <ScrollViewer MaxHeight="96" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Focusable="False">
+                    <ItemsControl ItemsSource="{Binding DirectoryBreadcrumbs}">
+                        <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate><DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                <controls:IconView Kind="chevron-right" Width="12" Height="12" Margin="6,0,2,0" Foreground="{DynamicResource TextMutedBrush}" />
+                                <Button Grid.Column="1" Command="{Binding NavigateCommand}" Height="Auto" MinHeight="32" Padding="4,4"
+                                        AutomationProperties.Name="{Binding Name}" ToolTip="{Binding Prefix}">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource GhostButton}">
+                                            <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
+                                            <Style.Triggers><DataTrigger Binding="{Binding IsCurrent}" Value="True"><Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" /></DataTrigger></Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                    <TextBlock Text="{Binding Name}" TextWrapping="Wrap" />
+                                </Button>
+                            </Grid>
+                        </DataTemplate></ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </WrapPanel>
+            <Button Grid.Column="1" Command="{Binding RefreshCommand}" Width="32" Height="32" Padding="7" VerticalAlignment="Top" ToolTip="{loc:Loc RefreshObjectList}" AutomationProperties.Name="{loc:Loc RefreshObjectList}">
                 <controls:IconView Kind="refresh-cw" Width="16" Height="16" Foreground="{DynamicResource TextMutedBrush}" />
             </Button>
-            <Button Grid.Column="5" Command="{Binding ToggleDetailsCommand}" Width="32" Height="32" Padding="7" ToolTip="{Binding DetailsToggleLabel}" AutomationProperties.Name="{Binding DetailsToggleLabel}">
+            <Button Grid.Column="3" Command="{Binding ToggleDetailsCommand}" Width="32" Height="32" Padding="7" VerticalAlignment="Top" ToolTip="{Binding DetailsToggleLabel}" AutomationProperties.Name="{Binding DetailsToggleLabel}">
                 <Button.Style><Style TargetType="Button" BasedOn="{StaticResource IconButton}"><Style.Triggers><DataTrigger Binding="{Binding IsDetailsOpen}" Value="True"><Setter Property="Background" Value="{DynamicResource AccentWeakBrush}" /></DataTrigger></Style.Triggers></Style></Button.Style>
                 <controls:IconView Kind="panel-left" Width="16" Height="16" RenderTransformOrigin="0.5,0.5"><controls:IconView.RenderTransform><ScaleTransform ScaleX="-1" /></controls:IconView.RenderTransform></controls:IconView>
             </Button>

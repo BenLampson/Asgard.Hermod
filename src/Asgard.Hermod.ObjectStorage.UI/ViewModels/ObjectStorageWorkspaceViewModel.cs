@@ -83,7 +83,9 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     public ObservableCollection<ObjectStorageEntryViewModel> Entries { get; } = [];
     /// <summary>当前前缀的可点击路径。</summary>
     public ObservableCollection<ObjectStorageBreadcrumbViewModel> Breadcrumbs { get; } = [];
-    /// <summary>右侧容器选择框后只显示目录段，避免重复展示 Bucket 名称。</summary>
+    /// <summary>第一级固定指向当前 Bucket 的根目录。</summary>
+    public ObjectStorageBreadcrumbViewModel? BucketBreadcrumb => Breadcrumbs.FirstOrDefault();
+    /// <summary>Bucket 之后的各级目录。</summary>
     public IEnumerable<ObjectStorageBreadcrumbViewModel> DirectoryBreadcrumbs => Breadcrumbs.Skip(1);
     /// <summary>失败、取消和完成的任务都保留在当前页签。</summary>
     public ObservableCollection<ObjectStorageTransferViewModel> Transfers { get; } = [];
@@ -193,8 +195,7 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
         _selectedBucket = null; _prefix = ""; _nextToken = null;
         OnPropertyChanged(nameof(SelectedBucket)); OnPropertyChanged(nameof(Prefix));
         OnPropertyChanged(nameof(Location)); OnPropertyChanged(nameof(Subtitle));
-        SelectedEntry = null; Entries.Clear(); Buckets.Clear(); Breadcrumbs.Clear();
-        OnPropertyChanged(nameof(DirectoryBreadcrumbs));
+        SelectedEntry = null; Entries.Clear(); Buckets.Clear(); RebuildBreadcrumbs();
         NotifyChecked();
         BucketsChanged?.Invoke(this, EventArgs.Empty);
         _initializeTask = ReadBucketsAsync(cancellationToken);
@@ -315,15 +316,19 @@ public sealed partial class ObjectStorageWorkspaceViewModel : WorkspacePageViewM
     private void RebuildBreadcrumbs()
     {
         Breadcrumbs.Clear();
-        if (SelectedBucket is not { } bucket) return;
-        Breadcrumbs.Add(new(bucket.Name, "", () => NavigateAsync(bucket, "")));
-        string prefix = "";
-        foreach (string part in Prefix.TrimEnd('/').Split('/', StringSplitOptions.RemoveEmptyEntries))
+        if (SelectedBucket is { } bucket)
         {
-            prefix += part + "/";
-            string target = prefix;
-            Breadcrumbs.Add(new(part, target, () => NavigateAsync(bucket, target), target == Prefix));
+            Breadcrumbs.Add(new(bucket.Name, "", () => NavigateAsync(bucket, ""), Prefix.Length == 0));
+            // 非空前缀以斜杠结束，只跳过末尾的分隔符，保留对象键中的空路径段。
+            int length = 0;
+            foreach (string part in Prefix.Split('/').SkipLast(1))
+            {
+                length += part.Length + 1;
+                string target = Prefix[..length];
+                Breadcrumbs.Add(new(part.Length == 0 ? "/" : part, target, () => NavigateAsync(bucket, target), target == Prefix));
+            }
         }
+        OnPropertyChanged(nameof(BucketBreadcrumb));
         OnPropertyChanged(nameof(DirectoryBreadcrumbs));
     }
     /// <summary>刷新勾选统计与批量操作条件。</summary>

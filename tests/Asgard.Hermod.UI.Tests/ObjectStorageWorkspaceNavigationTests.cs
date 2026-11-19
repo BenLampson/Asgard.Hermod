@@ -39,6 +39,23 @@ public sealed class ObjectStorageWorkspaceNavigationTests
         Assert.Equal("releases/v1/", model.Breadcrumbs.Last().Prefix);
     }
 
+    /// <summary>目录段保留真实对象键中的连续斜杠，根目录始终是同一 Bucket 的空前缀。</summary>
+    [Fact]
+    public async Task BreadcrumbsPreserveEmptySegmentsInObjectPrefixes()
+    {
+        var service = new ObjectStorageTestService();
+        await using var model = Create(service);
+        var token = TestContext.Current.CancellationToken;
+        await model.InitializeAsync(token);
+        var bucket = Assert.Single(model.Buckets);
+        await model.NavigateAsync(bucket, "/incoming//batch/", token);
+        Assert.Equal(new[] { "", "/", "/incoming/", "/incoming//", "/incoming//batch/" }, model.Breadcrumbs.Select(item => item.Prefix));
+        await model.Breadcrumbs[^2].NavigateCommand.ExecuteAsync();
+        Assert.Equal((bucket.Name, "/incoming//", "", (string?)null), service.ListCalls[^1]);
+        await model.BucketBreadcrumb!.NavigateCommand.ExecuteAsync();
+        Assert.Equal((bucket.Name, "", "", (string?)null), service.ListCalls[^1]);
+    }
+
     /// <summary>迟到的目录响应即使忽略取消，也不能覆盖新目录或结束新请求状态。</summary>
     [Fact]
     public async Task Navigate_IgnoresCancelledLateDirectory()

@@ -5,6 +5,10 @@ a generic S3-compatible connector. All use the same object browser, search,
 preview, transfer and deletion workflows. Each connector is registered by the
 application and can be used independently of SQLite and WPF.
 
+The bucket name is the first breadcrumb. Click it to return to that bucket's
+root from any folder, or click a folder in the path to return to that level.
+The arrow beside the bucket name opens the searchable bucket list.
+
 Editing keeps the instance type fixed and allows switching its storage provider.
 The selected provider determines the connection fields, endpoint and signing protocol.
 Switching clears the previous provider's connection fields and requires a successful

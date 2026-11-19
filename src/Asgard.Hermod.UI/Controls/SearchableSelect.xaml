@@ -25,7 +25,7 @@
         </Style>
         <Style x:Key="SelectOptionContainer" TargetType="ListBoxItem">
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            <Setter Property="Height" Value="32" /><Setter Property="Padding" Value="10,0" />
+            <Setter Property="MinHeight" Value="32" /><Setter Property="Padding" Value="10,4" />
             <Setter Property="Foreground" Value="{DynamicResource TextBodyBrush}" />
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
@@ -49,7 +49,8 @@
                 <local:IconView Kind="{Binding Icon, ElementName=SelectRoot}" Width="14" Height="14" Margin="0,0,8,0" Foreground="{DynamicResource TextMutedBrush}">
                     <local:IconView.Style><Style TargetType="local:IconView"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding Icon, ElementName=SelectRoot}" Value=""><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></local:IconView.Style>
                 </local:IconView>
-                <TextBlock Grid.Column="1" Text="{Binding SelectedLabel, ElementName=SelectRoot}" TextTrimming="CharacterEllipsis" Margin="0,0,8,0" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Text="{Binding SelectedLabel, ElementName=SelectRoot}" TextTrimming="CharacterEllipsis" Margin="0,0,8,0" VerticalAlignment="Center"
+                           Visibility="{Binding ShowSelectedLabel, ElementName=SelectRoot, Converter={StaticResource SelectVisible}}" />
                 <local:IconView Grid.Column="2" Kind="chevron-down" Width="13" Height="13" Foreground="{DynamicResource TextMutedBrush}" />
             </Grid>
         </Button>
@@ -73,7 +74,7 @@
                                  PreviewMouseLeftButtonUp="OnOptionClick" PreviewKeyDown="OnOptionsKeyDown" AutomationProperties.Name="{loc:Loc AvailableOptions}">
                             <ListBox.ItemTemplate><DataTemplate><Grid>
                                 <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="16" /></Grid.ColumnDefinitions>
-                                <TextBlock Text="{Binding Label}" FontFamily="{DynamicResource UiFont}" FontSize="12" FontWeight="Normal" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{Binding Label}" FontFamily="{DynamicResource UiFont}" FontSize="12" FontWeight="Normal" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" TextWrapping="Wrap" />
                                 <local:IconView Grid.Column="1" Kind="check" Width="16" Height="16" Foreground="{DynamicResource AccentBrush}" Visibility="{Binding IsCommitted, Converter={StaticResource SelectVisible}}" />
                             </Grid></DataTemplate></ListBox.ItemTemplate>
                         </ListBox>

@@ -15,6 +15,8 @@ public partial class SearchableSelect : UserControl
     public static readonly DependencyProperty DisplayMemberPathProperty = DependencyProperty.Register(nameof(DisplayMemberPath), typeof(string), typeof(SearchableSelect), new PropertyMetadata("", OnDisplayPathChanged));
     /// <summary>选择框前缀图标，可以省略。</summary>
     public static readonly DependencyProperty IconProperty = DependencyProperty.Register(nameof(Icon), typeof(string), typeof(SearchableSelect), new PropertyMetadata(""));
+    /// <summary>由相邻控件展示选中名称时，触发按钮可以只保留下拉箭头。</summary>
+    public static readonly DependencyProperty ShowSelectedLabelProperty = DependencyProperty.Register(nameof(ShowSelectedLabel), typeof(bool), typeof(SearchableSelect), new PropertyMetadata(true));
     /// <summary>当前弹层内的筛选词，不参与业务选择绑定。</summary>
     public static readonly DependencyProperty SearchTextProperty = DependencyProperty.Register(nameof(SearchText), typeof(string), typeof(SearchableSelect), new PropertyMetadata("", OnFilterChanged));
     /// <summary>控制弹层开关，点击外部和 Escape 都会关闭。</summary>
@@ -36,6 +38,8 @@ public partial class SearchableSelect : UserControl
     public string DisplayMemberPath { get => (string)GetValue(DisplayMemberPathProperty); set => SetValue(DisplayMemberPathProperty, value); }
     /// <summary>选择框的可选前缀图标。</summary>
     public string Icon { get => (string)GetValue(IconProperty); set => SetValue(IconProperty, value); }
+    /// <summary>是否在触发按钮内展示选中名称。</summary>
+    public bool ShowSelectedLabel { get => (bool)GetValue(ShowSelectedLabelProperty); set => SetValue(ShowSelectedLabelProperty, value); }
     /// <summary>弹层局部筛选词。</summary>
     public string SearchText { get => (string)GetValue(SearchTextProperty); set => SetValue(SearchTextProperty, value); }
     /// <summary>弹层是否展开。</summary>

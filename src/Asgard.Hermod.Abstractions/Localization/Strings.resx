@@ -1149,6 +1149,9 @@
   <data xml:space="preserve" name="SwitchBucket">
     <value>Switch bucket</value>
   </data>
+  <data xml:space="preserve" name="OpenBucketRoot">
+    <value>Open the root of bucket {0}</value>
+  </data>
   <data xml:space="preserve" name="SwitchToDarkMode">
     <value>Switch to dark mode</value>
   </data>
